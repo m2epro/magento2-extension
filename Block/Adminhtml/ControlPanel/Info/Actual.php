@@ -15,20 +15,6 @@ use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
  */
 class Actual extends AbstractBlock
 {
-    protected $moduleResource;
-
-    //########################################
-
-    public function __construct(
-        \Magento\Framework\Model\ResourceModel\Db\Context $dbContext,
-        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
-        array $data = []
-    ) {
-        $this->moduleResource = new \Magento\Framework\Module\ModuleResource($dbContext);
-
-        parent::__construct($context, $data);
-    }
-
     //########################################
 
     public function _construct()
@@ -59,8 +45,8 @@ class Actual extends AbstractBlock
 
         // ---------------------------------------
         $this->maintenanceMode = $this->getHelper('Module_Maintenance')->isEnabled();
-        $this->coreResourceVersion = $this->moduleResource->getDbVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER);
-        $this->coreResourceDataVersion = $this->moduleResource->getDataVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER);
+        $this->coreResourceVersion = $this->getHelper('Module')->getSchemaVersion();
+        $this->coreResourceDataVersion = $this->getHelper('Module')->getDataVersion();
         // ---------------------------------------
 
         // ---------------------------------------

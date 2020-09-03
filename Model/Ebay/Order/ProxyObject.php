@@ -15,35 +15,37 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 {
     const USER_ID_ATTRIBUTE_CODE = 'ebay_user_id';
 
+    /** @var \Magento\Tax\Model\Calculation */
     private $taxCalculation;
 
-    private $payment;
-
+    /** @var \Magento\Eav\Model\Entity\AttributeFactory */
     private $attributeFactory;
-
-    private $customerFactory;
-
-    private $customerRepository;
 
     //########################################
 
     public function __construct(
-        \Magento\Tax\Model\Calculation $taxCalculation,
+        \Ess\M2ePro\Model\Currency $currency,
         \Ess\M2ePro\Model\Magento\Payment $payment,
-        \Magento\Eav\Model\Entity\AttributeFactory $attributeFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel $order,
         \Magento\Customer\Model\CustomerFactory $customerFactory,
         \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
-        \Ess\M2ePro\Model\Currency $currency,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel $order,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Magento\Tax\Model\Calculation $taxCalculation,
+        \Magento\Eav\Model\Entity\AttributeFactory $attributeFactory
     ) {
-        $this->taxCalculation = $taxCalculation;
-        $this->payment = $payment;
+        $this->taxCalculation   = $taxCalculation;
         $this->attributeFactory = $attributeFactory;
-        $this->customerFactory = $customerFactory;
-        $this->customerRepository = $customerRepository;
-        parent::__construct($currency, $order, $helperFactory, $modelFactory);
+
+        parent::__construct(
+            $currency,
+            $payment,
+            $order,
+            $customerFactory,
+            $customerRepository,
+            $helperFactory,
+            $modelFactory
+        );
     }
 
     //########################################
@@ -51,6 +53,22 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     public function getChannelOrderNumber()
     {
         return $this->order->getEbayOrderId();
+    }
+
+    //########################################
+    /**
+     * @return string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getOrderNumberPrefix()
+    {
+        $prefix = $this->order->getEbayAccount()->getMagentoOrdersNumberRegularPrefix();
+
+        if ($this->order->getEbayAccount()->isMagentoOrdersNumberMarketplacePrefixUsed()) {
+            $prefix .= $this->order->getMagentoOrdersNumberMarketplacePrefix();
+        }
+
+        return $prefix;
     }
 
     //########################################

@@ -40,7 +40,6 @@ class Magento extends Command
     /**
      * @title "Show Event Observers"
      * @description "Show Event Observers"
-     * @new_line
      */
     public function showEventObserversAction()
     {
@@ -103,7 +102,6 @@ HTML;
     /**
      * @title "Show Installed Modules"
      * @description "Show Installed Modules"
-     * @new_line
      */
     public function showInstalledModulesAction()
     {
@@ -151,7 +149,6 @@ HTML;
     /**
      * @title "Show Plugins (Interceptors) List"
      * @description "Show Plugins (Interceptors) List"
-     * @new_line
      */
     public function showPluginsListAction()
     {
@@ -209,88 +206,6 @@ HTML;
 
         return str_replace('#count#', count($fullPluginsList), $html);
     }
-
-    /**
-     * @title "Show M2ePro Loggers"
-     * @description "M2ePro/Module_Logger in magento files"
-     * @new_line
-     */
-    public function showM2eProLoggersAction()
-    {
-        $recursiveIteratorIterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator(
-                $this->getHelper('Client')->getBaseDirectory().'vendor',
-                \FilesystemIterator::FOLLOW_SYMLINKS
-            )
-        );
-
-        $loggers = [];
-        foreach ($recursiveIteratorIterator as $splFileInfo) {
-            /**@var \SplFileInfo $splFileInfo */
-
-            if (!$splFileInfo->isFile() ||
-                !in_array($splFileInfo->getExtension(), ['php', 'phtml'])) {
-                continue;
-            }
-
-            if (strpos($splFileInfo->getRealPath(), 'Ess'.DIRECTORY_SEPARATOR.'M2ePro') !== false ||
-                strpos($splFileInfo->getRealPath(), 'm2e'.DIRECTORY_SEPARATOR.'ebay-amazon-magento2') !== false) {
-                continue;
-            }
-
-            $splFileObject = $splFileInfo->openFile();
-            if (!$splFileObject->getSize()) {
-                continue;
-            }
-
-            $content = $splFileObject->fread($splFileObject->getSize());
-            if (strpos($content, 'Module\Logger') === false) {
-                continue;
-            }
-
-            $content = explode("\n", $content);
-            foreach ($content as $line => $contentRow) {
-                if (strpos($contentRow, 'Module\Logger') === false) {
-                    continue;
-                }
-
-                $loggers[] = [
-                    'path' => $splFileObject->getRealPath(),
-                    'line' => $line + 1,
-                    'code' => implode("\n", array_slice($content, $line - 2, 7)),
-                ];
-            }
-        }
-
-        if (count($loggers) <= 0) {
-            return $this->getEmptyResultsHtml('No M2ePro Loggers');
-        }
-
-        $cdnURL = '//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0';
-        $html = <<<HTML
-<link type="text/css" href="{$cdnURL}/themes/prism-tomorrow.min.css" rel="stylesheet"/>
-<script type="text/javascript" src="{$cdnURL}/prism.min.js"></script>
-<script type="text/javascript" src="{$cdnURL}/components/prism-php.min.js"></script>
-<script type="text/javascript" src="{$cdnURL}/components/prism-php-extras.min.js"></script>
-
-<div style="max-width: 1280px; margin: 0 auto;">
-    <h2 style="text-align: center; margin-bottom: 0; padding-top: 25px">M2ePro Loggers in Magento files
-        <span style="color: #808080; font-size: 15px">(%count% entries)</span>
-    </h2>
-<br/>
-HTML;
-        foreach ($loggers as $logger) {
-            $html .= <<<HTML
-<figure>
-    <figcaption>{$logger['path']}:{$logger['line']}</figcaption>
-    <pre><code class="language-php">{$logger['code']}</code></pre>
-</figure>
-HTML;
-        }
-
-        return str_replace('%count%', count($loggers), $html. '</div>');
-    }
-
     /**
      * @title "Clear Cache"
      * @description "Clear magento cache"
@@ -300,14 +215,42 @@ HTML;
     {
         $this->getHelper('Magento')->clearCache();
         $this->getMessageManager()->addSuccess('Magento cache was successfully cleared.');
-        $this->_redirect($this->getHelper('View\ControlPanel')->getPageToolsTabUrl());
+        $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
+    }
+
+    /**
+     * @title "Clear Opcode"
+     * @description "Clear Opcode (APC and Zend Optcache Extension)"
+     */
+    public function clearOpcodeAction()
+    {
+        $messages = [];
+
+        if (!$this->getHelper('Client\Cache')->isApcAvailable() &&
+            !$this->getHelper('Client\Cache')->isZendOpcacheAvailable()) {
+            $this->getMessageManager()->addError('Opcode extensions are not installed.');
+            return $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
+        }
+
+        if ($this->getHelper('Client\Cache')->isApcAvailable()) {
+            $messages[] = 'APC opcode';
+            apc_clear_cache('system');
+        }
+
+        if ($this->getHelper('Client\Cache')->isZendOpcacheAvailable()) {
+            $messages[] = 'Zend Optcache';
+            opcache_reset();
+        }
+
+        $this->getMessageManager()->addSuccess(implode(' and ', $messages) . ' caches are cleared.');
+        return $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
     }
 
     //########################################
 
     private function getEmptyResultsHtml($messageText)
     {
-        $backUrl = $this->getHelper('View\ControlPanel')->getPageToolsTabUrl();
+        $backUrl = $this->getHelper('View\ControlPanel')->getPageModuleTabUrl();
 
         return <<<HTML
 <h2 style="margin: 20px 0 0 10px">

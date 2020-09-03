@@ -45,15 +45,15 @@ abstract class Order extends Main
         $successMessage = '';
         switch ($type) {
             case 'ready_for_pickup':
-                $successMessage = $this->__('Order was successfully marked as Ready For Pickup');
+                $successMessage = $this->__('Order was marked as Ready For Pickup');
                 break;
 
             case 'picked_up':
-                $successMessage = $this->__('Order was successfully marked as Picked Up');
+                $successMessage = $this->__('Order was marked as Picked Up');
                 break;
 
             case 'cancelled':
-                $successMessage = $this->__('Order was successfully marked as Cancelled');
+                $successMessage = $this->__('Order was marked as Cancelled');
                 break;
         }
 

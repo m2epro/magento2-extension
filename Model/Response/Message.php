@@ -63,6 +63,11 @@ class Message extends \Ess\M2ePro\Model\AbstractModel
         return $this->text;
     }
 
+    public function getType()
+    {
+        return $this->type;
+    }
+
     //########################################
 
     public function isError()

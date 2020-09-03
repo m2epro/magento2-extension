@@ -145,7 +145,9 @@ class ArchiveOldOrders extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         unset($data);
 
-        $connection->insertMultiple($dbHelper->getTableNameWithPrefix('m2epro_archived_entity'), $insertsData);
+        foreach (array_chunk($insertsData, 200) as $dataPart) {
+            $connection->insertMultiple($dbHelper->getTableNameWithPrefix('m2epro_archived_entity'), $dataPart);
+        }
 
         $connection->delete($mainOrderTable, ['id IN (?)' => $componentOrdersIds]);
         $connection->delete($componentOrderTable, ['order_id IN (?)' => $componentOrdersIds]);

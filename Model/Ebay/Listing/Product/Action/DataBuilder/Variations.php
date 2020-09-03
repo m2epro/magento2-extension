@@ -55,7 +55,7 @@ class Variations extends AbstractModel
         $qtyMode = $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->getQtyMode();
 
         $productsIds = [];
-        $variationIdsIndexes = [];
+        $variationMetaData = [];
 
         foreach ($this->getListingProduct()->getVariations(true) as $variation) {
             /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
@@ -81,6 +81,7 @@ class Variations extends AbstractModel
                 $item['sku'] = 'del-' . sha1(microtime(1) . $ebayVariation->getOnlineSku());
             }
 
+            // @codingStandardsIgnoreLine
             $item = array_merge($item, $this->getVariationPriceData($variation));
 
             if (($qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED ||
@@ -106,14 +107,14 @@ class Variations extends AbstractModel
             if (!empty($item['details']['mpn_previous']) && !empty($item['details']['mpn']) &&
                 $item['details']['mpn_previous'] != $item['details']['mpn']) {
                 $oneMoreVariation = [
-                    'qty' => 0,
-                    'price' => $item['price'],
-                    'sku' => 'del-' . sha1(microtime(1) . $item['sku']),
-                    'add' => 0,
-                    'delete' => 1,
+                    'qty'       => 0,
+                    'price'     => $item['price'],
+                    'sku'       => 'del-' . sha1(microtime(1) . $item['sku']),
+                    'add'       => 0,
+                    'delete'    => 1,
                     'specifics' => $item['specifics'],
                     'has_sales' => true,
-                    'details' => $item['details']
+                    'details'   => $item['details']
                 ];
                 $oneMoreVariation['details']['mpn'] = $item['details']['mpn_previous'];
 
@@ -128,11 +129,15 @@ class Variations extends AbstractModel
             }
 
             $data[] = $item;
-
-            $variationIdsIndexes[$variation->getId()] = count($data) - 1;
+            $variationMetaData[$variation->getId()] = [
+                // @codingStandardsIgnoreLine
+                'index'        => count($data) - 1,
+                'online_qty'   => $variation->getChildObject()->getOnlineQty(),
+                'online_price' => $variation->getChildObject()->getOnlinePrice()
+            ];
         }
 
-        $this->addMetaData('variation_ids_indexes', $variationIdsIndexes);
+        $this->addMetaData('variation_data', $variationMetaData);
 
         $this->checkQtyWarnings($productsIds);
 

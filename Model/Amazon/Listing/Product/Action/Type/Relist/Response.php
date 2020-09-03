@@ -13,8 +13,6 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Relist;
  */
 class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response
 {
-    const INSTRUCTION_INITIATOR                 = 'relist_action_response';
-
     const INSTRUCTION_TYPE_CHECK_QTY            = 'success_relist_check_qty';
     const INSTRUCTION_TYPE_CHECK_PRICE_REGULAR  = 'success_relist_check_price_regular';
     const INSTRUCTION_TYPE_CHECK_PRICE_BUSINESS = 'success_relist_check_price_business';

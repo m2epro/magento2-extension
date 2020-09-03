@@ -27,10 +27,15 @@ class Cancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
      */
     protected function performActions()
     {
+        $this->deleteNotActualChanges();
+
         $ordersChangesForProcess = $this->getOrdersChangesForProcess();
         if (empty($ordersChangesForProcess)) {
             return;
         }
+
+        $this->activeRecordFactory->getObject('Order_Change')->getResource()
+            ->incrementAttemptCount(array_keys($ordersChangesForProcess));
 
         foreach ($ordersChangesForProcess as $orderChange) {
             /** @var \Ess\M2ePro\Model\Order $order */
@@ -39,13 +44,13 @@ class Cancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             $actionHandler = $this->modelFactory->getObject('Walmart_Order_Action_Handler_Cancel');
             $actionHandler->setOrder($order);
-            $actionHandler->setParams($orderChange->getParams());
+            $actionHandler->setOrderChange($orderChange);
 
             if ($actionHandler->isNeedProcess()) {
                 $actionHandler->process();
+            } else {
+                $orderChange->delete();
             }
-
-            $orderChange->delete();
         }
     }
 
@@ -59,12 +64,21 @@ class Cancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Order\Change\Collection $collection */
         $collection = $this->activeRecordFactory->getObject('Order_Change')->getCollection();
+        $collection->addProcessingAttemptDateFilter();
         $collection->addFieldToFilter('component', Walmart::NICK);
         $collection->addFieldToFilter('action', Change::ACTION_CANCEL);
         $collection->getSelect()->limit(self::MAX_ORDERS_CHANGES_COUNT);
         $collection->getSelect()->group('order_id');
 
         return $collection->getItems();
+    }
+
+    protected function deleteNotActualChanges()
+    {
+        $this->activeRecordFactory->getObject('Order_Change')->getResource()->deleteByProcessingAttemptCount(
+            \Ess\M2ePro\Model\Order\Change::MAX_ALLOWED_PROCESSING_ATTEMPTS,
+            \Ess\M2ePro\Helper\Component\Walmart::NICK
+        );
     }
 
     //####################################

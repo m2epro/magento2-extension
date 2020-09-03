@@ -15,11 +15,14 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid as WidgetAbstractGrid;
  */
 abstract class AbstractGrid extends WidgetAbstractGrid
 {
-    const LISTING_ID_FIELD = 'listing_id';
-    const LISTING_PRODUCT_ID_FIELD = 'listing_product_id';
+    const LISTING_ID_FIELD                = 'listing_id';
+    const LISTING_PRODUCT_ID_FIELD        = 'listing_product_id';
     const LISTING_PARENT_PRODUCT_ID_FIELD = 'parent_listing_product_id';
 
     protected $resourceConnection;
+
+    /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+    protected $listingProduct = null;
 
     //########################################
 
@@ -94,9 +97,6 @@ abstract class AbstractGrid extends WidgetAbstractGrid
 
     // ---------------------------------------
 
-    /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-    protected $listingProduct = null;
-
     /**
      * @return \Ess\M2ePro\Model\Listing\Product|null
      */
@@ -131,18 +131,18 @@ abstract class AbstractGrid extends WidgetAbstractGrid
     protected function _getLogTypeList()
     {
         return [
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE => $this->__('Notice'),
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE  => $this->__('Notice'),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => $this->__('Success'),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => $this->__('Warning'),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => $this->__('Error')
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR   => $this->__('Error')
         ];
     }
 
     protected function _getLogInitiatorList()
     {
         return [
-            \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN => $this->__('Unknown'),
-            \Ess\M2ePro\Helper\Data::INITIATOR_USER => $this->__('Manual'),
+            \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN   => $this->__('Unknown'),
+            \Ess\M2ePro\Helper\Data::INITIATOR_USER      => $this->__('Manual'),
             \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION => $this->__('Automatic')
         ];
     }
@@ -193,10 +193,9 @@ abstract class AbstractGrid extends WidgetAbstractGrid
         }
 
         return $message;
-
     }
 
-    public function callbackDescription($value, $row, $column, $isExport)
+    public function callbackColumnDescription($value, $row, $column, $isExport)
     {
         $fullDescription = str_replace(
             "\n",
@@ -244,7 +243,7 @@ HTML;
     protected function _toHtml()
     {
         $this->jsTranslator->addTranslations([
-            'Message' => $this->__('Message')
+            'Description' => $this->__('Description')
         ]);
 
         $this->js->addRequireJs(['l' => 'M2ePro/Log'], "window.LogObj = new Log();");

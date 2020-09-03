@@ -63,7 +63,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
              * Extension stores Shipped QTY for each item starting from v1.5.0
              */
             $itemQtyShipped = isset($data['shipped_qty'][$orderItemId]) ? $data['shipped_qty'][$orderItemId] : 0;
-            $itemQty = $item->getChildObject()->getQty();
+            $itemQty = $item->getChildObject()->getQtyPurchased();
 
             if ($itemQtyShipped >= $itemQty) {
                 continue;

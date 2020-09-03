@@ -133,7 +133,7 @@ class Blocked extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                     ->getHumanTitleByListingProductStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED);
 
                 $tempLogMessage = $this->getHelper('Module_Translation')->__(
-                    'Item Status was successfully changed from "%from%" to "%to%" .',
+                    'Item Status was changed from "%from%" to "%to%" .',
                     $statusChangedFrom,
                     $statusChangedTo
                 );

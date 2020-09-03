@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Maintenance;
 
 use \Magento\Backend\App\Action;
-use \Ess\M2ePro\Controller\Adminhtml\Wizard\BaseMigrationFromMagento1;
+use \Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Maintenance\Index
@@ -50,6 +50,7 @@ class Index extends Action
         /** @var \Magento\Framework\View\Element\Template $block */
         $block = $result->getLayout()->createBlock(\Magento\Framework\View\Element\Template::class);
         $block->setData('is_migration', $this->isMigration());
+        $block->setData('migration_wizard_url', $this->getUrl('m2epro/wizard_migrationFromMagento1/database'));
         $block->setTemplate('Ess_M2ePro::maintenance.phtml');
 
         $this->_addContent($block);
@@ -59,24 +60,9 @@ class Index extends Action
 
     private function isMigration()
     {
-        $tableName = $this->helperFactory->getObject('Module_Database_Structure')
-                                         ->getTableNameWithPrefix('core_config_data');
-        $select = $this->resourceConnection->getConnection()
-                                           ->select()
-                                           ->from($tableName, 'value')
-                                           ->where('scope = ?', 'default')
-                                           ->where('scope_id = ?', 0)
-                                           ->where('path = ?', BaseMigrationFromMagento1::WIZARD_STATUS_CONFIG_PATH);
-
-        $currentWizardStep = $this->resourceConnection->getConnection()->fetchOne($select);
-
-        if ($currentWizardStep === BaseMigrationFromMagento1::WIZARD_STATUS_PREPARED ||
-            $currentWizardStep === BaseMigrationFromMagento1::WIZARD_STATUS_IN_PROGRESS
-        ) {
-            return true;
-        }
-
-        return false;
+        /** @var \Ess\M2ePro\Model\Wizard\MigrationFromMagento1 $wizard */
+        $wizard = $this->helperFactory->getObject('Module_Wizard')->getWizard(MigrationFromMagento1::NICK);
+        return $wizard->isStarted();
     }
 
     //########################################

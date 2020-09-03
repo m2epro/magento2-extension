@@ -27,9 +27,17 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     const FIRST_CONNECTION_ERROR_DATE_REGISTRY_KEY = '/walmart/listing/product/action/first_connection_error/date/';
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
     protected $walmartFactory;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
+
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
+    protected $localeCurrency;
 
     //########################################
 
@@ -37,6 +45,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory  $modelFactory,
         array $data = []
@@ -46,6 +55,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $this->activeRecordFactory = $activeRecordFactory;
         $this->walmartFactory = $walmartFactory;
         $this->resourceConnection = $resourceConnection;
+        $this->localeCurrency = $localeCurrency;
     }
 
     //########################################
@@ -600,7 +610,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
         $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
-            'Item was successfully Listed',
+            $this->getSuccessMessage($listingProduct),
             ResponseMessage::TYPE_SUCCESS
         );
 
@@ -648,7 +658,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
         $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData(
-            'The Item was listed successfully. However, some product data, i.e. product quantity, cannot yet
+            'The Item was listed. However, some product data, i.e. product quantity, cannot yet
             be submitted. It is caused by the technical limitations imposed by Walmart when adding a new offer
             on their website. M2E Pro will try to submit this product data later.',
             ResponseMessage::TYPE_WARNING
@@ -657,6 +667,22 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $logger->logListingProductMessage($listingProduct, $message);
 
         $this->completeListProcessingActionSuccess($processingAction);
+    }
+
+    //########################################
+
+    //todo: move to responser
+    protected function getSuccessMessage(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    {
+        $currency = $this->localeCurrency->getCurrency(
+            $listingProduct->getMarketplace()->getChildObject()->getCurrency()
+        );
+
+        return sprintf(
+            'Product was Listed with QTY %d, Price %s',
+            $listingProduct->getChildObject()->getOnlineQty(),
+            $currency->toCurrency($listingProduct->getChildObject()->getOnlinePrice())
+        );
     }
 
     //########################################
@@ -796,6 +822,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
                     $listingProductData['sku'] = $sku;
                 }
+                unset($listingProductData);
             }
         }
 

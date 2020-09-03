@@ -381,7 +381,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             $this->logReportChange(
                 $listingProduct,
                 $this->getHelper('Module\Translation')->__(
-                    'Item Status was successfully changed from "%from%" to "%to%" .',
+                    'Item Status was changed from "%from%" to "%to%" .',
                     $statusChangedFrom,
                     $statusChangedTo
                 )
@@ -423,7 +423,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             $this->logReportChange(
                 $listingProduct,
                 $this->getHelper('Module\Translation')->__(
-                    'Item QTY was successfully changed from %from% to %to% .',
+                    'Item QTY was changed from %from% to %to% .',
                     ($ebayListingProduct->getOnlineQty() - $ebayListingProduct->getOnlineQtySold()),
                     ($data['online_qty'] - $data['online_qty_sold'])
                 )
@@ -463,7 +463,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
                 $this->logReportChange(
                     $listingProduct,
                     $this->getHelper('Module\Translation')->__(
-                        'Item Price was successfully changed from %from% to %to% .',
+                        'Item Price was changed from %from% to %to% .',
                         $ebayListingProduct->getOnlineCurrentPrice(),
                         $data['online_current_price']
                     )
@@ -575,7 +575,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             $this->logReportChange(
                 $listingProduct,
                 $this->getHelper('Module\Translation')->__(
-                    'Price of some Variations was successfully changed.'
+                    'Price of some Variations was changed.'
                 )
             );
 
@@ -590,7 +590,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             $this->logReportChange(
                 $listingProduct,
                 $this->getHelper('Module\Translation')->__(
-                    'QTY of some Variations was successfully changed.'
+                    'QTY of some Variations was changed.'
                 )
             );
 

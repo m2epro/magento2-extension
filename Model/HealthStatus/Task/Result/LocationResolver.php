@@ -130,6 +130,11 @@ class LocationResolver extends \Ess\M2ePro\Model\AbstractModel
                 self::KEY_FIELD_SET => 'Orders',
                 self::KEY_FIELD     => 'eBay Retrieving'
             ],
+            \Ess\M2ePro\Model\HealthStatus\Task\Orders\IntervalToTheLatest\Walmart::class => [
+                self::KEY_TAB       => 'Problems',
+                self::KEY_FIELD_SET => 'Orders',
+                self::KEY_FIELD     => 'Walmart Retrieving'
+            ],
 
             \Ess\M2ePro\Model\HealthStatus\Task\Orders\MagentoCreationFailed\Amazon::class => [
                 self::KEY_TAB       => 'Problems',
@@ -141,6 +146,11 @@ class LocationResolver extends \Ess\M2ePro\Model\AbstractModel
                 self::KEY_FIELD_SET => 'Orders',
                 self::KEY_FIELD     => 'eBay Magento Order Creation'
             ],
+            \Ess\M2ePro\Model\HealthStatus\Task\Orders\MagentoCreationFailed\Walmart::class => [
+                self::KEY_TAB       => 'Problems',
+                self::KEY_FIELD_SET => 'Orders',
+                self::KEY_FIELD     => 'Walmart Magento Order Creation'
+            ]
         ];
     }
 

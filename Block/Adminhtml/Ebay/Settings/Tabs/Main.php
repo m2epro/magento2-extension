@@ -78,13 +78,8 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
                 ],
                 'value' => $this->getHelper('Component_Ebay_Configuration')->getPreventItemDuplicatesMode(),
                 'tooltip' => $this->__(
-                    '<p>Choose \'Yes\' to prevent M2E Pro from adding a Product
-                     if it has already been presented in the Listing</p>
-                     <p>Essentially, this option is useful if you have Automatic Add/Remove Rules set up.
-                     It will ensure that each Product is listed only once, when Products are added
-                     to the Listing automatically.</p><br/>
-                     <p><strong>Note:</strong> Applies only to Products Listed automatically on live Marketplaces
-                     (i.e. not using a Sandbox Account).</p>'
+                    'M2E Pro will not list Magento Product on the Channel if it is already listed
+                    within the same eBay Account and Marketplace.'
                 )
             ]
         );

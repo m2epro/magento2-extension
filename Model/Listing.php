@@ -148,7 +148,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_LISTING,
-            'Listing was successfully deleted',
+            'Listing was deleted',
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
         );
 
@@ -511,7 +511,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             $initiator,
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_PRODUCT_TO_LISTING,
-            'Product was successfully Added',
+            'Product was Added',
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
             $logAdditionalInfo
         );
@@ -649,7 +649,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             \Ess\M2ePro\Helper\Data::INITIATOR_USER,
             $actionId,
             \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
-            'Item was successfully Moved',
+            'Item was Moved',
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
         );
 
@@ -660,7 +660,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             \Ess\M2ePro\Helper\Data::INITIATOR_USER,
             $actionId,
             \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
-            'Item was successfully Moved',
+            'Item was Moved',
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
         );
 

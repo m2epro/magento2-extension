@@ -64,7 +64,7 @@ class AssignProduct extends Order
 
         $orderItem->getOrder()->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_USER);
         $orderItem->getOrder()->addSuccessLog(
-            'Order Item "%title%" was successfully Mapped.',
+            'Order Item "%title%" was Mapped.',
             [
                 'title' => $orderItem->getChildObject()->getTitle(),
             ]

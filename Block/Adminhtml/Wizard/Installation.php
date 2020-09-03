@@ -41,7 +41,9 @@ abstract class Installation extends AbstractWizard
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
             $this->nameBuilder->buildClassName([
                 'Wizard', $this->getNick()
-            ])
+            ]),
+            [],
+            true
         ));
 
         $stepsBlock = $this->createBlock(

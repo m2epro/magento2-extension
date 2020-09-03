@@ -20,6 +20,7 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
         $amazonFilters = [
             'amazon_sku'               => 'AmazonSku',
             'amazon_general_id'        => 'AmazonGeneralId',
+            'is_general_id_owner'      => 'AmazonGeneralIdOwner',
             'amazon_online_qty'        => 'AmazonOnlineQty',
             'amazon_online_price'      => 'AmazonOnlinePrice',
             'amazon_online_sale_price' => 'AmazonOnlineSalePrice',

@@ -92,7 +92,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             'type'      => 'text',
             'index'     => 'description',
             'filter_index' => 'main_table.description',
-            'frame_callback' => [$this, 'callbackDescription']
+            'frame_callback' => [$this, 'callbackColumnDescription']
         ]);
 
         $this->addColumn('type', [

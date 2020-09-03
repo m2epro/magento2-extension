@@ -108,7 +108,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
             // ---
 
-            'description_mode'     => '',
+            'description_mode'     => Description::DESCRIPTION_MODE_PRODUCT,
             'description_template' => '',
 
             'image_main_mode'      => Description::IMAGE_MAIN_MODE_PRODUCT,

@@ -13,14 +13,17 @@ namespace Ess\M2ePro\Model\Walmart\Order\Action\Handler;
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
-    /** @var \Ess\M2ePro\Model\Order $order */
-    protected $order = null;
+    /** @var \Ess\M2ePro\Model\Order */
+    protected $order;
 
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory */
-    protected $walmartFactory = null;
+    /** @var \Ess\M2ePro\Model\Order\Change */
+    protected $orderChange;
 
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory */
-    protected $activeRecordFactory = null;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
+    protected $walmartFactory;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
+    protected $activeRecordFactory;
 
     //########################################
 
@@ -42,6 +45,12 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     public function setOrder(\Ess\M2ePro\Model\Order $order)
     {
         $this->order = $order;
+        return $this;
+    }
+
+    public function setOrderChange(\Ess\M2ePro\Model\Order\Change $orderChange)
+    {
+        $this->orderChange = $orderChange;
         return $this;
     }
 

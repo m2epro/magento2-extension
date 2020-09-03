@@ -22,6 +22,10 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
 
     /** @var array */
     public static $registeredTasks = [
+        \Ess\M2ePro\Model\Cron\Task\System\HealthStatus::NICK => [
+            'component' => self::COMPONENT_GENERAL,
+            'group'     => self::GROUP_SYSTEM,
+        ],
         \Ess\M2ePro\Model\Cron\Task\System\ArchiveOldOrders::NICK => [
             'component' => self::COMPONENT_GENERAL,
             'group'     => self::GROUP_SYSTEM,

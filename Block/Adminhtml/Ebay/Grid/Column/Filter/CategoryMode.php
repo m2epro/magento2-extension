@@ -65,25 +65,25 @@ class CategoryMode extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Sele
     (function() {
 
         var initObservers = function () {
-         
+
          $('{$this->_getHtmlId()}')
             .observe('change', function() {
-                
+
                 var div = $('{$this->_getHtmlId()}_title_container');
                 div.hide();
-                
+
                 if (this.value == '{$modeTitle}') {
                     div.show();
                 }
             })
             .simulate('change');
          };
-         
+
          Event.observe(window, 'load', initObservers);
          if ({$isAjax}) {
              initObservers();
          }
-     
+
     })();
 JS
         );
@@ -91,7 +91,7 @@ JS
         $html = <<<HTML
 <div id="{$this->_getHtmlId()}_title_container" style="display: none;">
     <div style="width: auto; padding-top: 5px;">
-        <span>{$this->__('Category Path / Category ID')}: </span><br>
+        <span>{$this->getHelper('Module\Translation')->__('Category Path / Category ID')}: </span><br>
         <input style="width: 300px;" type="text" value="{$titleValue}" name="{$this->getColumn()->getId()}[title]">
     </div>
 </div>

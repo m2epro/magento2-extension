@@ -15,6 +15,8 @@ use Ess\M2ePro\Controller\Adminhtml\Wizard;
  */
 abstract class MigrationFromMagento1 extends Wizard
 {
+    //########################################
+
     protected function init()
     {
         $this->getResultPage()->getConfig()->getTitle()->prepend(
@@ -83,4 +85,14 @@ abstract class MigrationFromMagento1 extends Wizard
     {
         return true;
     }
+
+    protected function createCongratulationBlock()
+    {
+        return $this->createBlock(
+            $this->nameBuilder->buildClassName(['Wizard', $this->getNick(), 'Installation', 'Congratulation'])
+        )
+        ->setData(['nick' => $this->getNick()]);
+    }
+
+    //########################################
 }

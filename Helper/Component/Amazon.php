@@ -112,7 +112,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 
         $domain = $this->amazonFactory->getCachedObjectLoaded('Marketplace', $marketplaceId)->getUrl();
 
-        return 'https://sellercentral.'.$domain.'/gp/orders-v2/details/?orderID='.$orderId;
+        return 'https://sellercentral.'.$domain.'/orders-v3/order/'.$orderId;
     }
 
     //########################################

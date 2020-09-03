@@ -38,6 +38,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 
     abstract protected function getLogHash($type);
 
+    abstract protected function getComponentMode();
+
     //#######################################
 
     protected function addMaxAllowedLogsCountExceededNotification($date)

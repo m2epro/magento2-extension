@@ -180,7 +180,7 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         $this->getResource()->getConnection()->delete(
             $this->getResource()->getMainTable(),
-            ['`create_date` <= ?' => $minDate->format('Y-m-d H:i:s')]
+            ['`start_date` <= ?' => $minDate->format('Y-m-d H:i:s')]
         );
     }
 

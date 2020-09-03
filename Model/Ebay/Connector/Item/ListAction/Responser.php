@@ -15,11 +15,51 @@ use Ess\M2ePro\Model\Connector\Connection\Response\Message;
  */
 class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 {
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
+    protected $localeCurrency;
+
+    //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\Connector\Connection\Response $response,
+        \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $params = []
+    ) {
+        $this->localeCurrency = $localeCurrency;
+        parent::__construct($ebayFactory, $activeRecordFactory, $response, $helperFactory, $modelFactory, $params);
+    }
+
     //########################################
 
     protected function getSuccessfulMessage()
     {
-        return 'Item was successfully Listed';
+        $currency = $this->localeCurrency->getCurrency(
+            $this->listingProduct->getMarketplace()->getChildObject()->getCurrency()
+        );
+
+        $onlineQty = $this->listingProduct->getChildObject()->getOnlineQty() -
+                     $this->listingProduct->getChildObject()->getOnlineQtySold();
+
+        if ($this->getRequestDataObject()->isVariationItem()) {
+            $calculateWithEmptyQty = $this->listingProduct->getChildObject()->isOutOfStockControlEnabled();
+
+            return sprintf(
+                'Product was Listed with QTY %d, Price %s - %s',
+                $onlineQty,
+                $currency->toCurrency($this->getRequestDataObject()->getVariationMinPrice($calculateWithEmptyQty)),
+                $currency->toCurrency($this->getRequestDataObject()->getVariationMaxPrice($calculateWithEmptyQty))
+            );
+        }
+
+        return sprintf(
+            'Product was Listed with QTY %d, Price %s',
+            $onlineQty,
+            $currency->toCurrency($this->listingProduct->getChildObject()->getOnlineCurrentPrice())
+        );
     }
 
     //########################################

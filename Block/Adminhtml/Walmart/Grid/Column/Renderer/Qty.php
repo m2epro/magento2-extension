@@ -40,13 +40,13 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
 
         if (!$row->getData('is_variation_parent')) {
             if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-                return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
+                return '<span style="color: gray;">'.$this->getHelper('Module\Translation')->__('Not Listed').'</span>';
             }
 
             if ($value === null || $value === '' ||
                 ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED &&
                     !$row->getData('is_online_price_invalid'))) {
-                return $this->__('N/A');
+                return $this->getHelper('Module\Translation')->__('N/A');
             }
 
             if ($value <= 0) {
@@ -59,7 +59,7 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
         $variationChildStatuses = $this->getHelper('Data')->jsonDecode($row->getData('variation_child_statuses'));
 
         if (empty($variationChildStatuses) || $value === null || $value === '') {
-            return $this->__('N/A');
+            return $this->getHelper('Module\Translation')->__('N/A');
         }
 
         $activeChildrenCount = 0;
@@ -72,7 +72,7 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
         }
 
         if ($activeChildrenCount == 0) {
-            return $this->__('N/A');
+            return $this->getHelper('Module\Translation')->__('N/A');
         }
 
         if ($value <= 0) {

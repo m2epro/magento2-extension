@@ -330,7 +330,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     public function getRowUrl($row)
     {
-        return $this->getUrl('*/amazon_listing/view', ['_current'=>true]);
+        return false;
     }
 
     //########################################

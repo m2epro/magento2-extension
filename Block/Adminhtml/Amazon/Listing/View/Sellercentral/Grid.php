@@ -8,8 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Sellercentral;
 
-use Ess\M2ePro\Model\Listing\Log;
-
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Sellercentral\Grid
  */
@@ -92,7 +90,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'product_id=entity_id',
             [
                 'id'              => 'id',
-                'status'          => 'status',
+                'amazon_status'   => 'status',
                 'component_mode'  => 'component_mode',
                 'additional_data' => 'additional_data'
             ],
@@ -114,7 +112,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             [
                 'general_id'                    => 'general_id',
                 'search_settings_status'        => 'search_settings_status',
-                'sku'                           => 'sku',
+                'amazon_sku'                    => 'sku',
                 'online_qty'                    => 'online_qty',
                 'online_regular_price'          => 'online_regular_price',
                 'online_regular_sale_price'     => 'IF(
@@ -234,8 +232,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'align'        => 'left',
             'width'        => '150px',
             'type'         => 'text',
-            'index'        => 'sku',
-            'filter_index' => 'sku',
+            'index'        => 'amazon_sku',
+            'filter_index' => 'amazon_sku',
             'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Sku'
         ]);
 
@@ -246,7 +244,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'           => 'text',
             'index'          => 'general_id',
             'filter_index'   => 'general_id',
-            'frame_callback' => [$this, 'callbackColumnGeneralId']
+            'filter'         => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\GeneralId',
+            'frame_callback' => [$this, 'callbackColumnGeneralId'],
+            'filter_condition_callback' => [$this, 'callbackFilterGeneralId']
         ]);
 
         $this->addColumn('online_qty', [
@@ -284,8 +284,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->addColumn('status', [
             'header'   => $this->__('Status'),
             'width'    => '155px',
-            'index'    => 'status',
-            'filter_index' => 'status',
+            'index'    => 'amazon_status',
+            'filter_index' => 'amazon_status',
             'type'     => 'options',
             'sortable' => false,
             'options' => [
@@ -536,7 +536,7 @@ HTML;
 
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
-        switch ($row->getData('status')) {
+        switch ($row->getData('amazon_status')) {
             case \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN:
             case \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED:
                 $value = '<span style="color: gray;">' . $value . '</span>';
@@ -686,6 +686,19 @@ HTML;
                 ['attribute'=>'name', 'like'=>'%'.$value.'%']
             ]
         );
+    }
+
+    protected function callbackFilterGeneralId($collection, $column)
+    {
+        $inputValue = $column->getFilter()->getValue('input');
+        if ($inputValue !== null) {
+            $collection->addFieldToFilter('general_id', ['like' => '%' . $inputValue . '%']);
+        }
+
+        $selectValue = $column->getFilter()->getValue('select');
+        if ($selectValue !== null) {
+            $collection->addFieldToFilter('is_general_id_owner', $selectValue);
+        }
     }
 
     protected function callbackFilterQty($collection, $column)

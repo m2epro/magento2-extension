@@ -39,11 +39,11 @@ class ItemId extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         $itemId = $this->_getValue($row);
 
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-            return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
+            return '<span style="color: gray;">' . $this->getHelper('Module\Translation')->__('Not Listed') . '</span>';
         }
 
         if ($itemId === null || $itemId === '') {
-            return $this->__('N/A');
+            return $this->getHelper('Module\Translation')->__('N/A');
         }
 
         $accountId = ($this->getColumn()->getData('account_id')) ? $this->getColumn()->getData('account_id')

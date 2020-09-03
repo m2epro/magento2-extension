@@ -13,8 +13,6 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction;
  */
 class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Response
 {
-    const INSTRUCTION_INITIATOR             = 'list_action_response';
-
     const INSTRUCTION_TYPE_CHECK_QTY        = 'success_list_check_qty';
     const INSTRUCTION_TYPE_CHECK_LAG_TIME   = 'success_list_check_lag_time';
     const INSTRUCTION_TYPE_CHECK_PRICE      = 'success_list_check_price';

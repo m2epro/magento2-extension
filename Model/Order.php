@@ -394,7 +394,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             $description = $this->getHelper('Module\Log')->encodeDescription($description, $params, $links);
         }
 
-        $log->addMessage($this->getId(), $description, $type);
+        $log->addMessage($this, $description, $type);
     }
 
     public function addSuccessLog($description, array $params = [], array $links = [])
@@ -651,7 +651,6 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             $magentoQuoteBuilder = $this->modelFactory->getObject('Magento_Quote_Builder', ['proxyOrder' => $proxy]);
             $magentoQuote        = $magentoQuoteBuilder->build();
 
-
             $this->getHelper('Data\GlobalData')->unsetValue(self::ADDITIONAL_DATA_KEY_IN_ORDER);
             $this->getHelper('Data\GlobalData')->setValue(self::ADDITIONAL_DATA_KEY_IN_ORDER, $this);
 
@@ -659,7 +658,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
                 $this->magentoOrder = $this->quoteManager->submit($magentoQuote);
             } catch (FailDuringEventProcessing $e) {
                 $this->addWarningLog(
-                    'Magento Order was created successfully.
+                    'Magento Order was created.
                      However one or more post-processing actions on Magento Order failed.
                      This may lead to some issues in the future.
                      Please check the configuration of the ancillary services of your Magento.
@@ -688,6 +687,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             unset($magentoQuoteBuilder);
         } catch (\Exception $e) {
             unset($magentoQuoteBuilder);
+            $this->getHelper('Data\GlobalData')->unsetValue(self::ADDITIONAL_DATA_KEY_IN_ORDER);
 
             /**
              * \Magento\CatalogInventory\Model\StockManagement::registerProductsSale()

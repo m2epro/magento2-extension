@@ -49,7 +49,7 @@ class UnassignProduct extends Order
         $orderItem->unassignProduct();
 
         $orderItem->getOrder()->addSuccessLog(
-            'Item "%title%" was successfully Unmapped.',
+            'Item "%title%" was Unmapped.',
             [
                 'title' => $orderItem->getChildObject()->getTitle()
             ]

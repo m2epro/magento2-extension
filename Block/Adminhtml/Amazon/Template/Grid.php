@@ -297,6 +297,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'getter'    => 'getTemplateId',
             'actions'   => [
                 [
+                    'caption'   => $this->__('Edit'),
+                    'url'       => [
+                        'base' => '*/amazon_template/edit',
+                        'params' => [
+                            'type'    => '$type'
+                        ]
+                    ],
+                    'field' => 'id'
+                ],
+                [
                     'caption'   => $this->__('Delete'),
                     'class'     => 'action-default scalable add primary policy-delete-btn',
                     'url'       => [

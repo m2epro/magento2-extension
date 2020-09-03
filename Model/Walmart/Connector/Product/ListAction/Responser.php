@@ -19,12 +19,6 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
 {
     //########################################
 
-    protected function processSuccess(array $params = [])
-    {
-        $this->getResponseObject()->processSuccess($params);
-        $this->isSuccess = true;
-    }
-
     protected function getSuccessfulMessage()
     {
         return null;

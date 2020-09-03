@@ -46,10 +46,19 @@
 
     <tr>
         <td class="label">
-            <label><?php echo $block->__('Directory'); ?>: </label>
+            <label><?php echo $block->__('Directory [root]'); ?>: </label>
         </td>
         <td class="value">
             <?php echo $this->locationData['directory']; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $block->__('Directory [m2e]'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->locationData['relative_directory']; ?>
         </td>
     </tr>
 

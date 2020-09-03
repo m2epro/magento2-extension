@@ -153,7 +153,7 @@ HTML;
                 $sortedStatuses[$statusBlocked] = $variationChildStatuses[$statusBlocked];
             }
 
-            $linkTitle = $this->__('Show all Child Products with such Status');
+            $linkTitle = $this->getHelper('Module\Translation')->__('Show all Child Products with such Status');
 
             foreach ($sortedStatuses as $status => $productsCount) {
                 if (empty($productsCount)) {
@@ -163,7 +163,10 @@ HTML;
                 $filter = base64_encode('status=' . $status);
 
                 $productTitle = $this->getHelper('Data')->escapeHtml($row->getData('name'));
-                $vpmt = $this->__('Manage Variations of &quot;%s%&quot; ', $productTitle);
+                $vpmt = $this->getHelper('Module\Translation')->__(
+                    'Manage Variations of &quot;%s%&quot; ',
+                    $productTitle
+                );
                 $vpmt = addslashes($vpmt);
 
                 $generalId = $row->getData('general_id');
@@ -189,19 +192,21 @@ HTML;
 
     protected function getProductStatus($status, $statusChangeReasons = [])
     {
+        $translator = $this->getHelper('Module\Translation');
         $html = '';
         switch ($status) {
             case \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED:
-                $html = '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
+                $html = '<span style="color: gray;">' . $translator->__('Not Listed') . '</span>';
                 break;
             case \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED:
-                $html = '<span style="color: green;">' . $this->__('Active') . '</span>';
+                $html = '<span style="color: green;">' . $translator->__('Active') . '</span>';
                 break;
             case \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED:
-                $html ='<span style="color: red;">' . $this->__('Inactive') . '</span>';
+                $html ='<span style="color: red;">' . $translator->__('Inactive') . '</span>';
                 break;
             case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:
-                $html ='<span style="color: orange; font-weight: bold;">' . $this->__('Inactive (Blocked)') . '</span>';
+                $html ='<span style="color: orange; font-weight: bold;">' .
+                    $translator->__('Inactive (Blocked)') . '</span>';
                 break;
         }
 

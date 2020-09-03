@@ -61,44 +61,31 @@ class Amazon extends IssueType
             $result->setTaskResult(TaskResult::STATE_WARNING);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
             <<<HTML
-It was detected that there were no orders imported into your M2E Pro during the latest <b>%interval%</b> hours.
-Such case might be a sequence of some issue with your Module running (e.g. failed Install/Upgrade processes,
-incorrect settings for Magento Cron and inability to use M2E Pro Cron Service, lost connection to M2E Pro Servers,
-error returned from Channel for Account access, etc.).<br>
-Thus, please, verify all the aspects related to the Installation/Upgrade and configuration of your M2E Pro Module.
-It might be helpful to involve your Developer/Administrator into this process along with surfing the
-<a href="%documentation%" target="_blank">Documentation</a> and
-<a href="%knowledgebase%" target="_blank">Knowledge Base</a>.<br>
-In case, any assistance is needed, you can consult with our Support Team via email
-<a href="mailto:support@m2epro.com">support@m2epro.com</a>.
+Channel orders have not been imported into M2E Pro for the last %interval% hours. 
+Please make sure that the Cron Service and Server connection are properly configured, 
+and the last M2E Pro installation/upgrade went well.
+If you need assistance, contact Support at <a href="support@m2epro.com">support@m2epro.com</a>.
 HTML
                 ,
                 ceil($currentInterval / 3600),
-                'http://docs.m2epro.com/x/u4AVAQ',
-                'https://support.m2epro.com/knowledgebase'
+                $this->getHelper('Module_Support')->getKnowledgebaseArticleUrl('692955'),
+                $this->getHelper('Module_Support')->getKnowledgebaseArticleUrl('664870')
             ]));
         }
 
         if ($currentInterval >= $maxInterval * self::DIFF_CRITICAL_FACTOR) {
             $result->setTaskResult(TaskResult::STATE_CRITICAL);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
-            <<<HTML
-It seems that there were no orders imported into your M2E Pro during the latest <b>%interval%</b> hours
-which is rather unusual. We strongly recommend you to ensure that there were purchases made on Channel.<br>
-If the purchases are available on Channel, there might be some issue with your Module running
-(e.g. failed Install/Upgrade processes, incorrect settings for Magento Cron and inability to use M2E Pro Cron Service,
-lost connection to M2E Pro Servers, error returned from Channel for Account access, etc.).<br>
-Thus, please, verify all the aspects related to the Installation/Upgrade and configuration of your M2E Pro Module.
-It might be helpful to involve your Developer/Administrator into this process along with surfing the
-<a href="%documentation%" target="_blank">Documentation</a> and
-<a href="%knowledgebase%" target="_blank">Knowledge Base</a>.<br>
-In case, any assistance is needed, you can consult with our Support Team via email
-<a href="mailto:support@m2epro.com">support@m2epro.com</a>.
+                <<<HTML
+Channel orders have not been imported into M2E Pro for the last %interval% hours. 
+Please make sure that the Cron Service and Server connection are properly configured, 
+and the last M2E Pro installation/upgrade went well.
+If you need assistance, contact Support at <a href="support@m2epro.com">support@m2epro.com</a>.
 HTML
                 ,
                 ceil($currentInterval / 3600),
-                'http://docs.m2epro.com/x/u4AVAQ',
-                'https://support.m2epro.com/knowledgebase'
+                $this->getHelper('Module_Support')->getKnowledgebaseArticleUrl('692955'),
+                $this->getHelper('Module_Support')->getKnowledgebaseArticleUrl('664870')
             ]));
         }
 

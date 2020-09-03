@@ -48,6 +48,7 @@ class Builder extends AbstractModel
         // Init sale data
         // ---------------------------------------
         $this->setData('price', (float)$data['price']);
+        $this->setData('shipping_price', (float)$data['shipping_price']);
         $this->setData('gift_price', (float)$data['gift_price']);
         $this->setData('currency', trim($data['currency']));
         $this->setData('discount_details', $this->getHelper('Data')->jsonEncode($data['discount_details']));

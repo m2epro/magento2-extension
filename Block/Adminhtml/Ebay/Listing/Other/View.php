@@ -109,10 +109,10 @@ HTML
 
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
 
-        $someProductsWereNotMappedMessage = 'No matches were found. Please change the Mapping Attributes in <strong>';
-        $someProductsWereNotMappedMessage .= 'Configuration > Account > 3rd Party Listings</strong> ';
-        $someProductsWereNotMappedMessage .= 'or try to map manually.';
-        $someProductsWereNotMappedMessage = $helper->escapeJs($this->__($someProductsWereNotMappedMessage));
+        $someProductsWereNotMappedMessage = $this->__(
+            'Some Items were not mapped. Please edit <i>Product Mapping Settings</i> under
+            <i>Configuration > Account > 3rd Party Listings</i> or try to map manually.'
+        );
 
         $this->jsUrl->addUrls($helper->getControllerActions('Listing\Other'));
         $this->jsUrl->addUrls([

@@ -49,6 +49,10 @@ class Configure extends \Ess\M2ePro\Controller\Adminhtml\Order
             $this->getRequest()->getParam('to_date')
         );
 
+        if ($this->isMoreThanCurrentDate($toDate)) {
+            $toDate = $this->getHelper('Data')->getCurrentGmtDate();
+        }
+
         try {
             $manager->setFromToDates($fromDate, $toDate);
         } catch (\Exception $e) {
@@ -68,6 +72,19 @@ class Configure extends \Ess\M2ePro\Controller\Adminhtml\Order
 
         $this->setJsonContent(['result' => true]);
         return $this->getResult();
+    }
+
+    // ---------------------------------------
+
+    protected function isMoreThanCurrentDate($toDate)
+    {
+        $to   = new \DateTime($toDate, new \DateTimeZone('UTC'));
+
+        if ($to->getTimestamp() > $this->getHelper('Data')->getCurrentGmtDate(true)) {
+            return true;
+        }
+
+        return false;
     }
 
     //########################################

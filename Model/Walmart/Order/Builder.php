@@ -401,7 +401,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                     $walmartListingProduct->setData('online_qty', $currentOnlineQty - $orderItem['qty']);
 
                     $tempLogMessage = $this->getHelper('Module\Translation')->__(
-                        'Item QTY was successfully changed from %from% to %to% .',
+                        'Item QTY was changed from %from% to %to% .',
                         $currentOnlineQty,
                         ($currentOnlineQty - $orderItem['qty'])
                     );
@@ -426,7 +426,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
                 $tempLogMessages = [
                     $this->getHelper('Module\Translation')->__(
-                        'Item QTY was successfully changed from %from% to %to% .',
+                        'Item QTY was changed from %from% to %to% .',
                         $currentOnlineQty,
                         0
                     )
@@ -440,7 +440,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
                     if (!empty($statusChangedFrom) && !empty($statusChangedTo)) {
                         $tempLogMessages[] = $this->getHelper('Module\Translation')->__(
-                            'Item Status was successfully changed from "%from%" to "%to%" .',
+                            'Item Status was changed from "%from%" to "%to%" .',
                             $statusChangedFrom,
                             $statusChangedTo
                         );

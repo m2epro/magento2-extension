@@ -17,7 +17,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 
     protected function getSuccessfulMessage()
     {
-        return 'Item was successfully Stopped';
+        return 'Item was Stopped';
     }
 
     //########################################

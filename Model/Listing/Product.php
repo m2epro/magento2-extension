@@ -160,7 +160,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_PRODUCT_FROM_LISTING,
-            'Product was successfully Deleted',
+            'Product was Deleted',
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
         );
 

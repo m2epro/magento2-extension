@@ -180,6 +180,60 @@ class Table extends AbstractModifier
     }
 
     /**
+     * @param string $from
+     * @param string $to
+     * @param string $type
+     * @param string|null $default
+     * @param string|null $after
+     * @param bool $autoCommit
+     * @return $this
+     * @throws Setup
+     */
+    public function changeAndRenameColumn($from, $to, $type, $default = null, $after = null, $autoCommit = true)
+    {
+        if (!$this->isColumnExists($from) && $this->isColumnExists($to)) {
+            return $this;
+        }
+
+        if ($this->isColumnExists($from) && $this->isColumnExists($to)) {
+            throw new Setup(
+                "Column '{$from}' cannot be changed to '{$to}', because last one
+                 already exists in '{$this->tableName}' table."
+            );
+        }
+
+        if (!$this->isColumnExists($from) && !$this->isColumnExists($to)) {
+            throw new Setup(
+                "Column '{$from}' cannot be changed, because
+                 does not exist in '{$this->tableName}' table."
+            );
+        }
+
+        $definition = $this->buildColumnDefinition($type, $default, $after, $autoCommit);
+
+        if (empty($definition)) {
+            throw new Setup(
+                "Definition for '{$this->tableName}'.'{$to}' column is empty."
+            );
+        }
+
+        if ($autoCommit) {
+            $this->connection->changeColumn($this->tableName, $from, $to, $definition);
+        } else {
+            $this->addQueryToCommit(
+                self::COMMIT_KEY_CHANGE_COLUMN,
+                'CHANGE COLUMN %s %s %s',
+                [$from, $to],
+                $definition
+            );
+        }
+
+        $this->renameIndex($from, $to, $autoCommit);
+
+        return $this;
+    }
+
+    /**
      * @param string $name
      * @param bool $dropIndex
      * @param bool $autoCommit
@@ -402,13 +456,15 @@ class Table extends AbstractModifier
         $default = '';
         if ($columnInfo['DEFAULT'] !== null) {
             $default = $this->connection->quoteInto('DEFAULT ?', $columnInfo['DEFAULT']);
+        } elseif ($columnInfo['NULLABLE']) {
+            $default = 'DEFAULT NULL';
         }
 
         return sprintf(
             '%s %s %s %s %s',
             $type,
             $columnInfo['UNSIGNED'] ? 'UNSIGNED' : '',
-            !$columnInfo['NULLABLE'] ? 'NOT NULL' : 'DEFAULT NULL',
+            !$columnInfo['NULLABLE'] ? 'NOT NULL' : '',
             $default,
             $columnInfo['IDENTITY'] ? 'AUTO_INCREMENT' : ''
         );

@@ -15,5 +15,17 @@ use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
  */
 class Content extends AbstractBlock
 {
+    //########################################
+
     protected $_template = 'wizard/migrationFromMagento1/installation/congratulation.phtml';
+
+    protected function _beforeToHtml()
+    {
+        $form = $this->createBlock('Wizard_MigrationFromMagento1_Installation_Congratulation_Content_Form');
+        $this->setChild('enable_synchronization_form', $form);
+
+        return parent::_beforeToHtml();
+    }
+
+    //########################################
 }

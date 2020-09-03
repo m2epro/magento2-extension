@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Stop;
 
+use Ess\M2ePro\Model\Walmart\Template\ChangeProcessor\ChangeProcessorAbstract as ChangeProcessor;
+
 /**
  * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Stop\Response
  */
@@ -41,6 +43,22 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
         $additionalData = $this->getListingProduct()->getAdditionalData();
         $additionalData['last_synchronization_dates']['qty'] = $this->getHelper('Data')->getCurrentGmtDate();
         $this->getListingProduct()->setSettings('additional_data', $additionalData);
+    }
+
+    //########################################
+
+    public function throwRepeatActionInstructions()
+    {
+        $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()->add(
+            [
+                [
+                    'listing_product_id' => $this->getListingProduct()->getId(),
+                    'type'               => ChangeProcessor::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+                    'initiator'          => self::INSTRUCTION_INITIATOR,
+                    'priority'           => 80
+                ]
+            ]
+        );
     }
 
     //########################################

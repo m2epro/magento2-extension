@@ -18,6 +18,13 @@
     </p>
 
     <p>
-        <?php echo $block->__('The maintenance mode is disabled and the automatic synchronization is resumed. M2E Pro is now ready to use in Magento v2.x environment.'); ?>
+        <?php echo $block->__('
+            Enable automatic synchronization to start syncing your Magento inventory and sales with Channels. 
+            Click <strong>Complete</strong> to exit the Wizard.
+        '); ?>
+    </p>
+
+    <p>
+        <?php echo $block->getChildHtml('enable_synchronization_form'); ?>
     </p>
 </div>

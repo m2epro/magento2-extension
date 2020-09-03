@@ -156,7 +156,7 @@ class Cancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         /** @var \Ess\M2ePro\Model\ResourceModel\Order\Change\Collection $changesCollection */
         $changesCollection = $this->activeRecordFactory->getObject('Order_Change')->getCollection();
         $changesCollection->addAccountFilter($account->getId());
-        $changesCollection->addProcessingAttemptDateFilter(10);
+        $changesCollection->addProcessingAttemptDateFilter();
         $changesCollection->addFieldToFilter('component', \Ess\M2ePro\Helper\Component\Amazon::NICK);
         $changesCollection->addFieldToFilter('action', \Ess\M2ePro\Model\Order\Change::ACTION_CANCEL);
         $changesCollection->getSelect()->joinLeft(

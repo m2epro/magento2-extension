@@ -146,7 +146,7 @@ abstract class LastActions extends AbstractBlock
     {
         if (count($actionLogs) > 1) {
             $row = array_reduce($actionLogs, function ($a, $b) {
-                return strtotime($a['create_date']) > strtotime($b['create_date']) ? $a : $b;
+                return ($a === null || strtotime($a['create_date']) < strtotime($b['create_date'])) ? $b : $a;
             });
         } else {
             $row = reset($actionLogs);

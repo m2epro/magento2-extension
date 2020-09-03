@@ -9,6 +9,15 @@ define([
 
         initialize: function()
         {
+            jQuery.validator.addMethod('M2ePro-validate-description-mode', function(value, el) {
+
+                if (value === '-1') {
+                    return false;
+                }
+
+                return Validation.get('required-entry').test(value,el);
+            }, M2ePro.translator.translate('This is a required field.'));
+
             jQuery.validator.addMethod('M2ePro-validate-description-template', function(value, el) {
 
                 if ($('description_mode').value != M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::DESCRIPTION_MODE_CUSTOM')) {
@@ -151,7 +160,9 @@ define([
 
         description_mode_change: function()
         {
-            var self = EbayTemplateDescriptionObj;
+            if (this.value !== '-1' && this.options[0].value === '-1') {
+                this.removeChild(this.options[0]);
+            }
 
             var viewEditCustomDescription = $('view_edit_custom_description');
 

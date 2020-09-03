@@ -8,7 +8,8 @@
 
 namespace Ess\M2ePro\Plugin\Config\Magento\Config\Model\Config\Structure;
 
-use Ess\M2ePro\Controller\Adminhtml\Wizard\BaseMigrationFromMagento1;
+use Ess\M2ePro\Helper\View\Configuration;
+use Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
 
 /**
  * Class \Ess\M2ePro\Plugin\Config\Magento\Config\Model\Config\Structure\Data
@@ -16,8 +17,6 @@ use Ess\M2ePro\Controller\Adminhtml\Wizard\BaseMigrationFromMagento1;
 class Data extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     private $resourceConnection;
-
-    private $migrationFromMagento1Status;
 
     //########################################
 
@@ -49,50 +48,32 @@ class Data extends \Ess\M2ePro\Plugin\AbstractPlugin
     {
         $result = $callback(...$arguments);
 
-        if ($this->helperFactory->getObject('Module\Maintenance')->isEnabled()) {
-            unset($result['sections'][\Ess\M2ePro\Helper\View\Configuration::EBAY_SECTION_COMPONENT]);
-            unset($result['sections'][\Ess\M2ePro\Helper\View\Configuration::AMAZON_SECTION_COMPONENT]);
-            unset($result['sections'][\Ess\M2ePro\Helper\View\Configuration::WALMART_SECTION_COMPONENT]);
-            unset($result['sections'][\Ess\M2ePro\Helper\View\Configuration::ADVANCED_SECTION_COMPONENT]);
+        if ($this->helperFactory->getObject('Module\Maintenance')->isEnabled() ||
+            !$this->helperFactory->getObject('Module')->areImportantTablesExist()
+        ) {
+            unset($result['sections'][Configuration::EBAY_SECTION_COMPONENT]);
+            unset($result['sections'][Configuration::AMAZON_SECTION_COMPONENT]);
+            unset($result['sections'][Configuration::WALMART_SECTION_COMPONENT]);
+            unset($result['sections'][Configuration::ADVANCED_SECTION_COMPONENT]);
 
             unset($result['sections']['payment']['children']['m2epropayment']);
             unset($result['sections']['carriers']['children']['m2eproshipping']);
         } elseif ($this->helperFactory->getObject('Module')->isDisabled()) {
-            unset($result['sections'][\Ess\M2ePro\Helper\View\Configuration::EBAY_SECTION_COMPONENT]);
-            unset($result['sections'][\Ess\M2ePro\Helper\View\Configuration::AMAZON_SECTION_COMPONENT]);
-            unset($result['sections'][\Ess\M2ePro\Helper\View\Configuration::WALMART_SECTION_COMPONENT]);
+            unset($result['sections'][Configuration::EBAY_SECTION_COMPONENT]);
+            unset($result['sections'][Configuration::AMAZON_SECTION_COMPONENT]);
+            unset($result['sections'][Configuration::WALMART_SECTION_COMPONENT]);
 
             unset($result['sections']['payment']['children']['m2epropayment']);
             unset($result['sections']['carriers']['children']['m2eproshipping']);
         }
 
-        if (!$this->isMigrationFromMagento1InProgress()) {
-            unset($result['sections'][\Ess\M2ePro\Helper\View\Configuration::ADVANCED_SECTION_WIZARD]);
+        /** @var \Ess\M2ePro\Model\Wizard\MigrationFromMagento1 $wizard */
+        $wizard = $this->helperFactory->getObject('Module_Wizard')->getWizard(MigrationFromMagento1::NICK);
+        if (!$wizard->isStarted()) {
+            unset($result['sections'][Configuration::ADVANCED_SECTION_WIZARD]);
         }
 
         return $result;
-    }
-
-    //########################################
-
-    private function isMigrationFromMagento1InProgress()
-    {
-        if ($this->migrationFromMagento1Status === null) {
-            $select = $this->resourceConnection->getConnection()
-                ->select()
-                ->from(
-                    $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('core_config_data'),
-                    'value'
-                )
-                ->where('scope = ?', 'default')
-                ->where('scope_id = ?', 0)
-                ->where('path = ?', BaseMigrationFromMagento1::WIZARD_STATUS_CONFIG_PATH);
-
-            $this->migrationFromMagento1Status = $this->resourceConnection->getConnection()->fetchOne($select);
-        }
-
-        return $this->migrationFromMagento1Status === BaseMigrationFromMagento1::WIZARD_STATUS_PREPARED ||
-            $this->migrationFromMagento1Status === BaseMigrationFromMagento1::WIZARD_STATUS_IN_PROGRESS;
     }
 
     //########################################

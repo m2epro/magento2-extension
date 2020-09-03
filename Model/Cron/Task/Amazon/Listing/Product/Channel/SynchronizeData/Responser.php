@@ -256,7 +256,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
                 $newData['online_regular_price'] != $existingData['online_regular_price']
             ) {
                 $tempLogMessages[] = $this->getHelper('Module\Translation')->__(
-                    'Item Price was successfully changed from %from% to %to% .',
+                    'Item Price was changed from %from% to %to% .',
                     (float)$existingData['online_regular_price'],
                     (float)$newData['online_regular_price']
                 );
@@ -264,7 +264,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
 
             if (isset($newData['online_qty']) && $newData['online_qty'] != $existingData['online_qty']) {
                 $tempLogMessages[] = $this->getHelper('Module\Translation')->__(
-                    'Item QTY was successfully changed from %from% to %to% .',
+                    'Item QTY was changed from %from% to %to% .',
                     (int)$existingData['online_qty'],
                     (int)$newData['online_qty']
                 );
@@ -280,7 +280,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
 
                 if (!empty($statusChangedFrom) && !empty($statusChangedTo)) {
                     $tempLogMessages[] = $this->getHelper('Module_Translation')->__(
-                        'Item Status was successfully changed from "%from%" to "%to%" .',
+                        'Item Status was changed from "%from%" to "%to%" .',
                         $statusChangedFrom,
                         $statusChangedTo
                     );

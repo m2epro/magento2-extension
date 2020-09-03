@@ -19,13 +19,15 @@ class Listing extends \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewLogIc
 
     protected function getAvailableActions()
     {
+        $translator = $this->getHelper('Module\Translation');
+
         return parent::getAvailableActions() +
             [
-                Log::ACTION_DELETE_PRODUCT_FROM_COMPONENT => $this->__('Remove from Channel'),
-                Log::ACTION_DELETE_AND_REMOVE_PRODUCT     => $this->__('Remove from Channel & Listing'),
-                Log::ACTION_DELETE_PRODUCT_FROM_LISTING   => $this->__('Remove from Listing'),
-                Log::ACTION_SWITCH_TO_AFN_ON_COMPONENT    => $this->__('Switch to AFN'),
-                Log::ACTION_SWITCH_TO_MFN_ON_COMPONENT    => $this->__('Switch to MFN')
+                Log::ACTION_DELETE_PRODUCT_FROM_COMPONENT => $translator->__('Remove from Channel'),
+                Log::ACTION_DELETE_AND_REMOVE_PRODUCT     => $translator->__('Remove from Channel & Listing'),
+                Log::ACTION_DELETE_PRODUCT_FROM_LISTING   => $translator->__('Remove from Listing'),
+                Log::ACTION_SWITCH_TO_AFN_ON_COMPONENT    => $translator->__('Switch to AFN'),
+                Log::ACTION_SWITCH_TO_MFN_ON_COMPONENT    => $translator->__('Switch to MFN')
             ];
     }
 

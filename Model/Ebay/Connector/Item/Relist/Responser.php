@@ -15,11 +15,51 @@ use Ess\M2ePro\Model\Connector\Connection\Response\Message;
  */
 class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 {
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
+    protected $localeCurrency;
+
+    //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\Connector\Connection\Response $response,
+        \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $params = []
+    ) {
+        $this->localeCurrency = $localeCurrency;
+        parent::__construct($ebayFactory, $activeRecordFactory, $response, $helperFactory, $modelFactory, $params);
+    }
+
     //########################################
 
     protected function getSuccessfulMessage()
     {
-        return 'Item was successfully Relisted';
+        $currency = $this->localeCurrency->getCurrency(
+            $this->listingProduct->getMarketplace()->getChildObject()->getCurrency()
+        );
+
+        $onlineQty = $this->listingProduct->getChildObject()->getOnlineQty() -
+                     $this->listingProduct->getChildObject()->getOnlineQtySold();
+
+        if ($this->getRequestDataObject()->isVariationItem()) {
+            $calculateWithEmptyQty = $this->listingProduct->getChildObject()->isOutOfStockControlEnabled();
+
+            return sprintf(
+                'Product was Relisted with QTY %d, Price %s - %s',
+                $onlineQty,
+                $currency->toCurrency($this->getRequestDataObject()->getVariationMinPrice($calculateWithEmptyQty)),
+                $currency->toCurrency($this->getRequestDataObject()->getVariationMaxPrice($calculateWithEmptyQty))
+            );
+        }
+
+        return sprintf(
+            'Product was Relisted with QTY %d, Price %s',
+            $onlineQty,
+            $currency->toCurrency($this->listingProduct->getChildObject()->getOnlineCurrentPrice())
+        );
     }
 
     //########################################
@@ -36,11 +76,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
                 \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
             );
 
-            $this->getLogger()->logListingProductMessage(
-                $this->listingProduct,
-                $message
-            );
-
+            $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
             return;
         }
 
@@ -151,26 +187,6 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         if ($message = $this->isDuplicateErrorByEbayEngineAppeared($responseMessages)) {
             $this->processDuplicateByEbayEngine($message);
         }
-
-        $additionalData = $this->listingProduct->getAdditionalData();
-        if (empty($additionalData['skipped_action_configurator_data'])) {
-            return;
-        }
-
-        $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
-        $configurator->setUnserializedData($additionalData['skipped_action_configurator_data']);
-
-        /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction\Manager $configurator */
-        $scheduledActionManager = $this->modelFactory->getObject('Listing_Product_ScheduledAction_Manager');
-        $scheduledActionManager->addReviseAction(
-            $this->listingProduct,
-            $configurator,
-            false,
-            $this->params['params']
-        );
-
-        unset($additionalData['skipped_action_configurator_data']);
-        $this->listingProduct->setSettings('additional_data', $additionalData)->save();
 
         parent::eventAfterExecuting();
     }

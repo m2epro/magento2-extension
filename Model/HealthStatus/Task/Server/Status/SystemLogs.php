@@ -26,17 +26,20 @@ class SystemLogs extends IssueType
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     private $activeRecordFactory;
 
+    private $urlBuilder;
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\HealthStatus\Task\Result\Factory $resultFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Magento\Framework\UrlInterface $urlBuilder
     ) {
         parent::__construct($helperFactory, $modelFactory);
         $this->resultFactory = $resultFactory;
         $this->activeRecordFactory = $activeRecordFactory;
+        $this->urlBuilder = $urlBuilder;
     }
 
     //########################################
@@ -53,14 +56,12 @@ class SystemLogs extends IssueType
             $result->setTaskResult(TaskResult::STATE_WARNING);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
             <<<HTML
-M2E Pro records into the internal System Log all messages about any failure, temporary issues which might
-potentially have a negative impact on running of M2E Pro.
-There were <b>%exceptions%</b> new messages recorded during the last hour.
-It might be a sequence of some issues with Module’s functioning, its particular parts or related technologies.
-Please, consult with your Server Administrator/Developer to ensure that your Magento is correctly working.
+M2E Pro has recorded <b>%exceptions%</b> 
+messages to the System Log during the last hour. <a target="_blank" href="%url%">Click here</a> for the details.
 HTML
                 ,
-                $exceptionsCount
+                $exceptionsCount,
+                $this->urlBuilder->getUrl('m2epro/developers/index')
             ]));
         }
 
@@ -68,16 +69,12 @@ HTML
             $result->setTaskResult(TaskResult::STATE_CRITICAL);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
             <<<HTML
-M2E Pro records into the internal System Log all messages about any failure, temporary issues which might
-potentially have a negative impact on running of M2E Pro.
-There were <b>%exceptions%</b> new messages recorded during the last hour.
-It might be a sequence of some issues with Module’s functioning, its particular parts or related technologies.
-Please, consult with your Server Administrator/Developer to ensure that your Magento is correctly working.
-Then if you will need some more assistance in this matter, you can contact our Support Team via email
-<a href="mailto:support@m2epro.com">support@m2epro.com</a>.
+M2E Pro has recorded <b>%exceptions%</b> messages to the System Log during the last hour. 
+<a href="%url%">Click here</a> for the details. 
 HTML
                 ,
-                $exceptionsCount
+                $exceptionsCount,
+                $this->urlBuilder->getUrl('m2epro/developers/index')
             ]));
         }
 

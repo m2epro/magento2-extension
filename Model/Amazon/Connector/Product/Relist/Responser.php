@@ -13,39 +13,45 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Product\Relist;
  */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
 {
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
+    protected $localeCurrency;
+
     //########################################
 
-    protected function getSuccessfulMessage()
-    {
-        return 'Item was successfully Relisted';
+    public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\Connector\Connection\Response $response,
+        \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $params = []
+    ) {
+        $this->localeCurrency = $localeCurrency;
+        parent::__construct($amazonFactory, $activeRecordFactory, $response, $helperFactory, $modelFactory, $params);
     }
 
     //########################################
 
-    public function eventAfterExecuting()
+    protected function getSuccessfulMessage()
     {
-        parent::eventAfterExecuting();
-
-        $additionalData = $this->listingProduct->getAdditionalData();
-        if (empty($additionalData['skipped_action_configurator_data'])) {
-            return;
-        }
-
-        $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
-        $configurator->setUnserializedData($additionalData['skipped_action_configurator_data']);
-
-        /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction\Manager $scheduledActionManager */
-        $scheduledActionManager = $this->modelFactory->getObject('Listing_Product_ScheduledAction_Manager');
-        // TODO fix here and on m1
-        $scheduledActionManager->addReviseAction(
-            $this->listingProduct,
-            $configurator,
-            false,
-            $this->params['params']
+        $currency = $this->localeCurrency->getCurrency(
+            $this->listingProduct->getMarketplace()->getChildObject()->getCurrency()
         );
 
-        unset($additionalData['skipped_action_configurator_data']);
-        $this->listingProduct->setSettings('additional_data', $additionalData)->save();
+        $parts = [
+            sprintf('Product was Relisted with QTY %d', $this->listingProduct->getChildObject()->getOnlineQty())
+        ];
+
+        if ($regularPrice = $this->listingProduct->getChildObject()->getOnlineRegularPrice()) {
+            $parts[] = sprintf('Regular Price %s', $currency->toCurrency($regularPrice));
+        }
+
+        if ($businessPrice = $this->listingProduct->getChildObject()->getOnlineBusinessPrice()) {
+            $parts[] = sprintf('Business Price %s', $currency->toCurrency($businessPrice));
+        }
+
+        return implode(', ', $parts);
     }
 
     //########################################

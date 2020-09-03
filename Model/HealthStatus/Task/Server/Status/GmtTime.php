@@ -66,10 +66,9 @@ class GmtTime extends IssueType
             $result->setTaskResult(TaskResult::STATE_WARNING);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
             <<<HTML
-The Time value which is used by your Server and in your Magento is different from the actual Time value by
-several seconds. Your current Time value by UTC <b>%time%</b> is different from the reference one,
-that might lead to the further issues with the data updating on Channels.<br>
-Please, consult with your Server Administrator/Developer to adjust your settings.
+Your Server Time <b>%time%</b> (UTC) needs to be updated based on the actual local time. 
+It is important for the correct data synchronization with Channels.  
+Please consult your Server Administrator/Developer to adjust the settings.
 HTML
                 ,
                 $localTime->format('H:i:s')
@@ -80,14 +79,9 @@ HTML
             $result->setTaskResult(TaskResult::STATE_CRITICAL);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
             <<<HTML
-The Time value which is used by your Server and in your Magento is different from the actual Time value that might
-be a sequence of incorrect configurations provided.
-In order to correctly synchronize/update your data on Channels, the Time value specified in your system should be
-identical to the reference Time value.<br>
-However, your current Time value by UTC <b>%time%</b> is different from the reference one.
-Please, consult with your Server Administrator/Developer to adjust your settings.
-If you would like to get some more assistance in this matter, you can contact our Support Team via email
-<a href="mailto:support@m2epro.com">support@m2epro.com</a>.
+Your Server Time <b>%time%</b> (UTC) needs to be updated based on the actual local time.
+ It is important for the correct data synchronization with Channels.  
+Please consult your Server Administrator/Developer to adjust the settings.
 HTML
                 ,
                 $localTime->format('H:i:s')

@@ -12,14 +12,15 @@ use Ess\M2ePro\Model\Magento\Product\Inventory\AbstractModel;
 use Magento\InventorySalesApi\Api\Data\SalesChannelInterface;
 use Magento\InventorySalesApi\Api\GetProductSalableQtyInterface;
 use Magento\InventorySalesApi\Api\StockResolverInterface;
-use Magento\InventorySalesApi\Model\GetStockItemDataInterface;
+use \Magento\InventoryIndexer\Model\ResourceModel\GetStockItemData;
+use \Magento\InventoryReservations\Model\ResourceModel\GetReservationsQuantity;
 
 /**
  * Class \Ess\M2ePro\Model\MSI\Magento\Product\Inventory
  */
 class Inventory extends AbstractModel
 {
-    /** @var GetStockItemDataInterface */
+    /** @var GetStockItemData */
     private $getStockItemData;
     /** @var GetProductSalableQtyInterface */
     private $salableQtyResolver;
@@ -44,8 +45,14 @@ class Inventory extends AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
-        $this->getStockItemData = $objectManager->get(GetStockItemDataInterface::class);
-        $this->salableQtyResolver = $objectManager->get(GetProductSalableQtyInterface::class);
+        $this->getStockItemData = $objectManager->get(GetStockItemData::class);
+        $this->salableQtyResolver = $objectManager->create(
+            GetProductSalableQtyInterface::class,
+            [
+                'getStockItemData' => $this->getStockItemData,
+                'getReservationsQuantity' => $objectManager->get(GetReservationsQuantity::class)
+            ]
+        );
         $this->stockResolver = $objectManager->get(StockResolverInterface::class);
         parent::__construct($stockRegistry, $helperFactory, $modelFactory, $data);
     }
@@ -65,7 +72,7 @@ class Inventory extends AbstractModel
             $this->getProduct()->getSku(),
             $this->getStock()->getStockId()
         );
-        return $stockItemData === null ? 0 : $stockItemData[GetStockItemDataInterface::IS_SALABLE];
+        return $stockItemData === null ? 0 : $stockItemData[GetStockItemData::IS_SALABLE];
     }
 
     /**

@@ -49,7 +49,7 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
         $collection->addFieldToFilter('order_id', (int)$orderId);
         $collection->getSelect()->columns([
-            'items_total' => new \Zend_Db_Expr('SUM((`price`)*`qty`)')
+            'items_total' => new \Zend_Db_Expr('SUM((`price`)*`qty_purchased`)')
         ]);
         $collection->getSelect()->group('order_id');
 

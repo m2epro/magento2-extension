@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Setup\MigrationFromMagento1;
 
 use Ess\M2ePro\Helper\Factory as HelperFactory;
+use Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
 use Magento\Setup\Module\Setup as MagentoSetup;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\Config\ConfigOptionsListConstants;
@@ -18,14 +19,32 @@ use Magento\Framework\Config\ConfigOptionsListConstants;
  */
 class Runner
 {
-    const SUPPORTED_MIGRATION_VERSION = '6.7.*';
-
+    /** @var Mapper */
     private $mapper;
+
+    /** @var HelperFactory */
     private $helperFactory;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
+    private $activeRecordFactory;
+
+    /** @var \Magento\Framework\ObjectManagerInterface */
     private $objectManager;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     private $resourceConnection;
+
+    /** @var MagentoSetup */
     private $installer;
+
+    /** @var DeploymentConfig */
     private $deploymentConfig;
+
+    /** @var PreconditionsChecker\AbstractModel */
+    private $preconditionsChecker;
+
+    /** @var Modifier */
+    private $dbModifier;
 
     //########################################
 
@@ -40,16 +59,32 @@ class Runner
     public function __construct(
         Mapper $mapper,
         HelperFactory $helperFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
-        DeploymentConfig $deploymentConfig
+        DeploymentConfig $deploymentConfig,
+        Modifier $dbModifier
     ) {
-        $this->mapper             = $mapper;
-        $this->helperFactory      = $helperFactory;
-        $this->objectManager      = $objectManager;
-        $this->resourceConnection = $resourceConnection;
-        $this->installer          = new MagentoSetup($resourceConnection);
-        $this->deploymentConfig   = $deploymentConfig;
+        $this->mapper              = $mapper;
+        $this->helperFactory       = $helperFactory;
+        $this->activeRecordFactory = $activeRecordFactory;
+        $this->objectManager       = $objectManager;
+        $this->resourceConnection  = $resourceConnection;
+        $this->installer           = new MagentoSetup($resourceConnection);
+        $this->deploymentConfig    = $deploymentConfig;
+        $this->dbModifier          = $dbModifier;
+    }
+
+    //########################################
+
+    /**
+     * @param PreconditionsChecker\AbstractModel $preconditionsChecker
+     * @return $this
+     */
+    public function setPreconditionsChecker(PreconditionsChecker\AbstractModel $preconditionsChecker)
+    {
+        $this->preconditionsChecker = $preconditionsChecker;
+        return $this;
     }
 
     //########################################
@@ -88,15 +123,30 @@ class Runner
      */
     public function run()
     {
-        $this->checkPreconditions();
+        $this->getPreconditionsChecker()->checkPreconditions();
         $this->prepareTablesPrefixes();
 
-        $dbModifier = $this->getDbModifierObject();
-        $dbModifier->process();
+        $this->dbModifier->process();
 
         $this->mapper->map();
 
+        $this->createSetupRecord();
         $this->cleanUp();
+
+        $this->helperFactory->getObject('Magento')->clearCache();
+    }
+
+    /**
+     * @return PreconditionsChecker\AbstractModel
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function getPreconditionsChecker()
+    {
+        if ($this->preconditionsChecker === null) {
+            throw new \Ess\M2ePro\Model\Exception\Logic('Preconditions checker was not set.');
+        }
+
+        return $this->preconditionsChecker;
     }
 
     protected function cleanUp()
@@ -112,89 +162,11 @@ class Runner
     /**
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    private function checkPreconditions()
-    {
-        $configTableName = $this->getOldTablesPrefix() . 'm2epro_config';
-
-        if (!$this->helperFactory->getObject('Module\Maintenance')->isEnabled() ||
-            !$this->resourceConnection->getConnection()->isTableExists($configTableName)) {
-            throw new \Exception(
-                $this->helperFactory->getObject('Module\Translation')->translate([
-                    'It seems that M2E Pro MySQL tables dump from Magento v1.x has not been copied into the database
-                    of Magento v2.x. You should complete all the required actions before you proceed to the next step.
-                    Please, follow the instructions below.'
-                ])
-            );
-        }
-
-        $select = $this->resourceConnection->getConnection()
-                                           ->select()
-                                           ->from($configTableName)
-                                           ->where('`group` LIKE ?', '/migrationtomagento2/source/%');
-
-        $sourceParams = [];
-
-        foreach ($this->resourceConnection->getConnection()->fetchAll($select) as $paramRow) {
-            $sourceParams[$paramRow['group']][$paramRow['key']] = $paramRow['value'];
-        }
-
-        if (empty($sourceParams['/migrationtomagento2/source/']['is_prepared_for_migration']) ||
-            empty($sourceParams['/migrationtomagento2/source/']['version'])
-        ) {
-            throw new \Exception(
-                $this->helperFactory->getObject('Module\Translation')->translate([
-                    'M2E pro tables dump for Magento v1.x was not properly configured
-                    before transferring to M2E Pro for Magento v2.x. To prepare it properly,
-                    you should press Proceed button in
-                    System > Configuration > M2E Pro > Advanced section, then create
-                    new dump of M2E Pro tables from the database and transfer it to your
-                    Magento v2.x.'
-                ])
-            );
-        }
-
-        if (!$this->compareVersions($sourceParams['/migrationtomagento2/source/']['version'])) {
-            throw new \Exception(
-                $this->helperFactory->getObject('Module\Translation')->translate([
-                    'Your current Module version <b>%v%</b> for Magento v1.x does not support Data Migration.
-                    Please read our <a href="%url%" target="_blank">Migration Guide</a> for more details.',
-                    $sourceParams['/migrationtomagento2/source/']['version'],
-                    $this->helperFactory->getObject('Module\Support')->getDocumentationArticleUrl('x/EgA9AQ')
-                ])
-            );
-        }
-    }
-
-    /**
-     * Example: v6.0.0 and v6.0.10 will pass 6.0.*
-     */
-    private function compareVersions($version)
-    {
-        $pattern = explode('.', self::SUPPORTED_MIGRATION_VERSION);
-
-        foreach (explode('.', $version) as $vIndex => $vPart) {
-            if (!isset($pattern[$vIndex])) {
-                return false;
-            }
-
-            if ($pattern[$vIndex] === '*') {
-                return true;
-            }
-
-            if ($pattern[$vIndex] != $vPart) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     private function prepareTablesPrefixes()
     {
-        $oldTablesPrefix = $this->getOldTablesPrefix();
+        /** @var \Ess\M2ePro\Model\Wizard\MigrationFromMagento1 $wizard */
+        $wizard = $this->helperFactory->getObject('Module_Wizard')->getWizard(MigrationFromMagento1::NICK);
+        $oldTablesPrefix = $wizard->getM1TablesPrefix();
         $currentTablesPrefix = (string)$this->deploymentConfig->get(ConfigOptionsListConstants::CONFIG_PATH_DB_PREFIX);
 
         if (trim($oldTablesPrefix) == trim($currentTablesPrefix)) {
@@ -212,61 +184,33 @@ class Runner
 
     //########################################
 
-    /**
-     * @return IdModifierInterface
+     /**
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    private function getDbModifierObject()
+    protected function createSetupRecord()
     {
-        $pattern = str_replace('.*', '', self::SUPPORTED_MIGRATION_VERSION);
-        $className = 'Ess\M2ePro\Setup\MigrationFromMagento1\\v' . str_replace('.', '_', $pattern) . '\Modifier';
+        /** @var \Ess\M2ePro\Model\Setup $setupObject */
+        $setupObject = $this->activeRecordFactory->getObject('Setup')->getResource()->getMaxCompletedItem();
+        $magentoDataVersion = $this->helperFactory->getObject('Module')->getDataVersion();
 
-        if (!class_exists($className)) {
-            throw new \Exception(
-                $this->helperFactory->getObject('Module\Translation')->translate([
-                    'Migration version %v% doesn\'t exists.',
-                    self::SUPPORTED_MIGRATION_VERSION
-                ])
+        if ($setupObject !== null && $setupObject->getVersionTo() === $magentoDataVersion) {
+            return;
+        }
+
+        $setupTable = $this->helperFactory->getObject('Module_Database_Structure')
+            ->getTableNameWithPrefix('m2epro_setup');
+
+        $this->resourceConnection->getConnection()->truncateTable($setupTable);
+        $this->resourceConnection->getConnection()
+            ->insert(
+                $setupTable,
+                [
+                    'version_from' => null,
+                    'version_to'   => $magentoDataVersion,
+                    'is_backuped'  => 0,
+                    'is_completed' => 1,
+                ]
             );
-        }
-
-        /** @var \Ess\M2ePro\Setup\MigrationFromMagento1\IdModifierInterface $dbModifier */
-        $dbModifier = $this->objectManager->create($className);
-
-        if (!$dbModifier instanceof \Ess\M2ePro\Setup\MigrationFromMagento1\IdModifierInterface) {
-            throw new \Exception(
-                $this->helperFactory->getObject('Module\Translation')->translate([
-                    'Migration modifier object must implement IdModifierInterface.'
-                ])
-            );
-        }
-
-        return $dbModifier;
-    }
-
-    /**
-     * @return string
-     */
-    private function getOldTablesPrefix()
-    {
-        $prefix = false;
-        $configTables = $this->installer->getConnection()->getTables('%m2epro_config');
-
-        if (count($configTables) === 1) {
-            $prefix = $this->installer->getConnection()
-                                      ->select()
-                                      ->from(reset($configTables), ['value'])
-                                      ->where('`group` = ?', '/migrationToMagento2/source/magento/')
-                                      ->where('`key` = ?', 'tables_prefix')
-                                      ->query()->fetchColumn();
-        }
-
-        if ($prefix === false) {
-            $allM2eProTables = $this->installer->getConnection()->getTables('%m2epro_%');
-            $prefix = (string)preg_replace('/m2epro_[A-Za-z0-9_]+$/', '', reset($allM2eProTables));
-        }
-
-        return (string)$prefix;
     }
 
     //########################################

@@ -142,7 +142,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Prod
 
     //########################################
 
-    public function callbackDescription($value, $row, $column, $isExport)
+    public function callbackColumnDescription($value, $row, $column, $isExport)
     {
         $description = '';
 
@@ -163,7 +163,12 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Prod
                 $createDate = $this->_localeDate->formatDate($log->getCreateDate(), \IntlDateFormatter::MEDIUM, true);
             }
 
-            $logDescription = parent::callbackDescription($log->getData($column->getIndex()), $log, $column, $isExport);
+            $logDescription = parent::callbackColumnDescription(
+                $log->getData($column->getIndex()),
+                $log,
+                $column,
+                $isExport
+            );
 
             $description .= <<<HTML
 <div class="log-description-group">

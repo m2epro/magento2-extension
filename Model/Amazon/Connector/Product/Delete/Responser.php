@@ -20,7 +20,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
 
     protected function getSuccessfulMessage()
     {
-        return 'Item was successfully Deleted';
+        return 'Item was Deleted';
     }
 
     //########################################

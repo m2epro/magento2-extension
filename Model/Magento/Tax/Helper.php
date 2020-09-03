@@ -46,7 +46,6 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
             ->addFieldToFilter('tax_country_id', $countryId)
             ->addFieldToFilter('code', ['neq' => Builder::TAX_RATE_CODE_PRODUCT])
             ->addFieldToFilter('code', ['neq' => Builder::TAX_RATE_CODE_SHIPPING])
-            ->addFieldToFilter('code', ['neq' => 'eBay Tax Rate']) // backward compatibility with m2e 3.x.x
             ->getSize();
     }
 

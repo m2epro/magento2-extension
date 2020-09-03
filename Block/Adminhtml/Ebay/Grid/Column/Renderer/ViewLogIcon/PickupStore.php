@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ViewLogIcon;
 
 use Ess\M2ePro\Block\Adminhtml\Traits;
+use Ess\M2ePro\Model\Ebay\Account\PickupStore\Log;
 
 /**
  * Class  \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ViewLogIcon\PickupStore
@@ -22,10 +23,10 @@ class PickupStore extends \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewL
     protected function getAvailableActions()
     {
         return [
-            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_UNKNOWN => $this->__('Unknown'),
-            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_ADD_PRODUCT => $this->__('Add'),
-            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_UPDATE_QTY => $this->__('Update'),
-            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_DELETE_PRODUCT => $this->__('Delete'),
+            Log::ACTION_UNKNOWN        => $this->getHelper('Module\Translation')->__('Unknown'),
+            Log::ACTION_ADD_PRODUCT    => $this->getHelper('Module\Translation')->__('Add'),
+            Log::ACTION_UPDATE_QTY     => $this->getHelper('Module\Translation')->__('Update'),
+            Log::ACTION_DELETE_PRODUCT => $this->getHelper('Module\Translation')->__('Delete'),
         ];
     }
 
@@ -72,7 +73,8 @@ class PickupStore extends \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewL
         $pickupStoreState = $this->activeRecordFactory->getObjectLoaded('Ebay_Account_PickupStore_State', $stateId);
 
         $this->jsTranslator->addTranslations([
-            'Log For SKU ' . $stateId => $this->__('Log For SKU (%s%)', $pickupStoreState->getSku())
+            'Log For SKU ' . $stateId =>
+                $this->getHelper('Module\Translation')->__('Log For SKU (%s%)', $pickupStoreState->getSku())
         ]);
 
         return $summary->toHtml();

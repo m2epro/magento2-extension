@@ -20,7 +20,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
 
     protected function getSuccessfulMessage()
     {
-        return 'Item was successfully Stopped';
+        return 'Item was Stopped';
     }
 
     //########################################

@@ -8,8 +8,6 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Revise;
 
-use Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Revise\Request as ReviseRequest;
-
 /**
  * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Revise\Response
  */
@@ -49,62 +47,6 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
         $this->setLastSynchronizationDates();
 
         $this->getListingProduct()->save();
-    }
-
-    //########################################
-
-    /**
-     * @return string
-     */
-    public function getSuccessfulMessage()
-    {
-        if ($this->getConfigurator()->isExcludingMode()) {
-            return 'Item was successfully Revised';
-        }
-
-        $sequenceStrings = [];
-        $isPlural = false;
-
-        if ($this->getConfigurator()->isQtyAllowed()) {
-            $sequenceStrings[] = 'QTY';
-        }
-
-        if ($this->getConfigurator()->isPriceAllowed()) {
-            $sequenceStrings[] = 'Price';
-        }
-
-        if ($this->getConfigurator()->isPromotionsAllowed()) {
-            $sequenceStrings[] = 'Promotions';
-        }
-
-        if ($this->getConfigurator()->isDetailsAllowed()) {
-            if ($this->getRequestData()->getIsNeedSkuUpdate()) {
-                $sequenceStrings[] = 'SKU';
-            }
-
-            if ($this->getRequestData()->getIsNeedProductIdUpdate()) {
-                $idsMetadata = $this->getRequestMetaData(ReviseRequest::PRODUCT_ID_UPDATE_METADATA_KEY);
-                !empty($idsMetadata) && $sequenceStrings[] = strtoupper($idsMetadata['type']);
-            }
-
-            $sequenceStrings[] = 'Details';
-            $isPlural = true;
-        }
-
-        if (empty($sequenceStrings)) {
-            return 'Item was successfully Revised';
-        }
-
-        if (count($sequenceStrings) == 1) {
-            $verb = 'was';
-            if ($isPlural) {
-                $verb = 'were';
-            }
-
-            return ucfirst($sequenceStrings[0]) . ' ' . $verb . ' successfully Revised';
-        }
-
-        return ucfirst(implode(', ', $sequenceStrings)) . ' were successfully Revised';
     }
 
     //########################################

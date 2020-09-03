@@ -23,20 +23,16 @@ abstract class AbstractContainer extends \Ess\M2ePro\Block\Adminhtml\Magento\Gri
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
-        $this->setId(ucfirst($this->getComponentMode()) . 'OrderLog');
-        // ---------------------------------------
+        $this->_controller = 'adminhtml_' . $this->getComponentMode() . '_log_order';
 
-        // Set buttons actions
-        // ---------------------------------------
+        $this->setId(ucfirst($this->getComponentMode()) . 'OrderLog');
+
         $this->removeButton('back');
         $this->removeButton('reset');
         $this->removeButton('delete');
         $this->removeButton('add');
         $this->removeButton('save');
         $this->removeButton('edit');
-        // ---------------------------------------
     }
 
     //########################################
@@ -78,16 +74,14 @@ HTML;
             );
 
             return
-                '<div class="static-switcher-block">'
-                . $this->getStaticFilterHtml(
+                $this->getStaticFilterHtml(
                     $accountSwitcherBlock->getLabel(),
                     $accountTitle
                 )
                 . $this->getStaticFilterHtml(
                     $marketplaceSwitcherBlock->getLabel(),
                     $order->getMarketplace()->getTitle()
-                )
-                . '</div>';
+                );
         }
 
         if ($marketplaceSwitcherBlock->isEmpty() && $accountSwitcherBlock->isEmpty()) {

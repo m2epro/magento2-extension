@@ -17,13 +17,6 @@ class Diff extends \Ess\M2ePro\Model\Connector\Command\RealTime
     const SEVERITY_WARNING  = 'warning';
     const SEVERITY_NOTICE   = 'notice';
 
-    const PROBLEM_TABLE_MISSING   = 'table_missing';
-    const PROBLEM_TABLE_REDUNDANT = 'table_redundant';
-
-    const PROBLEM_COLUMN_MISSING   = 'column_missing';
-    const PROBLEM_COLUMN_REDUNDANT = 'column_redundant';
-    const PROBLEM_COLUMN_DIFFERENT = 'column_different';
-
     //########################################
 
     protected function getCommand()

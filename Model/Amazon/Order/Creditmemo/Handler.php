@@ -34,6 +34,19 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
                         self::AMAZON_REFUND_REASON_CUSTOMER_RETURN :
                         self::AMAZON_REFUND_REASON_NO_INVENTORY;
 
+        /** @var \Ess\M2ePro\Model\Order\ProxyObject $proxy */
+        $proxy = $order->getProxy()->setStore($order->getStore());
+
+        $isTaxAddedToShippingCost = $proxy->isTaxModeNone() && $proxy->getShippingPriceTaxRate() > 0;
+
+        $fullShippingCostRefunded = $creditmemo->getShippingAmount() > 0 ?
+            $proxy->getShippingData()['shipping_price'] === $creditmemo->getShippingAmount() :
+            false;
+
+        $fullShippingTaxRefunded = $creditmemo->getShippingTaxAmount() > 0 ?
+            $order->getChildObject()->getShippingPriceTaxAmount() === $creditmemo->getShippingTaxAmount() :
+            false;
+
         foreach ($creditmemo->getAllItems() as $creditmemoItem) {
             /** @var \Magento\Sales\Model\Order\Creditmemo\Item $creditmemoItem */
 
@@ -94,7 +107,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
                     $tax = $item->getChildObject()->getTaxAmount();
                 }
 
-                $itemsForRefund[] = [
+                $itemForRefund = [
                     'item_id'  => $orderItemId,
                     'reason'   => $refundReason,
                     'qty'      => $itemQty,
@@ -105,6 +118,16 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
                         'product' => $tax,
                     ],
                 ];
+
+                if ($fullShippingCostRefunded) {
+                    $itemToRefund['prices']['shipping'] = $item->getChildObject()->getShippingPrice();
+                }
+
+                if ($fullShippingTaxRefunded || ($fullShippingCostRefunded && $isTaxAddedToShippingCost)) {
+                    $itemToRefund['taxes']['shipping'] = $item->getChildObject()->getShippingTaxAmount();
+                }
+
+                $itemsForRefund[] = $itemForRefund;
 
                 $qtyAvailable -= $itemQty;
                 $data['refunded_qty'][$orderItemId] = $itemQty;

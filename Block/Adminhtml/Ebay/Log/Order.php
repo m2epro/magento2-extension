@@ -15,13 +15,6 @@ class Order extends \Ess\M2ePro\Block\Adminhtml\Log\Order\AbstractContainer
 {
     //########################################
 
-    public function _construct()
-    {
-        parent::_construct();
-
-        $this->_controller = 'adminhtml_ebay_log_order';
-    }
-
     protected function getComponentMode()
     {
         return \Ess\M2ePro\Helper\View\Ebay::NICK;

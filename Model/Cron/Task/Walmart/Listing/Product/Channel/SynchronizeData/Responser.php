@@ -242,7 +242,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
 
             if (isset($newData['online_qty']) && $newData['online_qty'] != $existingData['online_qty']) {
                 $tempLogMessages[] = $this->getHelper('Module_Translation')->__(
-                    'Item QTY was successfully changed from %from% to %to% .',
+                    'Item QTY was changed from %from% to %to% .',
                     (int)$existingData['online_qty'],
                     (int)$newData['online_qty']
                 );
@@ -258,7 +258,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
 
                 if (!empty($statusChangedFrom) && !empty($statusChangedTo)) {
                     $tempLogMessages[] = $this->getHelper('Module_Translation')->__(
-                        'Item Status was successfully changed from "%from%" to "%to%" .',
+                        'Item Status was changed from "%from%" to "%to%" .',
                         $statusChangedFrom,
                         $statusChangedTo
                     );

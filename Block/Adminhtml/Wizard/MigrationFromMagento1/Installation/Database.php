@@ -21,9 +21,11 @@ class Database extends Installation
     {
         parent::_construct();
 
-        $wizardUrl = $this->getUrl('m2epro/migrationFromMagento1/complete');
+        $this->jsUrl->addUrls([
+            'migrationFromMagento1/complete' => $this->getUrl('m2epro/migrationFromMagento1/complete')
+        ]);
 
-        $this->updateButton('continue', 'onclick', 'setLocation("'.$wizardUrl.'")');
+        $this->updateButton('continue', 'onclick', 'MigrationFromMagento1Obj.complete();');
     }
 
     protected function getStep()

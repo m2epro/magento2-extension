@@ -72,10 +72,16 @@ HTML
 HTML;
         }
 
+        $toolTip = $this->getTooltipHtml(
+            'Inventory and Order synchronization stops. The Module interface becomes unavailable.<br>
+            <b>Note</b>: Once you confirm the migration running, it cannot be stopped.'
+        );
+
         $html = <<<HTML
 <td class="value" colspan="3" style="padding: 2.2rem 1.5rem 0 0;">
-    <div style="text-align: center">
-        Open Migration Wizard {$buttonHtml}
+    <div style="text-align: left">
+        Migration from Magento v1.x {$buttonHtml}
+        <span style="padding-left: 10px;">{$toolTip}</span>
     </div>
 </td>
 

@@ -18,7 +18,7 @@ define([
                 '</div>';
 
             modal({
-                title: M2ePro.translator.translate('Message'),
+                title: M2ePro.translator.translate('Description'),
                 type: 'popup',
                 modalClass: 'width-1000',
                 buttons: [{

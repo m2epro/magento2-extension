@@ -214,6 +214,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
         $prefixKeys = [
             'prefix',
+            'use_marketplace_prefix'
         ];
         $tempSettings = !empty($tempSettings['prefix']) ? $tempSettings['prefix'] : [];
         foreach ($prefixKeys as $key) {
@@ -407,6 +408,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                     'source' => Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO,
                     'prefix' => [
                         'prefix' => '',
+                        'use_marketplace_prefix' => 0,
                     ],
                 ],
                 'customer' => [

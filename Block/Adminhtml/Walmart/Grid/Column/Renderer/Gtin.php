@@ -48,7 +48,7 @@ class Gtin extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         }
 
         if (empty($gtin)) {
-            return $this->__('N/A');
+            return $this->getHelper('Module\Translation')->__('N/A');
         }
 
         $productId = $row->getData('id');
@@ -108,7 +108,7 @@ HTML;
                 $htmlAdditional .= "<div class='separator-line'></div>";
             }
 
-            $identifierCode  = $this->__($title);
+            $identifierCode  = $this->getHelper('Module\Translation')->__($title);
             $identifierValue = $this->getHelper('Data')->escapeHtml($value);
 
             $htmlAdditional .= <<<HTML

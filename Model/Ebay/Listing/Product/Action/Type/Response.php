@@ -8,13 +8,16 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type;
 
-use \Ess\M2ePro\Model\Ebay\Listing\Product\Variation as EbayVariation;
+use Ess\M2ePro\Model\Ebay\Listing\Product\Variation as EbayVariation;
+use Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract as ChangeProcessor;
 
 /**
  * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Response
  */
 abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 {
+    const INSTRUCTION_INITIATOR = 'action_response';
+
     /**
      * @var array
      */
@@ -294,17 +297,16 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
         $requestVariations = $this->getRequestData()->getVariations();
 
-        $requestMetadata     = $this->getRequestMetaData();
-        $variationIdsIndexes = !empty($requestMetadata['variation_ids_indexes'])
-            ? $requestMetadata['variation_ids_indexes'] : [];
+        $requestMetadata = $this->getRequestMetaData();
+        $variationMetadata = !empty($requestMetadata['variation_data']) ? $requestMetadata['variation_data'] : [];
 
         foreach ($this->getListingProduct()->getVariations(true) as $variation) {
             if ($this->getRequestData()->hasVariations()) {
-                if (!isset($variationIdsIndexes[$variation->getId()])) {
+                if (!isset($variationMetadata[$variation->getId()]['index'])) {
                     continue;
                 }
 
-                $requestVariation = $requestVariations[$variationIdsIndexes[$variation->getId()]];
+                $requestVariation = $requestVariations[$variationMetadata[$variation->getId()]['index']];
 
                 if ($requestVariation['delete']) {
                     $variation->delete();
@@ -407,9 +409,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             $data['online_reserve_price'] = null;
             $data['online_buyitnow_price'] = null;
 
-            if ($this->getRequestData()->hasVariations()) {
-                // out_of_stock_control_result key is not presented in request data,
-                // if request was performed before code upgrade
+            if ($this->getRequestData()->hasVariations() && $this->getConfigurator()->isPriceAllowed()) {
                 $calculateWithEmptyQty = $this->getEbayListingProduct()->isOutOfStockControlEnabled();
                 $data['online_current_price'] = $this->getRequestData()->getVariationPrice($calculateWithEmptyQty);
             } elseif ($this->getRequestData()->hasPriceFixed()) {
@@ -445,10 +445,6 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
         if ($this->getRequestData()->hasSubtitle()) {
             $data['online_sub_title'] = $this->getRequestData()->getSubtitle();
-        }
-
-        if ($this->getRequestData()->hasDescription()) {
-            $data['online_description'] = $this->getRequestData()->getDescription();
         }
 
         if ($this->getRequestData()->hasDuration()) {
@@ -575,6 +571,20 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         return $data;
     }
 
+    protected function appendDescriptionValues($data)
+    {
+        if (!$this->getRequestData()->hasDescription()) {
+            return $data;
+        }
+
+        $data['online_description'] = $this->getHelper('Data')->hashString(
+            $this->getRequestData()->getDescription(),
+            'md5'
+        );
+
+        return $data;
+    }
+
     protected function appendImagesValues($data)
     {
         $requestMetadata = $this->getRequestMetaData();
@@ -582,7 +592,10 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             return $data;
         }
 
-        $data['online_images'] = $this->getHelper('Data')->jsonEncode($requestMetadata['images_data']);
+        $data['online_images'] = $this->getHelper('Data')->hashString(
+            $this->getHelper('Data')->jsonEncode($requestMetadata['images_data']),
+            'md5'
+        );
 
         return $data;
     }
@@ -606,7 +619,10 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             return $data;
         }
 
-        $data['online_payment_data'] = $this->getHelper('Data')->jsonEncode($requestMetadata['payment_data']);
+        $data['online_payment_data'] = $this->getHelper('Data')->hashString(
+            $this->getHelper('Data')->jsonEncode($requestMetadata['payment_data']),
+            'md5'
+        );
 
         return $data;
     }
@@ -618,7 +634,10 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             return $data;
         }
 
-        $data['online_shipping_data'] = $this->getHelper('Data')->jsonEncode($requestMetadata['shipping_data']);
+        $data['online_shipping_data'] = $this->getHelper('Data')->hashString(
+            $this->getHelper('Data')->jsonEncode($requestMetadata['shipping_data']),
+            'md5'
+        );
 
         return $data;
     }
@@ -630,7 +649,10 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             return $data;
         }
 
-        $data['online_return_data'] = $this->getHelper('Data')->jsonEncode($requestMetadata['return_data']);
+        $data['online_return_data'] = $this->getHelper('Data')->hashString(
+            $this->getHelper('Data')->jsonEncode($requestMetadata['return_data']),
+            'md5'
+        );
 
         return $data;
     }
@@ -642,8 +664,10 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             return $data;
         }
 
-        $data['online_other_data'] = $this->getHelper('Data')->jsonEncode($requestMetadata['other_data']);
-
+        $data['online_other_data'] = $this->getHelper('Data')->hashString(
+            $this->getHelper('Data')->jsonEncode($requestMetadata['other_data']),
+            'md5'
+        );
         return $data;
     }
 
@@ -654,6 +678,123 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         $pickupStoreStateUpdater = $this->modelFactory->getObject('Ebay_Listing_Product_PickupStore_State_Updater');
         $pickupStoreStateUpdater->setListingProduct($this->getListingProduct());
         $pickupStoreStateUpdater->process();
+    }
+
+    //########################################
+
+    public function throwRepeatActionInstructions()
+    {
+        $instructions = [];
+
+        if ($this->getConfigurator()->isQtyAllowed()) {
+            $instructions[] = [
+                'listing_product_id' => $this->getListingProduct()->getId(),
+                'type'               => ChangeProcessor::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+                'initiator'          => self::INSTRUCTION_INITIATOR,
+                'priority'           => 80
+            ];
+        }
+
+        if ($this->getConfigurator()->isPriceAllowed()) {
+            $instructions[] = [
+                'listing_product_id' => $this->getListingProduct()->getId(),
+                'type'               => ChangeProcessor::INSTRUCTION_TYPE_PRICE_DATA_CHANGED,
+                'initiator'          => self::INSTRUCTION_INITIATOR,
+                'priority'           => 80
+            ];
+        }
+
+        if ($this->getConfigurator()->isTitleAllowed()) {
+            $instructions[] = [
+                'listing_product_id' => $this->getListingProduct()->getId(),
+                'type'               => ChangeProcessor::INSTRUCTION_TYPE_TITLE_DATA_CHANGED,
+                'initiator'          => self::INSTRUCTION_INITIATOR,
+                'priority'           => 60
+            ];
+        }
+
+        if ($this->getConfigurator()->isSubtitleAllowed()) {
+            $instructions[] = [
+                'listing_product_id' => $this->getListingProduct()->getId(),
+                'type'               => ChangeProcessor::INSTRUCTION_TYPE_SUBTITLE_DATA_CHANGED,
+                'initiator'          => self::INSTRUCTION_INITIATOR,
+                'priority'           => 60
+            ];
+        }
+
+        if ($this->getConfigurator()->isDescriptionAllowed()) {
+            $instructions[] = [
+                'listing_product_id' => $this->getListingProduct()->getId(),
+                'type'               => ChangeProcessor::INSTRUCTION_TYPE_DESCRIPTION_DATA_CHANGED,
+                'initiator'          => self::INSTRUCTION_INITIATOR,
+                'priority'           => 30
+            ];
+        }
+
+        if ($this->getConfigurator()->isImagesAllowed()) {
+            $instructions[] = [
+                'listing_product_id' => $this->getListingProduct()->getId(),
+                'type'               => ChangeProcessor::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
+                'initiator'          => self::INSTRUCTION_INITIATOR,
+                'priority'           => 30
+            ];
+        }
+
+        if ($this->getConfigurator()->isCategoriesAllowed()) {
+            $instructions[] = [
+                'listing_product_id' => $this->getListingProduct()->getId(),
+                'type'               => ChangeProcessor::INSTRUCTION_TYPE_CATEGORIES_DATA_CHANGED,
+                'initiator'          => self::INSTRUCTION_INITIATOR,
+                'priority'           => 60
+            ];
+        }
+
+        if ($this->getConfigurator()->isShippingAllowed()) {
+            $instructions[] = [
+                'listing_product_id' => $this->getListingProduct()->getId(),
+                'type'               => ChangeProcessor::INSTRUCTION_TYPE_SHIPPING_DATA_CHANGED,
+                'initiator'          => self::INSTRUCTION_INITIATOR,
+                'priority'           => 60
+            ];
+        }
+
+        if ($this->getConfigurator()->isPaymentAllowed()) {
+            $instructions[] = [
+                'listing_product_id' => $this->getListingProduct()->getId(),
+                'type'               => ChangeProcessor::INSTRUCTION_TYPE_PAYMENT_DATA_CHANGED,
+                'initiator'          => self::INSTRUCTION_INITIATOR,
+                'priority'           => 60
+            ];
+        }
+
+        if ($this->getConfigurator()->isReturnAllowed()) {
+            $instructions[] = [
+                'listing_product_id' => $this->getListingProduct()->getId(),
+                'type'               => ChangeProcessor::INSTRUCTION_TYPE_RETURN_DATA_CHANGED,
+                'initiator'          => self::INSTRUCTION_INITIATOR,
+                'priority'           => 60
+            ];
+        }
+
+        if ($this->getConfigurator()->isOtherAllowed()) {
+            $instructions[] = [
+                'listing_product_id' => $this->getListingProduct()->getId(),
+                'type'               => ChangeProcessor::INSTRUCTION_TYPE_OTHER_DATA_CHANGED,
+                'initiator'          => self::INSTRUCTION_INITIATOR,
+                'priority'           => 30
+            ];
+        }
+
+        if ($this->getConfigurator()->isVariationsAllowed()) {
+            $instructions[] = [
+                'listing_product_id' => $this->getListingProduct()->getId(),
+                'type'               => ChangeProcessor::INSTRUCTION_TYPE_VARIATION_IMAGES_DATA_CHANGED,
+                'initiator'          => self::INSTRUCTION_INITIATOR,
+                'priority'           => 30
+            ];
+        }
+
+        $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()->add($instructions);
     }
 
     //########################################

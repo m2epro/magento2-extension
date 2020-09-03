@@ -50,8 +50,9 @@ class MinMaxPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Num
 
     public function render(\Magento\Framework\DataObject $row)
     {
+        $translator = $this->getHelper('Module\Translation');
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-            return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
+            return '<span style="color: gray;">' . $translator->__('Not Listed') . '</span>';
         }
         $currency = $this->getColumn()->getData('currency');
         $onlineMinPrice = $row->getData('min_online_price');
@@ -60,7 +61,7 @@ class MinMaxPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Num
         $onlineCurrentPrice = $row->getData('online_current_price');
 
         if ($onlineMinPrice === null || $onlineMinPrice === '') {
-            return $this->__('N/A');
+            return $translator->__('N/A');
         }
 
         if ((float)$onlineMinPrice <= 0) {
@@ -73,26 +74,26 @@ class MinMaxPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Num
 
             $onlineStartStr= $this->localeCurrency->getCurrency($currency)->toCurrency($onlineStartPrice);
 
-            $startPriceText = $this->__('Start Price');
+            $startPriceText = $translator->__('Start Price');
 
             $onlineCurrentPriceHtml = '';
             $onlineReservePriceHtml = '';
             $onlineBuyItNowPriceHtml = '';
 
             if ($row->getData('online_bids') > 0 || $onlineCurrentPrice > $onlineStartPrice) {
-                $currentPriceText = $this->__('Current Price');
+                $currentPriceText = $translator->__('Current Price');
                 $onlineCurrentStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineCurrentPrice);
                 $onlineCurrentPriceHtml = '<strong>'.$currentPriceText.':</strong> '.$onlineCurrentStr.'<br/><br/>';
             }
 
             if ($onlineReservePrice > 0) {
-                $reservePriceText = $this->__('Reserve Price');
+                $reservePriceText = $translator->__('Reserve Price');
                 $onlineReserveStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineReservePrice);
                 $onlineReservePriceHtml = '<strong>'.$reservePriceText.':</strong> '.$onlineReserveStr.'<br/>';
             }
 
             if ($onlineBuyItNowPrice > 0) {
-                $buyItNowText = $this->__('Buy It Now Price');
+                $buyItNowText = $translator->__('Buy It Now Price');
                 $onlineBuyItNowStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineBuyItNowPrice);
                 $onlineBuyItNowPriceHtml = '<strong>'.$buyItNowText.':</strong> '.$onlineBuyItNowStr;
             }
@@ -140,11 +141,11 @@ HTML;
 
             $title = $this->getHelper('Data')->escapeHtml($title);
 
-            $bidsPopupTitle = $this->__('Bids of &quot;%s&quot;', $title);
+            $bidsPopupTitle = $translator->__('Bids of &quot;%s&quot;', $title);
             $bidsPopupTitle = addslashes($bidsPopupTitle);
 
-            $bidsTitle = $this->__('Show bids list');
-            $bidsText = $this->__('Bid(s)');
+            $bidsTitle = $translator->__('Show bids list');
+            $bidsText = $translator->__('Bid(s)');
 
             if ($listingProduct->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED) {
                 $resultHtml .= '<br/><br/><span style="font-size: 10px; color: gray;">' .

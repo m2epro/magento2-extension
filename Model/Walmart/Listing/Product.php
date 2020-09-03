@@ -477,7 +477,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getOnlinePromotions()
     {
-        return $this->getSettings('online_promotions');
+        return $this->getData('online_promotions');
     }
 
     // ---------------------------------------
@@ -505,7 +505,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getOnlineDetailsData()
     {
-        return $this->getSettings('online_details_data');
+        return $this->getData('online_details_data');
     }
 
     // ---------------------------------------

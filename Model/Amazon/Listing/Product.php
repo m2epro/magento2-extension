@@ -700,7 +700,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getOnlineDetailsData()
     {
-        return $this->getSettings('online_details_data');
+        return $this->getData('online_details_data');
     }
 
     /**
@@ -709,7 +709,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getOnlineImagesData()
     {
-        return $this->getSettings('online_images_data');
+        return $this->getData('online_images_data');
     }
 
     // ---------------------------------------

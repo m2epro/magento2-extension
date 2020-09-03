@@ -19,24 +19,16 @@ use Ess\M2ePro\Helper\Component\Ebay;
  */
 class Integration extends Command
 {
+    /** @var \Magento\Framework\Data\Form\FormKey */
     private $formKey;
-    private $csvParser;
-    private $phpEnvironmentRequest;
-    private $productFactory;
 
     //########################################
 
     public function __construct(
         \Magento\Framework\Data\Form\FormKey $formKey,
-        \Magento\Framework\File\Csv $csvParser,
-        \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest,
-        \Magento\Catalog\Model\ProductFactory $productFactory,
         Context $context
     ) {
         $this->formKey = $formKey;
-        $this->csvParser = $csvParser;
-        $this->phpEnvironmentRequest = $phpEnvironmentRequest;
-        $this->productFactory = $productFactory;
         parent::__construct($context);
     }
 
@@ -144,7 +136,6 @@ HTML;
     /**
      * @title "Print Inspector Data"
      * @description "Print Inspector Data"
-     * @new_line
      */
     public function getInspectorDataAction()
     {
@@ -156,11 +147,13 @@ HTML;
             )->getCollection();
             $instructionCollection->applySkipUntilFilter();
             $instructionCollection->addFieldToFilter('listing_product_id', $listingProductId);
+            $lp = $this->activeRecordFactory->getObject('Listing\Product')->load($listingProductId);
 
-            if ($this->getRequest()->getParam('component_mode') == 'ebay') {
+            if ($lp->getComponentMode() == 'ebay') {
+                $lp->setChildMode(Ebay::NICK);
 
                 /**@var \Ess\M2ePro\Model\Listing\Product $lp */
-                $lp = $this->parentFactory->getObjectLoaded(Ebay::NICK, 'Listing\Product', $listingProductId);
+               // $lp = $this->parentFactory->getObjectLoaded(Ebay::NICK, 'Listing\Product', $listingProductId);
 
                 $checkerInput = $this->modelFactory->getObject(
                     'Listing_Product_Instruction_SynchronizationTemplate_Checker_Input'
@@ -234,10 +227,8 @@ HTML;
                 return $this->getResponse()->setBody($html);
             }
 
-            if ($this->getRequest()->getParam('component_mode') == 'amazon') {
-
-                /**@var \Ess\M2ePro\Model\Listing\Product $lp */
-                $lp = $this->parentFactory->getObjectLoaded(Amazon::NICK, 'Listing\Product', $listingProductId);
+            if ($lp->getComponentMode() == 'amazon') {
+                $lp->setChildMode(Amazon::NICK);
 
                 $checkerInput = $this->modelFactory->getObject(
                     'Listing_Product_Instruction_SynchronizationTemplate_Checker_Input'
@@ -302,10 +293,8 @@ HTML;
                 return $this->getResponse()->setBody($html);
             }
 
-            if ($this->getRequest()->getParam('component_mode') == 'walmart') {
-
-                /**@var \Ess\M2ePro\Model\Listing\Product $lp */
-                $lp = $this->parentFactory->getObjectLoaded(Walmart::NICK, 'Listing\Product', $listingProductId);
+            if ($lp->getComponentMode() == 'walmart') {
+                $lp->setChildMode(Walmart::NICK);
 
                 $checkerInput = $this->modelFactory->getObject(
                     'Listing_Product_Instruction_SynchronizationTemplate_Checker_Input'
@@ -383,16 +372,6 @@ HTML;
         <input name="listing_product_id" style="width: 200px;" required>
     </div>
 
-    <div style="margin: 5px 0; width: 400px;">
-        <label style="width: 170px; display: inline-block;">Component: </label>
-        <select name="component_mode" style="width: 200px;" required>
-            <option style="display: none;"></option>
-            <option value="ebay">eBay</option>
-            <option value="amazon">Amazon</option>
-            <option value="walmart">Walmart</option>
-        </select>
-    </div>
-
     <input name="form_key" value="{$formKey}" type="hidden" />
     <input name="print" value="1" type="hidden" />
 
@@ -409,7 +388,6 @@ HTML;
     /**
      * @title "Build Order Quote"
      * @description "Print Order Quote Data"
-     * @new_line
      */
     public function getPrintOrderQuoteDataAction()
     {
@@ -494,206 +472,6 @@ HTML;
     </div>
 
 </form>
-HTML;
-    }
-
-    //########################################
-
-    /**
-     * @title "Search Troubles With Parallel Execution"
-     * @description "By operation history table"
-     */
-    public function searchTroublesWithParallelExecutionAction()
-    {
-        if (!$this->getRequest()->getParam('print')) {
-            $formKey = $this->formKey->getFormKey();
-            $actionUrl = $this->getUrl('*/*/*', ['action' => 'searchTroublesWithParallelExecution']);
-
-            $collection = $this->activeRecordFactory->getObject('OperationHistory')->getCollection();
-            $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-            $collection->getSelect()->columns(['nick']);
-            $collection->getSelect()->order('nick ASC');
-            $collection->getSelect()->distinct();
-
-            $optionsHtml = '';
-            foreach ($collection->getItems() as $item) {
-                /** @var \Ess\M2ePro\Model\OperationHistory $item */
-                $optionsHtml .= <<<HTML
-<option value="{$item->getData('nick')}">{$item->getData('nick')}</option>
-HTML;
-            }
-
-            return <<<HTML
-<form method="get" enctype="multipart/form-data" action="{$actionUrl}">
-
-    <div style="margin: 5px 0; width: 400px;">
-        <label style="width: 170px; display: inline-block;">Search by nick: </label>
-        <select name="nick" style="width: 200px;" required>
-            <option value="" style="display: none;"></option>
-            {$optionsHtml}
-        </select>
-    </div>
-
-    <input name="form_key" value="{$formKey}" type="hidden" />
-    <input name="print" value="1" type="hidden" />
-
-    <div style="margin: 10px 0; width: 365px; text-align: right;">
-        <button type="submit">Search</button>
-    </div>
-
-</form>
-HTML;
-        }
-
-        $searchByNick = (string)$this->getRequest()->getParam('nick');
-
-        $collection = $this->activeRecordFactory->getObject('OperationHistory')->getCollection();
-        $collection->addFieldToFilter('nick', $searchByNick);
-        $collection->getSelect()->order('id ASC');
-
-        $results = [];
-        $prevItem = null;
-
-        foreach ($collection->getItems() as $item) {
-            /** @var \Ess\M2ePro\Model\OperationHistory $item */
-            /** @var \Ess\M2ePro\Model\OperationHistory $prevItem */
-
-            if ($item->getData('end_date') === null) {
-                continue;
-            }
-
-            if ($prevItem === null) {
-                $prevItem = $item;
-                continue;
-            }
-
-            $prevEnd   = new \DateTime($prevItem->getData('end_date'), new \DateTimeZone('UTC'));
-            $currStart = new \DateTime($item->getData('start_date'), new \DateTimeZone('UTC'));
-
-            if ($currStart->getTimeStamp() < $prevEnd->getTimeStamp()) {
-                $results[$item->getId().'##'.$prevItem->getId()] = [
-                    'curr' => [
-                        'id'    => $item->getId(),
-                        'start' => $item->getData('start_date'),
-                        'end'   => $item->getData('end_date')
-                    ],
-                    'prev' => [
-                        'id'    => $prevItem->getId(),
-                        'start' => $prevItem->getData('start_date'),
-                        'end'   => $prevItem->getData('end_date')
-                    ],
-                ];
-            }
-
-            $prevItem = $item;
-        }
-
-        if (count($results) <= 0) {
-            return $this->getEmptyResultsHtml('There are no troubles with a parallel work of crons.');
-        }
-
-        $tableContent = <<<HTML
-<tr>
-    <th>Num</th>
-    <th>Type</th>
-    <th>ID</th>
-    <th>Started</th>
-    <th>Finished</th>
-    <th>Total</th>
-    <th>Delay</th>
-</tr>
-HTML;
-        $index = 1;
-        $results = array_reverse($results, true);
-
-        foreach ($results as $key => $row) {
-            $currStart = new \DateTime($row['curr']['start'], new \DateTimeZone('UTC'));
-            $currEnd   = new \DateTime($row['curr']['end'], new \DateTimeZone('UTC'));
-            $currTime = $currEnd->diff($currStart);
-            $currTime = $currTime->format('%H:%I:%S');
-
-            $currUrlUp = $this->getUrl(
-                '*/controlPanel_database/showOperationHistoryExecutionTreeUp',
-                ['operation_history_id' => $row['curr']['id']]
-            );
-            $currUrlDown = $this->getUrl(
-                '*/controlPanel_database/showOperationHistoryExecutionTreeDown',
-                ['operation_history_id' => $row['curr']['id']]
-            );
-
-            $prevStart = new \DateTime($row['prev']['start'], new \DateTimeZone('UTC'));
-            $prevEnd   = new \DateTime($row['prev']['end'], new \DateTimeZone('UTC'));
-            $prevTime = $prevEnd->diff($prevStart);
-            $prevTime = $prevTime->format('%H:%I:%S');
-
-            $prevUrlUp = $this->getUrl(
-                '*/controlPanel_database/showOperationHistoryExecutionTreeUp',
-                ['operation_history_id' => $row['prev']['id']]
-            );
-            $prevUrlDown = $this->getUrl(
-                '*/controlPanel_database/showOperationHistoryExecutionTreeDown',
-                ['operation_history_id' => $row['prev']['id']]
-            );
-
-            $delayTime = $currStart->diff($prevStart);
-            $delayTime = $delayTime->format('%H:%I:%S');
-
-            $tableContent .= <<<HTML
-<tr>
-    <td rowspan="2">{$index}</td>
-    <td>Previous</td>
-    <td>
-        {$row['prev']['id']}&nbsp;
-        <a style="color: green;" href="{$prevUrlUp}" target="_blank"><span>&uarr;</span></a>&nbsp;
-        <a style="color: green;" href="{$prevUrlDown}" target="_blank"><span>&darr;</span></a>
-    </td>
-    <td><span>{$row['prev']['start']}</span></td>
-    <td><span>{$row['prev']['end']}</span></td>
-    <td><span>{$prevTime}</span></td>
-    <td rowspan="2"><span>{$delayTime}</span>
-</tr>
-<tr>
-    <td>Current</td>
-    <td>
-        {$row['curr']['id']}&nbsp;
-        <a style="color: green;" href="{$currUrlUp}" target="_blank"><span>&uarr;</span></a>&nbsp;&nbsp;
-        <a style="color: green;" href="{$currUrlDown}" target="_blank"><span>&darr;</span></a>
-        </td>
-    <td><span>{$row['curr']['start']}</span></td>
-    <td><span>{$row['curr']['end']}</span></td>
-    <td><span>{$currTime}</span></td>
-</tr>
-HTML;
-            $index++;
-        }
-
-        $html = $this->getStyleHtml() . <<<HTML
-<html>
-    <body>
-        <h2 style="margin: 20px 0 0 10px">Parallel work of [{$searchByNick}]
-            <span style="color: #808080; font-size: 15px;">(#count# entries)</span>
-        </h2>
-        <br/>
-        <table class="grid" cellpadding="0" cellspacing="0">
-            {$tableContent}
-        </table>
-    </body>
-</html>
-HTML;
-        return str_replace('#count#', count($results), $html);
-    }
-
-    //########################################
-
-    private function getEmptyResultsHtml($messageText)
-    {
-        $backUrl = $this->getHelper('View\ControlPanel')->getPageModuleTabUrl();
-
-        return <<<HTML
-<h2 style="margin: 20px 0 0 10px">
-    {$messageText} <span style="color: grey; font-size: 10px;">
-    <a href="{$backUrl}">[back]</a>
-</h2>
 HTML;
     }
 

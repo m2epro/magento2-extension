@@ -59,13 +59,13 @@ class License extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function isValidDomain()
     {
-        $isValid = $this->getHelper('Module')->getConfig()->getGroupValue('/license/ip/', 'is_valid');
+        $isValid = $this->getHelper('Module')->getConfig()->getGroupValue('/license/domain/', 'is_valid');
         return $isValid === null || (bool)$isValid;
     }
 
     public function isValidIp()
     {
-        $isValid = $this->getHelper('Module')->getConfig()->getGroupValue('/license/domain/', 'is_valid');
+        $isValid = $this->getHelper('Module')->getConfig()->getGroupValue('/license/ip/', 'is_valid');
         return $isValid === null || (bool)$isValid;
     }
 

@@ -41,33 +41,14 @@ class DirectDatabaseChanges extends AbstractForm
                 'no_hide' => true,
                 'content' => $this->__(
                     <<<HTML
-<p>M2E Pro is developed to work based on a standard Magento functionality.
-One of the main aspects of its work is a dynamic event catching: the Product Price,
-Quantity, Image, Attribute, etc. changes.</p><br>
-<p>
-If you update Magento Product information not via Magento backend and Standard Magento Model functionality
-(e.g. direct SQL injections or Custom Code that does not support a Magento Core Models),
-you can use the predefined M2E Pro Models to notify Extension about the product changes.
-The details can be found <a href="%url1%" target="_blank" class="external-link">here</a>.
-</p><br>
-
-<p>
-If you use Magmi Import tool to update Magento Product information, it is required to set up a
-predefined M2E Pro plug-in for Magmi Import tool. It will notify Extension about the changes made to product data.
-Please read more <a href="%url2%" target="_blank" class="external-link">here</a>.
-</p><br>
-
-<p>
-It is strongly recommended that you use one of the options above to decrease the impact on M2E Pro performance.
-</p><br>
-<p>
-Alternatively, you can enable Track Direct Database Changes to detect the product changes.
-</p><br>
-<p>
-<strong>Important note:</strong> The tracking of direct Database changes is resource-consuming and may
-affect the performance of your Magento site and synchronization with Channels. Set Yes only in case of
-extreme necessity when using of predefined M2E Pro Models is impossible for some reasons.
-</p>
+<p>If you update Magento Product information over the Magento Core Models (e.g. direct SQL injections),
+ use one of the options below to make M2E Pro detect these changes:</p>
+ <ul>
+<li>M2E Pro Models (Object or Structural Methods). Read <a target="_blank" href="%url1%"> the article</a> for more information.</li>
+<li>M2E Pro plug-in for the Magmi Import tool. Learn the details <a target="_blank" href="%url2%">here</a>.</li>
+<li>Track Direct Database Changes. Please note that this option is resource-consuming and may affect the 
+performance of your Magento site and synchronization with Channels.</li>
+</ul>
 HTML
                     ,
                     $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/oYFwAQ'),

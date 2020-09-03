@@ -107,7 +107,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
                 'string_limit'   => 350,
                 'index'          => 'description',
                 'filter_index'   => 'main_table.description',
-                'frame_callback' => [$this, 'callbackDescription']
+                'frame_callback' => [$this, 'callbackColumnDescription']
             ]
         );
 
@@ -120,7 +120,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
                 'string_limit'   => 65000,
                 'index'          => 'detailed_description',
                 'filter_index'   => 'main_table.detailed_description',
-                'frame_callback' => [$this, 'callbackDescription']
+                'frame_callback' => [$this, 'callbackColumnDescription']
             ]
         );
 

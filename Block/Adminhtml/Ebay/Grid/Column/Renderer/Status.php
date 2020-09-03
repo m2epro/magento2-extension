@@ -86,18 +86,18 @@ HTML;
                 }
             }
         }
-
+        $translator = $this->getHelper('Module\Translation');
         $html .= $this->getCurrentStatus($row);
 
         if ($row->getData('is_duplicate') && isset($additionalData['item_duplicate_action_required'])) {
             if ($this->getColumn()->getData('showLogIcon')) {
                 $duplicateContent = <<<HTML
 <a href="javascript:" onclick="EbayListingViewEbayGridObj.openItemDuplicatePopUp({$listingProductId});">
-    {$this->__('Duplicate')}
+    {$translator->__('Duplicate')}
 </a>
 HTML;
             } else {
-                $duplicateContent = "<span style='color: #ea7601;'>{$this->__('duplicate')}</span>";
+                $duplicateContent = "<span style='color: #ea7601;'>{$translator->__('duplicate')}</span>";
             }
 
             $html .= <<<HTML
@@ -118,34 +118,35 @@ HTML;
     protected function getCurrentStatus($row)
     {
         $html = '';
+        $translator = $this->getHelper('Module\Translation');
 
         switch ($row->getData('status')) {
             case \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED:
-                $html .= '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
+                $html .= '<span style="color: gray;">' . $translator->__('Not Listed') . '</span>';
                 break;
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED:
-                $html .= '<span style="color: green;">' . $this->__('Listed') . '</span>';
+                $html .= '<span style="color: green;">' . $translator->__('Listed') . '</span>';
                 break;
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN:
-                $html .= '<span style="color: red;">' . $this->__('Listed (Hidden)') . '</span>';
+                $html .= '<span style="color: red;">' . $translator->__('Listed (Hidden)') . '</span>';
                 break;
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD:
-                $html .= '<span style="color: brown;">' . $this->__('Inactive (Sold)') . '</span>';
+                $html .= '<span style="color: brown;">' . $translator->__('Inactive (Sold)') . '</span>';
 
                 break;
             case \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED:
-                $html .= '<span style="color: red;">' . $this->__('Inactive (Stopped)') . '</span>';
+                $html .= '<span style="color: red;">' . $translator->__('Inactive (Stopped)') . '</span>';
                 break;
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED:
-                $html .= '<span style="color: blue;">' . $this->__('Inactive (Finished)') . '</span>';
+                $html .= '<span style="color: blue;">' . $translator->__('Inactive (Finished)') . '</span>';
                 break;
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:
-                $html .= '<span style="color: orange;">' . $this->__('Inactive (Blocked)') . '</span>';
+                $html .= '<span style="color: orange;">' . $translator->__('Inactive (Blocked)') . '</span>';
                 break;
 
             default:

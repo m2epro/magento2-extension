@@ -51,8 +51,8 @@ abstract class AbstractPlugin
     {
         return $this->helperFactory->getObject('Magento')->isInstalled() &&
                !$this->helperFactory->getObject('Module\Maintenance')->isEnabled() &&
-               !$this->helperFactory->getObject('Module')->isDisabled() &&
-               $this->helperFactory->getObject('Module')->isReadyToWork();
+               $this->helperFactory->getObject('Module')->isReadyToWork() &&
+               !$this->helperFactory->getObject('Module')->isDisabled();
     }
 
     //########################################

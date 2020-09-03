@@ -20,28 +20,47 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
     const CHECKOUT_GUEST    = 'guest';
     const CHECKOUT_REGISTER = 'register';
 
+    /** @var \Ess\M2ePro\Model\Currency */
     protected $currency;
+
+    /** @var \Ess\M2ePro\Model\Magento\Payment */
+    protected $payment;
 
     /** @var EbayOrder|AmazonOrder|WalmartOrder */
     protected $order;
 
+    /** @var \Magento\Customer\Model\CustomerFactory */
+    protected $customerFactory;
+
+    /** @var \Magento\Customer\Api\CustomerRepositoryInterface */
+    protected $customerRepository;
+
+    /** @var \Ess\M2ePro\Model\Order\Item\ProxyObject[] */
     protected $items;
 
     /** @var \Magento\Store\Model\Store */
     protected $store;
 
+    /** @var array */
     protected $addressData = [];
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\Currency $currency,
+        \Ess\M2ePro\Model\Magento\Payment $payment,
         \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel $order,
+        \Magento\Customer\Model\CustomerFactory $customerFactory,
+        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
         $this->currency = $currency;
+        $this->payment = $payment;
         $this->order = $order;
+
+        $this->customerFactory = $customerFactory;
+        $this->customerRepository = $customerRepository;
         parent::__construct($helperFactory, $modelFactory);
     }
 

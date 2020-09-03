@@ -20,7 +20,6 @@ class ControlPanel extends \Ess\M2ePro\Helper\AbstractHelper
     const TAB_OVERVIEW         = 'overview';
     const TAB_INSPECTION       = 'inspection';
     const TAB_DATABASE         = 'database';
-    const TAB_TOOLS_GENERAL    = 'tools_general';
     const TAB_TOOLS_MODULE     = 'tools_module';
     const TAB_CRON             = 'cron';
     const TAB_DEBUG            = 'debug';
@@ -72,11 +71,6 @@ class ControlPanel extends \Ess\M2ePro\Helper\AbstractHelper
     public function getPageDatabaseTabUrl(array $params = [])
     {
         return $this->getPageUrl(array_merge($params, ['tab' => self::TAB_DATABASE]));
-    }
-
-    public function getPageToolsTabUrl(array $params = [])
-    {
-        return $this->getPageUrl(array_merge($params, ['tab' => self::TAB_TOOLS_GENERAL]));
     }
 
     public function getPageModuleTabUrl(array $params = [])

@@ -107,7 +107,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'product_id=entity_id',
             [
                 'id'              => 'id',
-                'status'          => 'status',
+                'amazon_status'   => 'status',
                 'component_mode'  => 'component_mode',
                 'additional_data' => 'additional_data'
             ],
@@ -126,7 +126,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'search_settings_status'         => 'search_settings_status',
                 'search_settings_data'           => 'search_settings_data',
                 'variation_child_statuses'       => 'variation_child_statuses',
-                'sku'                            => 'sku',
+                'amazon_sku'                     => 'sku',
                 'online_qty'                     => 'online_qty',
                 'online_regular_price'           => 'online_regular_price',
                 'online_regular_sale_price'      => 'IF(
@@ -231,8 +231,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'align'        => 'left',
             'width'        => '150px',
             'type'         => 'text',
-            'index'        => 'sku',
-            'filter_index' => 'sku',
+            'index'        => 'amazon_sku',
+            'filter_index' => 'amazon_sku',
             'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Sku'
         ]);
 
@@ -243,7 +243,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'           => 'text',
             'index'          => 'general_id',
             'filter_index'   => 'general_id',
-            'frame_callback' => [$this, 'callbackColumnGeneralId']
+            'filter'         => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\GeneralId',
+            'frame_callback' => [$this, 'callbackColumnGeneralId'],
+            'filter_condition_callback' => [$this, 'callbackFilterGeneralId']
         ]);
 
         $this->addColumn('online_qty', [
@@ -287,8 +289,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->addColumn('status', [
             'header'       => $this->__('Status'),
             'width'        => '155px',
-            'index'        => 'status',
-            'filter_index' => 'status',
+            'index'        => 'amazon_status',
+            'filter_index' => 'amazon_status',
             'type'         => 'options',
             'sortable'     => false,
             'options' => [
@@ -626,12 +628,12 @@ HTML;
 
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
-        if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
+        if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
             return $this->__('N/A');
         }
 
         if ((!$row->getData('is_variation_parent') &&
-            $row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) ||
+            $row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) ||
             ($row->getData('is_variation_parent') && $row->getData('general_id') == '')) {
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
@@ -747,7 +749,7 @@ HTML;
         $onlineMaxBusinessPrice = (float)$row->getData('max_online_business_price');
 
         if (empty($onlineMinRegularPrice) && empty($onlineMinBusinessPrice)) {
-            if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED ||
+            if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED ||
                 $row->getData('is_variation_parent')
             ) {
                 return $this->__('N/A') . $repricingHtml;
@@ -793,7 +795,7 @@ HTML;
             !$row->getData('is_variation_parent')
         ) {
             $accountId = $this->listing['account_id'];
-            $sku = $row->getData('sku');
+            $sku = $row->getData('amazon_sku');
 
             $regularPriceValue =<<<HTML
 <a id="m2epro_repricing_price_value_{$sku}"
@@ -906,6 +908,19 @@ HTML;
                 ['attribute'=>'name', 'like'=>'%'.$value.'%']
             ]
         );
+    }
+
+    protected function callbackFilterGeneralId($collection, $column)
+    {
+        $inputValue = $column->getFilter()->getValue('input');
+        if ($inputValue !== null) {
+            $collection->addFieldToFilter('general_id', ['like' => '%' . $inputValue . '%']);
+        }
+
+        $selectValue = $column->getFilter()->getValue('select');
+        if ($selectValue !== null) {
+            $collection->addFieldToFilter('is_general_id_owner', $selectValue);
+        }
     }
 
     protected function callbackFilterQty($collection, $column)
@@ -1071,7 +1086,7 @@ JS
     private function getGeneralIdColumnValueEmptyGeneralId($row)
     {
         // ---------------------------------------
-        if ((int)$row->getData('status') != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
+        if ((int)$row->getData('amazon_status') != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
             return '<i style="color:gray;">'.$this->__('receiving...').'</i>';
         }
         // ---------------------------------------
@@ -1172,7 +1187,7 @@ HTML;
                                   '</span>';
         }
 
-        if ((int)$row->getData('status') != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
+        if ((int)$row->getData('amazon_status') != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
             return <<<HTML
 <a href="{$url}" target="_blank">{$generalId}</a>{$generalIdOwnerHtml}
 HTML;

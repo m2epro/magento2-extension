@@ -8,7 +8,7 @@
         <!-- main tab -->
 
         <tab id="m2epro" translate="label" sortOrder="450" class="m2e-tab">
-            <label>Multi Channels</label>
+            <label>M2E Pro</label>
         </tab>
 
         <!-- ebay integration tab -->
@@ -70,15 +70,19 @@
             <tab>m2epro</tab>
             <resource>Ess_M2ePro::system_configuration</resource>
             <group id="module_mode" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Disable/Enable Module</label>
+                <label>Module</label>
                 <frontend_model>Ess\M2ePro\Block\Adminhtml\System\Config\General\Fieldset</frontend_model>
                 <field id="module_mode_field" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Module Mode</label>
                     <frontend_model>Ess\M2ePro\Block\Adminhtml\System\Config\Module\Mode\Field</frontend_model>
                 </field>
+                <field id="cron_mode_field" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Cron Mode</label>
+                    <frontend_model>Ess\M2ePro\Block\Adminhtml\System\Config\Module\Cron\Mode\Field</frontend_model>
+                </field>
             </group>
             <group id="migration_from_magento1" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Migration from Magento v1.x</label>
+                <label>Migration</label>
                 <frontend_model>Ess\M2ePro\Block\Adminhtml\System\Config\Module\Fieldset</frontend_model>
                 <field id="migration_field" translate="label" type="button" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <frontend_model>Ess\M2ePro\Block\Adminhtml\System\Config\Module\Migration\Field</frontend_model>

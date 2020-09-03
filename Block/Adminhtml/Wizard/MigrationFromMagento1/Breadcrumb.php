@@ -29,13 +29,8 @@ class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Widget\Breadcrumb
                 'description' => $this->__('Database Migration'),
             ],
             [
-                'id' => 'synchronization',
-                'title' => $this->__('Step 3'),
-                'description' => $this->__('Marketplaces Synchronization'),
-            ],
-            [
                 'id' => 'congratulation',
-                'title' => $this->__('Step 4'),
+                'title' => $this->__('Step 3'),
                 'description' => $this->__('Congratulation'),
             ],
         ]);

@@ -13,6 +13,8 @@ namespace Ess\M2ePro\Block\Adminhtml\System\Config;
  */
 abstract class Integration extends \Magento\Config\Block\System\Config\Form\Field
 {
+    use \Ess\M2ePro\Block\Adminhtml\Traits\BlockTrait;
+
     protected $moduleHelper;
 
     public function __construct(

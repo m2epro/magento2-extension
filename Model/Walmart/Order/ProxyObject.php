@@ -13,34 +13,8 @@ namespace Ess\M2ePro\Model\Walmart\Order;
  */
 class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 {
-    /** @var \Ess\M2ePro\Model\Walmart\Order */
-    protected $order;
-
     /** @var \Ess\M2ePro\Model\Walmart\Order\Item\ProxyObject[] */
     protected $removedProxyItems = [];
-
-    protected $payment;
-
-    protected $customerFactory;
-
-    private $customerRepository;
-
-    //########################################
-
-    public function __construct(
-        \Ess\M2ePro\Model\Magento\Payment $payment,
-        \Magento\Customer\Model\CustomerFactory $customerFactory,
-        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
-        \Ess\M2ePro\Model\Currency $currency,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel $order,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
-    ) {
-        $this->payment = $payment;
-        $this->customerFactory = $customerFactory;
-        $this->customerRepository = $customerRepository;
-        parent::__construct($currency, $order, $helperFactory, $modelFactory);
-    }
 
     //########################################
 

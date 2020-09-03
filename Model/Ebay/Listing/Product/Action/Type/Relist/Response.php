@@ -13,8 +13,6 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Relist;
  */
 class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Response
 {
-    const INSTRUCTION_INITIATOR              = 'relist_action_response';
-
     const INSTRUCTION_TYPE_CHECK_QTY         = 'success_relist_check_qty';
     const INSTRUCTION_TYPE_CHECK_PRICE       = 'success_relist_check_price';
     const INSTRUCTION_TYPE_CHECK_TITLE       = 'success_relist_check_title';
@@ -45,6 +43,8 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $data = $this->appendOnlineQtyValues($data);
         $data = $this->appendOnlinePriceValues($data);
         $data = $this->appendOnlineInfoDataValues($data);
+
+        $data = $this->appendDescriptionValues($data);
 
         $data = $this->appendItemFeesValues($data, $response);
         $data = $this->appendStartDateEndDateValues($data, $response);

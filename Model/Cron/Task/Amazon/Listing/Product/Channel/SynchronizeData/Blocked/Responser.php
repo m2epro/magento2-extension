@@ -131,7 +131,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
                     ->getHumanTitleByListingProductStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED);
 
                 $tempLogMessage = $this->getHelper('Module\Translation')->__(
-                    'Item Status was successfully changed from "%from%" to "%to%" .',
+                    'Item Status was changed from "%from%" to "%to%" .',
                     $statusChangedFrom,
                     $statusChangedTo
                 );

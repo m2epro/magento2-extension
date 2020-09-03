@@ -140,7 +140,7 @@
 
                     <resource id="Magento_Backend::stores_settings">
                         <resource id="Magento_Config::config">
-                            <resource id="Ess_M2ePro::system_configuration" title="Multi Channels" sortOrder="450" />
+                            <resource id="Ess_M2ePro::system_configuration" title="M2E Pro" sortOrder="450" />
                         </resource>
                     </resource>
 

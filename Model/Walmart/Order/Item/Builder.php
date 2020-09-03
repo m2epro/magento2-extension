@@ -43,7 +43,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         // Init sale data
         // ---------------------------------------
         $this->setData('price', (float)$data['price']);
-        $this->setData('qty', (int)$data['qty']);
+        $this->setData('qty_purchased', (int)$data['qty']);
         // ---------------------------------------
 
         /**

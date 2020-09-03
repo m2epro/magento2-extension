@@ -105,7 +105,23 @@ abstract class Main extends Base
     protected function beforeAddContentEvent()
     {
         $this->appendRequirementsPopup();
+        $this->appendMSINotificationPopup();
+
         parent::beforeAddContentEvent();
+    }
+
+    protected function appendMSINotificationPopup()
+    {
+        if (!$this->getHelper('Magento')->isMSISupportingVersion()) {
+            return;
+        }
+
+        if ($this->getHelper('Module')->getRegistry()->getValue('/view/msi/popup/shown/')) {
+            return;
+        }
+
+        $block = $this->createBlock('MsiNotificationPopup');
+        $this->getLayout()->setChild('js', $block->getNameInLayout(), '');
     }
 
     protected function appendRequirementsPopup()
@@ -178,26 +194,18 @@ abstract class Main extends Base
             !$this->getRequest()->isPost() &&
             !$this->getRequest()->isXmlHttpRequest()
         ) {
-            $staticNotification = $this->addStaticContentNotification();
-            $healthStatusNotifications = $this->addHealthStatusNotifications();
+            $this->addHealthStatusNotifications();
+            $this->addLicenseNotifications();
 
-            $muteMessages = $staticNotification || $healthStatusNotifications;
-
-            if (!$muteMessages) {
-                $this->addLicenseNotifications();
-            }
-
-            if (!$muteMessages) {
+            if (!$this->addStaticContentNotification()) {
                 $this->addStaticContentWarningNotification();
             }
 
             $this->addServerNotifications();
             $this->addServerMaintenanceInfo();
 
-            if (!$muteMessages) {
-                $this->addCronErrorMessage();
-                $this->getCustomViewControllerHelper()->addMessages();
-            }
+            $this->addCronErrorMessage();
+            $this->getCustomViewControllerHelper()->addMessages();
         }
     }
 
@@ -273,6 +281,8 @@ abstract class Main extends Base
         if (!$added && $this->getHelper('Module\License')->getKey()) {
             $added = $this->addLicenseStatusNotifications();
         }
+
+        return $added;
     }
 
     // ---------------------------------------
@@ -329,8 +339,9 @@ abstract class Main extends Base
         $helper = $this->helperFactory->getObject('Server_Maintenance');
 
         if ($helper->isNow()) {
-            $message = 'M2E Pro server is currently under the planned maintenance. The process is scheduled to last';
-            $message .= ' %from% to %to%. Please do not apply any actions during this time frame.';
+            $message = 'M2E Pro Server is under maintenance. It is scheduled to last';
+            $message .= ' %from% to %to%.Please do not apply Product Actions (List, Relist, Revise, Stop)';
+            $message .= ' during this time frame.';
 
             $this->getMessageManager()->addNotice(
                 $this->__(
@@ -340,8 +351,8 @@ abstract class Main extends Base
                 )
             );
         } elseif ($helper->isScheduled()) {
-            $message = 'The preventive server maintenance has been scheduled. The Service will be unavailable';
-            $message .= ' %from% to %to%. All product updates will processed after the technical works are finished.';
+            $message = 'M2E Pro Server maintenance is scheduled. The Service will be unavailable';
+            $message .= ' %from% to %to%. Product updates will be processed after the technical works are finished.';
 
             $this->getMessageManager()->addWarning(
                 $this->__(
@@ -465,7 +476,7 @@ abstract class Main extends Base
     protected function addStaticContentWarningNotification()
     {
         if (!$this->getHelper('Magento')->isProduction()) {
-            return;
+            return false;
         }
 
         $skipMessageForVersion = $this->getHelper('Module')->getRegistry()->getValue(
@@ -473,25 +484,25 @@ abstract class Main extends Base
         );
 
         if (version_compare($skipMessageForVersion, $this->getHelper('Module')->getPublicVersion(), '==')) {
-            return;
+            return false;
         }
 
         $deployDate = $this->getHelper('Magento')->getLastStaticContentDeployDate();
         if (!$deployDate) {
-            return;
+            return false;
         }
 
         $setupResource = $this->activeRecordFactory->getObject('Setup')->getResource();
         $lastUpgradeDate = $setupResource->getLastUpgradeDate();
         if (!$lastUpgradeDate) {
-            return;
+            return false;
         }
 
         $lastUpgradeDate = new \DateTime($lastUpgradeDate, new \DateTimeZone('UTC'));
         $deployDate = new \DateTime($deployDate, new \DateTimeZone('UTC'));
 
         if ($deployDate->getTimestamp() > $lastUpgradeDate->modify('- 30 minutes')->getTimestamp()) {
-            return;
+            return false;
         }
 
         $skipMessageUrl = $this->getUrl(
@@ -516,6 +527,8 @@ abstract class Main extends Base
             ),
             self::GLOBAL_MESSAGES_GROUP
         );
+
+        return true;
     }
 
     //########################################

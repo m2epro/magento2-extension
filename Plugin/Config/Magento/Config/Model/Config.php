@@ -82,6 +82,14 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
             );
         }
 
+        if (isset($groups['module_mode']['fields']['cron_mode_field']['value'])) {
+            $this->helperFactory->getObject('Module')->getConfig()->setGroupValue(
+                '/cron/',
+                'mode',
+                (int)$groups['module_mode']['fields']['cron_mode_field']['value']
+            );
+        }
+
         return $interceptor;
     }
 

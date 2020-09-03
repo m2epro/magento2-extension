@@ -47,7 +47,7 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         }
 
         if ($value === null || $value === '') {
-            $value = $this->__('N/A');
+            $value = $this->getHelper('Module\Translation')->__('N/A');
         }
 
         $showEditSku = ($this->getColumn()->getData('show_edit_sku') !== null)
@@ -76,7 +76,7 @@ HTML;
 Item Price violates Walmart pricing rules. Please adjust the Item Price to comply with the Walmart requirements.<br>
 Once the changes are applied, Walmart Item will become Active automatically.
 HTML;
-            $msg = '<p>' . $this->__($message) . '</p>';
+            $msg = '<p>' . $this->getHelper('Module\Translation')->__($message) . '</p>';
             if (empty($msg)) {
                 return $value;
             }

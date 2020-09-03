@@ -36,7 +36,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\Item\ProxyObject
      */
     public function getOriginalQty()
     {
-        return $this->item->getQty();
+        return $this->item->getQtyPurchased();
     }
 
     //########################################

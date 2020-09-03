@@ -188,11 +188,16 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
 
         $wizards = [];
         foreach ($this->cache as $nick => $wizard) {
-            if ($wizard['view'] != '*' && $wizard['view'] != $view) {
+            if ($wizard['view'] !== '*' && $wizard['view'] != $view) {
                 continue;
             }
 
-            $wizards[] = $this->getWizard($nick);
+            try {
+                $wizards[] = $this->getWizard($nick);
+            // @codingStandardsIgnoreLine
+            } catch (\ReflectionException $e) {
+                //wizards after migration from m1
+            }
         }
 
         return $wizards;

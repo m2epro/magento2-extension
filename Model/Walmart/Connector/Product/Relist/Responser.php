@@ -17,37 +17,37 @@ namespace Ess\M2ePro\Model\Walmart\Connector\Product\Relist;
  */
 class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
 {
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
+    protected $localeCurrency;
+
     //########################################
 
-    protected function getSuccessfulMessage()
-    {
-        return 'Item was successfully Relisted';
+    public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\Connector\Connection\Response $response,
+        \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $params = []
+    ) {
+        $this->localeCurrency = $localeCurrency;
+        parent::__construct($walmartFactory, $activeRecordFactory, $response, $helperFactory, $modelFactory, $params);
     }
 
     //########################################
 
-    public function eventAfterExecuting()
+    protected function getSuccessfulMessage()
     {
-        parent::eventAfterExecuting();
-
-        $additionalData = $this->listingProduct->getAdditionalData();
-        if (empty($additionalData['skipped_action_configurator_data'])) {
-            return;
-        }
-
-        $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
-        $configurator->setUnserializedData($additionalData['skipped_action_configurator_data']);
-
-        $scheduledActionManager = $this->modelFactory->getObject('Listing_Product_ScheduledAction_Manager');
-        $scheduledActionManager->addReviseAction(
-            $this->listingProduct,
-            $configurator,
-            false,
-            $this->params['params']
+        $currency = $this->localeCurrency->getCurrency(
+            $this->listingProduct->getMarketplace()->getChildObject()->getCurrency()
         );
 
-        unset($additionalData['skipped_action_configurator_data']);
-        $this->listingProduct->setSettings('additional_data', $additionalData)->save();
+        return sprintf(
+            'Product was Relisted with QTY %d, Price %s',
+            $this->listingProduct->getChildObject()->getOnlineQty(),
+            $currency->toCurrency($this->listingProduct->getChildObject()->getOnlinePrice())
+        );
     }
 
     //########################################

@@ -8,11 +8,15 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type;
 
+use Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract as ChangeProcessor;
+
 /**
  * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response
  */
 abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 {
+    const INSTRUCTION_INITIATOR = 'action_response';
+
     protected $activeRecordFactory;
 
     /**
@@ -66,7 +70,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @return array
      */
-    protected function getParams()
+    public function getParams()
     {
         return $this->params;
     }
@@ -300,7 +304,10 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             return $data;
         }
 
-        $data['online_details_data'] = $this->getHelper('Data')->jsonEncode($requestMetadata['details_data']);
+        $data['online_details_data'] = $this->getHelper('Data')->hashString(
+            $this->getHelper('Data')->jsonEncode($requestMetadata['details_data']),
+            'md5'
+        );
 
         return $data;
     }
@@ -312,7 +319,10 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             return $data;
         }
 
-        $data['online_images_data'] = $this->getHelper('Data')->jsonEncode($requestMetadata['images_data']);
+        $data['online_images_data'] = $this->getHelper('Data')->hashString(
+            $this->getHelper('Data')->jsonEncode($requestMetadata['images_data']),
+            'md5'
+        );
 
         return $data;
     }
@@ -357,6 +367,51 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->getListingProduct()->setSettings('additional_data', $additionalData);
+    }
+
+    //########################################
+
+    public function throwRepeatActionInstructions()
+    {
+        $instructions = [];
+
+        if ($this->getConfigurator()->isQtyAllowed()) {
+            $instructions[] = [
+                'listing_product_id' => $this->getListingProduct()->getId(),
+                'type'               => ChangeProcessor::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+                'initiator'          => self::INSTRUCTION_INITIATOR,
+                'priority'           => 80
+            ];
+        }
+
+        if ($this->getConfigurator()->isRegularPriceAllowed() || $this->getConfigurator()->isBusinessPriceAllowed()) {
+            $instructions[] = [
+                'listing_product_id' => $this->getListingProduct()->getId(),
+                'type'               => ChangeProcessor::INSTRUCTION_TYPE_PRICE_DATA_CHANGED,
+                'initiator'          => self::INSTRUCTION_INITIATOR,
+                'priority'           => 80
+            ];
+        }
+
+        if ($this->getConfigurator()->isDetailsAllowed()) {
+            $instructions[] = [
+                'listing_product_id' => $this->getListingProduct()->getId(),
+                'type'               => ChangeProcessor::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
+                'initiator'          => self::INSTRUCTION_INITIATOR,
+                'priority'           => 60
+            ];
+        }
+
+        if ($this->getConfigurator()->isImagesAllowed()) {
+            $instructions[] = [
+                'listing_product_id' => $this->getListingProduct()->getId(),
+                'type'               => ChangeProcessor::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
+                'initiator'          => self::INSTRUCTION_INITIATOR,
+                'priority'           => 30
+            ];
+        }
+
+        $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()->add($instructions);
     }
 
     //########################################

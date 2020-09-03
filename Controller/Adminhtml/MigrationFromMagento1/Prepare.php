@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1;
 
-use Ess\M2ePro\Controller\Adminhtml\Wizard\BaseMigrationFromMagento1;
+use Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1\Prepare
@@ -19,10 +19,12 @@ class Prepare extends Base
 
     public function execute()
     {
-        $this->setWizardStatus(BaseMigrationFromMagento1::WIZARD_STATUS_PREPARED);
-
         try {
             $this->migrationRunner->prepare();
+
+            /** @var \Ess\M2ePro\Model\Wizard\MigrationFromMagento1 $wizard */
+            $wizard = $this->helperFactory->getObject('Module_Wizard')->getWizard(MigrationFromMagento1::NICK);
+            $wizard->setCurrentStatus(MigrationFromMagento1::STATUS_PREPARED);
         } catch (\Exception $exception) {
             $this->getMessageManager()->addErrorMessage(
                 $this->__(

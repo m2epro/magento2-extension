@@ -251,8 +251,6 @@ HTML;
 
     protected function _toHtml()
     {
-        $categoriesData = $this->getData('categories_data');
-        if (!empty($categoriesData)) {
             $errorMessage = $this
                 ->__(
                     "To proceed, the category data must be specified.
@@ -280,7 +278,6 @@ HTML;
     });
 JS
             );
-        }
 
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(

@@ -523,10 +523,10 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 return ['item', 'add', 'single'];
 
             case Processing::TYPE_RELIST:
-                return ['item', 'update', 'revise'];
+                return ['item', 'update', 'relist'];
 
             case Processing::TYPE_REVISE:
-                return ['item', 'update', 'relist'];
+                return ['item', 'update', 'revise'];
 
             case Processing::TYPE_STOP:
                 return ['item', 'update', 'end'];

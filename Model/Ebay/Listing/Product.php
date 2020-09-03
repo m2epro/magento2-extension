@@ -664,7 +664,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
         // max int value is 2147483647 = 0x7FFFFFFF
         // @codingStandardsIgnoreLine
-        $randomPart = dechex(mt_rand(0x000000, 0x7FFFFFFF));
+        $randomPart = dechex(call_user_func('mt_rand', 0x000000, 0x7FFFFFFF));
         $uuid .= str_pad($randomPart, 16, '0', STR_PAD_LEFT);
 
         return strtoupper($uuid);
@@ -768,7 +768,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     public function getOnlineImages()
     {
-        return $this->getSettings('online_images');
+        return $this->getData('online_images');
     }
 
     public function getOnlineDuration()
@@ -856,7 +856,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getOnlineShippingData()
     {
-        return $this->getSettings('online_shipping_data');
+        return $this->getData('online_shipping_data');
     }
 
     /**
@@ -865,7 +865,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getOnlinePaymentData()
     {
-        return $this->getSettings('online_payment_data');
+        return $this->getData('online_payment_data');
     }
 
     /**
@@ -874,7 +874,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getOnlineReturnData()
     {
-        return $this->getSettings('online_return_data');
+        return $this->getData('online_return_data');
     }
 
     /**
@@ -883,7 +883,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getOnlineOtherData()
     {
-        return $this->getSettings('online_other_data');
+        return $this->getData('online_other_data');
     }
 
     // ---------------------------------------

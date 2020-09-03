@@ -441,7 +441,7 @@ class Builder extends AbstractModel
                     );
 
                     $tempLogMessage = $this->helperFactory->getObject('Module\Translation')->__(
-                        'Item QTY was successfully changed from %from% to %to% .',
+                        'Item QTY was changed from %from% to %to% .',
                         $currentOnlineQty,
                         ($currentOnlineQty - $orderItem['qty_purchased'])
                     );
@@ -466,7 +466,7 @@ class Builder extends AbstractModel
 
                 $tempLogMessages = [
                     $this->helperFactory->getObject('Module\Translation')->__(
-                        'Item QTY was successfully changed from %from% to %to% .',
+                        'Item QTY was changed from %from% to %to% .',
                         empty($currentOnlineQty) ? '"empty"' : $currentOnlineQty,
                         0
                     )
@@ -480,7 +480,7 @@ class Builder extends AbstractModel
 
                     if (!empty($statusChangedFrom) && !empty($statusChangedTo)) {
                         $tempLogMessages[] = $this->helperFactory->getObject('Module\Translation')->__(
-                            'Item Status was successfully changed from "%from%" to "%to%" .',
+                            'Item Status was changed from "%from%" to "%to%" .',
                             $statusChangedFrom,
                             $statusChangedTo
                         );

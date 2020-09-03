@@ -638,7 +638,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
                      */
                     $maxQtyTotal = 1;
                     if ($orderItem->getId() && empty($orderItem->getChildObject()->getMergedWalmartOrderItemIds())) {
-                        $maxQtyTotal = $orderItem->getChildObject()->getQty();
+                        $maxQtyTotal = $orderItem->getChildObject()->getQtyPurchased();
                     }
 
                     $newQtyTotal = $newItem['qty'] + $existingItem['qty'];

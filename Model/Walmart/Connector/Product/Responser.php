@@ -9,7 +9,6 @@
 namespace Ess\M2ePro\Model\Walmart\Connector\Product;
 
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
-use Ess\M2ePro\Model\Log\AbstractModel;
 
 /**
  * Class \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
@@ -74,6 +73,10 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
 
     public function eventAfterExecuting()
     {
+        if ($this->isTemporaryErrorAppeared($this->getResponse()->getMessages()->getEntities())) {
+            $this->getResponseObject()->throwRepeatActionInstructions();
+        }
+
         parent::eventAfterExecuting();
 
         $this->processParentProcessor();
@@ -164,11 +167,9 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
         $hasError = false;
 
         foreach ($messages as $message) {
-
             /** @var Message $message */
 
             !$hasError && $hasError = $message->isError();
-
             $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
         }
 
@@ -183,7 +184,9 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
         $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
         $message->initFromPreparedData($this->getSuccessfulMessage(), Message::TYPE_SUCCESS);
 
-        $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
+        if ($message->getText() !== null) {
+            $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
+        }
 
         $this->isSuccess = true;
     }
@@ -367,6 +370,29 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
         }
 
         throw new \Ess\M2ePro\Model\Exception('Wrong Action type');
+    }
+
+    //########################################
+
+    /**
+     * @param \Ess\M2ePro\Model\Connector\Connection\Response\Message[] $messages
+     * @return \Ess\M2ePro\Model\Connector\Connection\Response\Message|bool
+     *
+     * TODO ERROR CODEs
+     */
+    protected function isTemporaryErrorAppeared(array $messages)
+    {
+        $errorCodes = [
+            /* TODO ERROR CODEs */
+        ];
+
+        foreach ($messages as $message) {
+            if (in_array($message->getCode(), $errorCodes, true)) {
+                return $message;
+            }
+        }
+
+        return false;
     }
 
     //########################################

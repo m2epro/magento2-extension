@@ -115,7 +115,7 @@ class Config extends AbstractModifier
     /**
      * @param string $field
      * @param string $value
-     * @param string $where
+     * @param string|array $where
      * @return int
      */
     public function update($field, $value, $where)

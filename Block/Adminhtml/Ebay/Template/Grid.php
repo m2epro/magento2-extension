@@ -272,6 +272,16 @@ class Grid extends AbstractGrid
             'getter'    => 'getTemplateId',
             'actions'   => [
                 [
+                    'caption'   => $this->__('Edit'),
+                    'url'       => [
+                        'base' => '*/ebay_template/edit',
+                        'params' => [
+                            'nick'    => '$nick'
+                        ]
+                    ],
+                    'field' => 'id'
+                ],
+                [
                     'caption'   => $this->__('Delete'),
                     'class'     => 'action-default scalable add primary policy-delete-btn',
                     'url'       => [

@@ -204,6 +204,17 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
     // ---------------------------------------
 
+    /**
+     * @return string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getMagentoOrdersNumberMarketplacePrefix()
+    {
+        return strtoupper($this->getParentObject()->getMarketplace()->getChildObject()->getOriginCountry());
+    }
+
+    // ---------------------------------------
+
     public function getTaxDetails()
     {
         return $this->getSettings('tax_details');

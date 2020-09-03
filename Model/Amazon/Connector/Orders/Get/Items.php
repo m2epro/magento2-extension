@@ -191,19 +191,20 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
                 foreach ($orderData['items'] as $item) {
                     $order['items'][] = [
                         'amazon_order_item_id' => trim($item['id']),
-                        'sku' => trim($item['identifiers']['sku']),
-                        'general_id' => trim($item['identifiers']['general_id']),
-                        'is_isbn_general_id' => (int)$item['identifiers']['is_isbn'],
-                        'title' => trim($item['title']),
-                        'price' => (float)$item['prices']['product']['value'],
-                        'gift_price' => (float)$item['prices']['gift']['value'],
-                        'gift_type' => trim($item['gift_type']),
-                        'gift_message' => trim($item['gift_message']),
-                        'currency' => trim($item['prices']['product']['currency']),
-                        'tax_details' => $item['taxes'],
-                        'discount_details' => $item['discounts'],
-                        'qty_purchased' => (int)$item['qty']['ordered'],
-                        'qty_shipped' => (int)$item['qty']['shipped']
+                        'sku'                  => trim($item['identifiers']['sku']),
+                        'general_id'           => trim($item['identifiers']['general_id']),
+                        'is_isbn_general_id'   => (int)$item['identifiers']['is_isbn'],
+                        'title'                => trim($item['title']),
+                        'price'                => (float)$item['prices']['product']['value'],
+                        'shipping_price'       => (float)$item['prices']['shipping']['value'],
+                        'gift_price'           => (float)$item['prices']['gift']['value'],
+                        'gift_type'            => trim($item['gift_type']),
+                        'gift_message'         => trim($item['gift_message']),
+                        'currency'             => trim($item['prices']['product']['currency']),
+                        'tax_details'          => $item['taxes'],
+                        'discount_details'     => $item['discounts'],
+                        'qty_purchased'        => (int)$item['qty']['ordered'],
+                        'qty_shipped'          => (int)$item['qty']['shipped']
                     ];
                 }
 

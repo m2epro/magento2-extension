@@ -112,9 +112,12 @@ class Config extends AbstractConfig
                 'GeneralConfig',
                 'EbayConfig',
                 'AmazonConfig',
+                'RefundShippingCost'
             ],
             'y20_m07' => [
-                'EbayTemplateStoreCategory'
+                'EbayTemplateStoreCategory',
+                'HashLongtextFields',
+                'WalmartOrderItemQty'
             ]
         ];
     }
@@ -123,7 +126,11 @@ class Config extends AbstractConfig
 
     public function getMultiRunFeaturesList()
     {
-        return [];
+        return [
+            'y20_m07' => [
+                'WalmartOrderItemQty'
+            ],
+        ];
     }
 
     //########################################

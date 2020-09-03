@@ -638,7 +638,7 @@ class Builder extends AbstractModel
                     ]
                 );
 
-                $log->addMessage($order->getId(), $description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING);
+                $log->addMessage($order, $description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING);
 
                 try {
                     $order->cancelMagentoOrder();
@@ -660,7 +660,7 @@ class Builder extends AbstractModel
                 ]
             );
 
-            $log->addMessage($order->getId(), $description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING);
+            $log->addMessage($order, $description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING);
 
             $order->delete();
         }

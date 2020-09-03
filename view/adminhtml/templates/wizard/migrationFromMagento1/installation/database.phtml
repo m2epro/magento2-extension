@@ -9,24 +9,52 @@
 
 /** @var \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\Database\Content $block */
 
-?>
+if ($block->getCurrentWizardStatus() === \Ess\M2ePro\Model\Wizard\MigrationFromMagento1::STATUS_UNEXPECTEDLY_COPIED) : ?>
 
 <div class="wizard_block">
 
     <p>
-        <?php echo $block->__('At this step, you need to migrate M2E Pro database from Magento v1.x to Magento v2.x.'); ?>
+        <?php echo $block->getChildHtml('unexpectedly_copied_from_m1_message'); ?>
     </p>
-
+    <br>
     <p>
-        <?php echo $block->__('Please go to Magento v1.x to create a dump of all the tables with \'m2epro_\' prefix including both the structure and data. It can be done using the mysqldump utility or phpMyAdmin options.'); ?>
-    </p>
-
-    <p>
-        <?php echo $block->__('After you create the dump, please import it into MySQL database of Magento v2.x, then click <strong>Continue</strong>. M2E Pro will adapt the imported data to Magento v2.x environment. Once the process is completed, you will be redirected to the 3rd Migration Wizard step.'); ?>
-    </p>
-
-    <p>
-        <?php echo $block->__('<b>Note</b>: The step is rather time-consuming. If you are logged out from Magento, please log in and go to <i>Stores > Configuration > Multi Channels > Migration from Magento v1.x</i> to get back to the Migration Wizard.'); ?>
+        <?php echo $block->getChildHtml('magento1_url_form'); ?>
     </p>
 
 </div>
+
+<?php else: ?>
+
+<div class="wizard_block">
+
+    <p>
+        <?php echo $block->__('To migrate M2E Pro database from Magento v1.x to Magento v2.x, complete the actions:'); ?>
+    </p>
+    <li>
+        <?php echo $block->__("
+            In Magento v1.x, create a dump of all the tables with '<strong>m2epro_</strong>' prefix 
+            <strong>including both the structure and data</strong>. You can use the mysqldump utility or phpMyAdmin options.
+        "); ?>
+    </li>
+
+    <li>
+        <?php echo $block->__('Import the created dump into the MySQL database of Magento v2.x.'); ?>
+    </li>
+
+    <li>
+        <?php echo $block->__('
+            In Magento v2.x, click <strong>Continue</strong> at Wizard Step 2. The imported data will be adapted 
+            to the Magento v2.x environment. Once the process is completed, you will be redirected to the next step.
+        '); ?>
+    </li>
+
+    <p style="margin-top: 5px;">
+        <?php echo $block->__('
+            <strong>Note</strong>: The step is rather time-consuming. If you are logged out from Magento, log in again 
+            and go to <i>Stores > Settings > Configuration > M2E Pro > Advanced Settings > Migration from Magento v1.x</i>.'
+        ); ?>
+    </p>
+
+</div>
+
+<?php endif; ?>

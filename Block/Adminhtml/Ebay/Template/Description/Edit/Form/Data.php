@@ -881,11 +881,14 @@ HTML
                 'label' => $this->__('Description'),
                 'name' => 'description[description_mode]',
                 'values' => [
+                    '-1' => '',
                     Description::DESCRIPTION_MODE_PRODUCT => $this->__('Product Description'),
                     Description::DESCRIPTION_MODE_SHORT => $this->__('Product Short Description'),
                     Description::DESCRIPTION_MODE_CUSTOM => $this->__('Custom Value'),
                 ],
-                'value' => $formData['description_mode'],
+                'value' => $this->isEdit() ? $formData['description_mode'] : '-1',
+                'class' => 'M2ePro-validate-description-mode',
+                'required' => true,
                 'after_element_html' => $this->getTooltipHtml(
                     $this->__(<<<HTML
                         <p>Choose whether to use Magento <strong>Product Description</strong> or <strong>Product Short
@@ -1498,6 +1501,17 @@ JS
         return false;
     }
 
+    public function isEdit()
+    {
+        $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_description');
+
+        if ($template === null || $template->getId() === null) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function getTitle()
     {
         if ($this->isCustom()) {
@@ -1506,7 +1520,7 @@ JS
 
         $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_description');
 
-        if ($template === null) {
+        if (!$this->isEdit()) {
             return '';
         }
 
@@ -1515,11 +1529,11 @@ JS
 
     public function getFormData()
     {
-        $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_description');
-
-        if ($template === null || $template->getId() === null) {
+        if (!$this->isEdit()) {
             return [];
         }
+
+        $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_description');
 
         $data = array_merge($template->getData(), $template->getChildObject()->getData());
 

@@ -8,13 +8,18 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order\SendInvoice;
 
+use Ess\M2ePro\Model\Amazon\Order as Order;
+
 /**
  * Class \Ess\M2ePro\Model\Cron\Task\Amazon\Order\SendInvoice\Responser
  */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\ItemsResponser
 {
-    /** @var \Ess\M2ePro\Model\Order $order */
-    protected $order = [];
+    /** @var \Ess\M2ePro\Model\Order */
+    protected $order;
+
+    /** @var \Ess\M2ePro\Model\Order\Change */
+    protected $orderChange;
 
     //########################################
 
@@ -29,6 +34,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
         parent::__construct($amazonFactory, $activeRecordFactory, $response, $helperFactory, $modelFactory, $params);
 
         $this->order = $this->amazonFactory->getObjectLoaded('Order', $params['order']['order_id']);
+        $this->orderChange = $this->activeRecordFactory->getObject('Order\Change')->load($params['order']['change_id']);
     }
 
     //########################################
@@ -37,9 +43,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
     {
         parent::failDetected($messageText);
 
-        /** @var \Ess\M2ePro\Model\Order\Change $orderChange */
-        $orderChange = $this->activeRecordFactory->getObject('Order\Change')->load($this->params['order']['change_id']);
-        $this->order->getLog()->setInitiator($orderChange->getCreatorType());
+        $this->order->getLog()->setInitiator($this->orderChange->getCreatorType());
         $this->order->addErrorLog('Amazon Order invoice was not send. Reason: %msg%', ['msg' => $messageText]);
     }
 
@@ -64,13 +68,11 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
      * @return void|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function processResponseMessages(array $messages = array())
+    protected function processResponseMessages(array $messages = [])
     {
         parent::processResponseMessages();
 
-        /** @var \Ess\M2ePro\Model\Order\Change $orderChange */
-        $orderChange = $this->activeRecordFactory->getObject('Order\Change')->load($this->params['order']['change_id']);
-        $this->order->getLog()->setInitiator($orderChange->getCreatorType());
+        $this->order->getLog()->setInitiator($this->orderChange->getCreatorType());
 
         foreach ($this->getResponse()->getMessages()->getEntities() as $message) {
             if ($message->isError()) {
@@ -85,50 +87,41 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
 
     protected function processResponseData()
     {
-        $this->activeRecordFactory->getObject('Order\Change')->getResource()
-            ->deleteByIds([$this->params['order']['change_id']]);
-
+        $this->order->getLog()->setInitiator($this->orderChange->getCreatorType());
         $responseData = $this->getPreparedResponseData();
-
-        // Check separate messages
-        //----------------------
-        $isFailed = false;
 
         /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set $messagesSet */
         $messagesSet = $this->modelFactory->getObject('Connector_Connection_Response_Message_Set');
         $messagesSet->init($responseData['messages']);
 
         foreach ($messagesSet->getEntities() as $message) {
-            $this->order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
             if ($message->isError()) {
-                $isFailed = true;
                 $this->logErrorMessage($message);
             } else {
                 $this->order->addWarningLog($message->getText());
             }
         }
 
-        if ($isFailed) {
+        if ($messagesSet->hasErrorEntities()) {
             return;
         }
 
-        $this->order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
+        $this->orderChange->delete();
 
-        if ($this->params['order']['document_type'] == \Ess\M2ePro\Model\Amazon\Order::DOCUMENT_TYPE_INVOICE) {
+        if ($this->params['order']['document_type'] == Order::DOCUMENT_TYPE_INVOICE) {
             $this->order->getChildObject()->setData('is_invoice_sent', 1)->save();
             $this->order->addSuccessLog(
                 'Invoice #%document_number% was sent.',
                 [
-                    'document_number' => $this->params['order']['document_number'],
+                    'document_number' => $this->params['order']['document_number']
                 ]
             );
-        } elseif ($this->params['order']['document_type'] ==
-            \Ess\M2ePro\Model\Amazon\Order::DOCUMENT_TYPE_CREDIT_NOTE) {
+        } elseif ($this->params['order']['document_type'] == Order::DOCUMENT_TYPE_CREDIT_NOTE) {
             $this->order->getChildObject()->setData('is_credit_memo_sent', 1)->save();
             $this->order->addSuccessLog(
                 'Credit Memo #%document_number% was sent.',
                 [
-                    'document_number' => $this->params['order']['document_number'],
+                    'document_number' => $this->params['order']['document_number']
                 ]
             );
         }
@@ -139,7 +132,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
      */
     protected function logErrorMessage(\Ess\M2ePro\Model\Response\Message $message)
     {
-        if ($this->params['order']['document_type'] == \Ess\M2ePro\Model\Amazon\Order::DOCUMENT_TYPE_INVOICE) {
+        if ($this->params['order']['document_type'] == Order::DOCUMENT_TYPE_INVOICE) {
             $this->order->addErrorLog(
                 'Invoice #%document_number% was not sent. Reason: %msg%',
                 [
@@ -147,8 +140,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
                     'msg' => $message->getText()
                 ]
             );
-        } elseif ($this->params['order']['document_type'] ==
-            \Ess\M2ePro\Model\Amazon\Order::DOCUMENT_TYPE_CREDIT_NOTE) {
+        } elseif ($this->params['order']['document_type'] == Order::DOCUMENT_TYPE_CREDIT_NOTE) {
             $this->order->addErrorLog(
                 'Credit Memo #%document_number% was not sent. Reason: %msg%',
                 [

@@ -25,19 +25,13 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 
         $this->css->addFile('order/log/grid.css');
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId(ucfirst($this->getComponentMode()) . 'OrderLogGrid');
-        // ---------------------------------------
 
-        // Set default values
-        // ---------------------------------------
         $this->setDefaultSort('create_date');
         $this->setDefaultDir('DESC');
         $this->setSaveParametersInSession(true);
         $this->setUseAjax(true);
         $this->setCustomPageSize(true);
-        // ---------------------------------------
     }
 
     protected function _prepareCollection()
@@ -54,7 +48,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         $marketplaceId = (int)$this->getRequest()->getParam($this->getComponentMode() . 'Marketplace', false);
 
         if ($accountId) {
-            $collection->getSelect()->where('main_table.account_id = ?', $accountId);
+            $collection->addFieldToFilter('main_table.account_id', $accountId);
         } else {
             $collection->getSelect()->joinLeft(
                 [
@@ -64,11 +58,11 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
                 'main_table.account_id = account_table.id',
                 ['real_account_id' => 'account_table.id']
             );
-            $collection->getSelect()->where('account_table.id IS NOT NULL');
+            $collection->addFieldToFilter('account_table.id', ['notnull' => true]);
         }
 
         if ($marketplaceId) {
-            $collection->getSelect()->where('main_table.marketplace_id = ?', $marketplaceId);
+            $collection->addFieldToFilter('main_table.marketplace_id', $marketplaceId);
         } else {
             $collection->getSelect()->joinLeft(
                 [
@@ -78,8 +72,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
                 'main_table.marketplace_id = marketplace_table.id',
                 ['marketplace_status' => 'marketplace_table.status']
             );
-            $collection->getSelect()
-                ->where('marketplace_table.status = ?', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
+            $collection->addFieldToFilter('marketplace_table.status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
         }
 
         $collection->getSelect()->joinLeft(
@@ -94,7 +87,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             $collection->addFieldToFilter('main_table.order_id', (int)$orderId);
         }
 
-        $collection->getSelect()->where('main_table.component_mode = ?', $this->getComponentMode());
+        $collection->addFieldToFilter('main_table.component_mode', $this->getComponentMode());
 
         $this->setCollection($collection);
 
@@ -104,31 +97,27 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('create_date', [
-            'header'    => $this->__('Creation Date'),
-            'align'     => 'left',
-            'type'      => 'datetime',
-            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
-            'filter_time' => true,
-            'index'     => 'create_date',
+            'header'       => $this->__('Creation Date'),
+            'align'        => 'left',
+            'type'         => 'datetime',
+            'filter'       => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+            'filter_time'  => true,
+            'index'        => 'create_date',
             'filter_index' => 'main_table.create_date'
         ]);
 
-        $orderId = $this->getRequest()->getParam('id', false);
+        $componentNick = $this->getHelper('Component')->getComponentTitle(
+            $this->getComponentMode()
+        );
 
-        if (!$orderId) {
-            $componentNick = $this->getHelper('Component')->getComponentTitle(
-                $this->getComponentMode()
-            );
-
-            $this->addColumn('channel_order_id', [
-                'header'    => $this->__('%1% Order #', $componentNick),
-                'align'     => 'left',
-                'sortable'  => false,
-                'index'     => 'channel_order_id',
-                'frame_callback' => [$this, 'callbackColumnChannelOrderId'],
-                'filter_condition_callback' => [$this, 'callbackFilterChannelOrderId']
-            ]);
-        }
+        $this->addColumn('channel_order_id', [
+            'header'    => $this->__('%1% Order #', $componentNick),
+            'align'     => 'left',
+            'sortable'  => false,
+            'index'     => 'channel_order_id',
+            'frame_callback' => [$this, 'callbackColumnChannelOrderId'],
+            'filter_condition_callback' => [$this, 'callbackFilterChannelOrderId']
+        ]);
 
         $this->addColumn('magento_order_number', [
             'header'    => $this->__('Magento Order #'),
@@ -142,7 +131,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             'header'    => $this->__('Message'),
             'align'     => 'left',
             'index'     => 'description',
-            'frame_callback' => [$this, 'callbackDescription']
+            'frame_callback' => [$this, 'callbackColumnDescription']
         ]);
 
         $this->addColumn('initiator', [
@@ -262,13 +251,6 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
     public function getRowUrl($row)
     {
         return false;
-    }
-
-    public function getGridUrl()
-    {
-        return $this->getUrl('*/*/grid', [
-            '_current' => true
-        ]);
     }
 
     //########################################

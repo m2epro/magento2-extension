@@ -52,78 +52,11 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
 
     //########################################
 
-    /**
-     * @return string
-     */
-    public function getSuccessfulMessage()
-    {
-        if ($this->getConfigurator()->isExcludingMode()) {
-            return 'Item was successfully Revised';
-        }
-
-        $sequenceStrings = [];
-        $isPlural = false;
-
-        if ($this->getConfigurator()->isQtyAllowed()) {
-            $params = $this->getParams();
-
-            if (!empty($params['switch_to']) &&
-                $params['switch_to'] ===
-                DataBuilderQty::FULFILLMENT_MODE_AFN) {
-                return 'Item was successfully switched to AFN';
-            }
-
-            if (!empty($params['switch_to']) &&
-                $params['switch_to'] ===
-                DataBuilderQty::FULFILLMENT_MODE_MFN) {
-                return 'Item was successfully switched to MFN';
-            }
-
-            $sequenceStrings[] = 'QTY';
-        }
-
-        if ($this->getConfigurator()->isRegularPriceAllowed()) {
-            $sequenceStrings[] = 'Price';
-        }
-
-        if ($this->getConfigurator()->isBusinessPriceAllowed()) {
-            $sequenceStrings[] = 'Business Price';
-        }
-
-        if ($this->getConfigurator()->isDetailsAllowed()) {
-            $sequenceStrings[] = 'Details';
-            $isPlural = true;
-        }
-
-        if ($this->getConfigurator()->isImagesAllowed()) {
-            $sequenceStrings[] = 'Images';
-            $isPlural = true;
-        }
-
-        if (empty($sequenceStrings)) {
-            return 'Item was successfully Revised';
-        }
-
-        if (count($sequenceStrings) == 1) {
-            $verb = 'was';
-            if ($isPlural) {
-                $verb = 'were';
-            }
-
-            return ucfirst($sequenceStrings[0]).' '.$verb.' successfully Revised';
-        }
-
-        return ucfirst(implode(', ', $sequenceStrings)).' were successfully Revised';
-    }
-
-    //########################################
-
     protected function appendQtyValues($data)
     {
         $params = $this->getParams();
 
-        if (!empty($params['switch_to']) &&
-            $params['switch_to'] === DataBuilderQty::FULFILLMENT_MODE_AFN) {
+        if (!empty($params['switch_to']) && $params['switch_to'] === DataBuilderQty::FULFILLMENT_MODE_AFN) {
             $data['is_afn_channel'] = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_AFN_CHANNEL_YES;
             $data['online_qty'] = null;
             $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
@@ -131,8 +64,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
             return $data;
         }
 
-        if (!empty($params['switch_to']) &&
-            $params['switch_to'] === DataBuilderQty::FULFILLMENT_MODE_MFN) {
+        if (!empty($params['switch_to']) && $params['switch_to'] === DataBuilderQty::FULFILLMENT_MODE_MFN) {
             $data['is_afn_channel'] = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_AFN_CHANNEL_NO;
         }
 

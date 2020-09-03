@@ -63,10 +63,8 @@ class Acknowledge extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\Abstrac
         $this->getOrder()->getChildObject()->save();
         $this->getOrder()->save();
 
-        $this->getOrder()->getLog()->addMessage(
-            $this->getOrder()->getId(),
-            $this->helperFactory->getObject('Module\Translation')->__('Order was successfully acknowledged.'),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS
+        $this->getOrder()->addSuccessLog(
+            $this->helperFactory->getObject('Module\Translation')->__('Order was acknowledged.')
         );
     }
 
@@ -89,11 +87,7 @@ class Acknowledge extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\Abstrac
         }
 
         foreach ($messages as $message) {
-            $this->getOrder()->getLog()->addMessage(
-                $this->getOrder()->getId(),
-                $message->getText(),
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
-            );
+            $this->getOrder()->getLog()->addServerResponseMessage($this->getOrder(), $message);
         }
     }
 

@@ -23,17 +23,20 @@ class Amazon extends IssueType
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     private $amazonFactory;
 
+    private $urlBuilder;
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\HealthStatus\Task\Result\Factory $resultFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Magento\Framework\UrlInterface $urlBuilder
     ) {
         parent::__construct($helperFactory, $modelFactory);
         $this->resultFactory = $resultFactory;
         $this->amazonFactory = $amazonFactory;
+        $this->urlBuilder    = $urlBuilder;
     }
 
     //########################################
@@ -48,11 +51,12 @@ class Amazon extends IssueType
             $result->setTaskData($failedOrders);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
                 <<<HTML
-During the last 24 hours, M2E Pro could not create Magento orders for <strong>%failed_orders_count%</strong>
-imported Channel orders due to unforeseen issues on Magento side. Please check the Order Logs for more details.
+During the last 24 hours, no Magento orders have been created for <strong>%failed_orders_count%</strong> 
+imported Channel orders. Please check the <a target="_blank" href="%url%"> Order Log</a> for more details.
 HTML
                 ,
-                $failedOrders
+                $failedOrders,
+                $this->urlBuilder->getUrl('m2epro/amazon_log_order/index')
             ]));
         }
 

@@ -82,7 +82,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'product_id=entity_id',
             [
                 'id'              => 'id',
-                'status'          => 'status',
+                'amazon_status'          => 'status',
                 'component_mode'  => 'component_mode',
                 'additional_data' => 'additional_data'
             ],
@@ -104,7 +104,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'search_settings_status'         => 'search_settings_status',
                 'search_settings_data'           => 'search_settings_data',
                 'variation_child_statuses'       => 'variation_child_statuses',
-                'sku'                            => 'sku',
+                'amazon_sku'                     => 'sku',
                 'online_qty'                     => 'online_qty',
                 'online_regular_price'           => 'online_regular_price',
                  'online_regular_sale_price'     => 'IF(
@@ -208,9 +208,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'align'                  => 'left',
             'width'                  => '150px',
             'type'                   => 'text',
-            'index'                  => 'sku',
+            'index'                  => 'amazon_sku',
             'show_defected_messages' => false,
-            'filter_index'           => 'sku',
+            'filter_index'           => 'amazon_sku',
             'renderer'               => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Sku'
         ]);
 
@@ -513,7 +513,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     private function getGeneralIdColumnValueEmptyGeneralId($row)
     {
         // ---------------------------------------
-        if ((int)$row->getData('status') != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
+        if ((int)$row->getData('amazon_status') != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
             return '<i style="color:gray;">'.$this->__('receiving...').'</i>';
         }
 
@@ -549,7 +549,7 @@ HTML;
                 '</span>';
         }
 
-        if ((int)$row->getData('status') != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
+        if ((int)$row->getData('amazon_status') != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
             return <<<HTML
 <a href="{$url}" target="_blank">{$generalId}</a>{$generalIdOwnerHtml}
 HTML;

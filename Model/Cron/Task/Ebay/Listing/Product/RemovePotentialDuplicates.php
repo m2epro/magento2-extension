@@ -371,7 +371,7 @@ class RemovePotentialDuplicates extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
 
         if (!empty($statusChangedFrom) && !empty($statusChangedTo)) {
             $message = $this->getHelper('Module\Translation')->__(
-                'Item Status was successfully changed from "%from%" to "%to%" .',
+                'Item Status was changed from "%from%" to "%to%" .',
                 $statusChangedFrom,
                 $statusChangedTo
             );

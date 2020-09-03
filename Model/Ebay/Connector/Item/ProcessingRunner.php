@@ -112,10 +112,10 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
                 return \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Processing::TYPE_LIST;
 
             case \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE:
-                return \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Processing::TYPE_RELIST;
+                return \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Processing::TYPE_REVISE;
 
             case \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST:
-                return \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Processing::TYPE_REVISE;
+                return \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Processing::TYPE_RELIST;
 
             case \Ess\M2ePro\Model\Listing\Product::ACTION_STOP:
                 return \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Processing::TYPE_STOP;

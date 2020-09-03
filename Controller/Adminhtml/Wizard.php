@@ -14,7 +14,7 @@ namespace Ess\M2ePro\Controller\Adminhtml;
 abstract class Wizard extends Main
 {
     /** @var \Ess\M2ePro\Helper\Module\Wizard|null  */
-    protected $wizardHelper = null;
+    protected $wizardHelper;
 
     protected $nameBuilder;
 
@@ -61,13 +61,14 @@ abstract class Wizard extends Main
 
         $this->getHelper('Magento')->clearMenuCache();
 
-        $this->addContent(
-            $this->createBlock($this->nameBuilder->buildClassName([
-                'Wizard', 'Congratulation'
-            ]))
-        );
+        $this->addContent($this->createCongratulationBlock());
 
         return $this->getResult();
+    }
+
+    protected function createCongratulationBlock()
+    {
+        return $this->createBlock($this->nameBuilder->buildClassName(['Wizard', 'Congratulation']));
     }
 
     protected function indexAction()

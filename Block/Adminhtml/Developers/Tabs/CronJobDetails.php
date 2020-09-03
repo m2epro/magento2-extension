@@ -32,42 +32,13 @@ class CronJobDetails extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFo
                 'no_hide' => true,
                 'content' => $this->__(
                     <<<HTML
-                     <p>M2E Pro is an automatic tool for inventory data management on eBay, Amazon, etc.
-                     The concept of the Module implies initial configurations which then become the basis
-                     of an automatic operation. Continuous data synchronization is required to ensure the automatic
-                     execution of tasks. Frequency of data synchronization is determined by the Cron Job.
-                     M2E Pro Synchronization can be run using 2 types of Cron Jobs:</p>
-                     <ul>
-                     <li><p><strong>M2E Pro Cron Service</strong></p>
-                        <p>It is the Cron Job which is used in M2E Pro by default.
-                        This Service was created by M2E Pro Developers specially for Module Clients.
-                        It provides an automatic initialization of M2E Pro Extension via HTTP GET request.</p>
-                        <p>This solution has a lot of advantages: users do not need to configure
-                        the Magento Cron Job, M2E Pro Synchronization is performed in the same environment
-                        where the Magento admin panel or front-end are working, it prevents the risk of the
-                        double synchronization problem (which could be a real issue in the earlier Magento versions)
-                        along with other major advantages. Which explains why M2E Pro Cron Service is of a higher
-                        priority as compared to other available options.</p>
-
-                        <p><strong>Considering the fact that M2E Pro Cron Service works over HTTP,
-                        it is necessary to ensure that the IP of M2E Pro Cron Service is not blocked
-                        by the Firewall or whitelisted on your server. </strong></p>
-                        <p>The list of M2E Pro Cron Service IPs is 198.27.83.180, 94.23.53.45</p>
-                     </li>
-                     <li><p><strong>Magento Cron</strong></p>
-                     <p>Magento Cron can be automatically enabled only in case when automatic synchronization
-                     cannot be executed via M2E Pro Cron Service (e.g. if M2E Pro Cron Service IP is
-                     blocked by the Firewall of the web-server).</p>
-                     <p>This type of Cron Jobs is based on the Magento Cron which can cause various problems,
-                     e.g. double synchronization (which is inherent into the earlier Magento versions).</p>
-                     <p><strong>To provide proper work of Magento Cron Job,
-                     primary correct settings are required.</strong></p>
-                     </li>
-                     </ul>
-                     <p>In the list below you can find which Cron Job type is used in your system,
-                     the date of the last synchronization run and notices about the Magento Cron settings
-                     which might be helpful if you need to configure Magento Cron.</p>
+On this page, you can review which Cron Job type 
+(<a target="_blank" href="%url1%">M2E Pro Cron Service</a> or <a target="_blank" href="%url2%">Magento Cron</a>)
+ is used in your system to run automatic synchronization and its last run date.
 HTML
+                    ,
+                    $this->getHelper('Module_Support')->getKnowledgebaseArticleUrl('1499822'),
+                    $this->getHelper('Module_Support')->getKnowledgebaseArticleUrl('1577329')
                 )
             ]
         );
@@ -114,7 +85,7 @@ HTML
                 'label' => $this->__('Last Run'),
                 'text' => "<span>{$cronLastRunTime}</span>" .
                            $this->cronIsNotWorking  ?: ' (' .$this->__('not working'). ')',
-                'style' => !$this->cronIsNotWorking ?: 'color: red'
+                'style' => !$this->cronIsNotWorking ? '' : 'color: red'
             ]
         );
 

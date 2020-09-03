@@ -87,8 +87,10 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
             'Orders_IntervalToTheLatest_Ebay',
             'Orders_IntervalToTheLatest_Amazon',
+            'Orders_IntervalToTheLatest_Walmart',
             'Orders_MagentoCreationFailed_Ebay',
             'Orders_MagentoCreationFailed_Amazon',
+            'Orders_MagentoCreationFailed_Walmart',
         ];
     }
 

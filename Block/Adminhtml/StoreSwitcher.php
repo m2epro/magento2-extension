@@ -61,6 +61,11 @@ class StoreSwitcher extends Magento\AbstractBlock
         return $this->getData('display_default_store_mode') == self::DISPLAY_DEFAULT_STORE_MODE_DOWN;
     }
 
+    public function isSelectedDefaultStore()
+    {
+        return $this->getData('selected') === \Magento\Store\Model\Store::DEFAULT_STORE_ID;
+    }
+
     //########################################
 
     public function isRequiredOption()

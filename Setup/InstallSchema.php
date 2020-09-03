@@ -3905,13 +3905,13 @@ class InstallSchema implements InstallSchemaInterface
             ->addColumn(
                 'online_description',
                 Table::TYPE_TEXT,
-                self::LONG_COLUMN_SIZE,
+                40,
                 ['default' => null]
             )
             ->addColumn(
                 'online_images',
                 Table::TYPE_TEXT,
-                self::LONG_COLUMN_SIZE,
+                40,
                 ['default' => null]
             )
             ->addColumn(
@@ -3977,25 +3977,25 @@ class InstallSchema implements InstallSchemaInterface
             ->addColumn(
                 'online_shipping_data',
                 Table::TYPE_TEXT,
-                self::LONG_COLUMN_SIZE,
+                40,
                 ['default' => null]
             )
             ->addColumn(
                 'online_payment_data',
                 Table::TYPE_TEXT,
-                self::LONG_COLUMN_SIZE,
+                40,
                 ['default' => null]
             )
             ->addColumn(
                 'online_return_data',
                 Table::TYPE_TEXT,
-                self::LONG_COLUMN_SIZE,
+                40,
                 ['default' => null]
             )
             ->addColumn(
                 'online_other_data',
                 Table::TYPE_TEXT,
-                self::LONG_COLUMN_SIZE,
+                40,
                 ['default' => null]
             )
             ->addColumn(
@@ -7650,13 +7650,13 @@ class InstallSchema implements InstallSchemaInterface
             ->addColumn(
                 'online_details_data',
                 Table::TYPE_TEXT,
-                self::LONG_COLUMN_SIZE,
+                40,
                 ['default' => null]
             )
             ->addColumn(
                 'online_images_data',
                 Table::TYPE_TEXT,
-                self::LONG_COLUMN_SIZE,
+                40,
                 ['default' => null]
             )
             ->addColumn(
@@ -8183,6 +8183,12 @@ class InstallSchema implements InstallSchemaInterface
                 Table::TYPE_DECIMAL,
                 [12, 4],
                 ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'shipping_price',
+                Table::TYPE_DECIMAL,
+                [12, 4],
+                ['unsigned' => true, 'nullable' => false, 'default' => '0.0000']
             )
             ->addColumn(
                 'gift_price',
@@ -10311,7 +10317,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addColumn(
                 'online_promotions',
                 Table::TYPE_TEXT,
-                null,
+                40,
                 ['nullable' => true]
             )
             ->addColumn(
@@ -10329,7 +10335,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addColumn(
                 'online_details_data',
                 Table::TYPE_TEXT,
-                self::LONG_COLUMN_SIZE,
+                40,
                 ['nullable' => true]
             )
             ->addColumn(
@@ -10731,7 +10737,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'qty',
+                'qty_purchased',
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned'  => true, 'nullable'  => false, 'default'   => 0]

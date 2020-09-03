@@ -23,7 +23,13 @@ class General extends Magento\AbstractBlock
             return parent::_prepareLayout();
         }
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('General'));
+        $actions = $this->getHelper('Data')->getControllerActions(
+            'General',
+            [],
+            !$this->helperFactory->getObject('Module')->areImportantTablesExist()
+        );
+
+        $this->jsUrl->addUrls($actions);
 
         $this->css->addFile('plugin/AreaWrapper.css');
         $this->css->addFile('plugin/ProgressBar.css');
@@ -50,7 +56,12 @@ class General extends Magento\AbstractBlock
             'general/getCreateAttributeHtmlPopup' => $this->getUrl('*/general/getCreateAttributeHtmlPopup')
         ]);
 
-        $this->block_notices_show = $this->getHelper('Module_Configuration')->getViewShowBlockNoticesMode();
+        /**
+         * m2epro_config table may be missing if migration is going on
+         */
+        $this->block_notices_show = $this->helperFactory->getObject('Module')->areImportantTablesExist()
+            ? $this->getHelper('Module_Configuration')->getViewShowBlockNoticesMode()
+            : 0;
 
         $synchWarningMessage = 'Marketplace synchronization was completed with warnings. '
             . '<a target="_blank" href="%url%">View Log</a> for the details.';

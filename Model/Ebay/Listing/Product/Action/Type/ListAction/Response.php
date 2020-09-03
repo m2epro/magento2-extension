@@ -43,6 +43,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $data = $this->appendIsVariationValue($data);
         $data = $this->appendIsAuctionType($data);
 
+        $data = $this->appendDescriptionValues($data);
         $data = $this->appendImagesValues($data);
         $data = $this->appendCategoriesValues($data);
         $data = $this->appendPaymentValues($data);

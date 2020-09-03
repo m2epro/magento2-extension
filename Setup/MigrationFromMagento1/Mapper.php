@@ -126,6 +126,20 @@ class Mapper
         );
 
         $this->getConnection()->dropTable($this->getMapTableName('magento_orders'));
+
+        /**
+         * Unset links to unexisting magento orders
+         */
+        $sql = <<<SQL
+UPDATE `{$this->resourceConnection->getTableName('m2epro_order')}` AS `mo`
+LEFT JOIN `{$this->resourceConnection->getTableName('sales_order')}` AS `so` 
+ON `mo`.`magento_order_id` = `so`.`entity_id`
+SET `mo`.`magento_order_id` = 0
+WHERE `so`.`entity_id` IS NULL
+
+SQL;
+
+        $this->resourceConnection->getConnection()->query($sql);
     }
 
     // ---------------------------------------
@@ -245,7 +259,7 @@ class Mapper
      * @param $name
      * @return string
      */
-    private function getMapTableName($name)
+    public function getMapTableName($name)
     {
         return $this->resourceConnection->getTableName('m2epro__' . self::MAP_PREFIX . '_' . $name);
     }

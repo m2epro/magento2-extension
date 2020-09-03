@@ -31,7 +31,7 @@ define([
 
             if (typeof buttons === 'undefined') {
                 buttons = [{
-                    class: 'action-default action-dismiss',
+                    class: 'action-secondary action-dismiss',
                     text: M2ePro.translator.translate('Cancel'),
                     click: function (event) {
                         this.closeModal(event);
@@ -59,7 +59,7 @@ define([
 
             this.popUp = jQuery(modalDialogMessage).modal({
                 title: popup_title,
-                type: 'slide',
+                type: 'popup',
                 buttons: buttons
             });
 

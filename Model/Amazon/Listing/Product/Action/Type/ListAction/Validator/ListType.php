@@ -75,7 +75,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
                 if ($linkingObject->link()) {
                     $this->addMessage(
                         $this->getHelper('Module\Log')->encodeDescription(
-                            'Magento Parent Product was successfully linked
+                            'Magento Parent Product was linked
                              to Amazon Parent Product by %general_id_type% "%general_id%" via Search Settings.',
                             ['!general_id_type' => $generalIdType, '!general_id' => $generalId]
                         ),
@@ -85,7 +85,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
                     $this->addMessage(
                         $this->getHelper('Module\Log')->encodeDescription(
                             'Unexpected error has occurred while trying to link Magento Parent Product,
-                             although the %general_id_type% "%general_id%" was successfully found on Amazon.',
+                             although the %general_id_type% "%general_id%" was found on Amazon.',
                             ['general_id' => $generalId, 'general_id_type' => $generalIdType]
                         )
                     );

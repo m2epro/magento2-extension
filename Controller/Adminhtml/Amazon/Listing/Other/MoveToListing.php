@@ -31,17 +31,13 @@ class MoveToListing extends Main
 
         $errorsCount = 0;
         foreach ($selectedProducts as $otherListingProduct) {
-
             /** @var \Ess\M2ePro\Model\Listing\Other $listingOther */
             $listingOther = $this->amazonFactory->getObjectLoaded('Listing\Other', $otherListingProduct);
 
-            $listingProduct = $listingInstance->getChildObject()
-                ->addProductFromOther(
-                    $listingOther,
-                    \Ess\M2ePro\Helper\Data::INITIATOR_USER,
-                    false,
-                    false
-                );
+            $listingProduct = $listingInstance->getChildObject()->addProductFromOther(
+                $listingOther,
+                \Ess\M2ePro\Helper\Data::INITIATOR_USER
+            );
 
             if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
                 $errorsCount++;

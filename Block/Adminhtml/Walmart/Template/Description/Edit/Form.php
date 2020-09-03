@@ -520,6 +520,7 @@ HTML
                     Description::DESCRIPTION_MODE_CUSTOM  => $this->__('Custom Value'),
                 ],
                 'value' => $this->formData['description_mode'],
+                'required' => true,
                 'tooltip' => $this->__('
                         The key Product details and features that will be displayed on your Walmart Item page.<br>
                         You can use Magento Product data or create a Custom description.<br>

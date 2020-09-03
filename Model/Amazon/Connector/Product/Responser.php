@@ -79,6 +79,10 @@ abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
 
     public function eventAfterExecuting()
     {
+        if ($this->isTemporaryErrorAppeared($this->getResponse()->getMessages()->getEntities())) {
+            $this->getResponseObject()->throwRepeatActionInstructions();
+        }
+
         parent::eventAfterExecuting();
 
         $this->processParentProcessor();
@@ -163,11 +167,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
             /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
 
             !$hasError && $hasError = $message->isError();
-
-            $this->getLogger()->logListingProductMessage(
-                $this->listingProduct,
-                $message
-            );
+            $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
         }
 
         return !$hasError;
@@ -184,10 +184,9 @@ abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
             \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS
         );
 
-        $this->getLogger()->logListingProductMessage(
-            $this->listingProduct,
-            $message
-        );
+        if ($message->getText() !== null) {
+            $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
+        }
 
         $this->isSuccess = true;
     }
@@ -374,6 +373,29 @@ abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
         }
 
         throw new \Ess\M2ePro\Model\Exception('Wrong Action type');
+    }
+
+    //########################################
+
+    /**
+     * @param \Ess\M2ePro\Model\Connector\Connection\Response\Message[] $messages
+     * @return \Ess\M2ePro\Model\Connector\Connection\Response\Message|bool
+     *
+     * TODO ERROR CODEs
+     */
+    protected function isTemporaryErrorAppeared(array $messages)
+    {
+        $errorCodes = [
+            /* TODO ERROR CODEs */
+        ];
+
+        foreach ($messages as $message) {
+            if (in_array($message->getCode(), $errorCodes, true)) {
+                return $message;
+            }
+        }
+
+        return false;
     }
 
     //########################################

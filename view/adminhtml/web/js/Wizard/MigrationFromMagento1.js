@@ -10,47 +10,31 @@ define(function () {
         },
 
         // Steps
-        // ---------------------------------------
-
-        synchronizationStep: function ()
-        {
-            jQuery('#continue').prop('disabled', true);
-
-            var nextMarketplace = jQuery('.marketplace-id:not([synchronized]):first');
-
-            if (!nextMarketplace.length) {
-                MarketplaceSynchProgressObj.end();
-                return;
-            }
-
-            nextMarketplace.attr('synchronized', 1);
-            this.synchronizeMarketplace(nextMarketplace.attr('component'), nextMarketplace.val());
-        },
 
         congratulationStep: function ()
         {
-            WizardObj.setStatus(M2ePro.php.constant('Ess_M2ePro_Helper_Module_Wizard::STATUS_COMPLETED'), function() {
-                setLocation(M2ePro.url.get('complete'));
-            });
+            this.initFormValidation();
+
+            if (!this.isValidForm()) {
+                return;
+            }
+
+            this.submitForm(M2ePro.url.get('migrationFromMagento1/finish'));
         },
 
-        // ---------------------------------------
-
-        synchronizeMarketplace: function(component, marketplaceId)
+        complete: function ()
         {
-            var title = component + ' ' + $('marketplace_' + marketplaceId).innerHTML;
-            component = component.toLowerCase();
-            var url = M2ePro.url.get('wizard_migrationFromMagento1/runSynchNow')
-                      + 'component/' + component
-                      + '/marketplace_id/' + marketplaceId;
+            if ($('edit_form') !== null) {
+                this.initFormValidation();
 
-            MarketplaceSynchProgressObj.runTask(
-                title,
-                url,
-                M2ePro.url.get(component + '_marketplace/synchGetExecutingInfo'),
-                'MigrationFromMagento1Obj.synchronizationStep()'
-            );
+                if (!this.isValidForm()) {
+                    return;
+                }
+
+                this.submitForm(M2ePro.url.get('migrationFromMagento1/complete'));
+            } else {
+                setLocation(M2ePro.url.get('migrationFromMagento1/complete'));
+            }
         }
     });
-
 });

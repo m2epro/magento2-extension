@@ -38,11 +38,11 @@ class DateTime extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Dateti
     {
         $value = $this->_getValue($row);
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-            return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
+            return '<span style="color: gray;">' . $this->getHelper('Module\Translation')->__('Not Listed') . '</span>';
         }
 
         if ($value === null || $value === '') {
-            return $this->__('N/A');
+            return $this->getHelper('Module\Translation')->__('N/A');
         }
 
         return $value;

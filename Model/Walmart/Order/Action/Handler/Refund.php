@@ -15,16 +15,6 @@ use Ess\M2ePro\Model\Walmart\Order\Item as OrderItem;
  */
 class Refund extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractModel
 {
-    private $params = [];
-
-    //########################################
-
-    public function setParams(array $params)
-    {
-        $this->params = $params;
-        return $this;
-    }
-
     //########################################
 
     public function isNeedProcess()
@@ -57,8 +47,9 @@ class Refund extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
     protected function getRequestData()
     {
         $resultItems = [];
+        $params = $this->orderChange->getParams();
 
-        foreach ($this->params['items'] as $itemData) {
+        foreach ($params['items'] as $itemData) {
             /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
             $orderItem = $this->walmartFactory->getObject('Order_Item')
                 ->getCollection()
@@ -96,8 +87,9 @@ class Refund extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
         }
 
         $itemsStatuses = [];
+        $params = $this->orderChange->getParams();
 
-        foreach ($this->params['items'] as $itemData) {
+        foreach ($params as $itemData) {
             /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
             $orderItem = $this->walmartFactory->getObject('Order_Item')
                 ->getCollection()
@@ -128,10 +120,9 @@ class Refund extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
         $this->getOrder()->getChildObject()->save();
         $this->getOrder()->save();
 
-        $this->getOrder()->getLog()->addMessage(
-            $this->getOrder()->getId(),
-            $this->helperFactory->getObject('Module\Translation')->__('Order was successfully cancelled.'),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS
+        $this->orderChange->delete();
+        $this->getOrder()->addSuccessLog(
+            $this->helperFactory->getObject('Module\Translation')->__('Order was cancelled.')
         );
     }
 
@@ -154,11 +145,7 @@ class Refund extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
         }
 
         foreach ($messages as $message) {
-            $this->getOrder()->getLog()->addMessage(
-                $this->getOrder()->getId(),
-                $message->getText(),
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
-            );
+            $this->getOrder()->getLog()->addServerResponseMessage($this->getOrder(), $message);
         }
     }
 

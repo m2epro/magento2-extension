@@ -68,7 +68,7 @@ class AssignProductDetails extends Order
         }
 
         $orderItem->getOrder()->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_USER);
-        $orderItem->getOrder()->addSuccessLog('Order Item "%title%" Options were Successfully configured.', [
+        $orderItem->getOrder()->addSuccessLog('Order Item "%title%" Options were configured.', [
             'title' => $orderItem->getChildObject()->getTitle()
         ]);
 

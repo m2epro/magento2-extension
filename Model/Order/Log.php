@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Order;
 
+use \Ess\M2ePro\Model\Connector\Connection\Response\Message;
+
 /**
  * Class \Ess\M2ePro\Model\Order\Log
  */
@@ -46,19 +48,23 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 
     //########################################
 
-    public function addMessage($orderId, $description, $type, array $additionalData = [])
+    /**
+     * @param \Ess\M2ePro\Model\Order|int $order
+     * @param string $description
+     * @param int $type
+     * @param array $additionalData
+     */
+    public function addMessage($order, $description, $type, array $additionalData = [])
     {
-        /** @var \Ess\M2ePro\Model\Order $order */
-        $order = $this->parentFactory->getObjectLoaded(
-            $this->getComponentMode(),
-            'Order',
-            $orderId
-        );
+        if (!($order instanceof \Ess\M2ePro\Model\Order)) {
+            /** @var \Ess\M2ePro\Model\Order $order */
+            $order = $this->parentFactory->getObjectLoaded($this->getComponentMode(), 'Order', $order);
+        }
 
         $dataForAdd = [
-            'account_id'      => $order->getData('account_id'),
-            'marketplace_id'  => $order->getData('marketplace_id'),
-            'order_id'        => $orderId,
+            'account_id'      => $order->getAccountId(),
+            'marketplace_id'  => $order->getMarketplaceId(),
+            'order_id'        => $order->getId(),
             'description'     => $description,
             'type'            => (int)$type,
             'additional_data' => $this->getHelper('Data')->jsonEncode($additionalData),
@@ -70,6 +76,31 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         $this->activeRecordFactory->getObject('Order_Log')
             ->setData($dataForAdd)
             ->save();
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Order|int $order
+     * @param Message $message
+     */
+    public function addServerResponseMessage($order, Message $message)
+    {
+        if (!($order instanceof \Ess\M2ePro\Model\Order)) {
+            /** @var \Ess\M2ePro\Model\Order $order */
+            $order = $this->parentFactory->getObjectLoaded($this->getComponentMode(), 'Order', $order);
+        }
+
+        $map = [
+            Message::TYPE_NOTICE  => self::TYPE_NOTICE,
+            Message::TYPE_SUCCESS => self::TYPE_SUCCESS,
+            Message::TYPE_WARNING => self::TYPE_WARNING,
+            Message::TYPE_ERROR   => self::TYPE_ERROR
+        ];
+
+        $this->addMessage(
+            $order,
+            $message->getText(),
+            isset($map[$message->getType()]) ? $map[$message->getType()] : self::TYPE_ERROR
+        );
     }
 
     //########################################

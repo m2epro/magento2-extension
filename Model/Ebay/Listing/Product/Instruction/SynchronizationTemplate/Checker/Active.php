@@ -598,7 +598,8 @@ class Active extends AbstractModel
 
         $actionData = $actionDataBuilder->getBuilderData();
 
-        if ($actionData['description'] == $ebayListingProduct->getOnlineDescription()) {
+        $hashDescription = $this->getHelper('Data')->hashString($actionData['description'], 'md5');
+        if ($hashDescription == $ebayListingProduct->getOnlineDescription()) {
             return false;
         }
 
@@ -624,7 +625,12 @@ class Active extends AbstractModel
         $actionDataBuilder->setListingProduct($listingProduct);
         $actionDataBuilder->setIsVariationItem($ebayListingProduct->isVariationsReady());
 
-        if ($actionDataBuilder->getBuilderData() == $ebayListingProduct->getOnlineImages()) {
+        $hashImagesData = $this->getHelper('Data')->hashString(
+            $this->getHelper('Data')->jsonEncode($actionDataBuilder->getBuilderData()),
+            'md5'
+        );
+
+        if ($hashImagesData == $ebayListingProduct->getOnlineImages()) {
             return false;
         }
 
@@ -674,7 +680,12 @@ class Active extends AbstractModel
         $actionDataBuilder = $this->modelFactory->getObject('Ebay_Listing_Product_Action_DataBuilder_Payment');
         $actionDataBuilder->setListingProduct($listingProduct);
 
-        if ($actionDataBuilder->getBuilderData() == $ebayListingProduct->getOnlinePaymentData()) {
+        $hashReturnData = $this->getHelper('Data')->hashString(
+            $this->getHelper('Data')->jsonEncode($actionDataBuilder->getBuilderData()),
+            'md5'
+        );
+
+        if ($hashReturnData == $ebayListingProduct->getOnlinePaymentData()) {
             return false;
         }
 
@@ -699,7 +710,12 @@ class Active extends AbstractModel
         $actionDataBuilder = $this->modelFactory->getObject('Ebay_Listing_Product_Action_DataBuilder_Shipping');
         $actionDataBuilder->setListingProduct($listingProduct);
 
-        if ($actionDataBuilder->getBuilderData() == $ebayListingProduct->getOnlineShippingData()) {
+        $hashReturnData = $this->getHelper('Data')->hashString(
+            $this->getHelper('Data')->jsonEncode($actionDataBuilder->getBuilderData()),
+            'md5'
+        );
+
+        if ($hashReturnData == $ebayListingProduct->getOnlineShippingData()) {
             return false;
         }
 
@@ -724,7 +740,12 @@ class Active extends AbstractModel
         $actionDataBuilder = $this->modelFactory->getObject('Ebay_Listing_Product_Action_DataBuilder_ReturnPolicy');
         $actionDataBuilder->setListingProduct($listingProduct);
 
-        if ($actionDataBuilder->getBuilderData() == $ebayListingProduct->getOnlineReturnData()) {
+        $hashReturnData = $this->getHelper('Data')->hashString(
+            $this->getHelper('Data')->jsonEncode($actionDataBuilder->getBuilderData()),
+            'md5'
+        );
+
+        if ($hashReturnData == $ebayListingProduct->getOnlineReturnData()) {
             return false;
         }
 
@@ -749,7 +770,12 @@ class Active extends AbstractModel
         $actionDataBuilder = $this->modelFactory->getObject('Ebay_Listing_Product_Action_DataBuilder_Other');
         $actionDataBuilder->setListingProduct($listingProduct);
 
-        if ($actionDataBuilder->getBuilderData() == $ebayListingProduct->getOnlineOtherData()) {
+        $hashOtherData = $this->getHelper('Data')->hashString(
+            $this->getHelper('Data')->jsonEncode($actionDataBuilder->getBuilderData()),
+            'md5'
+        );
+
+        if ($hashOtherData == $ebayListingProduct->getOnlineOtherData()) {
             return false;
         }
 

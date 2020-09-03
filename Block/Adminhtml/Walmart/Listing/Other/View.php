@@ -119,10 +119,10 @@ HTML
             'unmappingProducts' => $this->getUrl('*/listing_other_mapping/unmapping')
         ]);
 
-        $someProductsWereNotMappedMessage = 'No matches were found. Please change the Mapping Attributes in <strong>';
-        $someProductsWereNotMappedMessage .= 'Configuration > Account > 3rd Party Listings</strong> ';
-        $someProductsWereNotMappedMessage .= 'or try to map manually.';
-        $someProductsWereNotMappedMessage = $this->__($someProductsWereNotMappedMessage);
+        $someProductsWereNotMappedMessage = $this->__(
+            'Some Items were not mapped. Please edit <i>Product Mapping Settings</i> under
+            <i>Configuration > Account > 3rd Party Listings</i> or try to map manually.'
+        );
 
         $createListing = $this->__(
             'Listings, which have the same Marketplace and Account were not found.'

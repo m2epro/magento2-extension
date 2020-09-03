@@ -321,7 +321,7 @@ class Grid extends AbstractGrid
 
         $returnString = $this->__('N/A');
 
-        if ($row['magento_order_id']) {
+        if ($magentoOrderId !== null) {
             if ($row['magento_order_num']) {
                 $orderUrl = $this->getUrl('sales/order/view', ['order_id' => $magentoOrderId]);
                 $returnString = '<a href="' . $orderUrl . '" target="_blank">' . $magentoOrderNumber . '</a>';

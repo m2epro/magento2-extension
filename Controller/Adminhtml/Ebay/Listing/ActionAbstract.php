@@ -18,8 +18,8 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
     protected function processConnector($action, array $params = [])
     {
         if ($this->getHelper('Server_Maintenance')->isNow()) {
-            $message = 'The action is temporarily unavailable. M2E Pro server is currently';
-            $message .= ' under the planned maintenance. Please try again later.';
+            $message = 'The action is temporarily unavailable. M2E Pro Server is under maintenance.';
+            $message .= ' Please try again later.';
 
             return $this->setRawContent($this->getHelper('Module_Translation')->__($message));
         }

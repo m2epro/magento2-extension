@@ -324,7 +324,7 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
                 \Ess\M2ePro\Helper\Data::INITIATOR_USER,
                 $actionId,
                 \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_FROM_OTHER_LISTING,
-                'Item was successfully Moved.',
+                'Item was Moved.',
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
             );
         }

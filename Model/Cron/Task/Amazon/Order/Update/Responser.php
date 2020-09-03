@@ -13,8 +13,11 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order\Update;
  */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsResponser
 {
-    /** @var \Ess\M2ePro\Model\Order $order */
-    protected $order = [];
+    /** @var \Ess\M2ePro\Model\Order */
+    protected $order;
+
+    /** @var \Ess\M2ePro\Model\Order\Change */
+    protected $orderChange;
 
     //########################################
 
@@ -29,6 +32,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
         parent::__construct($amazonFactory, $activeRecordFactory, $response, $helperFactory, $modelFactory, $params);
 
         $this->order = $this->amazonFactory->getObjectLoaded('Order', $params['order']['order_id']);
+        $this->orderChange = $this->activeRecordFactory->getObject('Order\Change')->load($params['order']['change_id']);
     }
 
     //########################################
@@ -42,9 +46,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
     {
         parent::failDetected($messageText);
 
-        /** @var \Ess\M2ePro\Model\Order\Change $orderChange */
-        $orderChange = $this->activeRecordFactory->getObject('Order\Change')->load($this->params['order']['change_id']);
-        $this->order->getLog()->setInitiator($orderChange->getCreatorType());
+        $this->order->getLog()->setInitiator($this->orderChange->getCreatorType());
         $this->order->addErrorLog('Amazon Order status was not updated. Reason: %msg%', ['msg' => $messageText]);
     }
 
@@ -69,19 +71,17 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
      * @return void|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function processResponseMessages(array $messages = array())
+    protected function processResponseMessages(array $messages = [])
     {
         parent::processResponseMessages();
 
-        /** @var \Ess\M2ePro\Model\Order\Change $orderChange */
-        $orderChange = $this->activeRecordFactory->getObject('Order\Change')->load($this->params['order']['change_id']);
-        $this->order->getLog()->setInitiator($orderChange->getCreatorType());
+        $this->order->getLog()->setInitiator($this->orderChange->getCreatorType());
 
         foreach ($this->getResponse()->getMessages()->getEntities() as $message) {
             if ($message->isError()) {
                 $this->order->addErrorLog(
                     'Amazon Order status was not updated. Reason: %msg%',
-                    array('msg' => $message->getText())
+                    ['msg' => $message->getText()]
                 );
             } else {
                 $this->order->addWarningLog($message->getText());
@@ -96,16 +96,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
      */
     protected function processResponseData()
     {
-        /** @var \Ess\M2ePro\Model\Order\Change $orderChange */
-        $orderChange = $this->activeRecordFactory->getObject('Order\Change')->load($this->params['order']['change_id']);
-        $this->order->getLog()->setInitiator($orderChange->getCreatorType());
-        $orderChange->delete();
-
+        $this->order->getLog()->setInitiator($this->orderChange->getCreatorType());
         $responseData = $this->getResponse()->getResponseData();
-
-        // Check separate messages
-        //----------------------
-        $isFailed = false;
 
         /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set $messagesSet */
         $messagesSet = $this->modelFactory->getObject('Connector_Connection_Response_Message_Set');
@@ -113,8 +105,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
 
         foreach ($messagesSet->getEntities() as $message) {
             if ($message->isError()) {
-                $isFailed = true;
-
                 $this->order->addErrorLog(
                     'Amazon Order status was not updated. Reason: %msg%',
                     ['msg' => $message->getText()]
@@ -124,10 +114,11 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
             }
         }
 
-        if ($isFailed) {
+        if ($messagesSet->hasErrorEntities()) {
             return;
         }
 
+        $this->orderChange->delete();
         $this->order->addSuccessLog('Amazon Order status was updated to Shipped.');
 
         if (empty($this->params['order']['tracking_number']) || empty($this->params['order']['carrier_name'])) {

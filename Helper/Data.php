@@ -563,7 +563,16 @@ class Data extends AbstractHelper
         return $constants;
     }
 
-    public function getControllerActions($controllerClass, array $params = [])
+    /**
+     * @param $controllerClass
+     * @param array $params
+     * @param bool $skipEnvironmentCheck
+     * m2epro_config table may be missing if migration is going on, so trying to check environment will cause SQL error
+     *
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getControllerActions($controllerClass, array $params = [], $skipEnvironmentCheck = false)
     {
         // fix for Magento2 sniffs that forcing to use ::class
         $controllerClass = str_replace('_', '\\', $controllerClass);
@@ -571,7 +580,7 @@ class Data extends AbstractHelper
         $classRoute = str_replace('\\', '_', $controllerClass);
         $classRoute = implode('_', array_map('lcfirst', explode('_', $classRoute)));
 
-        if (!$this->getHelper('Module')->isDevelopmentEnvironment()) {
+        if ($skipEnvironmentCheck || !$this->getHelper('Module')->isDevelopmentEnvironment()) {
             $cachedActions = $this->getHelper('Data_Cache_Permanent')->getValue('controller_actions_' . $classRoute);
 
             if ($cachedActions !== null) {
@@ -599,7 +608,7 @@ class Data extends AbstractHelper
             }
         }
 
-        if (!$this->getHelper('Module')->isDevelopmentEnvironment()) {
+        if ($skipEnvironmentCheck || !$this->getHelper('Module')->isDevelopmentEnvironment()) {
             $this->getHelper('Data_Cache_Permanent')->setValue('controller_actions_' . $classRoute, $actions);
         }
 

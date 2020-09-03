@@ -435,10 +435,18 @@ class Active extends AbstractModel
         $onlinePromotions = $walmartListingProduct->getOnlinePromotions();
 
         if (empty($onlinePromotions)) {
-            $onlinePromotions = ['promotion_prices' => []];
+            $onlinePromotions = $hashDetailsData = $this->getHelper('Data')->hashString(
+                $this->getHelper('Data')->jsonEncode(['promotion_prices' => []]),
+                'md5'
+            );
         }
 
-        return $promotionsActionDataBuilder->getBuilderData() != $onlinePromotions;
+        $hashPromotionsData = $this->getHelper('Data')->hashString(
+            $this->getHelper('Data')->jsonEncode($promotionsActionDataBuilder->getBuilderData()),
+            'md5'
+        );
+
+        return $hashPromotionsData != $onlinePromotions;
     }
 
     // ---------------------------------------
@@ -466,7 +474,12 @@ class Active extends AbstractModel
         $currentEndDate = $currentDetailsData['end_date'];
         unset($currentDetailsData['end_date']);
 
-        if ($currentDetailsData != $walmartListingProduct->getOnlineDetailsData()) {
+        $hashDetailsData = $this->getHelper('Data')->hashString(
+            $this->getHelper('Data')->jsonEncode($currentDetailsData),
+            'md5'
+        );
+
+        if ($hashDetailsData != $walmartListingProduct->getOnlineDetailsData()) {
             return true;
         }
 

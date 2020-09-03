@@ -47,13 +47,15 @@ class Listing extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 
     protected function getAvailableActions()
     {
+        $translator = $this->getHelper('Module\Translation');
+
         return [
-            Log::ACTION_LIST_PRODUCT_ON_COMPONENT     => $this->__('List'),
-            Log::ACTION_RELIST_PRODUCT_ON_COMPONENT   => $this->__('Relist'),
-            Log::ACTION_REVISE_PRODUCT_ON_COMPONENT   => $this->__('Revise'),
-            Log::ACTION_STOP_PRODUCT_ON_COMPONENT     => $this->__('Stop'),
-            Log::ACTION_STOP_AND_REMOVE_PRODUCT       => $this->__('Stop on Channel / Remove from Listing'),
-            Log::ACTION_CHANNEL_CHANGE                => $this->__('Channel Change')
+            Log::ACTION_LIST_PRODUCT_ON_COMPONENT   => $translator->__('List'),
+            Log::ACTION_RELIST_PRODUCT_ON_COMPONENT => $translator->__('Relist'),
+            Log::ACTION_REVISE_PRODUCT_ON_COMPONENT => $translator->__('Revise'),
+            Log::ACTION_STOP_PRODUCT_ON_COMPONENT   => $translator->__('Stop'),
+            Log::ACTION_STOP_AND_REMOVE_PRODUCT     => $translator->__('Stop on Channel / Remove from Listing'),
+            Log::ACTION_CHANNEL_CHANGE              => $translator->__('Channel Change')
         ];
     }
 

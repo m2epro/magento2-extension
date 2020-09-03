@@ -156,8 +156,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
                     return;
                 }
 
-                // @codingStandardsIgnoreLine
-                $trace = @debug_backtrace(false);
+                $trace = debug_backtrace(false);
                 $traceInfo = $this->getHelper('Module_Exception')->getFatalStackTraceInfo($trace);
 
                 $object->addMessage(

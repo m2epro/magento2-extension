@@ -72,7 +72,7 @@ class Grid extends AbstractGrid
             'sortable'  => false,
             'filter_index' => 'id',
             'index'     => 'description',
-            'frame_callback' => [$this, 'callbackDescription']
+            'frame_callback' => [$this, 'callbackColumnDescription']
         ]);
 
         $this->addColumn('initiator', [

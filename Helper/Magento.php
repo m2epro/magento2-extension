@@ -412,26 +412,6 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         return array_keys((array)$this->deploymentConfig->get('modules'));
     }
 
-    // ---------------------------------------
-
-    public function getConflictedModules()
-    {
-        $modules = $this->moduleList->getAll();
-
-        $conflictedModules = [];
-
-        $result = [];
-        foreach ($conflictedModules as $expression => $description) {
-            foreach ($modules as $module => $data) {
-                if (preg_match($expression, $module)) {
-                    $result[$module] = array_merge($data, ['description' => $description]);
-                }
-            }
-        }
-
-        return $result;
-    }
-
     public function getAllEventObservers()
     {
         $eventObservers = [];

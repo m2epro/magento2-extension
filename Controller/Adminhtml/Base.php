@@ -8,6 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml;
 
+use Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
 use \Magento\Backend\App\Action;
 
 use \Ess\M2ePro\Model\Factory as ModelFactory;
@@ -29,43 +30,43 @@ abstract class Base extends Action
     const GLOBAL_MESSAGES_GROUP = 'm2epro_global_messages_group';
 
     /** @var HelperFactory $helperFactory */
-    protected $helperFactory = null;
+    protected $helperFactory;
 
     /** @var ModelFactory $modelFactory */
-    protected $modelFactory = null;
+    protected $modelFactory;
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory */
-    protected $parentFactory = null;
+    protected $parentFactory;
 
     /** @var ActiveRecordFactory $activeRecordFactory */
-    protected $activeRecordFactory = null;
+    protected $activeRecordFactory;
 
     /** @var PageFactory $resultPageFactory */
-    protected $resultPageFactory = null;
+    protected $resultPageFactory;
 
     /** @var \Magento\Framework\Controller\Result\RawFactory $resultRawFactory  */
-    protected $resultRawFactory = null;
+    protected $resultRawFactory;
 
     /** @var \Magento\Framework\View\LayoutFactory $layoutFactory */
-    protected $layoutFactory = null;
+    protected $layoutFactory;
 
-    /** @var CssRenderer $cssRenderer  */
-    protected $cssRenderer = null;
+    /** @var CssRenderer $cssRenderer */
+    protected $cssRenderer;
 
-    /** @var \Magento\Framework\App\ResourceConnection|null  */
-    protected $resourceConnection = null;
+    /** @var \Magento\Framework\App\ResourceConnection */
+    protected $resourceConnection;
 
     /** @var \Magento\Config\Model\Config */
-    protected $magentoConfig = null;
+    protected $magentoConfig;
 
     /** @var \Magento\Framework\Controller\Result\Raw $rawResult  */
-    protected $rawResult = null;
+    protected $rawResult;
 
     /** @var \Magento\Framework\View\LayoutInterface $emptyLayout */
-    protected $emptyLayout = null;
+    protected $emptyLayout;
 
     /** @var \Magento\Framework\View\Result\Page $resultPage  */
-    protected $resultPage = null;
+    protected $resultPage;
 
     private $generalBlockWasAppended = false;
 
@@ -214,19 +215,25 @@ abstract class Base extends Action
             return $this->_redirect('*/maintenance');
         }
 
+        /** @var MigrationFromMagento1 $wizard */
+        $wizard = $this->helperFactory->getObject('Module_Wizard')->getWizard(MigrationFromMagento1::NICK);
+        if ($wizard->isUnexpectedlyCopiedFromM1()) {
+            return $this->_redirect('*/migrationFromMagento1/initUnexpectedlyCopied');
+        }
+
         if ($this->getHelper('Module')->isDisabled()) {
-            $message = $this->__('M2E Pro is disabled. Inventory and Order synchronization is not
-                                  running at this moment.<br>
-                                  At any time, you can enable the Module under<strong>Stores > Settings >
-                                  Configuration > Multi Channels > Advanced Settings</strong>.');
+            $message = $this->__('M2E Pro is disabled. Inventory and Order synchronization is not running. 
+                                  The Module interface is unavailable.<br>
+                                  You can enable the Module under 
+                                  <i>Stores > Settings > Configuration > M2E Pro > Advanced Settings > Module</i>.');
             $this->getMessageManager()->addNotice($message);
             return $this->_redirect('admin/dashboard');
         }
 
         if (empty($this->getHelper('Component')->getEnabledComponents())) {
-            $message = $this->__('Channel Integrations are disabled. To start working with M2E Pro, please go to
-                                 <strong>Stores > Settings > Configuration > Multi Channels</strong>
-                                 and enable at least one Channel Integration.');
+            $message = $this->__('Channel Integrations are disabled. To start working with M2E Pro, go to 
+                                  <i>Stores > Settings > Configuration > M2E Pro</i>
+                                  and enable at least one Channel Integration.');
             $this->getMessageManager()->addNotice($message);
             return $this->_redirect('admin/dashboard');
         }

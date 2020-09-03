@@ -47,7 +47,7 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 
     protected function canExecute()
     {
-        return true;
+        return $this->helperFactory->getObject('Module')->areImportantTablesExist();
     }
 
     //########################################
@@ -86,8 +86,8 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
                     true
                 );
                 $this->helperFactory->getObject('Magento')->clearMenuCache();
-                $this->processMaintenance($menuModel);
             }
+            $this->processMaintenance($menuModel);
             return $menuModel;
         } elseif ($maintenanceMenuState !== null) {
             $this->helperFactory->getObject('Data_Cache_Permanent')->removeValue(
@@ -139,9 +139,12 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 
     private function processMaintenance(\Magento\Backend\Model\Menu $menuModel)
     {
-        if ($menuModel->get(Ebay::MENU_ROOT_NODE_NICK)->isAllowed()) {
+        $ebayMenuModel = $menuModel->get(Ebay::MENU_ROOT_NODE_NICK);
+        $amazonMenuModel = $menuModel->get(Amazon::MENU_ROOT_NODE_NICK);
+
+        if ($ebayMenuModel !== null && $ebayMenuModel->isAllowed()) {
             $maintenanceMenuItemResource = Ebay::MENU_ROOT_NODE_NICK;
-        } elseif ($menuModel->get(Amazon::MENU_ROOT_NODE_NICK)->isAllowed()) {
+        } elseif ($amazonMenuModel !== null && $amazonMenuModel->isAllowed()) {
             $maintenanceMenuItemResource = Amazon::MENU_ROOT_NODE_NICK;
         } else {
             $maintenanceMenuItemResource = Walmart::MENU_ROOT_NODE_NICK;
@@ -163,9 +166,7 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
             }
         }
 
-        $menuModel->remove(Ebay::MENU_ROOT_NODE_NICK);
-        $menuModel->remove(Amazon::MENU_ROOT_NODE_NICK);
-        $menuModel->remove(Walmart::MENU_ROOT_NODE_NICK);
+        $this->processModuleDisable($menuModel);
     }
 
     private function processModuleDisable(\Magento\Backend\Model\Menu $menuModel)

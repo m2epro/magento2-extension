@@ -43,7 +43,7 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
     {
         $rowObject = $row;
         $value = $this->_getValue($row);
-
+        $translator = $this->getHelper('Module\Translation');
         $isVariationGrid = ($this->getColumn()->getData('is_variation_grid') !== null)
             ? $this->getColumn()->getData('is_variation_grid')
             : false;
@@ -52,30 +52,30 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
             $rowObject = $row->getChildObject();
         }
 
-        if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
-            return $this->__('N/A');
+        if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
+            return $translator->__('N/A');
         }
 
         $listingProductId = $row->getData('id');
 
         if (!$row->getData('is_variation_parent') || $isVariationGrid) {
-            if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-                return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
+            if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
+                return '<span style="color: gray;">' . $translator->__('Not Listed') . '</span>';
             }
 
             if ((bool)$rowObject->getData('is_afn_channel')) {
                 $sku = $rowObject->getData('sku');
 
                 if (empty($sku)) {
-                    return $this->__('AFN');
+                    return $translator->__('AFN');
                 }
 
                 /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
                 $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $listingProductId);
 
-                $afn = $this->__('AFN');
-                $total = $this->__('Total');
-                $inStock = $this->__('In Stock');
+                $afn = $translator->__('AFN');
+                $total = $translator->__('Total');
+                $inStock = $translator->__('In Stock');
                 $accountId = $listingProduct->getListing()->getAccountId();
 
                 return <<<HTML
@@ -100,7 +100,7 @@ HTML;
                 if ($showReceiving) {
                     return '<i style="color:gray;">receiving...</i>';
                 } else {
-                    return $this->__('N/A');
+                    return $translator->__('N/A');
                 }
             }
 
@@ -112,13 +112,13 @@ HTML;
         }
 
         if ($row->getData('general_id') == '') {
-            return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
+            return '<span style="color: gray;">' . $translator->__('Not Listed') . '</span>';
         }
 
         $variationChildStatuses = $this->getHelper('Data')->jsonDecode($row->getData('variation_child_statuses'));
 
         if (empty($variationChildStatuses)) {
-            return $this->__('N/A');
+            return $translator->__('N/A');
         }
 
         $activeChildrenCount = 0;
@@ -131,7 +131,7 @@ HTML;
         }
 
         if ($activeChildrenCount == 0) {
-            return $this->__('N/A');
+            return $translator->__('N/A');
         }
 
         if (!(bool)$row->getData('is_afn_channel')) {
@@ -142,19 +142,19 @@ HTML;
             return $value;
         }
 
-        $resultValue = $this->__('AFN');
+        $resultValue = $translator->__('AFN');
         $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
 
         $filter = base64_encode('online_qty[afn]=1');
 
         $productTitle = $this->getHelper('Data')->escapeHtml($row->getData('name'));
-        $vpmt = $this->__('Manage Variations of &quot;%s%&quot; ', $productTitle);
+        $vpmt = $translator->__('Manage Variations of &quot;%s%&quot; ', $productTitle);
         // @codingStandardsIgnoreLine
         $vpmt = addslashes($vpmt);
 
-        $linkTitle = $this->__('Show AFN Child Products.');
+        $linkTitle = $translator->__('Show AFN Child Products.');
         $afnCountWord = !empty($additionalData['afn_count']) ? $additionalData['afn_count']
-            : $this->__('show');
+            : $translator->__('show');
 
         $resultValue = $resultValue."&nbsp;<a href=\"javascript:void(0)\"
                            class=\"hover-underline\"

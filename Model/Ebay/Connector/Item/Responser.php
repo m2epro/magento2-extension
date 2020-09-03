@@ -10,10 +10,10 @@ namespace Ess\M2ePro\Model\Ebay\Connector\Item;
 
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator;
-use Ess\M2ePro\Model\Exception\Logic;
-use Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection;
-use Ess\M2ePro\Model\Listing\Product\Variation;
 use Ess\M2ePro\Model\Ebay\Listing\Product\Variation as EbayVariation;
+use Ess\M2ePro\Model\Exception\Logic;
+use Ess\M2ePro\Model\Listing\Product\Variation;
+use Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection;
 
 /**
  * Class \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
@@ -73,10 +73,16 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
             \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
         );
 
-        $this->getLogger()->logListingProductMessage(
-            $this->listingProduct,
-            $message
-        );
+        $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
+    }
+
+    public function eventAfterExecuting()
+    {
+        if ($this->isTemporaryErrorAppeared($this->getResponse()->getMessages()->getEntities())) {
+            $this->getResponseObject()->throwRepeatActionInstructions();
+        }
+
+        parent::eventAfterExecuting();
     }
 
     //########################################
@@ -137,10 +143,9 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
             \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS
         );
 
-        $this->getLogger()->logListingProductMessage(
-            $this->listingProduct,
-            $message
-        );
+        if ($message->getText() !== null) {
+            $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
+        }
 
         $this->isSuccess = true;
     }
@@ -301,6 +306,29 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
     {
         foreach ($messages as $message) {
             if ($message->getCode() == 21919067) {
+                return $message;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Connector\Connection\Response\Message[] $messages
+     * @return \Ess\M2ePro\Model\Connector\Connection\Response\Message|bool
+     *
+     * 10007: Sorry, Something Went Wrong. Please Wait A Moment And Try Again.
+     * 931: The token of eBay account is no longer valid. Please edit your eBay account and get a new token.
+     */
+    protected function isTemporaryErrorAppeared(array $messages)
+    {
+        $errorCodes = [
+            10007,
+            931
+        ];
+
+        foreach ($messages as $message) {
+            if (in_array($message->getCode(), $errorCodes, true)) {
                 return $message;
             }
         }

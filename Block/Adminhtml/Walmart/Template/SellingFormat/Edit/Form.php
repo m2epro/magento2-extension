@@ -375,7 +375,7 @@ HTML
                 ],
                 'value' => $this->formData['price_variation_mode'],
                 'tooltip' => $this->__(
-                    'Select where the Price for Configurable and Bundle Product Options should be taken from.'
+                    'Select where the price for Configurable Product Variations should be taken from.'
                 )
             ]
         );

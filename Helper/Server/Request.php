@@ -25,8 +25,7 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
     ) {
         if (!$canIgnoreMaintenance && $this->getHelper('Server_Maintenance')->isNow()) {
             throw new \Ess\M2ePro\Model\Exception\Connection(
-                'The action is temporarily unavailable. M2E Pro server is currently under the planned maintenance.
-                Please try again later.'
+                'The action is temporarily unavailable. M2E Pro Server is under maintenance. Please try again later.'
             );
         }
 
@@ -106,8 +105,7 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
     ) {
         if (!$canIgnoreMaintenance && $this->getHelper('Server_Maintenance')->isNow()) {
             throw new \Ess\M2ePro\Model\Exception\Connection(
-                'The action is temporarily unavailable. M2E Pro server is currently under the planned maintenance.
-                Please try again later.'
+                'The action is temporarily unavailable. M2E Pro Server is under maintenance. Please try again later.'
             );
         }
 

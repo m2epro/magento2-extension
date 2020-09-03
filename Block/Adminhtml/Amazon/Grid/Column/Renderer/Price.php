@@ -55,12 +55,12 @@ class Price extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
             $rowObject = $row->getChildObject();
         }
 
-        if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-            return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
+        if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
+            return '<span style="color: gray;">' . $this->getHelper('Module\Translation')->__('Not Listed') . '</span>';
         }
 
-        if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
-            return $this->__('N/A');
+        if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
+            return $this->getHelper('Module\Translation')->__('N/A');
         }
 
         $onlineRegularPrice  = $rowObject->getData('online_regular_price');
@@ -71,7 +71,7 @@ class Price extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
             (bool)(int)$rowObject->getData('is_repricing')) {
             $icon = 'repricing-enabled';
-            $text = $this->__(
+            $text = $this->getHelper('Module\Translation')->__(
                 'This Product is used by Amazon Repricing Tool, so its Price cannot be managed via M2E Pro. <br>
                  <strong>Please note</strong> that the Price value(s) shown in the grid might
                  be different from the actual one from Amazon. It is caused by the delay
@@ -80,7 +80,7 @@ class Price extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 
             if ((int)$row->getData('is_repricing_disabled') == 1) {
                 $icon = 'repricing-disabled';
-                $text = $this->__(
+                $text = $this->getHelper('Module\Translation')->__(
                     'This Item is disabled or unable to be repriced on Amazon Repricing Tool.
                      Its Price is updated via M2E Pro.'
                 );

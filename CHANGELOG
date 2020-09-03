@@ -1,4 +1,37 @@
-* 1.7.2 (r4035) (04/08/2020) 
+* 1.8.0 (r4150) (03/09/2020) 
+
+Common: [Added] Registry Manager
+Common: [Added] Config helper
+Common: [Added] Enable/disable automatic synchronization manually
+Common: [Improved] MSI mode ON notification
+Common: [Improved] Health status review
+Common: [Improved] Do not store completely built online data in longtext fields
+Common: [Improved] Make logs the same on both M1 and M2
+Common: [Improved] Validation when moving 3rd Party item to M2E Pro Listing
+Common: [Improved] Create additional instructions for products with the error "Sorry, something went wrong. Please wait a moment and try again"
+Common: [Improved] M2E Pro Migration Process
+Common: [Improved] Use search by indexed column in `m2epro_operation_history` table
+Common: [Improved] Detailed Listing Product Log(s)
+Common: [Improved] Do not mute Magento notifications if static content was not deployed or health status found problems
+Common: [Fixed] Product is relisted with 0 in salable qty after last item was sold
+Common: [Fixed] Synchronization may stuck on MySQL versions <= 5.5 after upgrade from old versions
+Common: [Fixed] Channel orders may mistakenly get linked to wrong Magento Order
+eBay: [Added] Prefixes for eBay orders (by Marketplace)
+eBay: [Added] Create additional instructions for products with the error "Validation of the authentication token in API request failed"
+eBay: [Fixed] Wrong action was selected in Ebay\Connector\Item\ProcessingRunner
+eBay: [Fixed] Resolve Sku functionality does not work
+Amazon: [Added] ASIN Creator filter
+Amazon: [Improved] Automatic order data resend after an unexpected error on Channel
+Amazon: [Improved] Amazon refund include the shipping cost
+Amazon: [Fixed] Partially Shipped does not work
+Amazon: [Fixed] Link to Channel Order
+Walmart: [Improved] Using the same Marketplace when adding new Policy on Listing Creation Wizard
+Walmart: [Improved] Change order log type/content
+Walmart: [Improved] Automatic order data resend after an unexpected error on Channel
+Walmart: [Fixed] Undefined index: sku in Model/Walmart/Listing/Product/Action/ListAction/Processor.php
+Walmart: [Fixed] Uncaught Error: Cannot access private property Ess\M2ePro\Model\Walmart\Order\ProxyObject::$customerRepository
+
+* 1.7.2 (r4015) (03/08/2020)
 
 Common: [Fixed] 3rd party mapping settings are not being changed after Save action
 eBay: [Fixed] Listing is not available on Settings View mode

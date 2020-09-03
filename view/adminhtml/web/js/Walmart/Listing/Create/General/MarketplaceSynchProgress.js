@@ -13,10 +13,7 @@ define([
             if (self.result == self.resultTypeError) {
                 self.printFinalMessage();
                 CommonObj.scrollPageToTop();
-                return;
             }
-
-            this.saveClick(M2ePro.url.get('walmart_listing_create/index'), true)
         }
 
         // ---------------------------------------

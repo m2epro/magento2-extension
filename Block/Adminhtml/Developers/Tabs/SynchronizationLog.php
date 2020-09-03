@@ -53,13 +53,8 @@ class SynchronizationLog extends AbstractContainer
     {
         $helpBlock = $this->createBlock('HelpBlock', '', ['data' => [
             'content' => $this->__(
-                '
-                <p>This grid displays Synchronization results - Quantity, Price, Details (M2E Pro Listings)<br>
-                Synchronization, Orders updating, Marketplaces’ data Synchronization,
-                3rd Party Listings Synchronization.</p><br>
-                <p>The records about Orders, Inventory and 3rd party Listings Synchronization are
-                displayed<br> only in those cases when it results in warning or error messages.</p>',
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/MAAJAQ#Logs.-SynchronizationLog')
+                'The Log includes information about synchronization of
+                 M2E Pro Listings, Orders, Marketplaces, 3rd Party Listings.'
             )
         ]]);
 

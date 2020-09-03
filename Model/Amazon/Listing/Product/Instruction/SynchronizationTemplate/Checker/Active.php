@@ -498,11 +498,16 @@ class Active extends AbstractModel
             return false;
         }
 
-        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Details $detailsActionDataBuilder */
-        $detailsActionDataBuilder = $this->modelFactory->getObject('Amazon_Listing_Product_Action_DataBuilder_Details');
-        $detailsActionDataBuilder->setListingProduct($listingProduct);
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Details $actionDataBuilder */
+        $actionDataBuilder = $this->modelFactory->getObject('Amazon_Listing_Product_Action_DataBuilder_Details');
+        $actionDataBuilder->setListingProduct($listingProduct);
 
-        if ($detailsActionDataBuilder->getBuilderData() != $amazonListingProduct->getOnlineDetailsData()) {
+        $hashDetailsData = $this->getHelper('Data')->hashString(
+            $this->getHelper('Data')->jsonEncode($actionDataBuilder->getBuilderData()),
+            'md5'
+        );
+
+        if ($hashDetailsData != $amazonListingProduct->getOnlineDetailsData()) {
             return true;
         }
 
@@ -527,7 +532,12 @@ class Active extends AbstractModel
         $actionDataBuilder = $this->modelFactory->getObject('Amazon_Listing_Product_Action_DataBuilder_Images');
         $actionDataBuilder->setListingProduct($listingProduct);
 
-        if ($actionDataBuilder->getBuilderData() != $amazonListingProduct->getOnlineImagesData()) {
+        $hashImagesData = $this->getHelper('Data')->hashString(
+            $this->getHelper('Data')->jsonEncode($actionDataBuilder->getBuilderData()),
+            'md5'
+        );
+
+        if ($hashImagesData != $amazonListingProduct->getOnlineImagesData()) {
             return true;
         }
 

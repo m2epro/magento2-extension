@@ -13,27 +13,29 @@ namespace Ess\M2ePro\Block\Adminhtml\System\Config\Module\Mode;
  */
 class Field extends \Ess\M2ePro\Block\Adminhtml\System\Config\Integration
 {
+    //########################################
+
     /**
      * @inheritdoc
      */
 
     public function render(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
+        $isModuleDisabled = (int)$this->moduleHelper->isDisabled();
         $buttonHtml = $this->getLayout()->createBlock(\Magento\Backend\Block\Widget\Button::class)->setData([
-            'label' => 'Proceed',
+            'label' => $isModuleDisabled ? 'Enable' : 'Disable',
             'class' => 'action-primary',
             'onclick' => 'toggleM2EProModuleStatus()',
             'style' => 'margin-left: 15px;'
         ])->toHtml();
+        $buttonText = 'Module Interface and Automatic Synchronization';
 
-        if ($this->moduleHelper->isDisabled()) {
+        if ($isModuleDisabled) {
             $title = 'Confirmation';
             $confirmContent = 'Are you sure ?';
-            $buttonText = 'Enable Module and Automatic Synchronization';
             $confirmBtn = 'Ok';
-            $value = 1;
         } else {
-            $title = 'Disable/Enable Module';
+            $title = 'Disable Module';
             $confirmContent = <<<HTML
                 <p>In case you confirm the Module disabling, the M2E Pro dynamic tasks run by
                 Cron will be stopped and the M2E Pro Interface will be blocked.</p>
@@ -41,17 +43,20 @@ class Field extends \Ess\M2ePro\Block\Adminhtml\System\Config\Integration
                 <p><b>Note</b>: You can re-enable it anytime you would like by clicking on the <strong>Proceed</strong>
                 button for <strong>Enable Module and Automatic Synchronization</strong> option.</p>
 HTML;
-            $buttonText = 'Stop Module and Automatic Synchronization';
             $confirmBtn = 'Confirm';
-            $value = 0;
         }
+
+        $toolTip = $this->getTooltipHtml(
+            'Inventory and Order synchronization stops. The Module interface becomes unavailable.'
+        );
 
         $html = <<<HTML
 <td class="value" colspan="3" style="padding: 2.2rem 1.5rem 0 0;">
-    <div style="text-align: center">
+    <div style="text-align: left">
         {$buttonText} {$buttonHtml}
         <input id="m2epro_module_mode_field" type="hidden"
-            name="groups[module_mode][fields][module_mode_field][value]" value="{$value}">
+            name="groups[module_mode][fields][module_mode_field][value]" value="{$isModuleDisabled}">
+        <span style="padding-left: 10px;">{$toolTip}</span>    
     </div>
 </td>
 
@@ -82,7 +87,7 @@ HTML;
                 }],
                 actions: {
                     confirm: function () {
-                        jQuery('#m2epro_module_mode_field').val(+!{$value});
+                        jQuery('#m2epro_module_mode_field').val(+!{$isModuleDisabled});
                         jQuery('#save').trigger('click');
                     },
                     cancel: function () {
@@ -96,4 +101,6 @@ HTML;
 HTML;
         return $this->_decorateRowHtml($element, $html);
     }
+
+    //########################################
 }

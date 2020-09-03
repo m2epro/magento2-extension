@@ -267,9 +267,23 @@ HTML
             [
                 'container_id' => 'magento_orders_number_prefix_container',
                 'name' => 'magento_orders_settings[number][prefix][prefix]',
-                'label' => $this->__('Prefix'),
+                'label' => $this->__('General Prefix'),
                 'value' => $formData['magento_orders_settings']['number']['prefix']['prefix'],
                 'maxlength' => 5
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_number_prefix_use_marketplace_prefix',
+            'select',
+            [
+                'name' => 'magento_orders_settings[number][prefix][use_marketplace_prefix]',
+                'label' => $this->__('Use Marketplace ID as a prefix'),
+                'values' => [
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
+                ],
+                'value' => $formData['magento_orders_settings']['number']['prefix']['use_marketplace_prefix']
             ]
         );
 
@@ -285,7 +299,15 @@ HTML
             'sample_ebay_order_id',
             'hidden',
             [
-                'value' => '110194096334-27192305001'
+                'value' => '07-02610-01994'
+            ]
+        );
+
+        $fieldset->addField(
+            'sample_marketplace_prefix',
+            'hidden',
+            [
+                'value' => 'GB'
             ]
         );
 

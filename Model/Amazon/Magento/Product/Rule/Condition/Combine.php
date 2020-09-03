@@ -54,6 +54,7 @@ class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
             'amazon_sku' => $helper->__('SKU'),
             'amazon_general_id' => $helper->__('ASIN/ISBN Value'),
             'amazon_general_id_state' => $helper->__('ASIN/ISBN Status'),
+            'is_general_id_owner' => $helper->__('ASIN/ISBN Creator'),
             'amazon_online_qty' => $helper->__('QTY'),
             'amazon_online_price' => $helper->__('Price'),
             'amazon_online_sale_price' => $helper->__('Sale Price'),

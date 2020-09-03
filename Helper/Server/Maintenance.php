@@ -127,7 +127,7 @@ class Maintenance extends \Ess\M2ePro\Helper\AbstractHelper
         $to = new \DateTime('now', new \DateTimeZone('UTC'));
         $to->modify('+ 10 minutes');
         // @codingStandardsIgnoreLine
-        $to->modify('+' . mt_rand(0, 300) . ' second');
+        $to->modify('+' . call_user_func('mt_rand', 0, 300) . ' second');
 
         $this->setDateEnabledFrom((new \DateTime('now', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s'));
         $this->setDateEnabledTo($to->format('Y-m-d H:i:s'));

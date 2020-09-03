@@ -86,7 +86,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
             \Ess\M2ePro\Helper\Data::INITIATOR_USER,
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_LISTING,
-            'Listing was successfully Added',
+            'Listing was Added',
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
         );
         // ---------------------------------------

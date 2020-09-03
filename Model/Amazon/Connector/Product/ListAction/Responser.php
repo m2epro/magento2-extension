@@ -13,11 +13,45 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Product\ListAction;
  */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
 {
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
+    protected $localeCurrency;
+
+    //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\Connector\Connection\Response $response,
+        \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $params = []
+    ) {
+        $this->localeCurrency = $localeCurrency;
+        parent::__construct($amazonFactory, $activeRecordFactory, $response, $helperFactory, $modelFactory, $params);
+    }
+
     //########################################
 
     protected function getSuccessfulMessage()
     {
-        return 'Item was successfully Listed';
+        $currency = $this->localeCurrency->getCurrency(
+            $this->listingProduct->getMarketplace()->getChildObject()->getCurrency()
+        );
+
+        $parts = [
+            sprintf('Product was Listed with QTY %d', $this->listingProduct->getChildObject()->getOnlineQty())
+        ];
+
+        if ($regularPrice = $this->listingProduct->getChildObject()->getOnlineRegularPrice()) {
+            $parts[] = sprintf('Regular Price %s', $currency->toCurrency($regularPrice));
+        }
+
+        if ($businessPrice = $this->listingProduct->getChildObject()->getOnlineBusinessPrice()) {
+            $parts[] = sprintf('Business Price %s', $currency->toCurrency($businessPrice));
+        }
+
+        return implode(', ', $parts);
     }
 
     //########################################
@@ -39,11 +73,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
                 \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
             );
 
-            $this->getLogger()->logListingProductMessage(
-                $this->listingProduct,
-                $message
-            );
-
+            $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
             return;
         }
 

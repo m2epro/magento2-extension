@@ -65,7 +65,7 @@ class SendPickupStoreNotifications extends \Ess\M2ePro\Observer\AbstractModel
             $this->sendNotification($order->getAccount(), 'cancelled', $ebayOrder->getEbayOrderId())
         ) {
             $order->addSuccessLog(
-                $this->getHelper('Module\Translation')->__('Order was successfully marked as Cancelled')
+                $this->getHelper('Module\Translation')->__('Order was marked as Cancelled')
             );
             return;
         }
@@ -75,7 +75,7 @@ class SendPickupStoreNotifications extends \Ess\M2ePro\Observer\AbstractModel
             $this->sendNotification($order->getAccount(), 'ready_for_pickup', $ebayOrder->getEbayOrderId())
         ) {
             $order->addSuccessLog(
-                $this->getHelper('Module\Translation')->__('Order was successfully marked as Ready For Pickup')
+                $this->getHelper('Module\Translation')->__('Order was marked as Ready For Pickup')
             );
         }
 
@@ -84,7 +84,7 @@ class SendPickupStoreNotifications extends \Ess\M2ePro\Observer\AbstractModel
             $this->sendNotification($order->getAccount(), 'picked_up', $ebayOrder->getEbayOrderId())
         ) {
             $order->addSuccessLog(
-                $this->getHelper('Module\Translation')->__('Order was successfully marked as Picked Up')
+                $this->getHelper('Module\Translation')->__('Order was marked as Picked Up')
             );
         }
     }

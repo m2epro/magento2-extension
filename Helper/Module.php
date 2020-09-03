@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Helper;
 
+use Magento\Framework\Component\ComponentRegistrar;
+
 /**
  * Class \Ess\M2ePro\Helper\Module
  */
@@ -33,6 +35,8 @@ class Module extends AbstractHelper
     protected $cookieManager;
     protected $packageInfo;
     protected $moduleResource;
+    protected $resourceConnection;
+    protected $componentRegistrar;
 
     //########################################
 
@@ -46,7 +50,9 @@ class Module extends AbstractHelper
         \Magento\Framework\Module\PackageInfo $packageInfo,
         \Magento\Framework\Model\ResourceModel\Db\Context $dbContext,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Framework\App\Helper\Context $context,
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Magento\Framework\Component\ComponentRegistrar $componentRegistrar
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->config = $config;
@@ -56,6 +62,8 @@ class Module extends AbstractHelper
         $this->cookieManager = $cookieManager;
         $this->packageInfo = $packageInfo;
         $this->moduleResource = new \Magento\Framework\Module\ModuleResource($dbContext);
+        $this->resourceConnection = $resourceConnection;
+        $this->componentRegistrar = $componentRegistrar;
 
         parent::__construct($helperFactory, $context);
     }
@@ -99,6 +107,16 @@ class Module extends AbstractHelper
         return $this->moduleList->getOne(self::IDENTIFIER)['setup_version'];
     }
 
+    public function getSchemaVersion()
+    {
+        return $this->moduleResource->getDbVersion(self::IDENTIFIER);
+    }
+
+    public function getDataVersion()
+    {
+        return $this->moduleResource->getDataVersion(self::IDENTIFIER);
+    }
+
     //########################################
 
     public function getInstallationKey()
@@ -139,10 +157,23 @@ class Module extends AbstractHelper
 
     public function isReadyToWork()
     {
-        return $this->getHelper('Component')->getEnabledComponents() &&
-                ($this->getHelper('View\Ebay')->isInstallationWizardFinished() ||
-                 $this->getHelper('View\Amazon')->isInstallationWizardFinished() ||
-                 $this->getHelper('View\Walmart')->isInstallationWizardFinished());
+        return $this->areImportantTablesExist() &&
+               $this->getHelper('Component')->getEnabledComponents() &&
+               ($this->getHelper('View\Ebay')->isInstallationWizardFinished() ||
+               $this->getHelper('View\Amazon')->isInstallationWizardFinished() ||
+               $this->getHelper('View\Walmart')->isInstallationWizardFinished());
+    }
+
+    public function areImportantTablesExist()
+    {
+        foreach (['m2epro_config', 'm2epro_setup'] as $table) {
+            $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($table);
+            if (!$this->resourceConnection->getConnection()->isTableExists($tableName)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     // ---------------------------------------
@@ -223,6 +254,17 @@ class Module extends AbstractHelper
         }
 
         return true;
+    }
+
+    //########################################
+
+    public function getBaseRelativeDirectory()
+    {
+        return str_replace(
+            $this->getHelper('Client')->getBaseDirectory(),
+            '',
+            $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, \Ess\M2ePro\Helper\Module::IDENTIFIER)
+        );
     }
 
     //########################################

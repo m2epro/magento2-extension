@@ -149,14 +149,14 @@ class ProductsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending
         switch ($this->getLogsAction($stateItemData)) {
             case \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_ADD_PRODUCT:
                 $encodedDescription = $this->getHelper('Module\Log')->encodeDescription(
-                    'The Product with %qty% quantity was successfully added to the Store.',
+                    'The Product with %qty% quantity was added to the Store.',
                     ['!qty' => $stateItemData['target_qty']]
                 );
                 break;
 
             case \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_DELETE_PRODUCT:
                 $encodedDescription = $this->getHelper('Module\Log')->encodeDescription(
-                    'The Product was successfully deleted from the Store.'
+                    'The Product was deleted from the Store.'
                 );
                 break;
 
@@ -172,7 +172,7 @@ class ProductsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending
                 }
 
                 $encodedDescription = $this->getHelper('Module\Log')->encodeDescription(
-                    'The Product quantity was successfully changed from %stock_from%[%qty_from%]
+                    'The Product quantity was changed from %stock_from%[%qty_from%]
                     to %stock_to%[%qty_to%] for the Store.',
                     [
                         '!qty_from'   => $stateItemData['online_qty'],

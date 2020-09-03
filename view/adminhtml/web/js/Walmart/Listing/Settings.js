@@ -71,7 +71,9 @@ define([
         checkMessages: function () {
             if ($('store_id').value == '' ||
                 $('marketplace_id').value == '' ||
-                $('template_selling_format_id').value == '') {
+                $('template_selling_format_id').value == '' ||
+                $('store_id').value == -1
+            ) {
                 return;
             }
 

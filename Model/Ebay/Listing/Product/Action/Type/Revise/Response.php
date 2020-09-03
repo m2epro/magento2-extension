@@ -41,6 +41,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $data = $this->appendIsVariationValue($data);
         $data = $this->appendIsAuctionType($data);
 
+        $data = $this->appendDescriptionValues($data);
         $data = $this->appendImagesValues($data);
         $data = $this->appendCategoriesValues($data);
         $data = $this->appendPaymentValues($data);
@@ -83,88 +84,6 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $data['additional_data'] = $this->getHelper('Data')->jsonEncode($data['additional_data']);
 
         $this->getListingProduct()->addData($data)->save();
-    }
-
-    //########################################
-
-    /**
-     * @return string
-     */
-    public function getSuccessfulMessage()
-    {
-        if ($this->getConfigurator()->isExcludingMode()) {
-            return 'Item was successfully Revised';
-        }
-
-        $sequenceStrings = [];
-        $isPlural = false;
-
-        if ($this->getConfigurator()->isVariationsAllowed() && $this->getRequestData()->isVariationItem()) {
-            $sequenceStrings[] = 'Variations';
-            $isPlural = true;
-        } else {
-            if ($this->getConfigurator()->isQtyAllowed()) {
-                $sequenceStrings[] = 'QTY';
-            }
-
-            if ($this->getConfigurator()->isPriceAllowed()) {
-                $sequenceStrings[] = 'Price';
-            }
-        }
-
-        if ($this->getConfigurator()->isTitleAllowed()) {
-            $sequenceStrings[] = 'Title';
-        }
-
-        if ($this->getConfigurator()->isSubtitleAllowed()) {
-            $sequenceStrings[] = 'Subtitle';
-        }
-
-        if ($this->getConfigurator()->isDescriptionAllowed()) {
-            $sequenceStrings[] = 'Description';
-        }
-
-        if ($this->getConfigurator()->isImagesAllowed()) {
-            $sequenceStrings[] = 'Images';
-            $isPlural = true;
-        }
-
-        if ($this->getConfigurator()->isCategoriesAllowed()) {
-            $sequenceStrings[] = 'Categories / Specifics';
-            $isPlural = true;
-        }
-
-        if ($this->getConfigurator()->isPaymentAllowed()) {
-            $sequenceStrings[] = 'Payment';
-        }
-
-        if ($this->getConfigurator()->isShippingAllowed()) {
-            $sequenceStrings[] = 'Shipping';
-        }
-
-        if ($this->getConfigurator()->isReturnAllowed()) {
-            $sequenceStrings[] = 'Return';
-        }
-
-        if ($this->getConfigurator()->isOtherAllowed()) {
-            $sequenceStrings[] = 'Condition, Condition Note, Lot Size, Tax, Best Offer, Donation';
-            $isPlural = true;
-        }
-
-        if (empty($sequenceStrings)) {
-            return 'Item was successfully Revised';
-        }
-
-        if (count($sequenceStrings) == 1) {
-            $verb = 'was';
-            if ($isPlural) {
-                $verb = 'were';
-            }
-
-            return ucfirst($sequenceStrings[0]).' '.$verb.' successfully Revised';
-        }
-
-        return ucfirst(implode(', ', $sequenceStrings)).' were successfully Revised';
     }
 
     //########################################

@@ -66,12 +66,8 @@ class TablesStructure extends IssueType
             $taskResult->setTaskResult(TaskResult::STATE_CRITICAL);
             $taskResult->setTaskMessage($this->getHelper('Module\Translation')->translate([
             <<<HTML
-The critical issue with the Database used by M2E Pro is detected.
-Some MySQL tables or some structural elements of Database are missing.
-In this case, any of the functionality available in M2E Pro may experience problems with its working.
-This issue might be caused by failed Installation/Upgrade processes of M2E Pro Module.
-We recommend you to contact our Support Team via email <a href="mailto:support@m2epro.com">support@m2epro.com</a>
-for assistance in this matter.
+Some MySQL tables or their columns are missing. It can cause critical issues in Module work. 
+Please contact Support at <a href="mailto:support@m2epro.com">support@m2epro.com</a> for a solution.
 HTML
             ]));
             return;
@@ -82,10 +78,9 @@ HTML
             $taskResult->setTaskResult(TaskResult::STATE_WARNING);
             $taskResult->setTaskMessage($this->getHelper('Module\Translation')->translate([
             <<<HTML
-Your current Database structure which is used in M2E Pro has differences from the database structure
-of the current M2E Pro version. It is not a critical issue which affect the working state of M2E Pro Module.
-However, if you face any unusual behavior of the Module, please, contact our Support Team via email
-<a href="mailto:support@m2epro.com">support@m2epro.com</a> with the detailed description of the problem you faced.
+Some MySQL tables or their columns may have incorrect definitions. 
+If you face any unusual behavior of the Module, please contact Support at
+<a href="mailto:support@m2epro.com">support@m2epro.com</a>
 HTML
             ]));
             return;

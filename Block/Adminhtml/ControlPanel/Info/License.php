@@ -43,9 +43,10 @@ class License extends AbstractBlock
         ];
 
         $this->locationData = [
-            'domain'    => $this->getHelper('Client')->getDomain(),
-            'ip'        => $this->getHelper('Client')->getIp(),
-            'directory' => $this->getHelper('Client')->getBaseDirectory()
+            'domain'             => $this->getHelper('Client')->getDomain(),
+            'ip'                 => $this->getHelper('Client')->getIp(),
+            'directory'          => $this->getHelper('Client')->getBaseDirectory(),
+            'relative_directory' => $this->getHelper('Module')->getBaseRelativeDirectory()
         ];
 
         return parent::_beforeToHtml();

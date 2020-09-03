@@ -117,8 +117,9 @@ define([
         $('magento_orders_listings_other_mode').observe('change', this.magentoOrdersListingsOtherModeChange).simulate('change');
         $('magento_orders_listings_other_product_mode').observe('change', this.magentoOrdersListingsOtherProductModeChange);
 
-        $('magento_orders_number_source').observe('change', this.magentoOrdersNumberSourceChange);
-        $('magento_orders_number_prefix_prefix').observe('keyup', this.magentoOrdersNumberPrefixPrefixChange).simulate('change');
+        $('magento_orders_number_source').observe('change', this.magentoOrdersNumberChange);
+        $('magento_orders_number_prefix_prefix').observe('keyup', this.magentoOrdersNumberChange);
+        $('magento_orders_number_prefix_use_marketplace_prefix').observe('change', this.magentoOrdersNumberChange);
         EbayAccountObj.renderOrderNumberExample();
 
         $('magento_orders_customer_mode').observe('change', this.magentoOrdersCustomerModeChange).simulate('change');
@@ -460,13 +461,7 @@ define([
         }
     },
 
-    magentoOrdersNumberSourceChange: function()
-    {
-        var self = EbayAccountObj ;
-        self.renderOrderNumberExample();
-    },
-
-    magentoOrdersNumberPrefixPrefixChange: function()
+    magentoOrdersNumberChange: function()
     {
         var self = EbayAccountObj ;
         self.renderOrderNumberExample();
@@ -478,7 +473,13 @@ define([
         if ($('magento_orders_number_source').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Account::MAGENTO_ORDERS_NUMBER_SOURCE_CHANNEL')) {
             orderNumber = $('sample_ebay_order_id').value;
         }
-        orderNumber = $('magento_orders_number_prefix_prefix').value + orderNumber;
+
+        var marketplacePrefix = '';
+        if ($('magento_orders_number_prefix_use_marketplace_prefix').value == 1) {
+            marketplacePrefix = $('sample_marketplace_prefix').value;
+        }
+
+        orderNumber = $('magento_orders_number_prefix_prefix').value + marketplacePrefix + orderNumber;
 
         $('order_number_example_container').update(orderNumber);
     },

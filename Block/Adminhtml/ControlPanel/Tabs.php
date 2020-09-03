@@ -33,7 +33,6 @@ class Tabs extends AbstractHorizontalTabs
             HelperControlPanel::TAB_OVERVIEW,
             HelperControlPanel::TAB_INSPECTION,
             HelperControlPanel::TAB_DATABASE,
-            HelperControlPanel::TAB_TOOLS_GENERAL,
             HelperControlPanel::TAB_TOOLS_MODULE,
             HelperControlPanel::TAB_CRON,
             HelperControlPanel::TAB_DEBUG,
@@ -49,11 +48,14 @@ class Tabs extends AbstractHorizontalTabs
             'content' => $this->createBlock('ControlPanel_Tabs_Overview')->toHtml()
         ]);
         // ---------------------------------------
-
-        $this->addTab(HelperControlPanel::TAB_INSPECTION, [
-            'label'   => $this->helperFactory->getObject('Module\Translation')->__('Inspection'),
-            'content' => $this->createBlock('ControlPanel_Tabs_Inspection')->toHtml(),
-        ]);
+        $params = ['label' => $this->helperFactory->getObject('Module\Translation')->__('Inspection')];
+        if ($activeTab == HelperControlPanel::TAB_INSPECTION) {
+            $params['content'] = $this->createBlock('ControlPanel_Tabs_Inspection')->toHtml();
+        } else {
+            $params['class'] = 'ajax';
+            $params['url'] = $this->getUrl('*/controlPanel/InspectionTab');
+        }
+        $this->addTab(HelperControlPanel::TAB_INSPECTION, $params);
 
         // ---------------------------------------
         $params = ['label' => $this->helperFactory->getObject('Module\Translation')->__('Database')];
@@ -65,11 +67,6 @@ class Tabs extends AbstractHorizontalTabs
         }
         $this->addTab(HelperControlPanel::TAB_DATABASE, $params);
         // ---------------------------------------
-
-        $this->addTab(HelperControlPanel::TAB_TOOLS_GENERAL, [
-            'label'   => $this->helperFactory->getObject('Module\Translation')->__('General Tools'),
-            'content' => $this->createBlock('ControlPanel_Tabs_ToolsGeneral')->toHtml(),
-        ]);
 
         $this->addTab(HelperControlPanel::TAB_TOOLS_MODULE, [
             'label'   => $this->helperFactory->getObject('Module\Translation')->__('Module Tools'),

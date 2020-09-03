@@ -31,6 +31,23 @@ class Tabs extends AbstractTabs
     protected function _beforeToHtml()
     {
         $this->addTab(
+            'magento',
+            [
+                'label' => __('Magento'),
+                'title' => __('Magento'),
+                'content' => $this->createBlock(
+                    'ControlPanel_Tabs_Command_Group',
+                    '',
+                    [
+                        'data' => [
+                            'controller_name' => Command::CONTROLLER_TOOLS_MAGENTO
+                        ]
+                    ]
+                )->toHtml()
+            ]
+        );
+
+        $this->addTab(
             'integration',
             [
                 'label' => __('Integration'),
@@ -75,23 +92,6 @@ class Tabs extends AbstractTabs
                     [
                         'data' => [
                             'controller_name' => Command::CONTROLLER_MODULE_INTEGRATION_AMAZON
-                        ]
-                    ]
-                )->toHtml()
-            ]
-        );
-
-        $this->addTab(
-            'integration_walmart',
-            [
-                'label' => __('Integration [Walmart]'),
-                'title' => __('Integration [Walmart]'),
-                'content' => $this->createBlock(
-                    'ControlPanel_Tabs_Command_Group',
-                    '',
-                    [
-                        'data' => [
-                            'controller_name' => Command::CONTROLLER_MODULE_INTEGRATION_WALMART
                         ]
                     ]
                 )->toHtml()

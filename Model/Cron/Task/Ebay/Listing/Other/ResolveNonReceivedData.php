@@ -96,13 +96,13 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $receivedData = $this->receiveFromEbay(
             $account,
-            $listingOtherCollection->getFirstItem()->getData('start_date')
+            $listingOtherCollection->getFirstItem()->getChildObject()->getData('start_date')
         );
 
         $listingOthers = [];
         foreach ($listingOtherCollection->getItems() as $item) {
             /** @var $item \Ess\M2ePro\Model\Listing\Other */
-            $listingOthers[(string)$item->getData('item_id')] = $item;
+            $listingOthers[(string)$item->getChildObject()->getData('item_id')] = $item;
         }
 
         if (empty($receivedData['items'])) {

@@ -55,8 +55,8 @@ class Form extends AbstractForm
 
         $title = $this->amazonFactory->getObject('Listing')->getCollection()->getSize() == 0 ? 'Default' : '';
         $accountId = '';
-
         $storeId = '';
+
         // ---------------------------------------
         $sessionKey = 'amazon_listing_create';
         $sessionData = $this->getHelper('Data\Session')->getValue($sessionKey);
