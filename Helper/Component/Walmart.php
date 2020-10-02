@@ -135,7 +135,7 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
             ->getCachedObjectLoaded('Marketplace', $marketplaceId)
             ->getUrl();
 
-        return 'https://'.$domain.'/ip/'.$productItemId;
+        return 'https://www.'.$domain.'/ip/'.$productItemId;
     }
 
     //todo is not correct. there are no orders to check

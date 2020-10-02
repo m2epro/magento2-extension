@@ -560,7 +560,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getInternationalShippingRateTable(\Ess\M2ePro\Model\Account $account)
     {
-        return (bool)$this->getData('local_shipping_rate_table_mode');
+        return $this->getRateTable('international', $account);
     }
 
     /**

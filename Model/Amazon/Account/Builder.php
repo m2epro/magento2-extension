@@ -277,9 +277,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         ];
         $tempSettings = !empty($tempSettings['notifications']) ? $tempSettings['notifications'] : [];
         foreach ($notificationsKeys as $key) {
-            if (in_array($key, $tempSettings)) {
-                $data['magento_orders_settings'][$tempKey]['notifications'][$key] = true;
-            }
+            $data['magento_orders_settings'][$tempKey]['notifications'][$key] = in_array($key, $tempSettings);
         }
 
         // status mapping settings

@@ -45,6 +45,8 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
         $shipmentItems = [];
         $qtyAvailable = (int)$shipmentItem->getQty();
 
+        $itemsCollection = $order->getItemsCollection();
+
         foreach ($additionalData[DataHelper::CUSTOM_IDENTIFIER]['items'] as &$data) {
             if ($qtyAvailable <= 0 || !isset($data['order_item_id'])) {
                 continue;
@@ -52,9 +54,8 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
 
             /** @var \Ess\M2ePro\Model\Order\Item $item */
             $orderItemId = $data['order_item_id'];
-            $item = $order->getItemsCollection()
-                ->addFieldToFilter('amazon_order_item_id', $orderItemId)
-                ->getFirstItem();
+            $itemsCollection->clear()->getSelect()->reset(\Zend_Db_Select::WHERE);
+            $item = $itemsCollection->addFieldToFilter('amazon_order_item_id', $orderItemId)->getFirstItem();
             if ($item === null) {
                 continue;
             }

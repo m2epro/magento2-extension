@@ -2661,7 +2661,6 @@ HTML
         $formDataServices = $this->getHelper('Data')->jsonEncode($this->formData['services']);
 
         $rateTablesHtml = <<<JS
-    var rateTablesIds = [];
 JS;
 
         if ($this->getAccountId() !== null) {
@@ -2679,7 +2678,7 @@ JS;
         value: {$rateTablesValue},
         type: "local"
     });
-    rateTablesIds.push("local_shipping_rate_table_value_{$this->getAccountId()}");
+    EbayTemplateShippingObj.rateTablesIds.push("local_shipping_rate_table_value_{$this->getAccountId()}");
 JS;
             }
 
@@ -2696,7 +2695,7 @@ JS;
         value: {$rateTablesValue},
         type: "international"
     });
-    rateTablesIds.push("international_shipping_rate_table_value_{$this->getAccountId()}");
+    EbayTemplateShippingObj.rateTablesIds.push("international_shipping_rate_table_value_{$this->getAccountId()}");
 JS;
             }
         } else {
@@ -2717,7 +2716,7 @@ JS;
         value: {$rateTablesValue},
         type: "local"
     });
-    rateTablesIds.push("local_shipping_rate_table_value_{$account->getId()}");
+    EbayTemplateShippingObj.rateTablesIds.push("local_shipping_rate_table_value_{$account->getId()}");
 JS;
                     }
 
@@ -2735,7 +2734,7 @@ JS;
         value: {$rateTablesValue},
         type: "international"
     });
-    rateTablesIds.push("international_shipping_rate_table_value_{$account->getId()}");
+    EbayTemplateShippingObj.rateTablesIds.push("international_shipping_rate_table_value_{$account->getId()}");
 JS;
                     }
                 }

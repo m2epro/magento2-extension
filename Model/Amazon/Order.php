@@ -774,7 +774,12 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
                        ->addFieldToFilter('processing_attempt_count', 0)
                        ->getFirstItem();
 
-        if ($change->getId() && empty($trackingDetails['tracking_number'])) {
+        $existingParams = $change->getParams();
+
+        $newTrackingNumber = !empty($trackingDetails['tracking_number']) ? $trackingDetails['tracking_number'] : '';
+        $oldTrackingNumber = !empty($existingParams['tracking_number']) ? $existingParams['tracking_number'] : '';
+
+        if ($change->getId() && $newTrackingNumber === $oldTrackingNumber) {
             $this->updateOrderChange($change, $params);
         } else {
             $this->activeRecordFactory->getObject('Order\Change')->create(

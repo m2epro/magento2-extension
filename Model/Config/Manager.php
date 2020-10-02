@@ -204,6 +204,16 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         return true;
     }
 
+    /**
+     * @return mixed
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getAllConfigData()
+    {
+        $collection = $this->activeRecordFactory->getObject('Config')->getCollection()->toArray();
+        return $collection['items'];
+    }
+
     //########################################
 
     private function getCacheData()

@@ -362,7 +362,10 @@ HTML;
             return;
         }
 
-        $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
+        $listing = $this->activeRecordFactory->getCachedObjectLoaded(
+            'Listing',
+            $this->getRequest()->getParam('id')
+        );
 
         // ---------------------------------------
         $excludeProductsSelect = $collection->getConnection()->select()->from(

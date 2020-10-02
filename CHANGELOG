@@ -1,4 +1,16 @@
-* 1.8.0 (r4150) (03/09/2020) 
+* 1.8.1 (r4220) (02/10/2020) 
+
+Common: [Fixed] Email notification settings can't be disabled
+Common: [Fixed] Not working link in enable secure key
+Common: [Fixed] Notice: Trying to access array offset on value of type null in .../Block/Adminhtml/Ebay/Listing/Product/Add/Category/Tree.php on line 340
+Common: [Fixed] Every order item is being shipped separately
+eBay: [Fixed] Trying to access array offset on value of type bool error on Magento 2.4.0
+eBay: [Fixed] eBay flat shipping package details
+Amazon: [Fixed] Child products go to Not Listed status after upgrade on 1.8.0
+Amazon: [Fixed] Not all item qty is sent along with shipment info
+Walmart: [Fixed] Item id link leads to invalid url
+
+* 1.8.0 (r4150) (02/09/2020)
 
 Common: [Added] Registry Manager
 Common: [Added] Config helper

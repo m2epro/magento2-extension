@@ -106,7 +106,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                         `second_table`.`online_regular_price`
                     )
                 )
-            ')
+            '),
+            'amazon_status' => 'status'
         ]);
 
         $lpvTable = $this->activeRecordFactory->getObject('Listing_Product_Variation')->getResource()->getMainTable();
@@ -242,11 +243,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $this->addColumn('online_current_price', $priceColumn);
 
-        $this->addColumn('status', [
+        $this->addColumn('amazon_status', [
             'header'   => $this->__('Status'),
             'width'    => '100px',
-            'index'    => 'status',
-            'filter_index' => 'status',
+            'index'    => 'amazon_status',
+            'filter_index' => 'amazon_status',
             'type'     => 'options',
             'sortable' => false,
             'options'  => [

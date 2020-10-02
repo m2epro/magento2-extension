@@ -600,8 +600,12 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
             ->addFieldToFilter('action', $action)
             ->addFieldToFilter('processing_attempt_count', 0)
             ->getFirstItem();
+        $existingParams = $change->getParams();
 
-        if ($change->getId()) {
+        $newTrackingNumber = !empty($trackingDetails['tracking_number']) ? $trackingDetails['tracking_number'] : '';
+        $oldTrackingNumber = !empty($existingParams['tracking_number']) ? $existingParams['tracking_number'] : '';
+
+        if ($change->getId() && $newTrackingNumber === $oldTrackingNumber) {
             $this->updateOrderChange($change, $params);
         } else {
             $this->activeRecordFactory->getObject('Order\Change')->create(

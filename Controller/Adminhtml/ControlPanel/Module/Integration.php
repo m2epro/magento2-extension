@@ -86,11 +86,15 @@ class Integration extends Command
             if ($componentMode == 'walmart') {
                 $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
 
+                $skuResolver = $this->modelFactory
+                    ->getObject('Walmart_Listing_Product_Action_Type_ListAction_SkuResolver');
+                $skuResolver->setListingProduct($lp);
+
                 /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Request $request */
                 $request = $this->modelFactory->getObject(
                     'Walmart_Listing_Product_Action_Type_'.$requestType.'_Request'
                 );
-                $request->setParams([]);
+                $request->setParams(['sku' => $skuResolver->resolve()]);
                 $request->setListingProduct($lp);
                 $request->setConfigurator($configurator);
 
