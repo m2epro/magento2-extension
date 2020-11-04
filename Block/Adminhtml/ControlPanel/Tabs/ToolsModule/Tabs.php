@@ -98,6 +98,23 @@ class Tabs extends AbstractTabs
             ]
         );
 
+        $this->addTab(
+            'integration_walmart',
+            [
+                'label' => __('Integration [Walmart]'),
+                'title' => __('Integration [Walmart]'),
+                'content' => $this->createBlock(
+                    'ControlPanel_Tabs_Command_Group',
+                    '',
+                    [
+                        'data' => [
+                            'controller_name' => Command::CONTROLLER_MODULE_INTEGRATION_WALMART
+                        ]
+                    ]
+                )->toHtml()
+            ]
+        );
+
         return parent::_beforeToHtml();
     }
 

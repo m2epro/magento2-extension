@@ -74,8 +74,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $storeId = '';
         // ---------------------------------------
-        $sessionKey = 'ebay_listing_create';
-        $sessionData = $this->getHelper('Data\Session')->getValue($sessionKey);
+        $sessionData = $this->getHelper('Data_Session')->getValue(
+            \Ess\M2ePro\Model\Ebay\Listing::CREATE_LISTING_SESSION_DATA
+        );
 
         isset($sessionData['listing_title']) && $title = $sessionData['listing_title'];
         isset($sessionData['account_id']) && $accountId = $sessionData['account_id'];

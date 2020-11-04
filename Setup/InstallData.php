@@ -196,6 +196,7 @@ class InstallData implements InstallDataInterface
             '1'
         );
         $moduleConfig->insert('/general/configuration/', 'secure_image_url_in_item_description_mode', '0');
+        $moduleConfig->insert('/general/configuration/', 'grouped_product_mode', '0');
         $moduleConfig->insert('/magento/product/simple_type/', 'custom_types', '');
         $moduleConfig->insert('/magento/product/downloadable_type/', 'custom_types', '');
         $moduleConfig->insert('/magento/product/configurable_type/', 'custom_types', '');
@@ -266,7 +267,6 @@ class InstallData implements InstallDataInterface
         $moduleConfig->insert('/ebay/configuration/', 'de_epids_attribute', null);
         $moduleConfig->insert('/ebay/configuration/', 'au_epids_attribute', null);
         $moduleConfig->insert('/ebay/configuration/', 'ktypes_attribute', null);
-        $moduleConfig->insert('/ebay/configuration/', 'sell_on_another_marketplace_tutorial_shown', '0');
         $moduleConfig->insert('/ebay/configuration/', 'upload_images_mode', 2);
         $moduleConfig->insert('/ebay/configuration/', 'view_template_selling_format_show_tax_category', '0');
         $moduleConfig->insert('/ebay/configuration/', 'feedback_notification_mode', '0');
@@ -579,6 +579,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 1,
                 'is_english_measurement_system'        => 1,
                 'is_metric_measurement_system'         => 0,
+                'is_managed_payments'                  => 1,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 1,
                 'is_charity'                           => 1,
@@ -605,6 +606,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 0,
                 'is_english_measurement_system'        => 1,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 1,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 0,
                 'is_charity'                           => 1,
@@ -631,6 +633,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 1,
                 'is_english_measurement_system'        => 0,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 1,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 1,
                 'is_charity'                           => 1,
@@ -657,6 +660,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 0,
                 'is_english_measurement_system'        => 0,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 1,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 0,
                 'is_charity'                           => 1,
@@ -683,6 +687,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 0,
                 'is_english_measurement_system'        => 0,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 0,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 0,
                 'is_charity'                           => 1,
@@ -709,6 +714,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 0,
                 'is_english_measurement_system'        => 0,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 0,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 0,
                 'is_charity'                           => 1,
@@ -735,6 +741,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 0,
                 'is_english_measurement_system'        => 0,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 0,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 0,
                 'is_charity'                           => 1,
@@ -761,6 +768,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 1,
                 'is_english_measurement_system'        => 0,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 1,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 0,
                 'is_charity'                           => 1,
@@ -787,6 +795,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 0,
                 'is_english_measurement_system'        => 1,
                 'is_metric_measurement_system'         => 0,
+                'is_managed_payments'                  => 0,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 1,
                 'is_charity'                           => 1,
@@ -813,6 +822,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 0,
                 'is_english_measurement_system'        => 0,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 0,
                 'is_cash_on_delivery'                  => 1,
                 'is_global_shipping_program'           => 0,
                 'is_charity'                           => 1,
@@ -839,6 +849,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 0,
                 'is_english_measurement_system'        => 0,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 0,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 0,
                 'is_charity'                           => 1,
@@ -865,6 +876,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 0,
                 'is_english_measurement_system'        => 0,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 0,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 0,
                 'is_charity'                           => 1,
@@ -891,6 +903,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 0,
                 'is_english_measurement_system'        => 0,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 0,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 0,
                 'is_charity'                           => 1,
@@ -917,6 +930,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 0,
                 'is_english_measurement_system'        => 0,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 0,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 0,
                 'is_charity'                           => 1,
@@ -943,6 +957,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 0,
                 'is_english_measurement_system'        => 0,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 0,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 0,
                 'is_charity'                           => 1,
@@ -969,6 +984,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 0,
                 'is_english_measurement_system'        => 0,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 0,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 0,
                 'is_charity'                           => 1,
@@ -995,6 +1011,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 0,
                 'is_english_measurement_system'        => 0,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 0,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 0,
                 'is_charity'                           => 1,
@@ -1021,6 +1038,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 0,
                 'is_english_measurement_system'        => 0,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 0,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 0,
                 'is_charity'                           => 1,
@@ -1047,6 +1065,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 0,
                 'is_english_measurement_system'        => 1,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 0,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 0,
                 'is_charity'                           => 1,
@@ -1073,6 +1092,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 0,
                 'is_english_measurement_system'        => 0,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 0,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 0,
                 'is_charity'                           => 1,
@@ -1099,6 +1119,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 0,
                 'is_english_measurement_system'        => 0,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 0,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 0,
                 'is_charity'                           => 1,
@@ -1125,6 +1146,7 @@ class InstallData implements InstallDataInterface
                 'is_international_shipping_rate_table' => 0,
                 'is_english_measurement_system'        => 0,
                 'is_metric_measurement_system'         => 1,
+                'is_managed_payments'                  => 0,
                 'is_cash_on_delivery'                  => 0,
                 'is_global_shipping_program'           => 0,
                 'is_charity'                           => 1,
@@ -1295,6 +1317,32 @@ class InstallData implements InstallDataInterface
                 'component_mode' => 'amazon',
                 'update_date'    => '2020-03-26 00:00:00',
                 'create_date'    => '2020-03-26 00:00:00'
+            ],
+            [
+                'id'             => 40,
+                'native_id'      => 12,
+                'title'          => 'Turkey',
+                'code'           => 'TR',
+                'url'            => 'amazon.com.tr',
+                'status'         => 0,
+                'sorder'         => 14,
+                'group_title'    => 'Europe',
+                'component_mode' => 'amazon',
+                'update_date'    => '2020-08-19 00:00:00',
+                'create_date'    => '2020-08-19 00:00:00'
+            ],
+            [
+                'id'             => 41,
+                'native_id'      => 13,
+                'title'          => 'Sweden',
+                'code'           => 'SE',
+                'url'            => 'amazon.se',
+                'status'         => 0,
+                'sorder'         => 15,
+                'group_title'    => 'Europe',
+                'component_mode' => 'amazon',
+                'update_date'    => '2020-09-03 00:00:00',
+                'create_date'    => '2020-09-03 00:00:00'
             ]
         ]);
 
@@ -1418,6 +1466,30 @@ class InstallData implements InstallDataInterface
                 'is_product_tax_code_policy_available'    => 1,
                 'is_automatic_token_retrieving_available' => 1,
                 'is_upload_invoices_available'            => 0,
+            ],
+            [
+                'marketplace_id'                          => 40,
+                'developer_key'                           => '7078-7205-1944',
+                'default_currency'                        => 'TRY',
+                'is_new_asin_available'                   => 1,
+                'is_merchant_fulfillment_available'       => 1,
+                'is_business_available'                   => 0,
+                'is_vat_calculation_service_available'    => 0,
+                'is_product_tax_code_policy_available'    => 0,
+                'is_automatic_token_retrieving_available' => 1,
+                'is_upload_invoices_available'            => 0
+            ],
+            [
+                'marketplace_id'                          => 41,
+                'developer_key'                           => '7078-7205-1944',
+                'default_currency'                        => 'SEK',
+                'is_new_asin_available'                   => 1,
+                'is_merchant_fulfillment_available'       => 1,
+                'is_business_available'                   => 0,
+                'is_vat_calculation_service_available'    => 0,
+                'is_product_tax_code_policy_available'    => 0,
+                'is_automatic_token_retrieving_available' => 1,
+                'is_upload_invoices_available'            => 0
             ]
         ]);
     }

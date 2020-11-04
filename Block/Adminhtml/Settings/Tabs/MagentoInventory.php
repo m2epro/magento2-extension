@@ -38,6 +38,40 @@ HTML
         );
 
         $fieldset = $form->addFieldset(
+            'magento_block_configuration_settings_variational_products_settings',
+            [
+                'legend'      => $this->__('Variational Product Settings'),
+                'collapsable' => false
+            ]
+        );
+
+        $fieldset->addField(
+            'grouped_product_mode',
+            self::SELECT,
+            [
+                'name' => 'grouped_product_mode',
+                'label' => $this->__('List Grouped Product as'),
+                'values' => [
+                    1 => $this->__('Product Set'),
+                    0 => $this->__('Variations')
+                ],
+                'value' => $this->getHelper('Module_Configuration')->getGroupedProductMode(),
+                'tooltip' => $this->__(
+                    <<<HTML
+<b>Product Set</b> - a group of products will be listed as a Set (Individual Item).
+Customers can purchase products only as a set. Read the <a href="%url%" target="_blank">article</a> for details.
+<b>Variations</b> - a group of products will be listed as a Variational Item.
+Customers can purchase each option of Variational Product separately.
+HTML
+                    ,
+                    $this->getHelper('Module_Support')->getSupportUrl(
+                        'knowledgebase/1585305-listing-magento-grouped-product-as-product-set'
+                    )
+                )
+            ]
+        );
+
+        $fieldset = $form->addFieldset(
             'configuration_settings_magento_inventory_quantity',
             [
                 'legend'      => $this->__('Quantity'),

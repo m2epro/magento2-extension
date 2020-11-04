@@ -214,7 +214,7 @@ HTML;
     public function clearMagentoCacheAction()
     {
         $this->getHelper('Magento')->clearCache();
-        $this->getMessageManager()->addSuccess('Magento cache was successfully cleared.');
+        $this->getMessageManager()->addSuccess('Magento cache was cleared.');
         $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
     }
 

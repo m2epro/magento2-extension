@@ -67,7 +67,7 @@ define([
                 if (isFailed == 1) {
                     MessagesObj.addError(M2ePro.translator.translate('failed_mapped'));
                 } else {
-                    MessagesObj.addSuccess(M2ePro.translator.translate('successfully_mapped'));
+                    MessagesObj.addSuccess(M2ePro.translator.translate('Product was Mapped.'));
                 }
 
                 this.progressBarObj.setStatus(M2ePro.translator.translate('task_completed_message'));

@@ -36,7 +36,7 @@ class AfterGetSellApiToken extends Account
             $this->_redirect('*/*/index');
         }
 
-        $this->getMessageManager()->addSuccess($this->__('Sell API token was successfully obtained'));
+        $this->getMessageManager()->addSuccess($this->__('Sell API token was obtained'));
         $this->_redirect('*/*/edit', ['id' => $accountId, '_current' => true]);
         // ---------------------------------------
     }

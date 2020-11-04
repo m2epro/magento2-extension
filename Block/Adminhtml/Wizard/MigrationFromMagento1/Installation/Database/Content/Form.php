@@ -54,7 +54,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'tooltip' => $this->__(
                     '<p style="color: #41362f">If your Magento v2.x is staging yet, 
                     it is recommended to keep synchronization on Magento v1.x running. It can be disabled later under 
-                    <i>System > Configuration > M2E Pro > Advanced > Automatic Synchronization</i>.</p>'
+                    <i>System > Configuration > M2E Pro > Module & Channels > Module
+                     > Automatic Synchronization</i>.</p>'
                 )
             ]
         );

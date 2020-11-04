@@ -117,4 +117,30 @@ class Edit extends AbstractContainer
             // ---------------------------------------
         }
     }
+
+    //########################################
+
+    protected function _prepareLayout()
+    {
+        $this->jsTranslator->addTranslations([
+            'is_ready_for_document_generation' => $this->__(<<<HTML
+    To use this option, go to <i>System > Configuration > General > General > Store Information</i> and fill in the 
+    following required fields:<br><br>
+        <ul style="padding-left: 50px">
+            <li>Store Name</li>
+            <li>Country</li>
+            <li>ZIP/Postal Code</li>
+            <li>City</li>
+            <li>Street Address</li>
+        </ul>
+HTML
+                ,
+                $this->getHelper('Module_Support')->getHowToGuideUrl('1602134')
+            )
+        ]);
+
+        return parent::_prepareLayout();
+    }
+
+    //########################################
 }

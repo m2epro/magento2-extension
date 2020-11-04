@@ -580,6 +580,16 @@ HTML;
 
     protected function _toHtml()
     {
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $this->js->add(
+                <<<JS
+                OrderObj.initializeGrids();
+JS
+            );
+
+            return parent::_toHtml();
+        }
+
         $tempGridIds = [];
         $this->getHelper('Component\Amazon')->isEnabled() && $tempGridIds[] = $this->getId();
 

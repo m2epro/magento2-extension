@@ -694,6 +694,24 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     // ---------------------------------------
 
     /**
+     * @return boolean
+     */
+    public function isAmazonCollectsEnabled()
+    {
+        return (bool)$this->getSetting('magento_orders_settings', ['tax', 'amazon_collects'], 0);
+    }
+
+    /**
+     * @return array
+     */
+    public function getExcludedStates()
+    {
+        return $this->getSetting('magento_orders_settings', ['tax', 'excluded_states'], []);
+    }
+
+    // ---------------------------------------
+
+    /**
      * @return bool
      */
     public function isMagentoOrdersCustomerGuest()

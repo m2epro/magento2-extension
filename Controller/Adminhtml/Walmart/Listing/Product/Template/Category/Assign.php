@@ -35,7 +35,7 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Te
         $this->runProcessorForParents($productsIds);
 
         $messages[] = $this->__(
-            'Category Policy was successfully assigned to %count% Products',
+            'Category Policy was assigned to %count% Products',
             count($productsIds)
         );
 

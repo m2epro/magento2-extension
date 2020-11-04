@@ -151,6 +151,13 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
             }
         }
 
+        if ($this->getListingProduct()->getMagentoProduct()->isGroupedType()) {
+            $additionalData = $this->getListingProduct()->getAdditionalData();
+            $data['additional_data'] = $this->getHelper('Data')->jsonEncode([
+                'grouped_product_mode' => $additionalData['grouped_product_mode']
+            ]);
+        }
+
         /** @var \Ess\M2ePro\Model\Amazon\Item $object */
         $object = $this->activeRecordFactory->getObject('Amazon\Item');
         $object->setData($data);

@@ -13,7 +13,7 @@ use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 /**
  * Class \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
  */
-abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pending\Responser
+abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Responser
 {
     /**
      * @var \Ess\M2ePro\Model\Listing\Product $listingProduct
@@ -45,17 +45,30 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $params = []
     ) {
-        parent::__construct($walmartFactory, $activeRecordFactory, $response, $helperFactory, $modelFactory, $params);
+        parent::__construct(
+            $response,
+            $helperFactory,
+            $modelFactory,
+            $amazonFactory,
+            $walmartFactory,
+            $ebayFactory,
+            $activeRecordFactory,
+            $params
+        );
 
-        $listingProductId = $this->params['product']['id'];
-        $this->listingProduct = $this->walmartFactory->getObjectLoaded('Listing\Product', $listingProductId);
+        $this->listingProduct = $this->walmartFactory->getObjectLoaded(
+            'Listing\Product',
+            $this->params['product']['id']
+        );
     }
 
     //########################################
@@ -305,23 +318,12 @@ abstract class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
     //########################################
 
     /**
-     * @return \Ess\M2ePro\Model\Account
+     * @return int
      */
-    protected function getAccount()
+    protected function getAccountId()
     {
-        return $this->getObjectByParam('Account', 'account_id');
+        return (int)$this->params['account_id'];
     }
-
-    /**
-     * @return \Ess\M2ePro\Model\Marketplace
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    protected function getMarketplace()
-    {
-        return $this->getAccount()->getChildObject()->getMarketplace();
-    }
-
-    //---------------------------------------
 
     protected function getActionType()
     {

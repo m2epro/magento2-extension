@@ -46,7 +46,7 @@ class PrepareMoveToListing extends Listing
             ->getObject($componentMode, 'Listing\Other')
             ->getCollection();
 
-        $listingOtherCollection->addFieldToFilter('main_table.id', ['in' => $selectedProductsPart]);
+        $listingOtherCollection->addFieldToFilter('main_table.id', ['in' => $selectedProducts]);
         $listingOtherCollection->addFieldToFilter('main_table.product_id', ['notnull' => true]);
 
         if ($listingOtherCollection->getSize() != count($selectedProducts)) {

@@ -44,7 +44,7 @@ class ReservationCancel extends Order
 
             if ($actionSuccessful) {
                 $this->messageManager->addSuccess(
-                    $this->__('QTY reserve for selected Order(s) was successfully canceled.')
+                    $this->__('QTY reserve for selected Order(s) was canceled.')
                 );
             } else {
                 $this->messageManager->addError(

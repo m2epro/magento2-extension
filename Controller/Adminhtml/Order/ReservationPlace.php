@@ -49,7 +49,7 @@ class ReservationPlace extends Order
 
             if ($actionSuccessful) {
                 $this->messageManager->addSuccess(
-                    $this->__('QTY for selected Order(s) was successfully reserved.')
+                    $this->__('QTY for selected Order(s) was reserved.')
                 );
             } else {
                 $this->messageManager->addError(

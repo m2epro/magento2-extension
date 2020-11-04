@@ -183,7 +183,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             return;
         }
 
-        $helper = $this->getHelper('M2ePro');
+        $helper = $this->getHelper('Data');
         foreach ($template->getSpecifics() as $specific) {
             $specific['value_ebay_recommended'] = (array)$helper->jsonDecode($specific['value_ebay_recommended']);
             $specific['value_custom_value']     = (array)$helper->jsonDecode($specific['value_custom_value']);

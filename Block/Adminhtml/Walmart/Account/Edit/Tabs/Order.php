@@ -172,8 +172,8 @@ HTML
                 ],
                 'value' => $formData['magento_orders_settings']['listing_other']['mode'],
                 'tooltip' => $this->__(
-                    'Enable to automatically create Magento Order if the Channel Order
-                    was placed for the Item listed without M2E Pro.'
+                    'Choose whether a Magento Order should be created if a Walmart Order is received for an item that 
+                    does <b>not</b> belong to the M2E Pro Listing.'
                 )
             ]
         );

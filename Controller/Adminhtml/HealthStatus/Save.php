@@ -47,7 +47,7 @@ class Save extends HealthStatus
             );
         }
 
-        $this->getMessageManager()->addSuccessMessage($this->__('Settings are successfully saved.'));
+        $this->getMessageManager()->addSuccessMessage($this->__('Settings are saved.'));
 
         $params = [];
         $params['tab'] = Tabs::TAB_ID_NOTIFICATIONS;

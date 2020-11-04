@@ -724,7 +724,7 @@ JS
         $this->jsTranslator->addTranslations([
             'task_completed_message' => $this->__('Task completed. Please wait ...'),
 
-            'task_completed_success_message' => $this->__('Stores have been successfully unassigned.'),
+            'task_completed_success_message' => $this->__('Stores have been unassigned.'),
 
             'task_completed_warning_message' => $this->__('You should provide correct parameters.'),
             'task_completed_error_message' => $this->__('"%task_title%" task has completed with errors.'),

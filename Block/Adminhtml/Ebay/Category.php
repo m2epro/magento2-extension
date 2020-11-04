@@ -39,7 +39,10 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     {
         $this->appendHelpBlock([
             'content' => $this->__(<<<HTML
-This page shows eBay Categories that are currently used in your M2E Pro Listings.<br/>
+This page shows eBay Categories that are currently used in your M2E Pro Listings.<br/><br/>
+You can see Category Status in a grid:<br/><br/>
+<strong>Active</strong> —  category is currently available on eBay<br/>
+<strong>Removed</strong> —  category was removed by eBay<br/><br/>
 Any changes you make on this page will affect M2E Pro Listings where these Categories are used.
 Read the <a href="%url%" target="_blank">article</a> to learn how to manage eBay Categories.
 HTML

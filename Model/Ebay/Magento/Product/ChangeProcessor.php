@@ -211,8 +211,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
                 $attributes,
                 array_merge(
                     $service->getCostAttributes(),
-                    $service->getCostAdditionalAttributes(),
-                    $service->getCostSurchargeAttributes()
+                    $service->getCostAdditionalAttributes()
                 )
             );
             // @codingStandardsIgnoreEnd

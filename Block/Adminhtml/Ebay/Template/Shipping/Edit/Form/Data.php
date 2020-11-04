@@ -2313,16 +2313,6 @@ HTML;
                     $attributes['services'][$i][$code] = $label;
                 }
             }
-
-            $mode = 'cost_mode';
-            $code = 'cost_surcharge_value';
-
-            if ($service[$mode] == \Ess\M2ePro\Model\Ebay\Template\Shipping\Service::COST_MODE_CUSTOM_ATTRIBUTE) {
-                if (!$this->isExistInAttributesArray($service[$code])) {
-                    $label = $magentoAttributeHelper->getAttributeLabel($service[$code]);
-                    $attributes['services'][$i][$code] = $label;
-                }
-            }
         }
 
         // ---------------------------------------

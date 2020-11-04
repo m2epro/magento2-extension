@@ -580,7 +580,10 @@ abstract class Settings extends Listing
         $listingProductAddIds = array_map('intval', $listingProductAddIds);
         $listingProductAddIds = array_diff($listingProductAddIds, $listingProductsIds);
 
-        $listing->setData('product_add_ids', $this->getHelper('Data')->jsonEncode($listingProductAddIds));
+        $listing->getChildObject()->setData(
+            'product_add_ids',
+            $this->getHelper('Data')->jsonEncode($listingProductAddIds)
+        );
         $listing->save();
     }
 

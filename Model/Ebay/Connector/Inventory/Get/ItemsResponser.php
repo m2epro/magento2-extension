@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Connector\Inventory\Get;
 /**
  * Class \Ess\M2ePro\Model\Ebay\Connector\Inventory\Get\ItemsResponser
  */
-abstract class ItemsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending\Responser
+abstract class ItemsResponser extends \Ess\M2ePro\Model\Connector\Command\Pending\Responser
 {
     //########################################
 

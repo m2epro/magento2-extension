@@ -35,7 +35,7 @@ class Delete extends Order
 
         $order->delete();
 
-        $this->messageManager->addSuccess($this->__('Order was successfully deleted.'));
+        $this->messageManager->addSuccess($this->__('Order was deleted.'));
         return $this->_redirect('*/*/index');
     }
 }

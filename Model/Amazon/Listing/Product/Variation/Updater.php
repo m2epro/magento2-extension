@@ -54,12 +54,11 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
     {
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager $variationManager */
         $variationManager = $listingProduct->getChildObject()->getVariationManager();
-        $magentoProduct = $listingProduct->getMagentoProduct();
-
-        if (!$magentoProduct->isProductWithVariations() || $variationManager->isVariationProduct()) {
+        if ($variationManager->isVariationProduct() || !$listingProduct->getChildObject()->isVariationMode()) {
             return false;
         }
 
+        $magentoProduct = $listingProduct->getMagentoProduct();
         if ($magentoProduct->isSimpleTypeWithCustomOptions() ||
             $magentoProduct->isBundleType() ||
             $magentoProduct->isDownloadableTypeWithSeparatedLinks()
@@ -72,6 +71,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         }
 
         $listingProduct->getChildObject()->setData('is_variation_product', 1);
+
         $variationManager->setIndividualType();
         $variationManager->getTypeModel()->resetProductVariation();
 
@@ -82,15 +82,13 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
     {
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager $variationManager */
         $variationManager = $listingProduct->getChildObject()->getVariationManager();
-        $isVariationMagentoProduct = $listingProduct->getMagentoProduct()->isProductWithVariations();
-
-        if ($isVariationMagentoProduct || !$variationManager->isVariationProduct()) {
+        if (!$variationManager->isVariationProduct() || $listingProduct->getChildObject()->isVariationMode()) {
             return false;
         }
 
         $variationManager->getTypeModel()->clearTypeData();
 
-        if ($variationManager->isRelationParentType()) {
+        if ($variationManager->isRelationParentType() && !$listingProduct->isGroupedProductModeSet()) {
             $listingProduct->getChildObject()->setData('general_id', null);
             $listingProduct->getChildObject()->setData(
                 'is_general_id_owner',

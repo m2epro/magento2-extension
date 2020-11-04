@@ -209,6 +209,16 @@ class Payment extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     /**
      * @return bool
      */
+    public function isManagedPaymentsEnabled()
+    {
+        return (bool)$this->getData('managed_payments_mode');
+    }
+
+    //########################################
+
+    /**
+     * @return bool
+     */
     public function isPayPalEnabled()
     {
         return (bool)$this->getData('pay_pal_mode');

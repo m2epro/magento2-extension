@@ -139,14 +139,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Details\It
     //########################################
 
     /**
-     * @return \Ess\M2ePro\Model\Account
-     */
-    protected function getAccount()
-    {
-        return $this->getObjectByParam('Account', 'account_id');
-    }
-
-    /**
      * @return \Ess\M2ePro\Model\Synchronization\Log
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

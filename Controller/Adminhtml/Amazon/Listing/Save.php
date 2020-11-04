@@ -175,7 +175,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         $this->processSellingFormatTemplateChange($oldData, $newData, $affectedListingsProductsData);
         $this->processSynchronizationTemplateChange($oldData, $newData, $affectedListingsProductsData);
 
-        $this->getMessageManager()->addSuccess($this->__('The Listing was successfully saved.'));
+        $this->getMessageManager()->addSuccess($this->__('The Listing was saved.'));
 
         return $this->_redirect($this->getHelper('Data')->getBackUrl('list', [], ['edit'=>['id'=>$id]]));
     }

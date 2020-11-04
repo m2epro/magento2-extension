@@ -30,7 +30,7 @@ class ClearLog extends Listing
             $this->activeRecordFactory->getObject('Listing\Log')->clearMessages($id);
         }
 
-        $this->getMessageManager()->addSuccess($this->__('The Listing(s) Log was successfully cleared.'));
+        $this->getMessageManager()->addSuccess($this->__('The Listing(s) Log was cleared.'));
         $this->_redirect($this->getHelper('Data')->getBackUrl('list'));
     }
 }

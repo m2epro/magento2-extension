@@ -37,10 +37,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('ebayTemplatePaymentEditFormData');
-        // ---------------------------------------
 
         $this->formData = $this->getFormData();
         $this->marketplaceData = $this->getMarketplaceData();
@@ -53,7 +50,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $form = $this->_formFactory->create();
 
         $form->addField('payment_id', 'hidden', [
-                'name' => 'payment[id]',
+                'name'  => 'payment[id]',
                 'value' => (!$this->isCustom() && isset($this->formData['id']))
                             ? (int)$this->formData['id'] : ''
             ]);
@@ -62,7 +59,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'payment_title',
             'hidden',
             [
-                'name' => 'payment[title]',
+                'name'  => 'payment[title]',
                 'value' => $this->getTitle()
             ]
         );
@@ -71,15 +68,35 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden_marketplace_id_'.$this->marketplaceData['id'],
             'hidden',
             [
-                'name' => 'payment[marketplace_id]',
+                'name'  => 'payment[marketplace_id]',
                 'value' => $this->marketplaceData['id']
             ]
         );
 
         $form->addField('is_custom_template', 'hidden', [
-                'name' => 'payment[is_custom_template]',
+                'name'  => 'payment[is_custom_template]',
                 'value' => $this->isCustom() ? 1 : 0
             ]);
+
+        if ($this->marketplaceData['managed_payments_allowed']) {
+            $fieldSet = $form->addFieldset(
+                'magento_block_ebay_template_payment_form_data_managed_payments',
+                ['legend' => $this->__('Managed Payments'), 'collapsable' => false]
+            );
+
+            $fieldSet->addField(
+                'managed_payments_mode',
+                'checkbox',
+                [
+                    'name'    => 'payment[managed_payments_mode]',
+                    'label'   => $this->__('Use eBay Managed Payments'),
+                    'value'   => 1,
+                    'class'   => 'M2ePro-validate-payment-methods admin__control-checkbox',
+                    'checked' => (bool)$this->formData['managed_payments_mode'],
+                    'after_element_html' => '<label for="managed_payments_mode"></label>'
+                ]
+            );
+        }
 
         $fieldSet = $form->addFieldset(
             'magento_block_ebay_template_payment_form_data_paypal',
@@ -90,10 +107,10 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'pay_pal_mode',
             'checkbox',
             [
-                'name' => 'payment[pay_pal_mode]',
-                'label' => $this->__('Accepted'),
-                'value' => 1,
-                'class' => 'M2ePro-validate-payment-methods admin__control-checkbox',
+                'name'    => 'payment[pay_pal_mode]',
+                'label'   => $this->__('PayPal Accepted'),
+                'value'   => 1,
+                'class'   => 'M2ePro-validate-payment-methods admin__control-checkbox',
                 'checked' => (bool)$this->formData['pay_pal_mode'],
                 'after_element_html' => '<label for="pay_pal_mode"></label>'
             ]
@@ -103,7 +120,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'pay_pal_email_address',
             'text',
             [
-                'name' => 'payment[pay_pal_email_address]',
+                'name'  => 'payment[pay_pal_email_address]',
                 'label' => $this->__('Email'),
                 'value' => $this->formData['pay_pal_email_address'],
                 'class' => 'input-text M2ePro-validate-ebay-payment-email',
@@ -116,11 +133,11 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'pay_pal_immediate_payment',
             'checkbox',
             [
-                'name' => 'payment[pay_pal_immediate_payment]',
-                'label' => $this->__('Immediate Payment Required'),
-                'value' => 1,
+                'name'    => 'payment[pay_pal_immediate_payment]',
+                'label'   => $this->__('Immediate Payment Required'),
+                'value'   => 1,
                 'checked' => (bool)$this->formData['pay_pal_immediate_payment'],
-                'class' => 'admin__control-checkbox',
+                'class'   => 'admin__control-checkbox',
                 'field_extra_attributes' => 'id="pay_pal_immediate_payment_container" style="display: none;"',
                 'after_element_html' => '<label for="pay_pal_mode"></label>'.$this->getTooltipHtml($this->__(
                     'This is only applicable to Items Listed on PayPal-enabled
@@ -140,10 +157,10 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'payment_methods',
                 'checkboxes',
                 [
-                    'label' => $this->__('Payment Methods'),
-                    'name' => 'payment[services][]',
+                    'label'  => $this->__('Payment Methods'),
+                    'name'   => 'payment[services][]',
                     'values' => $this->getPaymentMethods(),
-                    'value' => $this->formData['services']
+                    'value'  => $this->formData['services']
                 ]
             );
         }
@@ -255,7 +272,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $data = [
             'id' => $marketplace->getId(),
-            'services' => $marketplace->getChildObject()->getPaymentInfo()
+            'services' => $marketplace->getChildObject()->getPaymentInfo(),
+            'managed_payments_allowed' => $marketplace->getChildObject()->isManagedPaymentsEnabled()
         ];
 
         $policyLocalization = $this->getData('policy_localization');

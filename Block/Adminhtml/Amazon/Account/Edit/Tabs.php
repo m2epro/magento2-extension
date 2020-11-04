@@ -15,6 +15,12 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
  */
 class Tabs extends AbstractTabs
 {
+    const TAB_ID_GENERAL             = 'general';
+    const TAB_ID_LISTING_OTHER       = 'listingOther';
+    const TAB_ID_ORDERS              = 'orders';
+    const TAB_ID_VCS_UPLOAD_INVOICES = 'vcs_upload_invoices';
+    const TAB_ID_REPRICING           = 'repricing';
+
     protected function _construct()
     {
         parent::_construct();
@@ -28,19 +34,19 @@ class Tabs extends AbstractTabs
         /** @var $account \Ess\M2ePro\Model\Account */
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
 
-        $this->addTab('general', [
+        $this->addTab(self::TAB_ID_GENERAL, [
             'label'   => $this->__('General'),
             'title'   => $this->__('General'),
             'content' => $this->createBlock('Amazon_Account_Edit_Tabs_General')->toHtml(),
         ]);
 
-        $this->addTab('listingOther', [
+        $this->addTab(self::TAB_ID_LISTING_OTHER, [
             'label'   => $this->__('3rd Party Listings'),
             'title'   => $this->__('3rd Party Listings'),
             'content' => $this->createBlock('Amazon_Account_Edit_Tabs_ListingOther')->toHtml(),
         ]);
 
-        $this->addTab('orders', [
+        $this->addTab(self::TAB_ID_ORDERS, [
             'label'   => $this->__('Orders'),
             'title'   => $this->__('Orders'),
             'content' => $this->createBlock('Amazon_Account_Edit_Tabs_Order')->toHtml(),
@@ -50,7 +56,7 @@ class Tabs extends AbstractTabs
             && $account->getId()
             && $account->getChildObject()->getMarketplace()->getChildObject()->isVatCalculationServiceAvailable()
         ) {
-            $this->addTab('vcs_upload_invoices', [
+            $this->addTab(self::TAB_ID_VCS_UPLOAD_INVOICES, [
                 'label'   => $this->__('VCS / Upload Invoices'),
                 'title'   => $this->__('VCS / Upload Invoices'),
                 'content' => $this->createBlock('Amazon_Account_Edit_Tabs_VCSUploadInvoices')->toHtml(),
@@ -61,14 +67,14 @@ class Tabs extends AbstractTabs
             && $account->getId()
             && $this->getHelper('Component_Amazon_Repricing')->isEnabled()
         ) {
-            $this->addTab('repricing', [
+            $this->addTab(self::TAB_ID_REPRICING, [
                 'label'   => $this->__('Repricing Tool'),
                 'title'   => $this->__('Repricing Tool'),
                 'content' => $this->createBlock('Amazon_Account_Edit_Tabs_Repricing')->toHtml(),
             ]);
         }
 
-        $this->setActiveTab($this->getRequest()->getParam('tab', 'general'));
+        $this->setActiveTab($this->getRequest()->getParam('tab', self::TAB_ID_GENERAL));
 
         $this->js->addOnReadyJs(<<<JS
 

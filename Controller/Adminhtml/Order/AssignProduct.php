@@ -70,9 +70,15 @@ class AssignProduct extends Order
             ]
         );
 
+        $isPretendedToBeSimple = false;
+        if ($orderItem->getMagentoProduct()->isGroupedType() &&
+            $orderItem->getChildObject()->getChannelItem() !== null) {
+            $isPretendedToBeSimple = $orderItem->getChildObject()->getChannelItem()->isGroupedProductModeSet();
+        }
+
         $this->setJsonContent([
-            'success'  => $this->__('Order Item was successfully Mapped.'),
-            'continue' => $orderItem->getMagentoProduct()->isProductWithVariations()
+            'success'  => $this->__('Order Item was Mapped.'),
+            'continue' => $orderItem->getMagentoProduct()->isProductWithVariations() && !$isPretendedToBeSimple
         ]);
 
         return $this->getResult();

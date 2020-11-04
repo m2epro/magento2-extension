@@ -144,7 +144,7 @@ class MapToNewAsin extends Main
                 [
                     'type' => 'success',
                     'text' => $this->__(
-                        'New ASIN/ISBN creation feature was successfully added to %count% Products.',
+                        'New ASIN/ISBN creation feature was added to %count% Products.',
                         count($filteredProductsIdsByParent)
                     )
                 ]

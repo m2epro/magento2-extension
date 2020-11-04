@@ -70,7 +70,7 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
 
             return $this->_redirect('*/amazon_account');
         }
-        $this->messageManager->addSuccess($this->__('Token was successfully saved'));
+        $this->messageManager->addSuccess($this->__('Token was saved'));
 
         return $this->_redirect('*/*/edit', [
             'id' => $accountId, 'close_on_save' => $this->getRequest()->getParam('close_on_save')

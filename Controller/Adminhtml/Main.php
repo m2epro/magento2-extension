@@ -368,9 +368,18 @@ abstract class Main extends Base
 
     protected function addCronErrorMessage()
     {
+        if (!$this->getHelper('Module_Cron')->isModeEnabled()) {
+            return $this->getMessageManager()->addWarning(
+                'Automatic Synchronization is disabled. You can enable it under <i>Stores > Settings > Configuration 
+                    > M2E Pro > Advanced Settings > Automatic Synchronization</i>.',
+                \Ess\M2ePro\Controller\Adminhtml\Base::GLOBAL_MESSAGES_GROUP
+            );
+        }
+
         if ($this->getHelper('Module')->isReadyToWork() &&
             $this->getHelper('Module\Cron')->isLastRunMoreThan(1, true) &&
-            !$this->getHelper('Module')->isDevelopmentEnvironment()) {
+            !$this->getHelper('Module')->isDevelopmentEnvironment()
+        ) {
             $url = $this->getHelper('Module\Support')->getKnowledgebaseArticleUrl('cron-running');
 
             $message  = 'Attention! AUTOMATIC Synchronization is not running at the moment.';

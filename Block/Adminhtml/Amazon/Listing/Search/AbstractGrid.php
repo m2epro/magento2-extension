@@ -47,6 +47,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
     abstract protected function callbackFilterProductId($collection, $column);
     abstract protected function callbackFilterTitle($collection, $column);
     abstract protected function callbackFilterOnlineSku($collection, $column);
+    abstract protected function callbackFilterAsinIsbn($collection, $column);
     abstract protected function callbackFilterPrice($collection, $column);
     abstract protected function callbackFilterQty($collection, $column);
     abstract protected function callbackFilterStatus($collection, $column);
@@ -62,7 +63,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'type'     => 'number',
             'index'    => 'entity_id',
             'filter_index' => 'entity_id',
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId',
+            'filter_condition_callback' => [$this, 'callbackFilterProductId']
         ]);
 
         $this->addColumn('name', [
@@ -95,7 +97,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'type'           => 'text',
             'index'          => 'general_id',
             'filter_index'   => 'general_id',
-            'frame_callback' => [$this, 'callbackColumnGeneralId']
+            'frame_callback' => [$this, 'callbackColumnGeneralId'],
+            'filter_condition_callback' => [$this, 'callbackFilterAsinIsbn']
         ]);
 
         $this->addColumn('online_qty', [
@@ -131,8 +134,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
         $statusColumn = [
             'header'   => $this->__('Status'),
             'width'    => '125px',
-            'index'    => 'status',
-            'filter_index' => 'status',
+            'index'    => 'amazon_status',
+            'filter_index' => 'amazon_status',
             'type'     => 'options',
             'sortable' => false,
             'options'  => [
@@ -142,7 +145,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
                 \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Inactive'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Inactive (Blocked)')
             ],
-            'frame_callback' => [$this, 'callbackColumnStatus']
+            'frame_callback' => [$this, 'callbackColumnStatus'],
+            'filter_condition_callback' => [$this, 'callbackFilterStatus']
         ];
 
         $listingType = $this->getRequest()->getParam(
@@ -154,12 +158,12 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             unset($statusColumn['options'][\Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED]);
         }
 
-        $this->addColumn('status', $statusColumn);
+        $this->addColumn('amazon_status', $statusColumn);
 
         $this->addColumn('goto_listing_item', [
             'header'    => $this->__('Manage'),
             'align'     => 'center',
-            'width'     => '50px',
+            'width'     => '80px',
             'type'      => 'text',
             'filter'    => false,
             'sortable'  => false,
@@ -174,7 +178,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
     public function callbackColumnGeneralId($value, $row, $column, $isExport)
     {
         if (empty($value)) {
-            if ((int)$row->getData('status') != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
+            if ((int)$row->getData('amazon_status') != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
                 return '<i style="color:gray;">'.$this->__('receiving...').'</i>';
             }
 
@@ -196,7 +200,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
         }
 
         if (!$row->getData('is_variation_parent')) {
-            if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
+            if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
                 return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
             }
 
@@ -280,12 +284,12 @@ HTML;
 
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
-        if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
+        if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
             return $this->__('N/A');
         }
 
         if ((!$row->getData('is_variation_parent') &&
-            $row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) ||
+            $row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) ||
             ($row->getData('is_variation_parent') && $row->getData('general_id') == '')) {
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
@@ -382,7 +386,7 @@ HTML;
         $onlineBusinessPrice = (float)$row->getData('online_business_price');
 
         if (empty($currentOnlinePrice) && empty($onlineBusinessPrice)) {
-            if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED ||
+            if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED ||
                 $row->getData('is_variation_parent')
             ) {
                 return $this->__('N/A') . $repricingHtml;

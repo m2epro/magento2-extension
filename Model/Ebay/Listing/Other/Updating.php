@@ -57,15 +57,19 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
     {
         $this->updateToTimeLastSynchronization($responseData);
 
-        if (!isset($responseData['items']) || !is_array($responseData['items']) ||
-            count($responseData['items']) <= 0) {
+        if (!isset($responseData['items']) || !is_array($responseData['items']) || count($responseData['items']) <= 0) {
             return;
         }
 
         $responseData['items'] = $this->filterReceivedOnlyOtherListings($responseData['items']);
 
-        /** @var $mappingModel \Ess\M2ePro\Model\Ebay\Listing\Other\Mapping */
-        $mappingModel = $this->modelFactory->getObject('Ebay_Listing_Other_Mapping');
+        $isMappingEnabled = $this->getAccount()->getChildObject()->isOtherListingsMappingEnabled();
+
+        if ($isMappingEnabled) {
+            /** @var $mappingModel \Ess\M2ePro\Model\Ebay\Listing\Other\Mapping */
+            $mappingModel = $this->modelFactory->getObject('Ebay_Listing_Other_Mapping');
+            $mappingModel->initialize($this->getAccount());
+        }
 
         foreach ($responseData['items'] as $receivedItem) {
             $collection = $this->ebayFactory->getObject('Listing\Other')->getCollection()
@@ -188,12 +192,7 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
 
             $existObject->save();
 
-            if (!$existsId) {
-                if (!$this->getAccount()->getChildObject()->isOtherListingsMappingEnabled()) {
-                    continue;
-                }
-
-                $mappingModel->initialize($this->getAccount());
+            if (!$existsId && $isMappingEnabled) {
                 $mappingModel->autoMapOtherListingProduct($existObject);
             }
         }
@@ -243,10 +242,6 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
         }
 
         foreach (array_chunk($receivedItemsIds, 500, true) as $partReceivedItemsIds) {
-            if (count($partReceivedItemsIds) <= 0) {
-                continue;
-            }
-
             $collection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
             $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
 

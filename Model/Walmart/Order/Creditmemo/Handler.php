@@ -72,7 +72,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
                 $item = $this->activeRecordFactory->getObjectLoaded(
                     'Walmart_Order_Item',
                     $orderItemId,
-                    'order_item_id'
+                    'walmart_order_item_id'
                 );
                 if ($item === null) {
                     continue;

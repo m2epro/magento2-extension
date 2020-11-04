@@ -66,7 +66,7 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
             return $this->product;
         }
 
-        if ($this->proxyItem->getMagentoProduct()->isGroupedType()) {
+        if ($this->proxyItem->getMagentoProduct()->isGroupedType() && !$this->proxyItem->pretendedToBeSimple()) {
             $this->product = $this->getAssociatedGroupedProduct();
 
             if ($this->product === null) {

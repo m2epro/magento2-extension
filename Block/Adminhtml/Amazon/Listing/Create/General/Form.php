@@ -55,16 +55,16 @@ class Form extends AbstractForm
 
         $title = $this->amazonFactory->getObject('Listing')->getCollection()->getSize() == 0 ? 'Default' : '';
         $accountId = '';
+        $marketplaceId = '';
         $storeId = '';
 
-        // ---------------------------------------
-        $sessionKey = 'amazon_listing_create';
-        $sessionData = $this->getHelper('Data\Session')->getValue($sessionKey);
-
-        isset($sessionData['title']) && $title = $sessionData['title'];
+        $sessionData = $this->getHelper('Data_Session')->getValue(
+            \Ess\M2ePro\Model\Amazon\Listing::CREATE_LISTING_SESSION_DATA
+        );
+        isset($sessionData['title'])  && $title = $sessionData['title'];
         isset($sessionData['account_id']) && $accountId = $sessionData['account_id'];
+        isset($sessionData['marketplace_id']) && $marketplaceId = $sessionData['marketplace_id'];
         isset($sessionData['store_id']) && $storeId = $sessionData['store_id'];
-        // ---------------------------------------
 
         $fieldset->addField(
             'title',
@@ -151,19 +151,6 @@ HTML
             ]
         );
 
-        // ---------------------------------------
-        $marketplacesCollection = $this->amazonFactory->getObject('Marketplace')->getCollection()
-            ->setOrder('sorder', 'ASC')
-            ->setOrder('title', 'ASC');
-
-        $marketplacesCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS)
-            ->columns([
-                'value' => 'id',
-                'label' => 'title',
-                'url'   => 'url'
-            ]);
-        // ---------------------------------------
-
         $fieldset->addField(
             'marketplace_info',
             self::CUSTOM_CONTAINER,
@@ -179,7 +166,8 @@ HTML
             'marketplace_id',
             'hidden',
             [
-                'value' => ''
+                'name' => 'marketplace_id',
+                'value' => $marketplaceId
             ]
         );
 

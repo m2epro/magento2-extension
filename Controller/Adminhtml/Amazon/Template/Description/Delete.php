@@ -38,7 +38,7 @@ class Delete extends Description
             }
         }
 
-        $tempString = $this->__('%deleted% record(s) were successfully deleted.', $deleted);
+        $tempString = $this->__('%deleted% record(s) were deleted.', $deleted);
         $deleted && $this->messageManager->addSuccess($tempString);
 
         $tempString  = $this->__('%deleted% record(s) are used in Listing(s).', $locked) . ' ';

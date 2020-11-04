@@ -71,7 +71,7 @@ class Delete extends Account
             $deleted++;
         }
 
-        $tempString = $this->__('%amount% record(s) were successfully deleted.', $deleted);
+        $tempString = $this->__('%amount% record(s) were deleted.', $deleted);
         $deleted && $this->messageManager->addSuccess($tempString);
 
         $tempString  = $this->__('%amount% record(s) are used in M2E Pro Listing(s).', $locked) . ' ';

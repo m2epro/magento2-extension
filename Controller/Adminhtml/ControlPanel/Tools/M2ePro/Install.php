@@ -64,7 +64,7 @@ class Install extends Command
         $repairInfo = $this->getRequest()->getPost('repair_info');
 
         if (empty($repairInfo)) {
-            $this->_redirect($this->_redirect->getRefererUrl());
+            return;
         }
 
         foreach ($repairInfo as $item) {
@@ -78,8 +78,6 @@ class Install extends Command
         foreach ($columnsInfo as $columnInfo) {
             $inspector->fix($columnInfo);
         }
-
-        $this->_redirect($this->_redirect->getRefererUrl());
     }
 
     /**

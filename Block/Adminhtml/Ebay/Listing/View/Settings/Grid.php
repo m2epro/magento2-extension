@@ -53,7 +53,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         parent::_construct();
 
-        $this->setId('ebayListingViewSettingsGrid' . $this->listing->getId());
+        $this->setId('ebayListingViewGrid' . $this->listing->getId());
 
         $this->css->addFile('ebay/template.css');
 
@@ -407,6 +407,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'url' => '',
             'confirm' => $this->__('Are you sure?')
         ], 'other');
+
+        // ---------------------------------------
+
+        $this->getMassactionBlock()->addItem('transferring', [
+            'label' => $this->__('Sell on Another Marketplace'),
+            'url' => '',
+            'confirm' => $this->__('Are you sure?')
+        ], 'other');
+
+        // ---------------------------------------
 
         return $this;
     }
@@ -962,7 +972,6 @@ JS
 
         // ---------------------------------------
         $this->jsUrl->addUrls($helper->getControllerActions('Ebay\Listing', ['_current' => true]));
-        $this->jsUrl->add($this->getUrl('*/ebay_listing/view'), 'ebay_listing/getTransferringUrl');
 
         $this->jsUrl->add(
             $this->getUrl('*/ebay_log_listing_product/index', [
@@ -1048,7 +1057,7 @@ JS
             'Year To' => $this->__('Year To'),
             'Body Style' => $this->__('Body Style'),
             'task_completed_message' => $this->__('Task completed. Please wait ...'),
-            'task_completed_success_message' => $this->__('"%task_title%" Task has successfully completed.'),
+            'task_completed_success_message' => $this->__('"%task_title%" Task has completed.'),
             'sending_data_message' => $this->__('Sending %product_title% Product(s) data on eBay.'),
             'View Full Product Log.' => $this->__('View Full Product Log.'),
             'The Listing was locked by another process. Please try again later.' =>
@@ -1090,6 +1099,7 @@ JS
         'M2ePro/Ebay/Listing/View/Settings/Grid',
         'M2ePro/Ebay/Listing/View/Settings/Motors',
         'M2ePro/Ebay/Listing/Category',
+        'M2ePro/Ebay/Listing/Transferring'
     ], function(){
 
         window.EbayListingViewSettingsGridObj = new EbayListingViewSettingsGrid(
@@ -1104,6 +1114,9 @@ JS
 
         EbayListingViewSettingsMotorsObj = new EbayListingViewSettingsMotors({$this->listing->getId()},'{$motorsType}');
         window.EbayListingCategoryObj = new EbayListingCategory(EbayListingViewSettingsGridObj);
+        window.EbayListingTransferringObj = new EbayListingTransferring(
+            {$this->listing->getId()}
+        );
     });
 JS
         );

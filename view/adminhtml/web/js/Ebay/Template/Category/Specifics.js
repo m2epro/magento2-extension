@@ -60,19 +60,47 @@ define([
         {
             var specifics = {};
 
+            var self = this;
             $('edit_specifics_form').select('input[name^="specific"]', 'select[name^="specific"]').each(
                 function(el) {
                     if (el.disabled) {
                         return true;
                     }
                     var temp = el.name.match(/specific\[([a-z0-9_]*)\]\[([a-z_]*)\]/);
-                    if (typeof specifics[temp[1]] === 'undefined') specifics[temp[1]] = {};
-                    if (typeof specifics[temp[1]][temp[2]] === 'undefined') specifics[temp[1]][temp[2]] = {};
-                    specifics[temp[1]][temp[2]] = el.value;
+                    if (typeof specifics[temp[1]] === 'undefined') {
+                        specifics[temp[1]] = {};
+                    }
+
+                    if (typeof specifics[temp[1]][temp[2]] === 'undefined') {
+                        specifics[temp[1]][temp[2]] = {};
+                    }
+
+                    if (el.multiple) {
+                        specifics[temp[1]][temp[2]] = self.getSelectValues(el);
+                    } else {
+                        specifics[temp[1]][temp[2]] = el.value;
+                    }
                 }
             );
 
             return specifics;
+        },
+
+        getSelectValues: function(select)
+        {
+            var result = [];
+            var options = select && select.options;
+            var opt;
+
+            for (var i=0, iLen=options.length; i<iLen; i++) {
+                opt = options[i];
+
+                if (opt.selected) {
+                    result.push(opt.value || opt.text);
+                }
+            }
+
+            return result;
         },
 
         // ---------------------------------------

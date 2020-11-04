@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Account\Add;
 /**
  * Class \Ess\M2ePro\Model\Amazon\Connector\Account\Add\EntityResponser
  */
-class EntityResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Responser
+class EntityResponser extends \Ess\M2ePro\Model\Connector\Command\Pending\Responser
 {
     //########################################
 
@@ -30,7 +30,9 @@ class EntityResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending
         $responseData = $this->getPreparedResponseData();
 
         /** @var $amazonAccount \Ess\M2ePro\Model\Amazon\Account */
-        $amazonAccount = $this->getAccount()->getChildObject();
+        $amazonAccount = $this->amazonFactory
+            ->getObjectLoaded('Account', $this->params['account_id'])
+            ->getChildObject();
 
         $dataForUpdate = [
             'server_hash' => $responseData['hash'],
@@ -38,16 +40,6 @@ class EntityResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending
         ];
 
         $amazonAccount->addData($dataForUpdate)->save();
-    }
-
-    //########################################
-
-    /**
-     * @return \Ess\M2ePro\Model\Account
-     */
-    protected function getAccount()
-    {
-        return $this->getObjectByParam('Account', 'account_id');
     }
 
     //########################################

@@ -48,13 +48,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('walmartVariationProductManageGrid');
         $this->setDefaultSort('id');
         $this->setDefaultDir('ASC');
         $this->setUseAjax(true);
-        // ---------------------------------------
     }
 
     //########################################
@@ -79,15 +76,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareCollection()
     {
-        // Get collection
-        // ---------------------------------------
         $collection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
         $collection->getSelect()->distinct();
         $collection->getSelect()->where(
             "`second_table`.`variation_parent_id` = ?",
             (int)$this->getListingProduct()->getId()
         );
-        // ---------------------------------------
 
         $collection->getSelect()->columns([
             'online_price' => 'second_table.online_price'
@@ -113,7 +107,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ]
         );
 
-        // Set collection to grid
+        if ($this->getParam($this->getVarNameFilter()) == 'searched_by_child'){
+            $collection->addFieldToFilter(
+                'second_table.listing_product_id',
+                ['in' => explode(',', $this->getRequest()->getParam('listing_product_id_filter'))]
+            );
+        }
+
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
@@ -740,10 +740,24 @@ CSS
     ], function(){
 
         ListingProductVariationManageVariationsGridObj.afterInitPage();
+        ListingProductVariationManageVariationsGridObj.actionHandler.messageObj.clear();
 
     });
 JS
         );
+
+        if ($this->getParam($this->getVarNameFilter()) == 'searched_by_child'){
+            $noticeMessage = $this->__('This list includes a Product you are searching for.');
+            $this->js->add(
+                <<<JS
+    require([
+        'M2ePro/Amazon/Listing/Product/Variation/Manage/Tabs/Variations/Grid'
+    ], function(){
+        ListingProductVariationManageVariationsGridObj.actionHandler.messageObj.addNotice('{$noticeMessage}');
+    });
+JS
+            );
+        }
 
         return parent::_toHtml();
     }

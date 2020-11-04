@@ -61,29 +61,35 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function process()
-    {
-        return $this->createOrderItem();
-    }
-
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Order\Item
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    private function createOrderItem()
+    public function process()
     {
+        /** @var \Ess\M2ePro\Model\Order\Item $existItem */
         $existItem = $this->walmartFactory->getObject('Order\Item')->getCollection()
             ->addFieldToFilter('walmart_order_item_id', $this->getData('walmart_order_item_id'))
             ->addFieldToFilter('order_id', $this->getData('order_id'))
             ->addFieldToFilter('sku', $this->getData('sku'))
             ->getFirstItem();
 
-        $existItem->addData($this->getData());
-        $existItem->save();
+        foreach ($this->getData() as $key => $value) {
+            if (!$existItem->getId() || ($existItem->hasData($key) && $existItem->getData($key) != $value)) {
+                $existItem->addData($this->getData());
+                $existItem->save();
+                break;
+            }
+        }
 
-        $existItem->getChildObject()->addData($this->getData());
-        $existItem->getChildObject()->save();
+        $walmartItem = $existItem->getChildObject();
+        foreach ($this->getData() as $key => $value) {
+            if (!$existItem->getId() || ($walmartItem->hasData($key) && $walmartItem->getData($key) != $value)) {
+                $walmartItem->addData($this->getData());
+                $walmartItem->save();
+                break;
+            }
+        }
 
         return $existItem;
     }

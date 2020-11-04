@@ -45,7 +45,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->listing = $this->getHelper('Data\GlobalData')->getValue('view_listing');
 
-        $this->setId('amazonListingViewSettingsGrid' . $this->listing['id']);
+        $this->setId('amazonListingViewGrid' . $this->listing['id']);
 
         $this->showAdvancedFilterProductsOption = false;
     }
@@ -221,7 +221,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'           => 'text',
             'index'          => 'general_id',
             'filter_index'   => 'general_id',
-            'frame_callback' => [$this, 'callbackColumnGeneralId']
+            'filter'         => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\GeneralId',
+            'frame_callback' => [$this, 'callbackColumnGeneralId'],
+            'filter_condition_callback' => [$this, 'callbackFilterGeneralId']
         ]);
 
         $this->addColumn('description_template', [
@@ -418,6 +420,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
         ], 'other');
+
+        $this->getMassactionBlock()->addItem('transferring', [
+            'label' => $this->__('Sell on Another Marketplace'),
+            'url' => '',
+            'confirm'  => $this->__('Are you sure?')
+        ], 'other');
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -430,13 +438,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $productTitle = $this->getHelper('Data')->escapeHtml($productTitle);
 
         $value = '<span>'.$productTitle.'</span>';
-        $sku = $row->getData('sku');
 
-        if ($sku === null) {
-            $sku = $this->modelFactory->getObject('Magento\Product')
-                ->setProductId($row->getData('entity_id'))
-                ->getSku();
-        }
+        $sku = $this->modelFactory->getObject('Magento\Product')
+            ->setProductId($row->getData('entity_id'))
+            ->getSku();
 
         $value .= '<br/><strong>'.$this->__('SKU') .
             ':</strong> '.$this->getHelper('Data')->escapeHtml($sku) . '<br/>';
@@ -656,6 +661,19 @@ HTML;
         );
     }
 
+    protected function callbackFilterGeneralId($collection, $column)
+    {
+        $inputValue = $column->getFilter()->getValue('input');
+        if ($inputValue !== null) {
+            $collection->addFieldToFilter('general_id', ['like' => '%' . $inputValue . '%']);
+        }
+
+        $selectValue = $column->getFilter()->getValue('select');
+        if ($selectValue !== null) {
+            $collection->addFieldToFilter('is_general_id_owner', $selectValue);
+        }
+    }
+
     //########################################
 
     public function getRowUrl($row)
@@ -667,6 +685,17 @@ HTML;
 
     protected function _toHtml()
     {
+        $this->js->add(<<<JS
+    require([
+        'M2ePro/Amazon/Listing/Transferring'
+    ],function() {
+        window.AmazonListingTransferringObj = new AmazonListingTransferring(
+            {$this->listing->getId()}
+        );
+    });
+JS
+        );
+
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
                 <<<JS

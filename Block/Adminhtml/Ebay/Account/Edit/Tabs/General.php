@@ -56,7 +56,7 @@ choose <b>Production (Live)</b>. If you want to add an eBay Sandbox Account that
 test or development purposes,
 choose <b>Sandbox (Test)</b>. Then click <b>Get Token</b> to sign in to eBay and
 <b>Agree</b> to allow your eBay Account to connect to M2E Pro.<br/><br/>
-Once you\'ve successfully authorised M2E Pro to access your Account, the <b>Activated</b>
+Once you\'ve authorised M2E Pro to access your Account, the <b>Activated</b>
 status will change to \'Yes\' and you can click <b>Save and Continue Edit</b>.<br/><br/>
 <b>Note:</b> A Production (Live) eBay Account only works on a live Marketplace.
 A Sandbox (Test) Account only works on the eBay Sandbox test Environment.

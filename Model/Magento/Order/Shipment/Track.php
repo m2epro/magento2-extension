@@ -135,7 +135,7 @@ class Track extends \Ess\M2ePro\Model\AbstractModel
         // ---------------------------------------
         foreach ($this->magentoOrder->getTracksCollection() as $track) {
             foreach ($this->trackingDetails as $key => $trackingDetail) {
-                if ($track->getData('track_number') == $trackingDetail['number']) {
+                if (strtolower($track->getData('track_number')) == strtolower($trackingDetail['number'])) {
                     unset($this->trackingDetails[$key]);
                 }
             }

@@ -1035,18 +1035,19 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
     /**
      * @param array $trackingDetails
+     * @param array $items
+     *
      * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function updateShippingStatus(array $trackingDetails = [])
+    public function updateShippingStatus(array $trackingDetails = array(), array $items = array())
     {
         if (!$this->canUpdateShippingStatus($trackingDetails)) {
             return false;
         }
 
-        $params = [];
-
         if (!empty($trackingDetails['carrier_code'])) {
-            $trackingDetails['carrier_title'] = $this->getHelper('Component\Ebay')->getCarrierTitle(
+            $trackingDetails['carrier_title'] = $this->getHelper('Component_Ebay')->getCarrierTitle(
                 $trackingDetails['carrier_code'],
                 isset($trackingDetails['carrier_title']) ? $trackingDetails['carrier_title'] : ''
             );
@@ -1066,15 +1067,55 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             );
         }
 
-        $params = array_merge($params, $trackingDetails);
+        $params = $trackingDetails;
+        foreach ($items as $item) {
+            /** @var \Ess\M2ePro\Model\Order\Item $item */
+            $params['items'][] = [
+                'item_id' => $item->getId()
+            ];
+        }
 
-        $this->activeRecordFactory->getObject('Order\Change')->create(
-            $this->getId(),
-            \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING,
-            $this->getParentObject()->getLog()->getInitiator(),
-            \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            $params
-        );
+        /** @var \Ess\M2ePro\Model\Order\Change $change */
+        $change = $this->activeRecordFactory
+            ->getObject('Order_Change')
+            ->getCollection()
+            ->addFieldToFilter('order_id', $this->getParentObject()->getId())
+            ->addFieldToFilter('action', \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING)
+            ->addFieldToFilter('processing_attempt_count', 0)
+            ->getFirstItem();
+
+        if (!$change->getId() || !empty($trackingDetails['tracking_number'])) {
+            $this->activeRecordFactory->getObject('Order_Change')->create(
+                $this->getParentObject()->getId(),
+                \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING,
+                $this->getParentObject()->getLog()->getInitiator(),
+                \Ess\M2ePro\Helper\Component\Ebay::NICK,
+                $params
+            );
+            return true;
+        }
+
+        $existingParams = $change->getParams();
+
+        $existingItems = [];
+        if (isset($existingParams['items'])) {
+            $existingItems = $existingParams['items'];
+        }
+
+        foreach ($params['items'] as $newItem) {
+            foreach ($existingItems as $existingItem) {
+                if ($newItem['item_id'] === $existingItem['item_id']) {
+                    continue 2;
+                }
+            }
+
+            $existingItems[] = $newItem;
+        }
+
+        $existingParams['items'] = $existingItems;
+
+        $change->setData('params', $this->getHelper('Data')->jsonEncode($existingParams));
+        $change->save();
 
         return true;
     }

@@ -39,16 +39,13 @@ class General extends Command
         $tableNames = $this->getRequest()->getParam('table', []);
 
         if (empty($tableNames)) {
-            $this->messageManager->addError('Required params are not presented.');
-            return $this->_redirect($this->_redirect->getRefererUrl());
+            return;
         }
 
         /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\BrokenTables $inspection */
         $inspection = $this->inspectionManager
             ->getInspection(\Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\BrokenTables::class);
         $inspection->fix($tableNames);
-
-        return $this->_redirect($this->_redirect->getRefererUrl());
     }
 
     /**
@@ -128,7 +125,7 @@ class General extends Command
         $repairInfo = $this->getRequest()->getPost('repair_info');
 
         if (empty($repairInfo)) {
-            $this->_redirect($this->_redirect->getRefererUrl());
+            return;
         }
 
         $dataForRepair = (array)$this->getHelper('Data')->jsonDecode($repairInfo);
@@ -136,8 +133,6 @@ class General extends Command
         $inspector = $this->inspectionManager
             ->getInspection(\Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\OrderItemStructure::class);
         $inspector->fix($dataForRepair);
-
-        $this->_redirect($this->_redirect->getRefererUrl());
     }
 
     /**
@@ -148,7 +143,7 @@ class General extends Command
         $ids = $this->getRequest()->getPost('repair_info');
 
         if (empty($ids)) {
-            $this->_redirect($this->_redirect->getRefererUrl());
+            return;
         }
 
         $dataForRepair = (array)$this->getHelper('Data')->jsonDecode($ids);
@@ -156,8 +151,6 @@ class General extends Command
         $inspector = $this->inspectionManager
             ->getInspection(\Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\EbayItemIdStructure::class);
         $inspector->fix($dataForRepair);
-
-        $this->_redirect($this->_redirect->getRefererUrl());
     }
 
     /**
@@ -168,7 +161,7 @@ class General extends Command
         $ids = $this->getRequest()->getPost('repair_info');
 
         if (empty($ids)) {
-            $this->_redirect($this->_redirect->getRefererUrl());
+            return;
         }
 
         $dataForRepair = (array)$this->getHelper('Data')->jsonDecode($ids);
@@ -176,8 +169,6 @@ class General extends Command
         $inspector = $this->inspectionManager
             ->getInspection(\Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\AmazonProductWithoutVariations::class);
         $inspector->fix($dataForRepair);
-
-        $this->_redirect($this->_redirect->getRefererUrl());
     }
 
     //########################################

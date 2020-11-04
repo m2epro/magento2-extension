@@ -51,13 +51,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('amazonVariationProductManageGrid');
         $this->setDefaultSort('id');
         $this->setDefaultDir('ASC');
         $this->setUseAjax(true);
-        // ---------------------------------------
     }
 
     //########################################
@@ -82,15 +79,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareCollection()
     {
-        // Get collection
-        // ---------------------------------------
         $collection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
         $collection->getSelect()->distinct();
         $collection->getSelect()->where(
             "`second_table`.`variation_parent_id` = ?",
             (int)$this->getListingProduct()->getId()
         );
-        // ---------------------------------------
 
         $collection->getSelect()->columns([
             'online_current_price' => new \Zend_Db_Expr('
@@ -107,7 +101,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                     )
                 )
             '),
-            'amazon_status' => 'status'
+            'amazon_status' => 'status',
+            'amazon_sku'    => 'second_table.sku',
         ]);
 
         $lpvTable = $this->activeRecordFactory->getObject('Listing_Product_Variation')->getResource()->getMainTable();
@@ -140,7 +135,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ]
         );
 
-        // Set collection to grid
+        if ($this->getParam($this->getVarNameFilter()) == 'searched_by_child'){
+            $collection->addFieldToFilter(
+                'second_table.listing_product_id',
+                ['in' => explode(',', $this->getRequest()->getParam('listing_product_id_filter'))]
+            );
+        }
+
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
@@ -189,13 +190,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_condition_callback' => [$this, 'callbackChannelOptions']
         ]);
 
-        $this->addColumn('sku', [
+        $this->addColumn('amazon_sku', [
             'header'       => $this->__('SKU'),
             'align'        => 'left',
             'type'         => 'text',
-            'index'        => 'sku',
-            'filter_index' => 'sku',
-            'frame_callback' => [$this, 'callbackColumnAmazonSku']
+            'index'        => 'amazon_sku',
+            'filter_index' => 'amazon_sku',
+            'frame_callback' => [$this, 'callbackColumnAmazonSku'],
+            'filter_condition_callback' => [$this, 'callbackFilterSku']
         ]);
 
         $this->addColumn('general_id', [
@@ -258,7 +260,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Inactive (Blocked)')
             ],
             'is_variation_grid' => true,
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Status'
+            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Status',
+            'filter_condition_callback' => [$this, 'callbackFilterStatus']
         ]);
 
         return parent::_prepareColumns();
@@ -266,14 +269,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareMassaction()
     {
-        // Set massaction identifiers
-        // ---------------------------------------
         $this->setMassactionIdField('id');
         $this->setMassactionIdFieldOnlyIndexValue(true);
-        // ---------------------------------------
 
-        // Set mass-action
-        // ---------------------------------------
         $this->getMassactionBlock()->addItem('list', [
             'label'    => $this->__('List Item(s)'),
             'url'      => '',
@@ -309,8 +307,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
         ]);
-
-        // ---------------------------------------
 
         return parent::_prepareMassaction();
     }
@@ -698,6 +694,28 @@ HTML;
         $collection->getSelect()->where($condition);
     }
 
+    protected function callbackFilterStatus($collection, $column)
+    {
+        $value = $column->getFilter()->getValue();
+
+        if ($value == null) {
+            return;
+        }
+
+        $collection->getSelect()->where('status = ?', $value);
+    }
+
+    protected function callbackFilterSku($collection, $column)
+    {
+        $value = $column->getFilter()->getValue();
+
+        if ($value == null) {
+            return;
+        }
+
+        $collection->getSelect()->where('`sku` LIKE ?', '%' . $value . '%');
+    }
+
     //########################################
 
     public function getMainButtonsHtml()
@@ -881,10 +899,24 @@ CSS
     ], function(){
 
         ListingProductVariationManageVariationsGridObj.afterInitPage();
+        ListingProductVariationManageVariationsGridObj.actionHandler.messageObj.clear();
 
     });
 JS
         );
+
+        if ($this->getParam($this->getVarNameFilter()) == 'searched_by_child'){
+            $noticeMessage = $this->__('This list includes a Product you are searching for.');
+            $this->js->add(
+                <<<JS
+    require([
+        'M2ePro/Amazon/Listing/Product/Variation/Manage/Tabs/Variations/Grid'
+    ], function(){
+        ListingProductVariationManageVariationsGridObj.actionHandler.messageObj.addNotice('{$noticeMessage}');
+    });
+JS
+            );
+        }
 
         return parent::_toHtml();
     }

@@ -80,7 +80,7 @@ define([
 
         // ---------------------------------------
 
-        openPopUp: function (productId, title, filter)
+        openPopUp: function (productId, title, filter, listingProductIdFilter)
         {
             var self = this;
 
@@ -90,7 +90,8 @@ define([
                 method: 'post',
                 parameters: {
                     product_id: productId,
-                    filter: filter
+                    filter: filter,
+                    listing_product_id_filter : listingProductIdFilter
                 },
                 onSuccess: function (transport) {
 

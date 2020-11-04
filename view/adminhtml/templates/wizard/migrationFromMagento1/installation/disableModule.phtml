@@ -13,29 +13,19 @@
 
 <div class="wizard_block">
 
-    <p>
-        <?php echo $block->__('To prepare M2E Pro for the migration, complete the actions:'); ?>
-    </p>
-    <br>
-    <li>
-        <?php echo $block->__('
-            In Magento v1.x, go to <i>System > Configuration > M2E Pro > Advanced > Migration to Magento v2.x</i> and click <strong>Proceed</strong>. 
-            It can take up to 15 minutes to stop the dynamic Cron tasks, put M2E Pro under maintenance, and prepare its database for the migration.
-        '); ?>
-    </li>
-
-    <p>
-        <?php echo $block->__('
-            <strong>Note</strong>: Before clicking <strong>Proceed</strong>, it is recommended to create a backup of M2E Pro data 
-            in case you need to restore it in Magento v1.x.'
-        ); ?>
-    </p>
-
-    <li>
-        <?php echo $block->__('
-            In Magento v2.x, click <strong>Continue</strong> at Wizard Step 1. It will stop the dynamic Cron tasks, put M2E Pro under maintenance, 
-            and clear its database before the migration. Once the process is completed, you will be redirected to the next step.
-        '); ?>
-    </li>
+    <?php echo $block->__('
+        <p>To prepare M2E Pro for the migration, complete the actions:</p>
+        <br>
+        <ul class="list">
+            <li>In Magento v1.x, go to <i>System > Configuration > M2E Pro > Advanced > Migration to Magento v2.x</i> and click <strong>Proceed</strong>.
+                It can take up to 15 minutes to stop the dynamic Cron tasks, put M2E Pro under maintenance, and prepare its database for the migration.
+                <br><br>
+                <strong>Note</strong>: Before clicking <strong>Proceed</strong>, it is recommended to create a backup of M2E Pro data
+                in case you need to restore it in Magento v1.x.</li>
+                <br>
+            <li>In Magento v2.x, click <strong>Continue</strong> at Wizard Step 1. It will stop the dynamic Cron tasks, put M2E Pro under maintenance,
+                and clear its database before the migration. Once the process is completed, you will be redirected to the next step.</li>
+        </ul>
+    '); ?>
 
 </div>

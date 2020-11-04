@@ -65,7 +65,7 @@ class Edit extends Main
 
         $this->setJsonContent([
             'type' => 'success',
-            'message' => $this->__('Variation has been successfully edited.')
+            'message' => $this->__('Variation has been edited.')
         ]);
 
         return $this->getResult();

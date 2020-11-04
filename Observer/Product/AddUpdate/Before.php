@@ -73,6 +73,7 @@ class Before extends AbstractAddUpdate
         $this->getProxy()->setData('special_price_from_date', $this->getProduct()->getSpecialFromDate());
         $this->getProxy()->setData('special_price_to_date', $this->getProduct()->getSpecialToDate());
         $this->getProxy()->setData('tier_price', $this->getProduct()->getTierPrice());
+        $this->getProxy()->setData('default_qty', $this->getDefaultQty());
 
         $this->getProxy()->setAttributes($this->getTrackingAttributesWithValues());
     }
@@ -108,7 +109,7 @@ class Before extends AbstractAddUpdate
 
     private function clearStoredProxy()
     {
-        $key = $this->getProductId().'_'.$this->getStoreId();
+        $key = $this->getProductId() . '_' . $this->getStoreId();
         if ($this->isAddingProductProcess()) {
             $key = $this->getProduct()->getSku();
         }
@@ -118,13 +119,29 @@ class Before extends AbstractAddUpdate
 
     private function storeProxy()
     {
-        $key = $this->getProductId().'_'.$this->getStoreId();
+        $key = $this->getProductId() . '_' . $this->getStoreId();
         if ($this->isAddingProductProcess()) {
             $key = $this->getHelper('Data')->generateUniqueHash();
             $this->getEvent()->getProduct()->setData('before_event_key', $key);
         }
 
         self::$proxyStorage[$key] = $this->getProxy();
+    }
+
+    //########################################
+
+    protected function getDefaultQty()
+    {
+        if (!$this->getHelper('Magento_Product')->isGroupedType($this->getProduct()->getTypeId())) {
+            return [];
+        }
+
+        $values = [];
+        foreach ($this->getProduct()->getTypeInstance()->getAssociatedProducts($this->getProduct()) as $childProduct) {
+            $values[$childProduct->getSku()] = $childProduct->getQty();
+        }
+
+        return $values;
     }
 
     //########################################
@@ -136,7 +153,7 @@ class Before extends AbstractAddUpdate
         foreach ($this->getAffectedListingsProducts() as $listingProduct) {
             /** @var \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel $changeProcessor */
             $changeProcessor = $this->modelFactory->getObject(
-                ucfirst($listingProduct->getComponentMode()).'_Magento_Product_ChangeProcessor'
+                ucfirst($listingProduct->getComponentMode()) . '_Magento_Product_ChangeProcessor'
             );
             $changeProcessor->setListingProduct($listingProduct);
 

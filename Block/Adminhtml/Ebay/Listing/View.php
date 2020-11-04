@@ -170,10 +170,17 @@ class View extends AbstractContainer
                 'Ebay_Listing_AutoAction',
                 ['listing_id' => $this->getRequest()->getParam('id')]
             ),
-            ['variationProductManage' =>
-                $this->getUrl('*/ebay_listing_variation_product_manage/index')]
+            ['variationProductManage' => $this->getUrl('*/ebay_listing_variation_product_manage/index')]
         ));
         // ---------------------------------------
+
+        $path = 'ebay_listing/transferring/index';
+        $this->jsUrl->add($this->getUrl('*/' . $path, [
+            'listing_id' => $this->listing->getId()
+        ]), $path);
+
+        $path = 'ebay_listing_transferring/getListings';
+        $this->jsUrl->add($this->getUrl('*/' . $path), $path);
 
         // ---------------------------------------
 
@@ -186,15 +193,8 @@ class View extends AbstractContainer
             'You must select at least 1 Category.' => $this->__('You must select at least 1 Category.'),
             'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.'),
             'Compatibility Attribute' => $this->__('Compatibility Attribute'),
-            'Product' => $this->__('Product'),
-            'You must select at least 1 Listing.' => $this->__('You must select at least 1 Listing.'),
-            'Creating Listing in process. Please wait...' =>
-                $this->__('Creating Listing in process. Please wait...'),
-            'Adding Products in process. Please wait...' =>
-                $this->__('Adding Products in process. Please wait...'),
-            'Some Products Categories Settings are not set or Attributes for Title or Description are empty.' =>
-                $this->__('Some Products Categories Settings are not set'
-                    .' or Attributes for Title or Description are empty.'),
+            'Sell on Another Marketplace' => $this->__('Sell on Another Marketplace'),
+            'Create new' => $this->__('Create new'),
         ]);
         // ---------------------------------------
 

@@ -35,7 +35,7 @@ class Delete extends Template
             }
         }
 
-        $tempString = $this->__('%amount% record(s) were successfully deleted.', $deleted);
+        $tempString = $this->__('%amount% record(s) were deleted.', $deleted);
         $deleted && $this->messageManager->addSuccess($tempString);
 
         $tempString  = $this->__('%amount% record(s) are used in Listing(s).', $locked) . ' ';

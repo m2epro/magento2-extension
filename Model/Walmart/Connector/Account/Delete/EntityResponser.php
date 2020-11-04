@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Walmart\Connector\Account\Delete;
 /**
  * Class \Ess\M2ePro\Model\Walmart\Connector\Account\Delete\EntityResponser
  */
-class EntityResponser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pending\Responser
+class EntityResponser extends \Ess\M2ePro\Model\Connector\Command\Pending\Responser
 {
     //########################################
 

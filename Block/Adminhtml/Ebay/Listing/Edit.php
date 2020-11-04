@@ -125,8 +125,9 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
             $nextStepBtnText = 'Next Step';
 
-            $sessionKey = 'ebay_listing_create';
-            $sessionData = $this->getHelper('Data\Session')->getValue($sessionKey);
+            $sessionData = $this->getHelper('Data_Session')->getValue(
+                \Ess\M2ePro\Model\Ebay\Listing::CREATE_LISTING_SESSION_DATA
+            );
             if ($currentStep == 4 && isset($sessionData['creation_mode']) && $sessionData['creation_mode'] ===
                 \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY) {
                 $nextStepBtnText = 'Complete';

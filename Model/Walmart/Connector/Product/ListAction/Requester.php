@@ -15,21 +15,6 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
 {
     //########################################
 
-    public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
-    {
-        parent::setListingProduct($listingProduct);
-
-        $additionalData = $listingProduct->getAdditionalData();
-        unset($additionalData['synch_template_list_rules_note']);
-        $this->listingProduct->setSettings('additional_data', $additionalData);
-
-        $this->listingProduct->save();
-
-        return $this;
-    }
-
-    //########################################
-
     protected function getProcessingRunnerModelName()
     {
         return 'Walmart_Listing_Product_Action_ListAction_ProcessingRunner';

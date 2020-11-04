@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Walmart\Connector\Account\Update;
 /**
  * Class \Ess\M2ePro\Model\Walmart\Connector\Account\Update\EntityResponser
  */
-class EntityResponser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pending\Responser
+class EntityResponser extends \Ess\M2ePro\Model\Connector\Command\Pending\Responser
 {
     //########################################
 
@@ -30,23 +30,15 @@ class EntityResponser extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pendin
         $responseData = $this->getPreparedResponseData();
 
         /** @var $walmartAccount \Ess\M2ePro\Model\Walmart\Account */
-        $walmartAccount = $this->getAccount()->getChildObject();
+        $walmartAccount = $this->walmartFactory
+            ->getObjectLoaded('Account', $this->params['account_id'])
+            ->getChildObject();
 
         $dataForUpdate = [
             'info' => $this->getHelper('Data')->jsonEncode($responseData['info'])
         ];
 
         $walmartAccount->addData($dataForUpdate)->save();
-    }
-
-    //########################################
-
-    /**
-     * @return \Ess\M2ePro\Model\Account
-     */
-    protected function getAccount()
-    {
-        return $this->getObjectByParam('Account', 'account_id');
     }
 
     //########################################

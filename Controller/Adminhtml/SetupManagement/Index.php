@@ -151,7 +151,7 @@ class Index extends \Magento\Backend\App\Action
             <h3>Versions</h3>
             {$this->getVersionsBlockHtml()}
         </div>
-        
+
         <div class="item-block">
             <h3>Core Magento Info</h3>
             {$this->getCoreMagentoInfoBlockHtml()}
@@ -727,7 +727,7 @@ HTML;
         // Static Content will regenerated automatically
         $this->addCronJobToQueue(Cron\JobFactory::JOB_UPGRADE);
 
-        empty($errorMessage) ? $this->getMessageManager()->addSuccessMessage('Task has been successfully created.')
+        empty($errorMessage) ? $this->getMessageManager()->addSuccessMessage('Task has been created.')
                              : $this->getMessageManager()->addErrorMessage($errorMessage);
 
         return $this->_redirect($this->_url->getUrl('*/*/*'));
@@ -899,7 +899,7 @@ HTML;
     {
         $this->appCache->clean();
 
-        $this->messageManager->addSuccessMessage('Cache has been successfully cleared.');
+        $this->messageManager->addSuccessMessage('Cache has been cleared.');
         return $this->_redirect($this->_url->getUrl('*/*/*'));
     }
 

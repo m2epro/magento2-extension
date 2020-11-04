@@ -64,17 +64,11 @@ class Builder extends AbstractModel
 
     //########################################
 
-    public function process()
-    {
-        return $this->createOrderItem();
-    }
-
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Order\Item
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function createOrderItem()
+    public function process()
     {
         /** @var \Ess\M2ePro\Model\Order\Item $item */
         $item = $this->ebayFactory->getObject('Order\Item')->getCollection()
@@ -83,11 +77,22 @@ class Builder extends AbstractModel
             ->addFieldToFilter('transaction_id', $this->getData('transaction_id'))
             ->getFirstItem();
 
-        $item->addData($this->getData());
-        $item->save();
+        foreach ($this->getData() as $key => $value) {
+            if (!$item->getId() || ($item->hasData($key) && $item->getData($key) != $value)) {
+                $item->addData($this->getData());
+                $item->save();
+                break;
+            }
+        }
 
-        $item->getChildObject()->addData($this->getData());
-        $item->getChildObject()->save();
+        $ebayItem = $item->getChildObject();
+        foreach ($this->getData() as $key => $value) {
+            if (!$item->getId() || ($ebayItem->hasData($key) && $ebayItem->getData($key) != $value)) {
+                $ebayItem->addData($this->getData());
+                $ebayItem->save();
+                break;
+            }
+        }
 
         return $item;
     }

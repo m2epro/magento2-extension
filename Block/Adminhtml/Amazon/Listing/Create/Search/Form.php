@@ -16,7 +16,6 @@ use Ess\M2ePro\Model\Amazon\Listing;
  */
 class Form extends AbstractForm
 {
-    protected $sessionKey = 'amazon_listing_create';
     protected $useFormContainer = true;
 
     /** @var \Ess\M2ePro\Model\Listing */
@@ -319,7 +318,9 @@ JS
         if ($this->getRequest()->getParam('id') !== null) {
             $data = array_merge($this->getListing()->getData(), $this->getListing()->getChildObject()->getData());
         } else {
-            $data = $this->getHelper('Data\Session')->getValue($this->sessionKey);
+            $data = $this->getHelper('Data_Session')->getValue(
+                \Ess\M2ePro\Model\Amazon\Listing::CREATE_LISTING_SESSION_DATA
+            );
             $data = array_merge($this->getDefaultFieldsValues(), $data);
         }
 

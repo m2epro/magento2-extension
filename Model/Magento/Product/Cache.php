@@ -171,6 +171,7 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
     public function getQty($lifeMode = false)
     {
         $args = func_get_args();
+        $args[] = $this->isGroupedProductMode;
         return $this->getMethodData(__FUNCTION__, $args);
     }
 

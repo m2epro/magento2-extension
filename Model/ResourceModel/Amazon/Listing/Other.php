@@ -153,11 +153,10 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
             $additionalData = (array)$this->getHelper('Data')
                 ->jsonDecode($account->getAdditionalData());
 
-            unset($additionalData['is_amazon_other_listings_full_items_data_already_received'],
-                $additionalData['last_other_listing_products_synchronization']
-            );
+            unset($additionalData['is_amazon_other_listings_full_items_data_already_received']);
 
             $account->setSettings('additional_data', $additionalData)->save();
+            $account->getChildObject()->setData('inventory_last_synchronization', null)->save();
         }
     }
 

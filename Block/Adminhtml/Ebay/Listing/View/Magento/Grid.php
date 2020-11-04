@@ -48,7 +48,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         // Initialization block
         // ---------------------------------------
-        $this->setId('ebayListingViewGridMagento' . $this->listing->getId());
+        $this->setId('ebayListingViewGrid' . $this->listing->getId());
         // ---------------------------------------
 
         $this->hideMassactionColumn = true;

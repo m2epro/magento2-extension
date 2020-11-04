@@ -22,6 +22,8 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 
     protected $qty;
 
+    protected $price;
+
     protected $subtotal;
 
     protected $additionalData = [];
@@ -37,6 +39,12 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         $this->subtotal = $this->getOriginalPrice() * $this->getOriginalQty();
         parent::__construct($helperFactory, $modelFactory);
     }
+
+    //########################################
+
+    abstract public function getOriginalPrice();
+
+    abstract public function getOriginalQty();
 
     //########################################
 
@@ -111,6 +119,15 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         // ---------------------------------------
     }
 
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function pretendedToBeSimple()
+    {
+        return $this->item->getParentObject()->pretendedToBeSimple();
+    }
+
     //########################################
 
     public function getProduct()
@@ -147,14 +164,32 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         return $this->getProxyOrder()->convertPriceToBase($this->getPrice());
     }
 
-    public function getPrice()
+    /**
+     * @param float $price
+     * @return $this
+     */
+    public function setPrice($price)
     {
-        return $this->subtotal / $this->getQty();
+        if ($price <= 0) {
+            throw new \InvalidArgumentException('Price cannot be less than zero.');
+        }
+
+        $this->price = $price;
+
+        return $this;
     }
 
-    abstract public function getOriginalPrice();
+    /**
+     * @return float
+     */
+    public function getPrice()
+    {
+        if ($this->price !== null) {
+            return $this->price;
+        }
 
-    abstract public function getOriginalQty();
+        return $this->subtotal / $this->getQty();
+    }
 
     public function setQty($qty)
     {

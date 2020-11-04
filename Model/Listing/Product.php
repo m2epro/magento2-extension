@@ -53,6 +53,9 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
     const MOVING_LISTING_OTHER_SOURCE_KEY = 'moved_from_listing_other_id';
 
+    const GROUPED_PRODUCT_MODE_OPTIONS = 0;
+    const GROUPED_PRODUCT_MODE_SET     = 1;
+
     /**
      * It allows to delete an object without checking if it is isLocked()
      * @var bool
@@ -208,6 +211,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         if ($this->magentoProductModel === null) {
             $this->magentoProductModel = $this->modelFactory->getObject('Magento_Product_Cache');
             $this->magentoProductModel->setProductId($this->getProductId());
+
+            if ($this->magentoProductModel->isGroupedType()) {
+                $this->magentoProductModel->setGroupedProductMode($this->getGroupedProductMode());
+            }
         }
 
         return $this->prepareMagentoProduct($this->magentoProductModel);
@@ -336,6 +343,32 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     public function getAdditionalData()
     {
         return $this->getSettings('additional_data');
+    }
+
+    //########################################
+
+    /**
+     * @return null|int
+     */
+    public function getGroupedProductMode()
+    {
+        if (!$this->getMagentoProduct()->isGroupedType()) {
+            return null;
+        }
+
+        if ($this->isListable()) {
+            return $this->getHelper('Module_Configuration')->getGroupedProductMode();
+        }
+
+        return (int)$this->getSetting('additional_data', 'grouped_product_mode', self::GROUPED_PRODUCT_MODE_OPTIONS);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isGroupedProductModeSet()
+    {
+        return $this->getGroupedProductMode() === self::GROUPED_PRODUCT_MODE_SET;
     }
 
     //########################################

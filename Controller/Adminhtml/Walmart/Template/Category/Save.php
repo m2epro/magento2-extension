@@ -100,7 +100,7 @@ class Save extends Category
             return $this->getResult();
         }
 
-        $this->messageManager->addSuccess($this->__('Policy was successfully saved'));
+        $this->messageManager->addSuccess($this->__('Policy was saved'));
         return $this->_redirect($this->getHelper('Data')->getBackUrl(
             'list',
             [],

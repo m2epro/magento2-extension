@@ -252,6 +252,21 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
+        if (isset($tempSettings['amazon_collects'])) {
+            if ($this->isNeedExcludeStates()) {
+                $data['magento_orders_settings'][$tempKey]['amazon_collects'] = $tempSettings['amazon_collects'];
+            } else {
+                $data['magento_orders_settings'][$tempKey]['amazon_collects'] = 0;
+            }
+        }
+
+        if (isset($tempSettings['excluded_states'])) {
+            $data['magento_orders_settings'][$tempKey]['excluded_states'] = explode(
+                ',',
+                $tempSettings['excluded_states']
+            );
+        }
+
         // customer settings
         // ---------------------------------------
         $tempKey = 'customer';
@@ -377,7 +392,9 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                     'apply_to_amazon' => 0
                 ],
                 'tax' => [
-                    'mode' => Account::MAGENTO_ORDERS_TAX_MODE_MIXED
+                    'mode' => Account::MAGENTO_ORDERS_TAX_MODE_MIXED,
+                    'amazon_collects' => 1,
+                    'excluded_states' => $this->getGeneralExcludedStates()
                 ],
                 'customer' => [
                     'mode' => Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST,
@@ -413,6 +430,34 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             // vcs_upload_invoices
             'auto_invoicing' => 0,
             'is_magento_invoice_creation_disabled' => 0,
+        ];
+    }
+
+    private function isNeedExcludeStates()
+    {
+        if ($this->rawData['marketplace_id'] != \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_US) {
+            return false;
+        }
+
+        if ($this->rawData['magento_orders_settings']['listing']['mode'] == 0 &&
+            $this->rawData['magento_orders_settings']['listing_other']['mode'] == 0) {
+            return false;
+        }
+
+        if (!isset($this->rawData['magento_orders_settings']['tax']['excluded_states'])) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function getGeneralExcludedStates()
+    {
+        return [
+            'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DC', 'GA', 'HI', 'ID',
+            'IL', 'IN', 'IA', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS',
+            'NE', 'NV', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'PA', 'PR',
+            'RI', 'SC', 'SD', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY',
         ];
     }
 

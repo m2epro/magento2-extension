@@ -54,7 +54,7 @@ class Save extends Template
 
         $template = array_shift($templates);
 
-        $this->messageManager->addSuccess($this->__('Policy was successfully saved.'));
+        $this->messageManager->addSuccess($this->__('Policy was saved.'));
 
         $extendedRoutersParams = [
             'edit' => [

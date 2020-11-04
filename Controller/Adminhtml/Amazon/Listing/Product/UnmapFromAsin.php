@@ -39,7 +39,7 @@ class UnmapFromAsin extends Main
             $productsIds = explode(',', $productsIds);
         }
 
-        $message = $this->__('ASIN(s)/ISBN(s) was successfully unassigned.');
+        $message = $this->__('ASIN(s)/ISBN(s) was unassigned.');
         $type = 'success';
 
         foreach ($productsIds as $productId) {

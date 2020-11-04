@@ -70,7 +70,7 @@ class Save extends Template
             return $this->getResult();
         }
 
-        $this->getMessageManager()->addSuccess($this->__('Policy was successfully saved'));
+        $this->getMessageManager()->addSuccess($this->__('Policy was saved'));
 
         return $this->_redirect($this->getHelper('Data')->getBackUrl('*/amazon_template/index', [], [
             'edit' => ['id' => $model->getId()],

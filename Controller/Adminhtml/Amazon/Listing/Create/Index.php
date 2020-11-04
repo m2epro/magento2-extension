@@ -13,7 +13,20 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Create;
  */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
-    protected $sessionKey = 'amazon_listing_create';
+    /** @var \Ess\M2ePro\Model\Amazon\Listing\Transferring $transferring */
+    protected $transferring;
+
+    //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Model\Amazon\Listing\Transferring $transferring,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        $this->transferring = $transferring;
+
+        parent::__construct($amazonFactory, $context);
+    }
 
     //########################################
 
@@ -73,11 +86,17 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             // ---------------------------------------
 
             $this->setSessionValue('title', strip_tags($post['title']));
+            $this->setSessionValue('marketplace_id', (int)$post['marketplace_id']);
             $this->setSessionValue('account_id', (int)$post['account_id']);
             $this->setSessionValue('store_id', (int)$post['store_id']);
 
             $this->_redirect('*/*/index', ['_current' => true, 'step' => 2]);
             return;
+        }
+
+        $listingOnlyMode = \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY;
+        if ($this->getRequest()->getParam('creation_mode') == $listingOnlyMode) {
+            $this->setSessionValue('creation_mode', $listingOnlyMode);
         }
 
         $this->setWizardStep('listingGeneral');
@@ -122,8 +141,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
     {
         if ($this->getSessionValue('account_id') === null) {
             $this->clearSession();
-            $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
-            return;
+            return $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
         }
 
         if ($this->getRequest()->isPost()) {
@@ -137,7 +155,24 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             }
 
             $listing = $this->createListing();
-            $this->clearSession();
+
+            //todo Transferring move in another place?
+            if ($listingId = $this->getRequest()->getParam('listing_id')) {
+                $this->transferring->setListing(
+                    $this->amazonFactory->getCachedObjectLoaded('Listing', $listingId)
+                );
+
+                $this->clearSession();
+                $this->transferring->setTargetListingId($listing->getId());
+
+                return $this->_redirect(
+                    '*/amazon_listing/transferring/index',
+                    [
+                        'listing_id' => $listingId,
+                        'step'       => 3,
+                    ]
+                );
+            }
 
             if ($this->isCreationModeListingOnly()) {
                 // closing window for 3rd party products moving in new listing creation
@@ -145,7 +180,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
                 return $this->getRawResult()->setContents("<script>window.close();</script>");
             }
 
-            $this->_redirect(
+            $this->clearSession();
+
+            return $this->_redirect(
                 '*/amazon_listing_product_add/index',
                 [
                     'id' => $listing->getId(),
@@ -153,7 +190,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
                     'wizard' => $this->getRequest()->getParam('wizard')
                 ]
             );
-            return;
         }
 
         $this->setWizardStep('listingSearch');
@@ -165,32 +201,35 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 
     protected function createListing()
     {
-        $sessionData = $this->getSessionValue();
+        $data = $this->getSessionValue();
 
-        if ($sessionData['restock_date_value'] === '') {
-            $sessionData['restock_date_value'] = $this->getHelper('Data')->getCurrentGmtDate();
+        $data['title'] = $this->getSessionValue('title');
+        $data['account_id'] = $this->getSessionValue('account_id');
+        $data['marketplace_id'] = $this->getSessionValue('marketplace_id');
+        $data['store_id'] = $this->getSessionValue('store_id');
+
+        if ($this->getSessionValue('restock_date_value') === '') {
+            $data['restock_date_value'] = $this->getHelper('Data')->getCurrentGmtDate();
         } else {
             $timestamp = $this->getHelper('Data')->parseTimestampFromLocalizedFormat(
-                $sessionData['restock_date_value'],
-                \IntlDateFormatter::SHORT,
-                \IntlDateFormatter::SHORT
+                $this->getSessionValue('restock_date_value')
             );
-            $sessionData['restock_date_value'] = $this->getHelper('Data')->getDate($timestamp);
+            $data['restock_date_value'] = $this->getHelper('Data')->getDate($timestamp);
         }
 
         // Add new Listing
         // ---------------------------------------
-        $listing = $this->amazonFactory->getObject('Listing')->addData($sessionData)->save();
+        $listing = $this->amazonFactory->getObject('Listing')->addData($data)->save();
         // ---------------------------------------
 
         // Set message to log
         // ---------------------------------------
-        $tempLog = $this->activeRecordFactory->getObject('Listing\Log');
-        $tempLog->setComponentMode($listing->getComponentMode());
+        $tempLog = $this->activeRecordFactory->getObject('Listing_Log');
+        $tempLog->setComponentMode(\Ess\M2ePro\Helper\Component\Amazon::NICK);
         $tempLog->addListingMessage(
             $listing->getId(),
             \Ess\M2ePro\Helper\Data::INITIATOR_USER,
-            null,
+            $tempLog->getResource()->getNextActionId(),
             \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_LISTING,
             'Listing was Added',
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
@@ -215,14 +254,19 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         $sessionData = $this->getSessionValue();
         $sessionData[$key] = $value;
 
-        $this->getHelper('Data\Session')->setValue($this->sessionKey, $sessionData);
+        $this->getHelper('Data\Session')->setValue(
+            \Ess\M2ePro\Model\Amazon\Listing::CREATE_LISTING_SESSION_DATA,
+            $sessionData
+        );
 
         return $this;
     }
 
     protected function getSessionValue($key = null)
     {
-        $sessionData = $this->getHelper('Data\Session')->getValue($this->sessionKey);
+        $sessionData = $this->getHelper('Data\Session')->getValue(
+            \Ess\M2ePro\Model\Amazon\Listing::CREATE_LISTING_SESSION_DATA
+        );
 
         if ($sessionData === null) {
             $sessionData = [];
@@ -239,15 +283,17 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 
     private function clearSession()
     {
-        $this->getHelper('Data\Session')->setValue($this->sessionKey, null);
+        $this->getHelper('Data\Session')->setValue(
+            \Ess\M2ePro\Model\Amazon\Listing::CREATE_LISTING_SESSION_DATA,
+            null
+        );
     }
 
     //########################################
 
     private function isCreationModeListingOnly()
     {
-        return $this->getRequest()->getParam('creation_mode') ==
-            \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY;
+        return $this->getSessionValue('creation_mode') == \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY;
     }
 
     //########################################
@@ -255,7 +301,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
     private function setWizardStep($step)
     {
         $wizardHelper = $this->getHelper('Module\Wizard');
-
         if (!$wizardHelper->isActive(\Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK)) {
             return;
         }

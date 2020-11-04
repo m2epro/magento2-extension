@@ -19,7 +19,7 @@ class ProcessPartial extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     const STATUS_COMPLETE   = 'completed';
     const STATUS_PROCESSING = 'processing';
 
-    const MAX_PARTS_PER_ONE_ITERATION = 3;
+    const MAX_PARTS_PER_ONE_ITERATION = 5;
 
     //####################################
 

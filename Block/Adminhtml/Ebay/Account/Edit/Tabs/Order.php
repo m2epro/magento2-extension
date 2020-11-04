@@ -170,8 +170,8 @@ HTML
                 ],
                 'value' => $formData['magento_orders_settings']['listing_other']['mode'],
                 'tooltip' => $this->__(
-                    'Choose whether a Magento Order should be created if an eBay Order is received for
-                    an eBay Item <b>not</b> Listed using M2E Pro.'
+                    'Choose whether a Magento Order should be created if an eBay Order is received for an item 
+                    that does <b>not</b> belong to the M2E Pro Listing.'
                 )
             ]
         );

@@ -87,13 +87,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('ebayVariationProductManageGrid');
         $this->setDefaultSort('id');
         $this->setDefaultDir('ASC');
         $this->setUseAjax(true);
-        // ---------------------------------------
 
         $this->listingProductId = $this->getHelper('Data\GlobalData')->getValue('listing_product_id');
     }
@@ -158,7 +155,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ]
         );
 
-        // Set collection to grid
+        if ($this->getParam($this->getVarNameFilter()) == 'searched_by_child'){
+            $collection->addFieldToFilter(
+                'main_table.id',
+                ['in' => explode(',', $this->getRequest()->getParam('variation_id_filter'))]
+            );
+        }
+
         $this->setCollection($resultCollection);
 
         return parent::_prepareCollection();
@@ -515,6 +518,28 @@ HTML;
             )
         ];
 
+        $this->js->add(
+            <<<JS
+    require([
+        'M2ePro/Plugin/Messages'
+    ], function(MessageObj){
+        MessageObj.clear();
+    });
+JS
+        );
+
+        if ($this->getParam($this->getVarNameFilter()) == 'searched_by_child'){
+            $noticeMessage = $this->__('This list includes a Product you are searching for.');
+            $this->js->add(
+                <<<JS
+    require([
+        'M2ePro/Plugin/Messages'
+    ], function(MessageObj){
+        MessageObj.addNotice('{$noticeMessage}');
+    });
+JS
+            );
+        }
         $urls = $this->getHelper('Data')->jsonEncode($urls);
 
         $this->js->addRequireJs([

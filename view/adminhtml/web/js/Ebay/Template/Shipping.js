@@ -366,14 +366,6 @@ define([
 
         // ---------------------------------------
 
-        hasSurcharge: function (locationType)
-        {
-            var marketplaceId = $$('[name="shipping[marketplace_id]"]')[0];
-            return locationType == 'local' && marketplaceId && ['1', '9'].indexOf(marketplaceId.value) != -1;
-        },
-
-        // ---------------------------------------
-
         internationalShippingModeChange: function ()
         {
             // clear selected shipping methods
@@ -424,19 +416,6 @@ define([
         isInternationalShippingModeNoInternational: function ()
         {
             return $('international_shipping_mode').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Shipping::SHIPPING_TYPE_NO_INTERNATIONAL');
-        },
-
-        getCalculatedLocationType: function ()
-        {
-            if (EbayTemplateShippingObj.isLocalShippingModeCalculated()) {
-                return 'local';
-            }
-
-            if (EbayTemplateShippingObj.isInternationalShippingModeCalculated()) {
-                return 'international';
-            }
-
-            return null;
         },
 
         isShippingModeCalculated: function (locationType)
@@ -744,37 +723,6 @@ define([
                 note.down('.shipping_rate_table_note_accepted').show();
                 note.down('.shipping_rate_table_note_identifier').hide();
             }
-
-            var absoluteHide = !!(!EbayTemplateShippingObj.isLocalShippingModeFlat() ||
-                EbayTemplateShippingObj.isDomesticRateTableEnabled());
-            $$('[id^="shipping_variant_cost_surcharge_"]').each(function (surchargeRow) {
-                var row = surchargeRow.previous('tr');
-
-                // for template without data
-                if (!row) {
-                    return;
-                }
-
-                var inputCostSurchargeCV = surchargeRow.select('.shipping-cost-surcharge')[0];
-                var inputCostSurchargeCA = surchargeRow.select('.shipping-cost-surcharge-ca')[0];
-
-                inputCostSurchargeCV.hide();
-                inputCostSurchargeCA.hide();
-
-                if (absoluteHide || !(/(FedEx|UPS)/.test(row.select('.shipping-service')[0].value)) ||
-                    row.select('.cost-mode')[0].value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Shipping\\Service::COST_MODE_FREE')) {
-                    surchargeRow.hide();
-                } else {
-                    surchargeRow.show();
-
-                    if (row.select('.cost-mode')[0].value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Shipping\\Service::COST_MODE_CUSTOM_VALUE')) {
-                        inputCostSurchargeCV.show();
-                        inputCostSurchargeCV.disabled = false;
-                    } else if (row.select('.cost-mode')[0].value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Shipping\\Service::COST_MODE_CUSTOM_ATTRIBUTE')) {
-                        inputCostSurchargeCA.show();
-                    }
-                }
-            });
 
             EbayTemplateShippingObj.updatePackageBlockState();
         },
@@ -1098,21 +1046,6 @@ define([
         serviceCostModeChange: function ()
         {
             var row = $(this).up('tr');
-
-            // ---------------------------------------
-            var surchargeRow = $('shipping_variant_cost_surcharge_' + this.name.match(/\d+/) + '_tr');
-
-            if (EbayTemplateShippingObj.isLocalShippingModeFlat() && surchargeRow) {
-                var inputCostSurchargeCV = surchargeRow.select('.shipping-cost-surcharge')[0];
-                var inputCostSurchargeCA = surchargeRow.select('.shipping-cost-surcharge-ca')[0];
-
-                if (!EbayTemplateShippingObj.isDomesticRateTableEnabled() &&
-                    /(FedEx|UPS)/.test(row.select('.shipping-service')[0].value)) {
-                    surchargeRow.show();
-                } else {
-                    surchargeRow.hide();
-                }
-            }
             // ---------------------------------------
 
             // ---------------------------------------
@@ -1125,10 +1058,6 @@ define([
 
             // ---------------------------------------
             [inputCostCV, inputCostCA, inputCostAddCV, inputCostAddCA].invoke('hide');
-            if (surchargeRow) {
-                inputCostSurchargeCV.hide();
-                inputCostSurchargeCA.hide();
-            }
 
             inputPriority.show();
             // ---------------------------------------
@@ -1140,11 +1069,6 @@ define([
 
                 inputCostAddCV.show();
                 inputCostAddCV.disabled = false;
-
-                if (surchargeRow && !EbayTemplateShippingObj.isDomesticRateTableEnabled()) {
-                    inputCostSurchargeCV.show();
-                    inputCostSurchargeCV.disabled = false;
-                }
             }
             // ---------------------------------------
 
@@ -1152,7 +1076,6 @@ define([
             if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Shipping\\Service::COST_MODE_CUSTOM_ATTRIBUTE')) {
                 inputCostCA.show();
                 inputCostAddCA.show();
-                surchargeRow && !EbayTemplateShippingObj.isDomesticRateTableEnabled() && inputCostSurchargeCA.show();
             }
             // ---------------------------------------
 
@@ -1176,13 +1099,6 @@ define([
                     inputCostAddCV.show();
                     inputCostAddCV.value = 0;
                     inputCostAddCV.disabled = true;
-                }
-
-                if (surchargeRow) {
-                    inputCostSurchargeCV.hide();
-                    inputCostSurchargeCA.hide();
-
-                    surchargeRow.hide();
                 }
             }
             // ---------------------------------------
@@ -1257,26 +1173,6 @@ define([
             // ---------------------------------------
 
             // ---------------------------------------
-            if (EbayTemplateShippingObj.isLocalShippingModeFlat() &&
-                EbayTemplateShippingObj.hasSurcharge(type)) {
-
-                tpl = $$('#block_shipping_table_cost_surcharge_row_template_table tbody')[0].innerHTML;
-                tpl = tpl.replace(/%i%/g, i);
-                $(id).insert(tpl);
-
-                AttributeObj.renderAttributesWithEmptyOption(
-                    'shipping[shipping_cost_surcharge_attribute][' + i + ']',
-                    $('shipping_variant_cost_surcharge_' + i + '_tr').down('.shipping-cost-surcharge-ca'));
-                $('shipping[shipping_cost_surcharge_attribute][' + i + ']').insert({
-                    top: new Element('option', {selected: true}).update(M2ePro.translator.translate('None'))
-                });
-                var handlerObj = new AttributeCreator('shipping[shipping_cost_surcharge_attribute][' + i + ']');
-                handlerObj.setSelectObj($('shipping[shipping_cost_surcharge_attribute][' + i + ']'));
-                handlerObj.injectAddOption();
-            }
-            // ---------------------------------------
-
-            // ---------------------------------------
             EbayTemplateShippingObj.counter[type]++;
             EbayTemplateShippingObj.counter.total++;
             // ---------------------------------------
@@ -1314,23 +1210,6 @@ define([
 
                 EbayTemplateShippingObj.checkMessages(type);
             });
-
-            if (type == 'local') {
-
-                var next = row.next("[id^='shipping_variant_cost_surcharge']");
-
-                if (next) {
-                    next.down('[name^="shipping[shipping_cost_surcharge_attribute]"]').observe('change', function (event) {
-                        var element = row.down('[name^="shipping[cost_mode]"]');
-
-                        if (!isAttributeMode(element)) {
-                            return;
-                        }
-
-                        EbayTemplateShippingObj.checkMessages(type);
-                    });
-                }
-            }
             // ---------------------------------------
 
             return row;
@@ -1511,12 +1390,6 @@ define([
                 $(this).up('tr').next().remove();
             }
 
-            if (EbayTemplateShippingObj.hasSurcharge(locationType)) {
-                var i = $(this).up('tr').id.match(/\d+/);
-                var next = $(this).up('tr').next('[id=shipping_variant_cost_surcharge_' + i + '_tr]');
-                next && next.remove();
-            }
-
             $(this).up('tr').remove();
 
             EbayTemplateShippingObj.counter[locationType]--;
@@ -1577,7 +1450,6 @@ define([
 
                 var type = service.shipping_type == 1 ? 'international' : 'local';
                 var row = EbayTemplateShippingObj.addRow(type);
-                var surchargeRow = $('shipping_variant_cost_surcharge_' + i + '_tr');
 
                 row.down('.shipping-service').value = service.shipping_value;
                 row.down('.cost-mode').value = service.cost_mode;
@@ -1585,11 +1457,6 @@ define([
                 if (service.cost_mode == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Shipping\\Service::COST_MODE_CUSTOM_VALUE')) {
                     row.down('.shipping-cost-cv').value = service.cost_value;
                     row.down('.shipping-cost-additional').value = service.cost_additional_value;
-
-                    if (surchargeRow) {
-                        surchargeRow.down('.shipping-cost-surcharge').value = service.cost_surcharge_value;
-                    }
-
                 } else if (service.cost_mode == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Shipping\\Service::COST_MODE_CUSTOM_ATTRIBUTE')) {
                     if (EbayTemplateShippingObj.hasMissingServiceAttribute('cost_value', i)) {
                         EbayTemplateShippingObj.addMissingServiceAttributeOption(
@@ -1605,11 +1472,6 @@ define([
 
                     row.down('.shipping-cost-ca select').value = service.cost_value;
                     row.down('.shipping-cost-additional-ca select').value = service.cost_additional_value;
-
-                    if (surchargeRow) {
-                        surchargeRow.down('.shipping-cost-surcharge-ca select').value = service.cost_surcharge_value;
-                    }
-
                 }
 
                 row.down('.shipping-priority').value = service.priority;

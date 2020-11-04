@@ -13,6 +13,8 @@ namespace Ess\M2ePro\Model\Connector\Command\Pending\Processing\Partial;
  */
 class Runner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner
 {
+    const MAX_PARTS_PER_RUN = 5;
+
     /** @var \Ess\M2ePro\Model\Request\Pending\Partial $requestPendingPartial */
     protected $requestPendingPartial;
 
@@ -46,21 +48,25 @@ class Runner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runn
     public function processSuccess()
     {
         try {
-            $data = $this->getNextData();
+            for ($i = 0; $i < self::MAX_PARTS_PER_RUN; $i++) {
+                $data = $this->getNextData();
 
-            if (empty($data)) {
-                if ($this->getMessages()) {
-                    $this->getResponse()->initFromPreparedResponse([], $this->getMessages());
-                    $this->getResponser(true)->process();
+                if (empty($data)) {
+                    if ($this->getMessages()) {
+                        $this->getResponse()->initFromPreparedResponse([], $this->getMessages());
+                        $this->getResponser(true)->process();
+                    } else {
+                        $this->afterLastDataPartProcessed();
+                    }
+
+                    return true;
                 }
 
-                return true;
+                $this->getResponse()->initFromPreparedResponse($data);
+                $this->getResponser(true)->process();
+
+                $this->incrementNextDataPartNumber();
             }
-
-            $this->getResponse()->initFromPreparedResponse($data);
-            $this->getResponser(true)->process();
-
-            $this->incrementNextDataPartNumber();
         } catch (\Exception $exception) {
             $this->getResponser()->failDetected($exception->getMessage());
             return true;
@@ -125,6 +131,11 @@ class Runner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runn
         );
 
         $requesterPartial->save();
+    }
+
+    protected function afterLastDataPartProcessed()
+    {
+        return null;
     }
 
     //##################################

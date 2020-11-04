@@ -615,8 +615,6 @@ JS
                 $this->__('New Other'),
             \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW_WITH_DEFECT =>
                 $this->__('New With Defects'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_MANUFACTURER_REFURBISHED =>
-                $this->__('Manufacturer Refurbished'),
             \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_SELLER_REFURBISHED =>
                 $this->__('Seller Refurbished, Re-manufactured'),
             \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_USED =>

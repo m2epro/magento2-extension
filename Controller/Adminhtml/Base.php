@@ -8,14 +8,13 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml;
 
+use Ess\M2ePro\Block\Adminhtml\Magento\Renderer\CssRenderer;
+use Ess\M2ePro\Helper\Factory as HelperFactory;
+use Ess\M2ePro\Model\ActiveRecord\Factory as ActiveRecordFactory;
+use Ess\M2ePro\Model\Factory as ModelFactory;
 use Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
-use \Magento\Backend\App\Action;
-
-use \Ess\M2ePro\Model\Factory as ModelFactory;
-use \Ess\M2ePro\Model\ActiveRecord\Factory as ActiveRecordFactory;
-use \Ess\M2ePro\Helper\Factory as HelperFactory;
-use \Magento\Framework\View\Result\PageFactory;
-use \Ess\M2ePro\Block\Adminhtml\Magento\Renderer\CssRenderer;
+use Magento\Backend\App\Action;
+use Magento\Framework\View\Result\PageFactory;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Base
@@ -222,16 +221,16 @@ abstract class Base extends Action
         }
 
         if ($this->getHelper('Module')->isDisabled()) {
-            $message = $this->__('M2E Pro is disabled. Inventory and Order synchronization is not running. 
+            $message = $this->__('M2E Pro is disabled. Inventory and Order synchronization is not running.
                                   The Module interface is unavailable.<br>
-                                  You can enable the Module under 
+                                  You can enable the Module under
                                   <i>Stores > Settings > Configuration > M2E Pro > Advanced Settings > Module</i>.');
             $this->getMessageManager()->addNotice($message);
             return $this->_redirect('admin/dashboard');
         }
 
         if (empty($this->getHelper('Component')->getEnabledComponents())) {
-            $message = $this->__('Channel Integrations are disabled. To start working with M2E Pro, go to 
+            $message = $this->__('Channel Integrations are disabled. To start working with M2E Pro, go to
                                   <i>Stores > Settings > Configuration > M2E Pro</i>
                                   and enable at least one Channel Integration.');
             $this->getMessageManager()->addNotice($message);

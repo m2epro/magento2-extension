@@ -55,6 +55,12 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 
         $data['marketplace_id'] = (int)$this->rawData['marketplace_id'];
 
+        if (isset($this->rawData['managed_payments_mode'])) {
+            $data['managed_payments_mode'] = (int)(bool)$this->rawData['managed_payments_mode'];
+        } else {
+            $data['managed_payments_mode'] = 0;
+        }
+
         if (isset($this->rawData['pay_pal_mode'])) {
             $data['pay_pal_mode'] = (int)(bool)$this->rawData['pay_pal_mode'];
         } else {
@@ -94,6 +100,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
     public function getDefaultData()
     {
         return [
+            'managed_payments_mode'     => 0,
             'pay_pal_mode'              => 0,
             'pay_pal_email_address'     => '',
             'pay_pal_immediate_payment' => 0,

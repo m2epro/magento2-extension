@@ -135,7 +135,7 @@ HTML
             ),
             'Product does not exist.' => $this->__('Product does not exist.'),
             'Please enter correct Product ID.' => $this->__('Please enter correct Product ID.'),
-            'Product(s) was successfully Mapped.' => $this->__('Product(s) was successfully Mapped.'),
+            'Product(s) was Mapped.' => $this->__('Product(s) was Mapped.'),
             'Please enter correct Product ID or SKU' => $this->__('Please enter correct Product ID or SKU'),
 
             'Current version only supports Simple Products. Please, choose Simple Product.' => $this->__(
@@ -151,16 +151,16 @@ HTML
             'popup_title' => $this->__('Moving Walmart Items'),
             'confirm' => $this->__('Are you sure?'),
 
-            'not_enough_data' => $this->__('Not enough data'),
-            'successfully_unmapped' => $this->__('Product(s) was successfully Unmapped.'),
-            'successfully_removed' => $this->__('Product(s) was successfully Removed.'),
+            'Not enough data' => $this->__('Not enough data'),
+            'Product(s) was Unmapped.' => $this->__('Product(s) was Unmapped.'),
+            'Product(s) was Removed.' => $this->__('Product(s) was Removed.'),
 
             'select_items_message' => $this->__('Please select the Products you want to perform the Action on.'),
             'select_action_message' => $this->__('Please select Action.'),
 
             'automap_progress_title' => $this->__('Map Item(s) to Products'),
             'processing_data_message' => $this->__('Processing %product_title% Product(s).'),
-            'successfully_mapped' => $this->__('Product was successfully Mapped.'),
+            'Product was Mapped.' => $this->__('Product was Mapped.'),
             'failed_mapped' => $someProductsWereNotMappedMessage,
 
             'success_word' => $this->__('Success'),

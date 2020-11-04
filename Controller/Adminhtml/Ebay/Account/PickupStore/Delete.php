@@ -69,7 +69,7 @@ class Delete extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
         $model->delete();
 
         $this->getMessageManager()->addSuccessMessage($this->__(
-            'Store was successfully deleted.'
+            'Store was deleted.'
         ));
 
         return $this->_redirect('*/ebay_account_pickupStore/index', $params);

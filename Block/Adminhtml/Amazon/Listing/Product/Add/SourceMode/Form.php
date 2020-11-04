@@ -29,7 +29,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             self::HELP_BLOCK,
             [
                 'content' => $this->__(
-                    '<p>After an M2E Pro listing is successfully configured and created, Magento Products
+                    '<p>After an M2E Pro listing is configured and created, Magento Products
                     should be added into it. The Products you add to the Listing will further be Listed on
                     Amazon.</p>
                     <p>There are several different options of how Magento products can be found/selected

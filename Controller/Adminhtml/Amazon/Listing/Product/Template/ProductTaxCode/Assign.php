@@ -46,7 +46,7 @@ class Assign extends ProductTaxCode
         if (!empty($productsIdsLocked)) {
             $messages[] = [
                 'type' => 'success',
-                'text' => $this->__('Product Tax Code Policy was successfully assigned.')
+                'text' => $this->__('Product Tax Code Policy was assigned.')
             ];
 
             $this->setProductTaxCodeTemplateForProducts($productsIdsLocked, $templateId);

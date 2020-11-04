@@ -90,7 +90,7 @@ class MoveToListing extends Main
             );
 
         } else {
-            $this->messageManager->addSuccess($this->__('Product(s) was successfully Moved.'));
+            $this->messageManager->addSuccess($this->__('Product(s) was Moved.'));
             $this->setJsonContent(['result' => true]);
         }
 

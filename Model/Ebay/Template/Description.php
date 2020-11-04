@@ -31,7 +31,6 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     const CONDITION_EBAY_NEW = 1000;
     const CONDITION_EBAY_NEW_OTHER = 1500;
     const CONDITION_EBAY_NEW_WITH_DEFECT = 1750;
-    const CONDITION_EBAY_MANUFACTURER_REFURBISHED = 2000;
     const CONDITION_EBAY_SELLER_REFURBISHED = 2500;
     const CONDITION_EBAY_USED = 3000;
     const CONDITION_EBAY_VERY_GOOD = 4000;

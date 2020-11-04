@@ -74,6 +74,7 @@ class After extends AbstractAddUpdate
                 $this->performSpecialPriceToDateChanges();
                 $this->performTierPriceChanges();
                 $this->performTrackingAttributesChanges();
+                $this->performDefaultQtyChanges();
 
                 $this->addListingProductInstructions();
 
@@ -348,12 +349,61 @@ class After extends AbstractAddUpdate
 
     // ---------------------------------------
 
+    protected function performDefaultQtyChanges()
+    {
+        if (!$this->getHelper('Magento_Product')->isGroupedType($this->getProduct()->getTypeId())) {
+            return;
+        }
+
+        $values = $this->getProxy()->getData('default_qty');
+        foreach ($this->getProduct()->getTypeInstance()->getAssociatedProducts($this->getProduct()) as $childProduct) {
+            $sku = $childProduct->getSku();
+            $newValue = (int)$childProduct->getQty();
+            $oldValue = isset($values[$sku]) ? (int)$values[$sku] : 0;
+
+            unset($values[$sku]);
+            if ($oldValue == $newValue) {
+                continue;
+            }
+
+            foreach ($this->getAffectedListingsProducts() as $listingProduct) {
+                $this->listingsProductsChangedAttributes[$listingProduct->getId()][] = 'qty';
+
+                $this->logListingProductMessage(
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_QTY,
+                    $oldValue,
+                    $newValue,
+                    "SKU {$sku}: Default QTY was changed."
+                );
+            }
+        }
+
+        //----------------------------------------
+
+        foreach ($values as $sku => $defaultQty) {
+            foreach ($this->getAffectedListingsProducts() as $listingProduct) {
+                $this->listingsProductsChangedAttributes[$listingProduct->getId()][] = 'qty';
+
+                $this->logListingProductMessage(
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_QTY,
+                    $defaultQty,
+                    0,
+                    "SKU {$sku} was removed from the Product Set."
+                );
+            }
+        }
+    }
+
+    // ---------------------------------------
+
     protected function addListingProductInstructions()
     {
         foreach ($this->getAffectedListingsProducts() as $listingProduct) {
             /** @var \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel $changeProcessor */
             $changeProcessor = $this->modelFactory->getObject(
-                ucfirst($listingProduct->getComponentMode()).'_Magento_Product_ChangeProcessor'
+                ucfirst($listingProduct->getComponentMode()) . '_Magento_Product_ChangeProcessor'
             );
             $changeProcessor->setListingProduct($listingProduct);
             $changeProcessor->setDefaultInstructionTypes(

@@ -24,6 +24,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
 
         $data = [
             'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
+            'list_date' => $this->getHelper('Data')->getCurrentGmtDate()
         ];
 
         $data = $this->appendStatusChangerValue($data);
@@ -49,11 +50,6 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         $this->getListingProduct()->addData($data);
         $this->getListingProduct()->getChildObject()->addData($data);
         $this->setVariationData($generalId);
-        $this->getListingProduct()->setSetting(
-            'additional_data',
-            'list_date',
-            $this->getHelper('Data')->getCurrentGmtDate()
-        );
 
         $this->getListingProduct()->save();
 

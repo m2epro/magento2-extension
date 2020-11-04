@@ -52,7 +52,7 @@ Offer position on Amazon Channel. Repricing functionality provides you with the 
 Use <strong>Link Now</strong> button to add your M2E Pro Amazon Account to Amazon Repricing Service.
 Follow the Configuration Wizard steps to set up all necessary data.
 <br /><br />
-After your Account is successfully linked, the <strong>statistic information</strong> about the
+After your Account is linked, the <strong>statistic information</strong> about the
 Products managed by Repricing Tool becomes available.
 <br /><br />
 You have an ability to update parameters required for the repricing based on
@@ -86,7 +86,7 @@ HTML
                 'note',
                 [
                     'text' => <<<HTML
-    <span>{$this->__('This Amazon Account is successfully linked with Amazon Repricing Tool')}</span>&nbsp;
+    <span>{$this->__('This Amazon Account is linked with Amazon Repricing Tool')}</span>&nbsp;
     <button type="button" class="action primary" onclick="AmazonAccountObj.unlinkRepricing()">
         {$this->__('Unlink')}
     </button>

@@ -118,8 +118,8 @@ HTML
         );
 
         $this->jsTranslator->add(
-            'Help Blocks have been successfully restored.',
-            $this->__('Help Blocks have been successfully restored.')
+            'Help Blocks have been restored.',
+            $this->__('Help Blocks have been restored.')
         );
 
         $this->js->addRequireJs([

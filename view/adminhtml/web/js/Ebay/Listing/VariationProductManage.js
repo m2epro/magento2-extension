@@ -29,7 +29,7 @@ define([
 
         // ---------------------------------------
 
-        openPopUp: function(productId, title, filter)
+        openPopUp: function(productId, title, filter, variationIdFilter)
         {
             var self = this;
 
@@ -39,7 +39,8 @@ define([
                 method: 'post',
                 parameters: {
                     product_id : productId,
-                    filter: filter
+                    filter: filter,
+                    variation_id_filter : variationIdFilter
                 },
                 onSuccess: function (transport) {
 

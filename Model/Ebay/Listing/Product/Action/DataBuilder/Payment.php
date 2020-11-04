@@ -22,6 +22,10 @@ class Payment extends AbstractModel
 
     public function getBuilderData()
     {
+        if ($this->getPaymentTemplate()->isManagedPaymentsEnabled()) {
+            return [];
+        }
+
         $data = [
             'methods' => $this->getMethodsData()
         ];

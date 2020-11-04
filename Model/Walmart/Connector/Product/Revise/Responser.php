@@ -25,7 +25,9 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
@@ -34,7 +36,16 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
         array $params = []
     ) {
         $this->localeCurrency = $localeCurrency;
-        parent::__construct($walmartFactory, $activeRecordFactory, $response, $helperFactory, $modelFactory, $params);
+        parent::__construct(
+            $amazonFactory,
+            $activeRecordFactory,
+            $walmartFactory,
+            $ebayFactory,
+            $response,
+            $helperFactory,
+            $modelFactory,
+            $params
+        );
     }
 
     //########################################

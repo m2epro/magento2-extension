@@ -155,7 +155,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
         $model->save();
 
         $this->getMessageManager()->addSuccessMessage(
-            $this->__('Store was successfully saved.'),
+            $this->__('Store was saved.'),
             self::GLOBAL_MESSAGES_GROUP
         );
 

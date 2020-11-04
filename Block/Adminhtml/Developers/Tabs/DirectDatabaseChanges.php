@@ -97,7 +97,7 @@ HTML
     {
         $this->jsUrl->add($this->getUrl('*/developers/save'), 'developers/save');
 
-        $this->jsTranslator->add('Settings successfully saved', $this->__('Settings successfully saved'));
+        $this->jsTranslator->add('Settings saved', $this->__('Settings saved'));
 
         $this->js->addRequireJs(['d' => 'M2ePro/Developers'], <<<JS
 

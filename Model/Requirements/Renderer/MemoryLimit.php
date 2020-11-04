@@ -70,6 +70,7 @@ HTML;
         $helper = $this->getHelper('Module\Translation');
         $testUrl = $this->urlBuilder->getUrl('*/support/testMemoryLimit');
         $testResultUrl = $this->urlBuilder->getUrl('*/support/testMemoryLimitResult');
+        $knowledgeBaseUrl = $this->getHelper('Module\Support')->getKnowledgeBaseUrl('1535371');
 
         $button = $this->layout->createBlock('Ess\M2ePro\Block\Adminhtml\Magento\Button')->setData([
             'label'   => $helper->__('Check'),
@@ -103,7 +104,7 @@ function memoryLimitTest()
                             MessageObj.addWarning(
                                 '{$this->getTestWarningMessage()}'
                                 .replace('%value%', response['result'])
-                                .replace('%min-value%', '{$this->getCheckObject()->getMin()}')
+                                .replace('%url%', '{$knowledgeBaseUrl}')
                             );
                         } else {
                             MessageObj.addSuccess(
@@ -127,8 +128,9 @@ HTML;
     {
         return $this->getHelper('Data')->escapeJs(
             $this->getHelper('Module\Translation')->__(
-                'Actual memory limit is %value% Mb. It should be increased to at least %min-value% Mb
-                for uninterrupted synchronization work.'
+                'Actual memory limit is %value% Mb. 
+                The value must be increased on your server for the proper synchronization work. 
+                Read <a href="%url%" target="_blank">here</a> how to do it.'
             )
         );
     }

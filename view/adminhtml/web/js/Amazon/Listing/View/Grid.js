@@ -9,7 +9,8 @@ define([
     'M2ePro/Amazon/Listing/Product/Template/Description',
     'M2ePro/Amazon/Listing/Product/Template/Shipping',
     'M2ePro/Amazon/Listing/Product/Template/ProductTaxCode',
-    'M2ePro/Amazon/Listing/Product/Variation/Manage'
+    'M2ePro/Amazon/Listing/Product/Variation/Manage',
+    'M2ePro/Amazon/Listing/Transferring'
 ], function (MessageObj) {
 
     window.AmazonListingViewGrid = Class.create(ListingViewGrid, {
@@ -60,6 +61,7 @@ define([
 
             this.actions = Object.extend(this.actions, {
                 duplicateAction: this.duplicateProducts.bind(this),
+                transferringAction: this.transferring.bind(this),
                 movingAction: this.movingHandler.run.bind(this.movingHandler),
                 deleteAndRemoveAction: this.actionHandler.deleteAndRemoveAction.bind(this.actionHandler),
 
@@ -116,10 +118,15 @@ define([
                     this.repricingHandler.removeFromRepricing(id);
                 }).bind(this),
 
-                assignGeneralIdAction: (function() { this.productSearchHandler.searchGeneralIdAuto(this.getSelectedProductsString())}).bind(this),
-                newGeneralIdAction: (function() { this.productSearchHandler.addNewGeneralId(this.getSelectedProductsString())}).bind(this),
-                unassignGeneralIdAction: (function() { this.productSearchHandler.unmapFromGeneralId(this.getSelectedProductsString())}).bind(this)
-
+                assignGeneralIdAction: (function() {
+                    this.productSearchHandler.searchGeneralIdAuto(this.getSelectedProductsString())
+                }).bind(this),
+                newGeneralIdAction: (function() {
+                    this.productSearchHandler.addNewGeneralId(this.getSelectedProductsString())
+                }).bind(this),
+                unassignGeneralIdAction: (function() {
+                    this.productSearchHandler.unmapFromGeneralId(this.getSelectedProductsString())
+                }).bind(this)
             });
         },
 
@@ -160,6 +167,14 @@ define([
                     }
                 }).bind(this)
             });
+        },
+
+        transferring: function(id)
+        {
+            this.selectedProductsIds = id ? [id] : this.getSelectedProductsArray();
+            this.unselectAll();
+
+            window.AmazonListingTransferringObj.popupShow(this.selectedProductsIds);
         },
 
         // ---------------------------------------

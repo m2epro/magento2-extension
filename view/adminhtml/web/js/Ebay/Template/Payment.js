@@ -10,6 +10,10 @@ define([
         {
             jQuery.validator.addMethod('M2ePro-validate-payment-methods', function(value) {
 
+                if ($('managed_payments_mode') && $('managed_payments_mode').checked) {
+                    return true;
+                }
+
                 if ($('pay_pal_mode').checked) {
                     return true;
                 }
@@ -38,12 +42,43 @@ define([
 
         initObservers: function()
         {
+            if ($('managed_payments_mode')) {
+                jQuery('#managed_payments_mode')
+                    .on('change', EbayTemplatePaymentObj.managedPaymentsModeChange)
+                    .trigger('change');
+            }
+
             jQuery('#pay_pal_mode')
                 .on('change', EbayTemplatePaymentObj.payPalModeChange)
                 .trigger('change');
             jQuery('#pay_pal_immediate_payment')
                 .on('change', EbayTemplatePaymentObj.immediatePaymentChange)
                 .trigger('change');
+        },
+
+        // ---------------------------------------
+
+        managedPaymentsModeChange: function()
+        {
+            if (this.checked) {
+                $('pay_pal_mode').checked = false;
+                jQuery('#pay_pal_mode').trigger('change');
+                $('pay_pal_mode').setAttribute('disabled', 'disabled');
+
+                $('pay_pal_immediate_payment').setAttribute('disabled', 'disabled');
+
+                $$('input[name="payment[services][]"]').each(function(payment) {
+                    payment.checked = false;
+                    payment.setAttribute('disabled', 'disabled');
+                });
+            } else {
+                $('pay_pal_mode').removeAttribute('disabled');
+                $('pay_pal_immediate_payment').removeAttribute('disabled');
+
+                $$('input[name="payment[services][]"]').each(function(payment) {
+                    payment.removeAttribute('disabled');
+                });
+            }
         },
 
         // ---------------------------------------
@@ -70,7 +105,7 @@ define([
             if (this.checked) {
                 wrapper.hide();
 
-                $$('input.additional-payment-service').each(function(payment) {
+                $$('input[name="payment[services][]"]').each(function(payment) {
                     payment.checked = false;
                 });
             } else {

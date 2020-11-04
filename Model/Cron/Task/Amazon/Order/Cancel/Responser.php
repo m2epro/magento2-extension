@@ -23,13 +23,24 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Cancel\ItemsRe
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $params = []
     ) {
-        parent::__construct($amazonFactory, $activeRecordFactory, $response, $helperFactory, $modelFactory, $params);
+        parent::__construct(
+            $response,
+            $helperFactory,
+            $modelFactory,
+            $amazonFactory,
+            $walmartFactory,
+            $ebayFactory,
+            $activeRecordFactory,
+            $params
+        );
 
         $this->order = $this->amazonFactory->getObjectLoaded('Order', $params['order']['order_id']);
         $this->orderChange = $this->activeRecordFactory->getObject('Order\Change')->load($params['order']['change_id']);

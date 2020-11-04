@@ -8,12 +8,12 @@
 
 namespace Ess\M2ePro\Model\Order;
 
-use Ess\M2ePro\Model\Ebay\Order as EbayOrder;
 use Ess\M2ePro\Model\Amazon\Order as AmazonOrder;
+use Ess\M2ePro\Model\Ebay\Order as EbayOrder;
 use Ess\M2ePro\Model\Walmart\Order as WalmartOrder;
 
 /**
- * Class \Ess\M2ePro\Model\Order\ProxyObject
+ * Class Ess\M2ePro\Model\Order\ProxyObject
  */
 abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 {
@@ -525,6 +525,43 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $resultFee;
+    }
+
+    //########################################
+
+    /**
+     * @throws \Ess\M2ePro\Model\Exception
+     */
+    public function initializeShippingMethodDataPretendedToBeSimple()
+    {
+        foreach ($this->order->getParentObject()->getItemsCollection() as $item) {
+            /** @var \Ess\M2ePro\Model\Order\Item $item */
+            if (!$item->pretendedToBeSimple()) {
+                continue;
+            }
+
+            $shippingItems = [];
+            $product = $item->getMagentoProduct();
+            foreach ($product->getTypeInstance()->getAssociatedProducts($product->getProduct()) as $associatedProduct) {
+                /** @var \Magento\Catalog\Model\Product $associatedProduct */
+                if ($associatedProduct->getQty() <= 0) { // skip product if default qty zero
+                    continue;
+                }
+
+                $total = (int)($associatedProduct->getQty() * $item->getChildObject()->getQtyPurchased());
+                $shippingItems[$associatedProduct->getId()]['total'] = $total;
+                $shippingItems[$associatedProduct->getId()]['shipped'] = [];
+            }
+
+            $shippingInfo = [];
+            $shippingInfo['items'] = $shippingItems;
+            $shippingInfo['send'] = $item->getChildObject()->getQtyPurchased();
+
+            $additionalData = $item->getAdditionalData();
+            $additionalData['shipping_info'] = $shippingInfo;
+            $item->setSettings('additional_data', $additionalData);
+            $item->save();
+        }
     }
 
     //########################################

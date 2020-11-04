@@ -942,7 +942,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             return $this->getData(__METHOD__);
         }
 
-        if (!$this->isSetCategoryTemplate()) {
+        if (!$this->isSetCategoryTemplate() || $this->getParentObject()->isGroupedProductModeSet()) {
             $this->setData(__METHOD__, false);
             return false;
         }

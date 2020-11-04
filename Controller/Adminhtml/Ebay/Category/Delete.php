@@ -40,7 +40,7 @@ class Delete extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
             $deleted++;
         }
 
-        $tempString = $this->__('%s% record(s) were successfully deleted.', $deleted);
+        $tempString = $this->__('%s% record(s) were deleted.', $deleted);
         $deleted && $this->getMessageManager()->addSuccess($tempString);
 
         $tempString  = $this->__(

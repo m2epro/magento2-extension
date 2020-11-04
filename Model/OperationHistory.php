@@ -15,7 +15,7 @@ use \Ess\M2ePro\Helper\Data as Helper;
  */
 class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
-    const MAX_LIFETIME_INTERVAL = 864000; // 10 days
+    const MAX_LIFETIME_INTERVAL = 432000; // 5 days
 
     /**
      * @var OperationHistory

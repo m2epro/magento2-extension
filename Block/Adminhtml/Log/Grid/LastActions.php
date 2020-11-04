@@ -207,7 +207,7 @@ abstract class LastActions extends AbstractBlock
     {
         if (!$this->hasData('tips') || !is_array($this->getData('tips'))) {
             return [
-                LogModel::TYPE_SUCCESS  => 'Last Action was completed successfully.',
+                LogModel::TYPE_SUCCESS  => 'Last Action was completed.',
                 LogModel::TYPE_ERROR    => 'Last Action was completed with error(s).',
                 LogModel::TYPE_WARNING  => 'Last Action was completed with warning(s).',
                 LogModel::TYPE_NOTICE   => 'Last Action was completed with notice(s).'
@@ -233,7 +233,7 @@ abstract class LastActions extends AbstractBlock
 
     protected function getDefaultTip()
     {
-        return $this->__('Last Action was completed successfully.');
+        return $this->__('Last Action was completed.');
     }
 
     protected function getTipByType($type)

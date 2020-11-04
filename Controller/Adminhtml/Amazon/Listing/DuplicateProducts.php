@@ -55,7 +55,7 @@ class DuplicateProducts extends Main
 
         $this->setJsonContent([
             'type' => 'success',
-            'message' => $this->__('The Items were successfully duplicated.')
+            'message' => $this->__('The Items were duplicated.')
         ]);
 
         return $this->getResult();

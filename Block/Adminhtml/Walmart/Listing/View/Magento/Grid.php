@@ -59,7 +59,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         // Initialization block
         // ---------------------------------------
-        $this->setId('walmartListingViewMagentoGrid'.$this->listing['id']);
+        $this->setId('walmartListingViewGrid'.$this->listing['id']);
         // ---------------------------------------
 
         $this->hideMassactionColumn = true;

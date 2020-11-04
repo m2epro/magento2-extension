@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Inventory\Get;
 /**
  * Class \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsResponser
  */
-abstract class ItemsResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Responser
+abstract class ItemsResponser extends \Ess\M2ePro\Model\Connector\Command\Pending\Responser
 {
     //########################################
 
@@ -23,9 +23,7 @@ abstract class ItemsResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     protected function prepareResponseData()
     {
-        $preparedData = [
-            'data' => [],
-        ];
+        $preparedData = [];
 
         $responseData = $this->getResponse()->getResponseData();
 
@@ -34,7 +32,7 @@ abstract class ItemsResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command
                 continue;
             }
 
-            $preparedData['data'][$receivedItem['identifiers']['sku']] = $receivedItem;
+            $preparedData[$receivedItem['identifiers']['sku']] = $receivedItem;
         }
 
         $this->preparedResponseData = $preparedData;

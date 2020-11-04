@@ -975,9 +975,10 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
                 ->getObjectLoaded($row['component'], 'Marketplace', $row['marketplace_id'])
                 ->getTitle();
 
-            $accountTitle = $this->parentFactory
-                ->getObjectLoaded($row['component'], 'Account', $row['account_id'])
-                ->getTitle();
+            $account = $this->parentFactory->getObjectLoaded(
+                $row['component'], 'Account', $row['account_id'], null, false
+            );
+            $accountTitle = $account === null ? 'account_id_' . $row['account_id'] : $account->getTitle();
 
             if (!isset($data['orders'][$row['component']]['marketplaces'][$markTitle])) {
                 $data['orders'][$row['component']]['marketplaces'][$markTitle] = 0;

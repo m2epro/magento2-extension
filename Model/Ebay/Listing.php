@@ -18,6 +18,8 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     const PARTS_COMPATIBILITY_MODE_EPIDS  = 'epids';
     const PARTS_COMPATIBILITY_MODE_KTYPES = 'ktypes';
 
+    const CREATE_LISTING_SESSION_DATA = 'ebay_listing_create';
+
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Category
      */
@@ -789,6 +791,71 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $instruction->save();
 
         return $listingProduct;
+    }
+
+    public function addProductFromAnotherEbaySite(
+        \Ess\M2ePro\Model\Listing\Product $sourceListingProduct,
+        \Ess\M2ePro\Model\Listing $sourceListing
+    ) {
+        /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+        $listingProduct = $this->getParentObject()->addProduct(
+            $sourceListingProduct->getProductId(),
+            \Ess\M2ePro\Helper\Data::INITIATOR_USER
+        );
+
+        /** @var \Ess\M2ePro\Model\Listing\Log $logModel */
+        $logModel = $this->activeRecordFactory->getObject('Listing_Log');
+        $logModel->setComponentMode($this->getComponentMode());
+
+        if ($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product) {
+            $logModel->addProductMessage(
+                $sourceListing->getId(),
+                $sourceListingProduct->getProductId(),
+                $sourceListingProduct->getId(),
+                \Ess\M2ePro\Helper\Data::INITIATOR_USER,
+                $logModel->getResource()->getNextActionId(),
+                \Ess\M2ePro\Model\Listing\Log::ACTION_SELL_ON_ANOTHER_SITE,
+                'Item was added to the selected Listing',
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
+            );
+
+            if ($sourceListing->getMarketplaceId() == $this->getParentObject()->getMarketplaceId()) {
+                $listingProduct->getChildObject()->setData(
+                    'template_category_id',
+                    $sourceListingProduct->getChildObject()->getTemplateCategoryId()
+                );
+                $listingProduct->getChildObject()->setData(
+                    'template_category_secondary_id',
+                    $sourceListingProduct->getChildObject()->getTemplateCategorySecondaryId()
+                );
+                $listingProduct->getChildObject()->setData(
+                    'template_store_category_id',
+                    $sourceListingProduct->getChildObject()->getTemplateStoreCategoryId()
+                );
+                $listingProduct->getChildObject()->setData(
+                    'template_store_category_secondary_id',
+                    $sourceListingProduct->getChildObject()->getTemplateStoreCategorySecondaryId()
+                );
+
+                // @codingStandardsIgnoreLine
+                $listingProduct->getChildObject()->save();
+            }
+
+            return $listingProduct;
+        }
+
+        $logModel->addProductMessage(
+            $sourceListing->getId(),
+            $sourceListingProduct->getProductId(),
+            $sourceListingProduct->getId(),
+            \Ess\M2ePro\Helper\Data::INITIATOR_USER,
+            $logModel->getResource()->getNextActionId(),
+            \Ess\M2ePro\Model\Listing\Log::ACTION_SELL_ON_ANOTHER_SITE,
+            'Product already exists in the selected Listing',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
+        );
+
+        return false;
     }
 
     public function addProductFromListing(

@@ -341,7 +341,7 @@ STRING;
             $itemTitle = $this->getHelper('Data')->escapeHtml($item->getChildObject()->getTitle());
             $qtyLabel = $this->__('QTY');
             $qtyHtml = <<<HTML
-<span style="padding-left: 10px;"><b>{$qtyLabel}:</b> {$item->getChildObject()->getQty()}</span>
+<span style="padding-left: 10px;"><b>{$qtyLabel}:</b> {$item->getChildObject()->getQtyPurchased()}</span>
 HTML;
 
             $html .= <<<HTML

@@ -590,4 +590,15 @@ a.walmart-listing-view-switch-variation-mode:before {
     text-align: center;
 }
 
+
+.searched_child_product .admin__field-tooltip a.admin__field-tooltip-action {
+    background: url(../images/i_icon.png) no-repeat;
+    background-size: contain;
+    height: 18px;
+    width: 18px;
+}
+
+.searched_child_product .admin__field-tooltip .admin__field-tooltip-action:before {
+    content: '';
+}
 /* ================================================ */

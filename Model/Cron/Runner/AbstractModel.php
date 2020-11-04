@@ -209,7 +209,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             $this->getOperationHistoryData()
         );
         $this->getOperationHistory()->makeShutdownFunction();
-        $this->getOperationHistory()->cleanOldData();
     }
 
     protected function afterEnd()

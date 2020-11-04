@@ -21,17 +21,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('amazonListingSearchOtherGrid');
-        // ---------------------------------------
 
-        // Set default values
-        // ---------------------------------------
         $this->setDefaultSort(false);
         $this->setSaveParametersInSession(true);
         $this->setUseAjax(true);
-        // ---------------------------------------
     }
 
     protected function _prepareColumns()
@@ -74,7 +68,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
                 'listing_product_id'           => new \Zend_Db_Expr('NULL'),
                 'entity_id'                    => 'main_table.product_id',
                 'listing_id'                   => new \Zend_Db_Expr('NULL'),
-                'status'                       => 'main_table.status',
+                'amazon_status'                => 'main_table.status',
                 'is_general_id_owner'          => new \Zend_Db_Expr('NULL'),
                 'general_id'                   => 'second_table.general_id',
                 'is_afn_channel'               => 'second_table.is_afn_channel',
@@ -163,7 +157,7 @@ HTML;
 
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
-        return $this->getProductStatus($row->getData('status'));
+        return $this->getProductStatus($row->getData('amazon_status'));
     }
 
     public function callbackColumnActions($value, $row, $column, $isExport)
@@ -221,6 +215,17 @@ HTML;
         }
 
         $collection->getSelect()->where('second_table.sku LIKE ?', '%'.$value.'%');
+    }
+
+    protected function callbackFilterAsinIsbn($collection, $column)
+    {
+        $value = $column->getFilter()->getValue();
+
+        if ($value == null) {
+            return;
+        }
+
+        $collection->addFieldToFilter('general_id', ['like' => '%'.$value.'%']);
     }
 
     protected function callbackFilterPrice($collection, $column)

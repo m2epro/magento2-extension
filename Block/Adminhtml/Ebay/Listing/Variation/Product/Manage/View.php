@@ -46,6 +46,19 @@ class View extends AbstractContainer
             )
         ]);
 
-        return $block->toHtml() . parent::_toHtml();
+        $this->js->add(
+            <<<JS
+    require([
+        'M2ePro/Plugin/Messages'
+    ],function(MessageObj) {
+            MessageObj.setContainer('#listing_product_variation_action_messages_container');
+    });
+JS
+        );
+
+        return
+            $block->toHtml() .
+            '<div id="listing_product_variation_action_messages_container"></div>' .
+            parent::_toHtml();
     }
 }

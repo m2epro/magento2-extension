@@ -64,7 +64,7 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
             }
 
             if ((bool)$rowObject->getData('is_afn_channel')) {
-                $sku = $rowObject->getData('sku');
+                $sku = $rowObject->getData('amazon_sku');
 
                 if (empty($sku)) {
                     return $translator->__('AFN');

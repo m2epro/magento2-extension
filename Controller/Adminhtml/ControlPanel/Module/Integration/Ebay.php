@@ -139,7 +139,7 @@ class Ebay extends Command
                 ->save();
         }
 
-        $this->getMessageManager()->addSuccess("Successfully set for {$affected} affected Products.");
+        $this->getMessageManager()->addSuccess("Set for {$affected} affected Products.");
         return $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
     }
 

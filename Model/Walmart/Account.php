@@ -202,6 +202,14 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     }
 
     /**
+     * @return string
+     */
+    public function getInventoryLastSynchronization()
+    {
+        return $this->getData('inventory_last_synchronization');
+    }
+
+    /**
      * @return int
      */
     public function getOtherListingsMappingMode()

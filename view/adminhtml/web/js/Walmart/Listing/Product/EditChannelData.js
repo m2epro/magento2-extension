@@ -105,7 +105,7 @@ define([
                     self.cancelEditIdentifier();
 
                     self.getAppropriateMessageObj().addSuccess(
-                        M2ePro.translator.translate("Updating "+identifierName+" has successfully submitted to be processed.")
+                        M2ePro.translator.translate("Updating "+identifierName+" has submitted to be processed.")
                     );
                     self.getAppropriateGridObj().reload();
                 }
@@ -198,7 +198,7 @@ define([
                     self.cancelEditSku();
 
                     self.getAppropriateMessageObj().addSuccess(
-                        M2ePro.translator.translate('Updating SKU has successfully submitted to be processed.')
+                        M2ePro.translator.translate('Updating SKU has submitted to be processed.')
                     );
 
                     self.getAppropriateGridObj().reload();

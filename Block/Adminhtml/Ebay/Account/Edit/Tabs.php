@@ -15,6 +15,13 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
  */
 class Tabs extends AbstractTabs
 {
+    const TAB_ID_GENERAL       = 'general';
+    const TAB_ID_LISTING_OTHER = 'listingOther';
+    const TAB_ID_STORE         = 'store';
+    const TAB_ID_ORDER         = 'order';
+    const TAB_ID_FEEDBACK      = 'feedback';
+    const TAB_ID_MY_STORES     = 'my_stores';
+
     protected function _construct()
     {
         parent::_construct();
@@ -26,7 +33,7 @@ class Tabs extends AbstractTabs
     protected function _beforeToHtml()
     {
         $this->addTab(
-            'general',
+            self::TAB_ID_GENERAL,
             [
                 'label' => __('General'),
                 'title' => __('General'),
@@ -40,7 +47,7 @@ class Tabs extends AbstractTabs
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
 
         if ($account && $account->getId()) {
-            $this->addTab('listingOther', [
+            $this->addTab(self::TAB_ID_LISTING_OTHER, [
                 'label' => $this->__('3rd Party Listings'),
                 'title' => $this->__('3rd Party Listings'),
                 'content' => $this->createBlock(
@@ -48,7 +55,7 @@ class Tabs extends AbstractTabs
                 )->toHtml()
             ]);
 
-            $this->addTab('store', [
+            $this->addTab(self::TAB_ID_STORE, [
                 'label'   => $this->__('eBay Store'),
                 'title'   => $this->__('eBay Store'),
                 'content' => $this->createBlock(
@@ -56,7 +63,7 @@ class Tabs extends AbstractTabs
                 )->toHtml()
             ]);
 
-            $this->addTab('order', [
+            $this->addTab(self::TAB_ID_ORDER, [
                 'label'   => $this->__('Orders'),
                 'title'   => $this->__('Orders'),
                 'content' => $this->createBlock(
@@ -64,7 +71,7 @@ class Tabs extends AbstractTabs
                 )->toHtml()
             ]);
 
-            $this->addTab('feedback', [
+            $this->addTab(self::TAB_ID_FEEDBACK, [
                 'label' => $this->__('Feedback'),
                 'title' => $this->__('Feedback'),
                 'content' => $this->createBlock(
@@ -73,7 +80,7 @@ class Tabs extends AbstractTabs
             ]);
 
             if ($this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
-                $this->addTab('my_stores', [
+                $this->addTab(self::TAB_ID_MY_STORES, [
                     'label' => $this->__('In-Store Pickup'),
                     'title' => $this->__('In-Store Pickup'),
                     'content' => $this->createBlock(
@@ -83,7 +90,7 @@ class Tabs extends AbstractTabs
             }
         }
 
-        $this->setActiveTab($this->getRequest()->getParam('tab', 'general'));
+        $this->setActiveTab($this->getRequest()->getParam('tab', self::TAB_ID_GENERAL));
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Account'));
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay_Account_Feedback'));

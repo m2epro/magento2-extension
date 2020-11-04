@@ -93,7 +93,6 @@ class Builder extends AbstractModel
         $this->setData('account_id', $this->account->getId());
 
         $this->setData('ebay_order_id', $data['identifiers']['ebay_order_id']);
-        $this->setData('extended_order_id', $data['identifiers']['extended_order_id']);
         $this->setData('selling_manager_id', $data['identifiers']['selling_manager_id']);
 
         $this->setData('order_status', $this->helper->getOrderStatus($data['statuses']['order']));
@@ -538,11 +537,22 @@ class Builder extends AbstractModel
         $this->setData('shipping_details', $this->getHelper('Data')->jsonEncode($this->getData('shipping_details')));
         $this->setData('payment_details', $this->getHelper('Data')->jsonEncode($this->getData('payment_details')));
 
-        $this->order->addData($this->getData());
-        $this->order->save();
+        foreach ($this->getData() as $key => $value) {
+            if (!$this->order->getId() || ($this->order->hasData($key) && $this->order->getData($key) != $value)) {
+                $this->order->addData($this->getData());
+                $this->order->save();
+                break;
+            }
+        }
 
-        $this->order->getChildObject()->addData($this->getData());
-        $this->order->getChildObject()->save();
+        $ebayOrder = $this->order->getChildObject();
+        foreach ($this->getData() as $key => $value) {
+            if (!$this->order->getId() || ($ebayOrder->hasData($key) && $ebayOrder->getData($key) != $value)) {
+                $ebayOrder->addData($this->getData());
+                $ebayOrder->save();
+                break;
+            }
+        }
 
         $this->order->setAccount($this->account);
 

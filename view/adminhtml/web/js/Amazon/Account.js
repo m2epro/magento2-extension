@@ -156,8 +156,6 @@ define([
                 .observe('change', AmazonAccountObj.mapping_title_mode_change)
                 .simulate('change');
 
-            //$('amazonAccountEditTabs_listingOther').removeClassName('changed');
-
             if ($('auto_invoicing')) {
                 $('auto_invoicing')
                     .observe('change', AmazonAccountObj.autoInvoicingModeChange)
@@ -181,6 +179,8 @@ define([
             $('magento_orders_fba_mode').observe('change', AmazonAccountObj.magentoOrdersFbaModeChange).simulate('change');
 
             $('magento_orders_customer_mode').observe('change', AmazonAccountObj.magentoOrdersCustomerModeChange).simulate('change');
+            $('magento_orders_tax_mode').observe('change', AmazonAccountObj.magentoOrdersTaxModeChange).simulate('change');
+            $('magento_orders_tax_amazon_collects').observe('change', AmazonAccountObj.magentoOrdersTaxAmazonCollectsChange).simulate('change');
             $('magento_orders_status_mapping_mode').observe('change', AmazonAccountObj.magentoOrdersStatusMappingModeChange);
 
             if ($('regular_price_mode')) {
@@ -259,6 +259,7 @@ define([
             $('marketplaces_token_container').show();
 
             self.showGetAccessData(id);
+            self.magentoOrdersTaxModeChange();
         },
 
         showGetAccessData: function(id)
@@ -460,7 +461,7 @@ define([
             if (customerMode == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::MAGENTO_ORDERS_CUSTOMER_MODE_PREDEFINED')) {
                 $('magento_orders_customer_id_container').show();
                 $('magento_orders_customer_id').addClassName('M2ePro-account-product-id');
-            } else {  // M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::ORDERS_CUSTOMER_MODE_GUEST') || M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::ORDERS_CUSTOMER_MODE_NEW')
+            } else {
                 $('magento_orders_customer_id_container').hide();
                 $('magento_orders_customer_id').value = '';
                 $('magento_orders_customer_id').removeClassName('M2ePro-account-product-id');
@@ -475,6 +476,84 @@ define([
                 $('magento_orders_customer_new_website_id').value = '';
                 $('magento_orders_customer_new_group_id').value = '';
                 $('magento_orders_customer_new_notifications').value = '';
+            }
+        },
+
+        openExcludedStatesPopup: function()
+        {
+            var self = this;
+
+            new Ajax.Request(M2ePro.url.get('amazon_account/getExcludedStatesPopupHtml'), {
+                method: 'post',
+                parameters: {
+                    selected_states: $('magento_orders_tax_excluded_states').value
+                },
+                onSuccess: function(transport) {
+
+                    var excludedStates = $('excluded_states_popup');
+
+                    if (!excludedStates) {
+                        excludedStates = new Element('div', {
+                            id: 'excluded_states_popup'
+                        });
+                    }
+
+                    excludedStates.innerHTML = transport.responseText;
+
+                    self.excludedStatesPopUp = jQuery(excludedStates).modal({
+                        title: M2ePro.translator.translate('Select States where Amazon is responsible for tax calculation/collection'),
+                        type: 'popup',
+                        buttons: [{
+                            text: M2ePro.translator.translate('Confirm'),
+                            class: 'primary',
+                            click: function () {
+                                self.changeExcludedStates();
+                            }
+                        }]
+                    });
+
+                    self.excludedStatesPopUp.modal('openModal');
+                }
+            });
+        },
+
+        changeExcludedStates: function()
+        {
+            var self = this;
+            var excludedStates = [];
+
+            $$('.excluded_state_checkbox').each(function(element) {
+                if (element.checked) {
+                    excludedStates.push(element.value);
+                }
+            });
+
+            $('magento_orders_tax_excluded_states').value = excludedStates.toString();
+
+            self.excludedStatesPopUp.modal('closeModal');
+        },
+
+        magentoOrdersTaxModeChange: function()
+        {
+            if ($('marketplace_id').value != M2ePro.php.constant('\\Ess\\M2ePro\\Helper\\Component\\Amazon::MARKETPLACE_US')) {
+                $('magento_orders_tax_amazon_collects_container').hide();
+                return;
+            }
+
+            if ($('magento_orders_tax_mode').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::MAGENTO_ORDERS_TAX_MODE_CHANNEL') ||
+                $('magento_orders_tax_mode').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::MAGENTO_ORDERS_TAX_MODE_MIXED')) {
+                $('magento_orders_tax_amazon_collects_container').show();
+            } else {
+                $('magento_orders_tax_amazon_collects_container').hide();
+            }
+        },
+
+        magentoOrdersTaxAmazonCollectsChange: function()
+        {
+            if ($('magento_orders_tax_amazon_collects').value == 1) {
+                $('show_excluded_states_button').show();
+            } else {
+                $('show_excluded_states_button').hide();
             }
         },
 

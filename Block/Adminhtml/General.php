@@ -133,8 +133,8 @@ class General extends Magento\AbstractBlock
 
             'Preparing to start. Please wait ...' => $this->__('Preparing to start. Please wait ...'),
 
-            'Marketplace synchronization was completed successfully.' =>
-                $this->__('Marketplace synchronization was completed successfully.'),
+            'Marketplace synchronization was completed.' =>
+                $this->__('Marketplace synchronization was completed.'),
             $synchWarningMessage => $this->__($synchWarningMessage),
             $synchErrorMessage => $this->__($synchErrorMessage),
             'Unauthorized! Please login again' => $this->__('Unauthorized! Please login again'),

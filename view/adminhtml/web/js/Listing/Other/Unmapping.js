@@ -29,11 +29,11 @@ define([
 
                     if (transport.responseText == '1') {
                         MessagesObj.addSuccess(
-                            M2ePro.translator.translate('successfully_unmapped')
+                            M2ePro.translator.translate('Product(s) was Unmapped.')
                         );
                     } else {
                         MessagesObj.addError(
-                            M2ePro.translator.translate('not_enough_data')
+                            M2ePro.translator.translate('Not enough data')
                         );
                     }
 

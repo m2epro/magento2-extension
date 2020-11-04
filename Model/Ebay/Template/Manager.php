@@ -201,6 +201,11 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         ];
     }
 
+    public function getNotMarketplaceDependentTemplates()
+    {
+        return array_diff($this->getAllTemplates(), $this->getMarketplaceDependentTemplates());
+    }
+
     //########################################
 
     /**

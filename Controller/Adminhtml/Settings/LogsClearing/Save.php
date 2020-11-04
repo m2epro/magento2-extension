@@ -64,7 +64,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
                 case 'run_now':
                     $this->modelFactory->getObject('Log\Clearing')->clearOldRecords($log);
                     $tempString = $this->__(
-                        'Log for %title% has been successfully cleared.',
+                        'Log for %title% has been cleared.',
                         $title
                     );
                     $messages[] = ['success' => $tempString];
@@ -73,7 +73,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
                 case 'clear_all':
                     $this->modelFactory->getObject('Log\Clearing')->clearAllLog($log);
                     $tempString = $this->__(
-                        'All Log for %title% has been successfully cleared.',
+                        'All Log for %title% has been cleared.',
                         $title
                     );
                     $messages[] = ['success' => $tempString];

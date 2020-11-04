@@ -130,10 +130,9 @@ CSS
             'Add Specific into current container' => $this->__('Add Specific into current container'),
 
             'Value of this Specific can be automatically overwritten by M2E Pro.' => $this->__(
-                'In case this Description Policy will be used to create New Amazon Child Products,
-                value of this Specific can be automatically overwritten by M2E Pro.
-                Below there is a list of Variation Themes for which the value of this
-                Specific will be overwritten if you are using one of them in your Listing.'
+                'If you submit a certain value for one of the following Specifics and use this Description Policy 
+                to create a new Amazon Parent-Child Product with variations, 
+                this value will be automatically overwritten with the corresponding values of Amazon Child Products.'
             ),
             'Amazon Parentage Specific will be overridden notice.' =>
                 'The Value of this Specific can be necessary due to technical reasons,

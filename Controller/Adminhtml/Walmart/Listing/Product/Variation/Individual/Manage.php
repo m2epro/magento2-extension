@@ -95,7 +95,7 @@ class Manage extends Main
 
         $this->setJsonContent([
             'type' => 'success',
-            'message' => $this->__('Variation(s) has been successfully saved.')
+            'message' => $this->__('Variation(s) has been saved.')
         ]);
 
         return $this->getResult();

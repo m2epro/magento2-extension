@@ -19,7 +19,7 @@ class MarkAsReadyForPickup extends Order
     {
         if ($this->sendInStorePickupNotifications('ready_for_pickup')) {
             $this->messageManager->addSuccess(
-                $this->__('Orders were successfully marked as Ready For Pickup.')
+                $this->__('Orders were marked as Ready For Pickup.')
             );
         } else {
             $this->messageManager->addError(

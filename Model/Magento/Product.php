@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Magento;
 
 use Ess\M2ePro\Model\Magento\Product\Image;
 use Ess\M2ePro\Model\Magento\Product\Inventory\Factory;
-use \Magento\Catalog\Model\Product\Attribute\Source\Status;
+use Magento\Catalog\Model\Product\Attribute\Source\Status;
 
 /**
  * Class \Ess\M2ePro\Model\Magento\Product
@@ -92,6 +92,8 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     protected $isIgnoreVariationFilterAttributes = false;
 
     public $notFoundAttributes = [];
+
+    protected $isGroupedProductMode = \Ess\M2ePro\Model\Listing\Product::GROUPED_PRODUCT_MODE_OPTIONS;
 
     //########################################
 
@@ -286,6 +288,16 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     }
 
     // ---------------------------------------
+
+    /**
+     * @param int $isGroupedProductMode
+     * @return \Ess\M2ePro\Model\Magento\Product
+     */
+    public function setGroupedProductMode($isGroupedProductMode)
+    {
+        $this->isGroupedProductMode = $isGroupedProductMode;
+        return $this;
+    }
 
     /**
      * @return \Magento\Catalog\Model\Product\Type\AbstractType
@@ -774,13 +786,22 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
      */
     public function isStatusEnabled()
     {
+        if (\Ess\M2ePro\Model\Listing\Product::GROUPED_PRODUCT_MODE_SET == $this->isGroupedProductMode) {
+            foreach ($this->getTypeInstance()->getAssociatedProducts($this->getProduct()) as $childProduct) {
+                if ($childProduct->getStatus() == Status::STATUS_ENABLED) {
+                    continue;
+                }
+
+                return false;
+            }
+        }
+
         if (!$this->_productModel && $this->_productId > 0) {
             $status = $this->productStatus->getProductStatus($this->_productId, $this->_storeId);
 
             if (is_array($status) && isset($status[$this->_productId])) {
                 $status = (int)$status[$this->_productId];
-                if ($status == Status::STATUS_DISABLED ||
-                    $status == Status::STATUS_ENABLED) {
+                if ($status == Status::STATUS_DISABLED || $status == Status::STATUS_ENABLED) {
                     return $status == Status::STATUS_ENABLED;
                 }
             }
@@ -795,6 +816,16 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
      */
     public function isStockAvailability()
     {
+        if (\Ess\M2ePro\Model\Listing\Product::GROUPED_PRODUCT_MODE_SET == $this->isGroupedProductMode) {
+            foreach ($this->getTypeInstance()->getAssociatedProducts($this->getProduct()) as $childProduct) {
+                if ($this->inventoryFactory->getObject($childProduct)->isStockAvailability()) {
+                    continue;
+                }
+
+                return false;
+            }
+        }
+
         return $this->inventoryFactory->getObject($this->getProduct())->isStockAvailability();
     }
 
@@ -1031,8 +1062,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                 $stockItem->getUseConfigBackorders()
             );
 
-            if ($lifeMode &&
-                (!$inventory->isInStock() || $childProduct->getStatus() != Status::STATUS_ENABLED)) {
+            if ($lifeMode && (!$inventory->isInStock() || $childProduct->getStatus() != Status::STATUS_ENABLED)) {
                 continue;
             }
 
@@ -1042,13 +1072,27 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         return $totalQty;
     }
 
+    /**
+     * @param bool $lifeMode
+     *
+     * @return int
+     * @throws \Ess\M2ePro\Model\Exception
+     */
     protected function getGroupedQty($lifeMode = false)
     {
-        $totalQty = 0;
+        $value = 0;
 
         foreach ($this->getTypeInstance()->getAssociatedProducts($this->getProduct()) as $childProduct) {
             $inventory = $this->inventoryFactory->getObject($childProduct);
             $stockItem = $inventory->getStockItem();
+
+            if ($lifeMode && (!$inventory->isInStock() || $childProduct->getStatus() != Status::STATUS_ENABLED)) {
+                if (\Ess\M2ePro\Model\Listing\Product::GROUPED_PRODUCT_MODE_SET == $this->isGroupedProductMode) {
+                    return 0; // not sellable product if any child "Out Of Stock" or Disable
+                }
+
+                continue;
+            }
 
             $qty = $this->calculateQty(
                 $inventory->getQty(),
@@ -1058,15 +1102,29 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                 $stockItem->getUseConfigBackorders()
             );
 
-            if ($lifeMode &&
-                (!$inventory->isInStock() || $childProduct->getStatus() != Status::STATUS_ENABLED)) {
+            if (\Ess\M2ePro\Model\Listing\Product::GROUPED_PRODUCT_MODE_OPTIONS == $this->isGroupedProductMode) {
+                $value += $qty;
                 continue;
             }
 
-            $totalQty += $qty;
+            $defaultQty = $childProduct->getQty();
+            if ($defaultQty <= 0 || $qty <= 0) {
+                continue;
+            }
+
+            $qty = floor($qty / $defaultQty);
+            if ($qty < 1) {
+                return 0; // not sellable product if any child "Out Of Stock" or Disable
+            }
+
+            if ($value < $qty && $value != 0) { // where "0" is default $value
+                continue;
+            }
+
+            $value = $qty;
         }
 
-        return $totalQty;
+        return $value;
     }
 
     /**
@@ -1108,8 +1166,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                 $stockItem->getUseConfigBackorders()
             );
 
-            if ($lifeMode &&
-                (!$inventory->isInStock() || $item->getStatus() != Status::STATUS_ENABLED)) {
+            if ($lifeMode && (!$inventory->isInStock() || $item->getStatus() != Status::STATUS_ENABLED)) {
                 continue;
             }
 
@@ -1246,7 +1303,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                                       $this->getHelper('Module_Configuration')
                                           ->getSecureImageUrlInItemDescriptionMode()
                                   )
-                                  . 'catalog/product/'.ltrim($value, '/');
+                                  . 'catalog/product/' . ltrim($value, '/');
                 }
             }
         }

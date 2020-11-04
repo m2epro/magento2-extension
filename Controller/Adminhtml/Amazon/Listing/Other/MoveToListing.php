@@ -75,7 +75,7 @@ class MoveToListing extends Main
             $this->setJsonContent(
                 [
                     'result'   => true,
-                    'message'  => $this->__('Product(s) was successfully Moved.')
+                    'message'  => $this->__('Product(s) was Moved.')
                 ]
             );
         }

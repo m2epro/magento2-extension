@@ -16,7 +16,8 @@ use Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
 abstract class AbstractModel
 {
     protected $supportedVersionPatterns = [
-        '6.8.*'
+        '6.8.*',
+        '6.9.*'
     ];
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */

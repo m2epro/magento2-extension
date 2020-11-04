@@ -54,7 +54,7 @@ class Save extends Support
             $severity
         );
 
-        $this->messageManager->addSuccess($this->__('Your message has been successfully sent.'));
+        $this->messageManager->addSuccess($this->__('Your message has been sent.'));
 
         $referrer = $this->getRequest()->getParam('referrer', false);
         $params = [];

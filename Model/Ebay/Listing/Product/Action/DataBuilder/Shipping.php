@@ -258,18 +258,6 @@ class Shipping extends AbstractModel
 
                 $tempDataMethod['cost_additional'] = $service->getSource($this->getMagentoProduct())
                     ->getCostAdditional($store);
-
-                if (!$this->getShippingTemplate()->isLocalShippingRateTableEnabled($this->getAccount()) &&
-                    in_array(
-                        $this->getShippingTemplate()->getMarketplaceId(),
-                        [
-                            \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_US,
-                            \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_MOTORS,
-                        ]
-                    ) && preg_match('/(FedEx|UPS)/', $service->getShippingValue())) {
-                    $tempDataMethod['cost_surcharge'] = $service->getSource($this->getMagentoProduct())
-                        ->getCostSurcharge($store);
-                }
             }
 
             if ($this->getShippingTemplate()->isLocalShippingCalculatedEnabled()) {

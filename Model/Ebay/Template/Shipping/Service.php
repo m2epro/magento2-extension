@@ -204,11 +204,6 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return $this->getData('cost_additional_value');
     }
 
-    public function getCostSurchargeValue()
-    {
-        return $this->getData('cost_surcharge_value');
-    }
-
     // ---------------------------------------
 
     /**
@@ -234,20 +229,6 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
         if ($this->isCostModeCustomAttribute()) {
             $attributes[] = $this->getCostAdditionalValue();
-        }
-
-        return $attributes;
-    }
-
-    /**
-     * @return array
-     */
-    public function getCostSurchargeAttributes()
-    {
-        $attributes = [];
-
-        if ($this->isCostModeCustomAttribute()) {
-            $attributes[] = $this->getCostSurchargeValue();
         }
 
         return $attributes;

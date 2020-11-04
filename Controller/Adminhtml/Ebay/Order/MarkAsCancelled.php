@@ -19,7 +19,7 @@ class MarkAsCancelled extends Order
     {
         if ($this->sendInStorePickupNotifications('cancelled')) {
             $this->messageManager->addSuccess(
-                $this->__('Orders were successfully marked as Cancelled.')
+                $this->__('Orders were marked as Cancelled.')
             );
         } else {
             $this->messageManager->addError(

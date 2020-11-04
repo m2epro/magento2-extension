@@ -45,13 +45,13 @@ class OrderItemStructure extends AbstractInspection implements InspectorInterfac
         $collection->addFieldToFilter('mo.id', ['null' => true]);
 
         if ($total = $collection->getSize()) {
-            $brokenOrdersItem = [
+            $this->brokenData = [
                 'total' => $total,
                 'ids' => $collection->getAllIds()
             ];
         }
 
-        if (!empty($brokenOrdersItem)) {
+        if (!empty($this->brokenData)) {
             $issues[] = $this->resultFactory->createError(
                 $this,
                 'Has broken order item',
@@ -87,7 +87,7 @@ HTML;
 </tr>
 HTML;
         $html .= '</table>
-<input style="margin-top: 10px" type="submit" value="Delete broken items">
+<button type="button" onclick="ControlPanelInspectionObj.removeRow(this)">Delete broken items</button>
 </form>';
 
         return $html;

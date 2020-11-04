@@ -43,7 +43,7 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
         if (!empty($productsIdsLocked)) {
             $messages[] = [
                 'type' => 'success',
-                'text' => $this->__('Shipping Policy was successfully assigned.')
+                'text' => $this->__('Shipping Policy was assigned.')
             ];
 
             $this->setShippingTemplateForProducts($productsIdsLocked, $templateId);

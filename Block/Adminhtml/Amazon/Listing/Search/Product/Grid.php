@@ -21,17 +21,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('amazonListingSearchProductGrid');
-        // ---------------------------------------
 
-        // Set default values
-        // ---------------------------------------
         $this->setDefaultSort(false);
         $this->setSaveParametersInSession(true);
         $this->setUseAjax(true);
-        // ---------------------------------------
     }
 
     //########################################
@@ -54,7 +48,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
             'product_id=entity_id',
             [
                 'id'              => 'id',
-                'status'          => 'status',
+                'amazon_status'   => 'status',
                 'component_mode'  => 'component_mode',
                 'listing_id'      => 'listing_id',
                 'additional_data' => 'additional_data',
@@ -273,7 +267,7 @@ HTML;
 
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
-        $value = $this->getProductStatus($row->getData('status'));
+        $value = $this->getProductStatus($row->getData('amazon_status'));
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         $listingProductId = (int)$row->getData('listing_product_id');
@@ -324,24 +318,36 @@ HTML;
 
     public function callbackColumnActions($value, $row, $column, $isExport)
     {
-        $altTitle = $this->getHelper('Data')->escapeHtml($this->__('Go to Listing'));
-        $iconSrc  = $this->getViewFileUrl('Ess_M2ePro::images/goto_listing.png');
+        $productId = (int)$row->getData('entity_id');
 
-        $manageUrl = $this->getUrl('*/amazon_listing/view/', [
-            'id' => $row->getData('listing_id'),
-            'filter' => base64_encode(
-                'product_id[from]='.(int)$row->getData('entity_id')
-                .'&product_id[to]='.(int)$row->getData('entity_id')
-            )
-        ]);
+        $urlData = [
+            'id'     => $row->getData('listing_id'),
+            'filter' => base64_encode("product_id[from]={$productId}&product_id[to]={$productId}")
+        ];
 
+        $searchedChildHtml = '';
+        if ($this->wasFoundByChild($row)) {
+            $urlData['child_listing_product_ids'] = $this->getChildListingProductIds($row);
+
+            $searchedChildHtml = <<<HTML
+<br/>
+<div class="fix-magento-tooltip searched_child_product" style="margin-top: 4px; padding-left: 20px;">
+    {$this->getTooltipHtml($this->__(
+                'A Product you are searching for is found as part of a Multi-Variational Product.' .
+                ' Click on the arrow icon to manage it individually.'
+            ))}
+</div>
+HTML;
+        }
+        $manageUrl = $this->getUrl('*/amazon_listing/view/', $urlData);
         $html = <<<HTML
 <div style="float:right; margin:5px 15px 0 0;">
-    <a title="{$altTitle}" target="_blank" href="{$manageUrl}"><img src="{$iconSrc}" alt="{$altTitle}" /></a>
+    <a title="{$this->__('Go to Listing')}" target="_blank" href="{$manageUrl}">
+    <img src="{$this->getViewFileUrl('Ess_M2ePro::images/goto_listing.png')}" alt="{$this->__('Go to Listing')}" /></a>
 </div>
 HTML;
 
-        return $html;
+        return $searchedChildHtml . $html;
     }
 
     //----------------------------------------
@@ -506,22 +512,55 @@ HTML;
 
     protected function callbackFilterProductId($collection, $column)
     {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $cond = $column->getFilter()->getCondition();
 
         if (empty($cond)) {
             return;
         }
 
+        $childCollection = $this->getMagentoChildProductsCollection();
+        $childCollection->addFieldToFilter('product_id', $cond);
+
+        $collection->getSelect()->joinLeft(
+            ['product_id_subQuery' => $childCollection->getSelect()],
+            'product_id_subQuery.variation_parent_id=lp.id',
+            [
+                'product_id_child_listing_product_ids' => 'child_listing_product_ids',
+                'product_id_searched_by_child'         => 'searched_by_child'
+            ]
+        );
+
         $collection->addFieldToFilter('entity_id', $cond);
+        $collection->getSelect()->orWhere("(product_id_subQuery.searched_by_child = '1')");
     }
 
     protected function callbackFilterTitle($collection, $column)
     {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $value = $column->getFilter()->getValue();
 
         if ($value == null) {
             return;
         }
+
+        $childCollection = $this->getMagentoChildProductsCollection();
+        $childCollection->getSelect()->joinLeft(
+            ['cpe' => $this->getHelper('Module_Database_Structure')
+                ->getTableNameWithPrefix('catalog_product_entity')],
+            'cpe.entity_id=main_table.product_id',
+            []
+        );
+        $childCollection->addFieldToFilter('cpe.sku', ['like' => '%'.$value.'%']);
+
+        $collection->getSelect()->joinLeft(
+            ['product_sku_subQuery' => $childCollection->getSelect()],
+            'product_sku_subQuery.variation_parent_id=lp.id',
+            [
+                'product_sku_child_listing_product_ids' => 'child_listing_product_ids',
+                'product_sku_searched_by_child'         => 'searched_by_child'
+            ]
+        );
 
         $collection->addFieldToFilter(
             [
@@ -530,17 +569,55 @@ HTML;
                 ['attribute'=>'listing_title','like'=>'%'.$value.'%'],
             ]
         );
+        $collection->getSelect()->orWhere("(product_sku_subQuery.searched_by_child = '1')");
     }
 
     protected function callbackFilterOnlineSku($collection, $column)
     {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $value = $column->getFilter()->getValue();
-
         if ($value == null) {
             return;
         }
 
-        $collection->getSelect()->where('alp.sku LIKE ?', '%'.$value.'%');
+        $childCollection = $this->getChildProductsCollection();
+        $childCollection->addFieldToFilter('sku', ['like' => '%'.$value.'%']);
+
+        $collection->getSelect()->joinLeft(
+            ['online_sku_subQuery' => $childCollection->getSelect()],
+            'online_sku_subQuery.variation_parent_id=lp.id',
+            [
+                'online_sku_child_listing_product_ids' => 'child_listing_product_ids',
+                'online_sku_searched_by_child'         => 'searched_by_child'
+            ]
+        );
+
+        $collection->addFieldToFilter('online_sku', ['like' => '%'.$value.'%']);
+        $collection->getSelect()->orWhere("(online_sku_subQuery.searched_by_child = '1')");
+    }
+
+    protected function callbackFilterAsinIsbn($collection, $column)
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
+        $value = $column->getFilter()->getValue();
+        if ($value == null) {
+            return;
+        }
+
+        $childCollection = $this->getChildProductsCollection();
+        $childCollection->addFieldToFilter('general_id', ['like' => '%'.$value.'%']);
+
+        $collection->getSelect()->joinLeft(
+            ['asin_subQuery' => $childCollection->getSelect()],
+            'asin_subQuery.variation_parent_id=lp.id',
+            [
+                'asin_child_listing_product_ids' => 'child_listing_product_ids',
+                'asin_searched_by_child'         => 'searched_by_child'
+            ]
+        );
+
+        $collection->addFieldToFilter('general_id', ['like' => '%'.$value.'%']);
+        $collection->getSelect()->orWhere("(asin_subQuery.searched_by_child = '1')");
     }
 
     protected function callbackFilterPrice($collection, $column)
@@ -674,6 +751,102 @@ HTML;
             }
         }
         return $this;
+    }
+
+    //########################################
+
+    protected function getMagentoChildProductsCollection()
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option\Collection $collection */
+        $collection = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')->getCollection()
+            ->addFieldToSelect('listing_product_variation_id')
+            ->addFieldToFilter('main_table.component_mode', \Ess\M2ePro\Helper\Component\Amazon::NICK);
+
+        $collection->getSelect()->joinLeft(
+            ['lpv' => $this->activeRecordFactory->getObject('Listing_Product_Variation')
+                ->getResource()->getMainTable()],
+            'lpv.id=main_table.listing_product_variation_id',
+            ['listing_product_id']
+        );
+        $collection->getSelect()->joinLeft(
+            ['alp' =>  $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable()],
+            'alp.listing_product_id=lpv.listing_product_id',
+            ['variation_parent_id']
+        );
+        $collection->addFieldToFilter('variation_parent_id', ['notnull' => true]);
+
+        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->columns(
+            [
+                'child_listing_product_ids' => new \Zend_Db_Expr('GROUP_CONCAT(DISTINCT alp.listing_product_id)'),
+                'variation_parent_id'       => 'alp.variation_parent_id',
+                'searched_by_child'         => new \Zend_Db_Expr('1')
+            ]
+        );
+
+        $collection->getSelect()->group('alp.variation_parent_id');
+
+        return $collection;
+    }
+
+    protected function getChildProductsCollection()
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Collection $collection */
+        $collection = $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getCollection()
+            ->addFieldToFilter('variation_parent_id', ['notnull' => true])
+            ->addFieldToFilter('is_variation_product', 1);
+
+        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->columns(
+            [
+                'child_listing_product_ids' => new \Zend_Db_Expr('GROUP_CONCAT(listing_product_id)'),
+                'variation_parent_id'       => 'variation_parent_id',
+                'searched_by_child'         => new \Zend_Db_Expr('1')
+            ]
+        );
+        $collection->getSelect()->group('variation_parent_id');
+
+        return $collection;
+    }
+
+    //########################################
+
+    protected function wasFoundByChild($row)
+    {
+        foreach (['product_id', 'product_sku', 'online_sku', 'asin'] as $item) {
+            $searchedByChild = $row->getData("{$item}_searched_by_child");
+            if (!empty($searchedByChild)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function getChildListingProductIds($row)
+    {
+        $ids = [];
+
+        foreach (['product_id', 'product_sku', 'online_sku', 'asin'] as $item) {
+            $itemIds = $row->getData("{$item}_child_listing_product_ids");
+            if (empty($itemIds)) {
+                continue;
+            }
+
+            foreach (explode(',', $itemIds) as $itemId) {
+                !isset($ids[$itemId]) && $ids[$itemId] = 0;
+                $ids[$itemId]++;
+            }
+        }
+
+        $maxCount = max($ids);
+        foreach ($ids as $id => $count) {
+            if ($count < $maxCount) {
+                unset($ids[$id]);
+            }
+        }
+
+        return implode(',', array_keys($ids));
     }
 
     //########################################

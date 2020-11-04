@@ -281,14 +281,9 @@ define([
         transferring: function(id)
         {
             this.selectedProductsIds = id ? [id] : this.getSelectedProductsArray();
-            if (this.selectedProductsIds.length) {
-                this.unselectAll();
+            this.unselectAll();
 
-                var productName = this.selectedProductsIds.length == 1 ?
-                    this.getProductNameByRowId(this.selectedProductsIds[0]) : null;
-
-                EbayListingTransferringHandlerObj.loadActionHtml(this.selectedProductsIds, null, productName);
-            }
+            window.EbayListingTransferringObj.popupShow(this.selectedProductsIds);
         },
 
         // ---------------------------------------

@@ -84,8 +84,8 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         }
         $this->setData('status', $this->helper->getOrderStatus($itemsStatuses));
 
-        $this->setData('purchase_update_date', $data['update_date']);
-        $this->setData('purchase_create_date', $data['purchase_date']);
+        $this->setData('purchase_update_date', $this->getHelper('Data')->getDate($data['update_date']));
+        $this->setData('purchase_create_date', $this->getHelper('Data')->getDate($data['purchase_date']));
         // ---------------------------------------
 
         // Init sale data
@@ -244,11 +244,22 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             $this->order->getChildObject()->setData('purchase_update_date', $this->getData('purchase_update_date'));
             $this->order->getChildObject()->save();
         } else {
-            $this->order->addData($this->getData());
-            $this->order->save();
+            foreach ($this->getData() as $key => $value) {
+                if (!$this->order->getId() || ($this->order->hasData($key) && $this->order->getData($key) != $value)) {
+                    $this->order->addData($this->getData());
+                    $this->order->save();
+                    break;
+                }
+            }
 
-            $this->order->getChildObject()->addData($this->getData());
-            $this->order->getChildObject()->save();
+            $wlmOrder = $this->order->getChildObject();
+            foreach ($this->getData() as $key => $value) {
+                if (!$this->order->getId() || ($wlmOrder->hasData($key) && $wlmOrder->getData($key) != $value)) {
+                    $wlmOrder->addData($this->getData());
+                    $wlmOrder->save();
+                    break;
+                }
+            }
         }
 
         $this->order->setAccount($this->account);

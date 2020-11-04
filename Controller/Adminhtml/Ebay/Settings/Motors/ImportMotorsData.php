@@ -71,7 +71,7 @@ class ImportMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
             $connWrite->insert($tableName, $insertsData);
         }
 
-        $this->getMessageManager()->addSuccess("Successfully added '{$added}' compatibility records.");
+        $this->getMessageManager()->addSuccess("Added '{$added}' compatibility records.");
         return $this->_redirect('*/ebay_settings/index');
     }
 

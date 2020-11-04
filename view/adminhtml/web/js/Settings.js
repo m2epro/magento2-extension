@@ -73,7 +73,7 @@ define([
                                 self.templateEdit.forgetSkipSaveConfirmation();
 
                                 self.messageObj.addSuccess(
-                                    M2ePro.translator.translate('Help Blocks have been successfully restored.')
+                                    M2ePro.translator.translate('Help Blocks have been restored.')
                                 );
                             }
                         });
@@ -131,7 +131,7 @@ define([
                     }
 
                     if (result.success) {
-                        self.messageObj.addSuccess(M2ePro.translator.translate('Settings successfully saved'));
+                        self.messageObj.addSuccess(M2ePro.translator.translate('Settings saved'));
                     } else {
                         self.messageObj.addError(M2ePro.translator.translate('Error'));
                     }

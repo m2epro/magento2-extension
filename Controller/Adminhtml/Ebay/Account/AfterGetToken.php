@@ -42,7 +42,7 @@ class AfterGetToken extends Account
             $data = $this->sendDataToServer($accountId, $data);
             $id = $this->updateAccount($accountId, $data);
 
-            $this->messageManager->addSuccess($this->__('Token was successfully saved'));
+            $this->messageManager->addSuccess($this->__('Token was saved'));
             $this->_redirect('*/*/edit', ['id' => $id, '_current' => true]);
         }
         // ---------------------------------------

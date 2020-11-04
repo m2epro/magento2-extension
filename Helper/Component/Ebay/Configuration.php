@@ -135,31 +135,6 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         );
     }
 
-    /**
-     * @param string $value
-     *
-     * @return $this
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function setSellOnAnotherMarketplaceTutorialShown($value)
-    {
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            self::CONFIG_GROUP,
-            'sell_on_another_marketplace_tutorial_shown',
-            $value
-        );
-
-        return $this;
-    }
-
-    public function getSellOnAnotherMarketplaceTutorialShown()
-    {
-        return $this->getHelper('Module')->getConfig()->getGroupValue(
-            self::CONFIG_GROUP,
-            'sell_on_another_marketplace_tutorial_shown'
-        );
-    }
-
     //########################################
 
     public function getViewTemplateSellingFormatShowTaxCategory()

@@ -18,10 +18,10 @@ class TablesStructureValidity extends AbstractInspection implements InspectorInt
     const COLUMN_REDUNDANT = 'column_redundant';
     const COLUMN_DIFFERENT = 'column_different';
 
-    const FIX_INDEX   = 'index';
-    const FIX_COLUMN  = 'properties';
-    const DROP_COLUMN = 'drop';
-    const CRETE_TABLE = 'create_table';
+    const FIX_INDEX    = 'index';
+    const FIX_COLUMN   = 'properties';
+    const DROP_COLUMN  = 'drop';
+    const CREATE_TABLE = 'create_table';
 
     //########################################
 
@@ -126,7 +126,7 @@ HTML;
                 $columnInfo['column_info'] = $resultInfo['original_data'];
 
                 if ($resultRow['problem'] === self::TABLE_MISSING) {
-                    $columnInfo['repair_mode'] = self::CRETE_TABLE;
+                    $columnInfo['repair_mode'] = self::CREATE_TABLE;
                 } elseif ($resultRow['problem'] === self::COLUMN_MISSING) {
                     $columnInfo['repair_mode'] = self::FIX_COLUMN;
                 } elseif ($resultRow['problem'] === self::COLUMN_REDUNDANT) {
@@ -149,7 +149,9 @@ HTML;
 HTML;
             }
         }
-        $html .= '<button type="submit">Repair</button></table></form>';
+        $html .= '<button type="button" onclick="ControlPanelInspectionObj.removeRow(this)">Repair</button>
+</table>
+</form>';
 
         return $html;
     }
@@ -166,8 +168,8 @@ HTML;
             case self::DROP_COLUMN:
                 $this->dropColumn($data['table_name'], $data['column_info']);
                 break;
-            case self::CRETE_TABLE:
-                $this->creteTable($data['table_name'], $data['column_info']);
+            case self::CREATE_TABLE:
+                $this->createTable($data['table_name'], $data['column_info']);
                 break;
         }
     }
@@ -352,7 +354,7 @@ HTML;
         return $definition;
     }
 
-    protected function creteTable($tableName, $columnsInfo)
+    protected function createTable($tableName, $columnsInfo)
     {
         $connection = $this->resourceConnection->getConnection();
 

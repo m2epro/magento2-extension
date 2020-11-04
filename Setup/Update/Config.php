@@ -24,7 +24,8 @@ class Config extends AbstractConfig
                 'ChangeDevelopVersion',
                 'ReinstallHookWithFix',
                 'PrimaryConfigs',
-                'ModuleConfigs'
+                'ModuleConfigs',
+                'AddAmazonCollects'
             ],
             'y19_m01' => [
                 'NewUpgradesEngine',
@@ -117,7 +118,23 @@ class Config extends AbstractConfig
             'y20_m07' => [
                 'EbayTemplateStoreCategory',
                 'HashLongtextFields',
-                'WalmartOrderItemQty'
+                'WalmartOrderItemQty',
+                'WalmartKeywordsFields'
+            ],
+            'y20_m08' => [
+                'EbayManagedPayments',
+                'GroupedProduct',
+                'AmazonSkipTax',
+                'AmazonTR'
+            ],
+            'y20_m09' => [
+                'AmazonSE',
+                'SellOnAnotherSite',
+                'InventorySynchronization',
+                'ChangeManufacturerRefurbished',
+            ],
+            'y20_m10' => [
+                'SellOnAnotherSite'
             ]
         ];
     }

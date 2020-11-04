@@ -193,38 +193,35 @@ class Item extends AbstractGrid
         /** @var \Ess\M2ePro\Helper\Module\Translation $translationHelper */
         $translationHelper = $this->getHelper('Module_Translation');
 
+        $amazonOrderItem = $row->getChildObject();
         $skuHtml = '';
-        if ($row->getChildObject()->getSku()) {
+        if ($amazonOrderItem->getSku()) {
             $skuHtml = <<<HTML
-<b>{$translationHelper->__('SKU')}:</b> {$dataHelper->escapeHtml($row->getChildObject()->getSku())}&nbsp;
+<b>{$translationHelper->__('SKU')}:</b> {$dataHelper->escapeHtml($amazonOrderItem->getSku())}&nbsp;&nbsp;&nbsp;
 HTML;
         }
 
-        $generalIdLabel = $translationHelper->__($row->getChildObject()->getIsIsbnGeneralId() ? 'ISBN' : 'ASIN');
+        $generalIdLabel = $translationHelper->__($amazonOrderItem->getIsIsbnGeneralId() ? 'ISBN' : 'ASIN');
         $generalIdHtml = <<<HTML
-<b>{$generalIdLabel}:</b> {$dataHelper->escapeHtml($row->getChildObject()->getGeneralId())}<br/>
+<b>{$generalIdLabel}:</b> {$dataHelper->escapeHtml($amazonOrderItem->getGeneralId())}&nbsp;&nbsp;&nbsp;
 HTML;
 
         $afnWarehouseHtml = '';
         if ($row->getOrder()->getChildObject()->isFulfilledByAmazon()) {
-            $fulfillmentCenterId = $row->getChildObject()->getFulfillmentCenterId();
-            $fulfillmentCenterId = empty($fulfillmentCenterId) ? 'Pending' : $fulfillmentCenterId;
+            $fulfillmentCenterId = $amazonOrderItem->getFulfillmentCenterId() ?: 'Pending';
             $afnWarehouseHtml = <<<HTML
 <b>{$translationHelper->__('AFN Warehouse')}:</b> {$dataHelper->escapeHtml($fulfillmentCenterId)}<br/>
 HTML;
         }
 
-        if ($row->getChildObject()->getIsIsbnGeneralId() &&
-            !$dataHelper->isISBN($row->getChildObject()->getGeneralId())) {
-            $amazonLink = '';
-        } else {
-            $itemUrl = $this->getHelper('Component\Amazon')->getItemUrl(
-                $row->getChildObject()->getGeneralId(),
-                $this->order->getData('marketplace_id')
+        $amazonLink = '';
+        if (!$amazonOrderItem->getIsIsbnGeneralId() || !$dataHelper->isISBN($amazonOrderItem->getGeneralId())) {
+            $itemUrl = $this->getHelper('Component_Amazon')->getItemUrl(
+                $amazonOrderItem->getGeneralId(),
+                $this->order->getMarketplaceId()
             );
-
             $amazonLink = <<<HTML
-<a href="{$itemUrl}" target="_blank">{$translationHelper->__('View on Amazon')}</a>&nbsp;|&nbsp;
+<a href="{$itemUrl}" target="_blank">{$translationHelper->__('View on Amazon')}</a>
 HTML;
         }
 
@@ -235,44 +232,42 @@ HTML;
                 'store' => $row->getOrder()->getStoreId()
             ]);
             $productLink = <<<HTML
-<a href="{$productUrl}" target="_blank">{$translationHelper->__('View')}</a>
+<a href="{$productUrl}" class="external-link" target="_blank">{$translationHelper->__('View')}</a>
 HTML;
         }
 
-        $orderItemId = (int)$row->getId();
-        $gridId = $this->getId();
+        $amazonLink && $productLink && $amazonLink .= '&nbsp;|&nbsp;';
+        $jsTemplate = <<<HTML
+<a class="gray" href="javascript:void(0);" onclick="
+{OrderEditItemObj.%s('{$this->getId()}', {$row->getId()});}
+">%s</a>
+HTML;
 
         $editLink = '';
-        if (!$row->getProductId() || $row->getMagentoProduct()->isProductWithVariations()) {
-            if (!$row->getProductId()) {
-                $action = $translationHelper->__('Map to Magento Product');
-            } else {
-                $action = $translationHelper->__('Set Options');
-            }
+        if (!$row->getProductId()) {
+            $editLink = sprintf($jsTemplate, 'edit', $translationHelper->__('Map to Magento Product'));
+        }
 
-            $class = 'class="gray"';
+        $isPretendedToBeSimple = false;
+        if ($amazonOrderItem->getParentObject()->getMagentoProduct() !== null &&
+            $amazonOrderItem->getParentObject()->getMagentoProduct()->isGroupedType() &&
+            $amazonOrderItem->getChannelItem() !== null) {
+            $isPretendedToBeSimple = $amazonOrderItem->getChannelItem()->isGroupedProductModeSet();
+        }
 
-            $js = "{OrderEditItemObj.edit('{$gridId}', {$orderItemId});}";
-            $editLink = '<a href="javascript:void(0);" onclick="' . $js . '" ' . $class . '>' . $action . '</a>';
+        if ($row->getProductId() && $row->getMagentoProduct()->isProductWithVariations() && !$isPretendedToBeSimple) {
+            $editLink = sprintf($jsTemplate, 'edit', $translationHelper->__('Set Options')) . '&nbsp;|&nbsp;';
         }
 
         $discardLink = '';
         if ($row->getProductId()) {
-            $action = $translationHelper->__('Unmap');
-
-            $js = "{OrderEditItemObj.unassignProduct('{$gridId}', {$orderItemId});}";
-            $discardLink = '<a href="javascript:void(0);" onclick="' . $js . '" class="gray">' . $action . '</a>';
-
-            if ($editLink) {
-                $discardLink = '&nbsp;|&nbsp;' . $discardLink;
-            }
+            $discardLink = sprintf($jsTemplate, 'unassignProduct', $translationHelper->__('Unmap'));
         }
 
         return <<<HTML
-<b>{$dataHelper->escapeHtml($row->getChildObject()->getTitle())}</b><br/>
+<b>{$dataHelper->escapeHtml($amazonOrderItem->getTitle())}</b><br/>
 <div style="padding-left: 10px;">
-    {$skuHtml}
-    {$generalIdHtml}
+    {$skuHtml}{$generalIdHtml}
     {$afnWarehouseHtml}
 </div>
 <div style="float: left;">{$amazonLink}{$productLink}</div>

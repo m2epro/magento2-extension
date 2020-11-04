@@ -44,7 +44,7 @@ class Unassign extends ProductTaxCode
         if (!empty($productsIdsLocked)) {
             $messages[] = [
                 'type' => 'success',
-                'text' => $this->__('Product Tax Code Policy was successfully unassigned.')
+                'text' => $this->__('Product Tax Code Policy was unassigned.')
             ];
 
             $this->setProductTaxCodeTemplateForProducts($productsIdsLocked, null);

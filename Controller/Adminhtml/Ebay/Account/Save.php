@@ -26,6 +26,18 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 
         try {
             $data = $this->sendDataToServer($id, $post);
+
+            $accountExists = $this->getExistsAccount($data['user_id']);
+            if (empty($id) && !empty($accountExists)) {
+                $data['title'] = $accountExists->getTitle();
+                $this->updateAccount($accountExists->getAccountId(), $data->toArray());
+
+                $this->getMessageManager()->addError(
+                    $this->__('An account with the same eBay User ID already exists.')
+                );
+
+                return $this->_redirect('*/*/new');
+            }
             $id = $this->updateAccount($id, $data->toArray());
         } catch (\Exception $exception) {
             if ($this->isAjax()) {
@@ -48,7 +60,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
             return $this->getResult();
         }
 
-        $this->messageManager->addSuccess($this->__('Account was successfully saved'));
+        $this->messageManager->addSuccess($this->__('Account was saved'));
 
         return $this->_redirect($this->getHelper('Data')->getBackUrl(
             'list',
@@ -62,4 +74,22 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
             ]
         ));
     }
+
+    //########################################
+
+    protected function getExistsAccount($userId)
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $account */
+        $account = $this->ebayFactory->getObject('Account')->getCollection()
+            ->addFieldToSelect('title')
+            ->addFieldToFilter('user_id', $userId);
+
+        if (!$account->getSize()) {
+            return null;
+        }
+
+        return $account->getFirstItem();
+    }
+
+    //########################################
 }

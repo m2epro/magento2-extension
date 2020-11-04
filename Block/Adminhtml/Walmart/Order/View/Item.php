@@ -100,11 +100,11 @@ class Item extends AbstractGrid
             'frame_callback' => [$this, 'callbackColumnOriginalPrice']
         ]);
 
-        $this->addColumn('qty', [
+        $this->addColumn('qty_purchased', [
             'header'    => $this->__('QTY'),
             'align'     => 'left',
             'width'     => '80px',
-            'index'     => 'qty',
+            'index'     => 'qty_purchased',
             'frame_callback' => [$this, 'callbackColumnQty']
         ]);
 
@@ -195,85 +195,85 @@ class Item extends AbstractGrid
     //########################################
 
     /**
-     * @param $value
-     * @param $row \Ess\M2ePro\Model\Order\Item
-     * @param $column
-     * @param $isExport
+     * @param string $value
+     * @param \Ess\M2ePro\Model\Order\Item $row
+     * @param \Magento\Backend\Block\Widget\Grid\Column\Extended $column
+     * @param bool $isExport
      *
      * @return string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function callbackColumnProduct($value, $row, $column, $isExport)
     {
-        $skuHtml = '';
-        if ($row->getChildObject()->getSku()) {
-            $skuLabel = $this->__('SKU');
-            $sku = $this->getHelper('Data')->escapeHtml($row->getChildObject()->getSku());
+        /** @var \Ess\M2ePro\Helper\Data $dataHelper */
+        $dataHelper = $this->getHelper('Data');
 
+        /** @var \Ess\M2ePro\Helper\Module\Translation $translationHelper */
+        $translationHelper = $this->getHelper('Module_Translation');
+
+        $walmartOrderItem = $row->getChildObject();
+        $skuHtml = '';
+        if ($walmartOrderItem->getSku()) {
             $skuHtml = <<<HTML
-<b>{$skuLabel}:</b> {$sku}<br/>
+<b>{$translationHelper->__('SKU')}:</b> {$dataHelper->escapeHtml($walmartOrderItem->getSku())}<br/>
 HTML;
         }
 
         $walmartLink = '';
         $marketplaceId = $this->order->getMarketplaceId();
-        $walmartHelper = $this->getHelper('Component\Walmart');
+        $walmartHelper = $this->getHelper('Component_Walmart');
         $idForLink = $walmartHelper->getIdentifierForItemUrl($marketplaceId);
-
-        if (!empty($this->itemSkuToWalmartIds[$row->getChildObject()->getSku()][$idForLink])) {
-            $itemLinkText = $this->__('View on Walmart');
+        if (!empty($this->itemSkuToWalmartIds[$walmartOrderItem->getSku()][$idForLink])) {
             $itemUrl = $walmartHelper->getItemUrl(
-                $this->itemSkuToWalmartIds[$row->getChildObject()->getSku()][$idForLink],
+                $this->itemSkuToWalmartIds[$walmartOrderItem->getSku()][$idForLink],
                 $marketplaceId
             );
-
             $walmartLink = <<<HTML
-<a href="{$itemUrl}" class="external-link" target="_blank">{$itemLinkText}</a>
+<a href="{$itemUrl}" class="external-link" target="_blank">{$translationHelper->__('View on Walmart')}</a>
 HTML;
         }
 
         $productLink = '';
-        if ($productId = $row->getData('product_id')) {
+        if ($row->getProductId()) {
             $productUrl = $this->getUrl('catalog/product/edit', [
-                'id'    => $productId,
+                'id'    => $row->getProductId(),
                 'store' => $row->getOrder()->getStoreId()
             ]);
-            !empty($walmartLink) && $walmartLink .= ' | ';
-            $productLink = '<a href="'.$productUrl.'" target="_blank">'.$this->__('View').'</a>';
+            $productLink = <<<HTML
+<a href="{$productUrl}" target="_blank">{$translationHelper->__('View')}</a>
+HTML;
         }
 
-        $orderItemId = (int)$row->getId();
-        $gridId = $this->getId();
+        $walmartLink && $productLink && $walmartLink .= '&nbsp;|&nbsp;';
+        $jsTemplate = <<<HTML
+<a class="gray" href="javascript:void(0);" onclick="
+{OrderEditItemObj.%s('{$this->getId()}', {$row->getId()});}
+">%s</a>
+HTML;
 
         $editLink = '';
-        if (!$row->getProductId() || $row->getMagentoProduct()->isProductWithVariations()) {
-            if (!$row->getProductId()) {
-                $action = $this->__('Map to Magento Product');
-            } else {
-                $action = $this->__('Set Options');
-            }
+        if (!$row->getProductId()) {
+            $editLink = sprintf($jsTemplate, 'edit', $translationHelper->__('Map to Magento Product'));
+        }
 
-            $class = 'class="gray"';
+        $isPretendedToBeSimple = false;
+        if ($walmartOrderItem->getParentObject()->getMagentoProduct() !== null &&
+            $walmartOrderItem->getParentObject()->getMagentoProduct()->isGroupedType() &&
+            $walmartOrderItem->getChannelItem() !== null) {
+            $isPretendedToBeSimple = $walmartOrderItem->getChannelItem()->isGroupedProductModeSet();
+        }
 
-            $js = "{OrderEditItemObj.edit('{$gridId}', {$orderItemId});}";
-            $editLink = '<a href="javascript:void(0);" onclick="'.$js.'" '.$class.'>'.$action.'</a>';
+        if ($row->getProductId() && $row->getMagentoProduct()->isProductWithVariations() && !$isPretendedToBeSimple) {
+            $editLink = sprintf($jsTemplate, 'edit', $translationHelper->__('Set Options')) . '&nbsp;|&nbsp;';
         }
 
         $discardLink = '';
         if ($row->getProductId()) {
-            $action = $this->__('Unmap');
-
-            $js = "{OrderEditItemObj.unassignProduct('{$gridId}', {$orderItemId});}";
-            $discardLink = '<a href="javascript:void(0);" onclick="'.$js.'" class="gray">'.$action.'</a>';
-
-            if ($editLink) {
-                $discardLink = '&nbsp;|&nbsp;' . $discardLink;
-            }
+            $discardLink = sprintf($jsTemplate, 'unassignProduct', $translationHelper->__('Unmap'));
         }
 
-        $itemTitle = $this->getHelper('Data')->escapeHtml($row->getChildObject()->getTitle());
-
         return <<<HTML
-<b>{$itemTitle}</b><br/>
+<b>{$dataHelper->escapeHtml($walmartOrderItem->getTitle())}</b><br/>
 <div style="padding-left: 10px;">
     {$skuHtml}
 </div>
@@ -311,7 +311,7 @@ HTML;
 
     public function callbackColumnQty($value, $row, $column, $isExport)
     {
-        return $row->getChildObject()->getData('qty');
+        return $row->getChildObject()->getData('qty_purchased');
     }
 
     public function callbackColumnPrice($value, $row, $column, $isExport)

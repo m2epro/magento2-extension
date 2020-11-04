@@ -1,0 +1,35 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var $block \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\Order\ExcludedStates  */
+?>
+
+<div class="fieldset-wrapper" id="magento_block_amazon_accounts_magento_orders_listings" style="margin-top: 10px;" collapseable="no">
+
+    <div class="fieldset-wrapper-title admin__fieldset-wrapper-title" style="padding: 0 !important;"></div>
+
+    <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+        <div class="hor-scroll">
+            <table class="form-list" cellspacing="0" cellpadding="0">
+                <tr>
+                    <?php foreach ($block->getStatesList() as $column) : ?>
+                        <td class="value">
+                            <?php foreach ($column as $code => $name) : ?>
+                                <div class="checkbox_container excluded_states" style="display: block; margin: 5px;">
+                                    <input class="excluded_state_checkbox" type="checkbox" value="<?php echo $code; ?>" <?php if (in_array($code, $block->getSelectedStates())): ?>checked="checked"<?php endif; ?>/>
+                                    <label><?php echo $name; ?></label>
+                                </div>
+                            <?php endforeach; ?>
+                        </td>
+                    <?php endforeach; ?>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

@@ -103,15 +103,13 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
             $this->resourceConnection->getConnection()->delete($tableName, ['sku IN (?)' => $chunkSKUs]);
         }
 
-        $accountsCollection = $this->parentFactory->getObject(WalmartHelper::NICK, 'Account')->getCollection();
+        $accountsCollection = $this->parentFactory
+            ->getObject(WalmartHelper::NICK, 'Account')
+            ->getCollection()
+            ->addFieldToFilter('other_listings_synchronization', 1);
 
         foreach ($accountsCollection->getItems() as $account) {
-            $additionalData = (array)$this->getHelper('Data')
-                ->jsonDecode($account->getAdditionalData());
-
-            unset($additionalData['last_listing_products_synchronization']);
-
-            $account->setSettings('additional_data', $additionalData)->save();
+            $account->getChildObject()->setData('inventory_last_synchronization', null)->save();
         }
     }
 

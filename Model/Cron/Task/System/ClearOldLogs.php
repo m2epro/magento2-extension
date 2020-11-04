@@ -36,6 +36,8 @@ class ClearOldLogs extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $this->clearSystemLog();
 
+        $this->activeRecordFactory->getObject('Cron_OperationHistory')->cleanOldData();
+
         return true;
     }
 

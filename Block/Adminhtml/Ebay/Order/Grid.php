@@ -667,6 +667,16 @@ HTML;
 
     protected function _toHtml()
     {
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $this->js->add(
+                <<<JS
+                OrderObj.initializeGrids();
+JS
+            );
+
+            return parent::_toHtml();
+        }
+
         $tempGridIds = [];
         $this->getHelper('Component\Ebay')->isEnabled() && $tempGridIds[] = $this->getId();
         $tempGridIds = $this->getHelper('Data')->jsonEncode($tempGridIds);

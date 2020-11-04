@@ -60,7 +60,7 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
 
         foreach ($ordersData as $orderData) {
             try {
-                $orderCreateDate = new \DateTime($orderData['purchase_date'], new \DateTimeZone('UTC'));
+                $orderCreateDate = new \DateTime($this->getHelper('Data')->getDate($orderData['purchase_date']));
                 if ($this->_validateAccountCreateDate && $orderCreateDate < $accountCreateDate) {
                     continue;
                 }

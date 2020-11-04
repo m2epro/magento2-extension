@@ -100,9 +100,15 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
 
     //----------------------------------------
 
-    public function getKnowledgebaseUrl()
+    public function getKnowledgebaseUrl($articleUrl = null)
     {
-        return $this->getSupportUrl('knowledgebase');
+        $urlParts[] = $this->getSupportUrl('knowledgebase');
+
+        if ($articleUrl) {
+            $urlParts[] = trim($articleUrl, '/');
+        }
+
+        return implode('/', $urlParts);
     }
 
     public function getKnowledgebaseComponentUrl($component)

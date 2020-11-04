@@ -1,0 +1,119 @@
+<?php
+
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Transferring\Destination $this */
+?>
+
+<script type="text/javascript">
+
+    $('to_account_id')
+        .observe('change', EbayListingTransferringObj.accountIdChange.bind(EbayListingTransferringObj))
+        .simulate('change');
+
+    $('to_marketplace_id')
+        .observe('change', EbayListingTransferringObj.marketplaceIdChange.bind(EbayListingTransferringObj))
+        .simulate('change');
+
+    $('to_store_id')
+        .observe('change', EbayListingTransferringObj.storeIdChange.bind(EbayListingTransferringObj))
+        .simulate('change');
+
+</script>
+
+<style>
+    .destination-table-grid label {
+        font-weight: bold;
+    }
+
+    .destination-table-grid td , .destination-table-grid th {
+        padding: 4px 8px 4px 8px !important;
+    }
+
+    .destination-table-grid td select {
+        width: 100% !important;
+    }
+</style>
+
+<table class="destination-table-grid border data-grid data-grid-not-hovered data-grid-striped" cellpadding="0" cellspacing="0" required="" style="width: 100%;">
+    <thead>
+    <tr class="headings">
+        <th style="width: 20%;"></th>
+        <th style="width: 40%;"><?php echo $block->__('From'); ?></th>
+        <th style="width: 40%;"><?php echo $block->__('To'); ?></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            <label for="to_account_id"><?php echo $this->__('Account'); ?></label>
+        </td>
+        <td>
+            <input id="from_account_id" type="hidden" value="<?php echo $this->getListing()->getAccount()->getId(); ?>">
+            <span><?php echo $this->escapeHtml($this->getListing()->getAccount()->getTitle()); ?></span>
+        </td>
+        <td>
+            <select id="to_account_id" name="to_account_id" class="select admin__control-select required-entry">
+                <option class="empty"></option>
+                <?php foreach ($this->getAccounts()->getItems() as $account) : ?>
+                    <option class="value" value="<?php echo $account->getId(); ?>" <?php if ($this->getListing()->getAccount()->getId() == $account->getId()) : echo 'selected'; endif; ?>><?php echo $this->escapeHtml($account->getTitle()); ?></option>
+                <?php endforeach; ?>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label for="to_marketplace_id"><?php echo $this->__('Marketplace'); ?></label>
+        </td>
+        <td>
+            <input id="from_marketplace_id" type="hidden" value="<?php echo $this->getListing()->getMarketplace()->getId(); ?>">
+            <span><?php echo $this->escapeHtml($this->getListing()->getMarketplace()->getTitle()); ?></span>
+        </td>
+        <td>
+            <select id="to_marketplace_id" name="to_marketplace_id" class="select admin__control-select required-entry">
+                <option class="empty"></option>
+                <?php foreach ($this->getMarketplaces()->getItems() as $marketplace) : ?>
+                    <option class="value" data_status="<?php echo $marketplace->getStatus(); ?>" value="<?php echo $marketplace->getId(); ?>" <?php if ($this->getListing()->getMarketplace()->getId() == $marketplace->getId()) : echo 'selected'; endif; ?>><?php echo $this->escapeHtml($marketplace->getTitle()); ?></option>
+                <?php endforeach; ?>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label for="to_store_id"><?php echo $this->__('Store View'); ?></label>
+        </td>
+        <td>
+            <input id="from_store_id" type="hidden" value="<?php echo $this->getListing()->getStoreId(); ?>">
+            <span>
+                    <?php echo $this->escapeHtml($this->getStore()->getWebsite()->getName()); ?><br>
+                    &nbsp;&nbsp;<?php echo $this->escapeHtml($this->getStore()->getGroup()->getName()); ?><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<?php echo $this->escapeHtml($this->getStore()->getName()); ?>
+                </span>
+        </td>
+        <td>
+            <?php echo $this->getChildHtml('store_switcher'); ?>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label for="to_listing_id"><?php echo $this->__('Listing'); ?></label>
+        </td>
+        <td>
+            <input id="from_listing_id" type="hidden" value="<?php echo $this->getListing()->getId(); ?>">
+            <span><?php echo $this->escapeHtml($this->getListing()->getTitle()); ?></span>
+        </td>
+        <td>
+            <select id="to_listing_id" name="to_listing_id" class="select admin__control-select required-entry">
+                <option class="empty"></option>
+                <option class="value" style="color: brown;" value="<?php echo \Ess\M2ePro\Model\Ebay\Listing\Transferring::PARAM_LISTING_ID_DESTINATION_CREATE_NEW; ?>"><?php echo $this->__('Create New'); ?></option>
+            </select>
+        </td>
+    </tr>
+    </tbody>
+</table>

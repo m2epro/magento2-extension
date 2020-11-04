@@ -25,7 +25,7 @@ class TruncateTables extends Table
             $this->afterTableAction($table);
         }
 
-        $this->getMessageManager()->addSuccess('Truncate Tables was successfully completed.');
+        $this->getMessageManager()->addSuccess('Truncate Tables was completed.');
 
         if (count($tables) == 1) {
             return $this->redirectToTablePage($tables[0]);

@@ -23,6 +23,24 @@ define([
                 }]
             }, content).openModal();
 
+        },
+
+        removeRow: function (element) {
+            var selected = [],
+                form = element.up('form'),
+                url  = form.getAttribute('action'),
+                data = Form.serialize(form);
+
+            form.querySelectorAll("input:checked").forEach(function(element) {
+                element.up('tr').remove();
+            });
+
+            new Ajax.Request( url , {
+                method: 'post',
+                asynchronous : true,
+                parameters : data
+            });
         }
+
     });
 });

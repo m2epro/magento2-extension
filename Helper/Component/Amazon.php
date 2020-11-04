@@ -25,15 +25,18 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
     const MARKETPLACE_JP = 27;
     const MARKETPLACE_CN = 32;
 
+    protected $regionCollection;
     protected $amazonFactory;
 
     //########################################
 
     public function __construct(
+        \Magento\Directory\Model\ResourceModel\Region\Collection $regionCollection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
+        $this->regionCollection = $regionCollection;
         $this->amazonFactory = $amazonFactory;
         parent::__construct($helperFactory, $context);
     }
@@ -152,20 +155,20 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
             'usps'  => 'USPS',
             'ups'   => 'UPS',
             'fedex' => 'FedEx',
-            'dhl'   => 'DHL',
-            'Fastway',
-            'GLS',
-            'GO!',
-            'Hermes Logistik Gruppe',
-            'Royal Mail',
-            'Parcelforce',
-            'City Link',
-            'TNT',
-            'Target',
-            'SagawaExpress',
-            'NipponExpress',
-            'YamatoTransport'
+            'dhl'   => 'DHL'
         ];
+    }
+
+    public function getCarrierTitle($carrierCode, $title)
+    {
+        $carriers = $this->getCarriers();
+        $carrierCode = strtolower($carrierCode);
+
+        if (isset($carriers[$carrierCode])) {
+            return $carriers[$carrierCode];
+        }
+
+        return $title;
     }
 
     // ----------------------------------------
@@ -183,6 +186,37 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $collection = $this->getMarketplacesAvailableForApiCreation();
         return $collection->addFieldToFilter('is_new_asin_available', 1);
+    }
+
+    //########################################
+
+    public function getStatesList()
+    {
+        $collection = $this->regionCollection->addCountryFilter('US');
+        $collection->addFieldToFilter(
+            'default_name',
+            [
+                'nin' => [
+                    'Armed Forces Africa',
+                    'Armed Forces Americas',
+                    'Armed Forces Canada',
+                    'Armed Forces Europe',
+                    'Armed Forces Middle East',
+                    'Armed Forces Pacific',
+                    'Federated States Of Micronesia',
+                    'Marshall Islands',
+                    'Palau'
+                ]
+            ]
+        );
+
+        $states = [];
+
+        foreach ($collection->getItems() as $state) {
+            $states[$state->getCode()] = $state->getName();
+        }
+
+        return $states;
     }
 
     //########################################

@@ -90,6 +90,7 @@ HTML;
         $helper = $this->getHelper('Module\Translation');
         $testUrl = $this->urlBuilder->getUrl('*/support/testExecutionTime');
         $testResultUrl = $this->urlBuilder->getUrl('*/support/testExecutionTimeResult');
+        $knowledgeBaseUrl = $this->getHelper('Module\Support')->getKnowledgeBaseUrl('1535371');
 
         $button = $this->layout->createBlock('Ess\M2ePro\Block\Adminhtml\Magento\Button')->setData([
             'label'   => $helper->__('Check'),
@@ -132,11 +133,11 @@ function executionTimeTest(seconds)
                             MessageObj.addWarning(
                                 '{$this->getTestWarningMessage()}'
                                 .replace('%value%', response['result'])
-                                .replace('%min-value%', '{$this->getCheckObject()->getMin()}')
+                                .replace('%url%', '{$knowledgeBaseUrl}')
                             );
                         } else {
                             MessageObj.addSuccess(
-                                '{$helper->__('Max execution time of %value% sec. is tested.')}'
+                                '{$helper->__('Actual max execution time is %value% sec.')}'
                                 .replace('%value%', response['result'])
                             );
                         }
@@ -169,6 +170,12 @@ function openExecutionTimeTestPopup()
     
     popup.modal('openModal');
 }
+
+function checkExecutionTimeValue(el) {
+  if (Number(el.value) < Number('{$this->getCheckObject()->getMin()}')) {
+        el.value = '{$this->getCheckObject()->getMin()}';
+    }
+}
 </script>
 
 {$button->toHtml()}&nbsp;
@@ -183,14 +190,15 @@ HTML;
         return $this->getHelper('Data')->escapeJs(<<<HTML
 <div style="margin-top: 10px;">
     {$helper->__(
-        'Enter the time you want to test. The minimum recommended value is %min% sec.<br>
-        The Module interface will be unavailable during the check.
-        Synchronization processes won’t be affected.',
+        'Enter the time you want to test. The minimum required value is %min% sec.<br><br>
+        <strong>Note:</strong> Module interface will be unavailable during the check. 
+        Synchronization processes won’t be affected.\'',
         $this->getCheckObject()->getMin()
     )}
     <br><br>
     <label>{$helper->__('Seconds')}</label>:&nbsp;
-    <input type="text" id="execution_time_value" value="{$this->getCheckObject()->getMin()}" />
+    <input type="text" id="execution_time_value" value="{$this->getCheckObject()->getMin()}" 
+    onchange="return checkExecutionTimeValue(this);" />
 </div>
 HTML
         );
@@ -200,8 +208,9 @@ HTML
     {
         return $this->getHelper('Data')->escapeJs(
             $this->getHelper('Module\Translation')->__(
-                'Max execution time of %value% sec. is tested. To ensure your execution time limit is
-                sufficient, the test should be run for at least %min-value% sec.'
+                'Actual max execution time is %value% sec. 
+                The value must be increased on your server for the proper synchronization work. 
+                Read <a href="%url%" target="_blank">here</a> how to do it.'
             )
         );
     }

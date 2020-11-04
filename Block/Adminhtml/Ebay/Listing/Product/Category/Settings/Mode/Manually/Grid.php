@@ -423,7 +423,7 @@ JS
             'eBay could not assign Categories for %product_title% Products.'
         ));
         $this->jsTranslator->add('Suggested Categories were assigned.', $this->__(
-            'Suggested Categories were successfully Received for %product_title% Product(s).'
+            'Suggested Categories were Received for %product_title% Product(s).'
         ));
 
         $this->jsTranslator->add('select_relevant_category', $this->__(

@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Orders\Cancel;
 /**
  * Class \Ess\M2ePro\Model\Amazon\Connector\Orders\Cancel\ItemsResponser
  */
-abstract class ItemsResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Responser
+abstract class ItemsResponser extends \Ess\M2ePro\Model\Connector\Command\Pending\Responser
 {
     //########################################
 

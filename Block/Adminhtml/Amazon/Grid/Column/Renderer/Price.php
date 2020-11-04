@@ -116,7 +116,7 @@ HTML;
             !$row->getData('is_repricing_inactive')
         ) {
             $accountId = $this->getColumn()->getData('account_id');
-            $sku = $rowObject->getData('sku');
+            $sku = $rowObject->getData('amazon_sku');
 
             $priceValue =<<<HTML
 <a id="m2epro_repricing_price_value_{$sku}"

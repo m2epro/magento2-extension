@@ -67,11 +67,22 @@ class Order extends AbstractForm
 
         $defaults = $this->modelFactory->getObject('Amazon_Account_Builder')->getDefaultData();
 
+        if (isset($formData['magento_orders_settings']['tax']['excluded_states'])) {
+            unset($defaults['magento_orders_settings']['tax']['excluded_states']);
+        }
+
         $isEdit = !!$this->getRequest()->getParam('id');
 
         $isEdit && $defaults['magento_orders_settings']['refund_and_cancellation']['refund_mode'] = 0;
 
         $formData = array_replace_recursive($defaults, $formData);
+
+        if (is_array($formData['magento_orders_settings']['tax']['excluded_states'])) {
+            $formData['magento_orders_settings']['tax']['excluded_states'] = implode(
+                ',',
+                $formData['magento_orders_settings']['tax']['excluded_states']
+            );
+        }
 
         $form = $this->_formFactory->create();
 
@@ -180,8 +191,8 @@ HTML
                 ],
                 'value' => $formData['magento_orders_settings']['listing_other']['mode'],
                 'tooltip' => $this->__(
-                    'Whether an Order has to be created in Magento if a sold Product
-                    does not belong to M2E Pro Listings.'
+                    'Choose whether a Magento Order should be created if an Amazon Order is received for an item that 
+                    does <b>not</b> belong to the M2E Pro Listing.'
                 )
             ]
         );
@@ -596,6 +607,45 @@ HTML
             ]
         );
 
+        $button = $this->createBlock('Magento\Button')->addData([
+            'label' => $this->__('Show States'),
+            'onclick' => 'AmazonAccountObj.openExcludedStatesPopup()',
+            'class' => 'action-primary',
+            'style' => 'margin-left: 70px;',
+            'id' => 'show_excluded_states_button'
+        ]);
+
+        $fieldset->addField(
+            'magento_orders_tax_amazon_collects',
+            'select',
+            [
+                'container_id' => 'magento_orders_tax_amazon_collects_container',
+                'name' => 'magento_orders_settings[tax][amazon_collects]',
+                'label' => $this->__('Amazon Collects Tax'),
+                'values' => [
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
+                ],
+                'value' => $formData['magento_orders_settings']['tax']['amazon_collects'],
+                'after_element_html' => $this->getTooltipHtml(
+                    $this->__(
+                        'Please specify if Amazon is responsible for tax calculation/collection in certain States.
+                        More information you can find <a href="%url%" target="_blank">here</a>.',
+                        'https://www.amazon.com/gp/help/customer/display.html?nodeId=202211260'
+                    )
+                ) . $button->toHtml()
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_tax_excluded_states',
+            'hidden',
+            [
+                'name' => 'magento_orders_settings[tax][excluded_states]',
+                'value' => $formData['magento_orders_settings']['tax']['excluded_states'],
+            ]
+        );
+
         $fieldset = $form->addFieldset(
             'magento_block_amazon_accounts_magento_orders_status_mapping',
             [
@@ -696,8 +746,13 @@ HTML
 
         $this->jsTranslator->addTranslations([
             'No Customer entry is found for specified ID.' => $this->__('No Customer entry is found for specified ID.'),
+            'Select States where Amazon is responsible for tax calculation/collection' => $this->__(
+                'Select States where Amazon is responsible for tax calculation/collection'
+            ),
         ]);
 
         return parent::_prepareForm();
     }
+
+    //########################################
 }

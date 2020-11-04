@@ -186,7 +186,7 @@ HTML;
 
         $html .= <<<HTML
             </table>
-            <input style="margin-top: 10px" type="submit" value="Delete Checked">
+            <button type="button" onclick="ControlPanelInspectionObj.removeRow(this)">Delete checked</button>
         </form>
 HTML;
         return $html;

@@ -227,7 +227,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $popupTitle = $this->__('Moving Walmart Items');
 
         $taskCompletedMessage = $this->__('Task completed. Please wait ...');
-        $taskCompletedSuccessMessage = $this->__('"%task_title%" Task has successfully submitted to be processed.');
+        $taskCompletedSuccessMessage = $this->__('"%task_title%" Task has submitted to be processed.');
         $taskCompletedWarningMessage = $this->__(
             '"%task_title%" Task has completed with warnings. <a target="_blank" href="%url%">View Log</a> for details.'
         );
@@ -341,16 +341,16 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'Edit SKU'        => $this->__('Edit SKU'),
             'Edit Product ID' => $this->__('Edit Product ID'),
 
-            'Updating SKU has successfully submitted to be processed.' =>
-                $this->__('Updating SKU has successfully submitted to be processed.'),
-            'Updating GTIN has successfully submitted to be processed.' =>
-                $this->__('Updating GTIN has successfully submitted to be processed.'),
-            'Updating UPC has successfully submitted to be processed.' =>
-                $this->__('Updating UPC has successfully submitted to be processed.'),
-            'Updating EAN has successfully submitted to be processed.' =>
-                $this->__('Updating EAN has successfully submitted to be processed.'),
-            'Updating ISBN has successfully submitted to be processed.' =>
-                $this->__('Updating ISBN has successfully submitted to be processed.'),
+            'Updating SKU has submitted to be processed.' =>
+                $this->__('Updating SKU has submitted to be processed.'),
+            'Updating GTIN has submitted to be processed.' =>
+                $this->__('Updating GTIN has submitted to be processed.'),
+            'Updating UPC has submitted to be processed.' =>
+                $this->__('Updating UPC has submitted to be processed.'),
+            'Updating EAN has submitted to be processed.' =>
+                $this->__('Updating EAN has submitted to be processed.'),
+            'Updating ISBN has submitted to be processed.' =>
+                $this->__('Updating ISBN has submitted to be processed.'),
 
             'Required at least one identifier' => $this->__('Required at least one identifier'),
             'At least one Variant Attribute must be selected.' =>

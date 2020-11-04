@@ -14,10 +14,13 @@ namespace Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Other\Channel\SynchronizeData;
 class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Inventory\Get\ItemsResponser
 {
     /** @var \Ess\M2ePro\Model\Synchronization\Log */
-    protected $synchronizationLog = null;
+    protected $synchronizationLog;
 
     //########################################
 
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function processResponseMessages()
     {
         parent::processResponseMessages();
@@ -37,6 +40,9 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Inventory\Get\ItemsResp
         }
     }
 
+    /**
+     * @return bool
+     */
     protected function isNeedProcessResponse()
     {
         if (!parent::isNeedProcessResponse()) {
@@ -52,6 +58,10 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Inventory\Get\ItemsResp
 
     //########################################
 
+    /**
+     * @param $messageText
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function failDetected($messageText)
     {
         parent::failDetected($messageText);
@@ -64,13 +74,18 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Inventory\Get\ItemsResp
 
     //########################################
 
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function processResponseData()
     {
         try {
 
             /** @var $updatingModel \Ess\M2ePro\Model\Ebay\Listing\Other\Updating */
             $updatingModel = $this->modelFactory->getObject('Ebay_Listing_Other_Updating');
-            $updatingModel->initialize($this->getAccount());
+            $updatingModel->initialize(
+                $this->ebayFactory->getObjectLoaded('Account', $this->params['account_id'])
+            );
             $updatingModel->processResponseData($this->getPreparedResponseData());
         } catch (\Exception $e) {
             $this->getHelper('Module\Exception')->process($e);
@@ -79,24 +94,6 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Inventory\Get\ItemsResp
     }
 
     //########################################
-
-    /**
-     * @return \Ess\M2ePro\Model\Account
-     */
-    protected function getAccount()
-    {
-        return $this->getObjectByParam('Account', 'account_id');
-    }
-
-    /**
-     * @return \Ess\M2ePro\Model\Marketplace
-     */
-    protected function getMarketplace()
-    {
-        return $this->getObjectByParam('Marketplace', 'marketplace_id');
-    }
-
-    // ---------------------------------------
 
     /**
      * @return \Ess\M2ePro\Model\Synchronization\Log

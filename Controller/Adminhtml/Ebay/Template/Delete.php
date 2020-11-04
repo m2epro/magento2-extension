@@ -44,7 +44,7 @@ class Delete extends Template
             $template->delete();
 
             $this->messageManager->addSuccess(
-                $this->__('Policy was successfully deleted.')
+                $this->__('Policy was deleted.')
             );
         } else {
             $this->messageManager->addError(

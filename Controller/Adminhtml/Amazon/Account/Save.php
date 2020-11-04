@@ -23,9 +23,20 @@ class Save extends Account
             $this->_forward('index');
         }
 
+        $id = $this->getRequest()->getParam('id');
+
+        $accountExists = $this->getExistsAccount($post['merchant_id'], $post['marketplace_id']);
+        if (empty($id) && !empty($accountExists)) {
+            $this->getMessageManager()->addError(
+                $this->__('An account with the same Amazon Merchant ID and Marketplace already exists.')
+            );
+
+            return $this->_redirect('*/*/new');
+        }
+
         // Add or update model
         // ---------------------------------------
-        $model = $this->updateAccount($this->getRequest()->getParam('id'), $post->toArray());
+        $model = $this->updateAccount($id, $post->toArray());
 
         // Repricing
         // ---------------------------------------
@@ -99,7 +110,7 @@ class Save extends Account
             return $this->getResult();
         }
 
-        $this->messageManager->addSuccess($this->__('Account was successfully saved'));
+        $this->messageManager->addSuccess($this->__('Account was saved'));
 
         /** @var $wizardHelper \Ess\M2ePro\Helper\Module\Wizard */
         $wizardHelper = $this->getHelper('Module\Wizard');
@@ -112,4 +123,20 @@ class Save extends Account
 
         return $this->_redirect($this->getHelper('Data')->getBackUrl('list', [], ['edit'=>$routerParams]));
     }
+
+    protected function getExistsAccount($merchantId, $marketplaceId)
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $account */
+        $account = $this->amazonFactory->getObject('Account')->getCollection()
+            ->addFieldToFilter('merchant_id', $merchantId)
+            ->addFieldToFilter('marketplace_id', $marketplaceId);
+
+        if (!$account->getSize()) {
+            return null;
+        }
+
+        return $account->getFirstItem();
+    }
+
+    //########################################
 }

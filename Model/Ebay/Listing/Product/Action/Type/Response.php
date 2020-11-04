@@ -282,6 +282,13 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             $data['variations'] = $this->getHelper('Data')->jsonEncode($variations);
         }
 
+        if ($this->getListingProduct()->getMagentoProduct()->isGroupedType()) {
+            $additionalData = $this->getListingProduct()->getAdditionalData();
+            $data['additional_data'] = $this->getHelper('Data')->jsonEncode([
+                'grouped_product_mode' => $additionalData['grouped_product_mode']
+            ]);
+        }
+
         /** @var \Ess\M2ePro\Model\Ebay\Item $object */
         $object = $this->activeRecordFactory->getObject('Ebay\Item');
         $object->setData($data)->save();

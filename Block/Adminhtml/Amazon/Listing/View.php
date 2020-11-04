@@ -154,6 +154,17 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $path = 'amazon_listing/duplicateProducts';
         $this->jsUrl->add($this->getUrl('*/' . $path), $path);
 
+        $path = 'amazon_listing/transferring/index';
+        $this->jsUrl->add($this->getUrl('*/' . $path, [
+            'listing_id' => $this->listing->getId()
+        ]), $path);
+
+        $path = 'amazon_listing_transferring/getMarketplace';
+        $this->jsUrl->add($this->getUrl('*/' . $path), $path);
+
+        $path = 'amazon_listing_transferring/getListings';
+        $this->jsUrl->add($this->getUrl('*/' . $path), $path);
+
         $this->jsUrl->add($this->getUrl('*/amazon_log_listing_product/index', [
             \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD => $this->listing['id'],
         ]), 'logViewUrl');
@@ -233,7 +244,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $popupTitle = $this->__('Moving Amazon Items');
 
         $taskCompletedMessage = $this->__('Task completed. Please wait ...');
-        $taskCompletedSuccessMessage = $this->__('"%task_title%" Task has successfully submitted to be processed.');
+        $taskCompletedSuccessMessage = $this->__('"%task_title%" Task has submitted to be processed.');
         $taskCompletedWarningMessage = $this->__(
             '"%task_title%" Task has completed with warnings. <a target="_blank" href="%url%">View Log</a> for details.'
         );
@@ -302,6 +313,8 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'Based on Magento Categories' => $this->__('Based on Magento Categories'),
             'You must select at least 1 Category.' => $this->__('You must select at least 1 Category.'),
             'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.'),
+            'Sell on Another Marketplace' => $this->__('Sell on Another Marketplace'),
+            'Create new' => $this->__('Create new'),
 
             'Add New Shipping Policy' => $this->__('Add New Shipping Policy'),
             'Add New Product Tax Code Policy'  => $this->__('Add New Product Tax Code Policy'),

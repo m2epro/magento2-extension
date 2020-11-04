@@ -1,4 +1,47 @@
-* 1.8.1 (r4220) (02/10/2020) 
+* 1.9.0 (r4347) (04/11/2020) 
+
+Common: [Added] Grouped Product Improvement
+Common: [Added] Sell on another Marketplace
+Common: [Added] Notification if M2 Synchronization is disabled
+Common: [Fixed] Duplicate tracking number is created when Mark order as shipped
+Common: [Fixed] Selected items are not displayed/Reset filter button displays selected items
+Common: [Fixed] Exception is displayed during New Listing Creation
+Common: [Fixed] Only Mapped Products must be selected
+Common: [Improved] Save filtered conditions when switching between Listings view modes
+Common: [Improved] Change error message content
+Common: [Improved] Partial data download optimization
+Common: [Improved] Ability to find Child in the Listing Search
+Common: [Improved] Orders reimport optimization
+Common: [Improved] Review System > Configurations > M2E Pro menus
+Common: [Improved] Third party and listing products synchronization
+Common: [Improved] Delete old records in operation history table once day
+Common: [Improved] Add support for migration from 6.9.* versions
+Common: [Improved] Notification if M2 Synchronization wasn’t enabled on the last Migration Wizard Step
+Common: [Removed] 'successfully' word from all messages
+eBay: [Added] eBay Managed Payments
+eBay: [Fixed] The Next Step is displayed if the required field is empty
+eBay: [Fixed] Pop-up is not displayed on the "M2E Pro Listing Settings" page after clicking on the "Save as New Policy" button
+eBay: [Fixed] Unable to save eBay item specifics multi-choice
+eBay: [Improved] Change text in Help block
+eBay: [Improved] eBay order - Tracking details view improvement
+eBay: [Improved] Change Manufacturer Refurbished (ConditionID 2000) to Seller Refurbished (ConditionID 2500)
+eBay: [Removed] ShippingSurcharge eBay
+Amazon: [Added] Ability to skip tax for Amazon USA orders in some States
+Amazon: [Added] Add Amazon Turkey (TR) Marketplace
+Amazon: [Added] Add Amazon Sweden (SE) Marketplace
+Amazon: [Fixed] The fatal error is displayed on the "View Amazon Listing" page after changing to the "Settings" View Mode
+Amazon: [Fixed] Refund Action instead of Cancel is written in order_change table if Credit Memo was created for Unshipped Order
+Amazon: [Fixed] Error when try to update Amazon account
+Amazon: [Fixed] Wrong output SKU
+Amazon: [Fixed] Filter does not work by sku magento
+Amazon: [Fixed] Numeric SKU value indicated as not listed
+Amazon: [Fixed] Undefined index: in Model/Listing/SynchronizeInventory/Amazon/ListingProductsHandler.php on line 59
+Walmart: [Fixed] Exception is occurred after new Walmart Account was saved
+Walmart: [Fixed] Exception is occurred during order downloading
+Walmart: [Fixed] Every order item is being shipped separately
+Walmart: [Improved] Keywords improvement - add attribute with 'Text Area' input type
+
+* 1.8.1 (r4218) (02/10/2020)
 
 Common: [Fixed] Email notification settings can't be disabled
 Common: [Fixed] Not working link in enable secure key

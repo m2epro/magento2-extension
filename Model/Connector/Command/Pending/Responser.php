@@ -20,16 +20,37 @@ abstract class Responser extends \Ess\M2ePro\Model\AbstractModel
 
     protected $preparedResponseData = [];
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
+    protected $amazonFactory;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory  */
+    protected $walmartFactory;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
+    protected $ebayFactory;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
+    protected $activeRecordFactory;
+
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         array $params = []
     ) {
-        $this->params   = $params;
-        $this->response = $response;
+        $this->params              = $params;
+        $this->response            = $response;
+        $this->amazonFactory       = $amazonFactory;
+        $this->walmartFactory      = $walmartFactory;
+        $this->ebayFactory         = $ebayFactory;
+        $this->activeRecordFactory = $activeRecordFactory;
+
         parent::__construct($helperFactory, $modelFactory);
     }
 

@@ -467,4 +467,34 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
     }
 
     //########################################
+
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function pretendedToBeSimple()
+    {
+        if ($this->getMagentoProduct() === null || $this->getChildObject()->getChannelItem() === null) {
+            return false;
+        }
+
+        if ($this->getMagentoProduct()->isGroupedType()) {
+            return $this->getChildObject()->getChannelItem()->isGroupedProductModeSet();
+        }
+
+        return false;
+    }
+
+    //########################################
+
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getAdditionalData()
+    {
+        return $this->getSettings('additional_data');
+    }
+
+    //########################################
 }

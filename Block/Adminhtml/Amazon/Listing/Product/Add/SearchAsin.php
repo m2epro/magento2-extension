@@ -120,7 +120,7 @@ HTML
         $createEmptyListingMessage = $this->__('Are you sure you want to create empty Listing?');
 
         $taskCompletedMessage = $this->__('Task completed. Please wait ...');
-        $taskCompletedSuccessMessage = $this->__('"%task_title%" Task has successfully submitted to be processed.');
+        $taskCompletedSuccessMessage = $this->__('"%task_title%" Task has submitted to be processed.');
         $taskCompletedWarningMessage = $this->__(
             '"%task_title%" Task has completed with warnings. <a target="_blank" href="%url%">View Log</a> for details.'
         );

@@ -63,7 +63,7 @@ class Amazon extends Command
                 ['listing_id',
                     'product_id',
                     new \Zend_Db_Expr('COUNT(product_id) - 1 AS count_of_duplicates'),
-                    new \Zend_Db_Expr('MAX(mlp.id) AS save_this_id'),
+                    new \Zend_Db_Expr('MIN(mlp.id) AS save_this_id'),
                 ]
             )
             ->group(['mlp.product_id', 'malp.sku'])

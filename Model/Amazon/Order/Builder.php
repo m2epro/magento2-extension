@@ -89,7 +89,7 @@ class Builder extends AbstractModel
         // Init sale data
         // ---------------------------------------
         $this->setData('paid_amount', (float)$data['paid_amount']);
-        $this->setData('tax_details', $this->getHelper('Data')->jsonEncode($data['tax_details']));
+        $this->setData('tax_details', $this->getHelper('Data')->jsonEncode($this->prepareTaxDetails($data)));
         $this->setData('discount_details', $this->getHelper('Data')->jsonEncode($data['discount_details']));
         $this->setData('currency', $data['currency']);
         $this->setData('qty_shipped', $data['qty_shipped']);
@@ -172,6 +172,47 @@ class Builder extends AbstractModel
 
     //########################################
 
+    private function prepareTaxDetails($data)
+    {
+        if ($this->isNeedSkipTax($data)) {
+            $data['tax_details']['product'] = 0;
+            $data['tax_details']['shipping'] = 0;
+            $data['tax_details']['gift'] = 0;
+        }
+
+        return $data['tax_details'];
+    }
+
+    private function isNeedSkipTax($data)
+    {
+        if (!$this->account->getChildObject()->isAmazonCollectsEnabled()) {
+            return false;
+        }
+
+        $statesList = $this->getHelper('Component\Amazon')->getStatesList();
+        $excludedStates = $this->account->getChildObject()->getExcludedStates();
+
+        if (empty($excludedStates) || !isset($data['shipping_address']['state'])) {
+            return false;
+        }
+
+        $state = strtoupper($data['shipping_address']['state']);
+
+        foreach ($statesList as $code => $title) {
+            if (!in_array($code, $excludedStates)) {
+                continue;
+            }
+
+            if ($state == $code || $state == strtoupper($title)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    //########################################
+
     /**
      * @return \Ess\M2ePro\Model\Order
      */
@@ -239,7 +280,7 @@ class Builder extends AbstractModel
     //########################################
 
     /**
-     * @return \Ess\M2ePro\Model\Order
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     private function createOrUpdateOrder()
     {
@@ -252,11 +293,23 @@ class Builder extends AbstractModel
                 'shipping_address',
                 $this->getHelper('Data')->jsonEncode($this->getData('shipping_address'))
             );
-            $this->order->addData($this->getData());
-            $this->order->save();
 
-            $this->order->getChildObject()->addData($this->getData());
-            $this->order->getChildObject()->save();
+            foreach ($this->getData() as $key => $value) {
+                if (!$this->order->getId() || ($this->order->hasData($key) && $this->order->getData($key) != $value)) {
+                    $this->order->addData($this->getData());
+                    $this->order->save();
+                    break;
+                }
+            }
+
+            $amazonOrder = $this->order->getChildObject();
+            foreach ($this->getData() as $key => $value) {
+                if (!$this->order->getId() || ($amazonOrder->hasData($key) && $amazonOrder->getData($key) != $value)) {
+                    $amazonOrder->addData($this->getData());
+                    $amazonOrder->save();
+                    break;
+                }
+            }
         }
 
         $this->order->setAccount($this->account);

@@ -80,6 +80,24 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         return $this->getListingProductInspectorMode() == 1;
     }
 
+    public function getGroupedProductMode()
+    {
+        return (int)$this->getHelper('Module')->getConfig()->getGroupValue(
+            self::CONFIG_GROUP,
+            'grouped_product_mode'
+        );
+    }
+
+    public function isGroupedProductModeOptions()
+    {
+        return $this->getGroupedProductMode() == \Ess\M2ePro\Model\Listing\Product::GROUPED_PRODUCT_MODE_OPTIONS;
+    }
+
+    public function isGroupedProductModeSet()
+    {
+        return $this->getGroupedProductMode() == \Ess\M2ePro\Model\Listing\Product::GROUPED_PRODUCT_MODE_SET;
+    }
+
     //########################################
 
     public function getSecureImageUrlInItemDescriptionMode()
@@ -187,6 +205,14 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
                 self::CONFIG_GROUP,
                 'listing_product_inspector_mode',
                 $values['listing_product_inspector_mode']
+            );
+        }
+
+        if (isset($values['grouped_product_mode'])) {
+            $this->getHelper('Module')->getConfig()->setGroupValue(
+                self::CONFIG_GROUP,
+                'grouped_product_mode',
+                $values['grouped_product_mode']
             );
         }
     }

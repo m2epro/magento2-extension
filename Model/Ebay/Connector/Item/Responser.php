@@ -18,7 +18,7 @@ use Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection;
 /**
  * Class \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
  */
-abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending\Responser
+abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Responser
 {
     /** @var \Ess\M2ePro\Model\Listing\Product */
     protected $listingProduct = null;
@@ -40,6 +40,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
@@ -47,10 +49,18 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $params = []
     ) {
-        parent::__construct($ebayFactory, $activeRecordFactory, $response, $helperFactory, $modelFactory, $params);
+        parent::__construct(
+            $response,
+            $helperFactory,
+            $modelFactory,
+            $amazonFactory,
+            $walmartFactory,
+            $ebayFactory,
+            $activeRecordFactory,
+            $params
+        );
 
-        $listingProductId = $this->params['product']['id'];
-        $this->listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $listingProductId);
+        $this->listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $this->params['product']['id']);
     }
 
     //########################################
@@ -433,8 +443,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
                 'full_variations_mode' => true
             ],
             'result',
-            $this->getMarketplace(),
-            $this->getAccount()
+            $this->ebayFactory->getObjectLoaded('Marketplace', $this->getMarketplaceId()),
+            $this->ebayFactory->getObjectLoaded('Account', $this->getAccountId())
         );
 
         try {
@@ -743,19 +753,19 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
     //########################################
 
     /**
-     * @return \Ess\M2ePro\Model\Account
+     * @return int
      */
-    protected function getAccount()
+    protected function getAccountId()
     {
-        return $this->getObjectByParam('Account', 'account_id');
+        return (int)$this->params['account_id'];
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Marketplace
+     * @return int
      */
-    protected function getMarketplace()
+    protected function getMarketplaceId()
     {
-        return $this->getObjectByParam('Account', 'marketplace_id');
+        return (int)$this->params['marketplace_id'];
     }
 
     //---------------------------------------

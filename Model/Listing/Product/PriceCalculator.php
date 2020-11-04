@@ -791,22 +791,32 @@ abstract class PriceCalculator extends AbstractModel
         return $this->convertValueFromStoreToMarketplace($value);
     }
 
+    /**
+     * @param \Ess\M2ePro\Model\Magento\Product $product
+     *
+     * @return double
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function getGroupedProductValue(Product $product)
     {
         $value = 0;
-
-        /** @var $productTypeInstance \Magento\GroupedProduct\Model\Product\Type\Grouped */
-        $productTypeInstance = $product->getTypeInstance();
-
-        foreach ($productTypeInstance->getAssociatedProducts($product->getProduct()) as $childProduct) {
-
-            /** @var $childProduct Product */
-            $childProduct = $this->modelFactory->getObject('Magento\Product')->setProduct($childProduct);
+        foreach ($product->getTypeInstance()->getAssociatedProducts($product->getProduct()) as $childProduct) {
+            /** @var \Magento\Catalog\Model\Product $childProduct */
 
             $variationValue = (float)$childProduct->getSpecialPrice();
             $variationValue <= 0 && $variationValue = (float)$childProduct->getPrice();
 
-            if ($variationValue < $value || $value == 0) {
+            if ($this->getProduct()->isGroupedProductModeSet()) {
+                $defaultQty = $childProduct->getQty();
+                if ($defaultQty <= 0 || $variationValue <= 0) {
+                    continue;
+                }
+
+                $variationValue *= $defaultQty;
+                $value += $variationValue;
+
+            } elseif ($variationValue < $value || $value === 0) {
                 $value = $variationValue;
             }
         }

@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Product;
 /**
  * Class \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
  */
-abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Responser
+abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Responser
 {
     /**
      * @var \Ess\M2ePro\Model\Listing\Product
@@ -45,12 +45,23 @@ abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $params = []
     ) {
-        parent::__construct($amazonFactory, $activeRecordFactory, $response, $helperFactory, $modelFactory, $params);
+        parent::__construct(
+            $response,
+            $helperFactory,
+            $modelFactory,
+            $amazonFactory,
+            $walmartFactory,
+            $ebayFactory,
+            $activeRecordFactory,
+            $params
+        );
 
         $this->listingProduct = $this->amazonFactory->getObjectLoaded(
             'Listing\Product',
@@ -306,25 +317,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
     }
 
     //########################################
-
-    /**
-     * @return \Ess\M2ePro\Model\Account
-     */
-    protected function getAccount()
-    {
-        return $this->getObjectByParam('Account', 'account_id');
-    }
-
-    /**
-     * @return \Ess\M2ePro\Model\Marketplace
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    protected function getMarketplace()
-    {
-        return $this->getAccount()->getChildObject()->getMarketplace();
-    }
-
-    //---------------------------------------
 
     protected function getActionType()
     {

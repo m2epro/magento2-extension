@@ -107,7 +107,7 @@ define([
                                     self.popUp.modal('closeModal');
                                     self.scrollPageToTop();
                                     MessagesObj.addSuccess(
-                                        M2ePro.translator.translate('Product(s) was successfully Mapped.')
+                                        M2ePro.translator.translate('Product(s) was Mapped.')
                                     );
                                 } else if (transport.responseText == 1) {
                                     self.alert(M2ePro.translator.translate('Product does not exist.'));

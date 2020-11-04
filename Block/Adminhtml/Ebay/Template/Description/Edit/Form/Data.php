@@ -112,10 +112,6 @@ class Data extends AbstractForm
                 'attrs' => ['attribute_code' => Description::CONDITION_EBAY_NEW_WITH_DEFECT]
             ],
             [
-                'label' => $this->__('Manufacturer Refurbished'),
-                'attrs' => ['attribute_code' => Description::CONDITION_EBAY_MANUFACTURER_REFURBISHED]
-            ],
-            [
                 'label' => $this->__('Seller Refurbished, Re-manufactured'),
                 'attrs' => ['attribute_code' => Description::CONDITION_EBAY_SELLER_REFURBISHED]
             ],
@@ -1353,6 +1349,11 @@ HTML
             [
                 'legend' => $this->__('Upgrade Tools'),
                 'collapsable' => true,
+                'tooltip' => $this->__('
+                    The features below are provided by eBay for
+                    <a href="https://www.ebay.com/help/selling/fees-credits-invoices/selling-fees?id=4364#optional"
+                    target="_blank">additional fees</a>.
+                ')
             ]
         );
 

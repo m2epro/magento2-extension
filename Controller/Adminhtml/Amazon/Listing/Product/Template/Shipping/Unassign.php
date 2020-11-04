@@ -42,7 +42,7 @@ class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\T
         if (!empty($productsIdsLocked)) {
             $messages[] = [
                 'type' => 'success',
-                'text' => $this->__('Shipping Policy was successfully unassigned.')
+                'text' => $this->__('Shipping Policy was unassigned.')
             ];
 
             $this->setShippingTemplateForProducts($productsIdsLocked, null);

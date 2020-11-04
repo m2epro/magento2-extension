@@ -59,7 +59,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         // Initialization block
         // ---------------------------------------
-        $this->setId('amazonListingViewMagentoGrid'.$this->listing['id']);
+        $this->setId('amazonListingViewGrid'.$this->listing['id']);
         // ---------------------------------------
 
         $this->hideMassactionColumn = true;

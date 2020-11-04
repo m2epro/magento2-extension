@@ -28,6 +28,18 @@ class Save extends Account
         $id = $this->getRequest()->getParam('id');
         $isEdit = $id !== null;
 
+        $searchField = empty($post['client_id']) ? 'consumer_id' : 'client_id';
+        $searchValue = empty($post['client_id']) ? $post['consumer_id'] : $post['client_id'];
+
+        $accountExists = $this->getExistsAccount($searchField, $searchValue);
+        if (empty($id) && !empty($accountExists)) {
+            $this->getMessageManager()->addError(
+                $this->__('An account with the same Walmart Client ID already exists.')
+            );
+
+            return $this->_redirect('*/*/new');
+        }
+
         // Add or update model
         // ---------------------------------------
         /** @var \Ess\M2ePro\Model\Walmart\Account $model */
@@ -56,22 +68,18 @@ class Save extends Account
                 /** @var $dispatcherObject \Ess\M2ePro\Model\Walmart\Connector\Dispatcher */
                 $dispatcherObject = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
 
+                $requestData = [
+                    'title'            => $post['title'],
+                    'marketplace_id'   => (int)$post['marketplace_id'],
+                    'related_store_id' => (int)$post['related_store_id']
+                ];
+
                 if ($post['marketplace_id'] == \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA) {
-                    $requestData = [
-                        'title'            => $post['title'],
-                        'marketplace_id'   => (int)$post['marketplace_id'],
-                        'related_store_id' => (int)$post['related_store_id'],
-                        'consumer_id'      => $post['consumer_id'],
-                        'private_key'      => $post['private_key']
-                    ];
+                    $requestData['consumer_id'] = $post['consumer_id'];
+                    $requestData['private_key'] = $post['private_key'];
                 } else {
-                    $requestData = [
-                        'title'            => $post['title'],
-                        'marketplace_id'   => (int)$post['marketplace_id'],
-                        'related_store_id' => (int)$post['related_store_id'],
-                        'client_id'        => $post['client_id'],
-                        'client_secret'    => $post['client_secret'],
-                    ];
+                    $requestData['client_id'] = $post['client_id'];
+                    $requestData['client_secret'] = $post['client_secret'];
                 }
 
                 if (!$isEdit) {
@@ -84,9 +92,9 @@ class Save extends Account
                     );
                     $dispatcherObject->process($connectorObj);
                 } else {
-                    $requestData = array_diff_assoc($requestData, $oldData);
 
-                    if (!empty($requestData)) {
+                    $arrayDiffAssoc = array_diff_assoc($requestData, $oldData);
+                    if (!empty($arrayDiffAssoc)) {
                         $connectorObj = $dispatcherObject->getConnector(
                             'account',
                             'update',
@@ -127,7 +135,7 @@ class Save extends Account
             return $this->getResult();
         }
 
-        $this->messageManager->addSuccess($this->__('Account was successfully saved'));
+        $this->messageManager->addSuccess($this->__('Account was saved'));
 
         /** @var $wizardHelper \Ess\M2ePro\Helper\Module\Wizard */
         $wizardHelper = $this->getHelper('Module\Wizard');
@@ -142,6 +150,21 @@ class Save extends Account
         }
 
         return $this->_redirect($this->getHelper('Data')->getBackUrl('list', [], ['edit'=>$routerParams]));
+    }
+
+    //########################################
+
+    protected function getExistsAccount($search, $value)
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $account */
+        $account = $this->walmartFactory->getObject('Account')->getCollection()
+            ->addFieldToFilter($search, $value);
+
+        if (!$account->getSize()) {
+            return null;
+        }
+
+        return $account->getFirstItem();
     }
 
     //########################################

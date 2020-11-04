@@ -25,8 +25,8 @@ class ProcessResult extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->removeMissedProcessingLocks();
         $this->processExpired();
 
-        $this->processCompletedSingle();
-        $this->processCompletedPartial();
+        $this->processCompleted(\Ess\M2ePro\Model\Processing::TYPE_SINGLE, self::SINGLE_PROCESSINGS_PER_CRON_COUNT);
+        $this->processCompleted(\Ess\M2ePro\Model\Processing::TYPE_PARTIAL, self::PARTIAL_PROCESSINGS_PER_CRON_COUNT);
     }
 
     //########################################
@@ -95,64 +95,13 @@ class ProcessResult extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     //----------------------------------------
 
-    protected function processCompletedSingle()
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Processing\Collection $processingCollection */
-        $processingCollection = $this->activeRecordFactory->getObject('Processing')->getCollection();
-        $processingCollection->addFieldToFilter('is_completed', 1);
-        $processingCollection->addFieldToFilter('type', \Ess\M2ePro\Model\Processing::TYPE_SINGLE);
-        $processingCollection->getSelect()->order('main_table.id ASC');
-        $processingCollection->getSelect()->limit(self::SINGLE_PROCESSINGS_PER_CRON_COUNT);
-
-        /** @var \Ess\M2ePro\Model\Processing[] $processingObjects */
-        $processingObjects = $processingCollection->getItems();
-        if (empty($processingObjects)) {
-            return;
-        }
-
-        $iteration = 0;
-        $percentsForOneAction = 50 / count($processingObjects);
-
-        foreach ($processingObjects as $processingObject) {
-            if ($iteration % 10 == 0) {
-                $this->eventManager->dispatch(
-                    \Ess\M2ePro\Model\Cron\Strategy\AbstractModel::PROGRESS_SET_DETAILS_EVENT_NAME,
-                    [
-                        'progress_nick' => self::NICK,
-                        'percentage'    => ceil($percentsForOneAction * $iteration),
-                        'total'         => count($processingObjects)
-                    ]
-                );
-            }
-
-            try {
-                if (!$this->modelFactory->canCreateObject($processingObject->getModel())) {
-                    throw new \Ess\M2ePro\Model\Exception(
-                        sprintf('Responser runner model class "%s" does not exists', $processingObject->getModel())
-                    );
-                }
-
-                /** @var \Ess\M2ePro\Model\Processing\Runner $processingRunner */
-                $processingRunner = $this->modelFactory->getObject($processingObject->getModel());
-                $processingRunner->setProcessingObject($processingObject);
-
-                $processingRunner->processSuccess() && $processingRunner->complete();
-            } catch (\Exception $exception) {
-                $processingObject->forceRemove();
-                $this->getHelper('Module\Exception')->process($exception);
-            }
-
-            $iteration++;
-        }
-    }
-
-    protected function processCompletedPartial()
+    protected function processCompleted($type, $limit)
     {
         $processingCollection = $this->activeRecordFactory->getObject('Processing')->getCollection();
         $processingCollection->addFieldToFilter('is_completed', 1);
-        $processingCollection->addFieldToFilter('type', \Ess\M2ePro\Model\Processing::TYPE_PARTIAL);
+        $processingCollection->addFieldToFilter('type', $type);
         $processingCollection->getSelect()->order('main_table.id ASC');
-        $processingCollection->getSelect()->limit(self::PARTIAL_PROCESSINGS_PER_CRON_COUNT);
+        $processingCollection->getSelect()->limit($limit);
 
         /** @var \Ess\M2ePro\Model\Processing[] $processingObjects */
         $processingObjects = $processingCollection->getItems();

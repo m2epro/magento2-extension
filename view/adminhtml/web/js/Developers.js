@@ -49,7 +49,7 @@ define([
                     result = JSON.parse(result);
 
                     if (result.success) {
-                        MessagesObj.addSuccess(M2ePro.translator.translate('Settings successfully saved'));
+                        MessagesObj.addSuccess(M2ePro.translator.translate('Settings saved'));
                         $('save_inspector_mode').hide();
                         self.inspectionModeValue = self.inspectionModeElement.value;
                     } else {

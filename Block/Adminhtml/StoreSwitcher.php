@@ -78,6 +78,11 @@ class StoreSwitcher extends Magento\AbstractBlock
         return $this->getData('has_empty_option') === true;
     }
 
+    public function isDisabled()
+    {
+        return $this->getData('disabled') === true;
+    }
+
     //########################################
 
     public function getDefaultStoreId()

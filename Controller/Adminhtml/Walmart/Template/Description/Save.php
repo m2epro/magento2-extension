@@ -85,7 +85,7 @@ class Save extends Template
         $id = $descriptionTemplate->getId();
         // ---------------------------------------
 
-        $this->messageManager->addSuccess($this->__('Policy was successfully saved'));
+        $this->messageManager->addSuccess($this->__('Policy was saved'));
         return $this->_redirect($this->getHelper('Data')->getBackUrl('*/walmart_template/index', [], [
             'edit' => [
                 'id' => $id,

@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Ebay\Connector\AccountPickupStore\Synchronize;
 /**
  * Class \Ess\M2ePro\Model\Ebay\Connector\AccountPickupStore\Synchronize\ProductsResponser
  */
-class ProductsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending\Responser
+class ProductsResponser extends \Ess\M2ePro\Model\Connector\Command\Pending\Responser
 {
     /** @var \Ess\M2ePro\Model\Ebay\Account\PickupStore\State[] $pickupStoreStateItems */
     private $pickupStoreStateItems = [];
@@ -23,13 +23,24 @@ class ProductsResponser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $params = []
     ) {
-        parent::__construct($ebayFactory, $activeRecordFactory, $response, $helperFactory, $modelFactory, $params);
+        parent::__construct(
+            $response,
+            $helperFactory,
+            $modelFactory,
+            $amazonFactory,
+            $walmartFactory,
+            $ebayFactory,
+            $activeRecordFactory,
+            $params
+        );
 
         $collection = $this->activeRecordFactory->getObject('Ebay_Account_PickupStore_State')->getCollection();
         $collection->addFieldToFilter('id', array_keys($this->params['pickup_store_state_items']));

@@ -48,24 +48,29 @@ class Builder extends AbstractModel
 
     public function process()
     {
-        return $this->createOrderExternalTransaction();
-    }
-
-    //########################################
-
-    /**
-     * @return \Ess\M2ePro\Model\Ebay\Order\ExternalTransaction
-     */
-    protected function createOrderExternalTransaction()
-    {
+        /** @var \Ess\M2ePro\Model\Ebay\Order\ExternalTransaction $transaction */
         $transaction = $this->activeRecordFactory->getObject('Ebay_Order_ExternalTransaction')
             ->getCollection()
             ->addFieldToFilter('order_id', $this->getData('order_id'))
             ->addFieldToFilter('transaction_id', $this->getData('transaction_id'))
             ->getFirstItem();
 
-        $transaction->addData($this->getData());
-        $transaction->save();
+        foreach ($this->getData() as $key => $value) {
+            if ($transaction->getId() && (!$transaction->hasData($key) || $transaction->getData($key) == $value)) {
+                continue;
+            }
+
+            if ($key === 'transaction_date') {
+                $newDate = new \DateTime($value, new \DateTimeZone('UTC'));
+                if ($newDate->format('Y-m-d H:i:s') === $transaction->getData($key)) {
+                    continue;
+                }
+            }
+
+            $transaction->addData($this->getData());
+            $transaction->save();
+            break;
+        }
 
         return $transaction;
     }

@@ -25,13 +25,10 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('walmartTemplateDescriptionEditForm');
-        // ---------------------------------------
 
-        $this->templateModel   = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
-        $this->formData        = $this->getFormData();
+        $this->templateModel = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
+        $this->formData      = $this->getFormData();
 
         /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
         $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
@@ -41,6 +38,10 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text_select' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'select']),
             'text' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text']),
             'text_weight' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'weight']),
+            'text_keywords' => $magentoAttributeHelper->filterByInputTypes(
+                $allAttributes,
+                ['text', 'select', 'textarea']
+            ),
             'text_images' => $magentoAttributeHelper->filterByInputTypes(
                 $allAttributes,
                 ['text', 'image', 'media_image', 'gallery', 'multiline', 'textarea', 'select', 'multiselect']
@@ -792,7 +793,7 @@ HTML
                 'create_magento_attribute' => true,
                 'tooltip' => $this->__('Specify the relevant keywords that buyer would use to find your Item.')
             ]
-        )->addCustomAttribute('allowed_attribute_types', 'text,select');
+        )->addCustomAttribute('allowed_attribute_types', 'text,select,textarea');
 
         $fieldSet->addField(
             'keywords_custom_value',
@@ -805,6 +806,7 @@ HTML
                 'class' => 'input-text M2ePro-required-when-visible',
                 'required' => true,
                 'field_extra_attributes' => 'id="keywords_custom_value_tr" style="display: none;"',
+                'rows' => '5'
             ]
         );
 
@@ -1048,7 +1050,7 @@ HTML
         return array_merge($optionsResult, $this->getAttributeOptions(
             Description::KEYWORDS_MODE_CUSTOM_ATTRIBUTE,
             'keywords_custom_attribute',
-            'text_select'
+            'text_keywords'
         ));
     }
 

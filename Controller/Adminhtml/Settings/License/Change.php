@@ -48,7 +48,7 @@ class Change extends \Ess\M2ePro\Controller\Adminhtml\Base
 
             $this->setJsonContent([
                 'success' => true,
-                'message' => $this->__('The License Key has been successfully updated.')
+                'message' => $this->__('The License Key has been updated.')
             ]);
             return $this->getResult();
         }

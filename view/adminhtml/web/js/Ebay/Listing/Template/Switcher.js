@@ -233,19 +233,6 @@ define([
 
         // ---------------------------------------
 
-        scrollToFirstFailedElement: function()
-        {
-            var errors = $$('label.mage-error');
-
-            // if (errors.length > 0) {
-            //     $('#ebayListingTemplateEditTabs').showTabContent(errors[0]);
-            // }
-
-            // errors[0].up('table').scrollIntoView();
-        },
-
-        // ---------------------------------------
-
         saveSwitchers: function(callback)
         {
             var validationResult = jQuery('#edit_form').valid();
@@ -255,7 +242,6 @@ define([
             }
 
             if (!validationResult) {
-                EbayListingTemplateSwitcherObj.scrollToFirstFailedElement();
                 return;
             }
 
@@ -314,32 +300,8 @@ define([
 
         // ---------------------------------------
 
-        validateCustomTemplate: function(templateNick)
-        {
-            var validationResult = $('template_' + templateNick + '_data_container').select('select, input').collect(
-                function (el) {
-                    return jQuery('#edit_form').form().validate().element(el);
-                }
-            );
-
-            if (validationResult.indexOf(false) != -1) {
-                EbayListingTemplateSwitcherObj.scrollToFirstFailedElement();
-                return false;
-            }
-
-            return true;
-        },
-
-        // ---------------------------------------
-
         customSaveAsTemplate: function(templateNick)
         {
-            if (!this.validateCustomTemplate(templateNick)) {
-                return;
-            }
-
-            // jQuery('#edit_form').valid()
-
             new Ajax.Request(M2ePro.url.get('ebay_template/newTemplateHtml'), {
                 method: 'GET',
                 parameters: {

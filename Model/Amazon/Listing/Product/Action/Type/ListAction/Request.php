@@ -21,6 +21,25 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
 
     //########################################
 
+    protected function beforeBuildDataEvent()
+    {
+        $additionalData = $this->getListingProduct()->getAdditionalData();
+
+        if ($this->getListingProduct()->getMagentoProduct()->isGroupedType()) {
+            $additionalData['grouped_product_mode'] = $this->getHelper('Module_Configuration')
+                ->getGroupedProductMode();
+        }
+
+        unset($additionalData['synch_template_list_rules_note']);
+
+        $this->getListingProduct()->setSettings('additional_data', $additionalData);
+        $this->getListingProduct()->save();
+
+        parent::beforeBuildDataEvent();
+    }
+
+    //########################################
+
     protected function getActionData()
     {
         $data = [

@@ -78,7 +78,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
                 $item = $order->getItemsCollection()
                     ->addFieldToFilter('amazon_order_item_id', $orderItemId)
                     ->getFirstItem();
-                if ($item === null) {
+                if (!$item->getId()) {
                     continue;
                 }
 

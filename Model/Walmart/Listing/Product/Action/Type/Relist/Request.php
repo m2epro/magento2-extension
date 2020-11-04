@@ -15,6 +15,20 @@ class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Requ
 {
     //########################################
 
+    protected function beforeBuildDataEvent()
+    {
+        $additionalData = $this->getListingProduct()->getAdditionalData();
+
+        unset($additionalData['synch_template_list_rules_note']);
+
+        $this->getListingProduct()->setSettings('additional_data', $additionalData);
+        $this->getListingProduct()->save();
+
+        parent::beforeBuildDataEvent();
+    }
+
+    //########################################
+
     protected function getActionData()
     {
         $data = array_merge(

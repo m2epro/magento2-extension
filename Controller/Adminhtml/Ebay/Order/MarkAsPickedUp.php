@@ -19,7 +19,7 @@ class MarkAsPickedUp extends Order
     {
         if ($this->sendInStorePickupNotifications('picked_up')) {
             $this->messageManager->addSuccess(
-                $this->__('Orders were successfully marked as Picked Up.')
+                $this->__('Orders were marked as Picked Up.')
             );
         } else {
             $this->messageManager->addError(

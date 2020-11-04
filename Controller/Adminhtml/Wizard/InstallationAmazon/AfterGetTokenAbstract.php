@@ -80,6 +80,11 @@ abstract class AfterGetTokenAbstract extends InstallationAmazon
         $data['magento_orders_settings']['listing_other']['store_id'] = $this->getHelper('Magento\Store')
             ->getDefaultStoreId();
 
+        $data['magento_orders_settings']['tax']['excluded_states'] = implode(
+            ',',
+            $data['magento_orders_settings']['tax']['excluded_states']
+        );
+
         return $data;
     }
 }

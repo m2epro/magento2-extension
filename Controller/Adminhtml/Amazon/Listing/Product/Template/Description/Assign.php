@@ -69,7 +69,7 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
         $this->runProcessorForParents($filteredProductsIdsByType);
 
         $messages[] = $this->__(
-            'Description Policy was successfully assigned to %count% Products',
+            'Description Policy was assigned to %count% Products',
             count($filteredProductsIdsByType)
         );
 

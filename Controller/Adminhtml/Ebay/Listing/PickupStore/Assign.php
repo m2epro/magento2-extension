@@ -45,7 +45,7 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
 
             $messages[] = [
                 'type' => 'success',
-                'text' => $this->__('Stores have been successfully assigned.')
+                'text' => $this->__('Stores have been assigned.')
             ];
         }
 

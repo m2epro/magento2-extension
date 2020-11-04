@@ -26,6 +26,11 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
         $additionalData = $this->getListingProduct()->getAdditionalData();
 
+        if ($this->getListingProduct()->getMagentoProduct()->isGroupedType()) {
+            $additionalData['grouped_product_mode'] = $this->getHelper('Module_Configuration')
+                ->getGroupedProductMode();
+        }
+
         unset($additionalData['synch_template_list_rules_note']);
         unset($additionalData['item_duplicate_action_required']);
 

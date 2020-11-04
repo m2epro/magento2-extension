@@ -100,7 +100,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
     {
         $this->jsUrl->add($this->getUrl('*/*/index', ['active_tab' => self::TAB_ID_LICENSE]), 'licenseTab');
         $this->jsTranslator->addTranslations([
-            'Settings successfully saved' => $this->__('Settings successfully saved'),
+            'Settings saved' => $this->__('Settings saved'),
             'Error' => $this->__('Error'),
         ]);
         $this->js->addRequireJs([

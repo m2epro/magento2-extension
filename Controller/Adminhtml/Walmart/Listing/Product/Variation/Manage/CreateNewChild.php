@@ -48,7 +48,7 @@ class CreateNewChild extends Main
 
         $this->setJsonContent([
             'type' => 'success',
-            'msg'  => $this->__('New Walmart Child Product was successfully created.')
+            'msg'  => $this->__('New Walmart Child Product was created.')
         ]);
 
         return $this->getResult();

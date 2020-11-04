@@ -66,7 +66,7 @@ class CreateNewChild extends Main
 
         $result = [
             'type' => 'success',
-            'msg'  => $this->__('New Amazon Child Product was successfully created.')
+            'msg'  => $this->__('New Amazon Child Product was created.')
         ];
 
         if ($createNewAsin) {

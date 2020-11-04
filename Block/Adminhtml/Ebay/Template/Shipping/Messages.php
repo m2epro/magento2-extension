@@ -134,8 +134,7 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
                 $attributes = array_merge(
                     $attributes,
                     $service->getCostAttributes(),
-                    $service->getCostAdditionalAttributes(),
-                    $service->getCostSurchargeAttributes()
+                    $service->getCostAdditionalAttributes()
                 );
             }
         } else {
@@ -147,11 +146,6 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
             $shippingCostAdditionalAttributes = $template->getData('shipping_cost_additional_attribute');
             if (!empty($shippingCostAdditionalAttributes)) {
                 $attributes = array_merge($attributes, $shippingCostAdditionalAttributes);
-            }
-
-            $shippingCostSurchargeAttributes = $template->getData('shipping_cost_surcharge_attribute');
-            if (!empty($shippingCostSurchargeAttributes)) {
-                $attributes = array_merge($attributes, $shippingCostSurchargeAttributes);
             }
         }
 

@@ -6,15 +6,13 @@
  * @license    Commercial use is forbidden
  */
 
-/**
- * Handles shipments, created by seller in admin panel
- */
 namespace Ess\M2ePro\Model\Order\Shipment;
 
+use Ess\M2ePro\Helper\Data as Helper;
 use Magento\Sales\Model\ResourceModel\Order\Shipment\Track\Collection as TrackCollection;
 
 /**
- * Class \Ess\M2ePro\Model\Order\Shipment\Handler
+ * Class Ess\M2ePro\Model\Order\Shipment\Handler
  */
 abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
 {
@@ -45,10 +43,46 @@ abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     /**
+     * @return string
+     */
+    abstract protected function getComponentMode();
+
+    //########################################
+
+    /**
+     * @param \Ess\M2ePro\Model\Order $order
+     * @param \Magento\Sales\Model\Order\Shipment\Item $shipmentItem
+     *
+     * @return \Ess\M2ePro\Model\Order\Shipment\ItemToShipLoaderInterface
+     */
+    protected function getItemToShipLoader(
+        \Ess\M2ePro\Model\Order $order,
+        \Magento\Sales\Model\Order\Shipment\Item $shipmentItem
+    ) {
+        $additionalData = $this->getHelper('Data')->unserialize($shipmentItem->getOrderItem()->getAdditionalData());
+        $data = $additionalData[Helper::CUSTOM_IDENTIFIER];
+
+        $componentMode = ucfirst($this->getComponentMode());
+        if (isset($data['pretended_to_be_simple']) && $data['pretended_to_be_simple'] === true) {
+            return $this->modelFactory->getObject(
+                "{$componentMode}_Order_Shipment_ItemToShipLoader_PretendedToBeSimple",
+                ['data' => [$order, $shipmentItem]]
+            );
+        }
+
+        return $this->modelFactory->getObject(
+            "{$componentMode}_Order_Shipment_ItemToShipLoader_DefaultObject",
+            ['data' => [$order, $shipmentItem]]
+        );
+    }
+
+    //########################################
+
+    /**
      * @param \Ess\M2ePro\Model\Order $order
      * @param \Magento\Sales\Model\Order\Shipment $shipment
      * @return int
-     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Exception
      */
     public function handle(\Ess\M2ePro\Model\Order $order, \Magento\Sales\Model\Order\Shipment $shipment)
     {
@@ -57,7 +91,16 @@ abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
             return self::HANDLE_RESULT_SKIPPED;
         }
 
-        return $this->processStatusUpdates($order, $trackingDetails, $this->getItemsToShip($order, $shipment))
+        $items = [];
+        foreach ($shipment->getAllItems() as $shipmentItem) {
+            /** @var \Magento\Sales\Model\Order\Shipment\Item $shipmentItem */
+            $items = array_merge(
+                $items,
+                $this->getItemToShipLoader($order, $shipmentItem)->loadItem()
+            );
+        }
+
+        return $this->processStatusUpdates($order, $trackingDetails, $items)
             ? self::HANDLE_RESULT_SUCCEEDED
             : self::HANDLE_RESULT_FAILED;
     }
@@ -75,28 +118,13 @@ abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
             return self::HANDLE_RESULT_SKIPPED;
         }
 
-        $items = $this->getItemsToShipForShipmentItem($order, $shipmentItem);
+        $items = $this->getItemToShipLoader($order, $shipmentItem)->loadItem();
         return $this->processStatusUpdates($order, $trackingDetails, $items)
             ? self::HANDLE_RESULT_SUCCEEDED
             : self::HANDLE_RESULT_FAILED;
     }
 
-    /**
-     * @param \Ess\M2ePro\Model\Order $order
-     * @param \Magento\Sales\Model\Order\Shipment $shipment
-     * @return array
-     */
-    protected function getItemsToShip(\Ess\M2ePro\Model\Order $order, \Magento\Sales\Model\Order\Shipment $shipment)
-    {
-        $itemsToShip = [];
-
-        foreach ($shipment->getAllItems() as $shipmentItem) {
-            /** @var \Magento\Sales\Model\Order\Shipment\Item $shipmentItem */
-            $itemsToShip = array_merge($itemsToShip, $this->getItemsToShipForShipmentItem($order, $shipmentItem));
-        }
-
-        return $itemsToShip;
-    }
+    //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Order $order
@@ -107,14 +135,12 @@ abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function processStatusUpdates(\Ess\M2ePro\Model\Order $order, array $trackingDetails, array $items)
     {
+        if (empty($items)) {
+            return false;
+        }
+
         return $order->getChildObject()->updateShippingStatus($trackingDetails, $items);
     }
-
-    abstract protected function getComponentMode();
-    abstract protected function getItemsToShipForShipmentItem(
-        \Ess\M2ePro\Model\Order $order,
-        \Magento\Sales\Model\Order\Shipment\Item $shipmentItem
-    );
 
     //########################################
 
@@ -129,26 +155,21 @@ abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
         empty($tracks) && $tracks = $shipment->getTracksCollection();
 
         /** @var \Magento\Sales\Model\Order\Shipment\Track $track */
-        $track = $tracks instanceof TrackCollection ?
-                 $tracks->getLastItem() :
-                 end($tracks);
-
-        $number = trim($track->getData('track_number'));
-
+        $track = $tracks instanceof TrackCollection ? $tracks->getLastItem() : end($tracks);
+        $number = trim((string)$track->getData('track_number'));
         if (empty($number)) {
             return [];
         }
 
         $carrierCode = $carrierTitle = trim($track->getData('carrier_code'));
-
         $carrier = $this->carrierFactory->create($carrierCode, $order->getStoreId());
         $carrier && $carrierTitle = $carrier->getConfigData('title');
 
         return [
-            'carrier_code'     => $carrierCode,
-            'carrier_title'    => $carrierTitle,
-            'shipping_method'  => trim($track->getData('title')),
-            'tracking_number'  => $number
+            'carrier_code'    => $carrierCode,
+            'carrier_title'   => $carrierTitle,
+            'shipping_method' => trim($track->getData('title')),
+            'tracking_number' => $number
         ];
     }
 

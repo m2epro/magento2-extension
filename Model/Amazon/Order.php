@@ -39,9 +39,13 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
     private $grandTotalPrice = null;
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory */
+    protected $amazonFactory;
+
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\Magento\Order\ShipmentFactory $shipmentFactory,
         \Ess\M2ePro\Model\Amazon\Order\ShippingAddressFactory $shippingAddressFactory,
         \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
@@ -56,6 +60,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
+        $this->amazonFactory = $amazonFactory;
         $this->shipmentFactory = $shipmentFactory;
         $this->shippingAddressFactory = $shippingAddressFactory;
         $this->orderSender = $orderSender;
@@ -739,13 +744,25 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             $trackingDetails['fulfillment_date'] = $this->getHelper('Data')->getCurrentGmtDate();
         }
 
-        $params = [
+        if (!empty($trackingDetails['carrier_code'])) {
+            $trackingDetails['carrier_title'] = $this->getHelper('Component_Amazon')->getCarrierTitle(
+                $trackingDetails['carrier_code'],
+                isset($trackingDetails['carrier_title']) ? $trackingDetails['carrier_title'] : ''
+            );
+        }
+
+        if (!empty($trackingDetails['carrier_title'])) {
+            if ($trackingDetails['carrier_title'] == \Ess\M2ePro\Model\Order\Shipment\Handler::CUSTOM_CARRIER_CODE &&
+                !empty($trackingDetails['shipping_method'])) {
+                $trackingDetails['carrier_title'] = $trackingDetails['shipping_method'];
+            }
+        }
+
+        $params = array_merge([
             'amazon_order_id'  => $this->getAmazonOrderId(),
             'fulfillment_date' => $trackingDetails['fulfillment_date'],
             'items'            => []
-        ];
-
-        $params = array_merge($params, $trackingDetails);
+        ], $trackingDetails);
 
         foreach ($items as $item) {
             if (!isset($item['amazon_order_item_id']) || !isset($item['qty'])) {
@@ -762,44 +779,31 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             ];
         }
 
-        $orderId     = $this->getParentObject()->getId();
-        $action      = \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING;
-
         /** @var \Ess\M2ePro\Model\Order\Change $change */
         $change = $this->activeRecordFactory
-                       ->getObject('Order\Change')
-                       ->getCollection()
-                       ->addFieldToFilter('order_id', $orderId)
-                       ->addFieldToFilter('action', $action)
-                       ->addFieldToFilter('processing_attempt_count', 0)
-                       ->getFirstItem();
+            ->getObject('Order_Change')
+            ->getCollection()
+            ->addFieldToFilter('order_id', $this->getParentObject()->getId())
+            ->addFieldToFilter('action', \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING)
+            ->addFieldToFilter('processing_attempt_count', 0)
+            ->getFirstItem();
 
         $existingParams = $change->getParams();
 
         $newTrackingNumber = !empty($trackingDetails['tracking_number']) ? $trackingDetails['tracking_number'] : '';
         $oldTrackingNumber = !empty($existingParams['tracking_number']) ? $existingParams['tracking_number'] : '';
 
-        if ($change->getId() && $newTrackingNumber === $oldTrackingNumber) {
-            $this->updateOrderChange($change, $params);
-        } else {
-            $this->activeRecordFactory->getObject('Order\Change')->create(
-                $orderId,
-                $action,
+        if (!$change->getId() || $newTrackingNumber !== $oldTrackingNumber) {
+            $this->activeRecordFactory->getObject('Order_Change')->create(
+                $this->getParentObject()->getId(),
+                \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING,
                 $this->getParentObject()->getLog()->getInitiator(),
                 \Ess\M2ePro\Helper\Component\Amazon::NICK,
                 $params
             );
+            return true;
         }
 
-        return true;
-    }
-
-    /**
-     * @param \Ess\M2ePro\Model\Order\Change $change
-     * @param array $params
-     */
-    private function updateOrderChange(\Ess\M2ePro\Model\Order\Change $change, array $params)
-    {
         $existingParams = $change->getParams();
         foreach ($params['items'] as $newItem) {
             foreach ($existingParams['items'] as &$existingItem) {
@@ -807,25 +811,28 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
                     $newQtyTotal = $newItem['qty'] + $existingItem['qty'];
 
                     $maxQtyTotal  = $this->activeRecordFactory
-                                         ->getObject('Amazon_Order_Item')
-                                         ->getCollection()
-                                         ->addFieldToFilter(
-                                             'amazon_order_item_id',
-                                             $existingItem['amazon_order_item_id']
-                                         )
-                                         ->getFirstItem()
-                                         ->getQtyPurchased();
+                        ->getObject('Amazon_Order_Item')
+                        ->getCollection()
+                        ->addFieldToFilter(
+                            'amazon_order_item_id',
+                            $existingItem['amazon_order_item_id']
+                        )
+                        ->getFirstItem()
+                        ->getQtyPurchased();
                     $newQtyTotal >= $maxQtyTotal && $newQtyTotal = $maxQtyTotal;
                     $existingItem['qty'] = $newQtyTotal;
                     continue 2;
                 }
             }
+
             unset($existingItem);
             $existingParams['items'][] = $newItem;
         }
 
         $change->setData('params', $this->getHelper('Data')->jsonEncode($existingParams));
         $change->save();
+
+        return true;
     }
 
     //########################################
@@ -863,7 +870,9 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             'items'    => $items,
         ];
 
-        $totalItemsCount = $this->getParentObject()->getItemsCollection()->getSize();
+        $totalItemsCount = $this->amazonFactory->getObject('Order_Item')->getCollection()
+            ->addFieldToFilter('order_id', $this->getParentObject()->getId())
+            ->getSize();
 
         $orderId     = $this->getParentObject()->getId();
 

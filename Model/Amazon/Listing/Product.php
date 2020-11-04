@@ -123,17 +123,44 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     //########################################
 
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isVariationMode()
+    {
+        if ($this->hasData(__METHOD__)) {
+            return $this->getData(__METHOD__);
+        }
+
+        $result = $this->getMagentoProduct()->isProductWithVariations();
+
+        if ($this->getParentObject()->isGroupedProductModeSet()) {
+            $result = false;
+        }
+
+        $this->setData(__METHOD__, $result);
+
+        return $result;
+    }
+
+    /**
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function afterSaveNewEntity()
     {
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager $variationManager */
         $variationManager = $this->getVariationManager();
-        $magentoProduct = $this->getMagentoProduct();
-
-        if ($magentoProduct->isProductWithVariations() && !$variationManager->isVariationProduct()) {
-            $this->setData('is_variation_product', 1);
-            $variationManager->setRelationParentType();
-            $variationManager->getTypeModel()->resetProductAttributes(false);
-            $variationManager->getTypeModel()->getProcessor()->process();
+        if ($variationManager->isVariationProduct() || !$this->isVariationMode()) {
+            return null;
         }
+
+        $this->setData('is_variation_product', 1);
+
+        $variationManager->setRelationParentType();
+        $variationManager->getTypeModel()->resetProductAttributes(false);
+        $variationManager->getTypeModel()->getProcessor()->process();
     }
 
     //########################################

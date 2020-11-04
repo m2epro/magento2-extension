@@ -343,13 +343,6 @@ define([
                 }
 
                 var description = action.items[i].description;
-                if (description.indexOf('code:64') !== -1) {
-                    description = description.replace(/^(.*?)(\(code\:64,\s*amount_due\:(.*?)\s*,\s*currency\:(.*?)\s*)(\))(.*?)$/gi,
-                        '$1$2, <a href="#" onclick="EbayListingTransferringPaymentHandlerObj.payNowAction(\'$3\', \'$4\', \'\')">Add Funds</a>$5$6'
-
-                    );
-                }
-
                 html += '<div style="margin-top: 7px;"><div class="hl_messages_type">'+type+'</div><div class="hl_messages_text">'+description+'</div></div>';
             }
 

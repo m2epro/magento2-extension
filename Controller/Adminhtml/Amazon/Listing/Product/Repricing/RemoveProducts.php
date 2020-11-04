@@ -71,7 +71,7 @@ class RemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         $repricingSynchronization->run($skus);
 
         $this->getMessageManager()->addSuccess(
-            $this->__('Amazon Products have been successfully removed from the Amazon Repricing Tool.')
+            $this->__('Amazon Products have been removed from the Amazon Repricing Tool.')
         );
         return $this->_redirect($this->getUrl('*/amazon_listing/view', ['id' => $listingId]));
     }

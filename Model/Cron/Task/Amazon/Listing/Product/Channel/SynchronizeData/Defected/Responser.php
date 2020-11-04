@@ -13,7 +13,6 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeD
  */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defected\ItemsResponser
 {
-    protected $logsActionId       = null;
     protected $synchronizationLog = null;
 
     protected $resourceConnection;
@@ -24,13 +23,24 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defecte
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $params = []
     ) {
         $this->resourceConnection = $resourceConnection;
-        parent::__construct($amazonFactory, $activeRecordFactory, $response, $helperFactory, $modelFactory, $params);
+        parent::__construct(
+            $response,
+            $helperFactory,
+            $modelFactory,
+            $amazonFactory,
+            $walmartFactory,
+            $ebayFactory,
+            $activeRecordFactory,
+            $params
+        );
     }
 
     //########################################
@@ -153,24 +163,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defecte
     }
 
     //########################################
-
-    /**
-     * @return \Ess\M2ePro\Model\Account
-     */
-    protected function getAccount()
-    {
-        return $this->getObjectByParam('Account', 'account_id');
-    }
-
-    /**
-     * @return \Ess\M2ePro\Model\Marketplace
-     */
-    protected function getMarketplace()
-    {
-        return $this->getAccount()->getChildObject()->getMarketplace();
-    }
-
-    //-----------------------------------------
 
     protected function getSynchronizationLog()
     {

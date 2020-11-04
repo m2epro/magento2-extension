@@ -17,27 +17,33 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByAsin\ItemsRe
 
     /**
      * @return \Ess\M2ePro\Model\Listing\Product
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function getListingProduct()
     {
-        return $this->getObjectByParam('Listing\Product', 'listing_product_id');
+        return $this->amazonFactory->getObjectLoaded('Listing\Product', $this->params['listing_product_id']);
     }
 
     //########################################
 
+    /**
+     * @param $messageText
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function failDetected($messageText)
     {
         parent::failDetected($messageText);
 
         /** @var \Ess\M2ePro\Model\Listing\Log $logModel */
         $logModel = $this->activeRecordFactory->getObject('Listing\Log');
-
         $logModel->setComponentMode(\Ess\M2ePro\Helper\Component\Amazon::NICK);
 
+        $listingProduct = $this->getListingProduct();
+
         $logModel->addProductMessage(
-            $this->getListingProduct()->getListingId(),
-            $this->getListingProduct()->getProductId(),
-            $this->getListingProduct()->getId(),
+            $listingProduct->getListingId(),
+            $listingProduct->getProductId(),
+            $listingProduct->getId(),
             \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_UNKNOWN,
@@ -45,7 +51,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByAsin\ItemsRe
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
         );
 
-        $amazonListingProduct = $this->getListingProduct()->getChildObject();
+        $amazonListingProduct = $listingProduct->getChildObject();
 
         $amazonListingProduct->setData('search_settings_status', null);
         $amazonListingProduct->setData('search_settings_data', null);
@@ -54,6 +60,9 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByAsin\ItemsRe
 
     //########################################
 
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function processResponseData()
     {
         $responseData = $this->getPreparedResponseData();

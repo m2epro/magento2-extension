@@ -52,7 +52,7 @@ class SetMagentoCoreSetupValue extends Main
         $this->moduleResource->setDbVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER, $version);
         $this->moduleResource->setDataVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER, $version);
 
-        $this->messageManager->addSuccess($this->__('Extension upgrade was successfully completed.'));
+        $this->messageManager->addSuccess($this->__('Extension upgrade was completed.'));
         return $this->_redirect($this->getHelper('View_ControlPanel')->getPageUrl());
     }
 

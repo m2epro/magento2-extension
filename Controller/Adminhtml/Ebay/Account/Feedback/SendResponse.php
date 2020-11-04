@@ -35,7 +35,7 @@ class SendResponse extends Account
         $this->setJsonContent([
             'type' => $result ? 'success' : 'error',
             'text' => $result ?
-                $this->__('Feedback has been successfully sent.') :
+                $this->__('Feedback has been sent.') :
                 $this->__('Feedback was not sent.')
         ]);
 

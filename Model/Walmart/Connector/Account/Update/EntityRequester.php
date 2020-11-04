@@ -17,6 +17,14 @@ class EntityRequester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pendin
 
     public function getRequestData()
     {
+        /** @var \Ess\M2ePro\Model\Marketplace $marketplaceObject */
+        $marketplaceObject = $this->walmartFactory->getCachedObjectLoaded(
+            'Marketplace',
+            $this->params['marketplace_id']
+        );
+
+        $this->params['marketplace_id'] = $marketplaceObject->getNativeId();
+
         return $this->params;
     }
 

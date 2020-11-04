@@ -27,21 +27,6 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
     //########################################
 
-    public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
-    {
-        parent::setListingProduct($listingProduct);
-
-        $additionalData = $listingProduct->getAdditionalData();
-        unset($additionalData['synch_template_list_rules_note']);
-        $this->listingProduct->setSettings('additional_data', $additionalData);
-
-        $this->listingProduct->save();
-
-        return $this;
-    }
-
-    //########################################
-
     protected function getProcessingRunnerModelName()
     {
         return 'Amazon_Connector_Product_ListAction_ProcessingRunner';

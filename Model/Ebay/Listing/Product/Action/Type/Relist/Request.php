@@ -21,6 +21,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
         $additionalData = $this->getListingProduct()->getAdditionalData();
 
+        unset($additionalData['synch_template_list_rules_note']);
         unset($additionalData['item_duplicate_action_required']);
 
         $this->getListingProduct()->setSettings('additional_data', $additionalData);

@@ -117,9 +117,16 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function setSimpleType()
     {
         $this->getAmazonListingProduct()->setData('is_variation_product', 0)
-                                  ->setData('is_variation_parent', 0)
-                                  ->setData('variation_parent_id', null)
-                                  ->save();
+            ->setData('is_variation_parent', 0)
+            ->setData('variation_parent_id', null);
+
+        if ($this->getListingProduct()->isGroupedProductModeSet()) {
+            $this->getAmazonListingProduct()
+                ->setData('general_id', null)
+                ->setData('is_general_id_owner', \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO);
+        }
+
+        $this->getAmazonListingProduct()->save();
     }
 
     public function setIndividualType()

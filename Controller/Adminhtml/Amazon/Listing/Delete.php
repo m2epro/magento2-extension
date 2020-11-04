@@ -43,7 +43,7 @@ class Delete extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
             }
         }
 
-        $tempString = $this->__('%amount% Listing(s) were successfully deleted', $deleted);
+        $tempString = $this->__('%amount% Listing(s) were deleted', $deleted);
         $deleted && $this->getMessageManager()->addSuccess($tempString);
 
         $tempString = $this->__(

@@ -206,5 +206,25 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return $this->getSettings('variation_channel_options');
     }
 
+    /**
+     * @return int
+     */
+    public function getGroupedProductMode()
+    {
+        return (int)$this->getSetting(
+            'additional_data',
+            'grouped_product_mode',
+            \Ess\M2ePro\Model\Listing\Product::GROUPED_PRODUCT_MODE_OPTIONS
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function isGroupedProductModeSet()
+    {
+        return $this->getGroupedProductMode() == \Ess\M2ePro\Model\Listing\Product::GROUPED_PRODUCT_MODE_SET;
+    }
+
     //########################################
 }

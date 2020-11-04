@@ -117,7 +117,7 @@ class SaveListing extends Template
 
         // ---------------------------------------
 
-        $this->messageManager->addSuccess($this->__('The Listing was successfully saved.'));
+        $this->messageManager->addSuccess($this->__('The Listing was saved.'));
 
         $extendedParams = [
             '*/ebay_template/editListing' => [

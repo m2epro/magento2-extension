@@ -76,35 +76,6 @@ use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
 
 </table>
 
-<table id="block_shipping_table_cost_surcharge_row_template_table" style="display: none;">
-
-    <tbody>
-
-        <tr id="shipping_variant_cost_surcharge_%i%_tr" class="shipping-variant" style="display: none;">
-            <td colspan="7">
-
-                <table class="data-grid-not-bordered" cellspacing="0" cellpadding="0" style="width: auto; margin:5px 0;">
-
-                    <tr class="local-shipping-tr">
-                        <td class="label" style="width: auto;">
-                            <label style="width: auto;" for="shipping_cost_surcharge_value"><?php echo $block->__('Add a surcharge for Alaska, Hawaii, and Puerto Rico'); ?>:</label>
-                        </td>
-                        <td class="value" style="width: auto;">
-                            <input style="width: 80px;" name="shipping[shipping_cost_surcharge_value][%i%]" type="text" style="display: none;" class="shipping-cost-surcharge input-text M2ePro-validation-float admin__control-text a-right" />
-                            <span style="width: auto;" class="shipping-cost-surcharge-ca">
-                                <!-- shipping_cost_surcharge_attribute[%i%] -->
-                            </span>
-                        </td>
-                    </tr>
-                </table>
-
-            </td>
-        </tr>
-
-    </tbody>
-
-</table>
-
 <div style="display: none" id="magento_block_ebay_template_shipping_form_data_exclude_locations_popup">
     <div id="magento_block_ebay_template_shipping_form_data_exclude_locations_popup_content" class="entry-edit" style="padding: 7px; overflow-y: auto; overflow-x: hidden;">
 

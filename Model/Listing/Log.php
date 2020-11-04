@@ -85,6 +85,9 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     const ACTION_MOVE_FROM_OTHER_LISTING = 22;
     const _ACTION_MOVE_FROM_OTHER_LISTING = 'Move from 3rd Party Listing';
 
+    const ACTION_SELL_ON_ANOTHER_SITE = 33;
+    const _ACTION_SELL_ON_ANOTHER_SITE = 'Sell On Another Marketplace';
+
     const ACTION_CHANNEL_CHANGE = 25;
     const _ACTION_CHANNEL_CHANGE = 'Change Product on Channel';
 

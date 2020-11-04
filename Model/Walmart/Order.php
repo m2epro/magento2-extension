@@ -549,7 +549,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         }
 
         if (!empty($trackingDetails['carrier_code'])) {
-            $trackingDetails['carrier_title'] = $this->getHelper('Component\Walmart')->getCarrierTitle(
+            $trackingDetails['carrier_title'] = $this->getHelper('Component_Walmart')->getCarrierTitle(
                 $trackingDetails['carrier_code'],
                 isset($trackingDetails['carrier_title']) ? $trackingDetails['carrier_title'] : ''
             );
@@ -563,7 +563,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         }
 
         $params = [
-            'walmart_order_id' => $this->getWalmartOrderId(),
+            'walmart_order_id'  => $this->getWalmartOrderId(),
             'fulfillment_date' => $trackingDetails['fulfillment_date'],
             'items'            => []
         ];
@@ -584,49 +584,38 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
                     'ship_date' => $trackingDetails['fulfillment_date'],
                     'method'    => $this->getShippingService(),
                     'carrier'   => $trackingDetails['carrier_title'],
-                    'number'    => $trackingDetails['tracking_number'],
-                ],
+                    'number'    => $trackingDetails['tracking_number']
+                ]
             ];
         }
 
-        $orderId     = $this->getParentObject()->getId();
-        $action      = \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING;
-
         /** @var \Ess\M2ePro\Model\Order\Change $change */
         $change = $this->activeRecordFactory
-            ->getObject('Order\Change')
+            ->getObject('Order_Change')
             ->getCollection()
-            ->addFieldToFilter('order_id', $orderId)
-            ->addFieldToFilter('action', $action)
+            ->addFieldToFilter('order_id', $this->getParentObject()->getId())
+            ->addFieldToFilter('action', \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING)
             ->addFieldToFilter('processing_attempt_count', 0)
             ->getFirstItem();
+
         $existingParams = $change->getParams();
 
         $newTrackingNumber = !empty($trackingDetails['tracking_number']) ? $trackingDetails['tracking_number'] : '';
-        $oldTrackingNumber = !empty($existingParams['tracking_number']) ? $existingParams['tracking_number'] : '';
+        $oldTrackingNumber = !empty($existingParams['items'][0]['tracking_details']['number'])
+            ? $existingParams['items'][0]['tracking_details']['number']
+            : '';
 
-        if ($change->getId() && $newTrackingNumber === $oldTrackingNumber) {
-            $this->updateOrderChange($change, $params);
-        } else {
-            $this->activeRecordFactory->getObject('Order\Change')->create(
-                $orderId,
-                $action,
+        if (!$change->getId() || $newTrackingNumber !== $oldTrackingNumber) {
+            $this->activeRecordFactory->getObject('Order_Change')->create(
+                $this->getParentObject()->getId(),
+                \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING,
                 $this->getParentObject()->getLog()->getInitiator(),
                 \Ess\M2ePro\Helper\Component\Walmart::NICK,
                 $params
             );
+            return true;
         }
 
-        return true;
-    }
-
-    /**
-     * @param \Ess\M2ePro\Model\Order\Change $change
-     * @param array $params
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    private function updateOrderChange(\Ess\M2ePro\Model\Order\Change $change, array $params)
-    {
         $existingParams = $change->getParams();
         foreach ($params['items'] as $newItem) {
             foreach ($existingParams['items'] as &$existingItem) {
@@ -653,11 +642,15 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
                     continue 2;
                 }
             }
+
             unset($existingItem);
             $existingParams['items'][] = $newItem;
         }
 
-        $change->setParams($this->getHelper('Data')->jsonEncode($existingParams))->save();
+        $change->setData('params', $this->getHelper('Data')->jsonEncode($existingParams));
+        $change->save();
+
+        return true;
     }
 
     //########################################

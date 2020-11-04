@@ -71,7 +71,7 @@ class AddProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         $repricingSynchronization->run($skus);
 
         $this->getMessageManager()->addSuccess(
-            $this->__('Amazon Products have been successfully added to the Amazon Repricing Tool.')
+            $this->__('Amazon Products have been added to the Amazon Repricing Tool.')
         );
 
         return $this->_redirect($this->getUrl('*/amazon_listing/view', ['id' => $listingId]));

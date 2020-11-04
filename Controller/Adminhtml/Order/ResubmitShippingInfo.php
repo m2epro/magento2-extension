@@ -67,7 +67,7 @@ class ResubmitShippingInfo extends Order
             $this->messageManager->addError($errorMessage);
         } else {
             $this->messageManager->addSuccess(
-                $this->__('Shipping Information has been successfully resend.')
+                $this->__('Shipping Information has been resend.')
             );
         }
 

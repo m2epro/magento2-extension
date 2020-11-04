@@ -73,7 +73,7 @@ class AssignProductDetails extends Order
         ]);
 
         $this->setJsonContent([
-            'success' => $this->__('Order Item Options were Successfully configured.')
+            'success' => $this->__('Order Item Options were configured.')
         ]);
 
         return $this->getResult();

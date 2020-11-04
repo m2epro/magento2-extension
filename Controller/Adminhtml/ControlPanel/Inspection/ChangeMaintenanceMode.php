@@ -25,7 +25,7 @@ class ChangeMaintenanceMode extends Main
             $this->getHelper('Module_Maintenance')->enable();
         }
 
-        $this->messageManager->addSuccess($this->__('Changed successfully.'));
+        $this->messageManager->addSuccess($this->__('Changed.'));
         return $this->_redirect($this->getHelper('View_ControlPanel')->getPageUrl());
     }
 

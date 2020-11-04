@@ -98,80 +98,85 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             return;
         }
 
-        $this->getHelper('Data_Cache_Runtime')->setValue(
-            'item_get_changes_data_' . $account->getId(),
-            $changesByAccount
-        );
+        $changesPerEbayItemId = [];
 
-        foreach ($changesByAccount['items'] as $change) {
-            /* @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+        foreach ($changesByAccount['items'] as $itemChange) {
+            $changesPerEbayItemId[$itemChange['id']] = $itemChange;
+        }
 
-            $listingProduct = $this->getHelper('Component\Ebay')->getListingProductByEbayItem(
-                $change['id'],
-                $account->getId()
+        foreach (array_chunk(array_keys($changesPerEbayItemId), 500) as $ebayItemIds) {
+
+            /** @var $collection \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection */
+            $collection = $this->ebayFactory->getObject('Listing_Product')->getCollection();
+            $collection->getSelect()->join(
+                ['mei' => $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable()],
+                "(second_table.ebay_item_id = mei.id AND mei.account_id = {$account->getId()})",
+                ['item_id']
             );
+            $collection->addFieldToFilter('mei.item_id', ['in' => $ebayItemIds]);
 
-            if ($listingProduct === null) {
-                continue;
-            }
+            foreach ($collection->getItems() as $listingProduct) {
+                /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+                /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+                $ebayListingProduct = $listingProduct->getChildObject();
 
-            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-            $ebayListingProduct = $listingProduct->getChildObject();
+                $change = $changesPerEbayItemId[$listingProduct->getData('item_id')];
 
-            $isVariationOnChannel = !empty($change['variations']);
-            $isVariationInMagento = $ebayListingProduct->isVariationsReady();
+                $isVariationOnChannel = !empty($change['variations']);
+                $isVariationInMagento = $ebayListingProduct->isVariationsReady();
 
-            if ($isVariationOnChannel != $isVariationInMagento) {
-                continue;
-            }
+                if ($isVariationOnChannel != $isVariationInMagento) {
+                    continue;
+                }
 
-            // Listing product isn't listed and it child must have another item_id
-            if ($listingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED &&
-                $listingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN) {
-                continue;
-            }
-
-            // @codingStandardsIgnoreLine
-            $dataForUpdate = array_merge(
-                $this->getProductDatesChanges($change),
-                $this->getProductStatusChanges($listingProduct, $change),
-                $this->getProductQtyChanges($listingProduct, $change)
-            );
-
-            if (!$isVariationOnChannel || !$isVariationInMagento) {
-                // @codingStandardsIgnoreLine
-                $dataForUpdate = array_merge(
-                    $dataForUpdate,
-                    $this->getSimpleProductPriceChanges($listingProduct, $change)
-                );
-
-                $listingProduct->addData($dataForUpdate);
-                $listingProduct->getChildObject()->addData($dataForUpdate);
-                $listingProduct->save();
-            } else {
-                $listingProductVariations = $listingProduct->getVariations(true);
-
-                $this->processVariationChanges($listingProduct, $listingProductVariations, $change['variations']);
+                // Listing product isn't listed and it child must have another item_id
+                if ($listingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED &&
+                    $listingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN) {
+                    continue;
+                }
 
                 // @codingStandardsIgnoreLine
                 $dataForUpdate = array_merge(
-                    $dataForUpdate,
-                    $this->getVariationProductPriceChanges($listingProduct, $listingProductVariations)
+                    $this->getProductDatesChanges($change),
+                    $this->getProductStatusChanges($listingProduct, $change),
+                    $this->getProductQtyChanges($listingProduct, $change)
                 );
 
-                $oldListingProductStatus = $listingProduct->getStatus();
+                if (!$isVariationOnChannel || !$isVariationInMagento) {
+                    // @codingStandardsIgnoreLine
+                    $dataForUpdate = array_merge(
+                        $dataForUpdate,
+                        $this->getSimpleProductPriceChanges($listingProduct, $change)
+                    );
 
-                $listingProduct->addData($dataForUpdate);
-                $listingProduct->getChildObject()->addData($dataForUpdate);
-                $listingProduct->save();
+                    $listingProduct->addData($dataForUpdate);
+                    $listingProduct->getChildObject()->addData($dataForUpdate);
+                    $listingProduct->save();
+                } else {
+                    $listingProductVariations = $listingProduct->getVariations(true);
 
-                if ($oldListingProductStatus != $listingProduct->getStatus()) {
-                    $ebayListingProduct->updateVariationsStatus();
+                    $this->processVariationChanges($listingProduct, $listingProductVariations, $change['variations']);
+
+                    // @codingStandardsIgnoreLine
+                    $dataForUpdate = array_merge(
+                        $dataForUpdate,
+                        $this->getVariationProductPriceChanges($listingProduct, $listingProductVariations)
+                    );
+
+                    $oldListingProductStatus = $listingProduct->getStatus();
+
+                    $listingProduct->addData($dataForUpdate);
+                    $listingProduct->getChildObject()->addData($dataForUpdate);
+                    $listingProduct->save();
+
+                    if ($oldListingProductStatus != $listingProduct->getStatus()) {
+                        $ebayListingProduct->updateVariationsStatus();
+                    }
                 }
             }
         }
 
-        $account->getChildObject()->setData('defaults_last_synchronization', $changesByAccount['to_time'])->save();
+        $account->getChildObject()->setData('inventory_last_synchronization', $changesByAccount['to_time'])->save();
     }
 
     //########################################
@@ -180,7 +185,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
     {
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
 
-        $sinceTime = $this->prepareSinceTime($account->getChildObject()->getData('defaults_last_synchronization'));
+        $sinceTime = $this->prepareSinceTime($account->getChildObject()->getData('inventory_last_synchronization'));
         $toTime    = clone $now;
 
         if ($this->receiveChangesToDate !== null) {

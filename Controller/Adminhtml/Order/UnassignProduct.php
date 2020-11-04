@@ -56,7 +56,7 @@ class UnassignProduct extends Order
         );
 
         $this->setJsonContent([
-            'success' => $this->__('Item was successfully Unmapped.')
+            'success' => $this->__('Item was Unmapped.')
         ]);
 
         return $this->getResult();
