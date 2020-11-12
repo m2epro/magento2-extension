@@ -53,6 +53,17 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
         return $this->getHelper('Module')->getConfig()->getGroupValue('/support/', 'clients_portal_url');
     }
 
+    public function getHowToGuideUrl($articleUrl)
+    {
+        $urlParts[] = $this->getSupportUrl()  . '/how-to-guide';
+
+        if ($articleUrl) {
+            $urlParts[] = trim($articleUrl, '/');
+        }
+
+        return implode('/', $urlParts);
+    }
+
     public function getSupportUrl($urlPart = null)
     {
         $urlParts[] = trim(

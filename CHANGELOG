@@ -1,4 +1,8 @@
-* 1.9.0 (r4347) (04/11/2020) 
+* 1.9.1 (r4363) (12/11/2020) 
+
+Amazon: [Fixed] Uncaught Error: Call to undefined method Ess\M2ePro\Helper\Module\Support::getHowToGuideUrl()
+
+* 1.9.0 (r4339) (04/11/2020)
 
 Common: [Added] Grouped Product Improvement
 Common: [Added] Sell on another Marketplace
