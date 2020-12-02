@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Ebay\Template;
 
+use Ess\M2ePro\Helper\Component\Ebay\Category as EbayCategory;
+
 /**
  * Class \Ess\M2ePro\Model\Cron\Task\Ebay\Template\RemoveUnused
  */
@@ -42,8 +44,8 @@ class RemoveUnused extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function removeUnusedTemplates($templateNick)
     {
         $this->getOperationHistory()->addTimePoint(
-            __METHOD__.$templateNick,
-            'Remove Unused "'.$templateNick.'" Policies'
+            __METHOD__ . $templateNick,
+            'Remove Unused "' . $templateNick . '" Policies'
         );
 
         /** @var \Ess\M2ePro\Model\Ebay\Template\Manager $templateManager */
@@ -57,13 +59,13 @@ class RemoveUnused extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $unionSelectListingTemplate = $connection->select()
             ->from($listingTable, ['result_field'=>$templateManager->getTemplateIdColumnName()])
-            ->where($templateManager->getTemplateIdColumnName().' IS NOT NULL');
+            ->where($templateManager->getTemplateIdColumnName() . ' IS NOT NULL');
         $unionSelectListingCustom = $connection->select()
             ->from($listingTable, ['result_field'=>$templateManager->getCustomIdColumnName()])
             ->where($templateManager->getCustomIdColumnName().' IS NOT NULL');
         $unionSelectListingProductTemplate = $connection->select()
             ->from($listingProductTable, ['result_field'=>$templateManager->getTemplateIdColumnName()])
-            ->where($templateManager->getTemplateIdColumnName().' IS NOT NULL');
+            ->where($templateManager->getTemplateIdColumnName() . ' IS NOT NULL');
         $unionSelectListingProductCustom = $connection->select()
             ->from($listingProductTable, ['result_field'=>$templateManager->getCustomIdColumnName()])
             ->where($templateManager->getCustomIdColumnName().' IS NOT NULL');
@@ -81,7 +83,7 @@ class RemoveUnused extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $minCreateDate = $this->getHelper('Data')->getDate($minCreateDate);
 
         $collection = $templateManager->getTemplateCollection();
-        $collection->getSelect()->where('`id` NOT IN ('.$unionSelect->__toString().')');
+        $collection->getSelect()->where('`id` NOT IN (' . $unionSelect->__toString() . ')');
         $collection->getSelect()->where('`is_custom_template` = 1');
         $collection->getSelect()->where('`create_date` < ?', $minCreateDate);
 
@@ -90,7 +92,7 @@ class RemoveUnused extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $unusedTemplate->delete();
         }
 
-        $this->getOperationHistory()->saveTimePoint(__METHOD__.$templateNick);
+        $this->getOperationHistory()->saveTimePoint(__METHOD__ . $templateNick);
     }
 
     // ---------------------------------------
@@ -184,9 +186,33 @@ class RemoveUnused extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $minCreateDate = $this->getHelper('Data')->getDate($minCreateDate);
 
         $collection = $this->activeRecordFactory->getObject('Ebay_Template_Category')->getCollection();
-        $collection->getSelect()->where('id NOT IN ('.$unionSelect->__toString().')');
+        $collection->getSelect()->where('id NOT IN (' . $unionSelect->__toString() . ')');
         $collection->getSelect()->where('is_custom_template = 1');
         $collection->getSelect()->where('create_date < ?', $minCreateDate);
+
+        $rememberTemplateIds = [];
+
+        $listingCollection = $this->activeRecordFactory->getObject('Ebay_Listing')->getCollection();
+        foreach ($listingCollection->getItems() as $eBayListing) {
+            $additionalData = $eBayListing->getParentObject()->getSettings('additional_data');
+            if (!isset($additionalData['mode_same_category_data'])) {
+                continue;
+            }
+
+            $sameCategoryData = $additionalData['mode_same_category_data'];
+
+            if (!empty($sameCategoryData[EbayCategory::TYPE_EBAY_MAIN])) {
+                $rememberTemplateIds[] = $sameCategoryData[EbayCategory::TYPE_EBAY_MAIN]['template_id'];
+            }
+
+            if (!empty($sameCategoryData[EbayCategory::TYPE_EBAY_SECONDARY])) {
+                $rememberTemplateIds[] = $sameCategoryData[EbayCategory::TYPE_EBAY_SECONDARY]['template_id'];
+            }
+        }
+
+        if (!empty($rememberTemplateIds)) {
+            $collection->getSelect()->where('id NOT IN (' . implode(',', $rememberTemplateIds) . ')');
+        }
 
         $unusedTemplates = $collection->getItems();
         foreach ($unusedTemplates as $unusedTemplate) {
@@ -286,8 +312,32 @@ class RemoveUnused extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $minCreateDate = $this->getHelper('Data')->getDate($minCreateDate);
 
         $collection = $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory')->getCollection();
-        $collection->getSelect()->where('`id` NOT IN ('.$unionSelect->__toString().')');
+        $collection->getSelect()->where('`id` NOT IN (' . $unionSelect->__toString() . ')');
         $collection->getSelect()->where('`create_date` < ?', $minCreateDate);
+
+        $rememberTemplateIds = [];
+
+        $listingCollection = $this->activeRecordFactory->getObject('Ebay_Listing')->getCollection();
+        foreach ($listingCollection->getItems() as $eBayListing) {
+            $additionalData = $eBayListing->getParentObject()->getSettings('additional_data');
+            if (!isset($additionalData['mode_same_category_data'])) {
+                continue;
+            }
+
+            $sameCategoryData = $additionalData['mode_same_category_data'];
+
+            if (!empty($sameCategoryData[EbayCategory::TYPE_STORE_MAIN])) {
+                $rememberTemplateIds[] = $sameCategoryData[EbayCategory::TYPE_STORE_MAIN]['template_id'];
+            }
+
+            if (!empty($sameCategoryData[EbayCategory::TYPE_STORE_SECONDARY])) {
+                $rememberTemplateIds[] = $sameCategoryData[EbayCategory::TYPE_STORE_SECONDARY]['template_id'];
+            }
+        }
+
+        if (!empty($rememberTemplateIds)) {
+            $collection->getSelect()->where('id NOT IN (' . implode(',', $rememberTemplateIds) . ')');
+        }
 
         $unusedTemplates = $collection->getItems();
         foreach ($unusedTemplates as $unusedTemplate) {

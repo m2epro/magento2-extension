@@ -1,4 +1,8 @@
-* 1.9.1 (r4363) (12/11/2020) 
+* 1.9.2 (r4401) (02/12/2020) [non-public]
+
+eBay: [Fixed] 'Instance does not exist' error occurs because of non-existent suggested category template
+
+* 1.9.1 (r4359) (12/11/2020)
 
 Amazon: [Fixed] Uncaught Error: Call to undefined method Ess\M2ePro\Helper\Module\Support::getHowToGuideUrl()
 

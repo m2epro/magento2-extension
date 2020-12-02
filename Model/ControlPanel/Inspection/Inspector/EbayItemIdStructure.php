@@ -7,6 +7,7 @@ use Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection;
 use Ess\M2ePro\Model\ControlPanel\Inspection\FixerInterface;
 use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
 use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
+use Ess\M2ePro\Model\Listing\Product;
 
 class EbayItemIdStructure extends AbstractInspection implements InspectorInterface, FixerInterface
 {
@@ -45,9 +46,15 @@ class EbayItemIdStructure extends AbstractInspection implements InspectorInterfa
         );
         $collection->addFieldToFilter(
             'status',
-            ['nin' => [\Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
-                \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN]]
+            [
+                'nin' => [
+                    Product::STATUS_NOT_LISTED,
+                    Product::STATUS_UNKNOWN
+                ]
+            ]
         );
+
+        $collection->addFieldToFilter('item_id', ['null' => true]);
 
         if ($total = $collection->getSize()) {
             $this->brokenData = [
@@ -101,11 +108,11 @@ HTML;
     public function fix($ids)
     {
         /** @var $collection \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection */
-        $collection = $this->activeRecordFactory->getObject('Ebay\Item')->getCollection();
+        $collection = $this->parentFactory->getObject(Ebay::NICK, 'Listing\Product')->getCollection();
         $collection->addFieldToFilter('id', ['in' => $ids]);
 
         while ($item = $collection->fetchItem()) {
-            $item->delete();
+            $item->setData('status', Product::STATUS_NOT_LISTED)->save();
         }
     }
 
