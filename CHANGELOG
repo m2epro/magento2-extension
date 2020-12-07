@@ -1,4 +1,10 @@
-* 1.9.2 (r4401) (02/12/2020) [non-public]
+* 1.9.3 (r4414) (07/12/2020) 
+
+Common: [Fixed] Uncaught TypeError: Argument 2 passed to Magento\InventoryShipping\Model\SourceDeductionRequestFromShipmentFactory::execute() must be of the type string, integer given
+Common: [Fixed] Syntax error or access violation: 1118 Row size too large
+eBay:   [Fixed] Remove admin__control-checkbox css class from excluded location checkboxes
+
+* 1.9.2 (r4400) (02/12/2020)
 
 eBay: [Fixed] 'Instance does not exist' error occurs because of non-existent suggested category template
 

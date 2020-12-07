@@ -7456,7 +7456,8 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('template_synchronization_id', 'template_synchronization_id')
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
-            ->setOption('collate', 'utf8_general_ci');
+            ->setOption('collate', 'utf8_general_ci')
+            ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonListingTable);
 
         $amazonListingAutoCategoryGroupTable = $this->getConnection()->newTable(

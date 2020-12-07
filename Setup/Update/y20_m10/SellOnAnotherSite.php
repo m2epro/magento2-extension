@@ -13,12 +13,35 @@ class SellOnAnotherSite extends AbstractFeature
 
     public function execute()
     {
+        $this->changeRowFormat();
+
         $this->getTableModifier('amazon_listing')->addColumn(
             'product_add_ids',
             'TEXT',
             'NULL',
             'restock_date_custom_attribute'
         );
+    }
+
+    private function changeRowFormat()
+    {
+        $dbName = $this->helperFactory->getObject('Magento')->getDatabaseName();
+        $tableName = $this->getFullTableName('amazon_listing');
+        $sql = <<<SQL
+SELECT `row_format`
+FROM `information_schema`.`tables`
+WHERE `TABLE_SCHEMA` = '{$dbName}' and `TABLE_NAME` = '{$tableName}'
+SQL;
+
+        $result = $this->getConnection()->query($sql)->fetch();
+
+        if (strtolower($result['row_format']) != 'dynamic') {
+            $this->installer->run(
+                <<<SQL
+ALTER TABLE `{$tableName}` ROW_FORMAT=DYNAMIC
+SQL
+            );
+        }
     }
 
     //########################################

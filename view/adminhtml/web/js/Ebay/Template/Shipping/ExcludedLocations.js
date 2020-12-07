@@ -2,7 +2,7 @@ define([
     'jquery',
     'Magento_Ui/js/modal/modal',
     'M2ePro/Common'
-], function (jQuery, modal) {
+], function(jQuery, modal) {
     window.EbayTemplateShippingExcludedLocations = Class.create(Common, {
 
         excludedLocationsPopup: null,
@@ -12,7 +12,7 @@ define([
 
         // ---------------------------------------
 
-        initialize: function ($super, gridHandler) {
+        initialize: function($super, gridHandler) {
             var self = this;
 
             self.exclededLocationsPopupBlock = $('magento_block_ebay_template_shipping_form_data_exclude_locations_popup').innerHTML;
@@ -21,7 +21,7 @@ define([
 
         // ---------------------------------------
 
-        setSelectedLocations: function (locations) {
+        setSelectedLocations: function(locations) {
             var self = EbayTemplateShippingExcludedLocationsObj;
 
             self.selectedLocations = locations;
@@ -32,7 +32,7 @@ define([
 
         // ---------------------------------------
 
-        clear: function () {
+        clear: function() {
             var self = EbayTemplateShippingExcludedLocationsObj;
 
             if (self.excludedLocationsPopup !== null) {
@@ -44,7 +44,7 @@ define([
 
         // ---------------------------------------
 
-        showPopup: function () {
+        showPopup: function() {
             var self = EbayTemplateShippingExcludedLocationsObj;
 
             var containerEl = $('ebay_template_shipping_form_data_exclude_locations_popup');
@@ -63,14 +63,14 @@ define([
                 type: 'slide',
                 buttons: [{
                     text: M2ePro.translator.translate('Cancel'),
-                    click: function () {
+                    click: function() {
                         self.excludedLocationsPopup.modal('closeModal');
                     }
-                },{
+                }, {
                     text: M2ePro.translator.translate('Save'),
                     class: 'action-primary',
                     id: 'save_popup_button',
-                    click: function () {
+                    click: function() {
                         EbayTemplateShippingExcludedLocationsObj.savePopup();
                     }
                 }]
@@ -80,7 +80,7 @@ define([
 
             // Excluded locations
             // ---------------------------------------
-            $$('.excluded_location_region_title_container').each(function(element){
+            $$('.excluded_location_region_title_container').each(function(element) {
                 element
                     .observe(
                         'click', self.regionClick
@@ -93,7 +93,7 @@ define([
                     });
             });
 
-            jQuery('.excluded_location_region').each(function () {
+            jQuery('.excluded_location_region').each(function() {
                 jQuery(this).on('change', self.regionOnchange);
             });
 
@@ -118,18 +118,18 @@ define([
             self.renderSelected();
         },
 
-        closePopup: function () {
+        closePopup: function() {
             this.excludedLocationsPopup.modal('closeModal');
         },
 
-        resetPopup: function () {
+        resetPopup: function() {
             var self = EbayTemplateShippingExcludedLocationsObj;
 
             self.excludedLocationsPopup.selectedLocations = [];
             self.renderSelected();
         },
 
-        savePopup: function () {
+        savePopup: function() {
             var self = EbayTemplateShippingExcludedLocationsObj;
 
             //copy of array
@@ -141,7 +141,7 @@ define([
 
         // ---------------------------------------
 
-        regionClick: function () {
+        regionClick: function() {
             $$('.excluded_location_region_container').invoke('hide');
             $$('.excluded_location_region_title_container').invoke('removeClassName', 'selected_region');
 
@@ -151,7 +151,7 @@ define([
 
         // ---------------------------------------
 
-        regionOnchange: function () {
+        regionOnchange: function() {
             var self = EbayTemplateShippingExcludedLocationsObj;
             var location = {
                 code: this.value,
@@ -173,7 +173,7 @@ define([
 
         // ---------------------------------------
 
-        countryOnchange: function () {
+        countryOnchange: function() {
             var my = this;
 
             var self = EbayTemplateShippingExcludedLocationsObj;
@@ -207,7 +207,7 @@ define([
             } else if (myRegion && !isAllLocationsOfRegionAreSelected && myRegion.checked) {
 
                 self.deleteExcludedLocation(myRegion.value, 'code');
-                self.getCountriesByRegion(location.region)['locations'].each(function (childEl) {
+                self.getCountriesByRegion(location.region)['locations'].each(function(childEl) {
 
                     if (childEl.value === location.code) {
                         return true;
@@ -227,7 +227,7 @@ define([
             /**
              * For example Russian Federation is located in both of Regions [Europa and Asia]
              */
-            $$('.excluded_location[value="' + location.code + '"]').each(function (duplicatedLocation) {
+            $$('.excluded_location[value="' + location.code + '"]').each(function(duplicatedLocation) {
                 if (duplicatedLocation.region !== location.region && duplicatedLocation.checked !== my.checked) {
                     duplicatedLocation.checked = my.checked;
                     duplicatedLocation.simulate('change');
@@ -240,19 +240,19 @@ define([
 
         //########################################
 
-        renderSelected: function () {
+        renderSelected: function() {
             var self = EbayTemplateShippingExcludedLocationsObj;
 
-            $$('.excluded_location', '.excluded_location_region').each(function (el) {
+            $$('.excluded_location', '.excluded_location_region').each(function(el) {
                 el.checked = 0;
             });
 
-            self.excludedLocationsPopup.selectedLocations.each(function (location) {
+            self.excludedLocationsPopup.selectedLocations.each(function(location) {
 
                 /**
                  * For example Russian Federation is located in both of Regions [Europa and Asia]
                  */
-                $$('.excluded_location[value="' + location.code + '"]').each(function (childLocation) {
+                $$('.excluded_location[value="' + location.code + '"]').each(function(childLocation) {
                     childLocation.checked = 1;
                 });
 
@@ -260,8 +260,8 @@ define([
 
                     $$('.excluded_location_region[value="' + location.code + '"]').shift().checked = 1;
 
-                    self.getCountriesByRegion(location.code)['locations'].each(function (childLocation) {
-                        $$('.excluded_location[value="' + childLocation.value + '"]').each(function (elem) {
+                    self.getCountriesByRegion(location.code)['locations'].each(function(childLocation) {
+                        $$('.excluded_location[value="' + childLocation.value + '"]').each(function(elem) {
                             elem.checked = 1;
                         });
                     });
@@ -272,7 +272,7 @@ define([
             self.updateRegionStatistics();
         },
 
-        updatesPopupTitles: function () {
+        updatesPopupTitles: function() {
             var self = EbayTemplateShippingExcludedLocationsObj;
 
             if (!self.excludedLocationsPopup.selectedLocations.length) {
@@ -286,7 +286,7 @@ define([
             $('excluded_locations_popup_titles').innerHTML = self.getTitles(self.excludedLocationsPopup.selectedLocations);
         },
 
-        updateTemplateTitles: function () {
+        updateTemplateTitles: function() {
             var self = EbayTemplateShippingExcludedLocationsObj;
 
             if (!self.selectedLocations.length) {
@@ -298,25 +298,25 @@ define([
             $('excluded_locations_titles').innerHTML = self.getTitles(self.selectedLocations);
         },
 
-        getTitles: function (selectedLocations) {
+        getTitles: function(selectedLocations) {
             var titles = [];
 
-            selectedLocations.each(function (location) {
+            selectedLocations.each(function(location) {
 
                 if (location.region === null) {
                     titles.unshift('<b>' + location.title + '</b>');
                 } else {
-                    titles.push(location.title)
+                    titles.push(location.title);
                 }
             });
 
             return titles.join('; ');
         },
 
-        updateRegionStatistics: function () {
+        updateRegionStatistics: function() {
             var self = EbayTemplateShippingExcludedLocationsObj;
 
-            $$('.excluded_location_region_title_container').each(function (element) {
+            $$('.excluded_location_region_title_container').each(function(element) {
 
                 var locations = self.getCountriesByRegion(element.getAttribute('region'));
 
@@ -330,7 +330,7 @@ define([
 
         // ---------------------------------------
 
-        addExcludedLocation: function (location) {
+        addExcludedLocation: function(location) {
             var self = EbayTemplateShippingExcludedLocationsObj;
 
             if (self.isExcludedLocationAlreadyAdded(location)) {
@@ -340,14 +340,14 @@ define([
             self.excludedLocationsPopup.selectedLocations.push(location);
         },
 
-        isExcludedLocationAlreadyAdded: function (location) {
+        isExcludedLocationAlreadyAdded: function(location) {
             var self = EbayTemplateShippingExcludedLocationsObj;
 
             var existedCodes = [];
-            self.excludedLocationsPopup.selectedLocations.each(function (element) {
+            self.excludedLocationsPopup.selectedLocations.each(function(element) {
 
                 if (element.region == null) {
-                    $$('.excluded_location[region="' + element.code + '"]').each(function (childElement) {
+                    $$('.excluded_location[region="' + element.code + '"]').each(function(childElement) {
                         existedCodes.push(childElement.value);
                     });
                 } else {
@@ -358,12 +358,12 @@ define([
             return existedCodes.indexOf(location.code) !== -1;
         },
 
-        deleteExcludedLocation: function (code, key) {
+        deleteExcludedLocation: function(code, key) {
             var self = EbayTemplateShippingExcludedLocationsObj;
 
             for (var i = self.excludedLocationsPopup.selectedLocations.length - 1; i >= 0; i--) {
                 if (key === 'region') {
-                    $$('.excluded_location[region="' + code + '"]').each(function (childElement) {
+                    $$('.excluded_location[region="' + code + '"]').each(function(childElement) {
                         self.deleteExcludedLocation(childElement.value, 'code');
                     });
                 } else {
@@ -378,7 +378,7 @@ define([
 
         //########################################
 
-        getCountriesByRegion: function (region) {
+        getCountriesByRegion: function(region) {
             if (region == null) {
                 return false;
             }
@@ -386,7 +386,7 @@ define([
             var locations = [],
                 selectedLocations = [];
 
-            $$('div[id="excluded_location_region_container_' + region + '"] .excluded_location').each(function (el) {
+            $$('div[id="excluded_location_region_container_' + region + '"] .excluded_location').each(function(el) {
                 locations.push(el);
                 el.checked && selectedLocations.push(el);
             });
@@ -399,7 +399,7 @@ define([
             };
         },
 
-        isAllCountriesOfRegionAreSelected: function (region) {
+        isAllCountriesOfRegionAreSelected: function(region) {
             var locations = EbayTemplateShippingExcludedLocationsObj.getCountriesByRegion(region);
             if (!locations) {
                 return false;

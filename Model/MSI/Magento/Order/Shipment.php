@@ -136,7 +136,7 @@ class Shipment extends \Ess\M2ePro\Model\Magento\Order\Shipment
             /** @var \Magento\Sales\Model\Order\Shipment $shipment */
             $shipment = $this->shipmentDocumentFactory->create($this->magentoOrder, $shipmentItems);
             $shipmentExtension = $this->shipmentExtensionFactory->create();
-            $shipmentExtension->setSourceCode($sourceCode);
+            $shipmentExtension->setSourceCode((string)$sourceCode);
             $shipment->setExtensionAttributes($shipmentExtension);
             $shipment->register();
 

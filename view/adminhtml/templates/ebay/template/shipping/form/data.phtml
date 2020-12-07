@@ -90,7 +90,7 @@ use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
 
                     <?php foreach ($block->marketplaceData['locations_exclude']['domestic'] as $locationCode => $locationTitle) : ?>
                         <div class="checkbox_container" style="width: 200px;">
-                            <input id="excluded_location_domestic_<?php echo $locationCode; ?>" class="excluded_location admin__control-checkbox" type="checkbox" value="<?php echo $locationCode; ?>" location_type="domectic" />
+                            <input id="excluded_location_domestic_<?php echo $locationCode; ?>" class="excluded_location" type="checkbox" value="<?php echo $locationCode; ?>" location_type="domectic" />
                             <label for="excluded_location_domestic_<?php echo $locationCode; ?>" class="admin__field-label"><span><?php echo $locationTitle; ?></span></label>
                         </div>
                     <?php endforeach; ?>
@@ -106,7 +106,7 @@ use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
                     <div id="excluded_locations_international_regions">
                         <?php foreach ($block->marketplaceData['locations_exclude']['international'] as $regionCode => $regionTitle) : ?>
                             <div class="checkbox_container excluded_location_region_title_container" style="display: block;" region="<?php echo $regionCode; ?>">
-                                <input id="excluded_location_international_<?php echo $regionCode; ?>" class="excluded_location_region admin__control-checkbox" type="checkbox" value="<?php echo $regionCode; ?>" location_type="international" />
+                                <input id="excluded_location_international_<?php echo $regionCode; ?>" class="excluded_location_region" type="checkbox" value="<?php echo $regionCode; ?>" location_type="international" />
                                 <label for="excluded_location_international_<?php echo $regionCode; ?>" class="admin__field-label"><span><?php echo $regionTitle; ?></span></label>
                                 <span style="display: none;">(selected)</span>
                             </div>
@@ -119,7 +119,7 @@ use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
                                 <div class="excluded_location_region_container" id="excluded_location_region_container_<?php echo $regionCode; ?>" style="display: none;">
                                     <?php foreach ($block->marketplaceData['locations_exclude'][$regionCode] as $locationCode => $locationTitle) : ?>
                                         <div class="checkbox_container" style="display: block;">
-                                            <input id="excluded_location_international_<?php echo $locationCode; ?>" class="excluded_location admin__control-checkbox" type="checkbox" value="<?php echo $locationCode; ?>" region="<?php echo $regionCode; ?>" location_type="international" />
+                                            <input id="excluded_location_international_<?php echo $locationCode; ?>" class="excluded_location" type="checkbox" value="<?php echo $locationCode; ?>" region="<?php echo $regionCode; ?>" location_type="international" />
                                             <label for="excluded_location_international_<?php echo $locationCode; ?>" class="admin__field-label"><span><?php echo $locationTitle; ?></span></label>
                                         </div>
                                     <?php endforeach; ?>
@@ -140,7 +140,7 @@ use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
 
                     <?php foreach ($block->marketplaceData['locations_exclude']['additional'] as $locationCode => $locationTitle) : ?>
                         <div class="checkbox_container" style="width: 145px;">
-                            <input id="excluded_location_additional_<?php echo $locationCode; ?>" class="excluded_location admin__control-checkbox" type="checkbox" value="<?php echo $locationCode; ?>" location_type="additional" />
+                            <input id="excluded_location_additional_<?php echo $locationCode; ?>" class="excluded_location" type="checkbox" value="<?php echo $locationCode; ?>" location_type="additional" />
                             <label for="excluded_location_additional_<?php echo $locationCode; ?>" class="admin__field-label"><span><?php echo $locationTitle; ?></span></label>
                         </div>
                     <?php endforeach; ?>
