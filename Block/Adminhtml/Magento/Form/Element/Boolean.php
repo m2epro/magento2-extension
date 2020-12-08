@@ -19,7 +19,7 @@ class Boolean extends \Magento\Framework\Data\Form\Element\Select
     {
         parent::_construct();
         $this->setValues([
-            ['label' => __(''), 'value' => ''],
+            ['label' => '', 'value' => ''],
             ['label' => __('No'), 'value' => 0],
             ['label' => __('Yes'), 'value' => 1]
         ]);
