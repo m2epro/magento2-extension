@@ -37,12 +37,10 @@ abstract class AbstractExistingProductsHandler extends AbstractHandler
     {
         $ids = array_map(function ($id) { return (string) $id; }, $ids);
 
-        $collection = $this->getPreparedProductsCollection();
+        $select = clone $this->getPreparedProductsCollection()->getSelect();
+        $select->where("`second_table`.`{$this->getInventoryIdentifier()}` IN (?)", $ids);
 
-        $collection->clear()->getSelect()->reset(\Zend_Db_Select::WHERE);
-        $collection->getSelect()->where("`second_table`.`{$this->getInventoryIdentifier()}` IN (?)", $ids);
-
-        return $this->resourceConnection->getConnection()->query($collection->getSelect()->__toString());
+        return $this->resourceConnection->getConnection()->query($select->__toString());
     }
 
     /**

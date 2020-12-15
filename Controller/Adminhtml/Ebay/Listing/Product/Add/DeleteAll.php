@@ -31,6 +31,7 @@ class DeleteAll extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Ad
         $collection->addFieldToFilter('id', ['in' => $ids]);
 
         foreach ($collection->getItems() as $listingProduct) {
+            $listingProduct->canBeForceDeleted(true);
             $listingProduct->delete();
         }
 

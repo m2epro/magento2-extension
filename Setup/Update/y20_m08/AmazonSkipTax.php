@@ -45,7 +45,7 @@ class AmazonSkipTax extends AbstractFeature
             $this->getConnection()->update(
                 $this->getFullTableName('amazon_account'),
                 ['magento_orders_settings' => json_encode($data)],
-                ['account_id' => $row['account_id']]
+                ['account_id = ?' => $row['account_id']]
             );
         }
     }

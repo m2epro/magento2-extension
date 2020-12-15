@@ -231,7 +231,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
                     $fileDriver->deleteFile($watermarkPath);
                 }
             }
-        } elseif (!empty($this->rawData['old_watermark_image']) && !isset($data['id'])) {
+        } elseif (!empty($this->rawData['old_watermark_image']) && isset($data['id'])) {
             $data['watermark_image'] = base64_decode($this->rawData['old_watermark_image']);
         }
 

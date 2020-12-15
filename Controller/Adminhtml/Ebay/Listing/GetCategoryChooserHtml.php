@@ -91,13 +91,22 @@ class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listi
         }
 
         $differentCategories = [];
+        $isCustomTemplate = 0;
         foreach ($collection->getItems() as $item) {
             /**@var \Ess\M2ePro\Model\Ebay\Template\Category $item */
             $differentCategories[] = $item->getCategoryValue();
+
+            if (!empty($item->getIsCustomTemplate())) {
+                $isCustomTemplate = $item->getIsCustomTemplate();
+            }
         }
 
         if (count(array_unique($differentCategories)) > 1) {
             return $template;
+        }
+
+        if ($isCustomTemplate) {
+            $collection->addFieldToFilter('is_custom_template', $isCustomTemplate);
         }
 
         /** @var \Ess\M2ePro\Model\Ebay\Template\Category $tempTemplate */
@@ -109,7 +118,7 @@ class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listi
             $tempTemplate->getCategoryValue(),
             $tempTemplate->getCategoryMode(),
             $tempTemplate->getMarketplaceId(),
-            0
+            $isCustomTemplate
         );
 
         return $template;

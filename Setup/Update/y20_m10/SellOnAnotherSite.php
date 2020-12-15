@@ -33,7 +33,7 @@ FROM `information_schema`.`tables`
 WHERE `TABLE_SCHEMA` = '{$dbName}' and `TABLE_NAME` = '{$tableName}'
 SQL;
 
-        $result = $this->getConnection()->query($sql)->fetch();
+        $result = array_change_key_case($this->getConnection()->query($sql)->fetch());
 
         if (strtolower($result['row_format']) != 'dynamic') {
             $this->installer->run(

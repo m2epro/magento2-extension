@@ -94,6 +94,7 @@ abstract class Add extends Main
 
         foreach ($collection->getItems() as $listingProduct) {
             /**@var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+            $listingProduct->canBeForceDeleted(true);
             $listingProduct->delete();
         }
 
