@@ -1,13 +1,14 @@
-* 1.9.4 (r4432) (15/12/2020) 
-Common: [Fixed] Video screenshot is sent as image to the channel
-Common: [Fixed] ASIN and Price data gets unset if the same SKU is used on different account
-Ebay:   [Fixed] Incorrect behavior when changing the category of 2 products using mass action
-Ebay:   [Fixed] Product may be duplicated to target listing if it's moving from 3rd party was interrupted
-Ebay:   [Fixed] Watermark file setting is stripped after Save and Continue Edit button
-Amazon: [Fixed] Notice: Trying to access array offset on value of type null in Block/Adminhtml/Amazon/Template/Shipping/Edit/Form.php on line 191
-Amazon: [Fixed] Storeview for Amazon orders mistakenly changed after upgrade
-Amazon: [Fixed] Exception: Notice: Undefined index: row_format
-Walmart:[Fixed] Product may be duplicated to target listing if it's moving from 3rd party was interrupted
+* 1.9.4 (r4436) (16/12/2020) 
+
+Common:  [Fixed] Video screenshot is sent as a preview image to the channel
+Common:  [Fixed] ASIN and Price data get unset if the same SKU is used on a different account
+eBay:    [Fixed] Incorrect behavior when changing the category of 2 products using mass action
+eBay:    [Fixed] Product may be duplicated to target listing if its moving from 3rd party was interrupted
+eBay:    [Fixed] Watermark file setting is stripped after clicking the Save and Continue Edit button
+Amazon:  [Fixed] Notice: Trying to access array offset on value of type null in Block/Adminhtml/Amazon/Template/Shipping/Edit/Form.php on line 191 at the step of creating Shipping Policy
+Amazon:  [Fixed] Store View for Amazon orders mistakenly changed after upgrade from 1.8 to 1.9.1
+Amazon:  [Fixed] Exception: Notice: Undefined index: row_format in m2epro_setup
+Walmart: [Fixed] Product may be duplicated to target listing if its moving from 3rd party was interrupted
 
 * 1.9.3 (r4412) (07/12/2020)
 
