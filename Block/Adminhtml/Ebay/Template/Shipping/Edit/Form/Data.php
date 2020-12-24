@@ -47,10 +47,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('ebayTemplateShippingEditFormData');
-        // ---------------------------------------
+
+        $this->css->addFile('ebay/template.css');
 
         $this->formData = $this->getFormData();
         $this->marketplaceData = $this->getMarketplaceData();
@@ -1283,8 +1282,8 @@ HTML;
             'data' => [
                 'name' => 'shipping[weight_minor]',
                 'value' => $this->formData['weight_minor'],
-                'class' => 'M2ePro-required-when-visible M2ePro-validation-float input-text admin__control-text',
-                'style' => 'width: 30%',
+                'class' => 'M2ePro-required-when-visible M2ePro-validation-float input-text admin__control-text
+                            shipping_weight_minor',
             ]
         ]);
         $weightMinorBlock->setForm($form);
@@ -2553,16 +2552,13 @@ HTML;
 
     protected function _beforeToHtml()
     {
-        // ---------------------------------------
         $buttonBlock = $this
             ->createBlock('Magento\Button')
             ->setData([
                 'label' => $this->__('Remove'),
-                'onclick' => 'EbayTemplateShippingObj.removeRow.call(this, \'%type%\');',
                 'class' => 'delete icon-btn remove_shipping_method_button'
             ]);
         $this->setChild('remove_shipping_method_button', $buttonBlock);
-        // ---------------------------------------
 
         return parent::_beforeToHtml();
     }

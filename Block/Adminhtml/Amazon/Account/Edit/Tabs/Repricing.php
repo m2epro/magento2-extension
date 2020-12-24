@@ -499,7 +499,7 @@ More detailed information on how to work with this option can be found
                 'label' => $this->__('Min Price Percent'),
                 'name' => 'repricing[min_price_percent]',
                 'value' => ($repricing) ? $repricing->getData('min_price_percent') : '',
-                'class' => 'M2ePro-required-when-visible M2ePro-account-repricing-price-value',
+                'class' => 'M2ePro-required-when-visible M2ePro-account-repricing-price-percent',
                 'required' => true,
                 'tooltip' => $this->__(
                     'Provide the Percent Value which you would like to decrease the Regular Price by.'
@@ -711,7 +711,7 @@ More detailed information on how to work with this option can be found
                 'label' => $this->__('Max Price Percent'),
                 'name' => 'repricing[max_price_percent]',
                 'value' => ($repricing) ? $repricing->getData('max_price_percent') : '',
-                'class' => 'M2ePro-required-when-visible M2ePro-account-repricing-price-value',
+                'class' => 'M2ePro-required-when-visible M2ePro-account-repricing-price-percent',
                 'required' => true,
                 'tooltip' => $this->__(
                     'Provide the Percent Value which you would like to decrease the Regular Price by.'

@@ -43,7 +43,7 @@ define([
 
             jQuery.validator.addMethod('M2ePro-validate-greater-than', function(value, el) {
 
-                if (!el.up('div.admin__field').visible()) {
+                if (self.isFieldContainerHiddenFromPage(el)) {
                     return true;
                 }
 
@@ -607,7 +607,7 @@ define([
             targetAudienceChooser.simulate('change');
             targetAudienceChooser.setAttribute('disabled', 'disabled');
 
-            targetAudienceChooser.up('.admin__field').appendChild(new Element('input', {
+            targetAudienceChooser.up('.admin__field.field').appendChild(new Element('input', {
                 name  : targetAudienceChooser.name,
                 type  : 'hidden',
                 value : M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Template\\Description\\Definition::TARGET_AUDIENCE_MODE_CUSTOM')

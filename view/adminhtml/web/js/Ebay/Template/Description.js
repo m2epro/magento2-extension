@@ -122,7 +122,7 @@ define([
                     .observe('click', wysiwygdescription_template.toggle.bind(wysiwygdescription_template)).simulate('click')
                     .observe('click', EbayTemplateDescriptionObj.showHideWYSIWYG);
             } else {
-                $('description_template_tr').down('.admin__field-control').down('.admin__field').appendChild($('description_template_buttons'));
+                $('description_template_tr').down('.admin__field-control').down('.admin__field.field').appendChild($('description_template_buttons'));
             }
 
             this.initCustomInsertsPopup();

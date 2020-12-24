@@ -95,7 +95,7 @@ define([
             CommonObj.scrollPageToTop();
 
             var self = this;
-            var marketplaceStatusSelect = $(runNowButton).up(2).select('.marketplace_status_select')[0];
+            var marketplaceStatusSelect = $(runNowButton).up('div.admin__field').select('.marketplace_status_select')[0];
 
             self.marketplacesForUpdate = [marketplaceStatusSelect.readAttribute('marketplace_id')];
             self.marketplacesForUpdateCurrentIndex = 0;

@@ -8,6 +8,8 @@ define([
 
         initialize: function()
         {
+            var self = this;
+
             this.setValidationCheckRepetitionValue('M2ePro-account-title',
                 M2ePro.translator.translate('The specified Title is already used for other Account. Account Title must be unique.'),
                 'Account', 'title', 'id',
@@ -100,7 +102,7 @@ define([
 
             jQuery.validator.addMethod('M2ePro-account-repricing-price-value', function(value, el) {
 
-                if (!el.up('div.admin__field.field').visible()) {
+                if (self.isFieldContainerHiddenFromPage(el)) {
                     return true;
                 }
 
@@ -118,7 +120,7 @@ define([
 
             jQuery.validator.addMethod('M2ePro-account-repricing-price-percent', function(value, el) {
 
-                if (!el.up('div.admin__field.field').visible()) {
+                if (self.isFieldContainerHiddenFromPage(el)) {
                     return true;
                 }
 

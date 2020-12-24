@@ -9,6 +9,7 @@ define([
         initialize: function ()
         {
             var self = this;
+
             jQuery.validator.addMethod('M2ePro-validate-qty', function (value, el) {
 
                 if (self.isElementHiddenFromPage(el)) {
@@ -22,20 +23,6 @@ define([
                 return true;
             }, M2ePro.translator.translate('Wrong value. Only integer numbers.'));
 
-            // ---------------------------------------
-            jQuery.validator.addMethod('M2ePro-validate-conditions-between', function (value, el) {
-
-                var minValue = $(el.id.replace('_max', '')).value;
-
-                if (!el.up('.admin__field').visible()) {
-                    return true;
-                }
-
-                return parseInt(value) > parseInt(minValue);
-            }, M2ePro.translator.translate('Must be greater than "Min".'));
-            // ---------------------------------------
-
-            // ---------------------------------------
             jQuery.validator.addMethod('M2ePro-validate-stop-relist-conditions-product-status', function (value, el) {
 
                 if (EbayTemplateSynchronizationObj.isRelistModeDisabled()) {

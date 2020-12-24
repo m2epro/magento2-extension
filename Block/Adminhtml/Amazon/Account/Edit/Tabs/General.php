@@ -197,8 +197,6 @@ HTML
             $accessDataFieldConfig = [
                 'container_id' => 'marketplaces_register_url_container_' . $marketplace['id'],
                 'label'        => '',
-                'href'         => '',
-                'onclick'      => '',
                 'target'       => '_blank',
                 'value'        => $this->__('Get Access Data'),
                 'class'        => 'external-link',

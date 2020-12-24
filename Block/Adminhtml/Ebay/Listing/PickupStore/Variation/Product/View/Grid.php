@@ -304,7 +304,7 @@ class Grid extends AbstractGrid
     public function callbackColumnLog($value, $row, $column, $isExport)
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ViewLogIcon\PickupStore $viewLogIcon */
-        $viewLogIcon = $this->createBlock('Ebay_Grid_Column_Renderer_ViewLogIcon_Listing');
+        $viewLogIcon = $this->createBlock('Ebay_Grid_Column_Renderer_ViewLogIcon_PickupStore');
         $logIcon = $viewLogIcon->render($row);
 
         if (!empty($logIcon)) {

@@ -571,6 +571,8 @@ define([
 
         addRow: function(ruleData)
         {
+            var self = this;
+
             if ($('shipping_override_rule_table_main_screen').visible()) {
                 $('shipping_override_rule_table_main_screen').hide();
                 $('shipping_override_rule_table').show();
@@ -579,7 +581,7 @@ define([
             this.rulesIndex++;
 
             var tpl = $('shipping_override_rule_table_row_template').down('tbody').innerHTML;
-            tpl = tpl.replace(/%i%/g, this.rulesIndex);
+            tpl = tpl.replace(/temp-i/g, this.rulesIndex);
             $('shipping_override_rules_table_tbody').insert(tpl);
 
             var row = $('shipping_override_rule_' + this.rulesIndex + '_tr');
@@ -597,6 +599,8 @@ define([
                .observe('change', this.ruleActionChange).simulate('change');
             row.down('[id^="shipping_override_rule_cost_mode"]')
                .observe('change', this.ruleCostModeChange).simulate('change');
+
+            row.down('button').addEventListener('click', self.removeRow.bind(this));
 
             var attributeEl = row.down('.shipping-override-cost-custom-attribute');
             attributeEl.addClassName('M2ePro-custom-attribute-can-be-created');
@@ -661,7 +665,7 @@ define([
             ++this.promotionsIndex;
 
             var tpl = $('promotions_table_row_template').down('tbody').innerHTML;
-            tpl = tpl.replace(/%i%/g, this.promotionsIndex);
+            tpl = tpl.replace(/temp-i/g, this.promotionsIndex);
             $('promotions_table_tbody').insert(tpl);
 
             var row = $('promotions_' + this.promotionsIndex + '_tr');
@@ -717,6 +721,8 @@ define([
                 element.observe('mouseover', MagentoFieldTipObj.onToolTipMouseEnter);
             });
 
+            row.down('button.remove_promotion_price_button').addEventListener('click', self.removePromotionsPriceRow.bind(this));
+
             ['promotions_from_date_mode', 'promotions_to_date_mode', 'promotions_price_mode', 'promotions_comparison_price_mode'].forEach(function(el) {
                 var handlerObj = new AttributeCreator(el+'_' + self.promotionsIndex);
                 handlerObj.setSelectObj(row.down('.'+el));
@@ -726,7 +732,15 @@ define([
 
         removePromotionsPriceRow: function(el)
         {
-            el.up('.promotions').remove();
+            var targetNode;
+
+            if (el.nodeType === Node.ELEMENT_NODE) {
+                targetNode = el.up('.promotions');
+            } else {
+                targetNode = el.target.up('.promotions');
+            }
+
+            targetNode.remove();
 
             if ($('promotions_table_tbody').select('tr').length == 0) {
                 $('promotions_table_main_screen').show();
@@ -849,7 +863,15 @@ define([
 
         removeRow: function(el)
         {
-            el.up('.shipping-override-rule').remove();
+            var targetNode;
+
+            if (el.nodeType === Node.ELEMENT_NODE) {
+                targetNode = el.up('.shipping-override-rule');
+            } else {
+                targetNode = el.target.up('.shipping-override-rule');
+            }
+
+            targetNode.remove();
 
             if ($('shipping_override_rules_table_tbody').select('tr').length == 0) {
                 $('shipping_override_rule_table').hide();

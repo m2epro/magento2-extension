@@ -79,14 +79,13 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
         $shippingOverrideRuleService = $this->createElement(
             Form::SELECT,
             [
-                'html_id' => 'shipping_override_rule_service_%i%',
-                'name'    => 'shipping_override_rule[%i%][method]',
+                'html_id' => 'shipping_override_rule_service_temp-i',
+                'name'    => 'shipping_override_rule[temp-i][method]',
                 'values'  => $this->getShippingOverrideRuleSeviceOptions(),
                 'value'   => '',
                 'required' => true,
                 'disabled' => true,
                 'class'   => 'shipping-override-service',
-                'style'    => 'display: none;'
             ]
         );
         $this->setData('shipping_override_rule_service', $shippingOverrideRuleService);
@@ -96,13 +95,12 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
         $shippingOverrideRuleLocation = $this->createElement(
             Form::SELECT,
             [
-                'html_id'  => 'shipping_override_rule_location_%i%',
-                'name'     => 'shipping_override_rule[%i%][region]',
+                'html_id'  => 'shipping_override_rule_location_temp-i',
+                'name'     => 'shipping_override_rule[temp-i][region]',
                 'values'   => $this->getShippingOverrideRuleLocationOptions(),
                 'value'    => '',
                 'disabled' => true,
                 'class'    => 'shipping-override-location',
-                'style'    => 'display: none;'
             ]
         );
         $this->setData('shipping_override_rule_location', $shippingOverrideRuleLocation);
@@ -112,8 +110,8 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
         $shippingOverrideRuleAction = $this->createElement(
             Form::SELECT,
             [
-                'html_id'  => 'shipping_override_rule_action_%i%',
-                'name'     => 'shipping_override_rule[%i%][is_shipping_allowed]',
+                'html_id'  => 'shipping_override_rule_action_temp-i',
+                'name'     => 'shipping_override_rule[temp-i][is_shipping_allowed]',
                 'values'   => [
                     [
                         'value' => '',
@@ -133,7 +131,6 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
                 'required' => true,
                 'disabled' => true,
                 'class'    => 'shipping-override-action',
-                'style'    => 'display: none;'
             ]
         );
         $this->setData('shipping_override_rule_action', $shippingOverrideRuleAction);
@@ -143,8 +140,8 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
         $shippingOverrideRuleCostMode = $this->createElement(
             Form::SELECT,
             [
-                'html_id'  => 'shipping_override_rule_cost_mode_%i%',
-                'name'     => 'shipping_override_rule[%i%][cost_mode]',
+                'html_id'  => 'shipping_override_rule_cost_mode_temp-i',
+                'name'     => 'shipping_override_rule[temp-i][cost_mode]',
                 'values'   => [
                     [
                         'value' => '',
@@ -170,7 +167,6 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
                 'required' => true,
                 'disabled' => true,
                 'class'    => 'shipping-override-cost-mode',
-                'style'    => 'display: none;'
             ]
         );
         $this->setData('shipping_override_rule_cost_mode', $shippingOverrideRuleCostMode);
@@ -180,13 +176,12 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
         $shippingOverrideRuleCostValue = $this->createElement(
             'text',
             [
-                'html_id'  => 'shipping_override_rule_cost_value_%i%',
-                'name'     => 'shipping_override_rule[%i%][cost_value]',
+                'html_id'  => 'shipping_override_rule_cost_value_temp-i',
+                'name'     => 'shipping_override_rule[temp-i][cost_value]',
                 'value'    => '',
                 'required' => true,
                 'disabled' => true,
                 'class'    => 'M2ePro-validation-float shipping-override-cost-custom-value',
-                'style'    => 'display: none;'
             ]
         );
         $this->setData('shipping_override_rule_cost_value', $shippingOverrideRuleCostValue);
@@ -196,8 +191,8 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
         $shippingOverrideRuleCostAttribute = $this->createElement(
             Form::SELECT,
             [
-                'html_id'  => 'shipping_override_rule_cost_attribute_%i%',
-                'name'     => 'shipping_override_rule[%i%][cost_attribute]',
+                'html_id'  => 'shipping_override_rule_cost_attribute_temp-i',
+                'name'     => 'shipping_override_rule[temp-i][cost_attribute]',
                 'values'   => [
                     [
                         'value' => '',
@@ -210,7 +205,6 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
                 'required' => true,
                 'disabled' => true,
                 'class'    => 'shipping-override-cost-custom-attribute',
-                'style'    => 'display: none;'
             ]
         );
         $this->setData('shipping_override_rule_cost_attribute', $shippingOverrideRuleCostAttribute);
@@ -225,7 +219,6 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
             ->createBlock('Magento\Button')
             ->addData([
                 'label'   => $this->__('Remove'),
-                'onclick' => 'WalmartTemplateSellingFormatObj.removeRow(this);',
                 'class'   => 'delete icon-btn remove_shipping_override_rule_button'
             ]);
         $this->setData('remove_shipping_override_rule_button', $removeButton);

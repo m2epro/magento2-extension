@@ -1129,6 +1129,8 @@ define([
 
         addRow: function (type) // local|international
         {
+            var self = this;
+
             $('shipping_' + type + '_table').show();
             $('add_' + type + '_shipping_method_button').hide();
 
@@ -1144,6 +1146,10 @@ define([
 
             // ---------------------------------------
             var row = $('shipping_variant_' + type + '_' + i + '_tr');
+            // ---------------------------------------
+
+            // ---------------------------------------
+            row.down('button.remove_shipping_method_button').addEventListener('click', self.removeRow.bind(this, type));
             // ---------------------------------------
 
             // ---------------------------------------
@@ -1382,15 +1388,23 @@ define([
 
         // ---------------------------------------
 
-        removeRow: function (locationType)
+        removeRow: function (locationType, el)
         {
-            var table = $(this).up('table');
+            var targetNode;
 
-            if (locationType == 'international') {
-                $(this).up('tr').next().remove();
+            if (el.nodeType === Node.ELEMENT_NODE) {
+                targetNode = el;
+            } else {
+                targetNode = el.target;
             }
 
-            $(this).up('tr').remove();
+            var table = targetNode.up('table');
+
+            if (locationType == 'international') {
+                targetNode.up('tr').next().remove();
+            }
+
+            targetNode.up('tr').remove();
 
             EbayTemplateShippingObj.counter[locationType]--;
 

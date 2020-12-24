@@ -1,4 +1,15 @@
-* 1.9.4 (r4436) (16/12/2020) 
+* 1.9.5 (r4469) (24/12/2020) 
+Common:  [Fixed] Dynamic behavior compatibility in Magento 2.4.* and 2.3.*
+Common:  [Fixed] "TypeError: Cannot read property 'readAttribute' of undefined js/Marketplace.js:100" is occured when try to Update Now Marketplace on eBay/Amazon/Walmart -> Configuration -> Marketplaces (magento version 2.4)
+Common:  [Fixed] Remove button does not work for Promotions and Override Mode in Walmart Selling Policy and for Shipping Methods in Ebay Shipping Policy if second field was added (magento version 2.4)
+eBay:    [Fixed] International Shipping Services are not shown in eBay Shipping policy (magento version 2.3, 2.4)
+eBay:    [Fixed] Incorrect view of Weight field in eBay Shipping Policy (magento version 2.4)
+eBay:    [Fixed] Error Invalid block type: Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ViewLogIcon\Listing when try to Assign Products to Stores on eBay listing
+Amazon:  [Fixed] New tab is opened when try to redirect to Amazon during Account creation process (magento version 2.4)
+Walmart: [Fixed] "SyntaxError: Failed to execute 'querySelector' on 'Document': '#shipping_override_rule_service_%i%' is not a valid selector." is occured when Selling Policy was opened (magento version 2.4)
+Walmart: [Fixed] Locale, Action, Mode, Cost fields are disappeared after add new Override (magento version 2.4)
+
+* 1.9.4 (r4414) (09/12/2020)
 
 Common:  [Fixed] Video screenshot is sent as a preview image to the channel
 Common:  [Fixed] ASIN and Price data get unset if the same SKU is used on a different account

@@ -74,7 +74,7 @@ define([
                     return true;
                 }
 
-                if (!element.up('.admin__field').visible()) {
+                if (self.isFieldContainerHiddenFromPage(element)) {
                     return true;
                 }
 
@@ -113,6 +113,11 @@ define([
             }
 
             return hidden;
+        },
+
+        isFieldContainerHiddenFromPage: function(el)
+        {
+            return !el.up('.admin__field.field').visible();
         },
 
         // ---------------------------------------
