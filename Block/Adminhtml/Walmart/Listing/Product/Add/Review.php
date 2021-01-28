@@ -92,7 +92,7 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
             $buttonBlock = $this->createBlock('Magento\Button')
                 ->setData([
-                    'label'   => $this->__('Back to 3rd Party Listing'),
+                    'label'   => $this->__('Back to Unmanaged Listing'),
                     'onclick' => 'setLocation(\''.$url.'\');',
                     'class' => 'action primary'
                 ]);

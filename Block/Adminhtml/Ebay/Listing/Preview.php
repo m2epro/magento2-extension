@@ -16,9 +16,9 @@ use Ess\M2ePro\Model\Ebay\Template\Description\Source as DescriptionSource;
  */
 class Preview extends AbstractBlock
 {
-    const NEXT = 0;
+    const NEXT     = 0;
     const PREVIOUS = 1;
-    const CURRENT = 3;
+    const CURRENT  = 3;
 
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
     private $ebayListingProduct;
@@ -64,7 +64,8 @@ class Preview extends AbstractBlock
         $variations = $this->getHelper('Data')->jsonEncode($this->getVariations());
         $images = $this->getHelper('Data')->jsonEncode($this->getImages());
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
 
         M2ePro.formData.variations = {$variations};
         M2ePro.formData.images = {$images};
@@ -116,11 +117,14 @@ JS
 
         return [
             'title' => $tempEbayListingProduct->getMagentoProduct()->getName(),
-            'id' => $tempEbayListingProduct->getMagentoProduct()->getProductId(),
-            'url' => $this->getUrl('*/ebay_listing/previewItems', [
-                'currentProductId' => current($parsedProductIds),
-                'productIds' => $productIds,
-            ])
+            'id'    => $tempEbayListingProduct->getMagentoProduct()->getProductId(),
+            'url'   => $this->getUrl(
+                '*/ebay_listing/previewItems',
+                [
+                    'currentProductId' => current($parsedProductIds),
+                    'productIds'       => $productIds,
+                ]
+            )
         ];
     }
 
@@ -161,7 +165,7 @@ JS
     public function getPrice(array $variations)
     {
         $data = [
-            'price' => null,
+            'price'     => null,
             'price_stp' => null,
             'price_map' => null
         ];
@@ -269,8 +273,8 @@ JS
             $options = $productVariation->getOptions(true);
 
             $variationData = [
-                'price' => number_format($productVariation->getPrice(), 2),
-                'qty' => $variationQty,
+                'price'     => number_format($productVariation->getPrice(), 2),
+                'qty'       => $variationQty,
                 'price_stp' => null,
                 'price_map' => null
             ];
@@ -294,7 +298,7 @@ JS
             }
 
             $variationData = [
-                'data' => $variationData,
+                'data'      => $variationData,
                 'specifics' => $variationSpecifics
             ];
 
@@ -490,6 +494,7 @@ JS
         }
 
         $images['gallery'] = $links;
+
         return $this->images = $images;
     }
 
@@ -596,7 +601,7 @@ JS
             }
 
             $data[] = [
-                'name' => $tempAttributeLabel,
+                'name'  => $tempAttributeLabel,
                 'value' => $values
             ];
         }
@@ -609,23 +614,25 @@ JS
     private function getConditionHumanTitle($code)
     {
         $codes = [
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW                   =>
                 $this->__('New'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW_OTHER =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW_OTHER             =>
                 $this->__('New Other'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW_WITH_DEFECT =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW_WITH_DEFECT       =>
                 $this->__('New With Defects'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_SELLER_REFURBISHED =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_CERTIFIED_REFURBISHED =>
+                $this->__('Manufacturer Refurbished'),
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_SELLER_REFURBISHED    =>
                 $this->__('Seller Refurbished, Re-manufactured'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_USED =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_USED                  =>
                 $this->__('Used'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_VERY_GOOD =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_VERY_GOOD             =>
                 $this->__('Very Good'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_GOOD =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_GOOD                  =>
                 $this->__('Good'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_ACCEPTABLE =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_ACCEPTABLE            =>
                 $this->__('Acceptable'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NOT_WORKING =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NOT_WORKING           =>
                 $this->__('For Parts or Not Working')
         ];
 
@@ -645,6 +652,7 @@ JS
                 return $this->__($country['label']);
             }
         }
+
         return '';
     }
 
@@ -659,6 +667,7 @@ JS
                 }
             }
         }
+
         return '';
     }
 
@@ -674,6 +683,7 @@ JS
                 }
             }
         }
+
         return $locationsTitle;
     }
 
@@ -686,6 +696,7 @@ JS
                 return $this->__($excludeLocationInfo['title']);
             }
         }
+
         return '';
     }
 
@@ -696,6 +707,7 @@ JS
             $this->ebayListingProduct->getShippingTemplateSource()->getAddress(),
             $this->getCountryHumanTitle($this->ebayListingProduct->getShippingTemplateSource()->getCountry())
         ];
+
         return implode(', ', $itemLocation);
     }
 
@@ -733,6 +745,7 @@ JS
             return $this->ebayListingProduct->getShippingTemplate()->getCalculatedShipping()
                 ->getLocalHandlingCost();
         }
+
         return 0;
     }
 
@@ -742,6 +755,7 @@ JS
             return $this->ebayListingProduct->getShippingTemplate()->getCalculatedShipping()
                 ->getInternationalHandlingCost();
         }
+
         return 0;
     }
 
@@ -837,7 +851,7 @@ JS
             }
 
             $tempDataMethod = [
-                'service' => $this->getShippingServiceHumanTitle($service->getShippingValue()),
+                'service'   => $this->getShippingServiceHumanTitle($service->getShippingValue()),
                 'locations' => implode(', ', $this->getShippingLocationHumanTitle($service->getLocations()))
             ];
 
@@ -992,6 +1006,7 @@ JS
     public function isDomesticReturnsAccepted()
     {
         $template = $this->ebayListingProduct->getReturnTemplate();
+
         return $template->getAccepted() === \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy::RETURNS_ACCEPTED;
     }
 
@@ -1000,7 +1015,7 @@ JS
         $template = $this->ebayListingProduct->getReturnTemplate();
 
         return $this->isDomesticReturnsAccepted() &&
-               $template->getInternationalAccepted() === \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy::RETURNS_ACCEPTED;
+            $template->getInternationalAccepted() === \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy::RETURNS_ACCEPTED;
     }
 
     //########################################
@@ -1008,6 +1023,7 @@ JS
     protected function getDictionaryInfo($key)
     {
         $returnPolicyInfo = $this->ebayListingProduct->getEbayMarketplace()->getReturnPolicyInfo();
+
         return !empty($returnPolicyInfo[$key]) ? $returnPolicyInfo[$key] : [];
     }
 
@@ -1015,8 +1031,8 @@ JS
     {
         $returnPolicyInfo = $this->ebayListingProduct->getEbayMarketplace()->getReturnPolicyInfo();
 
-        if (!empty($returnPolicyInfo['international_'.$key])) {
-            return $returnPolicyInfo['international_'.$key];
+        if (!empty($returnPolicyInfo['international_' . $key])) {
+            return $returnPolicyInfo['international_' . $key];
         }
 
         return $this->getDictionaryInfo($key);

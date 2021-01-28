@@ -173,6 +173,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $this->_productModel = $this->productFactory->create()->setStoreId($storeId);
         $this->_productModel->load($productId, 'entity_id');
 
+        if ($this->_productModel->getId() === null) {
+            throw new \Ess\M2ePro\Model\Exception(sprintf('Magento Product with id %s does not exist.', $productId));
+        }
+
         $this->setProductId($productId);
         $this->setStoreId($storeId);
 

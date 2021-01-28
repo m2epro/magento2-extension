@@ -212,10 +212,6 @@ echo $block->getChildHtml('item_edit');
                             <td class="value"><strong><?php echo $block->getHelper('Data')->escapeHtml($block->order->getChildObject()->getPaymentMethod()); ?></strong></td>
                         </tr>
                         <tr>
-                            <td class="label"><?php echo $block->__('eBay User ID'); ?></td>
-                            <td class="value"><strong><?php echo $block->getHelper('Data')->escapeHtml($block->order->getChildObject()->getBuyerUserId()); ?></strong></td>
-                        </tr>
-                        <tr>
                             <td class="label"><?php echo $block->__('eBay Final Fee');?></td>
                             <td class="value">
                                 <strong>
@@ -332,48 +328,6 @@ echo $block->getChildHtml('item_edit');
                                 <td class="value"><strong><?php echo $block->formatDate($block->order->getChildObject()->getShippingDate(), \IntlDateFormatter::MEDIUM, true); ?></strong></td>
                             </tr>
                         <?php } ?>
-
-                        <tr>
-                            <td class="label"><?php echo $block->__('Shipping Address'); ?></td>
-                            <td class="value">
-                                <strong>
-
-                                    <?php echo $block->getHelper('Data')->escapeHtml($block->order->getChildObject()->getBuyerName()) ?>
-
-                                    <?php if (!empty($block->shippingAddress)) : ?>
-
-                                        <?php if (!empty($block->shippingAddress['street'][0])) : ?>
-                                            <br/><?php echo $block->getHelper('Data')->escapeHtml($block->shippingAddress['street'][0]); ?>
-                                        <?php endif; ?>
-
-                                        <?php if (!empty($block->shippingAddress['street'][1])) : ?>
-                                            <br/><?php echo $block->getHelper('Data')->escapeHtml($block->shippingAddress['street'][1]); ?>
-                                        <?php endif; ?>
-
-                                        <?php if (!empty($block->shippingAddress['city'])) : ?>
-                                            <br/><?php echo $block->getHelper('Data')->escapeHtml(implode(', ', [$block->shippingAddress['city'], $block->shippingAddress['state'], $block->shippingAddress['postal_code']])) ?>
-                                        <?php endif; ?>
-
-                                        <?php if (!empty($block->shippingAddress['country_name'])) : ?>
-                                            <br/>
-                                            <?php
-                                            if (!empty($block->shippingAddress['country_name'])) {
-                                                echo $block->getHelper('Data')->escapeHtml($block->shippingAddress['country_name']);
-                                            } else {
-                                                echo $block->getHelper('Data')->escapeHtml($block->shippingAddress['country_code']);
-                                            }
-                                            ?>
-                                        <?php endif; ?>
-
-                                        <?php if (!empty($block->shippingAddress['phone']) && stripos($block->shippingAddress['phone'], 'Invalid Request') === false) : ?>
-                                            <br/><?php echo 'T: ' . $block->getHelper('Data')->escapeHtml($block->shippingAddress['phone']); ?>
-                                        <?php endif; ?>
-
-                                    <?php endif; ?>
-
-                                </strong>
-                            </td>
-                        </tr>
 
                         <?php if (count($block->order->getChildObject()->getShippingTrackingDetails())) { ?>
 

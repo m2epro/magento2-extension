@@ -20,10 +20,8 @@ class InstallationEbay extends Wizard
         'account',
 
         'listingTutorial',
-        'listingAccount',
         'listingGeneral',
-        'listingSelling',
-        'listingSynchronization',
+        'listingTemplates',
 
         'sourceMode',
         'productSelection',

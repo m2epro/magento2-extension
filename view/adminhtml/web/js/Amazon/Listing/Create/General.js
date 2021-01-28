@@ -4,7 +4,7 @@ define([
     'M2ePro/Amazon/Listing/Create/General/MarketplaceSynchProgress',
     'M2ePro/Plugin/ProgressBar',
     'M2ePro/Plugin/AreaWrapper'
-], function (_, alert) {
+], function(_, alert) {
 
     window.AmazonListingCreateGeneral = Class.create({
 
@@ -14,7 +14,7 @@ define([
 
         // ---------------------------------------
 
-        initialize: function () {
+        initialize: function() {
             var self = this;
 
             self.marketplaceSynchProgressObj = new AmazonListingCreateGeneralMarketplaceSynchProgress(
@@ -32,7 +32,7 @@ define([
             self.initMarketplace();
         },
 
-        initAccount: function () {
+        initAccount: function() {
             var self = this;
 
             $('account_id').observe('change', function() {
@@ -71,7 +71,7 @@ define([
             });
         },
 
-        initMarketplace: function () {
+        initMarketplace: function() {
             var self = this;
 
             $('save_and_next').observe('click', function() {
@@ -85,7 +85,7 @@ define([
             });
         },
 
-        renderAccounts: function (callback) {
+        renderAccounts: function(callback) {
             var self = this;
 
             var account_add_btn = $('add_account_button');
@@ -101,6 +101,7 @@ define([
 
             new Ajax.Request(M2ePro.url.get('general/getAccounts'), {
                 method: 'get',
+                parameters: {component: M2ePro.php.constant('Ess_M2ePro_Helper_Component_Amazon::NICK')},
                 onSuccess: function(transport) {
                     var accounts = transport.responseText.evalJSON();
 
@@ -147,7 +148,10 @@ define([
                         if (M2ePro.formData.wizard) {
                             accountElement = new Element('span').update(account.title);
                         } else {
-                            var accountLink = M2ePro.url.get('amazon_account/edit', {'id': account.id, close_on_save: 1});
+                            var accountLink = M2ePro.url.get('amazon_account/edit', {
+                                'id': account.id,
+                                close_on_save: 1
+                            });
                             accountElement = new Element('a', {
                                 'href': accountLink,
                                 'target': '_blank'
@@ -179,12 +183,12 @@ define([
             });
         },
 
-        synchronizeMarketplace: function (marketplaceId) {
+        synchronizeMarketplace: function(marketplaceId) {
             var self = this;
 
             new Ajax.Request(M2ePro.url.get('general/isMarketplaceEnabled'), {
                 method: 'get',
-                parameters: { marketplace_id: marketplaceId },
+                parameters: {marketplace_id: marketplaceId},
                 onSuccess: function(transport) {
 
                     var result = transport.responseText.evalJSON();
@@ -215,7 +219,7 @@ define([
             });
         },
 
-        isAccountsEqual: function (newAccounts) {
+        isAccountsEqual: function(newAccounts) {
             if (!newAccounts.length && !this.accounts.length) {
                 return true;
             }
@@ -224,7 +228,7 @@ define([
                 return false;
             }
 
-            return _.every(this.accounts, function (account) {
+            return _.every(this.accounts, function(account) {
                 return _.where(newAccounts, account).length > 0;
             });
         }

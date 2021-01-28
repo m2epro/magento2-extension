@@ -22,7 +22,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     const _TASK_LISTINGS = 'M2E Pro Listings';
 
     const TASK_OTHER_LISTINGS = 5;
-    const _TASK_OTHER_LISTINGS = '3rd Party Listings';
+    const _TASK_OTHER_LISTINGS = 'Unmanaged Listings';
 
     const TASK_ORDERS = 3;
     const _TASK_ORDERS = 'Orders';

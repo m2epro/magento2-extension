@@ -28,11 +28,11 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     public function getTemplateCategoryIds(array $listingProductIds, $columnName, $returnNull = false)
     {
         $select = $this->getConnection()
-                       ->select()
-                       ->from(['elp' => $this->getMainTable()])
-                       ->reset(\Zend_Db_Select::COLUMNS)
-                       ->columns([$columnName])
-                       ->where('listing_product_id IN (?)', $listingProductIds);
+            ->select()
+            ->from(['elp' => $this->getMainTable()])
+            ->reset(\Zend_Db_Select::COLUMNS)
+            ->columns([$columnName])
+            ->where('listing_product_id IN (?)', $listingProductIds);
 
         !$returnNull && $select->where("{$columnName} IS NOT NULL");
 
@@ -46,6 +46,34 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         }
 
         return array_values($ids);
+    }
+
+    //########################################
+
+    public function assignTemplatesToProducts(
+        $productsIds,
+        $categoryTemplateId = null,
+        $categorySecondaryTemplateId = null,
+        $storeCategoryTemplateId = null,
+        $storeCategorySecondaryTemplateId = null
+    ) {
+        if (empty($productsIds)) {
+            return;
+        }
+
+        $bind = [
+            'template_category_id'                 => $categoryTemplateId,
+            'template_category_secondary_id'       => $categorySecondaryTemplateId,
+            'template_store_category_id'           => $storeCategoryTemplateId,
+            'template_store_category_secondary_id' => $storeCategorySecondaryTemplateId
+        ];
+        $bind = array_filter($bind);
+
+        $this->getConnection()->update(
+            $this->getMainTable(),
+            $bind,
+            ['listing_product_id IN (?)' => $productsIds]
+        );
     }
 
     //########################################

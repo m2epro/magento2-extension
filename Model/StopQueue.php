@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model;
 
+use \Ess\M2ePro\Model\Listing\Product as Listing_Product;
+
 /**
  * Class \Ess\M2ePro\Model\StopQueue
  */
@@ -42,28 +44,39 @@ class StopQueue extends ActiveRecord\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param int $actionType
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function add(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    public function add(\Ess\M2ePro\Model\Listing\Product $listingProduct, $actionType = Listing_Product::ACTION_STOP)
     {
         if (!$listingProduct->isStoppable()) {
             return false;
         }
 
-        $requestData = $this->getRequestData($listingProduct);
-        if (empty($requestData)) {
+        try {
+            $requestData = $this->getRequestData($listingProduct, $actionType);
+        } catch (\Exception $exception) {
+            $this->getHelper('Module\Logger')->process(
+                sprintf(
+                    'Product [Listing Product ID: %s, SKU %s] was not added to stop queue because of the error: %s',
+                    $listingProduct->getId(),
+                    $listingProduct->getChildObject()->getSku(),
+                    $exception->getMessage()
+                ),
+                'Product was not added to stop queue',
+                false
+            );
+
+            $this->getHelper('Module\Exception')->process($exception);
+
             return false;
         }
-
-        $additionalData = [
-            'request_data' => $requestData,
-        ];
 
         $addedData = [
             'component_mode'  => $listingProduct->getComponentMode(),
             'is_processed'    => 0,
-            'additional_data' => $this->getHelper('Data')->jsonEncode($additionalData),
+            'additional_data' => $this->getHelper('Data')->jsonEncode(['request_data' => $requestData]),
         ];
 
         $this->activeRecordFactory->getObject('StopQueue')->setData($addedData)->save();
@@ -73,42 +86,45 @@ class StopQueue extends ActiveRecord\AbstractModel
 
     // ---------------------------------------
 
-    private function getRequestData(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    private function getRequestData(Listing_Product $listingProduct, $actionType = Listing_Product::ACTION_STOP)
     {
         $data = [];
 
         if ($listingProduct->isComponentModeEbay()) {
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
             $ebayListingProduct = $listingProduct->getChildObject();
-            $ebayAccount        = $ebayListingProduct->getEbayAccount();
+            $ebayAccount = $ebayListingProduct->getEbayAccount();
 
             $data = [
                 'account'     => $ebayAccount->getServerHash(),
                 'marketplace' => $ebayListingProduct->getMarketplace()->getNativeId(),
                 'item_id'     => $ebayListingProduct->getEbayItem()->getItemId(),
+                'action_type' => $actionType
             ];
         }
 
         if ($listingProduct->isComponentModeAmazon()) {
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
             $amazonListingProduct = $listingProduct->getChildObject();
-            $amazonAccount        = $amazonListingProduct->getAmazonAccount();
+            $amazonAccount = $amazonListingProduct->getAmazonAccount();
 
             $data = [
-                'account' => $amazonAccount->getServerHash(),
-                'sku'     => $amazonListingProduct->getSku(),
+                'account'     => $amazonAccount->getServerHash(),
+                'sku'         => $amazonListingProduct->getSku(),
+                'action_type' => $actionType
             ];
         }
 
         if ($listingProduct->isComponentModeWalmart()) {
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
             $walmartListingProduct = $listingProduct->getChildObject();
-            $walmartAccount        = $walmartListingProduct->getWalmartAccount();
+            $walmartAccount = $walmartListingProduct->getWalmartAccount();
 
             $data = [
-                'account' => $walmartAccount->getServerHash(),
-                'sku'     => $walmartListingProduct->getSku(),
-                'wpid'    => $walmartListingProduct->getWpid()
+                'account'     => $walmartAccount->getServerHash(),
+                'sku'         => $walmartListingProduct->getSku(),
+                'wpid'        => $walmartListingProduct->getWpid(),
+                'action_type' => $actionType
             ];
         }
 

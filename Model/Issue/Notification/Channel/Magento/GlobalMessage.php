@@ -56,8 +56,8 @@ class GlobalMessage extends AbstractModel implements ChannelInterface
         $notice = [
             Message::TYPE_NOTICE,
             Message::TYPE_SUCCESS,
-            \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_NOTICE,
-            \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_SUCCESS
+            \Ess\M2ePro\Helper\Module::MESSAGE_TYPE_NOTICE,
+            \Ess\M2ePro\Helper\Module::MESSAGE_TYPE_SUCCESS
         ];
 
         if (in_array($issue->getType(), $notice, true)) {
@@ -66,7 +66,7 @@ class GlobalMessage extends AbstractModel implements ChannelInterface
 
         $warning = [
             Message::TYPE_WARNING,
-            \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_WARNING
+            \Ess\M2ePro\Helper\Module::MESSAGE_TYPE_WARNING
         ];
 
         if (in_array($issue->getType(), $warning, true)) {

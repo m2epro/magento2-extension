@@ -94,7 +94,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 'label' => $this->__('Save And Close'),
                 'class' => 'add',
                 'button_class' => '',
-                'onclick' => "EbayTemplateEditObj.saveClick('{$saveAndBackUrl}', '{$saveConfirmation}')",
+                'onclick' => "EbayTemplateEditObj.saveAndCloseClick('{$saveAndBackUrl}', '{$saveConfirmation}')",
                 'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
                 'options' => [
                     'save' => [
@@ -140,10 +140,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
     public function getTemplateObject()
     {
-        $nick = $this->getTemplateNick();
-        $template = $this->getHelper('Data\GlobalData')->getValue("ebay_template_{$nick}");
-
-        return $template;
+        return $this->getHelper('Data\GlobalData')->getValue("ebay_template_{$this->getTemplateNick()}");
     }
 
     //########################################

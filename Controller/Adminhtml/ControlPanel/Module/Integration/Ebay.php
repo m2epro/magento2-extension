@@ -34,7 +34,7 @@ class Ebay extends Command
     //########################################
 
     /**
-     * @title "Stop 3rd Party"
+     * @title "Stop Unmanaged"
      * @description "[in order to resolve the problem with duplicates]"
      * @new_line
      */

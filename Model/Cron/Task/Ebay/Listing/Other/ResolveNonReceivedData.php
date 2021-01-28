@@ -87,6 +87,8 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         )->getCollection();
         $listingOtherCollection->addFieldToFilter('main_table.account_id', (int)$account->getId());
         $listingOtherCollection->getSelect()->where('`second_table`.`sku` IS NULL');
+        $listingOtherCollection->getSelect()->orWhere('`second_table`.`online_main_category` IS NULL');
+        $listingOtherCollection->getSelect()->orWhere('`second_table`.`online_categories_data` IS NULL');
         $listingOtherCollection->getSelect()->order('second_table.start_date ASC');
         $listingOtherCollection->getSelect()->limit(200);
 
@@ -180,7 +182,11 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Other $ebayListingOther */
             $ebayListingOther = $listingOther->getChildObject();
 
-            if ($ebayListingOther->getSku() !== null) {
+            $sku = $ebayListingOther->getSku();
+            $onlineMainCategory = $ebayListingOther->getOnlineMainCategory();
+            $onlineCategoriesData = $ebayListingOther->getOnlineCategoriesData();
+
+            if ($sku !== null && $onlineMainCategory !== null && $onlineCategoriesData !== null) {
                 continue;
             }
 
@@ -190,7 +196,10 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 continue;
             }
 
-            $ebayListingOther->setData('sku', '');
+            $onlineMainCategory === null && $ebayListingOther->setData('online_main_category', '');
+            $onlineCategoriesData === null && $ebayListingOther->setData('online_categories_data', '');
+            $sku === null && $ebayListingOther->setData('sku', '');
+
             $ebayListingOther->save();
         }
     }

@@ -54,7 +54,7 @@ class SynchronizationLog extends AbstractContainer
         $helpBlock = $this->createBlock('HelpBlock', '', ['data' => [
             'content' => $this->__(
                 'The Log includes information about synchronization of
-                 M2E Pro Listings, Orders, Marketplaces, 3rd Party Listings.'
+                 M2E Pro Listings, Orders, Marketplaces, Unmanaged Listings.'
             )
         ]]);
 

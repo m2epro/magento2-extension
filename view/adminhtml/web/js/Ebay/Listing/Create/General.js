@@ -4,7 +4,7 @@ define([
     'M2ePro/Ebay/Listing/Create/General/MarketplaceSynchProgress',
     'M2ePro/Plugin/ProgressBar',
     'M2ePro/Plugin/AreaWrapper'
-], function (_, alert) {
+], function(_, alert) {
 
     window.EbayListingCreateGeneral = Class.create({
 
@@ -14,8 +14,7 @@ define([
 
         // ---------------------------------------
 
-        initialize: function (marketplaces) {
-
+        initialize: function(marketplaces) {
             var self = this;
 
             self.marketplaceSynchProgressObj = new EbayListingCreateGeneralMarketplaceSynchProgress(
@@ -33,8 +32,7 @@ define([
             self.initMarketplace(marketplaces);
         },
 
-        initAccount: function () {
-
+        initAccount: function() {
             var self = this;
 
             $('add_account_button').observe('click', function() {
@@ -53,15 +51,14 @@ define([
                 }, 1000);
             });
 
-            $('account_id').observe('change', function () {
+            $('account_id').observe('change', function() {
                 self.selectedAccountId = this.value;
             });
 
             self.renderAccounts();
         },
 
-        renderAccounts: function (callback) {
-
+        renderAccounts: function(callback) {
             var self = this;
 
             var account_add_btn = $('add_account_button');
@@ -70,6 +67,7 @@ define([
 
             new Ajax.Request(M2ePro.url.get('general/getAccounts'), {
                 method: 'get',
+                parameters: {component: M2ePro.php.constant('Ess_M2ePro_Helper_Component_Ebay::NICK')},
                 onSuccess: function(transport) {
                     var accounts = transport.responseText.evalJSON();
 
@@ -113,7 +111,10 @@ define([
                         if (M2ePro.formData.wizard) {
                             accountElement = new Element('span').update(account.title);
                         } else {
-                            var accountLink = M2ePro.url.get('ebay_account/edit', {'id': account.id, close_on_save: 1});
+                            var accountLink = M2ePro.url.get('ebay_account/edit', {
+                                'id': account.id,
+                                close_on_save: 1
+                            });
                             accountElement = new Element('a', {
                                 'href': accountLink,
                                 'target': '_blank'
@@ -138,39 +139,38 @@ define([
             });
         },
 
-        initMarketplace: function (marketplaces) {
-
+        initMarketplace: function(marketplaces) {
             var self = this;
 
-            $$('.next_step_button').each(function(btn) { btn.observe('click',function() {
-                if (self.marketplaceSynchProgressObj.runningNow) {
-                    alert({
-                        content: M2ePro.translator.translate('Please wait while Synchronization is finished.')
-                    });
-                    return;
-                }
-                jQuery('#edit_form').valid() && self.synchronizeMarketplace($('marketplace_id').value);
-            }) });
+            $$('.next_step_button').each(function(btn) {
+                btn.observe('click', function() {
+                    if (self.marketplaceSynchProgressObj.runningNow) {
+                        alert({
+                            content: M2ePro.translator.translate('Please wait while Synchronization is finished.')
+                        });
+                        return;
+                    }
+                    jQuery('#edit_form').valid() && self.synchronizeMarketplace($('marketplace_id').value);
+                });
+            });
 
             $('marketplace_id')
-                .observe('click', function() {
+                .observe('change', function() {
                     if (!this.value) {
                         return;
                     }
-                    var marketplace = _.findWhere(marketplaces, {value: this.value});
-                    $('marketplace_url_note').update(marketplace.url).show();
+                    $('marketplace_url_note').update(marketplaces[this.value].url).show();
                 })
-                .simulate('click')
+                .simulate('change')
             ;
         },
 
-        synchronizeMarketplace: function (marketplaceId) {
-
+        synchronizeMarketplace: function(marketplaceId) {
             var self = this;
 
             new Ajax.Request(M2ePro.url.get('general/isMarketplaceEnabled'), {
                 method: 'get',
-                parameters: { marketplace_id: marketplaceId },
+                parameters: {marketplace_id: marketplaceId},
                 onSuccess: function(transport) {
 
                     var result = transport.responseText.evalJSON();
@@ -186,7 +186,7 @@ define([
                         parameters: params,
                         onSuccess: function() {
 
-                            var title = 'eBay ' + $('marketplace_id').down('option[value='+$('marketplace_id').value+']').innerHTML;
+                            var title = 'eBay ' + $('marketplace_id').down('option[value=' + $('marketplace_id').value + ']').innerHTML;
 
                             $('next').disable();
 
@@ -202,7 +202,7 @@ define([
             });
         },
 
-        isAccountsEqual: function (newAccounts) {
+        isAccountsEqual: function(newAccounts) {
             if (!newAccounts.length && !this.accounts.length) {
                 return true;
             }
@@ -211,7 +211,7 @@ define([
                 return false;
             }
 
-            return _.every(this.accounts, function (account) {
+            return _.every(this.accounts, function(account) {
                 return _.where(newAccounts, account).length > 0;
             });
         }

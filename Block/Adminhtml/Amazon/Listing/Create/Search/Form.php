@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Search;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
-use Ess\M2ePro\Model\Amazon\Listing;
+use Ess\M2ePro\Model\Amazon\Listing as AmazonListing;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Search\Form
@@ -36,6 +36,8 @@ class Form extends AbstractForm
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
+    //########################################
+
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create(
@@ -45,7 +47,7 @@ class Form extends AbstractForm
                     'method'  => 'post',
                     'action'  => 'javascript:void(0)',
                     'enctype' => 'multipart/form-data',
-                    'class' => 'admin__scope-old'
+                    'class'   => 'admin__scope-old'
                 ]
             ]
         );
@@ -53,8 +55,10 @@ class Form extends AbstractForm
         /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
         $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
 
+        $attributes = $this->getHelper('Magento\Attribute')->getAll();
+
         $attributesByTypes = [
-            'text' => $magentoAttributeHelper->filterByInputTypes($this->getData('all_attributes'), ['text'])
+            'text' => $magentoAttributeHelper->filterByInputTypes($attributes, ['text'])
         ];
         $formData = $this->getListingData();
 
@@ -62,7 +66,7 @@ class Form extends AbstractForm
         $fieldset = $form->addFieldset(
             'identifiers_settings_fieldset',
             [
-                'legend' => $this->__('Identifiers Settings'),
+                'legend'      => $this->__('Identifiers Settings'),
                 'collapsable' => false
             ]
         );
@@ -71,40 +75,40 @@ class Form extends AbstractForm
             'general_id_custom_attribute',
             'hidden',
             [
-                'name' => 'general_id_custom_attribute',
+                'name'  => 'general_id_custom_attribute',
                 'value' => $formData['general_id_custom_attribute']
             ]
         );
 
         $preparedAttributes = [];
 
-        if ($formData['general_id_mode'] == \Ess\M2ePro\Model\Amazon\Listing::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE &&
+        if ($formData['general_id_mode'] == AmazonListing::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE &&
             !$magentoAttributeHelper->isExistInAttributesArray(
                 $formData['general_id_custom_attribute'],
                 $attributesByTypes['text']
             ) && $formData['general_id_custom_attribute'] != '') {
             $attrs = [
                 'attribute_code' => $formData['general_id_custom_attribute'],
-                'selected' => 'selected'
+                'selected'       => 'selected'
             ];
 
             $preparedAttributes[] = [
                 'attrs' => $attrs,
-                'value' => \Ess\M2ePro\Model\Amazon\Listing::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE,
+                'value' => AmazonListing::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $magentoAttributeHelper->getAttributeLabel($formData['general_id_custom_attribute']),
             ];
         }
 
         foreach ($attributesByTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['general_id_mode'] == \Ess\M2ePro\Model\Amazon\Listing::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE
+            if ($formData['general_id_mode'] == AmazonListing::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE
                 && $attribute['code'] == $formData['general_id_custom_attribute']
             ) {
                 $attrs['selected'] = 'selected';
             }
             $preparedAttributes[] = [
                 'attrs' => $attrs,
-                'value' => \Ess\M2ePro\Model\Amazon\Listing::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE,
+                'value' => AmazonListing::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $attribute['label'],
             ];
         }
@@ -113,10 +117,10 @@ class Form extends AbstractForm
             'general_id_mode',
             self::SELECT,
             [
-                'name' => 'general_id_mode',
-                'label' => $this->__('ASIN / ISBN'),
+                'name'   => 'general_id_mode',
+                'label'  => $this->__('ASIN / ISBN'),
                 'values' => [
-                    \Ess\M2ePro\Model\Amazon\Listing::GENERAL_ID_MODE_NOT_SET => $this->__('Not Set'),
+                    AmazonListing::GENERAL_ID_MODE_NOT_SET => $this->__('Not Set'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
@@ -125,13 +129,17 @@ class Form extends AbstractForm
                         ]
                     ]
                 ],
-                'value' => $formData['general_id_mode'] != Listing::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE
+                'value'  => $formData['general_id_mode'] != AmazonListing::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE
                     ? $formData['general_id_mode'] : '',
+
                 'create_magento_attribute' => true,
-                'after_element_html' => $this->getTooltipHtml($this->__(
-                    'This setting is a source for ASIN/ISBN value which will be used
+                'after_element_html'       => $this->getTooltipHtml(
+                    $this->__(
+                        'This setting is a source for ASIN/ISBN value which will be used
                     at the time of Automatic Search of Amazon Products.'
-                ), true)
+                    ),
+                    true
+                )
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
@@ -139,40 +147,40 @@ class Form extends AbstractForm
             'worldwide_id_custom_attribute',
             'hidden',
             [
-                'name' => 'worldwide_id_custom_attribute',
+                'name'  => 'worldwide_id_custom_attribute',
                 'value' => $formData['worldwide_id_custom_attribute']
             ]
         );
 
         $preparedAttributes = [];
 
-        if ($formData['worldwide_id_mode'] == \Ess\M2ePro\Model\Amazon\Listing::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE &&
+        if ($formData['worldwide_id_mode'] == AmazonListing::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE &&
             !$magentoAttributeHelper->isExistInAttributesArray(
                 $formData['worldwide_id_custom_attribute'],
                 $attributesByTypes['text']
             ) && $formData['worldwide_id_custom_attribute'] != '') {
             $attrs = [
                 'attribute_code' => $formData['worldwide_id_custom_attribute'],
-                'selected' => 'selected'
+                'selected'       => 'selected'
             ];
 
             $preparedAttributes[] = [
                 'attrs' => $attrs,
-                'value' => \Ess\M2ePro\Model\Amazon\Listing::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE,
+                'value' => AmazonListing::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $magentoAttributeHelper->getAttributeLabel($formData['worldwide_id_custom_attribute']),
             ];
         }
 
         foreach ($attributesByTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['worldwide_id_mode'] == \Ess\M2ePro\Model\Amazon\Listing::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE
+            if ($formData['worldwide_id_mode'] == AmazonListing::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE
                 && $attribute['code'] == $formData['worldwide_id_custom_attribute']
             ) {
                 $attrs['selected'] = 'selected';
             }
             $preparedAttributes[] = [
                 'attrs' => $attrs,
-                'value' => \Ess\M2ePro\Model\Amazon\Listing::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE,
+                'value' => AmazonListing::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $attribute['label'],
             ];
         }
@@ -181,10 +189,10 @@ class Form extends AbstractForm
             'worldwide_id_mode',
             self::SELECT,
             [
-                'name' => 'worldwide_id_mode',
-                'label' => $this->__('UPC / EAN'),
+                'name'   => 'worldwide_id_mode',
+                'label'  => $this->__('UPC / EAN'),
                 'values' => [
-                    \Ess\M2ePro\Model\Amazon\Listing::WORLDWIDE_ID_MODE_NOT_SET => $this->__('Not Set'),
+                    AmazonListing::WORLDWIDE_ID_MODE_NOT_SET => $this->__('Not Set'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
@@ -193,13 +201,17 @@ class Form extends AbstractForm
                         ]
                     ]
                 ],
-                'value' => $formData['worldwide_id_mode'] != Listing::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE
+                'value'  => $formData['worldwide_id_mode'] != AmazonListing::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE
                     ? $formData['worldwide_id_mode'] : '',
+
                 'create_magento_attribute' => true,
-                'after_element_html' => $this->getTooltipHtml($this->__(
-                    'This setting is a source for UPC/EAN value which will be used
+                'after_element_html'       => $this->getTooltipHtml(
+                    $this->__(
+                        'This setting is a source for UPC/EAN value which will be used
                     at the time of Automatic Search of Amazon Products.'
-                ), true)
+                    ),
+                    true
+                )
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
@@ -207,7 +219,7 @@ class Form extends AbstractForm
         $fieldset = $form->addFieldset(
             'additional_settings_fieldset',
             [
-                'legend' => $this->__('Additional Settings'),
+                'legend'      => $this->__('Additional Settings'),
                 'collapsable' => false
             ]
         );
@@ -216,13 +228,13 @@ class Form extends AbstractForm
             'search_by_magento_title_mode',
             'select',
             [
-                'name' => 'search_by_magento_title_mode',
-                'label' => $this->__('Search by Product Name'),
-                'values' => [
-                    \Ess\M2ePro\Model\Amazon\Listing::SEARCH_BY_MAGENTO_TITLE_MODE_NONE => $this->__('Disable'),
-                    \Ess\M2ePro\Model\Amazon\Listing::SEARCH_BY_MAGENTO_TITLE_MODE_YES => $this->__('Enable')
+                'name'    => 'search_by_magento_title_mode',
+                'label'   => $this->__('Search by Product Name'),
+                'values'  => [
+                    AmazonListing::SEARCH_BY_MAGENTO_TITLE_MODE_NONE => $this->__('Disable'),
+                    AmazonListing::SEARCH_BY_MAGENTO_TITLE_MODE_YES  => $this->__('Enable')
                 ],
-                'value' => $formData['search_by_magento_title_mode'],
+                'value'   => $formData['search_by_magento_title_mode'],
                 'tooltip' => $this->__(
                     '<p>Enable this additional Setting if you want M2E Pro to perform the search for Amazon
                     Products based on Magento Product Name.</p><br>
@@ -240,30 +252,14 @@ class Form extends AbstractForm
 
     //########################################
 
-    protected function _beforeToHtml()
+    protected function _prepareLayout()
     {
-        // ---------------------------------------
-        $data = $this->getListingData();
-
-        $this->setData(
-            'all_attributes',
-            $this->getHelper('Magento\Attribute')->getAll()
+        $this->jsPhp->addConstants(
+            $this->getHelper('Data')->getClassConstants(AmazonListing::class)
         );
 
-        foreach ($data as $key => $value) {
-            $this->setData($key, $value);
-        }
-        // ---------------------------------------
-
-        return parent::_beforeToHtml();
-    }
-
-    //########################################
-
-    protected function _toHtml()
-    {
-
-        $this->css->add(<<<CSS
+        $this->css->add(
+            <<<CSS
 .warning-tooltip {
     display: inline-block;
     width: 40px;
@@ -276,24 +272,20 @@ class Form extends AbstractForm
 CSS
         );
 
-        $this->jsPhp->addConstants($this->getHelper('Data')
-            ->getClassConstants(\Ess\M2ePro\Model\Amazon\Listing::class));
-
-        $this->js->add(<<<JS
-require([
-    'M2ePro/Amazon/Listing/Create/Search'
-], function(){
-
-    window.AmazonListingCreateSearchObj = new AmazonListingCreateSearch();
-
-    $('general_id_mode').observe('change', AmazonListingCreateSearchObj.general_id_mode_change);
-    $('worldwide_id_mode').observe('change', AmazonListingCreateSearchObj.worldwide_id_mode_change);
-
-});
+        $this->js->add(
+            <<<JS
+    require([
+        'M2ePro/Amazon/Listing/Create/Search'
+    ], function(){
+        window.AmazonListingCreateSearchObj = new AmazonListingCreateSearch();
+    
+        $('general_id_mode').observe('change', AmazonListingCreateSearchObj.general_id_mode_change);
+        $('worldwide_id_mode').observe('change', AmazonListingCreateSearchObj.worldwide_id_mode_change);
+    });
 JS
         );
 
-        return parent::_toHtml();
+        return parent::_prepareLayout();
     }
 
     //########################################
@@ -301,13 +293,13 @@ JS
     public function getDefaultFieldsValues()
     {
         return [
-            'general_id_mode' => \Ess\M2ePro\Model\Amazon\Listing::GENERAL_ID_MODE_NOT_SET,
+            'general_id_mode'             => AmazonListing::GENERAL_ID_MODE_NOT_SET,
             'general_id_custom_attribute' => '',
 
-            'worldwide_id_mode' => \Ess\M2ePro\Model\Amazon\Listing::WORLDWIDE_ID_MODE_NOT_SET,
+            'worldwide_id_mode'             => AmazonListing::WORLDWIDE_ID_MODE_NOT_SET,
             'worldwide_id_custom_attribute' => '',
 
-            'search_by_magento_title_mode' => \Ess\M2ePro\Model\Amazon\Listing::SEARCH_BY_MAGENTO_TITLE_MODE_NONE
+            'search_by_magento_title_mode' => AmazonListing::SEARCH_BY_MAGENTO_TITLE_MODE_NONE
         ];
     }
 
@@ -319,7 +311,7 @@ JS
             $data = array_merge($this->getListing()->getData(), $this->getListing()->getChildObject()->getData());
         } else {
             $data = $this->getHelper('Data_Session')->getValue(
-                \Ess\M2ePro\Model\Amazon\Listing::CREATE_LISTING_SESSION_DATA
+                AmazonListing::CREATE_LISTING_SESSION_DATA
             );
             $data = array_merge($this->getDefaultFieldsValues(), $data);
         }
@@ -331,12 +323,11 @@ JS
 
     protected function getListing()
     {
-        if (!$listingId = $this->getRequest()->getParam('id')) {
-            throw new \Ess\M2ePro\Model\Exception('Listing is not defined');
-        }
-
-        if ($this->listing === null) {
-            $this->listing = $this->amazonFactory->getCachedObjectLoaded('Listing', $listingId);
+        if ($this->listing === null && $this->getRequest()->getParam('id')) {
+            $this->listing = $this->amazonFactory->getCachedObjectLoaded(
+                'Listing',
+                $this->getRequest()->getParam('id')
+            );
         }
 
         return $this->listing;
@@ -350,6 +341,8 @@ JS
     public function setUseFormContainer($useFormContainer)
     {
         $this->useFormContainer = $useFormContainer;
+
+        return $this;
     }
 
     //########################################

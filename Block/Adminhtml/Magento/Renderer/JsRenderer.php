@@ -15,9 +15,10 @@ class JsRenderer extends AbstractRenderer
 {
     protected $js = [];
 
-    public function add($script)
+    public function add($script, $sOrder = 1)
     {
-        $this->js[] = $script;
+        $this->js[(string)$sOrder][] = $script;
+
         return $this;
     }
 
@@ -26,7 +27,7 @@ class JsRenderer extends AbstractRenderer
      * @param $script
      * @return $this
      */
-    public function addRequireJs(array $dependencies, $script)
+    public function addRequireJs(array $dependencies, $script, $sOrder = 1)
     {
         $parameters = array_keys($dependencies);
         $modules = array_values($dependencies);
@@ -34,11 +35,13 @@ class JsRenderer extends AbstractRenderer
         $preparedParameters = implode(',', $parameters);
         $preparedModules = implode('","', $modules);
 
-        $this->js[] = /** @lang JavaScript */ <<<JS
+        $this->js[(string)$sOrder][] = /** @lang JavaScript */
+            <<<JS
 require(["{$preparedModules}"], function({$preparedParameters}){
     {$script}
 });
 JS;
+
         return $this;
     }
 
@@ -57,6 +60,7 @@ JS;
         foreach ($viewModels as $alias => $viewModel) {
             $viewModelsScript .= "$alias: $alias,";
         }
+
         return $this->addRequireJs(
             array_merge(['ko' => 'knockout'], $viewModels),
             "var viewModels = {{$viewModelsScript}}; ko.applyBindings(viewModels);"
@@ -69,6 +73,15 @@ JS;
             return '';
         }
 
-        return implode(';', $this->js);
+        ksort($this->js);
+
+        $result = '';
+        foreach ($this->js as $orderIndex => $jsS) {
+            $result .= implode(PHP_EOL, array_values($jsS)) . PHP_EOL;
+        }
+
+        $this->js = [];
+
+        return $result;
     }
 }

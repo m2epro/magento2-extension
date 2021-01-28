@@ -124,7 +124,7 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
         }
 
         if ($this->isExistInOtherListings($sku)) {
-            $addMessages && $this->addMessage('Product with the same SKU is found in M2E Pro 3rd Party Listing.
+            $addMessages && $this->addMessage('Product with the same SKU is found in M2E Pro Unmanaged Listing.
                                             Please change the SKU or enable the Option Generate Merchant SKU.');
             return true;
         }

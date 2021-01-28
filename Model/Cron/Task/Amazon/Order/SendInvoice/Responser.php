@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order\SendInvoice;
 
-use Ess\M2ePro\Model\Amazon\Order as Order;
+use Ess\M2ePro\Model\Amazon\Order\Invoice as AmazonOrderInvoice;
 
 /**
  * Class \Ess\M2ePro\Model\Cron\Task\Amazon\Order\SendInvoice\Responser
@@ -119,7 +119,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
 
         $this->orderChange->delete();
 
-        if ($this->params['order']['document_type'] == Order::DOCUMENT_TYPE_INVOICE) {
+        if ($this->params['order']['document_type'] == AmazonOrderInvoice::DOCUMENT_TYPE_INVOICE) {
             $this->order->getChildObject()->setData('is_invoice_sent', 1)->save();
             $this->order->addSuccessLog(
                 'Invoice #%document_number% was sent.',
@@ -127,7 +127,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
                     'document_number' => $this->params['order']['document_number']
                 ]
             );
-        } elseif ($this->params['order']['document_type'] == Order::DOCUMENT_TYPE_CREDIT_NOTE) {
+        } elseif ($this->params['order']['document_type'] == AmazonOrderInvoice::DOCUMENT_TYPE_CREDIT_NOTE) {
             $this->order->getChildObject()->setData('is_credit_memo_sent', 1)->save();
             $this->order->addSuccessLog(
                 'Credit Memo #%document_number% was sent.',
@@ -143,7 +143,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
      */
     protected function logErrorMessage(\Ess\M2ePro\Model\Response\Message $message)
     {
-        if ($this->params['order']['document_type'] == Order::DOCUMENT_TYPE_INVOICE) {
+        if ($this->params['order']['document_type'] == AmazonOrderInvoice::DOCUMENT_TYPE_INVOICE) {
             $this->order->addErrorLog(
                 'Invoice #%document_number% was not sent. Reason: %msg%',
                 [
@@ -151,7 +151,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
                     'msg' => $message->getText()
                 ]
             );
-        } elseif ($this->params['order']['document_type'] == Order::DOCUMENT_TYPE_CREDIT_NOTE) {
+        } elseif ($this->params['order']['document_type'] == AmazonOrderInvoice::DOCUMENT_TYPE_CREDIT_NOTE) {
             $this->order->addErrorLog(
                 'Credit Memo #%document_number% was not sent. Reason: %msg%',
                 [

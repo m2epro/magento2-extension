@@ -14,6 +14,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order;
 class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'amazon/order/update';
+    const ORDER_CHANGES_PER_ACCOUNT = 300;
 
     //####################################
 
@@ -144,6 +145,7 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             []
         );
         $changesCollection->addFieldToFilter('pl.id', ['null' => true]);
+        $changesCollection->getSelect()->limit(self::ORDER_CHANGES_PER_ACCOUNT);
         $changesCollection->getSelect()->group(['order_id']);
 
         return $changesCollection->getItems();

@@ -166,7 +166,6 @@ HTML
 
         $defaultValue = '';
         if (in_array($this->formData['qty_mode'], [\Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT,
-                                                   \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_SINGLE,
                                                    \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_NUMBER])
         ) {
             $defaultValue = $this->formData['qty_mode'];
@@ -467,17 +466,20 @@ HTML
                 ],
                 'required' => true,
                 'value' => $this->formData['price_vat_percent'],
-                'tooltip' => $this->__('
-                    Enable to add a specified VAT value to the Item Price when it is listed on Walmart.<br/><br/>
-
-                    <strong>For example</strong>, if Magento Product Price = £10 and VAT
-                    rate = 15%, i.e. £10 * 15% = £1.50,<br>
-                    the final Item Price on Walmart will be calculated as Magento Price + VAT,
-                    i.e. £10 + £1.50 = £11.50.<br/><br/>
-
-                    <strong>Note:</strong> No VAT Rate value will be sent on Walmart. Instead, the Walmart
-                    Item Price will be increased by specified VAT %.
-                ')
+                'tooltip' => $this->__(<<<HTML
+Enable this option to add a specified VAT percent value to the Price when a Product is listed on Walmart.
+<br/>
+<br/>
+The final product price on Walmart will be calculated according to the following formula:
+<br/>
+<br/>
+(Product Price + Price Change) + VAT Rate
+<br/>
+<br/>
+<strong>Note:</strong> Walmart considers the VAT rate value sent by M2E Pro as an additional price increase,
+not as a proper VAT rate.
+HTML
+                )
             ]
         );
 
@@ -947,10 +949,6 @@ HTML
             [
                 'value' => \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT,
                 'label' => $this->__('Product Quantity')
-            ],
-            [
-                'value' => \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_SINGLE,
-                'label' => $this->__('Single Item')
             ],
             [
                 'value' => \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_NUMBER,

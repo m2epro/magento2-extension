@@ -30,6 +30,7 @@ class Data extends AbstractHelper
     protected $timezone;
     protected $objectManager;
 
+    /** @var \Magento\Framework\Serialize\SerializerInterface */
     protected $serializerInterface;
     protected $phpSerialize;
 
@@ -44,20 +45,22 @@ class Data extends AbstractHelper
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\ObjectManagerInterface $objectManager
     ) {
+        parent::__construct($helperFactory, $context);
+
         $this->dir           = $dir;
         $this->urlBuilder    = $urlBuilder;
         $this->localeDate    = $localeDate;
         $this->timezone      = $timezone;
         $this->objectManager = $objectManager;
-        $this->phpSerialize  = \Zend\Serializer\Serializer::getDefaultAdapter();
+        $this->phpSerialize  = version_compare($this->getHelper('Magento')->getVersion(), '2.3.5', '>=')
+            ? \Laminas\Serializer\Serializer::getDefaultAdapter()
+            : \Zend\Serializer\Serializer::getDefaultAdapter();
 
         if (interface_exists(\Magento\Framework\Serialize\SerializerInterface::class)) {
             $this->serializerInterface = $this->objectManager->get(
                 \Magento\Framework\Serialize\SerializerInterface::class
             );
         }
-
-        parent::__construct($helperFactory, $context);
     }
 
     //########################################
@@ -517,6 +520,8 @@ class Data extends AbstractHelper
     /**
      * @param string $data
      * @return array|string|null
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     *
      * $data can be json (in version > 2.2.0) or serialized string
      */
     public function unserialize($data)
@@ -525,11 +530,15 @@ class Data extends AbstractHelper
             return [];
         }
 
-        if (preg_match('/^((s|i|d|b|a|O|C):|N;)/', $data)) {
-            return $this->phpSerialize->unserialize($data);
-        }
+        try {
+            return preg_match('/^((s|i|d|b|a|O|C):|N;)/', $data)
+                ? $this->phpSerialize->unserialize($data)
+                : $this->serializerInterface->unserialize($data);
 
-        return $this->serializerInterface->unserialize($data);
+        } catch (\Exception $e) {
+            $this->getHelper('Module_Exception')->process($e);
+            return [];
+        }
     }
 
     public function phpUnserialize($data)

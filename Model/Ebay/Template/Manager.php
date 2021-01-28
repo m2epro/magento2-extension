@@ -23,14 +23,14 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     const COLUMN_PREFIX = 'template';
 
-    const OWNER_LISTING = 'Listing';
+    const OWNER_LISTING         = 'Listing';
     const OWNER_LISTING_PRODUCT = 'Listing\Product';
 
-    const TEMPLATE_RETURN_POLICY = 'return_policy';
-    const TEMPLATE_PAYMENT = 'payment';
-    const TEMPLATE_SHIPPING = 'shipping';
-    const TEMPLATE_DESCRIPTION = 'description';
-    const TEMPLATE_SELLING_FORMAT = 'selling_format';
+    const TEMPLATE_RETURN_POLICY   = 'return_policy';
+    const TEMPLATE_PAYMENT         = 'payment';
+    const TEMPLATE_SHIPPING        = 'shipping';
+    const TEMPLATE_DESCRIPTION     = 'description';
+    const TEMPLATE_SELLING_FORMAT  = 'selling_format';
     const TEMPLATE_SYNCHRONIZATION = 'synchronization';
 
     protected $activeRecordFactory;
@@ -72,6 +72,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->ownerObject = $object;
+
         return $this;
     }
 
@@ -115,6 +116,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->templateNick = strtolower($nick);
+
         return $this;
     }
 
@@ -213,15 +215,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getModeColumnName()
     {
-        return self::COLUMN_PREFIX.'_'.$this->getTemplate().'_mode';
-    }
-
-    /**
-     * @return string
-     */
-    public function getCustomIdColumnName()
-    {
-        return self::COLUMN_PREFIX.'_'.$this->getTemplate().'_custom_id';
+        return self::COLUMN_PREFIX . '_' . $this->getTemplate() . '_mode';
     }
 
     /**
@@ -229,40 +223,18 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getTemplateIdColumnName()
     {
-        return self::COLUMN_PREFIX.'_'.$this->getTemplate().'_id';
+        return self::COLUMN_PREFIX . '_' . $this->getTemplate() . '_id';
     }
 
     //########################################
 
-    /**
-     * @param int $mode
-     * @return null|string
-     */
-    public function getIdColumnNameByMode($mode)
-    {
-        $name = null;
-
-        switch ($mode) {
-            case self::MODE_TEMPLATE:
-                $name = $this->getTemplateIdColumnName();
-                break;
-            case self::MODE_CUSTOM:
-                $name = $this->getCustomIdColumnName();
-                break;
-        }
-
-        return $name;
-    }
-
     public function getIdColumnValue()
     {
-        $idColumnName = $this->getIdColumnNameByMode($this->getModeValue());
-
-        if ($idColumnName === null) {
+        if ($this->isModeParent()) {
             return null;
         }
 
-        return $this->getOwnerObject()->getData($idColumnName);
+        return $this->getOwnerObject()->getData($this->getTemplateIdColumnName());
     }
 
     //########################################
@@ -270,11 +242,6 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function getModeValue()
     {
         return $this->getOwnerObject()->getData($this->getModeColumnName());
-    }
-
-    public function getCustomIdValue()
-    {
-        return $this->getOwnerObject()->getData($this->getCustomIdColumnName());
     }
 
     public function getTemplateIdValue()
@@ -296,17 +263,6 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         $manager->setOwnerObject($this->getOwnerObject()->getEbayListing());
 
         return $manager->getResultObject();
-    }
-
-    public function getCustomResultObject()
-    {
-        $id = $this->getCustomIdValue();
-
-        if ($id === null) {
-            return null;
-        }
-
-        return $this->makeResultObject($id);
     }
 
     public function getTemplateResultObject()
@@ -375,15 +331,9 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             return $this->resultObject;
         }
 
-        if ($this->isModeParent()) {
+        if ($this->isListingProductOwner() && $this->isModeParent()) {
             $this->resultObject = $this->getParentResultObject();
-        }
-
-        if ($this->isModeCustom()) {
-            $this->resultObject = $this->getCustomResultObject();
-        }
-
-        if ($this->isModeTemplate()) {
+        } else {
             $this->resultObject = $this->getTemplateResultObject();
         }
 
@@ -449,7 +399,8 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             case self::TEMPLATE_SYNCHRONIZATION:
             case self::TEMPLATE_DESCRIPTION:
                 if ($returnChildModel) {
-                    $modelPath = ucfirst(\Ess\M2ePro\Helper\Component\Ebay::NICK).'\\'.$this->getTemplateModelName();
+                    $modelPath = ucfirst(\Ess\M2ePro\Helper\Component\Ebay::NICK) . '\\' . $this->getTemplateModelName(
+                        );
                     $model = $this->activeRecordFactory->getObject($modelPath);
                 } else {
                     $model = $this->ebayFactory->getObject($this->getTemplateModelName());
@@ -539,16 +490,17 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function getAffectedOwnerObjects($ownerObjectModel, $templateId, $asArrays = true, $columns = '*')
     {
         $collection = $this->ebayFactory->getObject($ownerObjectModel)->getCollection();
-
-        $where = "({$this->getModeColumnName()} = " .\Ess\M2ePro\Model\Ebay\Template\Manager::MODE_CUSTOM;
-        $where .= " AND {$this->getCustomIdColumnName()} = " . (int)$templateId . ")";
-
-        $where .= ' OR ';
-
-        $where .= "({$this->getModeColumnName()} = " .\Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE;
-        $where .= " AND {$this->getTemplateIdColumnName()} = " . (int)$templateId . ")";
-
-        $collection->getSelect()->where($where);
+        if ($ownerObjectModel === self::OWNER_LISTING) {
+            $collection->getSelect()->where(
+                "{$this->getTemplateIdColumnName()} = (?)",
+                [$templateId]
+            );
+        } else {
+            $collection->getSelect()->where(
+                "{$this->getModeColumnName()} IN (?) AND {$this->getTemplateIdColumnName()} = {$templateId}",
+                [self::MODE_CUSTOM, self::MODE_TEMPLATE]
+            );
+        }
 
         if (is_array($columns) && !empty($columns)) {
             $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
@@ -569,10 +521,9 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
             if ($templateMode == self::MODE_PARENT) {
                 $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $data['listing_id']);
-                $templateMode = $listing->getChildObject()->getData($this->getModeColumnName());
-                $templateId   = $listing->getChildObject()->getData($this->getIdColumnNameByMode($templateMode));
+                $templateId = $listing->getChildObject()->getData($this->getTemplateIdColumnName());
             } else {
-                $templateId = $data[$this->getIdColumnNameByMode($templateMode)];
+                $templateId = $data[$this->getTemplateIdColumnName()];
             }
 
             $templateModelName = $this->getTemplateModelName();

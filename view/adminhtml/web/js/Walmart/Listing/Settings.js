@@ -1,22 +1,67 @@
 define([
     'M2ePro/Common'
-], function () {
-
+], function() {
     window.WalmartListingSettings = Class.create(Common, {
 
         // ---------------------------------------
 
-        initialize: function () {
+        initialize: function() {
+        },
+
+        initObservers: function() {
+            $('template_selling_format_id').observe('change', function() {
+                if ($('template_selling_format_id').value) {
+                    $('edit_selling_format_template_link').show();
+                } else {
+                    $('edit_selling_format_template_link').hide();
+                }
+            });
+            $('template_selling_format_id').simulate('change');
+
+            $('template_selling_format_id').observe('change', function() {
+                WalmartListingSettingsObj.checkSellingFormatMessages();
+                WalmartListingSettingsObj.hideEmptyOption(this);
+            });
+            if ($('template_selling_format_id').value) {
+                $('template_selling_format_id').simulate('change');
+            }
+
+            $('template_description_id').observe('change', function() {
+                if ($('template_description_id').value) {
+                    $('edit_description_template_link').show();
+                } else {
+                    $('edit_description_template_link').hide();
+                }
+            });
+            $('template_description_id').simulate('change');
+
+            $('template_description_id').observe('change', function() {
+                WalmartListingSettingsObj.hideEmptyOption(this);
+            });
+            if ($('template_description_id').value) {
+                $('template_description_id').simulate('change');
+            }
+
+            $('template_synchronization_id').observe('change', function() {
+                if ($('template_synchronization_id').value) {
+                    $('edit_synchronization_template_link').show();
+                } else {
+                    $('edit_synchronization_template_link').hide();
+                }
+            });
+            $('template_synchronization_id').simulate('change');
+
+            $('template_synchronization_id').observe('change', function() {
+                WalmartListingSettingsObj.hideEmptyOption(this);
+            });
+            if ($('template_synchronization_id').value) {
+                $('template_synchronization_id').simulate('change');
+            }
         },
 
         // ---------------------------------------
 
-        saveClick: function (url, skipValidation) {
-
-            if (typeof skipValidation == 'undefined' && !this.isValidForm()) {
-                return;
-            }
-
+        saveClick: function(url) {
             if (typeof categories_selected_items != 'undefined') {
                 array_unique(categories_selected_items);
 
@@ -29,65 +74,37 @@ define([
                 url = M2ePro.url.formSubmit + 'back/' + base64_encode('list') + '/';
             }
 
-            Common.prototype.saveClick.call(this, url);
+            this.submitForm(url);
         },
 
-        reloadSellingFormatTemplates: function () {
-            WalmartListingSettingsObj.reload(M2ePro.url.get('getSellingFormatTemplates')  + 'marketplace_id/' + $('marketplace_id').value, 'template_selling_format_id');
-        },
-
-        reloadDescriptionTemplates: function () {
-            WalmartListingSettingsObj.reload(M2ePro.url.get('getDescriptionTemplates'), 'template_description_id');
-        },
-
-        reloadSynchronizationTemplates: function () {
-            WalmartListingSettingsObj.reload(M2ePro.url.get('getSynchronizationTemplates'), 'template_synchronization_id');
+        reloadSellingFormatTemplates: function() {
+            WalmartListingSettingsObj.reload(
+                M2ePro.url.get('getSellingFormatTemplates') + 'marketplace_id/' + $('marketplace_id').value,
+                'template_selling_format_id'
+            );
         },
 
         // ---------------------------------------
 
-        selling_format_template_id_simulate_change: function () {
-            var intervalRestartLimit = 20;
-            var intervalRestartCount = 0;
+        checkSellingFormatMessages: function() {
+            var storeId = $('store_id').value;
+            var marketplaceId = $('marketplace_id').value;
 
-            var intervalId = setInterval(function simulateSellingFormatTemplateChange() {
-                intervalRestartCount++;
-
-                if (intervalRestartCount >= intervalRestartLimit || Ajax.activeRequestCount == 0) {
-                    $('template_selling_format_id').value && $('template_selling_format_id').simulate('change');
-
-                    clearInterval(intervalId);
-                }
-            }, 250);
-        },
-
-        selling_format_template_id_change: function () {
-            WalmartListingSettingsObj.checkMessages();
-            WalmartListingSettingsObj.hideEmptyOption(this);
-        },
-
-        // ---------------------------------------
-
-        checkMessages: function () {
-            if ($('store_id').value == '' ||
-                $('marketplace_id').value == '' ||
-                $('template_selling_format_id').value == '' ||
-                $('store_id').value == -1
-            ) {
+            if (storeId.empty() || storeId < 0 || marketplaceId.empty() || marketplaceId < 0) {
                 return;
             }
 
             var id = $('template_selling_format_id').value,
                 nick = 'selling_format',
-                storeId = $('store_id').value,
-                marketplaceId = $('marketplace_id').value,
+                storeId = storeId,
+                marketplaceId = marketplaceId,
                 container = 'template_selling_format_messages',
-                callback = function () {
+                callback = function() {
                     var refresh = $(container).down('a.refresh-messages');
                     if (refresh) {
-                        refresh.observe('click', function () {
-                            this.checkMessages();
-                        }.bind(this))
+                        refresh.observe('click', function() {
+                            this.checkSellingFormatMessages();
+                        }.bind(this));
                     }
                 }.bind(this);
 
@@ -104,22 +121,10 @@ define([
 
         // ---------------------------------------
 
-        description_template_id_change: function () {
-            WalmartListingSettingsObj.hideEmptyOption(this);
-        },
-
-        // ---------------------------------------
-
-        synchronization_template_id_change: function () {
-            WalmartListingSettingsObj.hideEmptyOption(this);
-        },
-
-        // ---------------------------------------
-
-        reload: function (url, id) {
+        reload: function(url, id) {
             new Ajax.Request(url, {
                 asynchronous: false,
-                onSuccess: function (transport) {
+                onSuccess: function(transport) {
 
                     var data = transport.responseText.evalJSON(true);
 
@@ -128,7 +133,7 @@ define([
                     var firstItemValue = '';
                     var currentValue = $(id).value;
 
-                    data.each(function (paris) {
+                    data.each(function(paris) {
                         var key = (typeof paris.key != 'undefined') ? paris.key : paris.id;
                         var val = (typeof paris.value != 'undefined') ? paris.value : paris.title;
                         options += '<option value="' + key + '">' + val + '</option>\n';
@@ -157,11 +162,10 @@ define([
 
         // ---------------------------------------
 
-        addNewTemplate: function (url, callback) {
+        addNewTemplate: function(url, callback) {
             var win = window.open(url + 'marketplace_id/' + $('marketplace_id').value);
 
-            var intervalId = setInterval(function () {
-
+            var intervalId = setInterval(function() {
                 if (!win.closed) {
                     return;
                 }
@@ -173,12 +177,10 @@ define([
             }, 1000);
         },
 
-        editTemplate: function(url, id, callback)
-        {
+        editTemplate: function(url, id, callback) {
             var win = window.open(url + 'id/' + id + '/marketplace_id/' + $('marketplace_id').value);
 
             var intervalId = setInterval(function() {
-
                 if (!win.closed) {
                     return;
                 }
@@ -192,7 +194,7 @@ define([
 
         // ---------------------------------------
 
-        newSellingFormatTemplateCallback: function () {
+        newSellingFormatTemplateCallback: function() {
             var noteEl = $('template_selling_format_note');
 
             WalmartListingSettingsObj.reloadSellingFormatTemplates();
@@ -207,12 +209,10 @@ define([
             }
         },
 
-        // ---------------------------------------
-
-        newDescriptionTemplateCallback: function () {
+        newDescriptionTemplateCallback: function() {
             var noteEl = $('template_description_note');
 
-            WalmartListingSettingsObj.reloadDescriptionTemplates();
+            WalmartListingSettingsObj.reload(M2ePro.url.get('getDescriptionTemplates'), 'template_description_id');
             if ($('template_description_id').children.length > 0) {
                 $('template_description_id').show();
                 noteEl && $('template_description_note').show();
@@ -224,12 +224,10 @@ define([
             }
         },
 
-        // ---------------------------------------
-
-        newSynchronizationTemplateCallback: function () {
+        newSynchronizationTemplateCallback: function() {
             var noteEl = $('template_synchronization_note');
 
-            WalmartListingSettingsObj.reloadSynchronizationTemplates();
+            WalmartListingSettingsObj.reload(M2ePro.url.get('getSynchronizationTemplates'), 'template_synchronization_id');
             if ($('template_synchronization_id').children.length > 0) {
                 $('template_synchronization_id').show();
                 noteEl && $('template_synchronization_note').show();

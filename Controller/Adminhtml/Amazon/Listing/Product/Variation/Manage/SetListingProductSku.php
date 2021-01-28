@@ -31,7 +31,7 @@ class SetListingProductSku extends Main
         if ($this->isExistInM2eProListings($listingProduct, $sku)) {
             $msg = $this->__('This SKU is already being used in M2E Pro Listing.');
         } elseif ($this->isExistInOtherListings($listingProduct, $sku)) {
-            $msg = $this->__('This SKU is already being used in M2E Pro 3rd Party Listing.');
+            $msg = $this->__('This SKU is already being used in M2E Pro Unmanaged Listing.');
         } else {
             $skuInfo = $this->getSkuInfo($listingProduct, $sku);
 

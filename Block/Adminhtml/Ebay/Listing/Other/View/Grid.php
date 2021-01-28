@@ -127,7 +127,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('title', [
-            'header'                    => $this->__('Title / SKU'),
+            'header'                    => $this->__('Product Title / Product SKU / eBay Category'),
             'align'                     => 'left',
             'type'                      => 'text',
             'index'                     => 'title',
@@ -438,7 +438,12 @@ HTML;
             return;
         }
 
-        $collection->getSelect()->where('second_table.title LIKE ? OR second_table.sku LIKE ?', '%'.$value.'%');
+        $collection->getSelect()->where(
+            'second_table.title LIKE ? OR
+             second_table.sku LIKE ? OR
+              second_table.online_main_category LIKE ?',
+            '%'.$value.'%'
+        );
     }
 
     //########################################

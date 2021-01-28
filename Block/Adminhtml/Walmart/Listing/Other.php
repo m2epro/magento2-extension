@@ -31,7 +31,7 @@ class Other extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $url = $this->getUrl('*/walmart_listing_other/reset');
         $this->addButton('reset_other_listings', [
-            'label'   => $this->__('Reset 3rd Party Listings'),
+            'label'   => $this->__('Reset Unmanaged Listings'),
             'onclick' => "ListingOtherObj.showResetPopup('".$url."');",
             'class'   => 'action-primary'
         ]);
@@ -44,12 +44,12 @@ class Other extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->appendHelpBlock([
             'content' => $this->__(
                 <<<HTML
-    On this page, you can review the 3rd Party Listings imported by M2E Pro from your Channel Account
+    On this page, you can review the Unmanaged Listings imported by M2E Pro from your Channel Account
     associated with particular Marketplace. In the grid below,
-    click the 3rd Party Listing line to manage the Items.<br><br>
+    click the Unmanaged Listing line to manage the Items.<br><br>
 
-    <strong>Note:</strong> To import the 3rd Party Listings, enable the related option in your Account
-    Configuration under <i>Walmart Integration > Configuration > Accounts > Edit Account > 3rd Party Listings</i>.
+    <strong>Note:</strong> To import the Unmanaged Listings, enable the related option in your Account
+    Configuration under <i>Walmart Integration > Configuration > Accounts > Edit Account > Unmanaged Listings</i>.
 HTML
             )
         ]);
@@ -81,11 +81,11 @@ JS
     <div id="reset_other_listings_popup_content" class="block_notices m2epro-box-style"
      style="display: none; margin-bottom: 0;">
         <div>
-            <h3>{$this->__('Confirm the 3rd Party Listings reset')}</h3>
-            <p>{$this->__('This action will remove all the items from Walmart 3rd Party Listings.
+            <h3>{$this->__('Confirm the Unmanaged Listings reset')}</h3>
+            <p>{$this->__('This action will remove all the items from Walmart Unmanaged Listings.
              It will take some time to import them again.')}</p>
              <br>
-            <p>{$this->__('Do you want to reset the 3rd Party Listings?')}</p>
+            <p>{$this->__('Do you want to reset the Unmanaged Listings?')}</p>
         </div>
     </div>
 </div>

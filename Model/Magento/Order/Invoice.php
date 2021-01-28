@@ -77,7 +77,7 @@ class Invoice extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            $qtys[$item->getId()] = $item->getQtyToInvoice();
+            $qtys[$item->getId()] = $qtyToInvoice;
         }
 
         // Create invoice

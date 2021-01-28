@@ -13,7 +13,7 @@ define([
             self.resetPopup = jQuery('#reset_other_listings_popup_content');
 
             modal({
-                title: M2ePro.translator.translate('Reset 3rd Party Listings'),
+                title: M2ePro.translator.translate('Reset Unmanaged Listings'),
                 type: 'popup',
                 buttons: [{
                     class: 'action-secondary action-dismiss',

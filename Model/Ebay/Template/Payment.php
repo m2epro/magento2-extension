@@ -83,10 +83,6 @@ class Payment extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
         return (bool)$this->activeRecordFactory->getObject('Ebay\Listing')
                 ->getCollection()
-                ->addFieldToFilter(
-                    'template_payment_mode',
-                    \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
-                )
                 ->addFieldToFilter('template_payment_id', $this->getId())
                 ->getSize() ||
             (bool)$this->activeRecordFactory->getObject('Ebay_Listing_Product')

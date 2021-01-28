@@ -35,8 +35,6 @@ class Form extends AbstractForm
 
     protected function _prepareForm()
     {
-        $formData = $this->getListingData();
-
         $form = $this->_formFactory->create(
             [
                 'data' => [
@@ -48,13 +46,7 @@ class Form extends AbstractForm
             ]
         );
 
-        $form->addField(
-            'store_id',
-            'hidden',
-            [
-                'value' => $formData['store_id']
-            ]
-        );
+        $formData = $this->getListingData();
 
         $form->addField(
             'marketplace_id',
@@ -64,11 +56,19 @@ class Form extends AbstractForm
             ]
         );
 
+        $form->addField(
+            'store_id',
+            'hidden',
+            [
+                'value' => $formData['store_id']
+            ]
+        );
+
         // Policies
         $fieldset = $form->addFieldset(
             'policies_settings',
             [
-                'legend' => $this->__('Policies Settings'),
+                'legend'      => $this->__('Policies Settings'),
                 'collapsable' => false
             ]
         );
@@ -77,7 +77,7 @@ class Form extends AbstractForm
             'template_selling_format_messages',
             self::CUSTOM_CONTAINER,
             [
-                'style' => 'display: block;',
+                'style'     => 'display: block;',
                 'css_class' => 'm2epro-fieldset-table no-margin-bottom'
             ]
         );
@@ -85,35 +85,43 @@ class Form extends AbstractForm
         $sellingFormatTemplates = $this->getSellingFormatTemplates();
         $style = count($sellingFormatTemplates) === 0 ? 'display: none' : '';
 
-        $templateSellingFormat = $this->elementFactory->create('select', [
-            'data' => [
-                'html_id' => 'template_selling_format_id',
-                'name' => 'template_selling_format_id',
-                'style' => 'width: 50%;' . $style,
-                'no_span' => true,
-                'values' => array_merge([
-                    '' => ''
-                ], $sellingFormatTemplates),
-                'value' => $formData['template_selling_format_id'],
-                'required' => true
+        $templateSellingFormat = $this->elementFactory->create(
+            'select',
+            [
+                'data' => [
+                    'html_id'  => 'template_selling_format_id',
+                    'name'     => 'template_selling_format_id',
+                    'style'    => 'width: 50%;' . $style,
+                    'no_span'  => true,
+                    'values'   => array_merge(
+                        [
+                            '' => ''
+                        ],
+                        $sellingFormatTemplates
+                    ),
+                    'value'    => $formData['template_selling_format_id'],
+                    'required' => true
+                ]
             ]
-        ]);
+        );
         $templateSellingFormat->setForm($form);
 
-        $editPolicyTooltip = $this->getTooltipHtml($this->__(
-            'You can edit the saved Policy any time you need. However, the changes you make will automatically
+        $editPolicyTooltip = $this->getTooltipHtml(
+            $this->__(
+                'You can edit the saved Policy any time you need. However, the changes you make will automatically
             affect all of the Products which are listed using this Policy.'
-        ));
+            )
+        );
 
         $style = count($sellingFormatTemplates) === 0 ? '' : 'display: none';
         $fieldset->addField(
             'template_selling_format_container',
             self::CUSTOM_CONTAINER,
             [
-                'label' => $this->__('Selling Policy'),
-                'style' => 'line-height: 34px; display: initial;',
-                'required' => true,
-                'text' => <<<HTML
+                'label'              => $this->__('Selling Policy'),
+                'style'              => 'line-height: 34px; display: initial;',
+                'required'           => true,
+                'text'               => <<<HTML
     <span id="template_selling_format_label" style="padding-right: 25px; {$style}">
         {$this->__('No Policies available.')}
     </span>
@@ -122,11 +130,12 @@ HTML
                 ,
                 'after_element_html' => <<<HTML
 &nbsp;
-<span style="line-height: 20px;">
+<span style="line-height: 30px;">
     <span id="edit_selling_format_template_link" style="color:#41362f">
         <a href="javascript: void(0);" style="" onclick="WalmartListingSettingsObj.editTemplate(
             M2ePro.url.get('editSellingFormatTemplate'),
-            $('template_selling_format_id').value
+            $('template_selling_format_id').value,
+            WalmartListingSettingsObj.newSellingFormatTemplateCallback
         );">
             {$this->__('View')}&nbsp;/&nbsp;{$this->__('Edit')}
         </a>
@@ -139,10 +148,10 @@ HTML
         {$editPolicyTooltip}</div>
         <span>{$this->__('or')}</span>
     </span>
-    <a id="add_selling_format_template_link" href="javascript: void(0);"
-    onclick="WalmartListingSettingsObj.addNewTemplate(
-        M2ePro.url.get('addNewSellingFormatTemplate'),
-        WalmartListingSettingsObj.newSellingFormatTemplateCallback
+    <a id="add_selling_format_template_link" href="javascript: void(0);" 
+        onclick="WalmartListingSettingsObj.addNewTemplate(
+            M2ePro.url.get('addNewSellingFormatTemplate'),
+            WalmartListingSettingsObj.newSellingFormatTemplateCallback
     );">{$this->__('Add New')}</a>
 </span>
 HTML
@@ -152,19 +161,25 @@ HTML
         $descriptionTemplates = $this->getDescriptionTemplates();
         $style = count($descriptionTemplates) === 0 ? 'display: none' : '';
 
-        $templateDescription = $this->elementFactory->create('select', [
-            'data' => [
-                'html_id' => 'template_description_id',
-                'name' => 'template_description_id',
-                'style' => 'width: 50%;' . $style,
-                'no_span' => true,
-                'values' => array_merge([
-                    '' => ''
-                ], $descriptionTemplates),
-                'value' => $formData['template_description_id'],
-                'required' => true
+        $templateDescription = $this->elementFactory->create(
+            'select',
+            [
+                'data' => [
+                    'html_id'  => 'template_description_id',
+                    'name'     => 'template_description_id',
+                    'style'    => 'width: 50%;' . $style,
+                    'no_span'  => true,
+                    'values'   => array_merge(
+                        [
+                            '' => ''
+                        ],
+                        $descriptionTemplates
+                    ),
+                    'value'    => $formData['template_description_id'],
+                    'required' => true
+                ]
             ]
-        ]);
+        );
         $templateDescription->setForm($form);
 
         $style = count($descriptionTemplates) === 0 ? '' : 'display: none';
@@ -172,10 +187,10 @@ HTML
             'template_description_container',
             self::CUSTOM_CONTAINER,
             [
-                'label' => $this->__('Description Policy'),
-                'style' => 'line-height: 34px;display: initial;',
-                'required' => true,
-                'text' => <<<HTML
+                'label'              => $this->__('Description Policy'),
+                'style'              => 'line-height: 34px;display: initial;',
+                'required'           => true,
+                'text'               => <<<HTML
     <span id="template_description_label" style="padding-right: 25px; {$style}">
         {$this->__('No Policies available.')}
     </span>
@@ -184,11 +199,12 @@ HTML
                 ,
                 'after_element_html' => <<<HTML
 &nbsp;
-<span style="line-height: 20px;">
+<span style="line-height: 30px;">
     <span id="edit_description_template_link" style="color:#41362f">
         <a href="javascript: void(0);" onclick="WalmartListingSettingsObj.editTemplate(
             M2ePro.url.get('editDescriptionTemplate'),
-            $('template_description_id').value
+            $('template_description_id').value,
+            WalmartListingSettingsObj.newDescriptionTemplateCallback
         );">
             {$this->__('View')}&nbsp;/&nbsp;{$this->__('Edit')}
         </a>
@@ -202,9 +218,9 @@ HTML
         <span>{$this->__('or')}</span>
     </span>
     <a id="add_description_template_link" href="javascript: void(0);"
-    onclick="WalmartListingSettingsObj.addNewTemplate(
-        M2ePro.url.get('addNewDescriptionTemplate'),
-        WalmartListingSettingsObj.newDescriptionTemplateCallback
+        onclick="WalmartListingSettingsObj.addNewTemplate(
+            M2ePro.url.get('addNewDescriptionTemplate'),
+            WalmartListingSettingsObj.newDescriptionTemplateCallback
     );">{$this->__('Add New')}</a>
 </span>
 HTML
@@ -214,19 +230,25 @@ HTML
         $synchronizationTemplates = $this->getSynchronizationTemplates();
         $style = count($synchronizationTemplates) === 0 ? 'display: none' : '';
 
-        $templateSynchronization = $this->elementFactory->create('select', [
-            'data' => [
-                'html_id' => 'template_synchronization_id',
-                'name' => 'template_synchronization_id',
-                'style' => 'width: 50%;' . $style,
-                'no_span' => true,
-                'values' => array_merge([
-                    '' => ''
-                ], $synchronizationTemplates),
-                'value' => $formData['template_synchronization_id'],
-                'required' => true
+        $templateSynchronization = $this->elementFactory->create(
+            'select',
+            [
+                'data' => [
+                    'html_id'  => 'template_synchronization_id',
+                    'name'     => 'template_synchronization_id',
+                    'style'    => 'width: 50%;' . $style,
+                    'no_span'  => true,
+                    'values'   => array_merge(
+                        [
+                            '' => ''
+                        ],
+                        $synchronizationTemplates
+                    ),
+                    'value'    => $formData['template_synchronization_id'],
+                    'required' => true
+                ]
             ]
-        ]);
+        );
         $templateSynchronization->setForm($form);
 
         $style = count($synchronizationTemplates) === 0 ? '' : 'display: none';
@@ -234,24 +256,25 @@ HTML
             'template_synchronization_container',
             self::CUSTOM_CONTAINER,
             [
-                'label' => $this->__('Synchronization Policy'),
-                'style' => 'line-height: 34px;display: initial;',
+                'label'                  => $this->__('Synchronization Policy'),
+                'style'                  => 'line-height: 34px;display: initial;',
                 'field_extra_attributes' => 'style="margin-bottom: 5px"',
-                'required' => true,
-                'text' => <<<HTML
+                'required'               => true,
+                'text'                   => <<<HTML
     <span id="template_synchronization_label" style="padding-right: 25px; {$style}">
         {$this->__('No Policies available.')}
     </span>
     {$templateSynchronization->toHtml()}
 HTML
                 ,
-                'after_element_html' => <<<HTML
+                'after_element_html'     => <<<HTML
 &nbsp;
-<span style="line-height: 20px;">
+<span style="line-height: 30px;">
     <span id="edit_synchronization_template_link" style="color:#41362f">
         <a href="javascript: void(0);" onclick="WalmartListingSettingsObj.editTemplate(
             M2ePro.url.get('editSynchronizationTemplate'),
-            $('template_synchronization_id').value
+            $('template_synchronization_id').value,
+            WalmartListingSettingsObj.newSynchronizationTemplateCallback
         );">
             {$this->__('View')}&nbsp;/&nbsp;{$this->__('Edit')}
         </a>
@@ -265,9 +288,9 @@ HTML
         <span>{$this->__('or')}</span>
     </span>
     <a id="add_synchronization_template_link" href="javascript: void(0);"
-    onclick="WalmartListingSettingsObj.addNewTemplate(
-        M2ePro.url.get('addNewSynchronizationTemplate'),
-        WalmartListingSettingsObj.newSynchronizationTemplateCallback
+        onclick="WalmartListingSettingsObj.addNewTemplate(
+            M2ePro.url.get('addNewSynchronizationTemplate'),
+            WalmartListingSettingsObj.newSynchronizationTemplateCallback
     );">{$this->__('Add New')}</a>
 </span>
 HTML
@@ -282,74 +305,92 @@ HTML
 
     //########################################
 
-    protected function _toHtml()
+    protected function _prepareLayout()
     {
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('General', [
-            'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK
-        ]));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Account'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Marketplace'));
-        $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Walmart_Listing_Create', ['_current' => true])
+        $this->jsPhp->addConstants(
+            $this->getHelper('Data')
+                ->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class)
         );
 
-        $this->jsUrl->add($this->getUrl('*/walmart_account/newAction', [
-            'close_on_save' => true,
-            'wizard' => (bool)$this->getRequest()->getParam('wizard', false)
-        ]), 'walmart_account/newAction');
-
-        $this->jsUrl->add($this->getUrl(
-            '*/template/checkMessages',
-            ['component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK]
-        ), 'templateCheckMessages');
-        $this->jsUrl->add($this->getUrl(
-            '*/walmart_template_sellingFormat/new',
-            ['wizard' => $this->getRequest()->getParam('wizard'), 'close_on_save' => 1]
-        ), 'addNewSellingFormatTemplate');
-        $this->jsUrl->add($this->getUrl(
-            '*/walmart_template_description/new',
-            ['wizard' => $this->getRequest()->getParam('wizard'), 'close_on_save' => 1]
-        ), 'addNewDescriptionTemplate');
-        $this->jsUrl->add($this->getUrl(
-            '*/walmart_template_synchronization/new',
-            ['wizard' => $this->getRequest()->getParam('wizard'), 'close_on_save' => 1]
-        ), 'addNewSynchronizationTemplate');
-        $this->jsUrl->add($this->getUrl(
-            '*/walmart_template_sellingFormat/edit',
-            ['wizard' => $this->getRequest()->getParam('wizard'), 'close_on_save' => 1]
-        ), 'editSellingFormatTemplate');
-        $this->jsUrl->add($this->getUrl(
-            '*/walmart_template_description/edit',
-            ['wizard' => $this->getRequest()->getParam('wizard'), 'close_on_save' => 1]
-        ), 'editDescriptionTemplate');
-        $this->jsUrl->add($this->getUrl(
-            '*/walmart_template_synchronization/edit',
-            ['wizard' => $this->getRequest()->getParam('wizard'), 'close_on_save' => 1]
-        ), 'editSynchronizationTemplate');
-        $this->jsUrl->add($this->getUrl('*/general/modelGetAll', [
-            'model'=>'Template_SellingFormat',
-            'id_field'=>'id',
-            'data_field'=>'title',
-            'sort_field'=>'title',
-            'sort_dir'=>'ASC',
-            'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK
-        ]), 'getSellingFormatTemplates');
-        $this->jsUrl->add($this->getUrl('*/general/modelGetAll', [
-            'model'=>'Template_Description',
-            'id_field'=>'id',
-            'data_field'=>'title',
-            'sort_field'=>'title',
-            'sort_dir'=>'ASC',
-            'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK
-        ]), 'getDescriptionTemplates');
-        $this->jsUrl->add($this->getUrl('*/general/modelGetAll', [
-            'model'=>'Template_Synchronization',
-            'id_field'=>'id',
-            'data_field'=>'title',
-            'sort_field'=>'title',
-            'sort_dir'=>'ASC',
-            'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK
-        ]), 'getSynchronizationTemplates');
+        $this->jsUrl->addUrls(
+            [
+                'templateCheckMessages'         => $this->getUrl(
+                    '*/template/checkMessages',
+                    [
+                        'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK
+                    ]
+                ),
+                'addNewSellingFormatTemplate'   => $this->getUrl(
+                    '*/walmart_template_sellingFormat/new',
+                    [
+                        'close_on_save' => 1
+                    ]
+                ),
+                'editSellingFormatTemplate'     => $this->getUrl(
+                    '*/walmart_template_sellingFormat/edit',
+                    [
+                        'close_on_save' => 1
+                    ]
+                ),
+                'getSellingFormatTemplates'     => $this->getUrl(
+                    '*/general/modelGetAll',
+                    [
+                        'model'          => 'Template_SellingFormat',
+                        'id_field'       => 'id',
+                        'data_field'     => 'title',
+                        'sort_field'     => 'title',
+                        'sort_dir'       => 'ASC',
+                        'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK
+                    ]
+                ),
+                'addNewDescriptionTemplate'     => $this->getUrl(
+                    '*/walmart_template_description/new',
+                    [
+                        'close_on_save' => 1
+                    ]
+                ),
+                'editDescriptionTemplate'       => $this->getUrl(
+                    '*/walmart_template_description/edit',
+                    [
+                        'close_on_save' => 1
+                    ]
+                ),
+                'getDescriptionTemplates'       => $this->getUrl(
+                    '*/general/modelGetAll',
+                    [
+                        'model'          => 'Template_Description',
+                        'id_field'       => 'id',
+                        'data_field'     => 'title',
+                        'sort_field'     => 'title',
+                        'sort_dir'       => 'ASC',
+                        'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK
+                    ]
+                ),
+                'addNewSynchronizationTemplate' => $this->getUrl(
+                    '*/walmart_template_synchronization/new',
+                    [
+                        'close_on_save' => 1
+                    ]
+                ),
+                'editSynchronizationTemplate'   => $this->getUrl(
+                    '*/walmart_template_synchronization/edit',
+                    [
+                        'close_on_save' => 1
+                    ]
+                ),
+                'getSynchronizationTemplates'   => $this->getUrl(
+                    '*/general/modelGetAll',
+                    [
+                        'model'          => 'Template_Synchronization',
+                        'id_field'       => 'id',
+                        'data_field'     => 'title',
+                        'sort_field'     => 'title',
+                        'sort_dir'       => 'ASC',
+                        'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK
+                    ]
+                )
+            ]
+        );
 
         $this->jsTranslator->add(
             'The specified Title is already used for other Listing. Listing Title must be unique.',
@@ -367,69 +408,21 @@ HTML
             $this->__('Please wait while Synchronization is finished.')
         );
 
-        $this->jsPhp->addConstants($this->getHelper('Data')
-            ->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class));
-
-        $this->js->add(<<<JS
-
-    M2ePro.formData.wizard = {$this->getRequest()->getParam('wizard', 0)};
-
-require([
-    'M2ePro/TemplateManager',
-    'M2ePro/Walmart/Listing/Settings'
-], function(){
-
-    window.TemplateManagerObj = new TemplateManager();
-
-    window.WalmartListingSettingsObj = new WalmartListingSettings();
-
-    $('template_selling_format_id').observe('change', function() {
-        if ($('template_selling_format_id').value) {
-            $('edit_selling_format_template_link').show();
-        } else {
-            $('edit_selling_format_template_link').hide();
-        }
+        $this->js->add(
+            <<<JS
+    require([
+        'M2ePro/TemplateManager',
+        'M2ePro/Walmart/Listing/Settings'
+    ], function(){
+        window.TemplateManagerObj = new TemplateManager();
+    
+        window.WalmartListingSettingsObj = new WalmartListingSettings();
+        WalmartListingSettingsObj.initObservers();
     });
-    $('template_selling_format_id').simulate('change');
-
-    $('template_selling_format_id').observe('change', WalmartListingSettingsObj.selling_format_template_id_change)
-    if ($('template_selling_format_id').value) {
-        $('template_selling_format_id').simulate('change');
-    }
-
-    $('template_description_id').observe('change', function() {
-        if ($('template_description_id').value) {
-            $('edit_description_template_link').show();
-        } else {
-            $('edit_description_template_link').hide();
-        }
-    });
-    $('template_description_id').simulate('change');
-
-    $('template_description_id').observe('change', WalmartListingSettingsObj.description_template_id_change)
-    if ($('template_description_id').value) {
-        $('template_description_id').simulate('change');
-    }
-
-    $('template_synchronization_id').observe('change', function() {
-        if ($('template_synchronization_id').value) {
-            $('edit_synchronization_template_link').show();
-        } else {
-            $('edit_synchronization_template_link').hide();
-        }
-    });
-    $('template_synchronization_id').simulate('change');
-
-    $('template_synchronization_id').observe('change', WalmartListingSettingsObj.synchronization_template_id_change)
-    if ($('template_synchronization_id').value) {
-        $('template_synchronization_id').simulate('change');
-    }
-
-});
 JS
         );
 
-        return parent::_toHtml();
+        return parent::_prepareLayout();
     }
 
     //########################################
@@ -439,10 +432,12 @@ JS
         $collection = $this->walmartFactory->getObject('Template\SellingFormat')->getCollection();
         $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
         $collection->addFieldToFilter('marketplace_id', $this->listing->getMarketplaceId());
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns([
-            'value' => 'id',
-            'label' => 'title'
-        ]);
+        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+            [
+                'value' => 'id',
+                'label' => 'title'
+            ]
+        );
 
         return $collection->getConnection()->fetchAssoc($collection->getSelect());
     }
@@ -452,10 +447,12 @@ JS
         $collection = $this->walmartFactory->getObject('Template\Description')->getCollection();
         $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns([
-            'value' => 'id',
-            'label' => 'title'
-        ]);
+        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+            [
+                'value' => 'id',
+                'label' => 'title'
+            ]
+        );
 
         return $collection->getConnection()->fetchAssoc($collection->getSelect());
     }
@@ -465,39 +462,21 @@ JS
         $collection = $this->walmartFactory->getObject('Template\Synchronization')->getCollection();
         $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns([
-            'value' => 'id',
-            'label' => 'title'
-        ]);
+        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+            [
+                'value' => 'id',
+                'label' => 'title'
+            ]
+        );
 
         return $collection->getConnection()->fetchAssoc($collection->getSelect());
     }
 
     //########################################
 
-    public function getDefaultFieldsValues()
-    {
-        return [
-            'title' => $this->walmartFactory->getObject('Listing')->getCollection()->getSize() == 0 ? 'Default' : '',
-            'account_id' => '',
-            'store_id' => '',
-            'template_selling_format_id' => '',
-            'template_description_id' => '',
-            'template_synchronization_id' => '',
-        ];
-    }
-
-    //########################################
-
     protected function getListingData()
     {
-        if ($this->getRequest()->getParam('id') !== null) {
-            $data = array_merge($this->getListing()->getData(), $this->getListing()->getChildObject()->getData());
-        } else {
-            $data = $this->getDefaultFieldsValues();
-        }
-
-        return $data;
+        return array_merge($this->getListing()->getData(), $this->getListing()->getChildObject()->getData());
     }
 
     //########################################

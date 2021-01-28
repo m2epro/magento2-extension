@@ -6,25 +6,25 @@ define([
 
         // ---------------------------------------
 
-        initialize: function () {
+        initialize: function() {
         },
 
         // ---------------------------------------
 
-        checkMessages: function (id, nick, data, storeId, marketplaceId, container, callback) {
+        checkMessages: function(id, nick, data, storeId, marketplaceId, container, callback) {
             var parameters = '';
 
             parameters += 'id=' + encodeURIComponent(id);
             parameters += '&nick=' + encodeURIComponent(nick);
             parameters += '&store_id=' + encodeURIComponent(storeId);
             parameters += '&marketplace_id=' + encodeURIComponent(marketplaceId);
-            parameters += '&'+ data;
+            parameters += '&' + data;
 
             new Ajax.Request(M2ePro.url.get('templateCheckMessages'), {
                 method: 'post',
                 asynchronous: true,
                 parameters: parameters,
-                onSuccess: function (transport) {
+                onSuccess: function(transport) {
 
                     var messages = transport.responseText.evalJSON()['messages'];
 

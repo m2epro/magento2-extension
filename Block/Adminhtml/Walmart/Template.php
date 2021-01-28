@@ -21,25 +21,17 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('walmartTemplate');
         $this->_controller = 'adminhtml_walmart_template';
-        // ---------------------------------------
 
-        // Set buttons actions
-        // ---------------------------------------
         $this->buttonList->remove('back');
         $this->buttonList->remove('reset');
         $this->buttonList->remove('delete');
         $this->buttonList->remove('save');
         $this->buttonList->remove('edit');
-        // ---------------------------------------
 
-        // ---------------------------------------
         $this->buttonList->update('add', 'label', $this->__('Add Policy'));
         $this->buttonList->update('add', 'onclick', '');
-        // ---------------------------------------
     }
 
     //########################################
@@ -61,17 +53,19 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             be dynamically updated with Magento data.<br/><br/>'
         );
 
-        $this->appendHelpBlock([
-            'content' => $content
-        ]);
+        $this->appendHelpBlock(
+            [
+                'content' => $content
+            ]
+        );
 
         $addButtonProps = [
-            'id' => 'add_new_product',
-            'label' => __('Add Policy'),
-            'class' => 'add',
+            'id'           => 'add_policy',
+            'label'        => __('Add Policy'),
+            'class'        => 'add',
             'button_class' => '',
-            'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
-            'options' => $this->_getAddTemplateButtonOptions(),
+            'class_name'   => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
+            'options'      => $this->_getAddTemplateButtonOptions(),
         ];
         $this->addButton('add', $addButtonProps);
 
@@ -83,20 +77,24 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     protected function _getAddTemplateButtonOptions()
     {
         $data = [
-            Grid::TEMPLATE_CATEGORY => [
-                'label' => $this->__('Category'),
+            Grid::TEMPLATE_CATEGORY        => [
+                'label'   => $this->__('Category'),
+                'id'      => 'category',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_CATEGORY) . "')",
             ],
-            Grid::TEMPLATE_DESCRIPTION => [
-                'label' => $this->__('Description'),
+            Grid::TEMPLATE_DESCRIPTION     => [
+                'label'   => $this->__('Description'),
+                'id'      => 'description',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_DESCRIPTION) . "')",
             ],
-            Grid::TEMPLATE_SELLING_FORMAT => [
-                'label' => $this->__('Selling'),
+            Grid::TEMPLATE_SELLING_FORMAT  => [
+                'label'   => $this->__('Selling'),
+                'id'      => 'selling',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SELLING_FORMAT) . "')",
             ],
             Grid::TEMPLATE_SYNCHRONIZATION => [
-                'label' => $this->__('Synchronization'),
+                'label'   => $this->__('Synchronization'),
+                'id'      => 'synchronization',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SYNCHRONIZATION) . "')",
             ]
         ];

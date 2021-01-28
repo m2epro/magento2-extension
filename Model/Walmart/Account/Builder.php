@@ -24,6 +24,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         // tab: general
         // ---------------------------------------
         $keys = [
+            'mode',
             'title',
             'marketplace_id',
             'consumer_id',
@@ -37,7 +38,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
-        // tab: 3rd party listings
+        // tab: Unmanaged listings
         // ---------------------------------------
         $keys = [
             'related_store_id',
@@ -106,7 +107,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
-        if (isset($tempData['mapping_upc_mode']) ) {
+        if (isset($tempData['mapping_upc_mode'])) {
             $mappingSettings['upc']['mode'] = (int)$tempData['mapping_upc_mode'];
 
             if ($tempData['mapping_upc_mode'] == Account::OTHER_LISTINGS_MAPPING_UPC_MODE_CUSTOM_ATTRIBUTE) {
@@ -175,7 +176,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
-        // 3rd party orders settings
+        // Unmanaged orders settings
         // ---------------------------------------
         $tempKey = 'listing_other';
         $tempSettings = !empty($this->rawData['magento_orders_settings'][$tempKey])
@@ -272,26 +273,35 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
-        // invoice/shipment settings
+        $data['magento_orders_settings'] = $this->getHelper('Data')->jsonEncode($data['magento_orders_settings']);
+
+        // tab invoice and shipment
         // ---------------------------------------
-        $temp = Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_CUSTOM;
-        if (isset($this->rawData['magento_orders_settings']['status_mapping']['mode']) &&
-            $this->rawData['magento_orders_settings']['status_mapping']['mode'] == $temp
-        ) {
-            $data['magento_orders_settings']['invoice_mode'] = 1;
-            $data['magento_orders_settings']['shipment_mode'] = 1;
-
-            if (!isset($this->rawData['magento_orders_settings']['invoice_mode'])) {
-                $data['magento_orders_settings']['invoice_mode'] = 0;
-            }
-
-            if (!isset($this->rawData['magento_orders_settings']['shipment_mode'])) {
-                $data['magento_orders_settings']['shipment_mode'] = 0;
+        $keys = [
+            'create_magento_invoice',
+            'create_magento_shipment'
+        ];
+        foreach ($keys as $key) {
+            if (isset($this->rawData[$key])) {
+                $data[$key] = $this->rawData[$key];
             }
         }
 
-        // ---------------------------------------
-        $data['magento_orders_settings'] = $this->getHelper('Data')->jsonEncode($data['magento_orders_settings']);
+        if (isset($this->rawData['other_carrier']) && isset($this->rawData['other_carrier_url'])) {
+
+            $otherCarriers = [];
+            $carriers = array_filter($this->rawData['other_carrier']);
+            $carrierURLs = array_filter($this->rawData['other_carrier_url']);
+
+            foreach ($carriers as $index => $code) {
+                $otherCarriers[] = [
+                    'code' => $code,
+                    'url'  => isset($carrierURLs[$index]) ? $carrierURLs[$index] : ''
+                ];
+            }
+
+            $data['other_carriers'] = $this->getHelper('Data')->jsonEncode($otherCarriers);
+        }
 
         return $data;
     }
@@ -299,58 +309,60 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     public function getDefaultData()
     {
         return [
-            'title'           => '',
-            'marketplace_id'  => 0,
-            'consumer_id'     => '',
-            'private_key'     => '',
-            'client_id'       => '',
-            'client_secret'   => '',
+            'mode'           => \Ess\M2ePro\Model\Walmart\Account::MODE_PRODUCTION,
+            'title'          => '',
+            'marketplace_id' => 0,
+            'consumer_id'    => '',
+            'private_key'    => '',
+            'client_id'      => '',
+            'client_secret'  => '',
 
             'related_store_id' => 0,
 
-            'other_listings_synchronization' => 1,
-            'other_listings_mapping_mode' => 1,
+            'other_listings_synchronization'  => 1,
+            'other_listings_mapping_mode'     => 1,
             'other_listings_mapping_settings' => [],
 
             'magento_orders_settings' => [
-                'listing' => [
-                    'mode' => 1,
+                'listing'        => [
+                    'mode'       => 1,
                     'store_mode' => Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
-                    'store_id' => null
+                    'store_id'   => null
                 ],
-                'listing_other' => [
-                    'mode' => 1,
-                    'product_mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT,
+                'listing_other'  => [
+                    'mode'                 => 1,
+                    'product_mode'         => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT,
                     'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
-                    'store_id' => null,
+                    'store_id'             => null,
                 ],
-                'number' => [
+                'number'         => [
                     'source' => Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO,
                     'prefix' => [
                         'prefix' => '',
                     ]
                 ],
-                'tax' => [
+                'tax'            => [
                     'mode' => Account::MAGENTO_ORDERS_TAX_MODE_MIXED
                 ],
-                'customer' => [
-                    'mode' => Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST,
-                    'id' => null,
-                    'website_id' => null,
-                    'group_id' => null,
+                'customer'       => [
+                    'mode'          => Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST,
+                    'id'            => null,
+                    'website_id'    => null,
+                    'group_id'      => null,
                     'notifications' => [
                         'invoice_created' => false,
-                        'order_created' => false
+                        'order_created'   => false
                     ],
                 ],
                 'status_mapping' => [
-                    'mode' => Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT,
+                    'mode'       => Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT,
                     'processing' => Account::MAGENTO_ORDERS_STATUS_MAPPING_PROCESSING,
-                    'shipped' => Account::MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED,
-                ],
-                'invoice_mode'  => 1,
-                'shipment_mode' => 1
-            ]
+                    'shipped'    => Account::MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED,
+                ]
+            ],
+            'create_magento_invoice'  => 1,
+            'create_magento_shipment' => 1,
+            'other_carriers'          => []
         ];
     }
 

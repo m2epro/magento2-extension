@@ -32,8 +32,6 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
             return $this->_redirect('*/amazon_listing/index');
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('edit_listing', $listing);
-
         $this->addContent($this->createBlock('Amazon_Listing_Edit'));
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(

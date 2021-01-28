@@ -272,6 +272,22 @@ CSS
                     $('advanced_filter_button').simulate('click');
                 }
             }
+               $$('#listing_product_rules select.element-value-changer option').each(function(el) {
+                if ((el.value == '??' && el.selected) || (el.value == '!??' && el.selected)) {
+                    setTimeout(function () {
+                        $(el.parentElement.parentElement.parentElement.nextElementSibling).hide();
+                    }, 10);
+                }
+            });
+            $$('#listing_product_rules')
+                .invoke('observe', 'change', function (event) {
+                    let target = event.target;
+                    if (target.value == '??' || target.value == '!??') {
+                        setTimeout(function () {
+                            $(target.parentElement.parentElement.nextElementSibling).hide();
+                        }, 10);
+                    }
+                });
         });
 JS
         );

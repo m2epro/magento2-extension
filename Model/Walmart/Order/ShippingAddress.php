@@ -26,7 +26,7 @@ class ShippingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
             'recipient_name' => $this->getData('recipient_name'),
             'country_id'     => $this->getData('country_code'),
             'region'         => $this->getData('state'),
-            'city'           => $this->getData('city'),
+            'city'           => $this->getData('city') ? $this->getData('city') : $this->getCountryName(),
             'postcode'       => $this->getPostalCode(),
             'telephone'      => $this->getPhone(),
             'company'        => $this->getData('company'),

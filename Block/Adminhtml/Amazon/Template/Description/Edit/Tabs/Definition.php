@@ -41,6 +41,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $this->allAttributesByInputTypes = [
             'text' => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text']),
             'text_select' => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text', 'select']),
+            'text_select_multiselect' => $magentoAttributeHelper->filterByInputTypes(
+                $this->allAttributes, ['text', 'select', 'multiselect']
+            ),
             'text_weight' => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text', 'weight']),
             'text_images' => $magentoAttributeHelper->filterByInputTypes(
                 $this->allAttributes,
@@ -121,7 +124,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'after_element_html' => $this->createBlock('Magento_Button_MagentoAttribute')->addData([
                     'label' => $this->__('Insert Attribute'),
                     'destination_id' => 'title_template',
-                    'magento_attributes' => $this->getClearAttributesByInputTypesOptions(),
+                    'magento_attributes' => $this->getClearAttributesByInputTypesOptions('text_select'),
                     'class' => 'select_attributes_for_title_button primary',
                     'select_custom_attributes' => [
                         'allowed_attribute_types' => 'text,select',
@@ -1433,12 +1436,12 @@ HTML
 
     // ---------------------------------------
 
-    public function getClearAttributesByInputTypesOptions()
+    public function getClearAttributesByInputTypesOptions($type)
     {
         $optionsResult = [];
         $helper = $this->getHelper('Data');
 
-        foreach ($this->allAttributesByInputTypes['text_select'] as $attribute) {
+        foreach ($this->allAttributesByInputTypes[$type] as $attribute) {
             $optionsResult[] = [
                 'value' => $attribute['code'],
                 'label' => $helper->escapeHtml($attribute['label']),
@@ -1949,14 +1952,14 @@ HTML
         return $this->createBlock('Magento_Button_MagentoAttribute')->addData([
             'label' => $this->__('Insert Attribute'),
             'destination_id' => $type.'_'.$index,
-            'magento_attributes' => $this->getClearAttributesByInputTypesOptions(),
+            'magento_attributes' => $this->getClearAttributesByInputTypesOptions('text_select_multiselect'),
             'on_click_callback' => "function() {
                 AmazonTemplateDescriptionDefinitionObj.multi_element_keyup('{$type}',{value:' '});
             }",
             'class' => 'primary attributes-container-td',
             'style' => 'display: block; margin: 0; float: right;',
             'select_custom_attributes' => [
-                'allowed_attribute_types' => 'text,select',
+                'allowed_attribute_types' => 'text,select,multiselect',
                 'apply_to_all_attribute_sets' => 0
             ]
         ]);

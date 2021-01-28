@@ -18,7 +18,7 @@ class Tabs extends AbstractTabs
     const TAB_ID_GENERAL             = 'general';
     const TAB_ID_LISTING_OTHER       = 'listingOther';
     const TAB_ID_ORDERS              = 'orders';
-    const TAB_ID_VCS_UPLOAD_INVOICES = 'vcs_upload_invoices';
+    const TAB_ID_INVOICES_AND_SHIPMENTS = 'invoices_and_shipments';
     const TAB_ID_REPRICING           = 'repricing';
 
     protected function _construct()
@@ -29,7 +29,7 @@ class Tabs extends AbstractTabs
         $this->setDestElementId('edit_form');
     }
 
-    protected function _beforeToHtml()
+    protected function _prepareLayout()
     {
         /** @var $account \Ess\M2ePro\Model\Account */
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
@@ -41,8 +41,8 @@ class Tabs extends AbstractTabs
         ]);
 
         $this->addTab(self::TAB_ID_LISTING_OTHER, [
-            'label'   => $this->__('3rd Party Listings'),
-            'title'   => $this->__('3rd Party Listings'),
+            'label'   => $this->__('Unmanaged Listings'),
+            'title'   => $this->__('Unmanaged Listings'),
             'content' => $this->createBlock('Amazon_Account_Edit_Tabs_ListingOther')->toHtml(),
         ]);
 
@@ -52,14 +52,11 @@ class Tabs extends AbstractTabs
             'content' => $this->createBlock('Amazon_Account_Edit_Tabs_Order')->toHtml(),
         ]);
 
-        if ($account !== null
-            && $account->getId()
-            && $account->getChildObject()->getMarketplace()->getChildObject()->isVatCalculationServiceAvailable()
-        ) {
-            $this->addTab(self::TAB_ID_VCS_UPLOAD_INVOICES, [
-                'label'   => $this->__('VCS / Upload Invoices'),
-                'title'   => $this->__('VCS / Upload Invoices'),
-                'content' => $this->createBlock('Amazon_Account_Edit_Tabs_VCSUploadInvoices')->toHtml(),
+        if ($account !== null && $account->getId()) {
+            $this->addTab(self::TAB_ID_INVOICES_AND_SHIPMENTS, [
+                'label'   => $this->__('Invoices & Shipments'),
+                'title'   => $this->__('Invoices & Shipments'),
+                'content' => $this->createBlock('Amazon_Account_Edit_Tabs_InvoicesAndShipments')->toHtml(),
             ]);
         }
 
@@ -90,6 +87,6 @@ class Tabs extends AbstractTabs
 JS
         );
 
-        return parent::_beforeToHtml();
+        return parent::_prepareLayout();
     }
 }

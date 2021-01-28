@@ -235,26 +235,15 @@ HTML;
                     'my_id' => 'listing_product_id',
                     'my_mode' => "template_{$templateCode}_mode",
                     'my_template_id' => "template_{$templateCode}_id",
-                    'my_custom_id' => "template_{$templateCode}_custom_id",
 
                     'my_needed_id' => new \Zend_Db_Expr(
                         "CASE
                         WHEN melp.template_{$templateCode}_mode = 2 THEN melp.template_{$templateCode}_id
-                        WHEN melp.template_{$templateCode}_mode = 1 THEN melp.template_{$templateCode}_custom_id
-                        WHEN melp.template_{$templateCode}_mode = 0 THEN IF(mel.template_{$templateCode}_mode = 1,
-                                                                            mel.template_{$templateCode}_custom_id,
-                                                                            mel.template_{$templateCode}_id)
-                    END"
-                    ),
-                    'my_needed_id_field' => new \Zend_Db_Expr(
-                        "CASE
-                        WHEN melp.template_{$templateCode}_mode = 2 THEN 'template_{$templateCode}_id'
-                        WHEN melp.template_{$templateCode}_mode = 1 THEN 'template_{$templateCode}_custom_id'
-                        WHEN melp.template_{$templateCode}_mode = 0 THEN IF(mel.template_{$templateCode}_mode = 1,
-                                                                            'template_{$templateCode}_custom_id',
-                                                                            'template_{$templateCode}_id')
+                        WHEN melp.template_{$templateCode}_mode = 1 THEN melp.template_{$templateCode}_id
+                        WHEN melp.template_{$templateCode}_mode = 0 THEN mel.template_{$templateCode}_id
                         END"
-                    )
+                    ),
+                    'my_needed_id_field' => "template_{$templateCode}_id"
                 ]
             )
             ->joinLeft(
@@ -270,9 +259,7 @@ HTML;
                 ],
                 'mlp.listing_id = mel.listing_id',
                 [
-                    'parent_mode' => "template_{$templateCode}_mode",
-                    'parent_template_id' => "template_{$templateCode}_id",
-                    'parent_custom_id' => "template_{$templateCode}_custom_id"
+                    'parent_template_id' => "template_{$templateCode}_id"
                 ]
             );
 
@@ -295,7 +282,6 @@ HTML;
                     'subselect.my_id',
                     'subselect.listing_id',
                     'subselect.my_mode',
-                    'subselect.parent_mode',
                     'subselect.my_needed_id',
                     'subselect.my_needed_id_field'
                 ]

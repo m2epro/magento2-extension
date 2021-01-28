@@ -60,22 +60,14 @@ class RemoveUnused extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $unionSelectListingTemplate = $connection->select()
             ->from($listingTable, ['result_field'=>$templateManager->getTemplateIdColumnName()])
             ->where($templateManager->getTemplateIdColumnName() . ' IS NOT NULL');
-        $unionSelectListingCustom = $connection->select()
-            ->from($listingTable, ['result_field'=>$templateManager->getCustomIdColumnName()])
-            ->where($templateManager->getCustomIdColumnName().' IS NOT NULL');
         $unionSelectListingProductTemplate = $connection->select()
             ->from($listingProductTable, ['result_field'=>$templateManager->getTemplateIdColumnName()])
             ->where($templateManager->getTemplateIdColumnName() . ' IS NOT NULL');
-        $unionSelectListingProductCustom = $connection->select()
-            ->from($listingProductTable, ['result_field'=>$templateManager->getCustomIdColumnName()])
-            ->where($templateManager->getCustomIdColumnName().' IS NOT NULL');
 
         $unionSelect = $connection->select()->union(
             [
                 $unionSelectListingTemplate,
-                $unionSelectListingCustom,
                 $unionSelectListingProductTemplate,
-                $unionSelectListingProductCustom
             ]
         );
 

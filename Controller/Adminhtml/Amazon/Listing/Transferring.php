@@ -81,11 +81,36 @@ class Transferring extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
     protected function destinationStep()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Transferring\Destination $block */
-        $block = $this->createBlock('Amazon_Listing_Transferring_Destination', '', [
-            'data' => [
-                'listing' => $this->listing
+        $block = $this->createBlock(
+            'Amazon_Listing_Transferring_Destination',
+            '',
+            [
+                'data' => [
+                    'listing' => $this->listing
+                ]
             ]
-        ]);
+        );
+
+        if (!$block->getAccounts()->count()) {
+            $this->setJsonContent(
+                [
+                    'error'   => true,
+                    'message' => $this->getHelper('Module_Translation')->__(
+                        <<<HTML
+To use the Sell on Another Marketplace feature properly,
+you need to add one more account to M2E Pro under <i>Amazon Integration > Configuration > Accounts</i>.
+<br/>
+<br/>
+Click <a href="%url%" target="_blank">here</a> to learn about the Sell on Another Marketplace feature.
+HTML
+                        ,
+                        $this->getHelper('Module_Support')->getDocumentationArticleUrl('x/iICzAQ')
+                    )
+                ]
+            );
+
+            return $this->getResult();
+        }
 
         $this->setAjaxContent($block);
 
@@ -100,9 +125,9 @@ class Transferring extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             return $this->_redirect(
                 '*/amazon_listing/transferring/index',
                 [
-                    '_current' => true,
+                    '_current'   => true,
                     'listing_id' => $this->listing->getId(),
-                    'step' => 3
+                    'step'       => 3
                 ]
             );
         }
@@ -112,9 +137,9 @@ class Transferring extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             : $this->templateManager->getNotMarketplaceDependentTemplates();
 
         $sessionData = [
-            'account_id' => (int)$this->getRequest()->getParam('account_id'),
+            'account_id'     => (int)$this->getRequest()->getParam('account_id'),
             'marketplace_id' => (int)$this->getRequest()->getParam('marketplace_id'),
-            'store_id' => (int)$this->getRequest()->getParam('store_id')
+            'store_id'       => (int)$this->getRequest()->getParam('store_id')
         ];
 
         foreach ($templates as $nick) {

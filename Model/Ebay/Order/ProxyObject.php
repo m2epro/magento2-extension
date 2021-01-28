@@ -34,7 +34,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         \Magento\Tax\Model\Calculation $taxCalculation,
         \Magento\Eav\Model\Entity\AttributeFactory $attributeFactory
     ) {
-        $this->taxCalculation   = $taxCalculation;
+        $this->taxCalculation = $taxCalculation;
         $this->attributeFactory = $attributeFactory;
 
         parent::__construct(
@@ -56,6 +56,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     }
 
     //########################################
+
     /**
      * @return string
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -85,8 +86,10 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             );
 
             if ($customerDataObject->getId() === null) {
-                throw new \Ess\M2ePro\Model\Exception('Customer with ID specified in eBay Account
-                    Settings does not exist.');
+                throw new \Ess\M2ePro\Model\Exception(
+                    'Customer with ID specified in eBay Account
+                    Settings does not exist.'
+                );
             }
 
             return $customerDataObject;
@@ -109,11 +112,15 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
             $customerInfo = $this->getAddressData();
 
-            $customerObject = $this->customerFactory->create();
-            $customerObject->setWebsiteId($this->order->getEbayAccount()->getMagentoOrdersCustomerNewWebsiteId());
-            $customerObject->loadByEmail($customerInfo['email']);
+            $customerObject = $this->customerFactory->create()->getCollection()
+                ->addAttributeToSelect(self::USER_ID_ATTRIBUTE_CODE)
+                ->addAttributeToFilter(
+                    'website_id',
+                    $this->order->getEbayAccount()->getMagentoOrdersCustomerNewWebsiteId()
+                )
+                ->addAttributeToFilter(self::USER_ID_ATTRIBUTE_CODE, $this->order->getBuyerUserId())->getFirstItem();
 
-            if ($customerObject->getId() !== null) {
+            if (!empty($customerObject) && $customerObject->getId() !== null) {
                 $customerBuilder->setData($customerInfo);
                 $customerBuilder->updateAddress($customerObject);
 
@@ -153,30 +160,30 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         }
 
         $addressModel = $this->order->isUseGlobalShippingProgram() ? $this->order->getGlobalShippingWarehouseAddress()
-                                                                   : $this->order->getShippingAddress();
+            : $this->order->getShippingAddress();
 
         $rawAddressData = $addressModel->getRawData();
 
         $addressData = [];
 
         $recipientNameParts = $this->getNameParts($rawAddressData['recipient_name']);
-        $addressData['firstname']   = $recipientNameParts['firstname'];
-        $addressData['lastname']    = $recipientNameParts['lastname'];
-        $addressData['middlename']  = $recipientNameParts['middlename'];
+        $addressData['firstname'] = $recipientNameParts['firstname'];
+        $addressData['lastname'] = $recipientNameParts['lastname'];
+        $addressData['middlename'] = $recipientNameParts['middlename'];
 
         $customerNameParts = $this->getNameParts($rawAddressData['buyer_name']);
-        $addressData['customer_firstname']   = $customerNameParts['firstname'];
-        $addressData['customer_lastname']    = $customerNameParts['lastname'];
-        $addressData['customer_middlename']  = $customerNameParts['middlename'];
+        $addressData['customer_firstname'] = $customerNameParts['firstname'];
+        $addressData['customer_lastname'] = $customerNameParts['lastname'];
+        $addressData['customer_middlename'] = $customerNameParts['middlename'];
 
-        $addressData['email']      = $rawAddressData['email'];
+        $addressData['email'] = $rawAddressData['email'];
         $addressData['country_id'] = $rawAddressData['country_id'];
-        $addressData['region']     = $rawAddressData['region'];
-        $addressData['region_id']  = $addressModel->getRegionId();
-        $addressData['city']       = $rawAddressData['city'];
-        $addressData['postcode']   = $rawAddressData['postcode'];
-        $addressData['telephone']  = $rawAddressData['telephone'];
-        $addressData['company']    = !empty($rawAddressData['company']) ? $rawAddressData['company'] : '';
+        $addressData['region'] = $rawAddressData['region'];
+        $addressData['region_id'] = $addressModel->getRegionId();
+        $addressData['city'] = $rawAddressData['city'];
+        $addressData['postcode'] = $rawAddressData['postcode'];
+        $addressData['telephone'] = $rawAddressData['telephone'];
+        $addressData['company'] = !empty($rawAddressData['company']) ? $rawAddressData['company'] : '';
 
         // Adding reference id into street array
         // ---------------------------------------
@@ -186,17 +193,17 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         if ($this->order->isUseGlobalShippingProgram()) {
             $details = $this->order->getGlobalShippingDetails();
             isset($details['warehouse_address']['reference_id']) &&
-            $referenceId = 'Ref #'.$details['warehouse_address']['reference_id'];
+            $referenceId = 'Ref #' . $details['warehouse_address']['reference_id'];
         }
 
         if ($this->order->isUseClickAndCollect()) {
             $details = $this->order->getClickAndCollectDetails();
-            isset($details['reference_id']) && $referenceId = 'Ref #'.$details['reference_id'];
+            isset($details['reference_id']) && $referenceId = 'Ref #' . $details['reference_id'];
         }
 
         if ($this->order->isUseInStorePickup()) {
             $details = $this->order->getInStorePickupDetails();
-            isset($details['reference_id']) && $referenceId = 'Ref #'.$details['reference_id'];
+            isset($details['reference_id']) && $referenceId = 'Ref #' . $details['reference_id'];
         }
 
         if (!empty($referenceId)) {
@@ -221,11 +228,48 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
      */
     public function getBillingAddressData()
     {
-        if (!$this->order->isUseGlobalShippingProgram()) {
-            return parent::getBillingAddressData();
+        if ($this->order->getEbayAccount()->useMagentoOrdersShippingAddressAsBillingAlways()) {
+            return parent::getAddressData();
         }
 
-        return parent::getAddressData();
+        if ($this->order->getEbayAccount()->useMagentoOrdersShippingAddressAsBillingIfSameCustomerAndRecipient() &&
+            $this->order->getShippingAddress()->hasSameBuyerAndRecipient()
+        ) {
+            return parent::getAddressData();
+        }
+
+        $customerNameParts = $this->getNameParts($this->order->getBuyerName());
+
+        return [
+            'firstname'  => $customerNameParts['firstname'],
+            'middlename' => $customerNameParts['middlename'],
+            'lastname'   => $customerNameParts['lastname'],
+            'country_id' => '',
+            'region'     => '',
+            'region_id'  => '',
+            'city'       => 'eBay does not supply the complete billing Buyer information.',
+            'postcode'   => '',
+            'street'     => [],
+            'company'    => ''
+        ];
+    }
+
+    /**
+     * @return bool
+     */
+    public function shouldIgnoreBillingAddressValidation()
+    {
+        if ($this->order->getEbayAccount()->useMagentoOrdersShippingAddressAsBillingAlways()) {
+            return false;
+        }
+
+        if ($this->order->getEbayAccount()->useMagentoOrdersShippingAddressAsBillingIfSameCustomerAndRecipient() &&
+            $this->order->getShippingAddress()->hasSameBuyerAndRecipient()
+        ) {
+            return false;
+        }
+
+        return true;
     }
 
     //########################################
@@ -299,23 +343,23 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
         if ($this->order->isUseClickAndCollect() || $this->order->isUseInStorePickup()) {
             if ($this->order->isUseClickAndCollect()) {
-                $shippingData['shipping_method'] = 'Click And Collect | '.$shippingData['shipping_method'];
+                $shippingData['shipping_method'] = 'Click And Collect | ' . $shippingData['shipping_method'];
                 $details = $this->order->getClickAndCollectDetails();
             } else {
-                $shippingData['shipping_method'] = 'In Store Pickup | '.$shippingData['shipping_method'];
+                $shippingData['shipping_method'] = 'In Store Pickup | ' . $shippingData['shipping_method'];
                 $details = $this->order->getInStorePickupDetails();
             }
 
             if (!empty($details['location_id'])) {
-                $shippingData['shipping_method'] .= ' | Store ID: '.$details['location_id'];
+                $shippingData['shipping_method'] .= ' | Store ID: ' . $details['location_id'];
             }
 
             if (!empty($details['reference_id'])) {
-                $shippingData['shipping_method'] .= ' | Reference ID: '.$details['reference_id'];
+                $shippingData['shipping_method'] .= ' | Reference ID: ' . $details['reference_id'];
             }
 
             if (!empty($details['delivery_date'])) {
-                $shippingData['shipping_method'] .= ' | Delivery Date: '.$details['delivery_date'];
+                $shippingData['shipping_method'] .= ' | Delivery Date: ' . $details['delivery_date'];
             }
         }
 
@@ -358,9 +402,9 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         $comments = [];
 
         if ($this->order->isUseGlobalShippingProgram()) {
-            $comments[] = '<b>'.
-                          $this->getHelper('Module\Translation')->__('Global Shipping Program is used for this Order').
-                          '</b><br/>';
+            $comments[] = '<b>' .
+                $this->getHelper('Module\Translation')->__('Global Shipping Program is used for this Order') .
+                '</b><br/>';
         }
 
         $buyerMessage = $this->order->getBuyerMessage();

@@ -83,7 +83,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
     {
         if (null === $this->_defaultOperatorInputByType) {
             $this->_defaultOperatorInputByType = [
-                'string'      => ['==', '!=', '>=', '>', '<=', '<', '{}', '!{}', '()', '!()'],
+                'string'      => ['==', '!=', '>=', '>', '<=', '<', '{}', '!{}', '()', '!()', '??', '!??'],
                 'numeric'     => ['==', '!=', '>=', '>', '<=', '<', '()', '!()'],
                 'date'        => ['==', '>=', '<='],
                 'select'      => ['==', '!='],
@@ -115,7 +115,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
                 '{}'  => __('contains'),
                 '!{}' => __('does not contain'),
                 '()'  => __('is one of'),
-                '!()' => __('is not one of')
+                '!()' => __('is not one of'),
+                '??'  => __('is empty'),
+                '!??' => __('is not empty')
             ];
         }
         return $this->_defaultOperatorOptions;
@@ -671,9 +673,12 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
                     }
                 }
                 break;
+            case '??':case '!??':
+                $result = empty($validatedValue);
+                break;
         }
 
-        if ('!=' == $op || '>' == $op || '<' == $op || '!{}' == $op || '!()' == $op) {
+        if ('!=' == $op || '>' == $op || '<' == $op || '!{}' == $op || '!()' == $op || '!??' == $op) {
             $result = !$result;
         }
 

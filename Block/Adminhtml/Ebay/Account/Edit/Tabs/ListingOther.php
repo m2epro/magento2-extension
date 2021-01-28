@@ -40,7 +40,9 @@ class ListingOther extends AbstractForm
         $attributes = $magentoAttributeHelper->filterByInputTypes(
             $allAttributes,
             [
-                'text', 'textarea', 'select'
+                'text',
+                'textarea',
+                'select'
             ]
         );
 
@@ -48,12 +50,15 @@ class ListingOther extends AbstractForm
 
         // ---------------------------------------
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account')
-            ? $this->getHelper('Data\GlobalData')->getValue('edit_account') : [];
+            ? $this->getHelper('Data\GlobalData')->getValue('edit_account') : null;
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
-        $marketplacesData = $formData['marketplaces_data'];
-        $marketplacesData = !empty($marketplacesData)
-            ? $this->getHelper('Data')->jsonDecode($marketplacesData) : [];
+        $marketplacesData = [];
+        if (isset($formData['marketplaces_data'])) {
+            $marketplacesData = $formData['marketplaces_data'];
+            $marketplacesData = !empty($marketplacesData)
+                ? $this->getHelper('Data')->jsonDecode($marketplacesData) : [];
+        }
 
         $marketplaces = $this->ebayFactory->getObject('Marketplace')
             ->getCollection()
@@ -86,8 +91,8 @@ class ListingOther extends AbstractForm
             [
                 'content' => $this->__(
                     <<<HTML
-<p>This tab of the Account settings contains main configurations for the 3rd Party Listing management.
-You can set preferences whether you would like to import 3rd Party Listings
+<p>This tab of the Account settings contains main configurations for the Unmanaged Listing management.
+You can set preferences whether you would like to import Unmanaged Listings
 (Items that were Listed on eBay either directly on the channel or with the help of other than M2E Pro tool),
 automatically map them to Magento Product, etc.</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
@@ -101,7 +106,7 @@ HTML
         $fieldset = $form->addFieldset(
             'general',
             [
-                'legend' => $this->__('General'),
+                'legend'      => $this->__('General'),
                 'collapsable' => false
             ]
         );
@@ -110,13 +115,13 @@ HTML
             'other_listings_synchronization',
             'select',
             [
-                'name' => 'other_listings_synchronization',
-                'label' => $this->__('Import 3rd Party Listings'),
-                'values' => [
+                'name'    => 'other_listings_synchronization',
+                'label'   => $this->__('Import Unmanaged Listings'),
+                'values'  => [
                     1 => $this->__('Yes'),
                     0 => $this->__('No'),
                 ],
-                'value' => $formData['other_listings_synchronization'],
+                'value'   => $formData['other_listings_synchronization'],
                 'tooltip' => $this->__(
                     'Choose whether to Import eBay Listings that have been Listed on eBay either directly
                      or using a tool other than M2E Pro.
@@ -130,15 +135,15 @@ HTML
             'select',
             [
                 'container_id' => 'other_listings_mapping_mode_tr',
-                'name' => 'other_listings_mapping_mode',
-                'label' => $this->__('Product Mapping'),
-                'class' => 'M2ePro-require-select-attribute',
-                'values' => [
+                'name'         => 'other_listings_mapping_mode',
+                'label'        => $this->__('Product Mapping'),
+                'class'        => 'M2ePro-require-select-attribute',
+                'values'       => [
                     1 => $this->__('Yes'),
                     0 => $this->__('No'),
                 ],
-                'value' => $formData['other_listings_mapping_mode'],
-                'tooltip' => $this->__(
+                'value'        => $formData['other_listings_mapping_mode'],
+                'tooltip'      => $this->__(
                     'Choose whether imported eBay Listings should automatically map to a
                     Product in your Magento Inventory.'
                 )
@@ -148,11 +153,11 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_ebay_accounts_other_listings_product_mapping',
             [
-                'legend' => $this->__('Magento Product Mapping Settings'),
+                'legend'      => $this->__('Magento Product Mapping Settings'),
                 'collapsable' => true,
-                'tooltip' => $this->__(
+                'tooltip'     => $this->__(
                     '<p>In this section you can provide settings for automatic Mapping of the newly
-                    imported 3rd Party Listings to the appropriate Magento Products.</p><br>
+                    imported Unmanaged Listings to the appropriate Magento Products.</p><br>
                     <p>The imported Items are mapped based on the correspondence between eBay Item
                     values and Magento Product Attribute values. </p>'
                 )
@@ -183,13 +188,13 @@ HTML
             'mapping_sku_mode',
             self::SELECT,
             [
-                'name' => 'mapping_sku_mode',
-                'label' => $this->__('Custom Label (SKU)'),
-                'class' => 'attribute-mode-select',
-                'style' => 'float:left; margin-right: 15px;',
-                'values' => [
-                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_NONE => $this->__('None'),
-                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT => $this->__('Product SKU'),
+                'name'                     => 'mapping_sku_mode',
+                'label'                    => $this->__('Custom Label (SKU)'),
+                'class'                    => 'attribute-mode-select',
+                'style'                    => 'float:left; margin-right: 15px;',
+                'values'                   => [
+                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_NONE       => $this->__('None'),
+                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT    => $this->__('Product SKU'),
                     Account::OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID => $this->__('Product ID'),
                     [
                         'label' => $this->__('Magento Attributes'),
@@ -199,12 +204,13 @@ HTML
                         ]
                     ]
                 ],
-                'value' => isset($mappingSettings['sku']['mode'])
-                    && $mappingSettings['sku']['mode'] != Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE
+                'value'                    => isset($mappingSettings['sku']['mode'])
+                && $mappingSettings['sku']['mode'] != Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE
                     ? $mappingSettings['sku']['mode'] : '',
                 'create_magento_attribute' => true,
             ]
-        )->setAfterElementHtml(<<<HTML
+        )->setAfterElementHtml(
+            <<<HTML
 <div id="mapping_sku_priority">
     {$this->__('Priority')}: <input style="width: 50px;"
                                     name="mapping_sku_priority"
@@ -219,7 +225,7 @@ HTML
             'mapping_sku_attribute',
             'hidden',
             [
-                'name' => 'mapping_sku_attribute',
+                'name'  => 'mapping_sku_attribute',
                 'value' => isset($mappingSettings['sku']['attribute']) ? $mappingSettings['sku']['attribute'] : '',
             ]
         );
@@ -248,12 +254,12 @@ HTML
             'mapping_title_mode',
             self::SELECT,
             [
-                'name' => 'mapping_title_mode',
-                'label' => $this->__('Listing Title'),
-                'class' => 'attribute-mode-select',
-                'style' => 'float:left; margin-right: 15px;',
-                'values' => [
-                    Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE => $this->__('None'),
+                'name'                     => 'mapping_title_mode',
+                'label'                    => $this->__('Listing Title'),
+                'class'                    => 'attribute-mode-select',
+                'style'                    => 'float:left; margin-right: 15px;',
+                'values'                   => [
+                    Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE    => $this->__('None'),
                     Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT => $this->__('Product Name'),
                     [
                         'label' => $this->__('Magento Attributes'),
@@ -263,12 +269,13 @@ HTML
                         ]
                     ]
                 ],
-                'value' => isset($mappingSettings['title']['mode'])
-                    && $mappingSettings['title']['mode'] != Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE
+                'value'                    => isset($mappingSettings['title']['mode'])
+                && $mappingSettings['title']['mode'] != Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE
                     ? $mappingSettings['title']['mode'] : '',
                 'create_magento_attribute' => true,
             ]
-        )->setAfterElementHtml(<<<HTML
+        )->setAfterElementHtml(
+            <<<HTML
 <div id="mapping_title_priority">
     {$this->__('Priority')}: <input style="width: 50px;"
                                     name="mapping_title_priority"
@@ -283,7 +290,7 @@ HTML
             'mapping_title_attribute',
             'hidden',
             [
-                'name' => 'mapping_title_attribute',
+                'name'  => 'mapping_title_attribute',
                 'value' => isset($mappingSettings['title']['attribute']) ? $mappingSettings['title']['attribute'] : '',
             ]
         );
@@ -312,11 +319,11 @@ HTML
             'mapping_item_id_mode',
             self::SELECT,
             [
-                'name' => 'mapping_item_id_mode',
-                'label' => $this->__('eBay Item ID'),
-                'class' => 'attribute-mode-select',
-                'style' => 'float:left; margin-right: 15px;',
-                'values' => [
+                'name'                     => 'mapping_item_id_mode',
+                'label'                    => $this->__('eBay Item ID'),
+                'class'                    => 'attribute-mode-select',
+                'style'                    => 'float:left; margin-right: 15px;',
+                'values'                   => [
                     Account::OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_NONE => $this->__('None'),
                     [
                         'label' => $this->__('Magento Attributes'),
@@ -326,12 +333,13 @@ HTML
                         ]
                     ]
                 ],
-                'value' => isset($mappingSettings['item_id']['mode'])
+                'value'                    => isset($mappingSettings['item_id']['mode'])
                 && $mappingSettings['item_id']['mode'] != Account::OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_CUSTOM_ATTRIBUTE
                     ? $mappingSettings['item_id']['mode'] : '',
                 'create_magento_attribute' => true,
             ]
-        )->setAfterElementHtml(<<<HTML
+        )->setAfterElementHtml(
+            <<<HTML
 <div id="mapping_item_id_priority">
     {$this->__('Priority')}: <input style="width: 50px;"
                                     name="mapping_item_id_priority"
@@ -346,7 +354,7 @@ HTML
             'mapping_item_id_attribute',
             'hidden',
             [
-                'name' => 'mapping_item_id_attribute',
+                'name'  => 'mapping_item_id_attribute',
                 'value' => isset($mappingSettings['item_id']['attribute'])
                     ? $mappingSettings['item_id']['attribute'] : '',
             ]
@@ -356,9 +364,9 @@ HTML
             $fieldset = $form->addFieldset(
                 'magento_block_ebay_accounts_other_listings_related_store_views',
                 [
-                    'legend' => $this->__('Related Store Views'),
+                    'legend'      => $this->__('Related Store Views'),
                     'collapsable' => true,
-                    'tooltip' => $this->__(
+                    'tooltip'     => $this->__(
                         'Establish Connection between Marketplaces and Magento Store
                         Views for correct data Synchronization.'
                     )

@@ -103,26 +103,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
             '*/walmart_listing/index'
         );
 
-        $actions = [
-
-            'editConfiguration' => [
-                'caption' => $this->__('Configuration'),
-                'group'   => 'edit_actions',
-                'field'   => 'id',
-                'url'     => [
-                    'base'   => '*/walmart_listing/edit',
-                    'params' => ['back' => $backUrl]
-                ]
-            ],
-
-            'editListingTitle' => [
-                'caption' => $this->__('Title'),
-                'group'   => 'edit_actions',
-                'confirm' => $this->__('Are you sure?'),
-                'field'   => 'id',
-                'onclick_action' => 'EditListingTitleObj.openPopup'
-            ],
-
+        return [
             'manageProducts' => [
                 'caption' => $this->__('Manage'),
                 'group'   => 'products_actions',
@@ -174,6 +155,24 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
                 ]
             ],
 
+            'editListingTitle' => [
+                'caption' => $this->__('Title'),
+                'group'   => 'edit_actions',
+                'confirm' => $this->__('Are you sure?'),
+                'field'   => 'id',
+                'onclick_action' => 'EditListingTitleObj.openPopup'
+            ],
+
+            'editConfiguration' => [
+                'caption' => $this->__('Configuration'),
+                'group'   => 'edit_actions',
+                'field'   => 'id',
+                'url'     => [
+                    'base'   => '*/walmart_listing/edit',
+                    'params' => ['back' => $backUrl]
+                ]
+            ],
+
             'viewLog' => [
                 'caption' => $this->__('Logs & Events'),
                 'group'   => 'other',
@@ -209,8 +208,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
                 ]
             ],
         ];
-
-        return $actions;
     }
 
     //########################################

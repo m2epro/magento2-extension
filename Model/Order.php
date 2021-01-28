@@ -360,7 +360,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     // ---------------------------------------
 
     /**
-     * Check whether the order has items, listed by M2E Pro (also true for mapped 3rd party listings)
+     * Check whether the order has items, listed by M2E Pro (also true for mapped Unmanaged listings)
      *
      * @return bool
      */
@@ -372,7 +372,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     }
 
     /**
-     * Check whether the order has items, listed by 3rd party software
+     * Check whether the order has items, listed by Unmanaged software
      *
      * @return bool
      */

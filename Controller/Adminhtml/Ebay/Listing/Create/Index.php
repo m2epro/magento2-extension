@@ -39,8 +39,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
     public function execute()
     {
-        $this->addCss('ebay/listing/templates.css');
-
         $step = (int)$this->getRequest()->getParam('step');
 
         switch ($step) {
@@ -49,14 +47,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                 break;
             case 2:
                 $this->stepTwo();
-                break;
-            case 3:
-                $this->stepThree();
-                break;
-            case 4:
-                $this->stepFour();
                 if ($this->getRequest()->isPost() && $this->isCreationModeListingOnly()) {
-                    // closing window for 3rd party products moving in new listing creation
+                    // closing window for Unmanaged products moving in new listing creation
 
                     return $this->getRawResult();
                 }
@@ -81,10 +73,11 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $this->clearSession();
             $this->getRequest()->setParam('clear', null);
             $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
-            return $this->getResult();
+
+            return;
         }
 
-        $this->setWizardStep('listingAccount');
+        $this->setWizardStep('listingGeneral');
 
         if ($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
@@ -97,14 +90,14 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                 $this->clearSession();
             }
 
-            $this->setSessionValue('listing_title', strip_tags($post['title']));
+            $this->setSessionValue('title', strip_tags($post['title']));
             $this->setSessionValue('account_id', (int)$post['account_id']);
             $this->setSessionValue('marketplace_id', (int)$post['marketplace_id']);
             $this->setSessionValue('store_id', (int)$post['store_id']);
 
             $this->_redirect('*/*/index', ['_current' => true, 'step' => 2]);
 
-            return $this->getResult();
+            return;
         }
 
         $listingOnlyMode = \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY;
@@ -118,113 +111,22 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
     private function stepTwo()
     {
         if ($this->getSessionValue('account_id') === null ||
-            $this->getSessionValue('marketplace_id') === null) {
+            $this->getSessionValue('marketplace_id') === null
+        ) {
             $this->clearSession();
             $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
-            return $this->getResult();
+
+            return;
         }
-
-        $this->setWizardStep('listingGeneral');
-
-        $templateNicks = [
-            \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT,
-            \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING,
-            \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY,
-        ];
 
         if ($this->getRequest()->isPost()) {
+            $dataKeys = $this->createBlock(
+                'Ebay_Listing_Create_Templates_Form'
+            )->getDefaultFieldsValues();
+
             $post = $this->getRequest()->getPost();
-
-            foreach ($templateNicks as $nick) {
-                $templateData = $this->getHelper('Data')->jsonDecode(base64_decode($post["template_{$nick}"]));
-
-                $this->setSessionValue("template_id_{$nick}", $templateData['id']);
-                $this->setSessionValue("template_mode_{$nick}", $templateData['mode']);
-            }
-
-            $this->_redirect('*/*/index', ['_current' => true, 'step' => 3]);
-            return $this->getResult();
-        }
-
-        $this->loadTemplatesDataFromSession();
-
-        $data = [
-            'allowed_tabs' => ['general']
-        ];
-        $content = $this->createBlock('Ebay_Listing_Edit');
-        $content->setData($data);
-
-        $this->addContent($content);
-
-        return $this->getResult();
-    }
-
-    private function stepThree()
-    {
-        if ($this->getSessionValue('account_id') === null ||
-            $this->getSessionValue('marketplace_id') === null) {
-            $this->clearSession();
-            $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
-            return $this->getResult();
-        }
-
-        $this->setWizardStep('listingSelling');
-
-        $templateNicks = [
-            \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT,
-            \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION,
-        ];
-
-        if ($this->getRequest()->isPost()) {
-            $post = $this->getRequest()->getPost();
-
-            foreach ($templateNicks as $nick) {
-                $templateData = $this->getHelper('Data')->jsonDecode(base64_decode($post["template_{$nick}"]));
-
-                $this->setSessionValue("template_id_{$nick}", $templateData['id']);
-                $this->setSessionValue("template_mode_{$nick}", $templateData['mode']);
-            }
-
-            $this->_redirect('*/*/index', ['_current' => true, 'step' => 4]);
-            return $this->getResult();
-        }
-
-        $this->loadTemplatesDataFromSession();
-
-        $data = [
-            'allowed_tabs' => ['selling']
-        ];
-        $content = $this->createBlock('Ebay_Listing_Edit');
-        $content->setData($data);
-
-        $this->addContent($content);
-        return $this->getResult();
-    }
-
-    private function stepFour()
-    {
-        if ($this->getSessionValue('account_id') === null ||
-            $this->getSessionValue('marketplace_id') === null) {
-            $this->clearSession();
-            $this->_redirect('*/*/index', ['step' => 1,'_current' => true]);
-            return $this->getResult();
-        }
-
-        $this->setWizardStep('listingSynchronization');
-
-        $templateNicks = [
-            \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SYNCHRONIZATION,
-        ];
-
-        if ($this->getRequest()->isPost()) {
-            $post = $this->getRequest()->getPost();
-
-            foreach ($templateNicks as $nick) {
-                // @codingStandardsIgnoreLine
-                $templateData = $this->getHelper('Data')->jsonDecode(base64_decode($post["template_{$nick}"]));
-
-                $this->setSessionValue("template_id_{$nick}", $templateData['id']);
-                $this->setSessionValue("template_mode_{$nick}", $templateData['mode']);
+            foreach ($dataKeys as $key => $value) {
+                $this->setSessionValue($key, $post[$key]);
             }
 
             $listing = $this->createListing();
@@ -238,57 +140,52 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                 $this->clearSession();
                 $this->transferring->setTargetListingId($listing->getId());
 
-                return $this->_redirect(
+                $this->_redirect(
                     '*/ebay_listing/transferring/index',
                     [
                         'listing_id' => $listingId,
                         'step'       => 3,
                     ]
                 );
+
+                return;
             }
 
             if ($this->isCreationModeListingOnly()) {
-                // closing window for 3rd party products moving in new listing creation
-                return $this->getRawResult()->setContents("<script>window.close();</script>");
+                // closing window for Unmanaged products moving in new listing creation
+                $this->getRawResult()->setContents("<script>window.close();</script>");
+                return;
             }
 
             $this->clearSession();
 
             if ((bool)$this->getRequest()->getParam('wizard', false)) {
                 $this->setWizardStep('sourceMode');
-                return $this->_redirect('*/wizard_installationEbay');
+
+                $this->_redirect('*/wizard_installationEbay');
+                return;
             }
 
-            return $this->_redirect(
+            $this->_redirect(
                 '*/ebay_listing_product_add/sourceMode',
                 [
-                    'id' => $listing->getId(),
+                    'id'               => $listing->getId(),
                     'listing_creation' => true
                 ]
             );
+
+            return;
         }
 
-        $this->loadTemplatesDataFromSession();
-
-        $data = [
-            'allowed_tabs' => ['synchronization']
-        ];
-        $content = $this->createBlock('Ebay_Listing_Edit');
-        $content->setData($data);
-
-        $this->addContent($content);
-        return $this->getResult();
+        $this->setWizardStep('listingTemplates');
+        $this->addContent($this->createBlock('Ebay_Listing_Create_Templates'));
     }
 
     //########################################
 
     private function createListing()
     {
-        $data = [];
-        $data['title'] = $this->getSessionValue('listing_title');
-        $data['account_id'] = $this->getSessionValue('account_id');
-        $data['marketplace_id'] = $this->getSessionValue('marketplace_id');
-        $data['store_id'] = $this->getSessionValue('store_id');
+        $data = $this->getSessionValue();
 
         /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
         $marketplace = $this->ebayFactory->getCachedObjectLoaded('Marketplace', $data['marketplace_id']);
@@ -296,20 +193,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $data['parts_compatibility_mode'] = null;
         if ($marketplace->getChildObject()->isMultiMotorsEnabled()) {
             $data['parts_compatibility_mode'] = \Ess\M2ePro\Model\Ebay\Listing::PARTS_COMPATIBILITY_MODE_KTYPES;
-        }
-
-        $templateManager = $this->modelFactory->getObject('Ebay_Template_Manager');
-
-        foreach ($templateManager->getAllTemplates() as $nick) {
-            $manager = $this->modelFactory->getObject('Ebay_Template_Manager')->setTemplate($nick);
-            $templateId = $this->getSessionValue("template_id_{$nick}");
-            $templateMode = $this->getSessionValue("template_mode_{$nick}");
-
-            $idColumn = $manager->getIdColumnNameByMode($templateMode);
-            $modeColumn = $manager->getModeColumnName();
-
-            $data[$idColumn] = $templateId;
-            $data[$modeColumn] = $templateMode;
         }
 
         $model = $this->ebayFactory->getObject('Listing');
@@ -328,22 +211,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         );
 
         return $model;
-    }
-
-    //########################################
-
-    private function loadTemplatesDataFromSession()
-    {
-        $this->getHelper('Data_GlobalData')->setValue(
-            'ebay_custom_template_title',
-            $this->getSessionValue('listing_title')
-        );
-
-        $dataLoader = $this->getHelper('Component_Ebay_Template_Switcher_DataLoader');
-        $dataLoader->load(
-            $this->getHelper('Data_Session'),
-            ['session_key' => \Ess\M2ePro\Model\Ebay\Listing::CREATE_LISTING_SESSION_DATA]
-        );
     }
 
     //########################################

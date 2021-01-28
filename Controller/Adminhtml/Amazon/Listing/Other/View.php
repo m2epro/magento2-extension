@@ -24,7 +24,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other
             return $this->_redirect('*/*/index');
         }
 
-        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('3rd Party Listings'));
+        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Unmanaged Listings'));
 
         $this->addContent($this->createBlock('Amazon_Listing_Other_View'));
 

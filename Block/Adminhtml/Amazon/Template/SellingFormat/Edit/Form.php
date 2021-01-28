@@ -231,7 +231,6 @@ class Form extends AbstractForm
                 'name' => 'qty_mode',
                 'values' => [
                     \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT => $this->__('Product Quantity'),
-                    \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_SINGLE => $this->__('Single Item'),
                     \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_NUMBER => $this->__('Custom Value'),
                     [
                         'label' => $this->__('Magento Attributes'),
@@ -724,20 +723,21 @@ class Form extends AbstractForm
                     1 => $this->__('Yes')
                 ],
                 'value' => (int)($formData['regular_price_vat_percent'] > 0),
-                'tooltip' => $this->__('
-                    Choose whether you want to add VAT to the Price when a Product is Listed on Amazon and
-                    provide the appropriate VAT Percent Value.<br/><br/>
-
-                    <strong>Example:</strong>
-                    For a Product with Magento Price = £10<br/>
-                    VAT Rate = 15%<br/>
-                    Magento Price: £10<br/>
-                    VAT 15%: £10 * 15% = £1.50<br/>
-                    Final Price on Amazon (Magento Price + VAT) = £10 + £1.50 = £11.50<br/><br/>
-
-                    <strong>Note:</strong> No VAT Rate Value will be sent on Amazon. Only the Item\'s Price
-                    on Amazon will be increased.
-                ')
+                'tooltip' => $this->__(
+                    <<<HTML
+Enable this option to add a specified VAT percent value to the Price when a Product is listed on Amazon.
+<br/>
+<br/>
+The final product price on Amazon will be calculated according to the following formula:
+<br/>
+<br/>
+(Product Price + Price Change) + VAT Rate
+<br/>
+<br/>
+<strong>Note:<strong> Amazon considers the VAT rate value sent by M2E Pro as an additional price increase,
+not as a proper VAT rate.
+HTML
+                )
             ]
         );
 
@@ -864,18 +864,21 @@ class Form extends AbstractForm
                         1 => $this->__('Yes')
                     ],
                     'value' => (int)($formData['business_price_vat_percent'] > 0),
-                    'tooltip' => $this->__('
-                    Choose whether you want to add VAT to the Price when a Product is Listed on Amazon and
-                    provide the appropriate VAT Percent Value.<br/><br/>
-
-                    <strong>Example:</strong>
-                    For a Product with Magento Price = £10 and VAT Rate = 15%<br/>
-                    VAT = £10 * 15% = £1.50<br/>
-                    Final Price on Amazon (Magento Price + VAT) = £10 + £1.50 = £11.50<br/><br/>
-
-                    <strong>Note:</strong> No VAT Rate Value will be sent on Amazon.
-                    Only the Item Price will be increased on the Channel.
-                ')
+                    'tooltip' => $this->__(
+                        <<<HTML
+Enable this option to add a specified VAT percent value to the Price when a Product is listed on Amazon.
+<br/>
+<br/>
+The final product price on Amazon will be calculated according to the following formula:
+<br/>
+<br/>
+(Product Price + Price Change) + VAT Rate
+<br/>
+<br/>
+<strong>Note:<strong> Amazon considers the VAT rate value sent by M2E Pro as an additional price increase,
+not as a proper VAT rate.
+HTML
+                    )
                 ]
             );
 

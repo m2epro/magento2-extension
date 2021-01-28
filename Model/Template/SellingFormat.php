@@ -20,7 +20,6 @@ use \Ess\M2ePro\Model\Walmart\Template\SellingFormat as WalmartTemplateSellingFo
 class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
     const QTY_MODE_PRODUCT       = 1;
-    const QTY_MODE_SINGLE        = 2;
     const QTY_MODE_NUMBER        = 3;
     const QTY_MODE_ATTRIBUTE     = 4;
     const QTY_MODE_PRODUCT_FIXED = 5;

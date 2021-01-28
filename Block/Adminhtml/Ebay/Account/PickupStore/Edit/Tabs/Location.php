@@ -53,7 +53,8 @@ class Location extends AbstractForm
             'block_notice_ebay_accounts_pickup_store_location',
             self::HELP_BLOCK,
             [
-                'content' => $this->__('
+                'content' => $this->__(
+                    '
                 On this Tab, you should provide the <strong>full address of your Store</strong> including all possible
                 details. eBay will analyze this information when deciding if this Store fits the In-Store Pickup
                 Service conditions for a particular buyer.<br/>
@@ -61,7 +62,8 @@ class Location extends AbstractForm
                 Latitude values will be <strong>automatically offered</strong> by pressing the <strong>Get Latitude
                 and Longitude</strong> button.
                 You can also press <strong>Show on Google Map</strong> link to check the generated Longitude and
-                Latitude values.')
+                Latitude values.'
+                )
             ]
         );
 
@@ -69,7 +71,7 @@ class Location extends AbstractForm
             'check_location_validation',
             'text',
             [
-                'name' => 'check_location_validation',
+                'name'  => 'check_location_validation',
                 'class' => 'M2ePro-check-location hidden-validation'
             ]
         );
@@ -77,7 +79,8 @@ class Location extends AbstractForm
         $fieldset = $form->addFieldset(
             'magento_block_ebay_account_pickup_store_form_data_location_general',
             [
-                'legend' => $this->__('General'), 'collapsable' => false
+                'legend'      => $this->__('General'),
+                'collapsable' => false
             ]
         );
 
@@ -95,7 +98,7 @@ class Location extends AbstractForm
             /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
 
             $tmpCountry = $this->getHelper('Component_Ebay_PickupStore')
-                               ->convertMarketplaceToCountry($marketplace->getChildObject()->getData());
+                ->convertMarketplaceToCountry($marketplace->getChildObject()->getData());
 
             if (!$tmpCountry) {
                 continue;
@@ -118,15 +121,16 @@ class Location extends AbstractForm
             'country',
             self::SELECT,
             [
-                'name' => 'country',
-                'label' => $this->__('Country'),
-                'values' => $countries,
-                'value' => '',
+                'name'     => 'country',
+                'label'    => $this->__('Country'),
+                'values'   => $countries,
+                'value'    => '',
                 'required' => true,
-                'class' => 'M2ePro-pickup-store-dropdown',
-                'tooltip' => $this->__(
+                'class'    => 'M2ePro-pickup-store-dropdown',
+                'tooltip'  => $this->__(
                     'Select the Country where your Store is located. <strong>Please note</strong>,
-                     currently 3 countries are available for selection — Australia, United States and United Kingdom.'
+                     currently 5 countries are available for selection — Australia, Germany, Canada, 
+                     United States and United Kingdom.'
                 )
             ]
         );
@@ -135,7 +139,7 @@ class Location extends AbstractForm
             'region_hidden',
             'hidden',
             [
-                'name' => 'region_hidden',
+                'name'  => 'region_hidden',
                 'value' => $formData['region'],
             ]
         );
@@ -144,7 +148,7 @@ class Location extends AbstractForm
             'region_container',
             self::CUSTOM_CONTAINER,
             [
-                'label' => $this->__('Region'),
+                'label'    => $this->__('Region'),
                 'required' => true
             ]
         );
@@ -153,11 +157,11 @@ class Location extends AbstractForm
             'city',
             'text',
             [
-                'name' => 'city',
-                'label' => $this->__('City'),
-                'value' => $formData['city'],
+                'name'     => 'city',
+                'label'    => $this->__('City'),
+                'value'    => $formData['city'],
                 'required' => true,
-                'class' => 'input-text'
+                'class'    => 'input-text'
             ]
         );
 
@@ -165,11 +169,11 @@ class Location extends AbstractForm
             'address_1',
             'text',
             [
-                'name' => 'address_1',
-                'label' => $this->__('Address 1'),
-                'value' => $formData['address_1'],
+                'name'     => 'address_1',
+                'label'    => $this->__('Address 1'),
+                'value'    => $formData['address_1'],
                 'required' => true,
-                'class' => 'input-text M2ePro-validate-max-length-128'
+                'class'    => 'input-text M2ePro-validate-max-length-128'
             ]
         );
 
@@ -177,7 +181,7 @@ class Location extends AbstractForm
             'address_2',
             'text',
             [
-                'name' => 'address_2',
+                'name'  => 'address_2',
                 'label' => $this->__('Address 2'),
                 'value' => $formData['address_2'],
                 'class' => 'input-text M2ePro-validate-max-length-128'
@@ -188,18 +192,19 @@ class Location extends AbstractForm
             'postal_code',
             'text',
             [
-                'name' => 'postal_code',
-                'label' => $this->__('Postal Code'),
-                'value' => $formData['postal_code'],
+                'name'     => 'postal_code',
+                'label'    => $this->__('Postal Code'),
+                'value'    => $formData['postal_code'],
                 'required' => true,
-                'class' => 'input-text'
+                'class'    => 'input-text'
             ]
         );
 
         $fieldset = $form->addFieldset(
             'magento_block_ebay_account_pickup_store_form_data_location_additional',
             [
-                'legend' => $this->__('Additional'), 'collapsable' => true
+                'legend'      => $this->__('Additional'),
+                'collapsable' => true
             ]
         );
 
@@ -207,12 +212,12 @@ class Location extends AbstractForm
             'latitude',
             'text',
             [
-                'name' => 'latitude',
-                'label' => $this->__('Latitude'),
-                'value' => $formData['latitude'],
+                'name'     => 'latitude',
+                'label'    => $this->__('Latitude'),
+                'value'    => $formData['latitude'],
                 'required' => true,
-                'class' => 'input-text validate-number',
-                'tooltip' => $this->__(
+                'class'    => 'input-text validate-number',
+                'tooltip'  => $this->__(
                     'Specify the Latitude and Longitude of your Store.
                      Please, be attentive and provide the accurate values as it will determine the Store location.'
                 )
@@ -223,12 +228,12 @@ class Location extends AbstractForm
             'longitude',
             'text',
             [
-                'name' => 'longitude',
-                'label' => $this->__('Longitude'),
-                'value' => $formData['longitude'],
+                'name'     => 'longitude',
+                'label'    => $this->__('Longitude'),
+                'value'    => $formData['longitude'],
                 'required' => true,
-                'class' => 'input-text validate-number',
-                'tooltip' => $this->__(
+                'class'    => 'input-text validate-number',
+                'tooltip'  => $this->__(
                     'Specify the Latitude and Longitude of your Store.
                      Please, be attentive and provide the accurate values as it will determine the Store location.'
                 )
@@ -237,7 +242,7 @@ class Location extends AbstractForm
 
         $googleMapHref = '#empty';
         if (!empty($formData['latitude']) && !empty($formData['longitude'])) {
-            $googleMapHref = 'https://www.google.com/maps/place/'.$formData['latitude'].','.$formData['longitude'];
+            $googleMapHref = 'https://www.google.com/maps/place/' . $formData['latitude'] . ',' . $formData['longitude'];
         }
 
         $fieldset->addField(
@@ -245,10 +250,12 @@ class Location extends AbstractForm
             self::CUSTOM_CONTAINER,
             [
                 'text' => $this->createBlock('Magento\Button')
-                    ->setData([
-                        'label' => $this->__('Get Latitude & Longitude'),
-                        'class' => 'save primary get_geocord'
-                    ])->toHtml() .
+                        ->setData(
+                            [
+                                'label' => $this->__('Get Latitude & Longitude'),
+                                'class' => 'save primary get_geocord'
+                            ]
+                        )->toHtml() .
                     "<a href=\"{$googleMapHref}\" target=\"_blank\" id=\"google_map\" style=\"padding-left: 10px;\">
                     {$this->__('Show On Google Map')}
                     </a>"
@@ -259,8 +266,8 @@ class Location extends AbstractForm
 
         for ($i = -12; $i <= 12; $i++) {
             $sign = $i == 0 ? "+" : ($i > 0 ? '+' : '-');
-            $value = $i < 0 ? $i * -1: $i;
-            $offsetValue = $sign .($value < 10 ? '0'. $value : $value).':00';
+            $value = $i < 0 ? $i * -1 : $i;
+            $offsetValue = $sign . ($value < 10 ? '0' . $value : $value) . ':00';
             $utcOffsets[] = ['value' => $offsetValue, 'label' => $offsetValue];
         }
 
@@ -268,16 +275,17 @@ class Location extends AbstractForm
             'utc_offset',
             self::SELECT,
             [
-                'name' => 'utc_offset',
-                'label' => $this->__('UTC Offset'),
-                'values' => $utcOffsets,
-                'value' => $formData['utc_offset'],
+                'name'     => 'utc_offset',
+                'label'    => $this->__('UTC Offset'),
+                'values'   => $utcOffsets,
+                'value'    => $formData['utc_offset'],
                 'required' => true,
-                'class' => 'M2ePro-pickup-store-dropdown'
+                'class'    => 'M2ePro-pickup-store-dropdown'
             ]
         );
 
         $this->setForm($form);
+
         return parent::_prepareForm();
     }
 
@@ -287,15 +295,15 @@ class Location extends AbstractForm
     {
         $default = [
             'marketplace_id' => 0,
-            'country' => '',
-            'region' => '',
-            'city' => '',
-            'postal_code' => '',
-            'address_1' => '',
-            'address_2' => '',
-            'latitude' => '',
-            'longitude' => '',
-            'utc_offset' => ''
+            'country'        => '',
+            'region'         => '',
+            'city'           => '',
+            'postal_code'    => '',
+            'address_1'      => '',
+            'address_2'      => '',
+            'latitude'       => '',
+            'longitude'      => '',
+            'utc_offset'     => ''
         ];
 
         $model = $this->getHelper('Data\GlobalData')->getValue('temp_data');

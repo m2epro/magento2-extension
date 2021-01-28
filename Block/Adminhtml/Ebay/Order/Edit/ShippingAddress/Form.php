@@ -39,11 +39,13 @@ class Form extends AbstractForm
 
         $address = $order->getShippingAddress()->getData();
 
-        $form = $this->_formFactory->create([
-            'data' => [
-                'id' => 'edit_form'
+        $form = $this->_formFactory->create(
+            [
+                'data' => [
+                    'id' => 'edit_form'
+                ]
             ]
-        ]);
+        );
 
         $fieldset = $form->addFieldset(
             'order_address_info',
@@ -56,9 +58,9 @@ class Form extends AbstractForm
             'buyer_name',
             'text',
             [
-                'name' => 'buyer_name',
-                'label' => $this->__('Buyer Name'),
-                'value' => $order->getData('buyer_name'),
+                'name'     => 'buyer_name',
+                'label'    => $this->__('Buyer Name'),
+                'value'    => $order->getData('buyer_name'),
                 'required' => true,
             ]
         );
@@ -67,9 +69,21 @@ class Form extends AbstractForm
             'buyer_email',
             'text',
             [
-                'name' => 'buyer_email',
-                'label' => $this->__('Buyer Email'),
-                'value' => $buyerEmail,
+                'name'     => 'buyer_email',
+                'label'    => $this->__('Buyer Email'),
+                'value'    => $buyerEmail,
+                'required' => true,
+            ]
+        );
+
+        $fieldset->addField(
+            'recipient_name',
+            'text',
+            [
+                'name'     => 'recipient_name',
+                'label'    => $this->__('Recipient Name'),
+                'value'    => isset($address['recipient_name'])
+                    ? $this->getHelper('Data')->escapeHtml($address['recipient_name']) : '',
                 'required' => true,
             ]
         );
@@ -78,9 +92,9 @@ class Form extends AbstractForm
             'street_0',
             'text',
             [
-                'name' => 'street[0]',
-                'label' => $this->__('Street Address'),
-                'value' =>  isset($address['street'][0])
+                'name'     => 'street[0]',
+                'label'    => $this->__('Street Address'),
+                'value'    => isset($address['street'][0])
                     ? $this->getHelper('Data')->escapeHtml($address['street'][0]) : '',
                 'required' => true,
             ]
@@ -90,9 +104,9 @@ class Form extends AbstractForm
             'street_1',
             'text',
             [
-                'name' => 'street[1]',
+                'name'  => 'street[1]',
                 'label' => '',
-                'value' =>  isset($address['street'][1])
+                'value' => isset($address['street'][1])
                     ? $this->getHelper('Data')->escapeHtml($address['street'][1]) : '',
             ]
         );
@@ -101,9 +115,9 @@ class Form extends AbstractForm
             'city',
             'text',
             [
-                'name' => 'city',
-                'label' => $this->__('City'),
-                'value' => $address['city'],
+                'name'     => 'city',
+                'label'    => $this->__('City'),
+                'value'    => $address['city'],
                 'required' => true,
             ]
         );
@@ -112,10 +126,10 @@ class Form extends AbstractForm
             'country_code',
             'select',
             [
-                'name' => 'country_code',
-                'label' => $this->__('Country'),
-                'values' => $this->getHelper('Magento')->getCountries(),
-                'value' => $address['country_code'],
+                'name'     => 'country_code',
+                'label'    => $this->__('Country'),
+                'values'   => $this->getHelper('Magento')->getCountries(),
+                'value'    => $address['country_code'],
                 'required' => true,
             ]
         );
@@ -125,7 +139,7 @@ class Form extends AbstractForm
             'text',
             [
                 'container_id' => 'state_td',
-                'label' => $this->__('Region/State'),
+                'label'        => $this->__('Region/State'),
             ]
         );
 
@@ -133,7 +147,7 @@ class Form extends AbstractForm
             'postal_code',
             'text',
             [
-                'name' => 'postal_code',
+                'name'  => 'postal_code',
                 'label' => $this->__('Zip/Postal Code'),
                 'value' => $address['postal_code'],
             ]
@@ -143,7 +157,7 @@ class Form extends AbstractForm
             'phone',
             'text',
             [
-                'name' => 'phone',
+                'name'  => 'phone',
                 'label' => $this->__('Telephone'),
                 'value' => $address['phone'],
             ]
@@ -163,7 +177,8 @@ class Form extends AbstractForm
 
         $this->js->add("M2ePro.formData.region = '" . $this->getHelper('Data')->escapeJs($regionCode) . "';");
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Order/Edit/ShippingAddress',
     ], function(){

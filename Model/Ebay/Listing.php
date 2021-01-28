@@ -110,6 +110,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function save()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('listing');
+
         return parent::save();
     }
 
@@ -123,22 +124,22 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
         $this->templateManagers = [];
 
-        $this->autoGlobalAddingCategoryTemplateModel               = null;
-        $this->autoGlobalAddingCategorySecondaryTemplateModel      = null;
-        $this->autoGlobalAddingStoreCategoryTemplateModel          = null;
+        $this->autoGlobalAddingCategoryTemplateModel = null;
+        $this->autoGlobalAddingCategorySecondaryTemplateModel = null;
+        $this->autoGlobalAddingStoreCategoryTemplateModel = null;
         $this->autoGlobalAddingStoreCategorySecondaryTemplateModel = null;
 
-        $this->autoWebsiteAddingCategoryTemplateModel               = null;
-        $this->autoWebsiteAddingCategorySecondaryTemplateModel      = null;
-        $this->autoWebsiteAddingStoreCategoryTemplateModel          = null;
+        $this->autoWebsiteAddingCategoryTemplateModel = null;
+        $this->autoWebsiteAddingCategorySecondaryTemplateModel = null;
+        $this->autoWebsiteAddingStoreCategoryTemplateModel = null;
         $this->autoWebsiteAddingStoreCategorySecondaryTemplateModel = null;
 
-        $this->sellingFormatTemplateModel   = null;
+        $this->sellingFormatTemplateModel = null;
         $this->synchronizationTemplateModel = null;
-        $this->descriptionTemplateModel     = null;
-        $this->paymentTemplateModel         = null;
-        $this->returnTemplateModel          = null;
-        $this->shippingTemplateModel        = null;
+        $this->descriptionTemplateModel = null;
+        $this->paymentTemplateModel = null;
+        $this->returnTemplateModel = null;
+        $this->shippingTemplateModel = null;
 
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('listing');
 
@@ -171,7 +172,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function setAutoGlobalAddingCategoryTemplate(\Ess\M2ePro\Model\Ebay\Template\Category $instance)
     {
-         $this->autoGlobalAddingCategoryTemplateModel = $instance;
+        $this->autoGlobalAddingCategoryTemplateModel = $instance;
     }
 
     /**
@@ -292,7 +293,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function setAutoWebsiteAddingCategoryTemplate(\Ess\M2ePro\Model\Ebay\Template\Category $instance)
     {
-         $this->autoWebsiteAddingCategoryTemplateModel = $instance;
+        $this->autoWebsiteAddingCategoryTemplateModel = $instance;
     }
 
     // ---------------------------------------
@@ -462,7 +463,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function setSellingFormatTemplate(\Ess\M2ePro\Model\Template\SellingFormat $instance)
     {
-         $this->sellingFormatTemplateModel = $instance;
+        $this->sellingFormatTemplateModel = $instance;
     }
 
     // ---------------------------------------
@@ -485,7 +486,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function setSynchronizationTemplate(\Ess\M2ePro\Model\Template\Synchronization $instance)
     {
-         $this->synchronizationTemplateModel = $instance;
+        $this->synchronizationTemplateModel = $instance;
     }
 
     // ---------------------------------------
@@ -508,7 +509,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function setDescriptionTemplate(\Ess\M2ePro\Model\Template\Description $instance)
     {
-         $this->descriptionTemplateModel = $instance;
+        $this->descriptionTemplateModel = $instance;
     }
 
     // ---------------------------------------
@@ -519,7 +520,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function getPaymentTemplate()
     {
         if ($this->paymentTemplateModel === null) {
-            $template =\Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT;
+            $template = \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT;
             $this->paymentTemplateModel = $this->getTemplateManager($template)->getResultObject();
         }
 
@@ -531,7 +532,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function setPaymentTemplate(\Ess\M2ePro\Model\Ebay\Template\Payment $instance)
     {
-         $this->paymentTemplateModel = $instance;
+        $this->paymentTemplateModel = $instance;
     }
 
     // ---------------------------------------
@@ -554,7 +555,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function setReturnTemplate(\Ess\M2ePro\Model\Ebay\Template\ReturnPolicy $instance)
     {
-         $this->returnTemplateModel = $instance;
+        $this->returnTemplateModel = $instance;
     }
 
     // ---------------------------------------
@@ -577,7 +578,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function setShippingTemplate(\Ess\M2ePro\Model\Ebay\Template\Shipping $instance)
     {
-         $this->shippingTemplateModel = $instance;
+        $this->shippingTemplateModel = $instance;
     }
 
     // ---------------------------------------
@@ -731,16 +732,18 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
         $ebayItem = $collection->getLastItem();
         if (!$ebayItem->getId()) {
-            $ebayItem->setData([
-                'account_id'     => $listingOtherProduct->getAccount()->getId(),
-                'marketplace_id' => $listingOtherProduct->getMarketplace()->getId(),
-                'item_id'        => $listingOtherProduct->getChildObject()->getItemId(),
-                'product_id'     => $listingOtherProduct->getProductId(),
-            ]);
+            $ebayItem->setData(
+                [
+                    'account_id'     => $listingOtherProduct->getAccount()->getId(),
+                    'marketplace_id' => $listingOtherProduct->getMarketplace()->getId(),
+                    'item_id'        => $listingOtherProduct->getChildObject()->getItemId(),
+                    'product_id'     => $listingOtherProduct->getProductId(),
+                ]
+            );
         }
 
         $ebayItem->setData('store_id', $this->getParentObject()->getStoreId())
-                 ->save();
+            ->save();
 
         $ebayListingOther = $listingOtherProduct->getChildObject();
 
@@ -765,7 +768,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         ];
 
         $listingProduct->addData($dataForUpdate)
-                       ->getChildObject()->addData($dataForUpdate);
+            ->getChildObject()->addData($dataForUpdate);
         $listingProduct->setSetting(
             'additional_data',
             $listingProduct::MOVING_LISTING_OTHER_SOURCE_KEY,
@@ -781,13 +784,15 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $listingOtherProduct->save();
 
         $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
-        $instruction->setData([
-            'listing_product_id' => $listingProduct->getId(),
-            'component'          => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'type'               => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
-            'initiator'          => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_MOVING_PRODUCT_FROM_OTHER,
-            'priority'           => 20,
-        ]);
+        $instruction->setData(
+            [
+                'listing_product_id' => $listingProduct->getId(),
+                'component'          => \Ess\M2ePro\Helper\Component\Ebay::NICK,
+                'type'               => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
+                'initiator'          => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_MOVING_PRODUCT_FROM_OTHER,
+                'priority'           => 20,
+            ]
+        );
         $instruction->save();
 
         return $listingProduct;
@@ -807,6 +812,15 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $logModel = $this->activeRecordFactory->getObject('Listing_Log');
         $logModel->setComponentMode($this->getComponentMode());
 
+        $logMessage = $this->getHelper('Module\Translation')->__(
+            'Product was copied from %previous_listing_name% (%previous_marketplace%)
+            Listing to %current_listing_name% (%current_marketplace%) Listing.',
+            $sourceListing->getTitle(),
+            $sourceListing->getMarketplace()->getCode(),
+            $this->getParentObject()->getTitle(),
+            $this->getMarketplace()->getCode()
+        );
+
         if ($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product) {
             $logModel->addProductMessage(
                 $sourceListing->getId(),
@@ -815,7 +829,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
                 \Ess\M2ePro\Helper\Data::INITIATOR_USER,
                 $logModel->getResource()->getNextActionId(),
                 \Ess\M2ePro\Model\Listing\Log::ACTION_SELL_ON_ANOTHER_SITE,
-                'Item was added to the selected Listing',
+                $logMessage,
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
             );
 
@@ -844,6 +858,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             return $listingProduct;
         }
 
+        $logMessage = $this->getHelper('Module\Translation')->__(
+            'Product already exists in the %listing_name% Listing.',
+            $this->getParentObject()->getTitle()
+        );
+
         $logModel->addProductMessage(
             $sourceListing->getId(),
             $sourceListingProduct->getProductId(),
@@ -851,7 +870,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             \Ess\M2ePro\Helper\Data::INITIATOR_USER,
             $logModel->getResource()->getNextActionId(),
             \Ess\M2ePro\Model\Listing\Log::ACTION_SELL_ON_ANOTHER_SITE,
-            'Product already exists in the selected Listing',
+            $logMessage,
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
         );
 
@@ -887,6 +906,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     {
         $ids = $this->getData('product_add_ids');
         $ids = array_filter((array)$this->getHelper('Data')->jsonDecode($ids));
+
         return array_values(array_unique($ids));
     }
 
@@ -916,7 +936,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     public function getLastPrimaryCategory($key)
     {
-        return (array)$this->getSetting('additional_data', $key);
+        return (array)$this->getParentObject()->getSetting('additional_data', $key);
     }
 
     //########################################

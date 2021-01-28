@@ -35,10 +35,17 @@ class Messages extends \Ess\M2ePro\Model\Servicing\Task
         return [];
     }
 
+    /**
+     * @param array $data
+     *
+     * @return void
+     * @throws \Exception
+     */
     public function processResponseData(array $data)
     {
         $this->updateMagentoMessages($data);
         $this->updateModuleMessages($data);
+        $this->updateUpgradeMessages();
     }
 
     //########################################
@@ -57,8 +64,8 @@ class Messages extends \Ess\M2ePro\Model\Servicing\Task
             $issue = $this->modelFactory->getObject('Issue_DataObject', [
                 Issue::KEY_TYPE  => (int)$messageData['type'],
                 Issue::KEY_TITLE => isset($messageData['title']) ? $messageData['title'] : 'M2E Pro Notification',
-                Issue::KEY_TEXT  => isset($messageData['text'])  ? $messageData['text'] : null,
-                Issue::KEY_URL   => isset($messageData['url'])   ? $messageData['url'] : null
+                Issue::KEY_TEXT  => isset($messageData['text']) ? $messageData['text'] : null,
+                Issue::KEY_URL   => isset($messageData['url']) ? $messageData['url'] : null
             ]);
             $notificationChannel->addMessage($issue);
         }
@@ -73,6 +80,35 @@ class Messages extends \Ess\M2ePro\Model\Servicing\Task
         });
 
         $this->getHelper('Module')->getRegistry()->setValue('/server/messages/', $messages);
+    }
+
+    //########################################
+
+    /**
+     * @throws \Exception
+     */
+    private function updateUpgradeMessages()
+    {
+        $messages = $this->getHelper('Module')->getUpgradeMessages();
+        if (empty($messages)) {
+            return;
+        }
+
+        $nowDateTime = new \DateTime('now', new \DateTimeZone('UTC'));
+        $messages = array_filter($messages, function ($message) use ($nowDateTime) {
+            if (!isset($message['lifetime'])) {
+                return false;
+            }
+
+            $toDateTime = new \DateTime($message['lifetime'], new \DateTimeZone('UTC'));
+            if ($nowDateTime->getTimestamp() > $toDateTime->getTimestamp()) {
+                return false;
+            }
+
+            return true;
+        });
+
+        $this->getHelper('Module')->getRegistry()->setValue('/upgrade/messages/', $messages);
     }
 
     //########################################

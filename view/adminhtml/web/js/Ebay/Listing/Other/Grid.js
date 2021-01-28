@@ -10,9 +10,15 @@ define([
             this.movingHandler.submit(listingId, this.onSuccess)
         },
 
-        onSuccess: function(listingId)
+        onSuccess: function(listingId, hasOnlineCategory = false)
         {
-            setLocation(M2ePro.url.get('categorySettings', {id: listingId}));
+            var refererUrl = M2ePro.url.get('categorySettings', {id: listingId});
+
+            if (hasOnlineCategory) {
+                refererUrl = M2ePro.url.get('ebay_listing/view', {id: listingId});
+            }
+
+            setLocation(refererUrl);
         },
 
         // ---------------------------------------

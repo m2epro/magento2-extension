@@ -14,10 +14,10 @@ namespace Ess\M2ePro\Model\Ebay;
  */
 class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
-    const ORDER_STATUS_ACTIVE     = 0;
-    const ORDER_STATUS_COMPLETED  = 1;
-    const ORDER_STATUS_CANCELLED  = 2;
-    const ORDER_STATUS_INACTIVE   = 3;
+    const ORDER_STATUS_ACTIVE    = 0;
+    const ORDER_STATUS_COMPLETED = 1;
+    const ORDER_STATUS_CANCELLED = 2;
+    const ORDER_STATUS_INACTIVE  = 3;
 
     const CHECKOUT_STATUS_INCOMPLETE = 0;
     const CHECKOUT_STATUS_COMPLETED  = 1;
@@ -260,6 +260,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         }
 
         $taxDetails = $this->getTaxDetails();
+
         return isset($taxDetails['includes_shipping']) ? (bool)$taxDetails['includes_shipping'] : false;
     }
 
@@ -271,6 +272,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function hasTax()
     {
         $taxDetails = $this->getTaxDetails();
+
         return !empty($taxDetails['rate']);
     }
 
@@ -284,6 +286,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         }
 
         $taxDetails = $this->getTaxDetails();
+
         return !$taxDetails['is_vat'];
     }
 
@@ -297,6 +300,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         }
 
         $taxDetails = $this->getTaxDetails();
+
         return $taxDetails['is_vat'];
     }
 
@@ -333,6 +337,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function getShippingService()
     {
         $shippingDetails = $this->getShippingDetails();
+
         return isset($shippingDetails['service']) ? $shippingDetails['service'] : '';
     }
 
@@ -342,6 +347,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function getShippingPrice()
     {
         $shippingDetails = $this->getShippingDetails();
+
         return isset($shippingDetails['price']) ? (float)$shippingDetails['price'] : 0.0;
     }
 
@@ -351,6 +357,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function getShippingDate()
     {
         $shippingDetails = $this->getShippingDetails();
+
         return isset($shippingDetails['date']) ? $shippingDetails['date'] : '';
     }
 
@@ -360,6 +367,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function getCashOnDeliveryCost()
     {
         $shippingDetails = $this->getShippingDetails();
+
         return isset($shippingDetails['cash_on_delivery_cost'])
             ? (float)$shippingDetails['cash_on_delivery_cost'] : 0.0;
     }
@@ -372,9 +380,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $shippingDetails = $this->getShippingDetails();
         $address = isset($shippingDetails['address']) ? $shippingDetails['address'] : [];
 
-        return $this->shippingAddressFactory->create([
-            'order' => $this->getParentObject()
-        ])->setData($address);
+        return $this->shippingAddressFactory->create(
+            [
+                'order' => $this->getParentObject()
+            ]
+        )->setData($address);
     }
 
     /**
@@ -436,9 +446,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $warehouseAddress = is_array($globalShippingData['warehouse_address'])
             ? $globalShippingData['warehouse_address'] : [];
 
-        return $this->shippingAddressFactory->create([
-                    'order' => $this->getParentObject()
-                ])->setData($warehouseAddress);
+        return $this->shippingAddressFactory->create(
+            [
+                'order' => $this->getParentObject()
+            ]
+        )->setData($warehouseAddress);
     }
 
     // ---------------------------------------
@@ -449,6 +461,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function isUseClickAndCollect()
     {
         $clickEndCollectDetails = $this->getClickAndCollectDetails();
+
         return !empty($clickEndCollectDetails);
     }
 
@@ -471,6 +484,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function isUseInStorePickup()
     {
         $inStorePickupDetails = $this->getInStorePickupDetails();
+
         return !empty($inStorePickupDetails);
     }
 
@@ -499,6 +513,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function getPaymentMethod()
     {
         $paymentDetails = $this->getPaymentDetails();
+
         return isset($paymentDetails['method']) ? $paymentDetails['method'] : '';
     }
 
@@ -508,6 +523,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function getPaymentDate()
     {
         $paymentDetails = $this->getPaymentDetails();
+
         return isset($paymentDetails['date']) ? $paymentDetails['date'] : '';
     }
 
@@ -573,9 +589,9 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function isPaymentStatusUnknown()
     {
         return !$this->isPaymentCompleted() &&
-               !$this->isPaymentMethodNotSelected() &&
-               !$this->isPaymentInProcess() &&
-               !$this->isPaymentFailed();
+            !$this->isPaymentMethodNotSelected() &&
+            !$this->isPaymentInProcess() &&
+            !$this->isPaymentFailed();
     }
 
     // ---------------------------------------
@@ -610,8 +626,8 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function isShippingStatusUnknown()
     {
         return !$this->isShippingCompleted() &&
-               !$this->isShippingMethodNotSelected() &&
-               !$this->isShippingInProcess();
+            !$this->isShippingMethodNotSelected() &&
+            !$this->isShippingInProcess();
     }
 
     // ---------------------------------------
@@ -674,7 +690,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $channelItems = $this->getParentObject()->getChannelItems();
 
         if (empty($channelItems)) {
-            // 3rd party order
+            // Unmanaged order
             // ---------------------------------------
             $storeId = $this->getEbayAccount()->getMagentoOrdersListingsOtherStoreId();
             // ---------------------------------------
@@ -708,7 +724,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
         if (!$this->isCheckoutCompleted() &&
             ($ebayAccount->shouldCreateMagentoOrderWhenCheckedOut() ||
-             $ebayAccount->shouldCreateMagentoOrderWhenCheckedOutAndPaid())
+                $ebayAccount->shouldCreateMagentoOrderWhenCheckedOutAndPaid())
         ) {
             return false;
         }
@@ -742,7 +758,9 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $shippingDetails = $this->getShippingDetails();
         $shippingDetails['address'] = $buyerInfo['address'];
 
-        $this->getParentObject()->setData('buyer_name', $buyerInfo['name']);
+        $buyerName = trim($buyerInfo['first_name']) . ' ' . trim($buyerInfo['last_name']);
+
+        $this->getParentObject()->setData('buyer_name', $buyerName);
         $this->getParentObject()->setSettings('shipping_details', $shippingDetails);
 
         $this->getParentObject()->save();
@@ -966,6 +984,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     {
         /** @var $dispatcher \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher */
         $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Order_Dispatcher');
+
         return $dispatcher->process($action, $this->getParentObject(), $params);
     }
 
@@ -994,8 +1013,8 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             return false;
         }
 
-        $action    = \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_PAYMENT;
-        $creator   = $this->getParentObject()->getLog()->getInitiator();
+        $action = \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_PAYMENT;
+        $creator = $this->getParentObject()->getLog()->getInitiator();
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
 
         $this->activeRecordFactory->getObject('Order\Change')->create(
@@ -1040,7 +1059,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function updateShippingStatus(array $trackingDetails = array(), array $items = array())
+    public function updateShippingStatus(array $trackingDetails = [], array $items = [])
     {
         if (!$this->canUpdateShippingStatus($trackingDetails)) {
             return false;
@@ -1092,6 +1111,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
                 \Ess\M2ePro\Helper\Component\Ebay::NICK,
                 $params
             );
+
             return true;
         }
 
@@ -1128,7 +1148,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $firstItem = $this->getParentObject()->getItemsCollection()->getFirstItem();
 
         $params = [
-            'item_id' => $firstItem->getChildObject()->getItemId(),
+            'item_id'        => $firstItem->getChildObject()->getItemId(),
             'transaction_id' => $firstItem->getChildObject()->getTransactionId(),
         ];
 
@@ -1158,7 +1178,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $table = $this->activeRecordFactory->getObject('Ebay_Order_ExternalTransaction')->getResource()->getMainTable();
         $this->_getResource()->getConnection()->delete(
             $table,
-            ['order_id = ?'=>$this->getData('order_id')]
+            ['order_id = ?' => $this->getData('order_id')]
         );
 
         return parent::delete();

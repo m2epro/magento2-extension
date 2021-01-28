@@ -35,7 +35,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
-        // tab: 3rd party listings
+        // tab: Unmanaged listings
         // ---------------------------------------
         $keys = [
             'related_store_id',
@@ -146,7 +146,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
-        // 3rd party orders settings
+        // Unmanaged orders settings
         // ---------------------------------------
         $tempKey = 'listing_other';
         $tempSettings = !empty($this->rawData['magento_orders_settings'][$tempKey])
@@ -312,40 +312,20 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
-        // invoice/shipment settings
-        // ---------------------------------------
-        $temp = Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_CUSTOM;
-        if (isset($this->rawData['magento_orders_settings']['status_mapping']['mode']) &&
-            $this->rawData['magento_orders_settings']['status_mapping']['mode'] == $temp
-        ) {
-            $data['magento_orders_settings']['invoice_mode'] = 1;
-            $data['magento_orders_settings']['shipment_mode'] = 1;
-
-            if (!isset($this->rawData['magento_orders_settings']['invoice_mode'])) {
-                $data['magento_orders_settings']['invoice_mode'] = 0;
-            }
-
-            if (!isset($this->rawData['magento_orders_settings']['shipment_mode'])) {
-                $data['magento_orders_settings']['shipment_mode'] = 0;
-            }
-        }
-
         $data['magento_orders_settings'] = $this->getHelper('Data')->jsonEncode($data['magento_orders_settings']);
 
         // tab: vat calculation service
         // ---------------------------------------
         $keys = [
             'auto_invoicing',
-            'is_magento_invoice_creation_disabled',
+            'invoice_generation',
+            'create_magento_invoice',
+            'create_magento_shipment',
         ];
         foreach ($keys as $key) {
             if (isset($this->rawData[$key])) {
                 $data[$key] = $this->rawData[$key];
             }
-        }
-
-        if (empty($data['auto_invoicing'])) {
-            $data['is_magento_invoice_creation_disabled'] = false;
         }
 
         return $data;
@@ -406,7 +386,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                         'order_created' => false
                     ],
                     'billing_address_mode' =>
-                        Account::MAGENTO_ORDERS_BILLING_ADDRESS_MODE_SHIPPING_IF_SAME_CUSTOMER_AND_RECIPIENT
+                        Account::USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT
                 ],
                 'status_mapping' => [
                     'mode' => Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT,
@@ -422,14 +402,14 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                 'fba' => [
                     'mode'       => 1,
                     'stock_mode' => 0
-                ],
-                'invoice_mode'  => 1,
-                'shipment_mode' => 1
+                ]
             ],
 
             // vcs_upload_invoices
             'auto_invoicing' => 0,
-            'is_magento_invoice_creation_disabled' => 0,
+            'invoice_generation' => 0,
+            'create_magento_invoice' => 1,
+            'create_magento_shipment' => 1
         ];
     }
 

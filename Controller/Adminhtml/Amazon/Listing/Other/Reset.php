@@ -19,7 +19,7 @@ class Reset extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other
     {
         $this->activeRecordFactory->getObject('Amazon_Listing_Other')->getResource()->resetEntities();
 
-        $this->messageManager->addSuccess($this->__('Amazon 3rd Party Listings were reset.'));
+        $this->messageManager->addSuccess($this->__('Amazon Unmanaged Listings were reset.'));
 
         $this->_redirect($this->_redirect->getRefererUrl());
     }

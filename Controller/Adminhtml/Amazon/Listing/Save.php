@@ -65,10 +65,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         $keys = [
             'template_selling_format_id',
             'template_synchronization_id',
+            'template_shipping_id'
         ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
-                $data[$key] = $post[$key];
+                $data[$key] = (!empty($post[$key])) ? $post[$key] : null;
             }
         }
         // ---------------------------------------
@@ -175,6 +176,12 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         $this->processSellingFormatTemplateChange($oldData, $newData, $affectedListingsProductsData);
         $this->processSynchronizationTemplateChange($oldData, $newData, $affectedListingsProductsData);
 
+        $affectedListingsProductsData = $affectedListingsProducts->getObjectsData(
+            ['id', 'status'],
+            ['only_physical_units' => true, 'template_shipping_id' => true]
+        );
+        $this->processShippingTemplateChange($oldData, $newData, $affectedListingsProductsData);
+
         $this->getMessageManager()->addSuccess($this->__('The Listing was saved.'));
 
         return $this->_redirect($this->getHelper('Data')->getBackUrl('list', [], ['edit'=>['id'=>$id]]));
@@ -265,6 +272,45 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 
         /** @var \Ess\M2ePro\Model\Amazon\Template\Synchronization\ChangeProcessor $changeProcessor */
         $changeProcessor = $this->modelFactory->getObject('Amazon_Template_Synchronization_ChangeProcessor');
+        $changeProcessor->process($diff, $affectedListingsProductsData);
+    }
+
+    protected function processShippingTemplateChange(
+        array $oldData,
+        array $newData,
+        array $affectedListingsProductsData
+    ) {
+        if (empty($affectedListingsProductsData) ||
+            empty($oldData['template_shipping_id']) &&
+            empty($newData['template_shipping_id'])) {
+            return;
+        }
+
+        $oldTemplate = $this->activeRecordFactory->getObject('Amazon_Template_Shipping');
+        if (!empty($oldData['template_shipping_id'])) {
+            $oldTemplate = $oldTemplate->load($oldData['template_shipping_id']);
+        }
+
+        $snapshotBuilder = $this->modelFactory->getObject('Amazon_Template_Shipping_SnapshotBuilder');
+        $snapshotBuilder->setModel($oldTemplate);
+        $oldSnapshot = $snapshotBuilder->getSnapshot();
+
+        $newTemplate = $this->activeRecordFactory->getObject('Amazon_Template_Shipping');
+        if (!empty($newData['template_shipping_id'])) {
+            $newTemplate = $oldTemplate->load($newData['template_shipping_id']);
+        }
+
+        $snapshotBuilder = $this->modelFactory->getObject('Amazon_Template_Shipping_SnapshotBuilder');
+        $snapshotBuilder->setModel($newTemplate);
+        $newSnapshot = $snapshotBuilder->getSnapshot();
+
+        /** @var \Ess\M2ePro\Model\Amazon\Template\Shipping\Diff $diff */
+        $diff = $this->modelFactory->getObject('Amazon_Template_Shipping_Diff');
+        $diff->setNewSnapshot($newSnapshot);
+        $diff->setOldSnapshot($oldSnapshot);
+
+        /** @var \Ess\M2ePro\Model\Amazon\Template\Shipping\ChangeProcessor $changeProcessor */
+        $changeProcessor = $this->modelFactory->getObject('Amazon_Template_Shipping_ChangeProcessor');
         $changeProcessor->process($diff, $affectedListingsProductsData);
     }
 

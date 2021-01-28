@@ -21,7 +21,7 @@ class GetGlobalMessages extends Main
             $this->addLicenseNotifications();
         }
 
-        $this->addServerNotifications();
+        $this->addNotifications($this->getHelper('Module')->getServerMessages());
         $this->addCronErrorMessage();
         $this->getCustomViewControllerHelper()->addMessages();
 

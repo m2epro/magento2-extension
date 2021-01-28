@@ -30,7 +30,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
             $listing = $this->createListing();
 
             if ($this->isCreationModeListingOnly()) {
-                // closing window for 3rd party products moving in new listing creation
+                // closing window for Unmanaged products moving in new listing creation
 
                 return $this->getRawResult()->setContents("<script>window.close();</script>");
             }
@@ -59,26 +59,18 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
     {
         $post = $this->getRequest()->getParams();
 
-        // Validate Templates / Account
-        // ---------------------------------------
         /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->walmartFactory->getObjectLoaded(
             'Account',
             (int)$post['account_id']
         );
-        // ---------------------------------------
 
         $post['marketplace_id'] = $account->getChildObject()->getMarketplaceId();
 
-        // Add new Listing
-        // ---------------------------------------
         $listing = $this->walmartFactory->getObject('Listing')
             ->addData($post)
             ->save();
-        // ---------------------------------------
 
-        // Set message to log
-        // ---------------------------------------
         $tempLog = $this->activeRecordFactory->getObject('Listing\Log');
         $tempLog->setComponentMode($listing->getComponentMode());
         $tempLog->addListingMessage(
@@ -89,7 +81,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
             'Listing was Added',
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
         );
-        // ---------------------------------------
 
         return $listing;
     }

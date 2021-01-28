@@ -10,18 +10,17 @@ namespace Ess\M2ePro\Model\Walmart;
 
 /**
  * Class \Ess\M2ePro\Model\Walmart\Order
- */
-/**
+ *
  * @method \Ess\M2ePro\Model\Order getParentObject()
  * @method \Ess\M2ePro\Model\ResourceModel\Walmart\Order getResource()
  */
 class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
-    const STATUS_CREATED = 0;
-    const STATUS_UNSHIPPED = 1;
+    const STATUS_CREATED           = 0;
+    const STATUS_UNSHIPPED         = 1;
     const STATUS_SHIPPED_PARTIALLY = 2;
-    const STATUS_SHIPPED = 3;
-    const STATUS_CANCELED = 5;
+    const STATUS_SHIPPED           = 3;
+    const STATUS_CANCELED          = 5;
 
     private $shipmentFactory;
 
@@ -150,9 +149,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     {
         $address = $this->getHelper('Data')->jsonDecode($this->getData('shipping_address'));
 
-        return $this->shippingAddressFactory->create([
-            'order' => $this->getParentObject()
-        ])->setData($address);
+        return $this->shippingAddressFactory->create(
+            [
+                'order' => $this->getParentObject()
+            ]
+        )->setData($address);
     }
 
     //########################################
@@ -182,6 +183,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     public function getProductPriceTaxAmount()
     {
         $taxDetails = $this->getTaxDetails();
+
         return !empty($taxDetails['product']) ? (float)$taxDetails['product'] : 0.0;
     }
 
@@ -191,6 +193,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     public function getShippingPriceTaxAmount()
     {
         $taxDetails = $this->getTaxDetails();
+
         return !empty($taxDetails['shipping']) ? (float)$taxDetails['shipping'] : 0.0;
     }
 
@@ -327,7 +330,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         $channelItems = $this->getParentObject()->getChannelItems();
 
         if (count($channelItems) == 0) {
-            // 3rd party order
+            // Unmanaged order
             // ---------------------------------------
             $storeId = $this->getWalmartAccount()->getMagentoOrdersListingsOtherStoreId();
             // ---------------------------------------
@@ -534,13 +537,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         }
 
         if (empty($trackingDetails['tracking_number'])) {
-            $this->getParentObject()->addErrorLog(
-                'Walmart Order was not shipped. Reason: %msg%',
-                [
-                    'msg' => 'Order status was not updated to Shipped on Walmart because a tracking number
-                                is missing. Please insert the valid tracking number into the Order shipment.'
-                ]
+            $this->getParentObject()->addNoticeLog(
+                'Order status was not updated to Shipped because tracking number is missing.
+                Please add the valid tracking number to the order.'
             );
+
             return false;
         }
 
@@ -559,11 +560,20 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
             if ($trackingDetails['carrier_title'] == \Ess\M2ePro\Model\Order\Shipment\Handler::CUSTOM_CARRIER_CODE &&
                 !empty($trackingDetails['shipping_method'])) {
                 $trackingDetails['carrier_title'] = $trackingDetails['shipping_method'];
+
+                $otherCarriers = $this->getWalmartAccount()->getOtherCarriers();
+                $shippingMethod = strtolower($trackingDetails['shipping_method']);
+                foreach ($otherCarriers as $otherCarrier) {
+                    if (strtolower($otherCarrier['code']) === $shippingMethod) {
+                        $trackingDetails['url'] = $otherCarrier['url'];
+                        break;
+                    }
+                }
             }
         }
 
         $params = [
-            'walmart_order_id'  => $this->getWalmartOrderId(),
+            'walmart_order_id' => $this->getWalmartOrderId(),
             'fulfillment_date' => $trackingDetails['fulfillment_date'],
             'items'            => []
         ];
@@ -577,7 +587,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
                 continue;
             }
 
-            $params['items'][] = [
+            $data = [
                 'walmart_order_item_id' => $item['walmart_order_item_id'],
                 'qty'                   => (int)$item['qty'],
                 'tracking_details'      => [
@@ -587,6 +597,12 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
                     'number'    => $trackingDetails['tracking_number']
                 ]
             ];
+
+            if (isset($trackingDetails['url'])) {
+                $data['tracking_details']['url'] = $trackingDetails['url'];
+            }
+
+            $params['items'][] = $data;
         }
 
         /** @var \Ess\M2ePro\Model\Order\Change $change */
@@ -613,6 +629,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
                 \Ess\M2ePro\Helper\Component\Walmart::NICK,
                 $params
             );
+
             return true;
         }
 
@@ -684,7 +701,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
             'items'    => $items,
         ];
 
-        $action      = \Ess\M2ePro\Model\Order\Change::ACTION_CANCEL;
+        $action = \Ess\M2ePro\Model\Order\Change::ACTION_CANCEL;
 
         if ($this->isShipped() ||
             $this->isPartiallyShipped() ||
@@ -700,6 +717,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
                                     in Credit Memo form.'
                     ]
                 );
+
                 return false;
             }
 

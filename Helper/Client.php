@@ -15,9 +15,13 @@ class Client extends AbstractHelper
 {
     const API_APACHE_HANDLER = 'apache2handler';
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
+    /** @var \Magento\Framework\Filesystem */
     protected $filesystem;
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resource;
+    /** @var \Magento\Framework\HTTP\PhpEnvironment\Request */
     protected $phpEnvironmentRequest;
 
     //########################################
@@ -118,6 +122,7 @@ class Client extends AbstractHelper
     {
         $ip = $this->phpEnvironmentRequest->getServer('SERVER_ADDR');
         empty($ip) && $ip = $this->phpEnvironmentRequest->getServer('LOCAL_ADDR');
+        empty($ip) && $ip = gethostbyname(gethostname());
 
         return strtolower(trim((string)$ip));
     }

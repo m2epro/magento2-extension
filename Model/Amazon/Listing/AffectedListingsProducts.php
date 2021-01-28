@@ -40,6 +40,10 @@ class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListin
             $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
         }
 
+        if (!empty($filters['template_shipping_id'])) {
+            $listingProductCollection->addFieldToFilter('template_shipping_id', ['null' => true]);
+        }
+
         return $listingProductCollection;
     }
 

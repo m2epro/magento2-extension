@@ -144,27 +144,11 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $path = 'walmart_listing_autoAction/getCategoryTemplatesList';
         $this->jsUrl->add($this->getUrl('*/' . $path, [
-            'marketplace_id' => $this->listing->getMarketplaceId(),
-            'is_new_asin_accepted' => 1
+            'marketplace_id' => $this->listing->getMarketplaceId()
         ]), $path);
 
         $path = 'walmart_log_listing_product/index';
         $this->jsUrl->add($this->getUrl('*/' . $path), $path);
-
-//        $path = 'walmart_listing/duplicateProducts';
-//        $this->jsUrl->add($this->getUrl('*/' . $path), $path);
-//
-//        $path = 'walmart_listing/getEditSkuPopup';
-//        $this->jsUrl->add($this->getUrl('*/' . $path), $path);
-//
-//        $path = 'walmart_listing/editSku';
-//        $this->jsUrl->add($this->getUrl('*/' . $path), $path);
-//
-//        $path = 'walmart_listing/getEditIdentifiersPopup';
-//        $this->jsUrl->add($this->getUrl('*/' . $path), $path);
-//
-//        $path = 'walmart_listing/editIdentifier';
-//        $this->jsUrl->add($this->getUrl('*/' . $path), $path);
 
         $this->jsUrl->add($this->getUrl('*/walmart_log_listing_product/index', [
             \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD => $this->listing['id'],
@@ -427,24 +411,20 @@ JS
             'id' => $this->listing['id']
         ]);
 
-        // ---------------------------------------
         $url = $this->getUrl('*/walmart_listing/edit', [
             'id' => $this->listing['id'],
             'back' => $backUrl
         ]);
         $items[] = [
-            'label' => $this->__('Listing Settings'),
+            'label' => $this->__('Configuration'),
             'onclick' => 'window.open(\'' . $url . '\',\'_blank\');',
             'default' => true
         ];
-        // ---------------------------------------
 
-        // ---------------------------------------
         $items[] = [
             'onclick' => 'ListingAutoActionObj.loadAutoActionHtml();',
             'label' => $this->__('Auto Add/Remove Rules')
         ];
-        // ---------------------------------------
 
         return $items;
     }

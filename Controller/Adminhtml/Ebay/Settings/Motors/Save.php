@@ -22,6 +22,7 @@ class Save extends Settings
         $post = $this->getRequest()->getPostValue();
         if (!$post) {
             $this->setJsonContent(['success' => false]);
+
             return $this->getResult();
         }
 
@@ -29,10 +30,14 @@ class Save extends Settings
             $this->getHelper('Component_Ebay_Configuration')->setConfigValues($this->getRequest()->getParams());
             $this->setJsonContent(['success' => true]);
         } catch (\Ess\M2ePro\Model\Exception\Logic $e) {
-            $this->setJsonContent([
-                'success' => false,
-                'message' => $this->__($e->getMessage())
-            ]);
+            $this->setJsonContent(
+                [
+                    'success'  => false,
+                    'messages' => [
+                        ['error' => $this->__($e->getMessage())]
+                    ]
+                ]
+            );
         }
 
         return $this->getResult();

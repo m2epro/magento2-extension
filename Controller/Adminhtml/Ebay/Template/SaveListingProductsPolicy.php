@@ -117,46 +117,15 @@ class SaveListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
             // @codingStandardsIgnoreLine
             $templateData = $this->getHelper('Data')->jsonDecode(base64_decode($post["template_{$nick}"]));
 
-            $templateId = $templateData['id'];
-            $templateMode = $templateData['mode'];
-
-            $idColumn = $manager->getIdColumnNameByMode($templateMode);
-            $modeColumn = $manager->getModeColumnName();
-
-            if ($idColumn !== null) {
-                $data[$idColumn] = (int)$templateId;
+            if ($templateData['mode'] !== \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_PARENT) {
+                $data[$manager->getTemplateIdColumnName()] = (int)$templateData['id'];
             }
 
-            $data[$modeColumn] = $templateMode;
-
-            $this->clearTemplatesFieldsNotRelatedToMode($data, $nick, $templateMode);
+            $data[$manager->getModeColumnName()] = $templateData['mode'];
         }
         // ---------------------------------------
 
         return $data;
-    }
-
-    // ---------------------------------------
-
-    private function clearTemplatesFieldsNotRelatedToMode(array &$data, $nick, $mode)
-    {
-        $modes = [
-            \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_PARENT,
-            \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_CUSTOM,
-            \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
-        ];
-
-        unset($modes[array_search($mode, $modes)]);
-
-        foreach ($modes as $mode) {
-            $column = $this->templateManager->setTemplate($nick)->getIdColumnNameByMode($mode);
-
-            if ($column === null) {
-                continue;
-            }
-
-            $data[$column] = null;
-        }
     }
 
     //########################################

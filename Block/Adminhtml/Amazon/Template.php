@@ -21,25 +21,17 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('amazonTemplate');
         $this->_controller = 'adminhtml_amazon_template';
-        // ---------------------------------------
 
-        // Set buttons actions
-        // ---------------------------------------
         $this->buttonList->remove('back');
         $this->buttonList->remove('reset');
         $this->buttonList->remove('delete');
         $this->buttonList->remove('save');
         $this->buttonList->remove('edit');
-        // ---------------------------------------
 
-        // ---------------------------------------
         $this->buttonList->update('add', 'label', $this->__('Add Policy'));
         $this->buttonList->update('add', 'onclick', '');
-        // ---------------------------------------
     }
 
     //########################################
@@ -72,17 +64,19 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/8gEtAQ')
         );
 
-        $this->appendHelpBlock([
-            'content' => $content
-        ]);
+        $this->appendHelpBlock(
+            [
+                'content' => $content
+            ]
+        );
 
         $addButtonProps = [
-            'id' => 'add_new_product',
-            'label' => __('Add Policy'),
-            'class' => 'add',
+            'id'           => 'add_policy',
+            'label'        => __('Add Policy'),
+            'class'        => 'add',
             'button_class' => '',
-            'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
-            'options' => $this->_getAddTemplateButtonOptions(),
+            'class_name'   => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
+            'options'      => $this->_getAddTemplateButtonOptions(),
         ];
         $this->addButton('add', $addButtonProps);
 
@@ -94,24 +88,29 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     protected function _getAddTemplateButtonOptions()
     {
         $data = [
-            Grid::TEMPLATE_SELLING_FORMAT => [
-                'label' => $this->__('Selling'),
+            Grid::TEMPLATE_SELLING_FORMAT   => [
+                'label'   => $this->__('Selling'),
+                'id'      => 'selling',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SELLING_FORMAT) . "')",
             ],
-            Grid::TEMPLATE_DESCRIPTION => [
-                'label' => $this->__('Description'),
+            Grid::TEMPLATE_DESCRIPTION      => [
+                'label'   => $this->__('Description'),
+                'id'      => 'description',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_DESCRIPTION) . "')",
             ],
-            Grid::TEMPLATE_SYNCHRONIZATION => [
-                'label' => $this->__('Synchronization'),
+            Grid::TEMPLATE_SYNCHRONIZATION  => [
+                'label'   => $this->__('Synchronization'),
+                'id'      => 'synchronization',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SYNCHRONIZATION) . "')",
             ],
-            Grid::TEMPLATE_SHIPPING => [
-                'label' => $this->__('Shipping'),
+            Grid::TEMPLATE_SHIPPING         => [
+                'label'   => $this->__('Shipping'),
+                'id'      => 'shipping',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SHIPPING) . "')",
             ],
             Grid::TEMPLATE_PRODUCT_TAX_CODE => [
-                'label' => $this->__('Product Tax Code'),
+                'label'   => $this->__('Product Tax Code'),
+                'id'      => 'product_tax_code',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_PRODUCT_TAX_CODE) . "')",
             ]
         ];

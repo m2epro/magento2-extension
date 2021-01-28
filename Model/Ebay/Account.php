@@ -15,31 +15,31 @@ use Ess\M2ePro\Model\Exception\Logic;
  */
 class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
-    const MODE_SANDBOX = 0;
+    const MODE_SANDBOX    = 0;
     const MODE_PRODUCTION = 1;
 
-    const FEEDBACKS_AUTO_RESPONSE_NONE = 0;
+    const FEEDBACKS_AUTO_RESPONSE_NONE   = 0;
     const FEEDBACKS_AUTO_RESPONSE_CYCLED = 1;
     const FEEDBACKS_AUTO_RESPONSE_RANDOM = 2;
 
-    const OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE = 0;
-    const OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT = 1;
+    const OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE             = 0;
+    const OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT          = 1;
     const OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE = 2;
 
-    const OTHER_LISTINGS_MAPPING_SKU_MODE_NONE = 0;
-    const OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT = 1;
-    const OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID = 2;
+    const OTHER_LISTINGS_MAPPING_SKU_MODE_NONE             = 0;
+    const OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT          = 1;
+    const OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID       = 2;
     const OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE = 3;
 
-    const OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_NONE = 0;
+    const OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_NONE             = 0;
     const OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_CUSTOM_ATTRIBUTE = 1;
 
-    const OTHER_LISTINGS_MAPPING_SKU_DEFAULT_PRIORITY = 1;
-    const OTHER_LISTINGS_MAPPING_TITLE_DEFAULT_PRIORITY = 2;
+    const OTHER_LISTINGS_MAPPING_SKU_DEFAULT_PRIORITY     = 1;
+    const OTHER_LISTINGS_MAPPING_TITLE_DEFAULT_PRIORITY   = 2;
     const OTHER_LISTINGS_MAPPING_ITEM_ID_DEFAULT_PRIORITY = 3;
 
     const MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT = 0;
-    const MAGENTO_ORDERS_LISTINGS_STORE_MODE_CUSTOM = 1;
+    const MAGENTO_ORDERS_LISTINGS_STORE_MODE_CUSTOM  = 1;
 
     const MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE = 0;
     const MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT = 1;
@@ -47,23 +47,26 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     const MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO = 'magento';
     const MAGENTO_ORDERS_NUMBER_SOURCE_CHANNEL = 'channel';
 
-    const MAGENTO_ORDERS_CREATE_CHECKOUT = 2;
+    const MAGENTO_ORDERS_CREATE_CHECKOUT          = 2;
     const MAGENTO_ORDERS_CREATE_CHECKOUT_AND_PAID = 4;
 
-    const MAGENTO_ORDERS_TAX_MODE_NONE = 0;
+    const MAGENTO_ORDERS_TAX_MODE_NONE    = 0;
     const MAGENTO_ORDERS_TAX_MODE_CHANNEL = 1;
     const MAGENTO_ORDERS_TAX_MODE_MAGENTO = 2;
-    const MAGENTO_ORDERS_TAX_MODE_MIXED = 3;
+    const MAGENTO_ORDERS_TAX_MODE_MIXED   = 3;
 
-    const MAGENTO_ORDERS_CUSTOMER_MODE_GUEST = 0;
+    const MAGENTO_ORDERS_CUSTOMER_MODE_GUEST      = 0;
     const MAGENTO_ORDERS_CUSTOMER_MODE_PREDEFINED = 1;
-    const MAGENTO_ORDERS_CUSTOMER_MODE_NEW = 2;
+    const MAGENTO_ORDERS_CUSTOMER_MODE_NEW        = 2;
+
+    const USE_SHIPPING_ADDRESS_AS_BILLING_ALWAYS                         = 0;
+    const USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT = 1;
 
     const MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT = 0;
-    const MAGENTO_ORDERS_STATUS_MAPPING_MODE_CUSTOM = 1;
+    const MAGENTO_ORDERS_STATUS_MAPPING_MODE_CUSTOM  = 1;
 
-    const MAGENTO_ORDERS_STATUS_MAPPING_NEW = 'pending';
-    const MAGENTO_ORDERS_STATUS_MAPPING_PAID = 'processing';
+    const MAGENTO_ORDERS_STATUS_MAPPING_NEW     = 'pending';
+    const MAGENTO_ORDERS_STATUS_MAPPING_PAID    = 'processing';
     const MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED = 'complete';
 
     //########################################
@@ -79,6 +82,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function save()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('account');
+
         return parent::save();
     }
 
@@ -124,6 +128,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         }
 
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('account');
+
         return parent::delete();
     }
 
@@ -537,6 +542,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function getRelatedStoreId($marketplaceId)
     {
         $storeId = $this->getSetting('marketplaces_data', [(int)$marketplaceId, 'related_store_id']);
+
         return $storeId !== null ? (int)$storeId : \Magento\Store\Model\Store::DEFAULT_STORE_ID;
     }
 
@@ -631,6 +637,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             ['number', 'source'],
             self::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO
         );
+
         return $setting;
     }
 
@@ -658,6 +665,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function getMagentoOrdersNumberRegularPrefix()
     {
         $settings = $this->getSetting('magento_orders_settings', ['number', 'prefix']);
+
         return isset($settings['prefix']) ? $settings['prefix'] : '';
     }
 
@@ -669,6 +677,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function isMagentoOrdersNumberMarketplacePrefixUsed()
     {
         $settings = $this->getSetting('magento_orders_settings', ['number', 'prefix']);
+
         return isset($settings['use_marketplace_prefix']) ? (bool)$settings['use_marketplace_prefix'] : false;
     }
 
@@ -886,7 +895,36 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function isMagentoOrdersInStorePickupEnabled()
     {
         $setting = $this->getSetting('magento_orders_settings', ['in_store_pickup_statues', 'mode'], 0);
+
         return (bool)$setting;
+    }
+
+    /**
+     * @return bool
+     */
+    public function useMagentoOrdersShippingAddressAsBillingAlways()
+    {
+        return $this->getBillingAddressMode() == self::USE_SHIPPING_ADDRESS_AS_BILLING_ALWAYS;
+    }
+
+    /**
+     * @return bool
+     */
+    public function useMagentoOrdersShippingAddressAsBillingIfSameCustomerAndRecipient()
+    {
+        return $this->getBillingAddressMode() == self::USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT;
+    }
+
+    /**
+     * @return int
+     */
+    private function getBillingAddressMode()
+    {
+        return (int)$this->getSetting(
+            'magento_orders_settings',
+            ['customer', 'billing_address_mode'],
+            self::USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT
+        );
     }
 
     // ---------------------------------------
@@ -965,11 +1003,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function isMagentoOrdersInvoiceEnabled()
     {
-        if ($this->isMagentoOrdersStatusMappingDefault()) {
-            return true;
-        }
-
-        return $this->getSetting('magento_orders_settings', 'invoice_mode', 0) == 1;
+        return (bool)$this->getData('create_magento_invoice');
     }
 
     // ---------------------------------------
@@ -979,11 +1013,15 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function isMagentoOrdersShipmentEnabled()
     {
-        if ($this->isMagentoOrdersStatusMappingDefault()) {
-            return true;
-        }
+        return (bool)$this->getData('create_magento_shipment');
+    }
 
-        return $this->getSetting('magento_orders_settings', 'shipment_mode', 0) == 1;
+    /**
+     * @return bool
+     */
+    public function isSkipEvtinModeOn()
+    {
+        return (bool)$this->getData('skip_evtin');
     }
 
     //########################################
@@ -1080,6 +1118,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function isPickupStoreEnabled()
     {
         $additionalData = $this->getHelper('Data')->jsonDecode($this->getParentObject()->getData('additional_data'));
+
         return !empty($additionalData['bopis']);
     }
 
@@ -1179,11 +1218,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         foreach ($data as $node) {
             if ($node['parent_id'] == $rootId) {
                 $children[] = [
-                    'id' => $node['category_id'],
-                    'text' => $node['title'],
+                    'id'        => $node['category_id'],
+                    'text'      => $node['title'],
                     'allowDrop' => false,
                     'allowDrag' => false,
-                    'children' => []
+                    'children'  => []
                 ];
             }
         }

@@ -44,7 +44,7 @@ class Listing extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             etc. Policy Settings.</p><br>
 
             <p><strong>Note:</strong> Products which are not listed via M2E Pro will be automatically added to the
-            3rd Party Listings if the import option is enabled in the Account settings.</p>'
+            Unmanaged Listings if the import option is enabled in the Account settings.</p>'
         );
 
         $this->appendHelpBlock([

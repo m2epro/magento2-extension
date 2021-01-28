@@ -19,45 +19,37 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('amazonListingEditTabs');
-        // ---------------------------------------
-
         $this->setDestElementId('edit_form');
     }
 
-    protected function _beforeToHtml()
+    protected function _prepareLayout()
     {
-        // ---------------------------------------
-        $block = $this->createBlock('Amazon_Listing_Create_Selling_Form');
-        $block->setUseFormContainer(false);
         $this->addTab(
             'selling',
             [
                 'label'   => $this->__('Selling Settings'),
                 'title'   => $this->__('Selling Settings'),
-                'content' => $block->toHtml()
+                'content' => $this->createBlock('Amazon_Listing_Create_Selling_Form')
+                    ->setUseFormContainer(false)
+                    ->toHtml()
             ]
         );
-        // ---------------------------------------
 
-        // ---------------------------------------
-        $block = $this->createBlock('Amazon_Listing_Create_Search_Form');
-        $block->setUseFormContainer(false);
         $this->addTab(
             'search',
             [
                 'label'   => $this->__('Search Settings'),
                 'title'   => $this->__('Search Settings'),
-                'content' => $block->toHtml()
+                'content' => $this->createBlock('Amazon_Listing_Create_Search_Form')
+                    ->setUseFormContainer(false)
+                    ->toHtml()
             ]
         );
-        // ---------------------------------------
 
         $this->setActiveTab($this->getRequest()->getParam('tab', 'selling'));
 
-        return parent::_beforeToHtml();
+        return parent::_prepareLayout();
     }
 
     //########################################

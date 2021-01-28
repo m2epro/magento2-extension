@@ -222,10 +222,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnProductTitle($productTitle, $row, $column, $isExport)
     {
-        if (strlen($productTitle) > 60) {
-            $productTitle = substr($productTitle, 0, 60) . '...';
-        }
-
         $productTitle = $this->getHelper('Data')->escapeHtml($productTitle);
 
         $value = '<span>'.$productTitle.'</span>';

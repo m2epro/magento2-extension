@@ -324,9 +324,20 @@ class Details extends AbstractModel
     protected function getShippingData()
     {
         if ($this->getAmazonListingProduct()->isAfnChannel() ||
-            !$this->getAmazonListingProduct()->isExistShippingTemplate()
+            !$this->getAmazonListingProduct()->isExistShippingTemplate() &&
+            !$this->getAmazonListing()->isExistShippingTemplate()
         ) {
             return [];
+        }
+
+        if (!$this->getAmazonListingProduct()->isExistShippingTemplate()) {
+            return [
+                'shipping_data' => [
+                    'template_name' => $this->getAmazonListing()->getShippingTemplateSource(
+                        $this->getAmazonListingProduct()->getActualMagentoProduct()
+                    )->getTemplateName(),
+                ]
+            ];
         }
 
         return [

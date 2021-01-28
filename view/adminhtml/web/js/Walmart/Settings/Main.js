@@ -1,14 +1,13 @@
 define([
     'jquery',
     'M2ePro/Common'
-], function (jQuery) {
+], function(jQuery) {
 
     window.WalmartSettingsMain = Class.create(Common, {
 
         // ---------------------------------------
 
-        initialize: function()
-        {
+        initialize: function() {
             jQuery.validator.addMethod('M2ePro-walmart-required-identifier-setting', function(value, el) {
 
                 var result = false;
@@ -30,8 +29,7 @@ define([
 
         // ---------------------------------------
 
-        sku_mode_change: function()
-        {
+        sku_mode_change: function() {
             var self = WalmartSettingsMainObj;
 
             $('sku_custom_attribute').value = '';
@@ -40,8 +38,7 @@ define([
             }
         },
 
-        sku_modification_mode_change: function()
-        {
+        sku_modification_mode_change: function() {
             var self = WalmartSettingsMainObj;
 
             if ($('sku_modification_mode').value == M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart_Configuration::SKU_MODIFICATION_MODE_TEMPLATE')) {
@@ -57,8 +54,7 @@ define([
             }
         },
 
-        upc_mode_change: function()
-        {
+        upc_mode_change: function() {
             var self = WalmartSettingsMainObj;
 
             $('upc_custom_attribute').value = '';
@@ -67,8 +63,7 @@ define([
             }
         },
 
-        ean_mode_change: function()
-        {
+        ean_mode_change: function() {
             var self = WalmartSettingsMainObj;
 
             $('ean_custom_attribute').value = '';
@@ -77,8 +72,7 @@ define([
             }
         },
 
-        gtin_mode_change: function()
-        {
+        gtin_mode_change: function() {
             var self = WalmartSettingsMainObj;
 
             $('gtin_custom_attribute').value = '';
@@ -87,8 +81,7 @@ define([
             }
         },
 
-        isbn_mode_change: function()
-        {
+        isbn_mode_change: function() {
             var self = WalmartSettingsMainObj;
 
             $('isbn_custom_attribute').value = '';

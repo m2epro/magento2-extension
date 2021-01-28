@@ -86,6 +86,17 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             || $templateNick == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT
             || $templateNick == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY
         ) {
+            if ($this->getRequest()->getParam('marketplace_id', false) !== false) {
+                $fieldset->addField(
+                    'marketplace_id_hidden',
+                    'hidden',
+                    [
+                        'name'  => 'marketplace_id',
+                        'value' => $templateData['marketplace_id']
+                    ]
+                );
+            }
+
             $fieldset->addField(
                 'marketplace_id',
                 'select',
@@ -96,7 +107,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'values' => $this->getMarketplaceDataToOptions(),
                     'value' => $templateData['marketplace_id'],
                     'required' => true,
-                    'disabled' => !empty($templateData['id'])
+                    'disabled' => !empty($templateData['marketplace_id'])
                 ]
             );
         }
@@ -108,11 +119,13 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     public function getTemplateData()
     {
+        $marketplaceId = $this->getRequest()->getParam('marketplace_id', false);
+
         $nick = $this->getTemplateNick();
         $templateData = $this->getHelper('Data\GlobalData')->getValue("ebay_template_{$nick}");
         return array_merge([
             'title' => '',
-            'marketplace_id' => ''
+            'marketplace_id' => ($marketplaceId !== false) ? $marketplaceId : ''
         ], $templateData->getData());
     }
 
@@ -165,17 +178,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         return $optionsResult;
-    }
-
-    public function getMarketplaceId()
-    {
-        $template = $this->getParentBlock()->getTemplateObject();
-
-        if ($template) {
-            return $template->getData('marketplace_id');
-        }
-
-        return null;
     }
 
     //########################################

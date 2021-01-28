@@ -33,9 +33,9 @@ class Order extends AbstractContainer
         $this->addButton(
             'upload_by_user',
             [
-                'label'     => $this->__('Order Reimport'),
-                'onclick'   => 'UploadByUserObj.openPopup()',
-                'class'     => 'action-primary'
+                'label'   => $this->__('Order Reimport'),
+                'onclick' => 'UploadByUserObj.openPopup()',
+                'class'   => 'action-primary'
             ]
         );
     }
@@ -44,9 +44,10 @@ class Order extends AbstractContainer
 
     protected function _prepareLayout()
     {
-        $this->appendHelpBlock([
-            'content' => $this->__(
-                <<<HTML
+        $this->appendHelpBlock(
+            [
+                'content' => $this->__(
+                    <<<HTML
                 <p>On this page, you can review the Channel Sales imported from Walmart.
                 In the grid below, filter the records to narrow your search results,
                 then click the Order line to review the details. Use the Action menu to manage
@@ -56,8 +57,9 @@ class Order extends AbstractContainer
                 and Shipments in the Account Configuration under
                 <i>Walmart Integration > Configuration > Accounts > Edit Account > Orders</i>.</p>
 HTML
-            )
-        ]);
+                )
+            ]
+        );
 
         $this->setPageActionsBlock('Walmart_Order_PageActions');
 
@@ -67,7 +69,7 @@ HTML
     public function getGridHtml()
     {
         return $this->createBlock('Order_Item_Edit')->toHtml() .
-               parent::getGridHtml();
+            parent::getGridHtml();
     }
 
     protected function _beforeToHtml()
@@ -76,8 +78,10 @@ HTML
             $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Controller\Adminhtml\Order\EditItem::class)
         );
 
-        $this->js->addRequireJs(['upload' => 'M2ePro/Order/UploadByUser'], <<<JS
-UploadByUserObj = new UploadByUser('walmart', 'orderUploadByUserPopupGrid');
+        $this->js->addRequireJs(
+            ['upload' => 'M2ePro/Order/UploadByUser'],
+            <<<JS
+    UploadByUserObj = new UploadByUser('walmart', 'orderUploadByUserPopupGrid');
 JS
         );
 

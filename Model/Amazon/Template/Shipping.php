@@ -70,10 +70,14 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             return true;
         }
 
-        return (bool)$this->activeRecordFactory->getObject('Amazon_Listing_Product')
-            ->getCollection()
-            ->addFieldToFilter('template_shipping_id', $this->getId())
-            ->getSize();
+        return (bool)$this->activeRecordFactory->getObject('Amazon_Listing')
+                ->getCollection()
+                ->addFieldToFilter('template_shipping_id', $this->getId())
+                ->getSize() ||
+                (bool)$this->activeRecordFactory->getObject('Amazon_Listing_Product')
+                ->getCollection()
+                ->addFieldToFilter('template_shipping_id', $this->getId())
+                ->getSize();
     }
 
     //########################################

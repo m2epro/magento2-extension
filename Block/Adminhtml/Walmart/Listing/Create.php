@@ -23,7 +23,7 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         // ---------------------------------------
         $this->setId('walmartListingCreateStepOne');
         $this->_controller = 'adminhtml_walmart_listing';
-        $this->_mode = 'create';
+        $this->_mode       = 'create';
         // ---------------------------------------
 
         // Set header text
@@ -39,17 +39,23 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->removeButton('add');
         $this->removeButton('save');
         $this->removeButton('edit');
-        // ---------------------------------------
+        $this->addButton(
+            'save_and_next',
+            [
+                'label' => $this->__('Next Step'),
+                'class' => 'action-primary forward'
+            ]
+        );
 
-        // ---------------------------------------
-        $url = $this->getUrl('*/walmart_listing_create/index', [
-            '_current' => true
-        ]);
-        $this->addButton('save_and_next', [
-            'label'     => $this->__('Next Step'),
-            'onclick'   => 'CommonObj.saveClick(\'' . $url . '\')',
-            'class'     => 'action-primary forward'
-        ]);
+        $this->jsUrl->add(
+            $this->getUrl(
+                '*/walmart_listing_create/index',
+                [
+                    '_current' => true
+                ]
+            ),
+            'walmart_listing_create/index'
+        );
         // ---------------------------------------
     }
 
@@ -57,16 +63,18 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
     protected function _toHtml()
     {
-        $helpBlock = $this->createBlock('HelpBlock')->setData([
-            'content' => $this->__(
-                'On this page, you can configure the basic Listing settings. Specify the meaningful Listing Title for
+        $helpBlock = $this->createBlock('HelpBlock')->setData(
+            [
+                'content' => $this->__(
+                    'On this page, you can configure the basic Listing settings. Specify the meaningful Listing Title for
                 your internal use.<br>
                 Select Account under which you want to manage this Listing. Assign the Policy Templates and
                 Magento Store View.<br/><br/>
                 <p>The detailed information can be found <a href="%url%" target="_blank">here</a></p>',
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/NQBhAQ')
-            )
-        ]);
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/NQBhAQ')
+                )
+            ]
+        );
 
         return
             '<div id="progress_bar"></div>' .

@@ -19,10 +19,7 @@ class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Widget\Breadcrumb
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('amazonListingBreadcrumb');
-        // ---------------------------------------
 
         $this->setSteps([
             [

@@ -15,6 +15,8 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
  */
 class Edit extends AbstractContainer
 {
+    //########################################
+
     public function _construct()
     {
         parent::_construct();
@@ -40,48 +42,64 @@ class Edit extends AbstractContainer
 
         if ($wizardHelper->isActive(\Ess\M2ePro\Helper\View\Walmart::WIZARD_INSTALLATION_NICK)) {
             // ---------------------------------------
-            $this->addButton('save_and_continue', [
-                'label'     => $this->__('Save And Continue Edit'),
-                'onclick'   => 'WalmartAccountObj.saveAndEditClick(\'\',\'walmartAccountEditTabs\')',
-                'class'     => 'action-primary'
-            ]);
+            $this->addButton(
+                'save_and_continue',
+                [
+                    'label'   => $this->__('Save And Continue Edit'),
+                    'onclick' => 'WalmartAccountObj.saveAndEditClick(\'\',\'walmartAccountEditTabs\')',
+                    'class'   => 'action-primary'
+                ]
+            );
             // ---------------------------------------
 
             if ($this->getRequest()->getParam('id')) {
                 // ---------------------------------------
                 $url = $this->getUrl('*/walmart_account/new', ['wizard' => true]);
-                $this->addButton('add_new_account', [
-                    'label'     => $this->__('Add New Account'),
-                    'onclick'   => 'setLocation(\''. $url .'\')',
-                    'class'     => 'action-primary'
-                ]);
+                $this->addButton(
+                    'add_new_account',
+                    [
+                        'label'   => $this->__('Add New Account'),
+                        'onclick' => 'setLocation(\'' . $url . '\')',
+                        'class'   => 'action-primary'
+                    ]
+                );
                 // ---------------------------------------
             }
         } else {
             if ((bool)$this->getRequest()->getParam('close_on_save', false)) {
                 if ($this->getRequest()->getParam('id')) {
-                    $this->addButton('save', [
-                        'label'     => $this->__('Save And Close'),
-                        'onclick'   => 'WalmartAccountObj.saveAndClose()',
-                        'class'     => 'action-primary'
-                    ]);
+                    $this->addButton(
+                        'save',
+                        [
+                            'label'   => $this->__('Save And Close'),
+                            'onclick' => 'WalmartAccountObj.saveAndClose()',
+                            'class'   => 'action-primary'
+                        ]
+                    );
                 } else {
-                    $this->addButton('save_and_continue', [
-                        'label'     => $this->__('Save And Continue Edit'),
-                        'onclick'   => 'WalmartAccountObj.saveAndEditClick(\'\',\'walmartAccountEditTabs\')',
-                        'class'     => 'action-primary'
-                    ]);
+                    $this->addButton(
+                        'save_and_continue',
+                        [
+                            'label'   => $this->__('Save And Continue Edit'),
+                            'onclick' => 'WalmartAccountObj.saveAndEditClick(\'\',\'walmartAccountEditTabs\')',
+                            'class'   => 'action-primary'
+                        ]
+                    );
                 }
+
                 return;
             }
 
             // ---------------------------------------
             $url = $this->getUrl('*/walmart_account/index');
-            $this->addButton('back', [
-                'label'     => $this->__('Back'),
-                'onclick'   => 'WalmartAccountObj.backClick(\''. $url .'\')',
-                'class'     => 'back'
-            ]);
+            $this->addButton(
+                'back',
+                [
+                    'label'   => $this->__('Back'),
+                    'onclick' => 'WalmartAccountObj.backClick(\'' . $url . '\')',
+                    'class'   => 'back'
+                ]
+            );
             // ---------------------------------------
 
             // ---------------------------------------
@@ -89,32 +107,55 @@ class Edit extends AbstractContainer
                 $this->getHelper('Data\GlobalData')->getValue('edit_account')->getId()
             ) {
                 // ---------------------------------------
-                $this->addButton('delete', [
-                    'label'     => $this->__('Delete'),
-                    'onclick'   => 'WalmartAccountObj.deleteClick()',
-                    'class'     => 'delete M2ePro_delete_button primary'
-                ]);
+                $this->addButton(
+                    'delete',
+                    [
+                        'label'   => $this->__('Delete'),
+                        'onclick' => 'WalmartAccountObj.deleteClick()',
+                        'class'   => 'delete M2ePro_delete_button primary'
+                    ]
+                );
                 // ---------------------------------------
             }
 
             // ---------------------------------------
             $saveButtons = [
-                'id' => 'save_and_continue',
-                'label' => $this->__('Save And Continue Edit'),
-                'class' => 'add',
+                'id'           => 'save_and_continue',
+                'label'        => $this->__('Save And Continue Edit'),
+                'class'        => 'add',
                 'button_class' => '',
-                'onclick'   => 'WalmartAccountObj.saveAndEditClick(\'\',\'walmartAccountEditTabs\')',
-                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
-                'options' => [
+                'onclick'      => 'WalmartAccountObj.saveAndEditClick(\'\',\'walmartAccountEditTabs\')',
+                'class_name'   => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'options'      => [
                     'save' => [
-                        'label'     => $this->__('Save And Back'),
-                        'onclick'   => 'WalmartAccountObj.saveClick()',
-                        'class'     => 'action-primary'
-                    ]]
+                        'label'   => $this->__('Save And Back'),
+                        'onclick' => 'WalmartAccountObj.saveClick()',
+                        'class'   => 'action-primary'
+                    ]
+                ]
             ];
 
             $this->addButton('save_buttons', $saveButtons);
             // ---------------------------------------
         }
     }
+
+    //########################################
+
+    protected function _prepareLayout()
+    {
+        $this->js->add(
+            <<<JS
+    require([
+        'M2ePro/Walmart/Account',
+    ], function() {
+        window.WalmartAccountObj = new WalmartAccount();
+    });
+JS
+        );
+
+        return parent::_prepareLayout();
+    }
+
+    //########################################
 }

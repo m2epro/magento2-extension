@@ -148,7 +148,7 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
 
         if ($this->isExistInOtherListings($sku)) {
             $addMessages && $this->addMessage(
-                'Product with the same SKU is found in M2E Pro 3rd Party Listing.
+                'Product with the same SKU is found in M2E Pro Unmanaged Listing.
                 Please change the SKU or enable the Option Generate Merchant SKU.'
             );
             return true;

@@ -177,11 +177,6 @@ class PickupStore extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return $this->getQtyMode() == self::QTY_MODE_PRODUCT;
     }
 
-    public function isQtyModeSingle()
-    {
-        return $this->getQtyMode() == self::QTY_MODE_SINGLE;
-    }
-
     public function isQtyModeNumber()
     {
         return $this->getQtyMode() == self::QTY_MODE_NUMBER;

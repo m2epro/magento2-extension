@@ -191,7 +191,8 @@ class Shipping extends AbstractModel
                 $this->getListingProduct()->getListing()->getAccountId()
             );
 
-        if ($this->getShippingTemplate()->isLocalShippingFlatEnabled()) {
+        if ($this->getShippingTemplate()->isLocalShippingFlatEnabled() &&
+            $this->getShippingTemplate()->isLocalShippingRateTableEnabled($this->getAccount())) {
             $data['rate_table_mode'] = $this->getShippingTemplate()
                 ->getLocalShippingRateTableMode($this->getAccount());
             $data['rate_table_enabled'] = $this->getShippingTemplate()

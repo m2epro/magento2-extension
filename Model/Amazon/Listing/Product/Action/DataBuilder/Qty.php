@@ -40,14 +40,14 @@ class Qty extends AbstractModel
         $this->checkQtyWarnings();
 
         if (!isset($this->validatorsData['handling_time'])) {
-            $handlingTime                       = $this->getAmazonListingProduct()
+            $handlingTime = $this->getAmazonListingProduct()
                 ->getListingSource()
                 ->getHandlingTime();
             $this->cachedData['handling_time'] = $handlingTime;
         }
 
         if (!isset($this->validatorsData['restock_date'])) {
-            $restockDate                       = $this->getAmazonListingProduct()->getListingSource()->getRestockDate();
+            $restockDate = $this->getAmazonListingProduct()->getListingSource()->getRestockDate();
             $this->cachedData['restock_date'] = $restockDate;
         }
 
@@ -61,6 +61,11 @@ class Qty extends AbstractModel
 
         if (!empty($this->params['switch_to']) && $this->params['switch_to'] === self::FULFILLMENT_MODE_MFN) {
             $data['switch_to'] = self::FULFILLMENT_MODE_MFN;
+        }
+
+        $isRemoteFulfillmentProgram = $this->getAmazonAccount()->isRemoteFulfillmentProgramEnabled();
+        if (!empty($isRemoteFulfillmentProgram)) {
+            $data['remote_fulfillment_program'] = true;
         }
 
         return $data;
@@ -90,14 +95,14 @@ class Qty extends AbstractModel
     {
         if ($type === MagentoProduct::FORCING_QTY_TYPE_MANAGE_STOCK_NO) {
             $this->addWarningMessage(
-                'During the Quantity Calculation the Settings in the "Manage Stock No" '.
+                'During the Quantity Calculation the Settings in the "Manage Stock No" ' .
                 'field were taken into consideration.'
             );
         }
 
         if ($type === MagentoProduct::FORCING_QTY_TYPE_BACKORDERS) {
             $this->addWarningMessage(
-                'During the Quantity Calculation the Settings in the "Backorders" '.
+                'During the Quantity Calculation the Settings in the "Backorders" ' .
                 'field were taken into consideration.'
             );
         }

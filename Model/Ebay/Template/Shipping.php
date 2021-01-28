@@ -119,10 +119,6 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
         return (bool)$this->activeRecordFactory->getObject('Ebay\Listing')
                 ->getCollection()
-                ->addFieldToFilter(
-                    'template_shipping_mode',
-                    \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
-                )
                 ->addFieldToFilter('template_shipping_id', $this->getId())
                 ->getSize() ||
             (bool)$this->activeRecordFactory->getObject('Ebay_Listing_Product')

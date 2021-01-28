@@ -118,13 +118,34 @@ define([
 
         initObservers: function()
         {
+            $$('#advanced_filter select.element-value-changer option').each(function(el) {
+                if ((el.value == '??' && el.selected) || (el.value == '!??' && el.selected)) {
+                    setTimeout(function () {
+                        $(el.parentElement.parentElement.parentElement.nextElementSibling).hide();
+                    }, 10);
+                }
+            });
+            $$(
+                '#amazon_template_synchronization_list_advanced_rules',
+                '#amazon_template_synchronization_relist_advanced_rules',
+                '#amazon_template_synchronization_stop_advanced_rules',
+            )
+                .invoke('observe', 'change', function (event) {
+                    let target = event.target;
+                    if (target.value == '??' || target.value == '!??') {
+                        setTimeout(function () {
+                            $(target.parentElement.parentElement.nextElementSibling).hide();
+                        }, 10);
+                    }
+                });
+
             //list
             $('list_mode')
                 .observe('change', AmazonTemplateSynchronizationObj.listMode_change)
                 .simulate('change');
 
             $('list_qty_calculated')
-                .observe('change', AmazonTemplateSynchronizationObj.listQty_change)
+                .observe('change', AmazonTemplateSynchronizationObj.listQtyChange)
                 .simulate('change');
 
             $('list_advanced_rules_mode')
@@ -137,7 +158,7 @@ define([
                 .simulate('change');
 
             $('relist_qty_calculated')
-                .observe('change', AmazonTemplateSynchronizationObj.relistQty_change)
+                .observe('change', AmazonTemplateSynchronizationObj.relistQtyChange)
                 .simulate('change');
 
             $('relist_advanced_rules_mode')
@@ -165,7 +186,7 @@ define([
                 .simulate('change');
 
             $('stop_qty_calculated')
-                .observe('change', AmazonTemplateSynchronizationObj.stopQty_change)
+                .observe('change', AmazonTemplateSynchronizationObj.stopQtyChange)
                 .simulate('change');
 
             $('stop_advanced_rules_mode')
@@ -199,14 +220,9 @@ define([
 
         // ---------------------------------------
 
-        stopQty_change: function()
+        stopQtyChange: function(event)
         {
-            var valueContainer    = $('stop_qty_calculated_value');
-            valueContainer.hide();
-
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_YES')) {
-                valueContainer.show();
-            }
+            AmazonTemplateSynchronizationObj.qtyChange(event, this, 'stop');
         },
 
         stopAdvancedRules_change: function()
@@ -239,9 +255,9 @@ define([
             }
         },
 
-        listQty_change: function()
+        listQtyChange: function()
         {
-            var valueContainer    = $('list_qty_calculated_value');
+            var valueContainer = $('list_qty_calculated_value');
             valueContainer.hide();
 
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_YES')) {
@@ -282,14 +298,9 @@ define([
            }
         },
 
-        relistQty_change: function()
+        relistQtyChange: function(event)
         {
-            var valueContainer    = $('relist_qty_calculated_value');
-            valueContainer.hide();
-
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_YES')) {
-                valueContainer.show();
-            }
+            AmazonTemplateSynchronizationObj.qtyChange(event, this, 'relist');
         },
 
         relistAdvancedRules_change: function()
@@ -430,6 +441,57 @@ define([
                 rulesContainer.show();
                 advancedRulesContainer.show();
             }
+        },
+
+        // ---------------------------------------
+
+        qtyChange: function(event, element, action)
+        {
+            var self = AmazonTemplateSynchronizationObj;
+            var qtyCalculatedValue = $(action + '_qty_calculated_value');
+
+            qtyCalculatedValue.hide();
+
+            if (element.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_Synchronization::QTY_MODE_YES')) {
+                qtyCalculatedValue.show();
+            } else if (!event.cancelable) {
+                self.openQtyCalculatedConfirmationPopUp(element, action);
+            }
+        },
+
+        openQtyCalculatedConfirmationPopUp: function(element, action)
+        {
+            var popupTemplate = jQuery('#' + action + '_qty_calculated_confirmation_popup_template').clone();
+
+            popupTemplate.confirm({
+                title: M2ePro.translator.translate('Are you sure?'),
+                actions: {
+                    confirm: function () {
+                        element.selectedIndex = 0;
+                        element.simulate('change');
+                    },
+                    cancel: function () {
+                        element.selectedIndex = 1;
+                        element.simulate('change');
+                    },
+                },
+                buttons: [
+                    {
+                        text: M2ePro.translator.translate('Cancel'),
+                        class: 'action-secondary action-dismiss',
+                        click: function (event) {
+                            this.closeModal(event);
+                        }
+                    },
+                    {
+                        text: M2ePro.translator.translate('Confirm'),
+                        class: 'action-primary action-accept',
+                        click: function (event) {
+                            this.closeModal(event, true);
+                        }
+                    }
+                ]
+            });
         }
 
         // ---------------------------------------

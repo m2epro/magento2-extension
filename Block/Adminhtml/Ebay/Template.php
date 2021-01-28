@@ -22,20 +22,14 @@ class Template extends AbstractContainer
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('ebayTemplate');
         $this->_controller = 'adminhtml_ebay_template';
-        // ---------------------------------------
 
-        // Set buttons actions
-        // ---------------------------------------
         $this->removeButton('back');
         $this->removeButton('reset');
         $this->removeButton('delete');
         $this->removeButton('save');
         $this->removeButton('edit');
-        // ---------------------------------------
     }
 
     //########################################
@@ -48,17 +42,19 @@ class Template extends AbstractContainer
             <p>You can <strong>Delete</strong> a Policy only if it\'s not being used for an M2E Pro Listing.</p>'
         );
 
-        $this->appendHelpBlock([
-            'content' => $content
-        ]);
+        $this->appendHelpBlock(
+            [
+                'content' => $content
+            ]
+        );
 
         $addButtonProps = [
-            'id' => 'add_new_product',
-            'label' => __('Add Policy'),
-            'class' => 'add',
+            'id'           => 'add_policy',
+            'label'        => __('Add Policy'),
+            'class'        => 'add',
             'button_class' => '',
-            'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
-            'options' => $this->_getAddTemplateButtonOptions(),
+            'class_name'   => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
+            'options'      => $this->_getAddTemplateButtonOptions(),
         ];
         $this->addButton('add', $addButtonProps);
 
@@ -70,33 +66,39 @@ class Template extends AbstractContainer
     protected function _getAddTemplateButtonOptions()
     {
         $data = [
-            Manager::TEMPLATE_PAYMENT => [
-                'label' => $this->__('Payment'),
+            Manager::TEMPLATE_PAYMENT         => [
+                'label'   => $this->__('Payment'),
+                'id'      => 'payment',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Manager::TEMPLATE_PAYMENT) . "')",
                 'default' => true
             ],
-            Manager::TEMPLATE_SHIPPING => [
-                'label' => $this->__('Shipping'),
+            Manager::TEMPLATE_SHIPPING        => [
+                'label'   => $this->__('Shipping'),
+                'id'      => 'shipping',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Manager::TEMPLATE_SHIPPING) . "')",
                 'default' => false,
             ],
-            Manager::TEMPLATE_RETURN_POLICY => [
-                'label' => $this->__('Return'),
+            Manager::TEMPLATE_RETURN_POLICY   => [
+                'label'   => $this->__('Return'),
+                'id'      => 'return',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Manager::TEMPLATE_RETURN_POLICY) . "')",
                 'default' => false,
             ],
-            Manager::TEMPLATE_SELLING_FORMAT => [
-                'label' => $this->__('Selling'),
+            Manager::TEMPLATE_SELLING_FORMAT  => [
+                'label'   => $this->__('Selling'),
+                'id'      => 'selling',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Manager::TEMPLATE_SELLING_FORMAT) . "')",
                 'default' => false,
             ],
-            Manager::TEMPLATE_DESCRIPTION => [
-                'label' => $this->__('Description'),
+            Manager::TEMPLATE_DESCRIPTION     => [
+                'label'   => $this->__('Description'),
+                'id'      => 'description',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Manager::TEMPLATE_DESCRIPTION) . "')",
                 'default' => false,
             ],
             Manager::TEMPLATE_SYNCHRONIZATION => [
-                'label' => $this->__('Synchronization'),
+                'label'   => $this->__('Synchronization'),
+                'id'      => 'synchronization',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Manager::TEMPLATE_SYNCHRONIZATION) . "')",
                 'default' => false,
             ]

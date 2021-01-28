@@ -67,9 +67,12 @@
             <td class="value">
                 <strong>
 
-                    <?php echo $block->getHelper('Data')->escapeHtml($block->getOrder()->getChildObject()->getBuyerName()) ?>
-
                     <?php if (!empty($block->getShippingAddress())) : ?>
+
+                        <?php if (!empty($block->getShippingAddress()['recipient_name'])): ?>
+                            <?php echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['recipient_name']); ?>
+                        <?php endif; ?>
+
                         <?php if (!empty($block->getShippingAddress()['street'][0])) : ?>
                             <br/><?php echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['street'][0]); ?>
                         <?php endif; ?>

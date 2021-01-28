@@ -28,7 +28,6 @@ class Config extends AbstractConfig
             '@y20_m09/AmazonSE',
             '@y20_m09/InventorySynchronization',
             '@y20_m09/SellOnAnotherSite',
-            '@y20_m09/ChangeManufacturerRefurbished',
             '@y20_m10/SellOnAnotherSite',
         ];
     }

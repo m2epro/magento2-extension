@@ -19,12 +19,14 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
     const MARKETPLACE_SYNCHRONIZATION_LOCK_ITEM_NICK = 'ebay_marketplace_synchronization';
 
-    const MARKETPLACE_US = 1;
+    const MARKETPLACE_US     = 1;
+    const MARKETPLACE_UK     = 3;
+    const MARKETPLACE_AU     = 4;
+    const MARKETPLACE_BE_FR  = 6;
+    const MARKETPLACE_DE     = 8;
     const MARKETPLACE_MOTORS = 9;
-    const MARKETPLACE_AU = 4;
-    const MARKETPLACE_UK = 3;
-    const MARKETPLACE_DE = 8;
-    const MARKETPLACE_IT = 10;
+    const MARKETPLACE_IT     = 10;
+    const MARKETPLACE_BE_NL  = 11;
 
     const LISTING_DURATION_GTC = 100;
     const MAX_LENGTH_FOR_OPTION_VALUE = 50;
@@ -102,11 +104,29 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
         /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
         $marketplace = $this->activeRecordFactory->getCachedObjectLoaded('Marketplace', $marketplaceId);
-        $domain = $marketplace->getUrl();
 
         return $accountMode == \Ess\M2ePro\Model\Ebay\Account::MODE_SANDBOX
-            ? 'http://cgi.sandbox.' . $domain . '/ws/eBayISAPI.dll?ViewItem&item=' . (double)$ebayItemId
-            : 'http://www.' . $domain . '/itm/' . (double)$ebayItemId;
+            ? $this->getSandboxItemUrl($ebayItemId, $marketplace)
+            : 'http://www.' . $marketplace->getUrl() . '/itm/' . (double)$ebayItemId;
+    }
+
+    protected function getSandboxItemUrl($ebayItemId, \Ess\M2ePro\Model\Marketplace $marketplace)
+    {
+        $domainParts = explode('.', $marketplace->getUrl());
+
+        switch ($marketplace->getId()) {
+            case self::MARKETPLACE_US:
+                $subDomain = '';
+                break;
+            case self::MARKETPLACE_BE_FR:
+            case self::MARKETPLACE_BE_NL:
+                $subDomain = reset($domainParts) . '.';
+                break;
+            default:
+                $subDomain = end($domainParts) . '.';
+        }
+
+        return 'https://www.' . $subDomain . 'sandbox.ebay.com/itm/' . (double)$ebayItemId;
     }
 
     public function getMemberUrl($ebayMemberId, $accountMode = \Ess\M2ePro\Model\Ebay\Account::MODE_PRODUCTION)

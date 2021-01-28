@@ -10,13 +10,13 @@ namespace Ess\M2ePro\Model\Ebay\Listing;
 
 /**
  * @method \Ess\M2ePro\Model\Listing\Product getParentObject()
+ * @method \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product getResource()
  */
-
 class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
     const INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED = 'channel_status_changed';
-    const INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED    = 'channel_qty_changed';
-    const INSTRUCTION_TYPE_CHANNEL_PRICE_CHANGED  = 'channel_price_changed';
+    const INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED = 'channel_qty_changed';
+    const INSTRUCTION_TYPE_CHANNEL_PRICE_CHANGED = 'channel_price_changed';
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Item
@@ -146,7 +146,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function setEbayItem(\Ess\M2ePro\Model\Ebay\Item $instance)
     {
-         $this->ebayItemModel = $instance;
+        $this->ebayItemModel = $instance;
     }
 
     // ---------------------------------------
@@ -171,7 +171,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function setCategoryTemplate(\Ess\M2ePro\Model\Ebay\Template\Category $instance)
     {
-         $this->categoryTemplateModel = $instance;
+        $this->categoryTemplateModel = $instance;
     }
 
     // ---------------------------------------
@@ -378,7 +378,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function setSellingFormatTemplate(\Ess\M2ePro\Model\Template\SellingFormat $instance)
     {
-         $this->sellingFormatTemplateModel = $instance;
+        $this->sellingFormatTemplateModel = $instance;
     }
 
     // ---------------------------------------
@@ -401,7 +401,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function setSynchronizationTemplate(\Ess\M2ePro\Model\Template\Synchronization $instance)
     {
-         $this->synchronizationTemplateModel = $instance;
+        $this->synchronizationTemplateModel = $instance;
     }
 
     // ---------------------------------------
@@ -424,7 +424,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function setDescriptionTemplate(\Ess\M2ePro\Model\Template\Description $instance)
     {
-         $this->descriptionTemplateModel = $instance;
+        $this->descriptionTemplateModel = $instance;
     }
 
     // ---------------------------------------
@@ -447,7 +447,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function setPaymentTemplate(\Ess\M2ePro\Model\Ebay\Template\Payment $instance)
     {
-         $this->paymentTemplateModel = $instance;
+        $this->paymentTemplateModel = $instance;
     }
 
     // ---------------------------------------
@@ -470,7 +470,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function setReturnTemplate(\Ess\M2ePro\Model\Ebay\Template\ReturnPolicy $instance)
     {
-         $this->returnTemplateModel = $instance;
+        $this->returnTemplateModel = $instance;
     }
 
     // ---------------------------------------
@@ -493,7 +493,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function setShippingTemplate(\Ess\M2ePro\Model\Ebay\Template\Shipping $instance)
     {
-         $this->shippingTemplateModel = $instance;
+        $this->shippingTemplateModel = $instance;
     }
 
     // ---------------------------------------
@@ -658,7 +658,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     public function generateItemUUID()
     {
-        $uuid  = str_pad($this->getAccount()->getId(), 2, '0', STR_PAD_LEFT);
+        $uuid = str_pad($this->getAccount()->getId(), 2, '0', STR_PAD_LEFT);
         $uuid .= str_pad($this->getListing()->getId(), 4, '0', STR_PAD_LEFT);
         $uuid .= str_pad($this->getId(), 10, '0', STR_PAD_LEFT);
 
@@ -905,7 +905,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $sku = $this->getMagentoProduct()->getSku();
 
         if (strlen($sku) >= 50) {
-            $sku = 'RANDOM_'.sha1($sku);
+            $sku = 'RANDOM_' . sha1($sku);
         }
 
         return $sku;
@@ -919,7 +919,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function isListingTypeFixed()
     {
         return $this->getSellingFormatTemplateSource()->getListingType() ==
-              \Ess\M2ePro\Model\Ebay\Template\SellingFormat::LISTING_TYPE_FIXED;
+            \Ess\M2ePro\Model\Ebay\Template\SellingFormat::LISTING_TYPE_FIXED;
     }
 
     /**
@@ -928,7 +928,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function isListingTypeAuction()
     {
         return $this->getSellingFormatTemplateSource()->getListingType() ==
-              \Ess\M2ePro\Model\Ebay\Template\SellingFormat::LISTING_TYPE_AUCTION;
+            \Ess\M2ePro\Model\Ebay\Template\SellingFormat::LISTING_TYPE_AUCTION;
     }
 
     // ---------------------------------------
@@ -948,20 +948,20 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         }
 
         $isVariationEnabled = $this->getHelper('Component_Ebay_Category_Ebay')
-                                                ->isVariationEnabled(
-                                                    (int)$this->getCategoryTemplateSource()->getCategoryId(),
-                                                    $this->getMarketplace()->getId()
-                                                );
+            ->isVariationEnabled(
+                (int)$this->getCategoryTemplateSource()->getCategoryId(),
+                $this->getMarketplace()->getId()
+            );
 
         if ($isVariationEnabled === null) {
             $isVariationEnabled = true;
         }
 
         $result = $this->getEbayMarketplace()->isMultivariationEnabled() &&
-                  !$this->getEbaySellingFormatTemplate()->isIgnoreVariationsEnabled() &&
-                  $isVariationEnabled &&
-                  $this->isListingTypeFixed() &&
-                  $this->getMagentoProduct()->isProductWithVariations();
+            !$this->getEbaySellingFormatTemplate()->isIgnoreVariationsEnabled() &&
+            $isVariationEnabled &&
+            $this->isListingTypeFixed() &&
+            $this->getMagentoProduct()->isProductWithVariations();
 
         $this->setData(__METHOD__, $result);
 
@@ -992,7 +992,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function isPriceDiscountStp()
     {
         return $this->getEbayMarketplace()->isStpEnabled() &&
-               !$this->getEbaySellingFormatTemplate()->isPriceDiscountStpModeNone();
+            !$this->getEbaySellingFormatTemplate()->isPriceDiscountStpModeNone();
     }
 
     /**
@@ -1001,7 +1001,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function isPriceDiscountMap()
     {
         return $this->getEbayMarketplace()->isMapEnabled() &&
-               !$this->getEbaySellingFormatTemplate()->isPriceDiscountMapModeNone();
+            !$this->getEbaySellingFormatTemplate()->isPriceDiscountMapModeNone();
     }
 
     //########################################
@@ -1277,6 +1277,24 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         }
 
         return round($price, 2);
+    }
+
+    //########################################
+
+    public function assignTemplatesToProducts(
+        $productsIds,
+        $categoryTemplateId = null,
+        $categorySecondaryTemplateId = null,
+        $storeCategoryTemplateId = null,
+        $storeCategorySecondaryTemplateId = null
+    ) {
+        $this->getResource()->assignTemplatesToProducts(
+            $productsIds,
+            $categoryTemplateId,
+            $categorySecondaryTemplateId,
+            $storeCategoryTemplateId,
+            $storeCategorySecondaryTemplateId
+        );
     }
 
     //########################################

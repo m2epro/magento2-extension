@@ -502,11 +502,6 @@ HTML
 
         $statusList = $this->orderConfig->getStatuses();
 
-        $invoiceModeDisabled = $isDisabledStatusStyle ? 'disabled="disabled"' : '';
-        $invoiceModeChecked = $formData['magento_orders_settings']['status_mapping']['mode']
-                                             == Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT ||
-                              $formData['magento_orders_settings']['invoice_mode'] == 1 ? 'checked="checked"' : '';
-
         $fieldset->addField(
             'magento_orders_status_mapping_processing',
             'select',
@@ -518,18 +513,7 @@ HTML
                 'value' => $formData['magento_orders_settings']['status_mapping']['processing'],
                 'disabled' => $isDisabledStatusStyle
             ]
-        )->setAfterElementHtml(<<<HTML
-<label for="magento_orders_invoice_mode">
-<input id="magento_orders_invoice_mode"
-       name="magento_orders_settings[invoice_mode]"
-       type="checkbox" $invoiceModeChecked $invoiceModeDisabled> {$this->__('Automatic Invoice Creation')}</label>
-HTML
         );
-
-        $shipmentModeDisabled = $isDisabledStatusStyle ? 'disabled="disabled"' : '';
-        $shipmentModeChecked = $formData['magento_orders_settings']['status_mapping']['mode']
-                                    == Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT ||
-                               $formData['magento_orders_settings']['shipment_mode'] == 1 ? 'checked="checked"' : '';
 
         $fieldset->addField(
             'magento_orders_status_mapping_shipped',
@@ -542,12 +526,6 @@ HTML
                 'value' => $formData['magento_orders_settings']['status_mapping']['shipped'],
                 'disabled' => $isDisabledStatusStyle
             ]
-        )->setAfterElementHtml(<<<HTML
-<label for="magento_orders_shipment_mode">
-<input id="magento_orders_shipment_mode"
-       name="magento_orders_settings[shipment_mode]"
-       type="checkbox" $shipmentModeChecked $shipmentModeDisabled> {$this->__('Automatic Shipment Creation')}</label>
-HTML
         );
 
         $this->setForm($form);

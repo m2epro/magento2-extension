@@ -154,10 +154,6 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
     protected function getClearProductValue()
     {
         switch ($this->getSource('mode')) {
-            case \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_SINGLE:
-                $value = 1;
-                break;
-
             case \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_NUMBER:
                 $value = (int)$this->getSource('value');
                 break;
@@ -234,10 +230,6 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
     protected function getOptionBaseValue(\Ess\M2ePro\Model\Listing\Product\Variation\Option $option)
     {
         switch ($this->getSource('mode')) {
-            case \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_SINGLE:
-                $value = 1;
-                break;
-
             case \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_NUMBER:
                 $value = (int)$this->getSource('value');
                 break;

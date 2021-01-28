@@ -26,31 +26,12 @@ class ShippingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
             'recipient_name' => $this->getData('recipient_name'),
             'country_id'     => $this->getData('country_code'),
             'region'         => $this->getData('state'),
-            'city'           => $this->getData('city'),
+            'city'           => $this->getData('city') ? $this->getData('city') : $this->getCountryName(),
             'postcode'       => $this->getPostalCode(),
             'telephone'      => $this->getPhone(),
             'company'        => $this->getData('company'),
             'street'         => array_filter($this->getData('street'))
         ];
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasSameBuyerAndRecipient()
-    {
-        $rawAddressData = $this->order->getShippingAddress()->getRawData();
-
-        $buyerNameParts =  array_map('strtolower', explode(' ', $rawAddressData['buyer_name']));
-        $recipientNameParts = array_map('strtolower', explode(' ', $rawAddressData['recipient_name']));
-
-        $buyerNameParts = array_map('trim', $buyerNameParts);
-        $recipientNameParts = array_map('trim', $recipientNameParts);
-
-        sort($buyerNameParts);
-        sort($recipientNameParts);
-
-        return count(array_diff($buyerNameParts, $recipientNameParts)) == 0;
     }
 
     private function getBuyerEmail()

@@ -49,7 +49,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
      * @param \Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride $instance
      * @return $this
      */
-    public function setSellingFormatShipingOverrideTemplate(
+    public function setSellingFormatShippingOverrideTemplate(
         \Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride $instance
     ) {
         $this->sellingFormatShippingOverrideTemplateModel = $instance;

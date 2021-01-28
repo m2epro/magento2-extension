@@ -30,7 +30,8 @@ use Ess\M2ePro\Controller\Adminhtml\SetupManagement\Index;
         </td>
         <td class="value">
             <?php echo $this->latestPublicVersion; ?>
-            <a href="<?php echo $block->getHelper('Module_Support')->getDocumentationArticleUrl("display/RNMagento2/M2E+Pro+Version+-+{$this->latestPublicVersion}"); ?>" target="_blank"><?php echo $block->__('[release notes]'); ?></a>
+            <?php $versionForUrl = str_replace('.', '-', $this->latestPublicVersion); ?>
+            <a href="<?php echo $block->getHelper('Module_Support')->getDocumentationArticleUrl("help/m2/release-notes-policy/m2e-pro-version-{$versionForUrl}"); ?>" target="_blank"><?php echo $block->__('[release notes]'); ?></a>
         </td>
     </tr>
     <?php endif; ?>
@@ -42,7 +43,8 @@ use Ess\M2ePro\Controller\Adminhtml\SetupManagement\Index;
         </td>
         <td class="value">
             <?php echo $this->latestVersion; ?>
-            <a href="<?php echo $block->getHelper('Module_Support')->getDocumentationArticleUrl("display/RNMagento2/M2E+Pro+Version+-+{$this->latestVersion}"); ?>" target="_blank"><?php echo $block->__('[release notes]'); ?></a>
+            <?php $versionForUrl = str_replace('.', '-', $this->latestVersion); ?>
+            <a href="<?php echo $block->getHelper('Module_Support')->getDocumentationArticleUrl("help/m2/release-notes-policy/m2e-pro-version-{$versionForUrl}"); ?>" target="_blank"><?php echo $block->__('[release notes]'); ?></a>
         </td>
     </tr>
     <?php endif; ?>

@@ -45,7 +45,7 @@ For example, to sell Items on Amazon.es, Amazon.it, you need to add two separate
 Spain and Italy Marketplaces using your Merchant ID for Amazon Europe.</p><br>
 <p><strong>Note:</strong> prior to adding a new M2E Pro Amazon Account, enable an appropriate Marketplace under the
 Configuration > Marketplaces.</p>
-<p>Each Account is configured separately. Specify your preferences for the 3rd Party Listing import,
+<p>Each Account is configured separately. Specify your preferences for the Unmanaged Listing import,
 Channel Order management, Magento Order creation rules, etc.</p><br>
 <p><strong>Note:</strong> M2E Pro Amazon Account can be deleted only if it is not being used
 for any of M2E Pro Listings.</p>

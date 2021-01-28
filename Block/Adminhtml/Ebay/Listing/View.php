@@ -49,19 +49,23 @@ class View extends AbstractContainer
         $this->jsPhp->addConstants(
             $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class)
         );
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(
-            '\Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid'
-        ));
+        $this->jsPhp->addConstants(
+            $this->getHelper('Data')->getClassConstants(
+                '\Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid'
+            )
+        );
 
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            $this->appendHelpBlock([
-                'content' => $this->__(
-                    '<p>M2E Pro Listing is a group of Magento Products sold on a certain Marketplace
+            $this->appendHelpBlock(
+                [
+                    'content' => $this->__(
+                        '<p>M2E Pro Listing is a group of Magento Products sold on a certain Marketplace
                     from a particular Account. M2E Pro has several options to display the content of
                     Listings referring to different data details. Each of the view options contains a
                     unique set of available Actions accessible in the Mass Actions drop-down.</p>'
-                )
-            ]);
+                    )
+                ]
+            );
 
             $this->setPageActionsBlock(
                 'Ebay_Listing_View_Switcher',
@@ -70,11 +74,14 @@ class View extends AbstractContainer
         }
 
         // ---------------------------------------
-        $this->addButton('back', [
-            'label'   => $this->__('Back'),
-            'onclick' => 'setLocation(\''.$this->getUrl('*/ebay_listing/index') . '\');',
-            'class'   => 'back'
-        ]);
+        $this->addButton(
+            'back',
+            [
+                'label'   => $this->__('Back'),
+                'onclick' => 'setLocation(\'' . $this->getUrl('*/ebay_listing/index') . '\');',
+                'class'   => 'back'
+            ]
+        );
         // ---------------------------------------
 
         // ---------------------------------------
@@ -85,43 +92,56 @@ class View extends AbstractContainer
                     $this->listing->getId()
             ]
         );
-        $this->addButton('view_log', [
-            'label'   => $this->__('Logs & Events'),
-            'onclick' => 'window.open(\'' . $url . '\',\'_blank\')',
-        ]);
+        $this->addButton(
+            'view_log',
+            [
+                'label'   => $this->__('Logs & Events'),
+                'onclick' => 'window.open(\'' . $url . '\',\'_blank\')',
+            ]
+        );
         // ---------------------------------------
 
         // ---------------------------------------
         if ($this->listing->getAccount()->getChildObject()->isPickupStoreEnabled() &&
             $this->listing->getMarketplace()->getChildObject()->isInStorePickupEnabled()) {
             $pickupStoreUrl = $this->getUrl('*/ebay_listing_pickupStore/index', ['id' => $this->listing->getId()]);
-            $this->addButton('pickup_store_management', [
-                'label' => $this->__('In-Store Pickup'),
-                'onclick' => 'window.open(\'' . $pickupStoreUrl . '\',\'_blank\')',
-                'class' => 'success primary'
-            ]);
+            $this->addButton(
+                'pickup_store_management',
+                [
+                    'label'   => $this->__('In-Store Pickup'),
+                    'onclick' => 'window.open(\'' . $pickupStoreUrl . '\',\'_blank\')',
+                    'class'   => 'success primary'
+                ]
+            );
         }
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('edit_templates', [
-            'label'   => $this->__('Edit Settings'),
-            'onclick' => '',
-            'class'   => 'drop_down edit_default_settings_drop_down primary',
-            'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
-            'options' => $this->getSettingsButtonDropDownItems()
-        ]);
+        $this->addButton(
+            'edit_templates',
+            [
+                'label'      => $this->__('Edit Settings'),
+                'onclick'    => '',
+                'class'      => 'drop_down edit_default_settings_drop_down primary',
+                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
+                'options'    => $this->getSettingsButtonDropDownItems()
+            ]
+        );
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('add_products', [
-            'id'        => 'add_products',
-            'label'     => $this->__('Add Products'),
-            'class'     => 'add',
-            'button_class' => '',
-            'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
-            'options' => $this->getAddProductsDropDownItems(),
-        ]);
+        $this->addButton(
+            'add_products',
+            [
+                'id'           => 'add_products',
+                'label'        => $this->__('Add Products'),
+                'class'        => 'add',
+                'button_class' => '',
+                'class_name'   => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
+                'options'      => $this->getAddProductsDropDownItems(),
+            ]
+        );
+
         // ---------------------------------------
 
         return parent::_prepareLayout();
@@ -146,57 +166,61 @@ class View extends AbstractContainer
             return parent::getGridHtml();
         }
 
-        $html = '';
-
-        // ---------------------------------------
-        $viewHeaderBlock = $this->createBlock('Listing_View_Header', '', [
-            'data' => ['listing' => $this->listing]
-        ]);
+        $viewHeaderBlock = $this->createBlock(
+            'Listing_View_Header',
+            '',
+            [
+                'data' => ['listing' => $this->listing]
+            ]
+        );
         $viewHeaderBlock->setListingViewMode(true);
-        // ---------------------------------------
 
         /** @var $helper \Ess\M2ePro\Helper\Data */
         $helper = $this->getHelper('Data');
 
-        // ---------------------------------------
-
-        $this->jsUrl->addUrls(array_merge(
-            [],
-            $helper->getControllerActions(
-                'Ebay\Listing',
-                ['_current' => true]
-            ),
-            $helper->getControllerActions(
-                'Ebay_Listing_AutoAction',
-                ['listing_id' => $this->getRequest()->getParam('id')]
-            ),
-            ['variationProductManage' => $this->getUrl('*/ebay_listing_variation_product_manage/index')]
-        ));
-        // ---------------------------------------
+        $this->jsUrl->addUrls(
+            array_merge(
+                [],
+                $helper->getControllerActions(
+                    'Ebay\Listing',
+                    ['_current' => true]
+                ),
+                $helper->getControllerActions(
+                    'Ebay_Listing_AutoAction',
+                    ['listing_id' => $this->getRequest()->getParam('id')]
+                ),
+                ['variationProductManage' => $this->getUrl('*/ebay_listing_variation_product_manage/index')]
+            )
+        );
 
         $path = 'ebay_listing/transferring/index';
-        $this->jsUrl->add($this->getUrl('*/' . $path, [
-            'listing_id' => $this->listing->getId()
-        ]), $path);
+        $this->jsUrl->add(
+            $this->getUrl(
+                '*/' . $path,
+                [
+                    'listing_id' => $this->listing->getId()
+                ]
+            ),
+            $path
+        );
 
         $path = 'ebay_listing_transferring/getListings';
         $this->jsUrl->add($this->getUrl('*/' . $path), $path);
 
-        // ---------------------------------------
-
-        $this->jsTranslator->addTranslations([
-            'Remove Category' => $this->__('Remove Category'),
-            'Add New Rule' => $this->__('Add New Rule'),
-            'Add/Edit Categories Rule' => $this->__('Add/Edit Categories Rule'),
-            'Auto Add/Remove Rules' => $this->__('Auto Add/Remove Rules'),
-            'Based on Magento Categories' => $this->__('Based on Magento Categories'),
-            'You must select at least 1 Category.' => $this->__('You must select at least 1 Category.'),
-            'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.'),
-            'Compatibility Attribute' => $this->__('Compatibility Attribute'),
-            'Sell on Another Marketplace' => $this->__('Sell on Another Marketplace'),
-            'Create new' => $this->__('Create new'),
-        ]);
-        // ---------------------------------------
+        $this->jsTranslator->addTranslations(
+            [
+                'Remove Category'                          => $this->__('Remove Category'),
+                'Add New Rule'                             => $this->__('Add New Rule'),
+                'Add/Edit Categories Rule'                 => $this->__('Add/Edit Categories Rule'),
+                'Auto Add/Remove Rules'                    => $this->__('Auto Add/Remove Rules'),
+                'Based on Magento Categories'              => $this->__('Based on Magento Categories'),
+                'You must select at least 1 Category.'     => $this->__('You must select at least 1 Category.'),
+                'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.'),
+                'Compatibility Attribute'                  => $this->__('Compatibility Attribute'),
+                'Sell on Another Marketplace'              => $this->__('Sell on Another Marketplace'),
+                'Create new'                               => $this->__('Create new'),
+            ]
+        );
 
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
@@ -212,7 +236,6 @@ class View extends AbstractContainer
 JS
             );
         }
-        // ---------------------------------------
 
         return $viewHeaderBlock->toHtml() .
             parent::getGridHtml();
@@ -224,50 +247,28 @@ JS
     {
         $items = [];
 
-        // ---------------------------------------
-        $url = $this->getUrl('*/ebay_template/editListing', [
-            'id' => $this->listing->getId(),
-            'tab' => 'selling'
-        ]);
-        $items[] = [
-            'label' => $this->__('Selling'),
-            'onclick' => 'window.open(\'' . $url . '\',\'_blank\');'
-        ];
-        // ---------------------------------------
+        $backUrl = $this->getHelper('Data')->makeBackUrlParam(
+            '*/ebay_listing/view',
+            ['id' => $this->listing->getId()]
+        );
 
-        // ---------------------------------------
-        $url = $this->getUrl('*/ebay_template/editListing', [
-            'id' => $this->listing->getId(),
-            'tab' => 'synchronization'
-        ]);
-        $items[] = [
-            'label' => $this->__('Synchronization'),
-            'onclick' => 'window.open(\'' . $url . '\',\'_blank\');'
-        ];
-        // ---------------------------------------
-
-        // ---------------------------------------
         $url = $this->getUrl(
-            '*/ebay_template/editListing',
+            '*/ebay_listing/edit',
             [
-                'id' => $this->listing->getId(),
-                'tab' => 'general'
+                'id'   => $this->listing->getId(),
+                'back' => $backUrl
             ]
         );
         $items[] = [
-            'url' => $url,
-            'label' => $this->__('Payment / Shipping'),
+            'label'   => $this->__('Configuration'),
             'onclick' => 'window.open(\'' . $url . '\',\'_blank\');',
-            'target' => '_blank'
+            'default' => true
         ];
-        // ---------------------------------------
 
-        // ---------------------------------------
         $items[] = [
             'onclick' => 'ListingAutoActionObj.loadAutoActionHtml();',
-            'label' => $this->__('Auto Add/Remove Rules')
+            'label'   => $this->__('Auto Add/Remove Rules')
         ];
-        // ---------------------------------------
 
         return $items;
     }
@@ -278,32 +279,34 @@ JS
     {
         $items = [];
 
-        // ---------------------------------------
-        $url = $this->getUrl('*/ebay_listing_product_add', [
-            'source' => \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode::MODE_PRODUCT,
-            'clear' => true,
-            'id' => $this->listing->getId()
-        ]);
+        $url = $this->getUrl(
+            '*/ebay_listing_product_add',
+            [
+                'source' => \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode::MODE_PRODUCT,
+                'clear'  => true,
+                'id'     => $this->listing->getId()
+            ]
+        );
         $items[] = [
-            'id' => 'add_products_mode_product',
-            'label' => $this->__('From Products List'),
+            'id'      => 'add_products_mode_product',
+            'label'   => $this->__('From Products List'),
             'onclick' => "setLocation('" . $url . "')",
             'default' => true
         ];
-        // ---------------------------------------
 
-        // ---------------------------------------
-        $url = $this->getUrl('*/ebay_listing_product_add', [
-            'source' => \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode::MODE_CATEGORY,
-            'clear' => true,
-            'id' => $this->listing->getId()
-        ]);
+        $url = $this->getUrl(
+            '*/ebay_listing_product_add',
+            [
+                'source' => \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode::MODE_CATEGORY,
+                'clear'  => true,
+                'id'     => $this->listing->getId()
+            ]
+        );
         $items[] = [
-            'id' => 'add_products_mode_category',
-            'label' => $this->__('From Categories'),
+            'id'      => 'add_products_mode_category',
+            'label'   => $this->__('From Categories'),
             'onclick' => "setLocation('" . $url . "')"
         ];
-        // ---------------------------------------
 
         return $items;
     }

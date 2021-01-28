@@ -42,7 +42,7 @@ abstract class TypeSwitcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
                         'value' => self::LISTING_TYPE_M2E_PRO
                     ],
                     [
-                        'label' => $this->__('3rd Party'),
+                        'label' => $this->__('Unmanaged'),
                         'value' => self::LISTING_TYPE_LISTING_OTHER
                     ],
                 ]

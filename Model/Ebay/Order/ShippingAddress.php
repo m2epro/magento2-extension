@@ -17,20 +17,21 @@ class ShippingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
 
     /**
      * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getRawData()
     {
         return [
             'buyer_name'     => $this->order->getChildObject()->getBuyerName(),
-            'recipient_name' => $this->order->getChildObject()->getBuyerName(),
+            'recipient_name' => $this->getData('recipient_name'),
             'email'          => $this->getBuyerEmail(),
             'country_id'     => $this->getData('country_code'),
             'region'         => $this->getData('state'),
-            'city'           => $this->getData('city'),
+            'city'           => $this->getData('city') ? $this->getData('city') : $this->getCountryName(),
             'postcode'       => $this->getPostalCode(),
             'telephone'      => $this->getPhone(),
             'company'        => $this->getData('company'),
-            'street'         => array_filter($this->getData('street'))
+            'street'         => $this->getStreet()
         ];
     }
 
@@ -66,6 +67,24 @@ class ShippingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
         }
 
         return $phone;
+    }
+
+    protected function getStreet()
+    {
+        $street = $this->getData('street');
+
+        if ($this->order->getChildObject()->getEbayAccount()->isSkipEvtinModeOn()) {
+            $street = array_map(
+                function ($streetLine) {
+                    $ebayPos = strpos($streetLine, 'ebay');
+
+                    return $ebayPos === false ? $streetLine : trim(substr($streetLine, 0, $ebayPos));
+                },
+                $street
+            );
+        }
+
+        return array_filter($street);
     }
 
     //########################################

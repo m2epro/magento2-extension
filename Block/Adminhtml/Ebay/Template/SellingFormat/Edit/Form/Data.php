@@ -380,7 +380,6 @@ class Data extends AbstractForm
                 'label' => $this->__('Quantity'),
                 'values' => [
                     \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT => $this->__('Product Quantity'),
-                    \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_SINGLE => $this->__('Single Item'),
                     \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_NUMBER => $this->__('Custom Value'),
                     [
                         'label' => $this->__('Magento Attributes'),
@@ -754,15 +753,16 @@ class Data extends AbstractForm
                 ],
                 'value' => $formData['price_increase_vat_percent'],
                 'tooltip' => $this->__(
-                    'Choose whether you want to add VAT to the Price when a Product is Listed on eBay,
-                     using the VAT Rate or eBay Tax Table in the Taxation Section above.<br/><br/>
-                     <b>Example:</b> For a Product with Magento Price = £10, VAT Rate = 19%,
-                     Price change percentage increase = 2%, the final eBay Price will be £12.14.<br/>
-                     Magento Price: £10<br/>
-                     VAT 19%: £10 * 19% = £1.90<br/>
-                     Magento Price + VAT = £10 + £1.90 = £11.90<br/>
-                     add percentage increase 2% = £11.90 * 2% = £0.24<br/><br/>
-                     <b>Final Price on eBay</b>: £11.90 + £0.24 = £12.14'
+                    <<<HTML
+Choose whether you want to add VAT to the Price when a Product is listed on eBay,
+using the VAT Rate field or eBay Tax Table in the Taxation section above.
+<br/>
+<br/>
+The final product price on eBay will be calculated according to the following formula:
+<br/>
+<br/>
+(Product Price + Price Change) + VAT Rate
+HTML
                 ),
                 'css_class' => 'no-margin-top'
             ]

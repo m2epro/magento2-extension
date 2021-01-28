@@ -19,7 +19,7 @@ class Reset extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
     {
         $this->activeRecordFactory->getObject('Ebay_Listing_Other')->getResource()->resetEntities();
 
-        $this->messageManager->addSuccess($this->__('eBay 3rd Party Listings were reset.'));
+        $this->messageManager->addSuccess($this->__('eBay Unmanaged Listings were reset.'));
 
         $this->_redirect($this->_redirect->getRefererUrl());
     }

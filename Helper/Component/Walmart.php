@@ -176,10 +176,17 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
     public function getCarriers()
     {
         return [
-            'usps'  => 'USPS',
-            'ups'   => 'UPS',
-            'fedex' => 'FedEx',
-            'dhl'   => 'DHL',
+            'ups'      => 'UPS',
+            'usps'     => 'USPS',
+            'fedex'    => 'FedEx',
+            'airborne' => 'Airborne',
+            'ontrac'   => 'OnTrac',
+            'dhl'      => 'DHL',
+            'ng'       => 'NG',
+            'ls'       => 'LS',
+            'uds'      => 'UDS',
+            'upsmi'    => 'UPSMI',
+            'fdx'      => 'FDX'
         ];
     }
 

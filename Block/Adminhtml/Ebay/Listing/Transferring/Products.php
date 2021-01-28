@@ -17,7 +17,7 @@ class Products extends AbstractBlock
 {
     //########################################
 
-    /** @var \Ess\M2ePro\Model\Amazon\Listing\Transferring $transferring */
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\Transferring $transferring */
     protected $transferring;
 
     //########################################

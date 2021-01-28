@@ -35,7 +35,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                     will be stopped on Channel.</p><br>
                     <p>More detailed information you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/kgYtAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/kAYtAQ')
                 )
             ]
         );

@@ -178,12 +178,12 @@ HTML
             'marketplaces_register_url_ca',
             'link',
             [
-                'label'        => '',
-                'href'         => $this->getHelper('Component\Walmart')->getRegisterUrl($marketplaceCA),
-                'target'       => '_blank',
-                'value'        => $this->__('Get Access Data'),
-                'class'        => "external-link",
-                'css_class'    => "marketplace-required-field marketplace-required-field-id{$marketplaceCA}",
+                'label'     => '',
+                'href'      => $this->getHelper('Component\Walmart')->getRegisterUrl($marketplaceCA),
+                'target'    => '_blank',
+                'value'     => $this->__('Get Access Data'),
+                'class'     => "external-link",
+                'css_class' => "marketplace-required-field marketplace-required-field-id{$marketplaceCA}",
             ]
         );
         $fieldset->addField(
@@ -196,6 +196,32 @@ HTML
                 'value'     => $this->__('Get Access Data'),
                 'class'     => "external-link",
                 'css_class' => "marketplace-required-field marketplace-required-field-id{$marketplaceUS}",
+            ]
+        );
+
+        $production = $this->__('Production (Live)');
+        $sandbox = $this->__('Sandbox (Test)');
+
+        $fieldset->addField(
+            'mode',
+            'select',
+            [
+                'label'     => $this->__('Environment'),
+                'required'  => true,
+                'name'      => 'mode',
+                'value'     => $formData['mode'],
+                'values'    => [
+                    \Ess\M2ePro\Model\Walmart\Account::MODE_PRODUCTION => $production,
+                    \Ess\M2ePro\Model\Walmart\Account::MODE_SANDBOX    => $sandbox,
+                ],
+                'disabled'  => $isEdit,
+                'css_class' => "marketplace-required-field marketplace-required-field-id{$marketplaceUS}",
+                'tooltip'   => $this->__(
+                    <<<HTML
+<b>Production (Live)</b> - to list real products on a Walmart marketplace so buyers could see your products.<br/>
+<b>Sandbox (Test)</b> - to test actions but buyers on Walmart won’t be able to see your products.
+HTML
+                )
             ]
         );
 
@@ -269,16 +295,18 @@ HTML
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(Walmart::class));
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Account', ['_current' => true]));
-        $this->jsUrl->addUrls([
-            'formSubmit' => $this->getUrl(
-                '*/walmart_account/save',
-                ['_current' => true, 'id' => $this->getRequest()->getParam('id')]
-            ),
-            'deleteAction' => $this->getUrl(
-                '*/walmart_account/delete',
-                ['id' => $this->getRequest()->getParam('id')]
-            )
-        ]);
+        $this->jsUrl->addUrls(
+            [
+                'formSubmit'   => $this->getUrl(
+                    '*/walmart_account/save',
+                    ['_current' => true, 'id' => $this->getRequest()->getParam('id')]
+                ),
+                'deleteAction' => $this->getUrl(
+                    '*/walmart_account/delete',
+                    ['id' => $this->getRequest()->getParam('id')]
+                )
+            ]
+        );
 
         $this->jsTranslator->add(
             'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server. '
@@ -289,38 +317,50 @@ HTML
             )
         );
 
-        $this->jsTranslator->addTranslations([
-            'Coefficient is not valid.' => $this->__('Coefficient is not valid.'),
-            'The specified Title is already used for other Account. Account Title must be unique.' => $this->__(
-                'The specified Title is already used for other Account. Account Title must be unique.'
-            ),
-            'M2E Pro was not able to get access to the Walmart Account' => $this->__(
-                'M2E Pro could not get access to your Walmart account. <br>
+        $this->jsTranslator->addTranslations(
+            [
+                'Coefficient is not valid.'                                                            => $this->__(
+                    'Coefficient is not valid.'
+                ),
+                'The specified Title is already used for other Account. Account Title must be unique.' => $this->__(
+                    'The specified Title is already used for other Account. Account Title must be unique.'
+                ),
+                'M2E Pro was not able to get access to the Walmart Account'                            => $this->__(
+                    'M2E Pro could not get access to your Walmart account. <br>
                  For Walmart CA, please check if you entered valid Consumer ID and Private Key. <br>
                  For Walmart US, please ensure to provide M2E Pro with full access permissions
                  to all API sections and enter valid Consumer ID, Client ID, and Client Secret.'
-            ),
-            'M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%' => $this->__(
-                'M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%'
-            ),
-        ]);
-
-        $this->js->add(<<<JS
-    require([
-        'M2ePro/Walmart/Account'
-    ], function(){
-
-        window.WalmartAccountObj = new WalmartAccount();
-        WalmartAccountObj.initValidation();
-        WalmartAccountObj.initTokenValidation();
-        WalmartAccountObj.initObservers();
-    });
-JS
+                ),
+                'M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%'   => $this->__(
+                    'M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%'
+                ),
+            ]
         );
 
         $this->setForm($form);
 
         return parent::_prepareForm();
+    }
+
+    //########################################
+
+    protected function _prepareLayout()
+    {
+        $this->js->add(
+            <<<JS
+    require([
+        'M2ePro/Walmart/Account',
+    ], function() {
+        WalmartAccountObj.initValidation();
+        WalmartAccountObj.initTokenValidation();
+        WalmartAccountObj.initObservers();
+    });
+JS
+            ,
+            2
+        );
+
+        return parent::_prepareLayout();
     }
 
     //########################################

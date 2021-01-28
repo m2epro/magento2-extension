@@ -2,7 +2,7 @@ define([
     'jquery',
     'Magento_Ui/js/modal/modal',
     'M2ePro/Common',
-    'M2ePro/Plugin/ProgressBar',
+    'M2ePro/Plugin/ProgressBar'
 ], function(jQuery) {
 
     window.AmazonListingTransferring = Class.create(Common, {
@@ -12,54 +12,45 @@ define([
 
         // ---------------------------------------
 
-        initialize: function(listingId)
-        {
+        initialize: function(listingId) {
             this.listingId = listingId;
         },
 
         //----------------------------------------
 
-        getSourceAccount: function()
-        {
+        getSourceAccount: function() {
             return $('from_account_id').value;
         },
 
-        getTargetAccount: function()
-        {
+        getTargetAccount: function() {
             return $('to_account_id').value;
         },
 
-        getSourceMarketplace: function()
-        {
+        getSourceMarketplace: function() {
             return $('from_marketplace_id').value;
         },
 
-        getSourceListing: function()
-        {
+        getSourceListing: function() {
             return $('from_listing_id').value;
         },
 
         //----------------------------------------
 
-        getTargetMarketplace: function()
-        {
+        getTargetMarketplace: function() {
             return $('to_marketplace_id').value;
         },
 
-        getTargetStore: function()
-        {
+        getTargetStore: function() {
             return $('to_store_id').value;
         },
 
-        getTargetListing: function()
-        {
+        getTargetListing: function() {
             return $('to_listing_id').value;
         },
 
         //----------------------------------------
 
-        popupShow: function(selectedProductsIds)
-        {
+        popupShow: function(selectedProductsIds) {
             new Ajax.Request(M2ePro.url.get('amazon_listing/transferring/index', {step: 1}), {
                 method: 'post',
                 asynchronous: true,
@@ -68,6 +59,15 @@ define([
                     products_ids: selectedProductsIds.join(',')
                 },
                 onSuccess: function(transport) {
+
+                    if (transport.responseText.isJSON()) {
+                        var response = transport.responseText.evalJSON();
+                        if (response.error) {
+                            this.alert(response.message);
+
+                            return;
+                        }
+                    }
 
                     modalDialogMessage = new Element('div', {
                         id: 'modal_dialog_message'
@@ -80,14 +80,14 @@ define([
                             {
                                 text: 'Cancel',
                                 class: 'action-secondary action-dismiss',
-                                click: function (event) {
+                                click: function(event) {
                                     this.closeModal(event);
                                 }
                             },
                             {
                                 text: 'Continue',
                                 class: 'action-primary action-accept',
-                                click: function () {
+                                click: function() {
                                     AmazonListingTransferringObj.popupContinue();
                                 }
                             }
@@ -104,8 +104,7 @@ define([
             });
         },
 
-        popupContinue: function()
-        {
+        popupContinue: function() {
             if (!Validation.validate($('to_account_id')) ||
                 !Validation.validate($('to_marketplace_id')) ||
                 !Validation.validate($('to_store_id')) ||
@@ -118,11 +117,11 @@ define([
                 M2ePro.url.get(
                     'amazon_listing/transferring/index',
                     {
-                        step           : 2,
-                        account_id     : this.getTargetAccount(),
-                        marketplace_id : this.getTargetMarketplace(),
-                        store_id       : this.getTargetStore(),
-                        to_listing_id  : this.getTargetListing()
+                        step: 2,
+                        account_id: this.getTargetAccount(),
+                        marketplace_id: this.getTargetMarketplace(),
+                        store_id: this.getTargetStore(),
+                        to_listing_id: this.getTargetListing()
                     }
                 )
             );
@@ -130,20 +129,17 @@ define([
 
         // ---------------------------------------
 
-        accountIdChange: function()
-        {
+        accountIdChange: function() {
             this.refreshMarketplaces();
         },
 
-        storeIdChange: function()
-        {
+        storeIdChange: function() {
             this.refreshListings();
         },
 
         //----------------------------------------
 
-        refreshMarketplaces: function()
-        {
+        refreshMarketplaces: function() {
             new Ajax.Request(M2ePro.url.get('amazon_listing_transferring/getMarketplace'), {
                 method: 'post',
                 asynchronous: true,
@@ -161,8 +157,7 @@ define([
             });
         },
 
-        refreshListings: function()
-        {
+        refreshListings: function() {
             if (!this.getTargetAccount() || !this.getTargetMarketplace() || !this.getTargetStore()) {
                 return;
             }
@@ -171,10 +166,10 @@ define([
                 method: 'post',
                 asynchronous: true,
                 parameters: {
-                    account_id     : this.getTargetAccount(),
-                    marketplace_id : this.getTargetMarketplace(),
-                    store_id       : this.getTargetStore(),
-                    listing_id     : this.getSourceListing()
+                    account_id: this.getTargetAccount(),
+                    marketplace_id: this.getTargetMarketplace(),
+                    store_id: this.getTargetStore(),
+                    listing_id: this.getSourceListing()
                 },
                 onSuccess: function(transport) {
 
@@ -196,8 +191,7 @@ define([
 
         //----------------------------------------
 
-        addProducts: function(progressBatId, products, callback)
-        {
+        addProducts: function(progressBatId, products, callback) {
             var parts = this.makeProductsParts(products, 100);
 
             this.progressBarObj = new ProgressBar(progressBatId);
@@ -210,8 +204,7 @@ define([
             this.sendPartsProducts(parts, parts.length, callback);
         },
 
-        makeProductsParts: function(products, partSize)
-        {
+        makeProductsParts: function(products, partSize) {
             var productsArray = products;
             var parts = new Array();
 
@@ -222,22 +215,21 @@ define([
 
             var result = new Array();
             for (var i = 0; i < productsArray.length; i++) {
-                if (result.length == 0 || result[result.length-1].length == partSize) {
+                if (result.length == 0 || result[result.length - 1].length == partSize) {
                     result[result.length] = new Array();
                 }
-                result[result.length-1][result[result.length-1].length] = productsArray[i];
+                result[result.length - 1][result[result.length - 1].length] = productsArray[i];
             }
 
             return result;
         },
 
-        sendPartsProducts: function(parts, partsCount, callback)
-        {
-            if (parts.length == 0) {
+        sendPartsProducts: function(parts, partsCount, callback) {
+            if (partsCount == 0) {
                 return;
             }
 
-            var isLastPart  = parts.length === 1 ? 1 : 0;
+            var isLastPart = partsCount === 1 ? 1 : 0;
             var part = parts.splice(0, 1)[0];
 
             new Ajax.Request(M2ePro.url.get('amazon_listing_transferring/addProducts'), {
@@ -246,14 +238,14 @@ define([
                     Ajax.Responders.unregister(varienLoaderHandler.handler);
                 },
                 parameters: {
-                    listing_id   : this.listingId,
-                    products     : implode(',', part),
-                    is_last_part : isLastPart
+                    listing_id: this.listingId,
+                    products: implode(',', part),
+                    is_last_part: isLastPart
                 },
                 onSuccess: function() {
                     Ajax.Responders.register(varienLoaderHandler.handler);
 
-                    var percents = ((100 - this.progressBarObj.getPercents()) / parts.length) + this.progressBarObj.getPercents();
+                    var percents = ((100 - this.progressBarObj.getPercents()) / partsCount) + this.progressBarObj.getPercents();
                     if (percents >= 100) {
                         this.progressBarObj.setPercents(100, 0);
                         this.progressBarObj.setStatus('Adding has been completed');
@@ -264,8 +256,8 @@ define([
                     }
 
                     setTimeout(function() {
-                        this.sendPartsProducts(parts, partsCount);
-                    }, 500);
+                        this.sendPartsProducts(parts, parts.length, callback);
+                    }.bind(this), 500);
                 }.bind(this)
             });
         }

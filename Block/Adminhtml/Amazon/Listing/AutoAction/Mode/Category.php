@@ -64,7 +64,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstr
 
                 <p>More detailed information you can find
                 <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/lgYtAQ')
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/kAYtAQ')
             )
         ]);
 

@@ -32,8 +32,6 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
             return $this->_redirect('*/walmart_listing/index');
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('edit_listing', $listing);
-
         $this->addContent($this->createBlock('Walmart_Listing_Edit'));
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(

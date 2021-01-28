@@ -24,7 +24,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
             return $this->_redirect('*/*/index');
         }
 
-        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('3rd Party Listings'));
+        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Unmanaged Listings'));
 
         $this->addContent($this->createBlock(
             'Ebay_Listing_Other_View'

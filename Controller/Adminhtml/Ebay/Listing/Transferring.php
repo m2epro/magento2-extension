@@ -122,12 +122,8 @@ class Transferring extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
         foreach ($templates as $nick) {
             $this->templateManager->setTemplate($nick);
 
-            $sessionData["template_id_{$nick}"] = $this->listing->getChildObject()->getData(
+            $sessionData["template_{$nick}_id"] = $this->listing->getChildObject()->getData(
                 $this->templateManager->getTemplateIdColumnName()
-            );
-
-            $sessionData["template_mode_{$nick}"] = $this->listing->getChildObject()->getData(
-                $this->templateManager->getModeColumnName()
             );
         }
 

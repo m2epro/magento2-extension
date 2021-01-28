@@ -1,22 +1,103 @@
 define([
     'M2ePro/Common'
-], function () {
+], function() {
 
     window.AmazonListingSettings = Class.create(Common, {
 
         // ---------------------------------------
 
-        storeId: null,
-        marketplaceId: null,
+        initialize: function() {
+        },
 
-        // ---------------------------------------
+        initObservers: function() {
+            $('template_selling_format_id').observe('change', function() {
+                if ($('template_selling_format_id').value) {
+                    $('edit_selling_format_template_link').show();
+                } else {
+                    $('edit_selling_format_template_link').hide();
+                }
+            });
+            $('template_selling_format_id').simulate('change');
 
-        initialize: function () {
+            $('template_synchronization_id').observe('change', function() {
+                if ($('template_synchronization_id').value) {
+                    $('edit_synchronization_template_link').show();
+                } else {
+                    $('edit_synchronization_template_link').hide();
+                }
+            });
+            $('template_synchronization_id').simulate('change');
+
+            $('template_shipping_id').observe('change', function() {
+                if ($('template_shipping_id').value) {
+                    $('edit_shipping_template_link').show();
+                } else {
+                    $('edit_shipping_template_link').hide();
+                }
+            });
+            $('template_shipping_id').simulate('change');
+
+            $('template_selling_format_id').observe('change', function() {
+                AmazonListingSettingsObj.checkSellingFormatMessages();
+                AmazonListingSettingsObj.hideEmptyOption(this);
+            });
+            if ($('template_selling_format_id').value) {
+                $('template_selling_format_id').simulate('change');
+            }
+
+            $('template_synchronization_id').observe('change', function() {
+                AmazonListingSettingsObj.hideEmptyOption(this);
+            });
+            if ($('template_synchronization_id').value) {
+                $('template_synchronization_id').simulate('change');
+            }
+
+            $('template_shipping_id').observe('change', function() {
+                AmazonListingSettingsObj.hideEmptyOption(this);
+            });
+            if ($('template_shipping_id').value) {
+                $('template_shipping_id').simulate('change');
+            }
+
+            $('sku_mode').observe('change', AmazonListingCreateSellingObj.sku_mode_change);
+
+            $('sku_modification_mode')
+                .observe('change', AmazonListingCreateSellingObj.sku_modification_mode_change)
+                .simulate('change');
+
+            $('condition_mode').observe('change', AmazonListingCreateSellingObj.condition_mode_change)
+                .simulate('change');
+
+            $('condition_note_mode').observe('change', AmazonListingCreateSellingObj.condition_note_mode_change);
+
+            $('image_main_mode')
+                .observe('change', AmazonListingCreateSellingObj.image_main_mode_change)
+                .simulate('change');
+
+            $('gallery_images_mode')
+                .observe('change', AmazonListingCreateSellingObj.gallery_images_mode_change)
+                .simulate('change');
+
+            $('gift_wrap_mode')
+                .observe('change', AmazonListingCreateSellingObj.gift_wrap_mode_change)
+                .simulate('change');
+
+            $('gift_message_mode')
+                .observe('change', AmazonListingCreateSellingObj.gift_message_mode_change)
+                .simulate('change');
+
+            $('handling_time_mode')
+                .observe('change', AmazonListingCreateSellingObj.handling_time_mode_change)
+                .simulate('change');
+
+            $('restock_date_mode')
+                .observe('change', AmazonListingCreateSellingObj.restock_date_mode_change)
+                .simulate('change');
         },
 
         // ---------------------------------------
 
-        saveClick: function (url, skipValidation) {
+        saveClick: function(url, skipValidation) {
 
             if (typeof skipValidation == 'undefined' && !this.isValidForm()) {
                 return;
@@ -34,14 +115,10 @@ define([
                 url = M2ePro.url.formSubmit + 'back/' + base64_encode('list') + '/';
             }
 
-            Common.prototype.saveClick.call(this, url);
+            this.submitForm(url);
         },
 
-        saveAndEditClick: function (url, lastActiveTab, skipValidation) {
-            if (typeof skipValidation == 'undefined' && !this.isValidForm()) {
-                return;
-            }
-
+        saveAndEditClick: function(url, lastActiveTab) {
             if (typeof categories_selected_items != 'undefined' && !this.isValidForm()) {
                 array_unique(categories_selected_items);
 
@@ -58,54 +135,27 @@ define([
             this.submitForm(url);
         },
 
-        reloadSellingFormatTemplates: function () {
-            AmazonListingSettingsObj.reload(M2ePro.url.get('getSellingFormatTemplates'), 'template_selling_format_id');
-        },
-
-        reloadSynchronizationTemplates: function () {
-            AmazonListingSettingsObj.reload(M2ePro.url.get('getSynchronizationTemplates'), 'template_synchronization_id');
-        },
-
         // ---------------------------------------
 
-        selling_format_template_id_simulate_change: function () {
-            var intervalRestartLimit = 20;
-            var intervalRestartCount = 0;
+        checkSellingFormatMessages: function() {
+            var storeId = $('store_id').value;
+            var marketplaceId = $('marketplace_id').value;
 
-            var intervalId = setInterval(function simulateSellingFormatTemplateChange() {
-                intervalRestartCount++;
-
-                if (intervalRestartCount >= intervalRestartLimit || Ajax.activeRequestCount == 0) {
-                    $('template_selling_format_id').value && $('template_selling_format_id').simulate('change');
-
-                    clearInterval(intervalId);
-                }
-            }, 250);
-        },
-
-        selling_format_template_id_change: function () {
-            AmazonListingSettingsObj.checkMessages();
-            AmazonListingSettingsObj.hideEmptyOption(this);
-        },
-
-        // ---------------------------------------
-
-        checkMessages: function () {
-            if (AmazonListingSettingsObj.storeId === null || AmazonListingSettingsObj.marketplaceId === null) {
+            if (storeId.empty() || storeId < 0 || marketplaceId.empty() || marketplaceId < 0) {
                 return;
             }
 
             var id = $('template_selling_format_id').value,
                 nick = 'selling_format',
-                storeId = AmazonListingSettingsObj.storeId,
-                marketplaceId = AmazonListingSettingsObj.marketplaceId,
+                storeId = storeId,
+                marketplaceId = marketplaceId,
                 container = 'template_selling_format_messages',
-                callback = function () {
+                callback = function() {
                     var refresh = $(container).down('a.refresh-messages');
                     if (refresh) {
-                        refresh.observe('click', function () {
-                            this.checkMessages();
-                        }.bind(this))
+                        refresh.observe('click', function() {
+                            this.checkSellingFormatMessages();
+                        }.bind(this));
                     }
                 }.bind(this);
 
@@ -122,25 +172,23 @@ define([
 
         // ---------------------------------------
 
-        synchronization_template_id_change: function () {
-            AmazonListingSettingsObj.hideEmptyOption(this);
-        },
-
-        // ---------------------------------------
-
-        reload: function (url, id) {
+        reload: function(url, id, addEmptyOption = false) {
             new Ajax.Request(url, {
                 asynchronous: false,
-                onSuccess: function (transport) {
+                onSuccess: function(transport) {
 
                     var data = transport.responseText.evalJSON(true);
 
                     var options = '';
 
+                    if (addEmptyOption) {
+                        options += '<option value=""></option>\n';
+                    }
+
                     var firstItemValue = '';
                     var currentValue = $(id).value;
 
-                    data.each(function (paris) {
+                    data.each(function(paris) {
                         var key = (typeof paris.key != 'undefined') ? paris.key : paris.id;
                         var val = (typeof paris.value != 'undefined') ? paris.value : paris.title;
                         options += '<option value="' + key + '">' + val + '</option>\n';
@@ -169,11 +217,25 @@ define([
 
         // ---------------------------------------
 
-        addNewTemplate: function (url, callback) {
+        addNewTemplate: function(url, callback) {
             var win = window.open(url);
 
-            var intervalId = setInterval(function () {
+            var intervalId = setInterval(function() {
+                if (!win.closed) {
+                    return;
+                }
 
+                clearInterval(intervalId);
+
+                callback && callback();
+
+            }, 1000);
+        },
+
+        editTemplate: function(url, id, callback) {
+            var win = window.open(url + 'id/' + id);
+
+            var intervalId = setInterval(function() {
                 if (!win.closed) {
                     return;
                 }
@@ -187,10 +249,10 @@ define([
 
         // ---------------------------------------
 
-        newSellingFormatTemplateCallback: function () {
+        newSellingFormatTemplateCallback: function() {
             var noteEl = $('template_selling_format_note');
 
-            AmazonListingSettingsObj.reloadSellingFormatTemplates();
+            AmazonListingSettingsObj.reload(M2ePro.url.get('getSellingFormatTemplates'), 'template_selling_format_id');
             if ($('template_selling_format_id').children.length > 0) {
                 $('template_selling_format_id').show();
                 noteEl && $('template_selling_format_note').show();
@@ -202,12 +264,10 @@ define([
             }
         },
 
-        // ---------------------------------------
-
-        newSynchronizationTemplateCallback: function () {
+        newSynchronizationTemplateCallback: function() {
             var noteEl = $('template_synchronization_note');
 
-            AmazonListingSettingsObj.reloadSynchronizationTemplates();
+            AmazonListingSettingsObj.reload(M2ePro.url.get('getSynchronizationTemplates'), 'template_synchronization_id');
             if ($('template_synchronization_id').children.length > 0) {
                 $('template_synchronization_id').show();
                 noteEl && $('template_synchronization_note').show();
@@ -216,6 +276,21 @@ define([
                 $('template_synchronization_id').hide();
                 noteEl && $('template_synchronization_note').hide();
                 $('template_synchronization_label').show();
+            }
+        },
+
+        newShippingTemplateCallback: function() {
+            var noteEl = $('template_shipping_note');
+
+            AmazonListingSettingsObj.reload(M2ePro.url.get('getShippingTemplates'), 'template_shipping_id', true);
+            if ($('template_shipping_id').children.length > 0) {
+                $('template_shipping_id').show();
+                noteEl && $('template_shipping_note').show();
+                $('template_shipping_label').hide();
+            } else {
+                $('template_shipping_id').hide();
+                noteEl && $('template_shipping_note').hide();
+                $('template_shipping_label').show();
             }
         }
 

@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 
 /**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Account\getExcludedStatesPopupHtml
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Account\GetExcludedStatesPopupHtml
  */
 class GetExcludedStatesPopupHtml extends Account
 {

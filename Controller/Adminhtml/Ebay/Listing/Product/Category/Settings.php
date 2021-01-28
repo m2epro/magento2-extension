@@ -103,12 +103,12 @@ abstract class Settings extends Listing
                 $converter->setCategoryDataFromChooser($templateData, $categoryType);
                 $categoryTpl = $builder->build($template, $converter->getCategoryDataForTemplate($categoryType));
 
-                $this->assignTemplatesToProducts(
-                    $categoryType == eBayCategory::TYPE_EBAY_MAIN       ? $categoryTpl->getId() : null,
-                    $categoryType == eBayCategory::TYPE_EBAY_SECONDARY  ? $categoryTpl->getId() : null,
-                    $categoryType == eBayCategory::TYPE_STORE_MAIN      ? $categoryTpl->getId() : null,
-                    $categoryType == eBayCategory::TYPE_STORE_SECONDARY ? $categoryTpl->getId() : null,
-                    $listingProductsIds
+                $this->activeRecordFactory->getObject('Ebay_Listing_Product')->assignTemplatesToProducts(
+                    $listingProductsIds,
+                    $categoryType == eBayCategory::TYPE_EBAY_MAIN ? $categoryTpl->getId() : null,
+                    $categoryType == eBayCategory::TYPE_EBAY_SECONDARY ? $categoryTpl->getId() : null,
+                    $categoryType == eBayCategory::TYPE_STORE_MAIN ? $categoryTpl->getId() : null,
+                    $categoryType == eBayCategory::TYPE_STORE_SECONDARY ? $categoryTpl->getId() : null
                 );
             }
         }
@@ -492,7 +492,7 @@ abstract class Settings extends Listing
             }
         }
 
-        //-- Remove successfully moved 3rd party items
+        //-- Remove successfully moved Unmanaged items
         $additionalData = $ebayListing->getParentObject()->getSettings('additional_data');
         if (isset($additionalData['source']) && $additionalData['source'] == SourceModeBlock::MODE_OTHER) {
             $this->deleteListingOthers();
@@ -527,34 +527,6 @@ abstract class Settings extends Listing
     }
 
     //########################################
-
-    protected function assignTemplatesToProducts(
-        $categoryTemplateId,
-        $categorySecondaryTemplateId,
-        $storeCategoryTemplateId,
-        $storeCategorySecondaryTemplateId,
-        $productsIds
-    ) {
-        if (empty($productsIds)) {
-            return;
-        }
-
-        $bind = [
-            'template_category_id'                 => $categoryTemplateId,
-            'template_category_secondary_id'       => $categorySecondaryTemplateId,
-            'template_store_category_id'           => $storeCategoryTemplateId,
-            'template_store_category_secondary_id' => $storeCategorySecondaryTemplateId
-        ];
-        $bind = array_filter($bind);
-
-        $this->resourceConnection->getConnection()->update(
-            $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable(),
-            $bind,
-            ['listing_product_id IN (?)' => $productsIds]
-        );
-    }
-
-    // ---------------------------------------
 
     protected function deleteListingProducts($listingProductsIds)
     {

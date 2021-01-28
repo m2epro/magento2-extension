@@ -64,7 +64,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->appendHelpBlock([
             'content' => $this->__(
                 <<<HTML
-                You can Map the 3rd Party Items to the related Magento Products and Move them to the
+                You can Map the Unmanaged Items to the related Magento Products and Move them to the
                 selected M2E Pro Listing. Manage each Item individually or use the
                 Mass Actions to update the Items in bulk.
 HTML
@@ -121,7 +121,7 @@ HTML
 
         $someProductsWereNotMappedMessage = $this->__(
             'Some Items were not mapped. Please edit <i>Product Mapping Settings</i> under
-            <i>Configuration > Account > 3rd Party Listings</i> or try to map manually.'
+            <i>Configuration > Account > Unmanaged Listings</i> or try to map manually.'
         );
 
         $createListing = $this->__(

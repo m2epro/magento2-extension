@@ -54,11 +54,13 @@ HTML
 
     protected function _prepareForm()
     {
-        $form = $this->_formFactory->create([
-            'data' => [
-                'id' => 'edit_form',
+        $form = $this->_formFactory->create(
+            [
+                'data' => [
+                    'id' => 'edit_form',
+                ]
             ]
-        ]);
+        );
 
         $fieldset = $form->addFieldset(
             'account_details',
@@ -70,10 +72,12 @@ HTML
             ->addFieldToFilter('developer_key', ['notnull' => true])
             ->setOrder('sorder', 'ASC');
 
-        $marketplaces = [[
-            'value' => '',
-            'label' => ''
-        ]];
+        $marketplaces = [
+            [
+                'value' => '',
+                'label' => ''
+            ]
+        ];
         foreach ($marketplacesCollection->getItems() as $item) {
             $marketplace = array_merge($item->getData(), $item->getChildObject()->getData());
             $marketplaces[$marketplace['id']] = $marketplace['title'];
@@ -94,16 +98,35 @@ HTML
         $marketplaceUS = Walmart::MARKETPLACE_US;
         $marketplaceCA = Walmart::MARKETPLACE_CA;
 
+        $production = $this->__('Production (Live)');
+        $sandbox = $this->__('Sandbox (Test)');
+
+        $fieldset->addField(
+            'mode',
+            'select',
+            [
+                'label'     => $this->__('Environment'),
+                'required'  => true,
+                'name'      => 'mode',
+                'value'     => WalmartAccount::MODE_PRODUCTION,
+                'values'    => [
+                    WalmartAccount::MODE_PRODUCTION => $production,
+                    WalmartAccount::MODE_SANDBOX    => $sandbox,
+                ],
+                'css_class' => "marketplace-required-field marketplace-required-field-id{$marketplaceUS}"
+            ]
+        );
+
         $fieldset->addField(
             'marketplaces_register_url_ca',
             'link',
             [
-                'label'        => '',
-                'href'         => $this->getHelper('Component\Walmart')->getRegisterUrl($marketplaceCA),
-                'target'       => '_blank',
-                'value'        => $this->__('Get Access Data'),
-                'class'        => "external-link",
-                'css_class'    => "marketplace-required-field marketplace-required-field-id{$marketplaceCA}",
+                'label'     => '',
+                'href'      => $this->getHelper('Component\Walmart')->getRegisterUrl($marketplaceCA),
+                'target'    => '_blank',
+                'value'     => $this->__('Get Access Data'),
+                'class'     => "external-link",
+                'css_class' => "marketplace-required-field marketplace-required-field-id{$marketplaceCA}",
             ]
         );
         $fieldset->addField(
@@ -185,23 +208,22 @@ HTML
                 'wa' => 'M2ePro/Walmart/Account'
             ],
             <<<JS
-
-WalmartAccountObj = new WalmartAccount();
-WalmartAccountObj.initTokenValidation();
+    WalmartAccountObj = new WalmartAccount();
+    WalmartAccountObj.initTokenValidation();
 JS
         );
 
-        $this->js->addOnReadyJs(<<<JS
-
-        wait(
-            function() {
-                return typeof InstallationWalmartWizardObj != 'undefined';
-            }, 
-            function() {
-                $('marketplace_id').simulate('change');
-            },
-            50
-        );
+        $this->js->addOnReadyJs(
+            <<<JS
+    wait(
+        function() {
+            return typeof InstallationWalmartWizardObj != 'undefined';
+        },
+        function() {
+            $('marketplace_id').simulate('change');
+        },
+        50
+    );
 JS
         );
 
@@ -213,17 +235,19 @@ JS
 
     protected function _beforeToHtml()
     {
-        $this->jsTranslator->addTranslations([
-             'M2E Pro was not able to get access to the Walmart Account' => $this->__(
-                 'M2E Pro could not get access to your Walmart account. <br>
+        $this->jsTranslator->addTranslations(
+            [
+                'M2E Pro was not able to get access to the Walmart Account'                          => $this->__(
+                    'M2E Pro could not get access to your Walmart account. <br>
                  For Walmart CA, please check if you entered valid Consumer ID and Private Key. <br>
                  For Walmart US, please ensure to provide M2E Pro with full access permissions
                  to all API sections and enter valid Consumer ID, Client ID, and Client Secret.'
-             ),
-             'M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%' => $this->__(
-                 'M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%'
-             ),
-        ]);
+                ),
+                'M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%' => $this->__(
+                    'M2E Pro was not able to get access to the Walmart Account. Reason: %error_message%'
+                ),
+            ]
+        );
 
         return parent::_beforeToHtml();
     }

@@ -1,4 +1,65 @@
-* 1.9.5 (r4469) (24/12/2020) 
+* 1.10.0 (r4553) (28/01/2021) 
+
+Common: [Improved] Selling Policy creation
+Common: [Improved] Refactor create/edit Listing
+Common: [Improved] Add 'is empty', 'is not empty' options to Advanced Conditions of Synchronization Policy
+Common: [Improved] Error message "Server IP is not defined" in some cases
+Common: [Improved] MSI mode - default values in Synchronization Policy
+Common: [Improved] Automatic Magento order creation for City-states
+Common: [Improved] Summarize common PHPStorm settings for code styling
+Common: [Improved] Empty array is returned if unserialization error occurs
+Common: [Improved] Remove ‘Single Item’ option for QTY in Selling Policy
+Common: [Improved] Add support for migration from 6.10.* versions
+Common: [Fixed] Sell on Another Marketplace feature does not work if more than 100 items are selected
+Common: [Fixed] "Item was deleted from Magento and hidden on the Channel. You can find and manage the item in Unmanaged Listings." log is displayed in the Listing Logs after ‘Not Listed’ product was deleted from Magento
+Common: [Fixed] Exception ‘Magento Product does not exist’ is displayed on the Orders page after deleting Magento product
+Common: [Fixed] Fatal error occurs when performing actions with the product deleted from Magento
+Common: [Fixed] DomainException ‘Missed phrase in Block/Adminhtml/Magento/Form/Element/Boolean.php:22’ when running bin/magento i18n:collect-phrases
+eBay: [Improved] Import eBay categories for Unmanaged products
+eBay: [Improved] Billing address usage
+eBay: [Improved] Log for ‘Move product to another listing’
+eBay: [Improved] Ability to skip eVTN in eBay orders
+eBay: [Improved] Add In-Store pickup for Germany and Canada marketplaces
+eBay: [Improved] eBay categories are preselected for items moved from Unmanaged Listing
+eBay: [Improved] Hide item on the Channel if ‘Out of stock control’ is enabled and the product is removed from Magento
+eBay: [Improved] Add Shipping Rate Tables for Italy, Canada, and Canada (FR) marketplaces
+eBay: [Improved] Do not use separate fields for template_custom_template_id
+eBay: [Improved] Add 'Collect and Remit taxes' field to eBay order details
+eBay: [Improved] 'Use Description From eBay Catalog' field is changed to 'Use eBay catalog Item data' in Description Policy
+eBay: [Improved] Newly added Magento customers are validated by eBay User ID
+eBay: [Improved] Add 'Invoices & Shipments' tab to Account Settings
+eBay: [Improved] Remove Highlight from eBay Description Policy
+eBay: [Fixed] Canada is displayed twice in the ‘Country’ drop-down when adding a new Store
+eBay: [Fixed] The Hint lacks Germany and Canada when adding a new Store
+eBay: [Fixed] Exception "Please correct the country code: ." occurs when clicking on the ‘Add Store’ button
+eBay: [Fixed] Unable to get Sell API Details Token for eBay account
+eBay: [Fixed] Confirmation pop-up is not shown when Sell on another Marketplace functionality is used for one eBay Account
+eBay: [Fixed] 'Select Attribute' value is impossible to be saved for two and more of Parts Compatibility blocks
+eBay: [Fixed] Error with no text is shown when trying to save two or more same Parts Compatibility attributes
+eBay: [Fixed] JS error "TypeError: Cannot read property 'update' of null js/eBay/Listing/Create/General.js:162" occurs when adding new listing
+eBay: [Fixed] Notice: ‘Trying to access array offset on value of type bool in .../M2ePro/Model/eBay/Template/Shipping.php’ occurs when adding Shipping Policy
+eBay: [Fixed] Redirect to eBay Sandbox does not work after clicking on the Item ID link in the Listing grid
+eBay: [Added] Item condition ID 2000 for Manufacturer Refurbished
+eBay: [Removed] Custom settings for eBay Listings
+Amazon: [Improved] Allow 'Multi-select' attribute type for selection as a keyword
+Amazon: [Improved] Disable the Invoice Uploading functionality (Netherlands)
+Amazon: [Improved] Ability to assign Shipping Policy in Listing Settings
+Amazon: [Improved] Extra line is added between 'VAT Invoice Creation' and 'Magento Invoice Creation' in Account Configuration
+Amazon: [Improved] Display more than 60 characters for Title when adding product to the Listing
+Amazon: [Fixed] Sending VAT invoices does not work
+Amazon: [Fixed] No empty row in Shipping Policy drop-down in the Selling Settings of Amazon listing
+Amazon: [Fixed] Confirmation pop-up is not shown when Sell on another Marketplace functionality is used for one Amazon account
+Amazon: [Fixed] 'Magento Invoice Creation' option is not saved if 'Invoice Uploading to Amazon' is selected as 'Use VAT Calculation Service' in Account Configuration
+Amazon: [Added] Ability to send SwitchFulfillmentTo in Inventory Feed
+Amazon: [Added] Upload VCS Invoices/Credit Memos to Amazon
+Walmart: [Improved] Tracking details are sent when order status is updated to ‘Shipped’
+Walmart: [Improved] Add 'Invoices & Shipments' tab to Account Settings
+Walmart: [Fixed] URL field is not indicated as ‘required’ if the Title field is entered
+Walmart: [Fixed] ‘Other Carrier #1’ block is not separated with a line from ‘Magento Shipment Creation’ block
+Walmart: [Fixed] The page is reloaded before the sync is completed on Walmart Wizard
+Walmart: [Added] Custom shipping carriers for US and Canada marketplaces
+
+* 1.9.5 (r4467) (24/12/2020)
 Common:  [Fixed] Dynamic behavior compatibility in Magento 2.4.* and 2.3.*
 Common:  [Fixed] "TypeError: Cannot read property 'readAttribute' of undefined js/Marketplace.js:100" is occured when try to Update Now Marketplace on eBay/Amazon/Walmart -> Configuration -> Marketplaces (magento version 2.4)
 Common:  [Fixed] Remove button does not work for Promotions and Override Mode in Walmart Selling Policy and for Shipping Methods in Ebay Shipping Policy if second field was added (magento version 2.4)

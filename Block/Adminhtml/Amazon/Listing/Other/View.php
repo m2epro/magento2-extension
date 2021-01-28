@@ -64,7 +64,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->appendHelpBlock([
             'content' => $this->__(
                 <<<HTML
-                <p>The list below shows the 3rd Party Listings imported from a particular Account and Marketplace.
+                <p>The list below shows the Unmanaged Listings imported from a particular Account and Marketplace.
                 It contains the functionality of manual and automatic Item Mapping and Moving. After the imported
                 Items are Mapped to Magento Products, they can be Moved into an M2E Pro
                 Listing for further management.</p><br>
@@ -127,7 +127,7 @@ HTML
 
         $someProductsWereNotMappedMessage = $this->__(
             'Some Items were not mapped. Please edit <i>Product Mapping Settings</i> under
-            <i>Configuration > Account > 3rd Party Listings</i> or try to map manually.'
+            <i>Configuration > Account > Unmanaged Listings</i> or try to map manually.'
         );
 
         $createListing = $this->__(

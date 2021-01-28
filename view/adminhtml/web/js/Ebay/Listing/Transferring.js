@@ -229,11 +229,11 @@ define([
 
         sendPartsProducts: function(parts, partsCount, callback)
         {
-            if (parts.length == 0) {
+            if (partsCount == 0) {
                 return;
             }
 
-            var isLastPart  = parts.length === 1 ? 1 : 0;
+            var isLastPart  = partsCount === 1 ? 1 : 0;
             var part = parts.splice(0, 1)[0];
 
             new Ajax.Request(M2ePro.url.get('ebay_listing_transferring/addProducts'), {
@@ -249,7 +249,7 @@ define([
                 onSuccess: function() {
                     Ajax.Responders.register(varienLoaderHandler.handler);
 
-                    var percents = ((100 - this.progressBarObj.getPercents()) / parts.length) + this.progressBarObj.getPercents();
+                    var percents = ((100 - this.progressBarObj.getPercents()) / partsCount) + this.progressBarObj.getPercents();
                     if (percents >= 100) {
                         this.progressBarObj.setPercents(100, 0);
                         this.progressBarObj.setStatus('Adding has been completed');
@@ -260,8 +260,8 @@ define([
                     }
 
                     setTimeout(function() {
-                        this.sendPartsProducts(parts, partsCount);
-                    }, 500);
+                        this.sendPartsProducts(parts, parts.length, callback);
+                    }.bind(this), 500);
                 }.bind(this)
             });
         }

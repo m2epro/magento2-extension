@@ -145,7 +145,6 @@ class StockSettings extends AbstractForm
 
         $values = [
             ['label' => $this->__('Product Quantity'), 'value' => PickupStore::QTY_MODE_PRODUCT],
-            ['label' => $this->__('Single Item'), 'value' => PickupStore::QTY_MODE_SINGLE],
             ['label' => $this->__('Custom Value'), 'value' => PickupStore::QTY_MODE_NUMBER],
             [
                 'label' => $this->__('Magento Attribute'),

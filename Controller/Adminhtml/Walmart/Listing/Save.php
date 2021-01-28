@@ -54,16 +54,10 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
 
         $oldData = $snapshotBuilder->getSnapshot();
 
-        // Base prepare
-        // ---------------------------------------
         $data = [];
-        // ---------------------------------------
-
-        // tab: settings
-        // ---------------------------------------
         $keys = [
-            'template_description_id',
             'template_selling_format_id',
+            'template_description_id',
             'template_synchronization_id',
         ];
         foreach ($keys as $key) {
@@ -71,29 +65,9 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
                 $data[$key] = $post[$key];
             }
         }
-        // ---------------------------------------
 
         $listing->addData($data);
         $listing->getChildObject()->addData($data);
-        $listing->save();
-
-        $templateData = [];
-
-        // tab: channel settings
-        // ---------------------------------------
-        $keys = [
-            'account_id',
-            'marketplace_id',
-        ];
-        foreach ($keys as $key) {
-            if (isset($post[$key])) {
-                $templateData[$key] = $post[$key];
-            }
-        }
-        // ---------------------------------------
-
-        $listing->addData($templateData);
-        $listing->getChildObject()->addData($templateData);
         $listing->save();
 
         $snapshotBuilder = $this->modelFactory->getObject('Walmart_Listing_SnapshotBuilder');

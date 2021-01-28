@@ -61,7 +61,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             case 3:
                 $this->stepThree();
                 if ($this->getRequest()->isPost() && $this->isCreationModeListingOnly()) {
-                    // closing window for 3rd party products moving in new listing creation
+                    // closing window for Unmanaged products moving in new listing creation
 
                     return $this->getRawResult();
                 }
@@ -175,7 +175,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             }
 
             if ($this->isCreationModeListingOnly()) {
-                // closing window for 3rd party products moving in new listing creation
+                // closing window for Unmanaged products moving in new listing creation
 
                 return $this->getRawResult()->setContents("<script>window.close();</script>");
             }

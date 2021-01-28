@@ -124,7 +124,7 @@ class Edit extends AbstractContainer
     {
         $this->jsTranslator->addTranslations([
             'is_ready_for_document_generation' => $this->__(<<<HTML
-    To use this option, go to <i>System > Configuration > General > General > Store Information</i> and fill in the 
+    To use this option, go to <i>Stores > Configuration > General > General > Store Information</i> and fill in the 
     following required fields:<br><br>
         <ul style="padding-left: 50px">
             <li>Store Name</li>

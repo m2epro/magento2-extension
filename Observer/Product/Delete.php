@@ -17,7 +17,7 @@ class Delete extends AbstractProduct
 
     public function process()
     {
-        if ($this->getProductId() <= 0) {
+        if (empty($this->getProductId())) {
             return;
         }
 

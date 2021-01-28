@@ -89,7 +89,6 @@ class Builder extends AbstractModel
      */
     protected function initializeData(array $data = [])
     {
-        // ---------------------------------------
         $this->setData('account_id', $this->account->getId());
 
         $this->setData('ebay_order_id', $data['identifiers']['ebay_order_id']);
@@ -100,9 +99,7 @@ class Builder extends AbstractModel
 
         $this->setData('purchase_update_date', $data['purchase_update_date']);
         $this->setData('purchase_create_date', $data['purchase_create_date']);
-        // ---------------------------------------
 
-        // ---------------------------------------
         $this->setData('paid_amount', (float)$data['selling']['paid_amount']);
         $this->setData('saved_amount', (float)$data['selling']['saved_amount']);
         $this->setData('currency', $data['selling']['currency']);
@@ -113,17 +110,12 @@ class Builder extends AbstractModel
             $this->setData('tax_details', $data['selling']['tax_details']);
         }
 
-        // ---------------------------------------
-
-        // ---------------------------------------
         $this->setData('buyer_user_id', trim($data['buyer']['user_id']));
-        $this->setData('buyer_name', trim($data['buyer']['name']));
+        $this->setData('buyer_name', trim($data['buyer']['first_name']) . ' ' . trim($data['buyer']['last_name']));
         $this->setData('buyer_email', trim($data['buyer']['email']));
         $this->setData('buyer_message', $data['buyer']['message']);
         $this->setData('buyer_tax_id', trim($data['buyer']['tax_id']));
-        // ---------------------------------------
 
-        // ---------------------------------------
         $this->externalTransactions = $data['payment']['external_transactions'];
         unset($data['payment']['external_transactions']);
 
@@ -135,9 +127,7 @@ class Builder extends AbstractModel
             $data['payment']['status']
         );
         $this->setData('payment_status', $paymentStatus);
-        // ---------------------------------------
 
-        // ---------------------------------------
         $this->setData('shipping_details', $data['shipping']);
 
         $shippingStatus = $this->helper->getShippingStatus(
@@ -145,11 +135,8 @@ class Builder extends AbstractModel
             !empty($data['shipping']['service'])
         );
         $this->setData('shipping_status', $shippingStatus);
-        // ---------------------------------------
 
-        // ---------------------------------------
         $this->items = $data['items'];
-        // ---------------------------------------
     }
 
     //########################################

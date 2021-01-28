@@ -51,8 +51,8 @@ class Walmart extends IssueType
             $result->setTaskData($failedOrders);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
                 <<<HTML
-During the last 24 hours, no Magento orders have been created for <strong>%failed_orders_count%</strong> 
-imported Channel orders. Please check the <a target="_blank" href="%url%"> Order Log</a> for more details.
+During the last 24 hours, M2E Pro has not created Magento orders for <strong>%failed_orders_count%</strong>
+imported Channel orders. See the <a target="_blank" href="%url%">Order Log</a> for more details.
 HTML
                 ,
                 $failedOrders,

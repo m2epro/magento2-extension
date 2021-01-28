@@ -326,7 +326,7 @@ HTML;
 <div class="note_icon admin__field-tooltip">
     <a class="admin__field-tooltip-note-action" href="javascript://"></a>
     <div class="admin__field-tooltip-content" style="right: -4.4rem">
-        <div class="ebay-identifiers">
+        <div class="amazon-identifiers">
            {$htmlNotesCount}
         </div>
     </div>
@@ -381,7 +381,20 @@ HTML;
 
             $isShowEditLink = false;
 
-            $product = $item->getProduct();
+            try {
+                $product = $item->getProduct();
+            } catch (\Ess\M2ePro\Model\Exception $e) {
+                $product = null;
+                $logModel = $this->activeRecordFactory->getObject('Order\Log');
+                $logModel->setComponentMode(\Ess\M2ePro\Helper\Component\Amazon::NICK);
+
+                $logModel->addMessage(
+                    $row->getData('id'),
+                    $e->getMessage(),
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
+                );
+            }
+
             if ($product !== null) {
                 /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
                 $magentoProduct = $this->modelFactory->getObject('Magento\Product');

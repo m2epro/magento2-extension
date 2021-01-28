@@ -122,33 +122,66 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             $itemRequestData = $itemAdditionalData['request_data'];
 
-            $accountMarketplace = $itemRequestData['account'].'_'.$itemRequestData['marketplace'];
+            $accountMarketplaceActionType = $itemRequestData['account']
+                                            . '_' .
+                                            $itemRequestData['marketplace']
+                                            . '_' .
+                                            $itemRequestData['action_type'];
 
-            $accountsMarketplacesRequestData[$accountMarketplace][] = [
+            $accountsMarketplacesRequestData[$accountMarketplaceActionType][] = [
                 'item_id' => $itemRequestData['item_id'],
             ];
         }
 
-        foreach ($accountsMarketplacesRequestData as $accountMarketplace => $accountMarketplaceRequestData) {
-            list($account, $marketplace) = explode('_', $accountMarketplace);
+        foreach ($accountsMarketplacesRequestData as $accountMarketplaceActionType => $accountMarketplaceRequestData) {
+            list($account, $marketplace, $actionType) = explode('_', $accountMarketplaceActionType);
 
-            $requestDataPacks = array_chunk($accountMarketplaceRequestData, self::EBAY_REQUEST_MAX_ITEMS_COUNT);
-
-            foreach ($requestDataPacks as $requestDataPack) {
-                $requestData = [
-                    'account'     => $account,
-                    'marketplace' => $marketplace,
-                    'items'       => $requestDataPack,
-                ];
-
-                $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
-                $connector  = $dispatcher->getVirtualConnector('item', 'update', 'ends', $requestData);
-                $dispatcher->process($connector);
+            if ((int)$actionType === \Ess\M2ePro\Model\Listing\Product::ACTION_STOP) {
+                $this->stopItemEbay($account, $marketplace, $accountMarketplaceRequestData);
+            } else {
+                $this->hideItemEbay($account, $marketplace, $accountMarketplaceRequestData);
             }
         }
 
         $this->markItemsAsProcessed($processedItemsIds);
     }
+
+    //----------------------------------------
+
+    protected function stopItemEbay($account, $marketplace, $accountMarketplaceRequestData)
+    {
+        $requestDataPacks = array_chunk($accountMarketplaceRequestData, self::EBAY_REQUEST_MAX_ITEMS_COUNT);
+
+        foreach ($requestDataPacks as $requestDataPack) {
+            $requestData = [
+                'account'     => $account,
+                'marketplace' => $marketplace,
+                'items'       => $requestDataPack,
+            ];
+
+            $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+            $connector  = $dispatcher->getVirtualConnector('item', 'update', 'ends', $requestData);
+            $dispatcher->process($connector);
+        }
+    }
+
+    protected function hideItemEbay($account, $marketplace, $accountMarketplaceRequestData)
+    {
+        foreach ($accountMarketplaceRequestData as $requestData) {
+            $requestData = [
+                'account'     => $account,
+                'marketplace' => $marketplace,
+                'item_id'     => $requestData['item_id'],
+                'qty'         => 0
+            ];
+
+            $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+            $connector = $dispatcher->getVirtualConnector('item', 'update', 'revise', $requestData);
+            $dispatcher->process($connector);
+        }
+    }
+
+    //########################################
 
     protected function processAmazon()
     {
@@ -220,6 +253,8 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $this->markItemsAsProcessed($processedItemsIds);
     }
+
+    //########################################
 
     protected function processWalmart()
     {

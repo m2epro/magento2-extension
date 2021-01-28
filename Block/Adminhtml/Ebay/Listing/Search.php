@@ -49,7 +49,7 @@ class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'content' => $this->__(
                 <<<HTML
             <p>This Search tool contains a list of all the Products present in M2E Pro Listings as
-            well as 3rd Party Listings.</p><br>
+            well as Unmanaged Listings.</p><br>
             <p>This functionality allows you to search for Products based common Item details or Attribute values
             more effectively (Product Title, SKU, Stock Availability, etc.).</p><br>
 

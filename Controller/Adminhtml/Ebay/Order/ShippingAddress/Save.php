@@ -48,6 +48,7 @@ class Save extends Order
 
         $data = [];
         $keys = [
+            'recipient_name',
             'street',
             'city',
             'country_code',

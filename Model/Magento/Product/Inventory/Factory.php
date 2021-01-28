@@ -50,6 +50,7 @@ class Factory extends \Ess\M2ePro\Model\AbstractModel
     {
         $object = $this->objectManager->get($this->isMsiMode($product) ? MSIInventory::class : Inventory::class);
         $object->setProduct($product);
+
         return $object;
     }
 
@@ -65,6 +66,7 @@ class Factory extends \Ess\M2ePro\Model\AbstractModel
             $isSourceItemManagementAllowedForProductType = $this->objectManager->get(
                 IsSourceItemManagementAllowedForProductTypeInterface::class
             );
+
             return $isSourceItemManagementAllowedForProductType->execute($product->getTypeId());
         }
 

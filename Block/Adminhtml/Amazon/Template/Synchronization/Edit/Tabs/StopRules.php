@@ -47,9 +47,9 @@ class StopRules extends AbstractForm
         );
 
         $fieldset = $form->addFieldset(
-            'magento_block_walmart_template_synchronization_stop_filters',
+            'magento_block_amazon_template_synchronization_stop_filters',
             [
-                'legend' => $this->__('General'),
+                'legend'      => $this->__('General'),
                 'collapsable' => false,
             ]
         );
@@ -58,10 +58,10 @@ class StopRules extends AbstractForm
             'stop_mode',
             self::SELECT,
             [
-                'name' => 'stop_mode',
-                'label' => $this->__('Stop Action'),
-                'value' => $formData['stop_mode'],
-                'values' => [
+                'name'    => 'stop_mode',
+                'label'   => $this->__('Stop Action'),
+                'value'   => $formData['stop_mode'],
+                'values'  => [
                     0 => $this->__('Disabled'),
                     1 => $this->__('Enabled'),
                 ],
@@ -74,7 +74,7 @@ class StopRules extends AbstractForm
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_synchronization_stop_rules',
             [
-                'legend' => $this->__('Stop Conditions'),
+                'legend'      => $this->__('Stop Conditions'),
                 'collapsable' => false,
             ]
         );
@@ -83,10 +83,10 @@ class StopRules extends AbstractForm
             'stop_status_disabled',
             self::SELECT,
             [
-                'name' => 'stop_status_disabled',
-                'label' => $this->__('Stop When Status Disabled'),
-                'value' => $formData['stop_status_disabled'],
-                'values' => [
+                'name'    => 'stop_status_disabled',
+                'label'   => $this->__('Stop When Status Disabled'),
+                'value'   => $formData['stop_status_disabled'],
+                'values'  => [
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
@@ -100,10 +100,10 @@ class StopRules extends AbstractForm
             'stop_out_off_stock',
             self::SELECT,
             [
-                'name' => 'stop_out_off_stock',
-                'label' => $this->__('Stop When Out Of Stock'),
-                'value' => $formData['stop_out_off_stock'],
-                'values' => [
+                'name'    => 'stop_out_off_stock',
+                'label'   => $this->__('Stop When Out Of Stock'),
+                'value'   => $formData['stop_out_off_stock'],
+                'values'  => [
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
@@ -114,36 +114,53 @@ class StopRules extends AbstractForm
             ]
         );
 
+        $form->addField(
+            'stop_qty_calculated_confirmation_popup_template',
+            self::CUSTOM_CONTAINER,
+            [
+                'text'  => $this->__(
+                    <<<HTML
+Disabling this option might affect actual product data updates.
+Please read <a href="%url%" target="_blank">this article</a> before disabling the option.
+HTML
+                    ,
+                    $this->getHelper('Module_Support')->getKnowledgebaseUrl('1606824')
+                ),
+                'style' => 'display: none;'
+            ]
+        );
+
         $fieldset->addField(
             'stop_qty_calculated',
             self::SELECT,
             [
-                'name' => 'stop_qty_calculated',
-                'label' => $this->__('Stop When Quantity Is'),
-                'value' => $formData['stop_qty_calculated'],
-                'values' => [
+                'name'    => 'stop_qty_calculated',
+                'label'   => $this->__('Stop When Quantity Is'),
+                'value'   => $formData['stop_qty_calculated'],
+                'values'  => [
                     TemplateSynchronization::QTY_MODE_NONE => $this->__('No Action'),
-                    TemplateSynchronization::QTY_MODE_YES => $this->__('Less or Equal'),
+                    TemplateSynchronization::QTY_MODE_YES  => $this->__('Less or Equal'),
                 ],
                 'tooltip' => $this->__(
                     'Automatically stops Item(s) if Quantity according to the Selling
                     Policy has been changed and meets the Conditions.'
                 )
             ]
-        )->setAfterElementHtml(<<<HTML
+        )->setAfterElementHtml(
+            <<<HTML
 <input name="stop_qty_calculated_value" id="stop_qty_calculated_value"
        value="{$formData['stop_qty_calculated_value']}" type="text"
        style="width: 72px; margin-left: 10px;"
        class="input-text admin__control-text required-entry validate-digits _required" />
 HTML
-            );
+        );
 
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_synchronization_stop_advanced_filters',
             [
-                'legend' => $this->__('Advanced Conditions'),
+                'legend'      => $this->__('Advanced Conditions'),
                 'collapsable' => false,
-                'tooltip' => $this->__(
+                'tooltip'     => $this->__(
                     '<p>Define Magento Attribute value(s) based on which a product must be stopped on the Channel.<br>
                     Once at least one Stop or Advanced Condition is met, the product will be stopped.</p>'
                 )
@@ -154,14 +171,16 @@ HTML
             'stop_advanced_rules_filters_warning',
             self::MESSAGES,
             [
-                'messages' => [[
-                    'type' => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
-                    'content' => $this->__(
-                        'Please be very thoughtful before enabling this option as this functionality can have
+                'messages' => [
+                    [
+                        'type'    => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
+                        'content' => $this->__(
+                            'Please be very thoughtful before enabling this option as this functionality can have
                         a negative impact on the Performance of your system.<br> It can decrease the speed of running
                         in case you have a lot of Products with the high number of changes made to them.'
-                    )
-                ]]
+                        )
+                    ]
+                ]
             ]
         );
 
@@ -169,12 +188,12 @@ HTML
             'stop_advanced_rules_mode',
             self::SELECT,
             [
-                'name' => 'stop_advanced_rules_mode',
-                'label' => $this->__('Stop When Meet'),
-                'value' => $formData['stop_advanced_rules_mode'],
+                'name'   => 'stop_advanced_rules_mode',
+                'label'  => $this->__('Stop When Meet'),
+                'value'  => $formData['stop_advanced_rules_mode'],
                 'values' => [
                     0 => $this->__('No'),
-                    1  => $this->__('Yes'),
+                    1 => $this->__('Yes'),
                 ],
             ]
         );

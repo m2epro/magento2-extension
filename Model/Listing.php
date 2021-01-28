@@ -34,11 +34,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     const AUTO_MODE_WEBSITE  = 2;
     const AUTO_MODE_CATEGORY = 3;
 
-    const ADDING_MODE_NONE          = 0;
-    const ADDING_MODE_ADD           = 1;
+    const ADDING_MODE_NONE = 0;
+    const ADDING_MODE_ADD  = 1;
 
-    const AUTO_ADDING_ADD_NOT_VISIBLE_NO   = 0;
-    const AUTO_ADDING_ADD_NOT_VISIBLE_YES  = 1;
+    const AUTO_ADDING_ADD_NOT_VISIBLE_NO  = 0;
+    const AUTO_ADDING_ADD_NOT_VISIBLE_YES = 1;
 
     const DELETING_MODE_NONE        = 0;
     const DELETING_MODE_STOP        = 1;
@@ -120,6 +120,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     public function save($reloadOnCreate = false)
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('listing');
+
         return parent::save($reloadOnCreate);
     }
 
@@ -158,6 +159,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         $this->deleteChildInstance();
 
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('listing');
+
         return parent::delete();
     }
 
@@ -185,7 +187,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
      */
     public function setAccount(\Ess\M2ePro\Model\Account $instance)
     {
-         $this->accountModel = $instance;
+        $this->accountModel = $instance;
     }
 
     // ---------------------------------------
@@ -211,7 +213,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
      */
     public function setMarketplace(\Ess\M2ePro\Model\Marketplace $instance)
     {
-         $this->marketplaceModel = $instance;
+        $this->marketplaceModel = $instance;
     }
 
     //########################################
@@ -472,7 +474,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         array $logAdditionalInfo = []
     ) {
         $productId = $product instanceof \Magento\Catalog\Model\Product ?
-                        (int)$product->getId() : (int)$product;
+            (int)$product->getId() : (int)$product;
 
         if ($checkHasProduct && $this->hasProduct($productId)) {
             return false;
@@ -494,7 +496,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
         $listingProductTemp->getChildObject()->afterSaveNewEntity();
 
-        $variationUpdaterModel = ucwords($this->getComponentMode()).'\Listing\Product\Variation\Updater';
+        $variationUpdaterModel = ucwords($this->getComponentMode()) . '\Listing\Product\Variation\Updater';
         /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Updater $variationUpdaterObject */
         $variationUpdaterObject = $this->modelFactory->getObject($variationUpdaterModel);
         $variationUpdaterObject->process($listingProductTemp);
@@ -557,7 +559,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                 ->from($table, new \Zend_Db_Expr('DISTINCT `product_id`'))
                 ->where('`component_mode` = ?', (string)$this->getComponentMode());
 
-            $collection->getSelect()->where('`e`.`entity_id` NOT IN ('.$dbSelect->__toString().')');
+            $collection->getSelect()->where('`e`.`entity_id` NOT IN (' . $dbSelect->__toString() . ')');
         }
 
         $table = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('catalog_category_product');
@@ -565,7 +567,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             ->from($table, new \Zend_Db_Expr('DISTINCT `product_id`'))
             ->where("`category_id` = ?", (int)$categoryId);
 
-        $collection->getSelect()->where('`e`.`entity_id` IN ('.$dbSelect->__toString().')');
+        $collection->getSelect()->where('`e`.`entity_id` IN (' . $dbSelect->__toString() . ')');
 
         $sqlQuery = $collection->getSelect()->__toString();
 
@@ -642,6 +644,12 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             return false;
         }
 
+        $logMessage = $this->getHelper('Module\Translation')->__(
+            'Product was transferred from %previous_listing_name% Listing to %current_listing_name% Listing.',
+            $sourceListing->getTitle(),
+            $this->getTitle()
+        );
+
         $logModel->addProductMessage(
             $sourceListing->getId(),
             $listingProduct->getProductId(),
@@ -649,7 +657,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             \Ess\M2ePro\Helper\Data::INITIATOR_USER,
             $actionId,
             \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
-            'Item was Moved',
+            $logMessage,
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
         );
 
@@ -660,7 +668,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             \Ess\M2ePro\Helper\Data::INITIATOR_USER,
             $actionId,
             \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
-            'Item was Moved',
+            $logMessage,
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
         );
 
@@ -683,6 +691,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             ]
         );
         $instruction->save();
+
         // ---------------------------------------
 
         return true;
@@ -696,32 +705,57 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
      */
     public function hasProduct($productId)
     {
-        return !empty($this->getProducts(false, ['product_id'=>$productId]));
+        return !empty($this->getProducts(false, ['product_id' => $productId]));
     }
 
     public function removeDeletedProduct($product)
     {
         $productId = $product instanceof \Magento\Catalog\Model\Product ?
-                        (int)$product->getId() : (int)$product;
+            (int)$product->getId() : (int)$product;
 
         $processedListings = [];
 
         // Delete Products
         // ---------------------------------------
         $listingsProducts = $this->activeRecordFactory->getObject('Listing\Product')->getCollection()
-                                    ->addFieldToFilter('product_id', $productId)
-                                    ->getItems();
+            ->addFieldToFilter('product_id', $productId)
+            ->getItems();
 
         $listingsProductsForRemove = [];
 
         /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
         foreach ($listingsProducts as $listingProduct) {
+            $message = $this->getHelper('Module\Translation')->__('Item was deleted from Magento.');
+            if ($listingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
+                $message = $this->getHelper('Module\Translation')->__(
+                    'Item was deleted from Magento and stopped on the Channel.'
+                );
+            }
+
             if (!isset($listingsProductsForRemove[$listingProduct->getId()])) {
                 $listingProduct->deleteProcessingLocks();
-                $listingProduct->isStoppable() && $this->activeRecordFactory->getObject('StopQueue')->add(
-                    $listingProduct
-                );
-                $listingProduct->setStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED)->save();
+
+                if ($listingProduct->isComponentModeEbay() &&
+                    $listingProduct->getChildObject()->isOutOfStockControlEnabled()) {
+
+                    $listingProduct->isStoppable() && $this->activeRecordFactory->getObject('StopQueue')->add(
+                        $listingProduct,
+                        \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+                    );
+
+                    if ($listingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
+                        $message = $this->getHelper('Module\Translation')->__(
+                            'Item was deleted from Magento and hidden on the Channel.'
+                        );
+                    }
+
+                    $listingProduct->setStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN)->save();
+                } else {
+                    $listingProduct->isStoppable() && $this->activeRecordFactory->getObject('StopQueue')->add(
+                        $listingProduct
+                    );
+                    $listingProduct->setStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED)->save();
+                }
 
                 if ($listingProduct->isComponentModeAmazon() || $listingProduct->isComponentModeWalmart()) {
                     /** @var AmazonProduct|WalmartProduct $componentListingProduct */
@@ -740,11 +774,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             $listingId = $listingProduct->getListingId();
             $componentMode = $listingProduct->getComponentMode();
 
-            if (isset($processedListings[$listingId.'_'.$componentMode])) {
+            if (isset($processedListings[$listingId . '_' . $componentMode])) {
                 continue;
             }
 
-            $processedListings[$listingId.'_'.$componentMode] = 1;
+            $processedListings[$listingId . '_' . $componentMode] = 1;
 
             $this->activeRecordFactory->getObject('Listing\Log')
                 ->setComponentMode($componentMode)
@@ -755,7 +789,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                     \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
                     null,
                     \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_PRODUCT_FROM_MAGENTO,
-                    null,
+                    $message,
                     \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING
                 );
         }
@@ -765,9 +799,9 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         // Delete Options
         // ---------------------------------------
         $variationOptions = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')
-                                    ->getCollection()
-                                    ->addFieldToFilter('product_id', $productId)
-                                    ->getItems();
+            ->getCollection()
+            ->addFieldToFilter('product_id', $productId)
+            ->getItems();
 
         $processedVariationsIds = [];
 
@@ -800,17 +834,17 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                     }
 
                     $tempVariation = [
-                        'qty' => 0,
-                        'price' => $ebayVariation->getOnlinePrice(),
-                        'sku' => $ebayVariation->getOnlineSku(),
-                        'add' => 0,
-                        'delete' => 1,
+                        'qty'       => 0,
+                        'price'     => $ebayVariation->getOnlinePrice(),
+                        'sku'       => $ebayVariation->getOnlineSku(),
+                        'add'       => 0,
+                        'delete'    => 1,
                         'specifics' => $specifics,
                         'has_sales' => true
                     ];
 
                     if ($ebayVariation->isDelete()) {
-                        $tempVariation['sku'] = 'del-' . sha1(microtime(1).$ebayVariation->getOnlineSku());
+                        $tempVariation['sku'] = 'del-' . sha1(microtime(1) . $ebayVariation->getOnlineSku());
                     }
 
                     $specificsReplacements = $listingProduct->getChildObject()->getVariationSpecificsReplacements();
@@ -850,11 +884,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             $listingId = $listingProduct->getListingId();
             $componentMode = $listingProduct->getComponentMode();
 
-            if (isset($processedListings[$listingId.'_'.$componentMode])) {
+            if (isset($processedListings[$listingId . '_' . $componentMode])) {
                 continue;
             }
 
-            $processedListings[$listingId.'_'.$componentMode] = 1;
+            $processedListings[$listingId . '_' . $componentMode] = 1;
 
             $this->activeRecordFactory->getObject('Listing\Log')
                 ->setComponentMode($componentMode)

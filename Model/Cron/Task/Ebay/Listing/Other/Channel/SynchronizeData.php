@@ -80,7 +80,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                     $this->executeUpdateInventoryDataAccount($account);
                 } catch (\Exception $exception) {
                     $message = $this->getHelper('Module\Translation')->__(
-                        'The "Update 3rd Party Listings" Action for eBay Account "%account%" was completed with error.',
+                        'The "Update Unmanaged Listings" Action for eBay Account "%account%" was completed with error.',
                         $account->getTitle()
                     );
 

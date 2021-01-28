@@ -92,7 +92,7 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
         );
 
         $this->sellingFormatShippingOverrideSourceModels[$id]->setMagentoProduct($magentoProduct);
-        $this->sellingFormatShippingOverrideSourceModels[$id]->setSellingFormatShipingOverrideTemplate($this);
+        $this->sellingFormatShippingOverrideSourceModels[$id]->setSellingFormatShippingOverrideTemplate($this);
 
         return $this->sellingFormatShippingOverrideSourceModels[$id];
     }

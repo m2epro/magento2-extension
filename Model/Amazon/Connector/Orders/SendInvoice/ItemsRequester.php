@@ -116,11 +116,29 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     public function getRequestData()
     {
-        return [
+        $requestData = [
             'order_id' => $this->params['order']['amazon_order_id'],
             'document_number' => $this->params['order']['document_number'],
             'document_type' => $this->params['order']['document_type']
         ];
+
+        if (isset($this->params['order']['document_shipping_id'])) {
+            $requestData['document_shipping_id'] = $this->params['order']['document_shipping_id'];
+        }
+
+        if (isset($this->params['order']['document_transaction_id'])) {
+            $requestData['document_transaction_id'] = $this->params['order']['document_transaction_id'];
+        }
+
+        if (isset($this->params['order']['document_total_amount'])) {
+            $requestData['document_total_amount'] = $this->params['order']['document_total_amount'];
+        }
+
+        if (isset($this->params['order']['document_total_vat_amount'])) {
+            $requestData['document_total_vat_amount'] = $this->params['order']['document_total_vat_amount'];
+        }
+
+        return $requestData;
     }
 
     //########################################

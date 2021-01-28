@@ -124,6 +124,15 @@ class Item extends AbstractGrid
             'frame_callback' => [$this, 'callbackColumnTaxPercent']
         ]);
 
+        $this->addColumn('ebay_collect_tax', [
+                'header'         => $this->__('Collect and Remit taxes'),
+                'align'          => 'left',
+                'width'          => '80px',
+                'filter'         => false,
+                'sortable'       => false,
+                'frame_callback' => [$this, 'callbackColumnEbayCollectTax']
+            ]);
+
         $this->addColumn('row_total', [
             'header'    => $this->__('Row Total'),
             'align'     => 'left',
@@ -294,6 +303,20 @@ HTML;
         }
 
         return sprintf('%s%%', $taxDetails['rate']);
+    }
+
+    public function callbackColumnEbayCollectTax($value, $row, $column, $isExport)
+    {
+        $collectTax = $this->getHelper('Data')->jsonDecode($row->getData('tax_details'));
+
+        if (isset($collectTax['ebay_collect_taxes'])) {
+            return $this->modelFactory->getObject('Currency')->formatPrice(
+                $this->order->getChildObject()->getCurrency(),
+                $collectTax['ebay_collect_taxes']
+            );
+        }
+
+        return '0';
     }
 
     public function callbackColumnRowTotal($value, $row, $column, $isExport)

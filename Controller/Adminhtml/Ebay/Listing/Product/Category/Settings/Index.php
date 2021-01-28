@@ -524,12 +524,12 @@ class Index extends Settings
         \Ess\M2ePro\Model\Ebay\Template\StoreCategory $storeSecondaryTpl,
         $remember
     ) {
-        $this->assignTemplatesToProducts(
+        $this->activeRecordFactory->getObject('Ebay_Listing_Product')->assignTemplatesToProducts(
+            $this->getEbayListingFromRequest()->getAddedListingProductsIds(),
             $categoryTpl->getId(),
             $categorySecondaryTpl->getId(),
             $storeTpl->getId(),
-            $storeSecondaryTpl->getId(),
-            $this->getEbayListingFromRequest()->getAddedListingProductsIds()
+            $storeSecondaryTpl->getId()
         );
 
         if ($remember) {

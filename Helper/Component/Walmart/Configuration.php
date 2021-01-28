@@ -25,7 +25,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
     const PRODUCT_ID_OVERRIDE_MODE_NONE              = 0;
     const PRODUCT_ID_OVERRIDE_MODE_ALL               = 1;
     const PRODUCT_ID_OVERRIDE_MODE_SPECIFIC_PRODUCTS = 2;
-    const PRODUCT_ID_OVERRIDE_CUSTOM_CODE = 'CUSTOM';
+    const PRODUCT_ID_OVERRIDE_CUSTOM_CODE            = 'CUSTOM';
 
     const UPC_MODE_NOT_SET          = 0;
     const UPC_MODE_CUSTOM_ATTRIBUTE = 1;
@@ -130,7 +130,10 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getProductIdOverrideMode()
     {
-        return (int)$this->getHelper('Module')->getConfig()->getGroupValue(self::CONFIG_GROUP, 'product_id_override_mode');
+        return (int)$this->getHelper('Module')->getConfig()->getGroupValue(
+            self::CONFIG_GROUP,
+            'product_id_override_mode'
+        );
     }
 
     public function isProductIdOverrideModeNode()

@@ -109,10 +109,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
 
         return (bool)$this->activeRecordFactory->getObject('Ebay\Listing')
                 ->getCollection()
-                ->addFieldToFilter(
-                    'template_selling_format_mode',
-                    \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
-                )
                 ->addFieldToFilter('template_selling_format_id', $this->getId())
                 ->getSize() ||
             (bool)$this->activeRecordFactory->getObject('Ebay_Listing_Product')
@@ -299,14 +295,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
     public function isQtyModeProduct()
     {
         return $this->getQtyMode() == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isQtyModeSingle()
-    {
-        return $this->getQtyMode() == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_SINGLE;
     }
 
     /**

@@ -17,10 +17,10 @@ class Module extends AbstractHelper
 {
     const IDENTIFIER = 'Ess_M2ePro';
 
-    const SERVER_MESSAGE_TYPE_NOTICE  = 0;
-    const SERVER_MESSAGE_TYPE_ERROR   = 1;
-    const SERVER_MESSAGE_TYPE_WARNING = 2;
-    const SERVER_MESSAGE_TYPE_SUCCESS = 3;
+    const MESSAGE_TYPE_NOTICE  = 0;
+    const MESSAGE_TYPE_ERROR   = 1;
+    const MESSAGE_TYPE_WARNING = 2;
+    const MESSAGE_TYPE_SUCCESS = 3;
 
     const ENVIRONMENT_PRODUCTION     = 'production';
     const ENVIRONMENT_DEVELOPMENT    = 'development';
@@ -38,6 +38,9 @@ class Module extends AbstractHelper
     protected $resourceConnection;
     protected $componentRegistrar;
 
+    /** @var \Magento\Backend\Model\UrlInterface $urlBuilder */
+    protected $urlBuilder;
+
     //########################################
 
     public function __construct(
@@ -52,7 +55,8 @@ class Module extends AbstractHelper
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Magento\Framework\Component\ComponentRegistrar $componentRegistrar
+        \Magento\Framework\Component\ComponentRegistrar $componentRegistrar,
+        \Magento\Backend\Model\UrlInterface $urlBuilder
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->config = $config;
@@ -64,6 +68,7 @@ class Module extends AbstractHelper
         $this->moduleResource = new \Magento\Framework\Module\ModuleResource($dbContext);
         $this->resourceConnection = $resourceConnection;
         $this->componentRegistrar = $componentRegistrar;
+        $this->urlBuilder = $urlBuilder;
 
         parent::__construct($helperFactory, $context);
     }
@@ -241,13 +246,36 @@ class Module extends AbstractHelper
     {
         $messages = $this->getRegistry()->getValueFromJson('/server/messages/');
 
-        $messages = array_filter($messages, [$this,'getServerMessagesFilterModuleMessages']);
+        $messages = array_filter($messages, [$this,'getMessagesFilterModuleMessages']);
         !is_array($messages) && $messages = [];
 
         return $messages;
     }
 
-    public function getServerMessagesFilterModuleMessages($message)
+    public function getUpgradeMessages()
+    {
+        $messages = $this->getRegistry()->getValueFromJson('/upgrade/messages/');
+
+        $messages = array_filter($messages, [$this,'getMessagesFilterModuleMessages']);
+        !is_array($messages) && $messages = [];
+
+        foreach ($messages as &$message) {
+            if (!isset($message['url'])) {
+                continue;
+            }
+
+            $message['text'] = str_replace(
+                '%url%',
+                $this->urlBuilder->getUrl($message['url'], isset($message['url_args']) ? $message['url_args'] : null),
+                $message['text']
+            );
+        }
+        unset($message);
+
+        return $messages;
+    }
+
+    public function getMessagesFilterModuleMessages($message)
     {
         if (!isset($message['text']) || !isset($message['type'])) {
             return false;

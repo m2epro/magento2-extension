@@ -30,7 +30,7 @@ class ResendInvoice extends Order
         $order = $this->amazonFactory->getObjectLoaded('Order', (int)$orderId);
         $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_USER);
 
-        if ($documentType == \Ess\M2ePro\Model\Amazon\Order::DOCUMENT_TYPE_INVOICE) {
+        if ($documentType == \Ess\M2ePro\Model\Amazon\Order\Invoice::DOCUMENT_TYPE_INVOICE) {
             $order->getChildObject()->sendInvoice();
             $this->setJsonContent(
                 [
@@ -42,7 +42,7 @@ class ResendInvoice extends Order
             );
         }
 
-        if ($documentType == \Ess\M2ePro\Model\Amazon\Order::DOCUMENT_TYPE_CREDIT_NOTE) {
+        if ($documentType == \Ess\M2ePro\Model\Amazon\Order\Invoice::DOCUMENT_TYPE_CREDIT_NOTE) {
             $order->getChildObject()->sendCreditmemo();
             $this->setJsonContent(
                 [

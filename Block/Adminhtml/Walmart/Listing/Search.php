@@ -48,7 +48,7 @@ class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $content = $this->__(
             <<<HTML
-        On this page, you can review the Items from both M2E Pro and 3rd Party Listings.<br/>
+        On this page, you can review the Items from both M2E Pro and Unmanaged Listings.<br/>
         Filter the records by the Listing Type, Account or Marketplace. Click the Arrow Icon next to the Item to go
         to the related Listing.
 HTML

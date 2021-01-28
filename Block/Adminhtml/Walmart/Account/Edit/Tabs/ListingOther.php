@@ -53,19 +53,19 @@ class ListingOther extends AbstractForm
             [
                 'content' => $this->__(
                     <<<HTML
-        The 3rd Party Listings include Items which were listed on Walmart without using M2E Pro Extension.<br/><br/>
+        The Unmanaged Listings include Items which were listed on Walmart without using M2E Pro Extension.<br/><br/>
 
-        To allow the 3rd Party Listing importing for the current Walmart Account,
-        enable the Import 3rd Party Listings option. The imported 3rd Party Items can be found
-        under <i>Walmart Integration > Listings > 3rd Party</i>.<br/><br/>
+        To allow the Unmanaged Listing importing for the current Walmart Account,
+        enable the Import Unmanaged Listings option. The imported Unmanaged Items can be found
+        under <i>Walmart Integration > Listings > Unmanaged</i>.<br/><br/>
 
-        The 3rd Party Items can be automatically mapped to the related Magento Product by SKU, UPC, GTIN,
+        The Unmanaged Items can be automatically mapped to the related Magento Product by SKU, UPC, GTIN,
         Walmart ID or Title values. To do this, enable the Product Mapping option and
         select appropriate Attribute.<br/><br/>
 
-        <strong>Note:</strong> Automatic mapping of the 3rd Party Item is performed only during
-        the initial 3rd Party Listing importing. Afterward, you can map and move the 3rd Party Items manually
-        under <i>Walmart Integration > Listings > 3rd Party</i>.<br/><br/>
+        <strong>Note:</strong> Automatic mapping of the Unmanaged Item is performed only during
+        the initial Unmanaged Listing importing. Afterward, you can map and move the Unmanaged Items manually
+        under <i>Walmart Integration > Listings > Unmanaged</i>.<br/><br/>
 
         The detailed information can be found <a href="%url%" target="_blank">here</a>.
 HTML
@@ -88,13 +88,13 @@ HTML
             'select',
             [
                 'name' => 'other_listings_synchronization',
-                'label' => $this->__('Import 3rd Party Listings'),
+                'label' => $this->__('Import Unmanaged Listings'),
                 'values' => [
                     1 => $this->__('Yes'),
                     0 => $this->__('No'),
                 ],
                 'value' => $formData['other_listings_synchronization'],
-                'tooltip' => $this->__('Enable to automatically import the 3rd Party Items.')
+                'tooltip' => $this->__('Enable to automatically import the Unmanaged Items.')
             ]
         );
 
@@ -126,7 +126,7 @@ HTML
                 ],
                 'value' => $formData['other_listings_mapping_mode'],
                 'tooltip' => $this->__(
-                    'Enable to automatically map your 3rd Party Items to Magento
+                    'Enable to automatically map your Unmanaged Items to Magento
                     Products based on the mapping Attribute settings.'
                 )
             ]
@@ -139,7 +139,7 @@ HTML
                 'collapsable' => false,
                 'tooltip' => $this->__(
                     '<p>In this section you can provide settings for automatic Mapping of the newly imported
-                    3rd Party Listings to the appropriate Magento Products. </p><br>
+                    Unmanaged Listings to the appropriate Magento Products. </p><br>
                     <p>The imported Items are mapped based on the correspondence between Walmart Item values and
                     Magento Product Attribute values. </p>'
                 )

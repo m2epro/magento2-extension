@@ -53,8 +53,8 @@ class ListingOther extends AbstractForm
             [
                 'content' => $this->__(
                     <<<HTML
-<p>Under this tab you can manage the 3rd Party Listings - Items that were listed directly via your Seller Central
-Account or via some other 3rd party software. Specify whether you would like to import the 3rd Party Listings,
+<p>Under this tab you can manage the Unmanaged Listings - Items that were listed directly via your Seller Central
+Account or via some other Unmanaged software. Specify whether you would like to import the Unmanaged Listings,
 configure the automatic mapping and moving settings.</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
@@ -77,13 +77,13 @@ HTML
             'select',
             [
                 'name' => 'other_listings_synchronization',
-                'label' => $this->__('Import 3rd Party Listings'),
+                'label' => $this->__('Import Unmanaged Listings'),
                 'values' => [
                     1 => $this->__('Yes'),
                     0 => $this->__('No'),
                 ],
                 'value' => $formData['other_listings_synchronization'],
-                'tooltip' => $this->__('Allows importing 3rd Party Listings.')
+                'tooltip' => $this->__('Allows importing Unmanaged Listings.')
             ]
         );
 
@@ -128,7 +128,7 @@ HTML
                 'collapsable' => false,
                 'tooltip' => $this->__(
                     '<p>In this section you can provide settings for automatic Mapping of the newly imported
-                    3rd Party Listings to the appropriate Magento Products. </p><br>
+                    Unmanaged Listings to the appropriate Magento Products. </p><br>
                     <p>The imported Items are mapped based on the correspondence between Amazon Item values and
                     Magento Product Attribute values. </p>'
                 )

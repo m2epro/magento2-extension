@@ -1,8 +1,8 @@
 "eBay Motors","eBay Motori"
 "Feedback Synchronization","Sincronizzazione Feedback"
-"Task ""3rd Party Listings Synchronization"" for eBay account: ""%s"" is in data processing state. Please wait...","L'attività ""Sincronizzazione inserzioni di terze parti"" per l'account eBay: ""%s"" è in stato di elaborazione dati. Attendi..."
+"Task ""Unmanaged Listings Synchronization"" for eBay account: ""%s"" is in data processing state. Please wait...","L'attività ""Sincronizzazione inserzioni di terze parti"" per l'account eBay: ""%s"" è in stato di elaborazione dati. Attendi..."
 "Task ""Update Listings Products"" for eBay account: ""%s"" is in data processing state. Please wait...","L'attività ""Aggiorna prodotti delle inserzioni"" per l'account eBay: ""%s"" è in stato di elaborazione dati. Attendi..."
-"Task ""Update 3rd Party Listings"" for eBay account: ""%s"" is in data processing state. Please wait...","L'attività ""Aggiorna inserzioni di terze parti"" per l'account eBay: ""%s"" è in stato di elaborazione dati. Attendi..."
+"Task ""Update Unmanaged Listings"" for eBay account: ""%s"" is in data processing state. Please wait...","L'attività ""Aggiorna inserzioni di terze parti"" per l'account eBay: ""%s"" è in stato di elaborazione dati. Attendi..."
 "Payment Status was updated to Paid on eBay. As Magento Order #%order_id% can have wrong data, it have to be cancelled.","Stato del pagamento aggiornato in Pagato su eBay. Poiché l'ordine Magento #%order_id% può avere dati errati, deve essere annullato."
 "Task ""Orders Cancellation Synchronization"" for eBay account: ""%s"" is in data processing state. Please wait...","L'attività ""Sincronizzazione annullamento ordini"" per l'account eBay: ""%s"" è in stato di elaborazione dati. Attendi..."
 "Attention! Last eBay AUTOMATIC synchronization was performed by cron more than %s hours ago. You should set up cron job, otherwise no automatic synchronization will be performed. <br/>You can check this %sarticle%s to get how to set cron job. The command for cron job for your server environment can be found %shere%s.","Attenzione L'ultima sincronizzazione AUTOMATICA eBay è stata eseguita da Cron più di %s ore fa. Devi impostare il processo Cron, altrimenti non verrà eseguita alcuna sincronizzazione automatica. <br/>Per istruzioni su come impostare un processo Cron, puoi consultare questo %articolo%s. Il comando per il processo Cron per il tuo ambiente di server è disponibile %squi%s."
@@ -25,7 +25,7 @@
 "Hide","Nascondi"
 "Configuration","Configurazione"
 "General","Generale"
-"3rd Party Listings","Inserzioni di terze parti"
+"Unmanaged Listings","Inserzioni di terze parti"
 "eBay Store","Negozio eBay"
 "Orders","Ordini"
 "Feedback","Feedback"
@@ -170,12 +170,12 @@
 "Description","Descrizione"
 "Run Mode","Modalità di esecuzione"
 "Priority","Priorità"
-"Log For%s 3rd Party Listing","Registro per%s inserzione di terze parti"
+"Log For%s Unmanaged Listing","Registro per%s inserzione di terze parti"
 "Source","Fonte"
 "Revise Rules","Modifica regole"
 "Relist Rules","Regole per la rimessa in vendita"
 "Stop Rules","Blocca regole"
-"Edit%s 3rd Party Synchronization Settings","Modifica%s impostazioni sincronizzazione di terze parti"
+"Edit%s Unmanaged Synchronization Settings","Modifica%s impostazioni sincronizzazione di terze parti"
 "Product Title / SKU","Titolo/codice prodotto"
 "eBay Available QTY","Q.tà disponibile su eBay"
 "eBay Sold QTY","Q.tà vendute su eBay"
@@ -273,7 +273,7 @@ Click Start Configure to create a rule<br/> or Cancel if you do not want to do i
 "Product Title / Listing / SKU","Titolo/inserzione/codice prodotto"
 "Listing Type","Tipo di inserzione"
 "M2E Pro","M2E Pro"
-"3rd Party","Terze parti"
+"Unmanaged","Terze parti"
 """Buy It Now"" Price","Prezzo ""Compralo Subito"""
 "Unknown","Sconosciuto"
 "Not Listed","Non messo in vendita"
@@ -581,7 +581,7 @@ Click Start Configure to create a rule<br/> or Cancel if you do not want to do i
 "Data obtaining for eBay Item failed. Please try again later.","Ottenimento dati per oggetto eBay non riuscito. Riprova più tardi."
 "Product for eBay Item #%id% was created in Magento catalog.","Il prodotto per l'oggetto eBay #%id% è stato creato nel catalogo Magento."
 "Magento Order creation for items listed by M2E Pro is disabled in Account settings.","La creazione dell'ordine Magento per oggetti messi in vendita da M2E Pro è disabilitata nelle impostazioni di account."
-"Magento Order creation for items listed by 3rd party software is disabled in Account settings.","La creazione dell'ordine Magento per oggetti messi in vendita da software di terze parti è disabilitata nelle impostazioni di account."
+"Magento Order creation for items listed by Unmanaged software is disabled in Account settings.","La creazione dell'ordine Magento per oggetti messi in vendita da software di terze parti è disabilitata nelle impostazioni di account."
 "Product import is disabled in Account settings.","L'importazione del prodotto è disabilitata nelle impostazioni di account."
 "Not Selected Yet","Non ancora selezionato"
 "eBay Shipping","Spedizione eBay"
@@ -641,13 +641,13 @@ Click Start Configure to create a rule<br/> or Cancel if you do not want to do i
 "The ""Revise"" action is finished. Please wait...","L'azione ""Modifica"" è terminata. Attendi..."
 "The ""Stop"" action is started. Please wait...","L'azione ""Interruzione"" è iniziata. Attendi..."
 "The ""Stop"" action is finished. Please wait...","L'azione ""Interruzione"" è terminata. Attendi..."
-"Task ""Update 3rd Party Listings"" has completed with errors. View %sl%listings log%el% for details.","L'attività ""Aggiorna inserzioni di terze parti"" è stata completata con errori. Vedi %sl%listings log%el% per dettagli."
-"Task ""Update 3rd Party Listings"" has completed with warnings. View %sl%listings log%el% for details.","L'attività ""Aggiorna inserzioni di terze parti"" è stata completata con avvisi. Vedi %sl%listings log%el% per dettagli."
-"The ""Update 3rd Party Listings"" action is started. Please wait...","L'azione ""Aggiorna inserzioni di terze parti"" è iniziata. Attendi..."
-"The ""Update 3rd Party Listings"" action is finished. Please wait...","L'azione ""Aggiorna inserzioni di terze parti"" è terminata. Attendi..."
-"Task ""3rd Party Listings Synchronization"" for eBay account: ""%s"" is started. Please wait...","L'attività ""Sincronizzazione inserzioni di terze parti"" per l'account eBay: ""%s"" è iniziata. Attendi..."
-"Task ""3rd Party Listings Synchronization"" is started. Please wait...","L'attività ""Sincronizzazione inserzioni di terze parti"" è iniziata. Attendi..."
-"Task ""3rd Party Listings Synchronization"" is finished. Please wait...","L'attività ""Sincronizzazione inserzioni di terze parti"" è terminata. Attendi..."
+"Task ""Update Unmanaged Listings"" has completed with errors. View %sl%listings log%el% for details.","L'attività ""Aggiorna inserzioni di terze parti"" è stata completata con errori. Vedi %sl%listings log%el% per dettagli."
+"Task ""Update Unmanaged Listings"" has completed with warnings. View %sl%listings log%el% for details.","L'attività ""Aggiorna inserzioni di terze parti"" è stata completata con avvisi. Vedi %sl%listings log%el% per dettagli."
+"The ""Update Unmanaged Listings"" action is started. Please wait...","L'azione ""Aggiorna inserzioni di terze parti"" è iniziata. Attendi..."
+"The ""Update Unmanaged Listings"" action is finished. Please wait...","L'azione ""Aggiorna inserzioni di terze parti"" è terminata. Attendi..."
+"Task ""Unmanaged Listings Synchronization"" for eBay account: ""%s"" is started. Please wait...","L'attività ""Sincronizzazione inserzioni di terze parti"" per l'account eBay: ""%s"" è iniziata. Attendi..."
+"Task ""Unmanaged Listings Synchronization"" is started. Please wait...","L'attività ""Sincronizzazione inserzioni di terze parti"" è iniziata. Attendi..."
+"Task ""Unmanaged Listings Synchronization"" is finished. Please wait...","L'attività ""Sincronizzazione inserzioni di terze parti"" è terminata. Attendi..."
 "The ""Business Policies Receive"" action for eBay Site: ""%s"" and Account: ""%s"" is started. Please wait...","L'azione ""Ricezione regole di vendita"" per il sito eBay: ""%s"" e per l'account: ""%s"" è iniziata. Attendi..."
 "The ""'.$this->synchName.'"" action is started. Please wait...","L'icona ""'.$this->synchName."" è iniziata. Attendi..."
 "The ""'.$this->synchName.'"" action is finished. Please wait...","L'icona ""'.$this->synchName."" è terminata. Attendi..."
@@ -705,7 +705,7 @@ Click Start Configure to create a rule<br/> or Cancel if you do not want to do i
 "ePIDs were saved in Compatibility Attribute.","ePID sono stati salvati in attributo compatibilità."
 "Listing Review","Revisione inserzioni"
 "Logs","Registri"
-"3rd Party Listing does not exist.","L'inserzione di terze parti non è disponibile."
+"Unmanaged Listing does not exist.","L'inserzione di terze parti non è disponibile."
 "Marketplaces","Mercati"
 "Sales","Vendite "
 "Order address has been updated.","Aggiornamento dell'indirizzo dell'ordine completato."
@@ -723,8 +723,8 @@ Click Start Configure to create a rule<br/> or Cancel if you do not want to do i
 "This is not a PayPal transaction.","Non si tratta di una transazione PayPal."
 "Please select item(s) to clear","Seleziona gli oggetti da cancellare"
 "The synchronization task log has been successfully cleaned.","Il registro delle attività di sincronizzazione è stato pulito correttamente."
-"eBay 3rd Party Listings are being downloaded now. ' .
-                'They will be available soon in %s > Listings > 3rd Party. ' .
+"eBay Unmanaged Listings are being downloaded now. ' .
+                'They will be available soon in %s > Listings > Unmanaged. ' .
                 'You can continue working with M2E Pro.","È attualmente in corso il download delle inserzioni di terze parti di eBay. "" Saranno presto disponibili in %s > Inserzioni > Terze parti "". 'Puoi continuare a utilizzare M2E Pro."
 "This product ID does not exist","Questo ID prodotto non esiste"
 "Error search charity","Errore ricerca organizzazione di beneficenza"
@@ -778,16 +778,16 @@ Click Start Configure to create a rule<br/> or Cancel if you do not want to do i
 "Activated","Attivata"
 "Expiration Date","Data di scadenza"
 "
-        The 3rd Party Listings are the items, which were listed on eBay without using M2E Pro extension.
+        The Unmanaged Listings are the items, which were listed on eBay without using M2E Pro extension.
         <br/><br/>
-        Set 'Yes' in Import 3rd Party Listings to allow importing for the current eBay Account. Imported listings you can find in Sell on eBay -> Listings -> 3rd Party.
+        Set 'Yes' in Import Unmanaged Listings to allow importing for the current eBay Account. Imported listings you can find in Sell on eBay -> Listings -> Unmanaged.
         <br/>
         Use 'Product Mapping' settings to connect eBay listings to Magento products.
         <br/><br/>
-        <b>Note:</b> The 3rd Party Listings Synchronization must be enabled in %1$s > Configuration > Synchronization.
+        <b>Note:</b> The Unmanaged Listings Synchronization must be enabled in %1$s > Configuration > Synchronization.
         ","        Le inserzioni di terze parti sono gli oggetti che sono stati messi in vendita su eBay senza utilizzare l'estensione                M2E Pro.        <br/><br/>        Per consentire l'importazione per l'account eBay corrente, imposta Importa inserzioni di terze parti su ""Sì"". Le inserzioni importate saranno disponibili in Vendi su eBay -> Inserzioni -> Terze parti.        <br/>        Utilizza le impostazioni ""Associazione prodotti"" per collegare le inserzioni eBay ai prodotti Magento.        <br/><br/>        <b>Nota:</b> è necessario abilitare la sincronizzazione delle inserzioni di terze parti in %1$s > Configurazione > Sincronizzazione.        "
-"Import 3rd Party Listings","Importa inserzioni di terze parti"
-"Allows importing 3rd Party Listings.<br/><b>Note:</b> Only active eBay Listings created less than 2 years before will be imported.","Consente l'importazione di inserzioni di terze parti.<br/><b>Nota:</b> verranno importate le sole inserzioni eBay create meno di 2 anni fa."
+"Import Unmanaged Listings","Importa inserzioni di terze parti"
+"Allows importing Unmanaged Listings.<br/><b>Note:</b> Only active eBay Listings created less than 2 years before will be imported.","Consente l'importazione di inserzioni di terze parti.<br/><b>Nota:</b> verranno importate le sole inserzioni eBay create meno di 2 anni fa."
 "Product Mapping","Associazione prodotti"
 "Maps eBay product with Magento product.","Associa un prodotto eBay a un prodotto Magento."
 "Mapping Settings","Impostazioni di associazione"
@@ -797,13 +797,13 @@ Click Start Configure to create a rule<br/> or Cancel if you do not want to do i
 "Listing Title","Titolo inserzione"
 "Mapped Items Synchronization","Sincronizzazione oggetti associati"
 "Enabled","Abilitata"
-"Enables / Disables synchronization of Mapped 3rd Party<br/>Listings for the current account. Click 'Synchronization Settings' button to configure settings.
-                            <br/><b>Note:</b> The first 3rd Party Listings Synchronization launches the first product automapping. After that you can launch it manually in Sell on eBay > Listings > 3rd Party.","Abilita/disabilita la sincronizzazione delle inserzioni<br/>di terze parti associate per l'account corrente. Clicca sul pulsante ""Impostazioni di sincronizzazione"" per configurare le impostazioni.                            <br/><b>Nota:</b> quando si esegue per la prima volta la sincronizzazione delle inserzioni di terze parti viene avviata l'associazione automatica dei prodotti. In seguito, puoi avviarla manualmente in Vendi su eBay > Inserzioni > Terze parti."
+"Enables / Disables synchronization of Mapped Unmanaged<br/>Listings for the current account. Click 'Synchronization Settings' button to configure settings.
+                            <br/><b>Note:</b> The first Unmanaged Listings Synchronization launches the first product automapping. After that you can launch it manually in Sell on eBay > Listings > Unmanaged.","Abilita/disabilita la sincronizzazione delle inserzioni<br/>di terze parti associate per l'account corrente. Clicca sul pulsante ""Impostazioni di sincronizzazione"" per configurare le impostazioni.                            <br/><b>Nota:</b> quando si esegue per la prima volta la sincronizzazione delle inserzioni di terze parti viene avviata l'associazione automatica dei prodotti. In seguito, puoi avviarla manualmente in Vendi su eBay > Inserzioni > Terze parti."
 "Related Store Views","Negozi correlati"
 "Related Store View","Negozio correlato"
 "Establish connection between eBay sites and Magento Store Views for correct data synchronization.","Per una sincronizzazione corretta dei dati, crea un collegamento tra i siti eBay e i Negozi Magento."
 "For each eBay account M2E Pro allows import orders coming from eBay and setting up automatic Magento orders creation.
-                                         Using appropriate settings you can create Magento orders for the items listed by the 3rd party software and by M2E Pro.
+                                         Using appropriate settings you can create Magento orders for the items listed by the Unmanaged software and by M2E Pro.
                                          <br/>
                                          <br/>
                                          <b>Note:</b> The Product Stock QTY only reduces after Magento Order creation.<br/>
@@ -1083,14 +1083,14 @@ Actions for a single Listing you can find in the Action column of the grid. Choo
 "This Log contains all information about actions, which were done on all M2E Pro Listings and their items.","Questo registro contiene le informazioni relative alle azioni effettuate su tutte le inserzioni M2E Pro e sui rispettivi oggetti."
 "
 This page contains eBay Listings, which belong to registered eBay Accounts (%1$s > Configuration > Accounts Settings) and were listed not by M2E Pro extension.<br/>
-They are filtered by eBay User ID and Marketplaces in the grid. To review necessary 3rd Party Listings click on appropriate line of the grid.
+They are filtered by eBay User ID and Marketplaces in the grid. To review necessary Unmanaged Listings click on appropriate line of the grid.
 <br/><br/>
-<b>Note:</b> To import eBay 3rd Party Listings the 3rd Party Listings Import must be enabled in account's settings
-(%1$s > Configuration > Accounts Settings > 3rd Party Listings tab) and the 3rd Party Listings Synchronization must be enabled in %1$s > Configuration > Synchronization.
+<b>Note:</b> To import eBay Unmanaged Listings the Unmanaged Listings Import must be enabled in account's settings
+(%1$s > Configuration > Accounts Settings > Unmanaged Listings tab) and the Unmanaged Listings Synchronization must be enabled in %1$s > Configuration > Synchronization.
 <br/><br/>
-<b>Important:</b> Initially (the first synchronization of 3rd Party Listings) M2E imports items which have been listed not later than a year ago.
+<b>Important:</b> Initially (the first synchronization of Unmanaged Listings) M2E imports items which have been listed not later than a year ago.
 ","In questa sezione sono contenute le inserzioni che appartengono ad account eBay registrati (%1$s > Configurazione > Impostazioni account) e che non sono state pubblicate tramite l'estensione M2E Pro.<br/>Sono filtrati in base all'ID utente eBay e ai mercati nella griglia. Per controllare le inserzioni di terzi parti richieste, clicca sulla riga della griglia adeguata.<br/><br/><b>Nota:</b> per importare le inserzioni di terze parti eBay, devi abilitare Importazione inserzioni di terze parti nelle impostazioni dell'account (%1$s > Configurazione > Impostazioni account > scheda Inserzioni di terze parti), nonché Sincronizzazione inserzioni di terze parti in %1$s > Configurazione > Sincronizzazione.<br/><br/><b>Importante:</b> durante la prima sincronizzazione delle inserzioni di terze parti, M2E importa i soli oggetti messi in vendita da meno di un anno."
-"This Log contains all information about actions, which were done on 3rd Party Listings.","Questo registro contiene tutte le informazioni sulle azioni che sono state effettuate sulle inserzioni di terze parti."
+"This Log contains all information about actions, which were done on Unmanaged Listings.","Questo registro contiene tutte le informazioni sulle azioni che sono state effettuate sulle inserzioni di terze parti."
 "Define the conditions when you want eBay items relisted.
     ","Definisci le condizioni per rimettere in vendita oggetti su eBay.    "
 "Relist Action","Azione di rimessa in vendita"
@@ -1183,7 +1183,7 @@ If the product belongs to several categories, it is shown in each category. And 
 "Selected Categories: ","Categorie selezionate: "
 "view","visita"
 "Search Items","Cerca oggetti "
-"This page contains all products added to M2E listings or assigned to the 3rd Party. It allows quick searching listings by their products.","Questa pagina contiene tutti i prodotti aggiunti alle inserzioni M2E o assegnati a terze parti. Consente di cercare rapidamente le inserzioni in base ai relativi prodotti."
+"This page contains all products added to M2E listings or assigned to the Unmanaged. It allows quick searching listings by their products.","Questa pagina contiene tutti i prodotti aggiunti alle inserzioni M2E o assegnati a terze parti. Consente di cercare rapidamente le inserzioni in base ai relativi prodotti."
 "Keep the existing M2E Listing settings or customise these settings for the products shown below.","Mantieni le impostazioni correnti dell'inserzione M2E o personalizzale per i prodotti mostrati di seguito."
 "You can edit Settings for a single product by choosing necessary edit action on appropriate line of the grid<br/>
         or edit and set the same settings for several products items: select items and choose necessary action from the Actions drop down menu.","Puoi modificare le impostazioni per un unico prodotto selezionando, nella riga della griglia corrispondente, l'azione di modifica richiesta<br/>        oppure puoi modificare e impostare le stesse impostazioni per più prodotti: seleziona gli oggetti e scegli l'azione richiesta dal menu a discesa Azioni."
@@ -1309,7 +1309,7 @@ you can create them manually by using appropriate options in the Action dropdown
 "Running All Enabled Tasks","Esecuzione di tutte le attività abilitate"
 "Inventory Synchronization","Sincronizzazione magazzino"
 "Orders Synchronization","Sincronizzazione ordini"
-"3rd Party Listings Synchronization","Sincronizzazione inserzioni di terze parti"
+"Unmanaged Listings Synchronization","Sincronizzazione inserzioni di terze parti"
 "Revise All","Modifica tutte"
 "enabled","abilitata"
 "If catalog updates in your magento performed using import/export tools, custom scripts or direct changes in database,
@@ -1323,13 +1323,13 @@ you can create them manually by using appropriate options in the Action dropdown
 "Finished, end date - ","Terminato, data di fine: - "
 "Imports and synchronizes eBay Orders for accounts, which have enabled Import eBay Orders in their Accounts settings.","Importa e sincronizza gli ordini eBay per gli account che hanno abilitato Importa ordini eBay nelle impostazioni degli account."
 "Imports buyers' feedback and automatically sends Auto Responses according to eBay Accounts settings.","Importa i Feedback degli acquirenti e invia automaticamente le risposte automatiche in base alle impostazioni degli account eBay."
-"Imports and synchronizes 3rd Party Listings for eBay accounts, which have enabled Import 3rd Party Listings in their Accounts settings.<br/><strong>Note: </strong>Click ""Synchronization Settings"" to configure settings.","Importa e sincronizza le inserzioni di terze parti per gli account eBay che hanno abilitato Importa inserzioni di terze parti nelle impostazioni degli account.<br/><strong>Nota: </strong>clicca sul pulsante ""Impostazioni di sincronizzazione"" per configurare le impostazioni."
+"Imports and synchronizes Unmanaged Listings for eBay accounts, which have enabled Import Unmanaged Listings in their Accounts settings.<br/><strong>Note: </strong>Click ""Synchronization Settings"" to configure settings.","Importa e sincronizza le inserzioni di terze parti per gli account eBay che hanno abilitato Importa inserzioni di terze parti nelle impostazioni degli account.<br/><strong>Nota: </strong>clicca sul pulsante ""Impostazioni di sincronizzazione"" per configurare le impostazioni."
 "Click 'Confirm' and Revise will be performed by the Inventory Synchronization, 100 items per a cycle.","Clicca su ""Conferma"" per consentire alla sincronizzazione del magazzino di apportare la modifica (100 oggetti per ciclo)."
 "Set preferences of data synchronization and Save Settings.<br/>
     To run each task manually, click the Run Now button; to run all the tasks simultaneously click the Run Enabled Now button displayed at the top of the page.<br/>
     <br/><b>Note:</b> Cron job must be set up for automatic synchronization.","Definisci e salva le impostazioni per la sincronizzazione dei dati.<br/>    Per eseguire tutte le attività manualmente, clicca sul pulsante Esegui ora. Per eseguire tutte le attività contemporaneamente, clicca sul pulsante Esegui ora attività abilitate nella parte superiore della pagina.<br/>    <br/><b>Nota:</b> il processo cron deve essere impostato per la sincronizzazione automatica."
 "This Log contains information on processes, which were done in Synchronization tasks.<br/><br/>
-    <b>Note:</b> Logs of Default, Templates, Orders and 3rd Party Listings Synchronizations are only recorded when Error(s) or Warning(s) appears.","Questo registro contiene le informazioni sui processi che sono stati effettuati nelle attività di sincronizzazione.<br/><br/>    <b>Nota:</b> i registri delle sincronizzazioni predefinite, di modelli, ordini e inserzioni di terze parti vengono compilati solo in caso di visualizzazione di errori o avvisi."
+    <b>Note:</b> Logs of Default, Templates, Orders and Unmanaged Listings Synchronizations are only recorded when Error(s) or Warning(s) appears.","Questo registro contiene le informazioni sui processi che sono stati effettuati nelle attività di sincronizzazione.<br/><br/>    <b>Nota:</b> i registri delle sincronizzazioni predefinite, di modelli, ordini e inserzioni di terze parti vengono compilati solo in caso di visualizzazione di errori o avvisi."
 "Adding Image","Aggiunta immagine"
 "Condition description must be less then 1000 symbols.","La descrizione delle condizioni deve contenere al massimo 1.000 caratteri."
 "New, New with tags, New with box, Brand New","Nuovo, Nuovo con etichette, nuovo nella confezione originale"
@@ -1798,11 +1798,11 @@ If all options are enabled, then an item will be stopped if at least one of the 
 "Inventory Synchronization","Sincronizzazione magazzino"
 "Orders Synchronization","Sincronizzazione ordini"
 "Marketplaces Synchronization","Sincronizzazione mercati"
-"3rd Party Listings Synchronization","Sincronizzazione inserzioni di terze parti"
+"Unmanaged Listings Synchronization","Sincronizzazione inserzioni di terze parti"
 "The ""Categories Synchronization"" action for marketplace: ""%s"" is in data processing mode. Please wait...","L'azione ""Sincronizzazione categorie"" per il mercato: ""%s"" è in modalità di elaborazione dati. Attendi..."
 "Magento Order was not created. Reason: Magento Order creation is disabled in Account settings.","Ordine Magento non creato. Motivo: la creazione dell'ordine Magento è disabilitata nelle impostazioni di account."
 "Magento Order was not created. Reason: Magento Order creation for items listed by M2E Pro is disabled in Account settings.","Ordine Magento non creato. Motivo: la creazione dell'ordine Magento per oggetti messi in vendita da M2E Pro è disabilitata nelle impostazioni di account."
-"Magento Order was not created. Reason: Magento Order creation for items listed by 3rd party software is disabled in Account settings.","Ordine Magento non creato. Motivo: la creazione dell'ordine Magento per oggetti messi in vendita da software di terze parti è disabilitata nelle impostazioni di account."
+"Magento Order was not created. Reason: Magento Order creation for items listed by Unmanaged software is disabled in Account settings.","Ordine Magento non creato. Motivo: la creazione dell'ordine Magento per oggetti messi in vendita da software di terze parti è disabilitata nelle impostazioni di account."
 "Magento order was not created. Reason: Order Creation Rules were not met. Press Create Order button at Order view page to create it anyway.","Ordine Magento non creato. Motivo: Regole di creazione ordini non soddisfatte. Premi il pulsante Crea ordine sulla pagina di visualizzazione dell'ordine per crearlo comunque."
 "Magento Order is already created for this %s Order. Press Create Order button to create new one.","L'ordine Magento è già creato per questo ordine %s. Premi il pulsante Crea ordine per crearne uno nuovo."
 "Payment Status was not updated to Paid. Magento Order #%order_id% have to be cancelled according to Account's Automatic Cancellation setting.","Stato del pagamento non aggiornato in Pagato. L'ordine Magento #%order_id% deve essere annullato in base all'impostazione Annullamento automatico dell'account."
@@ -1816,7 +1816,7 @@ If all options are enabled, then an item will be stopped if at least one of the 
 "M2E Pro module license has expired for ""%s"" component. Go to the %slicense page%s.","Licenza del modulo M2E Pro scaduta per il componente ""%s"". Vai su %slicense page%s."
 "M2E Pro module is running under Trial License for ""%s"" component, that will expire on %s.","Il modulo M2E Pro è in esecuzione con licenza di valutazione per il componente ""%s"", che scadrà in data %s."
 "M2E Pro module license will expire on %s for ""%s"" component. Go to the %slicense page%s.","La licenza del modulo M2E Pro scadrà in data %s per il componente ""%s"". Vai su %slicense page%s."
-"No matches were found. Please change the mapping attributes in <strong>Configuration > Account > 3rd Party Listings</strong> or try to map manually.","Non sono state trovate corrispondenze. Modifica gli attributi di associazione in <strong>Configurazione > Account > Inserzioni di terze parti</strong> o prova a eseguire l'associazione manualmente."
+"No matches were found. Please change the mapping attributes in <strong>Configuration > Account > Unmanaged Listings</strong> or try to map manually.","Non sono state trovate corrispondenze. Modifica gli attributi di associazione in <strong>Configurazione > Account > Inserzioni di terze parti</strong> o prova a eseguire l'associazione manualmente."
 "The ""Categories Synchronization"" action for marketplace: ""%mrk%"" is in data processing mode. Please wait...","L'azione ""Sincronizzazione categorie"" per il mercato: ""%mrk%"" è in modalità di elaborazione dati. Attendi..."
 "Task ""Orders Receive Synchronization"" for Rakuten.com ""%acc%"" Account is started. Please wait...","L'attività ""Sincronizzazione ricezione ordini"" per l'account ""%acc%"" Rakuten.com è iniziata. Attendi..."
 "Task ""Orders Update Synchronization"" for Rakuten.com ""%acc%"" Account is started. Please wait...","L'attività ""Sincronizzazione aggiornamenti ordini"" per l'account ""%acc%"" Rakuten.com è iniziata. Attendi..."
@@ -1847,7 +1847,7 @@ If all options are enabled, then an item will be stopped if at least one of the 
 "Add Account","Aggiungi account"
 "Configuration","Configurazione"
 "General","Generale"
-"3rd Party Listings","Inserzioni di terze parti"
+"Unmanaged Listings","Inserzioni di terze parti"
 "Orders","Ordini"
 "Edit%s Account","Modifica%s account"
 "Add%s Account","Aggiungi%s account"
@@ -2148,8 +2148,8 @@ If all options are enabled, then an item will be stopped if at least one of the 
 "Product Name","Nome prodotto"
 "Run Mode","Modalità di esecuzione"
 "Priority","Priorità"
-"Log For%s 3rd Party Listing","Registro per%s inserzione di terze parti"
-"3rd Party Listings Log","Registro inserzioni di terze parti"
+"Log For%s Unmanaged Listing","Registro per%s inserzione di terze parti"
+"Unmanaged Listings Log","Registro inserzioni di terze parti"
 "Product was successfully mapped.","Prodotto associato correttamente."
 "Listings, which have the same Marketplace and Account were not found.","Inserzioni con mercato e account corrispondenti non trovate."
 "Would you like to create one with default settings ?","Crearne una con le impostazioni predefinite?"
@@ -2526,7 +2526,7 @@ If all options are enabled, then an item will be stopped if at least one of the 
 "Product for Play Item ""%id%"" was created in Magento catalog.","Il prodotto per l'oggetto Play ""%id%"" è stato creato nel catalogo Magento."
 "Product for Play Item ""%title%"" was created in Magento catalog.","Il prodotto per l'oggetto Play ""%title%"" è stato creato nel catalogo Magento."
 "Magento Order creation for items listed by M2E Pro is disabled in Account settings.","La creazione dell'ordine Magento per oggetti messi in vendita da M2E Pro è disabilitata nelle impostazioni di account."
-"Magento Order creation for items listed by 3rd party software is disabled in Account settings.","La creazione dell'ordine Magento per oggetti messi in vendita da software di terze parti è disabilitata nelle impostazioni di account."
+"Magento Order creation for items listed by Unmanaged software is disabled in Account settings.","La creazione dell'ordine Magento per oggetti messi in vendita da software di terze parti è disabilitata nelle impostazioni di account."
 "Play Shipping","Spedizione Play"
 "Customer with ID specified in Play account settings does not exist.","Il cliente con l'ID specificato nelle impostazioni dell'account Play non esiste."
 "Invalid component mode.","Modalità componente non valida."
@@ -2549,9 +2549,9 @@ If all options are enabled, then an item will be stopped if at least one of the 
 "Task ""%s"" is started. Please wait...","L'attività ""%s"" è iniziata. Attendi..."
 "Task ""%s"" is finished. Please wait...","L'attività ""%s"" è terminata. Attendi..."
 "Play.com Orders Update Synchronization","Sincronizzazione aggiornamenti ordini Play.com"
-"Task ""3rd Party Listings Synchronization"" is started. Please wait...","L'attività ""Sincronizzazione inserzioni di terze parti"" è iniziata. Attendi..."
-"Task ""3rd Party Listings Synchronization"" is finished. Please wait...","L'attività ""Sincronizzazione inserzioni di terze parti"" è terminata. Attendi..."
-"Task ""3rd Party Listings Synchronization"" for Play.com account: ","L'attività ""Sincronizzazione inserzioni di terze parti"" per account Play.com: "
+"Task ""Unmanaged Listings Synchronization"" is started. Please wait...","L'attività ""Sincronizzazione inserzioni di terze parti"" è iniziata. Attendi..."
+"Task ""Unmanaged Listings Synchronization"" is finished. Please wait...","L'attività ""Sincronizzazione inserzioni di terze parti"" è terminata. Attendi..."
+"Task ""Unmanaged Listings Synchronization"" for Play.com account: ","L'attività ""Sincronizzazione inserzioni di terze parti"" per account Play.com: "
 """%s"" is started. Please wait...","%s è iniziata. Attendi..."
 "The ""List"" action is started. Please wait...","L'azione ""Metti in vendita"" è iniziata. Attendi..."
 "The ""List"" action is finished. Please wait...","L'azione ""Metti in vendita"" è terminata. Attendi..."
@@ -2644,7 +2644,7 @@ If all options are enabled, then an item will be stopped if at least one of the 
 "Each keyword should be at least three characters.","Ogni parola chiave deve contenere almeno tre caratteri."
 "Product(s) was not assigned","Prodotto/i non assegnato/i"
 "Global","Internazionale"
-"The 3rd party listings are locked by another process. ","Le inserzioni di terze parti sono bloccate da un altro processo. "
+"The Unmanaged listings are locked by another process. ","Le inserzioni di terze parti sono bloccate da un altro processo. "
 "Please try again later.","Riprova più tardi."
 "Component is not defined.","Componente non definito."
 "The item was successfully removed.","L'oggetto è stato rimosso correttamente."
@@ -2658,7 +2658,7 @@ If all options are enabled, then an item will be stopped if at least one of the 
 "Component and Listing Products must be specified.","È necessario indicare il componente e i prodotti dell'inserzione."
 "The items were successfully duplicated.","Duplicazione degli oggetti eseguita correttamente."
 "Activity Logs","Registri attività "
-"3rd Party Listing does not exist.","L'inserzione di terze parti non è disponibile."
+"Unmanaged Listing does not exist.","L'inserzione di terze parti non è disponibile."
 "Play.com Accounts","Account Play.com"
 "The Play.com access obtaining is currently unavailable.<br />Reason: %s","Al momento non è possibile accedere a Play.com.<br />Motivo: %s"
 "Play.com Listings","Inserzioni Play.com"
@@ -2688,7 +2688,7 @@ If all options are enabled, then an item will be stopped if at least one of the 
 "Component Mode or Account ID or Marketplace ID is empty.","Modalità componente, ID account o ID mercato vuoto."
 "No Other Listings found.","Impossibile trovare altre inserzioni."
 "Please select item(s) to clear.","Seleziona gli oggetti da cancellare."
-"The 3rd party listing(s) log has been successfully cleaned.","Il registro delle inserzioni di terze parti è stato pulito correttamente."
+"The Unmanaged listing(s) log has been successfully cleaned.","Il registro delle inserzioni di terze parti è stato pulito correttamente."
 "The listing(s) log was successfully cleaned.","Il registro delle inserzioni è stato pulito correttamente."
 "-- Please select --","-- Seleziona --"
 "QTY for selected Order(s) was successfully reserved.","La quantità per gli ordini selezionati è stata prenotata."
@@ -2733,7 +2733,7 @@ If all options are enabled, then an item will be stopped if at least one of the 
             <li>Accept the Amazon MWS License Agreement.</li>
             <li>Copy generated Merchant ID and paste it in the corresponding fields of the current page.</li>
         </ul>
-        Continue working with 3rd Party Listings and Orders settings tabs.
+        Continue working with Unmanaged Listings and Orders settings tabs.
     ","        Compila il titolo, seleziona il mercato con il quale desideri lavorare e clicca sul link <i>Ottieni dati di accesso</i>.        <br/>Sarai reindirizzato al sito Web Amazon.<br/><br/>    <b>Nota:</b> per poter vendere su Amazon è necessario disporre di almeno uno degli elementi seguenti: un account aziendale di vendita su Amazon, un account Amazon WebStore, un account di pagamento tramite Amazon o un account relativo alle inserzioni di prodotti Amazon.<br/>    Se sei un venditore non professionale devi effettuare l'aggiornamento a un account di venditore professionale dalla pagina Vendita su Amazon dei servizi Amazon.        <br/>        <br/>Accedi e completa i passaggi per accedere a ogni mercato:        <ul class=""list"">            <li>Seleziona <i>""Voglio utilizzare un'applicazione per accedere al mio account di venditore di Amazon con MWS"".</i></li>            <li>Immetti il nome dell'applicazione e il numero dell'account di sviluppatore dell'applicazione disponibili nella sezione Mercati della pagina corrente.</li>            <li>Accetta l'Accordo per gli utenti di Amazon MWS.</li>            <li>Copia l'ID venditore professionale generato e incollalo nei campi corrispondenti della pagina corrente.</li>        </ul>        Continua a utilizzare le schede di impostazioni Inserzioni di terze parti e Ordini.    "
 "Be attentive! By deleting account you delete all information on it from M2E Pro server. This will cause inappropriate work of all accounts' copies.","Attenzione L'eliminazione dell'account comporta l'eliminazione di tutte le relative informazioni dal server M2E Pro. Questo comporta un lavoro inappropriato per tutte le copie degli account."
 "The specified title is already used for other account. Account title must be unique.","Il titolo specificato è già utilizzato per un altro account. Il titolo dell'account deve essere univoco."
@@ -2753,20 +2753,20 @@ If all options are enabled, then an item will be stopped if at least one of the 
 "Paste generated Merchant ID from Amazon. (It must look like: A15UFR7CZVW5YA).","Incolla l'ID venditore professionale da Amazon (deve essere simile a: A15UFR7CZVW5YA)."
 "If Yes is chosen, you must select at least one attribute for product mapping.","Se scegli Sì, devi selezionare almeno un attributo per l'associazione dei prodotti."
 "
-The 3rd Party Listings are the items, which were listed on Amazon without using M2E Pro extension. <br/><br/>
-To allow importing of these listings for the current Amazon Account, set Import 3rd Party Listings to <i>Yes</i>.<br/>
-Imported Listings can be found in %1$s > Manage Listings > 3rd Party Listings.<br/><br/>
-<b>Note:</b> The 3rd Party Listings Synchronization must be enabled in %1$s > Configuration > Synchronization.<br/><br/>
-To map the products of the 3rd Party Listings with existing products in Magento by ASIN, ISBN, SKU or Title, set Product Mapping to <i>Yes</i> and choose appropriate attribute(s).
+The Unmanaged Listings are the items, which were listed on Amazon without using M2E Pro extension. <br/><br/>
+To allow importing of these listings for the current Amazon Account, set Import Unmanaged Listings to <i>Yes</i>.<br/>
+Imported Listings can be found in %1$s > Manage Listings > Unmanaged Listings.<br/><br/>
+<b>Note:</b> The Unmanaged Listings Synchronization must be enabled in %1$s > Configuration > Synchronization.<br/><br/>
+To map the products of the Unmanaged Listings with existing products in Magento by ASIN, ISBN, SKU or Title, set Product Mapping to <i>Yes</i> and choose appropriate attribute(s).
 A Magento product will be mapped if at least one of the chosen attributes meets the same value in Amazon Listing as it has in Magento.
 <br/><br/>
-After mapping the Amazon Listing can be automatically moved from the 3rd Party Listings to M2E Pro Listings for further management.<br/><br/>
+After mapping the Amazon Listing can be automatically moved from the Unmanaged Listings to M2E Pro Listings for further management.<br/><br/>
 
-<b>Note:</b> Auto mapping and moving actions are performed only once during the first 3rd Party Listings Synchronization.
-Afterwards, it can be performed manually on the 3rd Party Listings page (%1$s > Manage Listings > 3rd Party Listings).
+<b>Note:</b> Auto mapping and moving actions are performed only once during the first Unmanaged Listings Synchronization.
+Afterwards, it can be performed manually on the Unmanaged Listings page (%1$s > Manage Listings > Unmanaged Listings).
 ","Le inserzioni di terze parti sono gli oggetti che sono stati messi in vendita su Amazon senza utilizzare l'estensione M2E Pro. <br/><br/>Per consentire l'importazione di queste inserzioni per l'account Amazon corrente, imposta Importa inserzioni di terze parti su <i>Sì</i>.<br/>Le inserzioni importate sono disponibili in %1$s > Gestione inserzioni > Inserzioni di terze parti.<br/><br/><b>Nota:</b> la sincronizzazione delle inserzioni di terze parti deve essere abilitata in %1$s > Configurazione > Sincronizzazione.<br/><br/>Per associare prodotti delle inserzioni di terze parti ai prodotti esistenti in Magento tramite numero ASIN, ISBN, SKU o Titolo, imposta Associazione prodotti su <i>Sì</i> e scegli gli attributi appropriati. Un prodotto Magento sarà associato se almeno uno degli attributi scelti soddisfa lo stesso valore presente in Inserzione Amazon e in Magento.<br/><br/>Dopo l'associazione, l'inserzione Amazon può essere spostata automaticamente da Inserzioni di terze parti a Inserzioni M2E Pro per un'ulteriore gestione.<br/><br/><b>Nota:</b> le azioni di associazione e spostamento automatici vengono effettuate solo una volta durante la prima sincronizzazione delle inserzioni di terze parti. Successivamente, può essere effettuata manualmente nella pagina                                Inserzioni di terze parti (%s > Gestione inserzioni > Inserzioni di terze parti)."
-"Import 3rd Party Listings","Importa inserzioni di terze parti"
-"Allows importing 3rd Party Listings.","Consente l'importazione di inserzioni di terze parti."
+"Import Unmanaged Listings","Importa inserzioni di terze parti"
+"Allows importing Unmanaged Listings.","Consente l'importazione di inserzioni di terze parti."
 "Related Store View","Negozio correlato"
 "Store View, which will be associated with chosen<br/>Marketplace of the current account.","Negozio che verrà associato con il mercato<br/>selezionato dell'account corrente."
 "Product Mapping","Associazione prodotti"
@@ -2775,10 +2775,10 @@ Afterwards, it can be performed manually on the 3rd Party Listings page (%1$s > 
 "Product SKU","Codice prodotto"
 "Custom Attribute","Attributo personalizzato"
 "Auto Moving Mapped Amazon Items To M2E Listings","Lo spostamento automatico ha associato gli oggetti Amazon alle inserzioni M2E"
-"Moving 3rd Party Listings","Spostamento di inserzioni di terze parti"
+"Moving Unmanaged Listings","Spostamento di inserzioni di terze parti"
 "This section allows you automatically move mapped Amazon Items in default created M2E Listing and synchronize their Prices and Quantities with Magento values at once they have been moved.","Questa sezione consente di spostare automaticamente oggetti Amazon associati a inserzioni M2E create in modo predefinito e sincronizzare i relativi prezzi e quantità con i valori Magento non appena vengono spostati."
 "Move Mapped Amazon Items","Sposta oggetti Amazon associati"
-"Automatically moves Amazon Listings from 3rd Party Listings to default created M2E Listing.","Sposta automaticamente le inserzioni Amazon dalle inserzioni di terze parti all'inserzione M2E creata in modo predefinito."
+"Automatically moves Amazon Listings from Unmanaged Listings to default created M2E Listing.","Sposta automaticamente le inserzioni Amazon dalle inserzioni di terze parti all'inserzione M2E creata in modo predefinito."
 "Immediate Synchronization","Sincronizzazione immediata"
 "Price and QTY","Prezzo e quantità"
 "Price Only","Solo prezzo"
@@ -2923,8 +2923,8 @@ You should select the appropriate option how to handle billing address for impor
 This section contains Amazon Listings, which belong to registered Amazon Accounts (%1$s > Configuration > Amazon Accounts) and were listed not by M2E Pro extension.<br/>
 Use Amazon Accounts and Marketplaces dropdowns to filter them.
 You can map these Listings to existing products in Magento and move them to another M2E Listings for further management. For that use single actions on appropriate Listing record or use mass Actions in the top right corner.<br/><br/>
-<b>Note:</b> To import Amazon 3rd Party Listings the 3rd Party Listings Import must be enabled in account's settings
-(%1$s > Configuration > Amazon Accounts > General tab) and the 3rd Party Listings Synchronization must be enabled in %1$s > Configuration > Synchronization.","In questa sezione sono contenute le inserzioni Amazon che appartengono agli account Amazon registrati (%1$s > Configurazione > Account Amazon) e che non sono state messe in vendita tramite l'estensione M2E Pro.<br/>Utilizza i menu a discesa Account Amazon e Mercati per filtrarle. Puoi associare queste inserzioni a prodotti esistenti in Magento e spostarle nelle altre inserzioni M2E per un'ulteriore gestione. Per farlo, utilizza le singole azioni nel registro delle inserzioni adeguato o le azioni di massa nell'angolo in alto a destra.<br/><br/><b>Nota:</b> per importare le inserzioni di terze parti Amazon, devi abilitare Importazione inserzioni di terze parti nelle impostazioni dell'account (%1$s > Configurazione > Account Amazon > scheda Generale), nonché Sincronizzazione inserzioni di terze parti in %1$s > Configurazione > Sincronizzazione."
+<b>Note:</b> To import Amazon Unmanaged Listings the Unmanaged Listings Import must be enabled in account's settings
+(%1$s > Configuration > Amazon Accounts > General tab) and the Unmanaged Listings Synchronization must be enabled in %1$s > Configuration > Synchronization.","In questa sezione sono contenute le inserzioni Amazon che appartengono agli account Amazon registrati (%1$s > Configurazione > Account Amazon) e che non sono state messe in vendita tramite l'estensione M2E Pro.<br/>Utilizza i menu a discesa Account Amazon e Mercati per filtrarle. Puoi associare queste inserzioni a prodotti esistenti in Magento e spostarle nelle altre inserzioni M2E per un'ulteriore gestione. Per farlo, utilizza le singole azioni nel registro delle inserzioni adeguato o le azioni di massa nell'angolo in alto a destra.<br/><br/><b>Nota:</b> per importare le inserzioni di terze parti Amazon, devi abilitare Importazione inserzioni di terze parti nelle impostazioni dell'account (%1$s > Configurazione > Account Amazon > scheda Generale), nonché Sincronizzazione inserzioni di terze parti in %1$s > Configurazione > Sincronizzazione."
 "Apply Actions On Categories Products to the selected categories.","Applica le azioni su Categorie di prodotti alle categorie selezionate."
 "The number shown next to each category is the quantity of products filtered by
     Attribute Set and Products Filter settings.<br/><br/>
@@ -2950,7 +2950,7 @@ You can map these Listings to existing products in Magento and move them to anot
         <li>In the Search Settings you have to specify the identifiers, at which products will be searched on Amazon.</li>
         <li>The Condition section allows specifying item(s) condition and making notes to better describe the condition.</li>
         </ul>
-        <b>Note:</b> <i>Not Set</i> and <i>Not Set / Not Changeable</i> options are used for the 3rd Party Listings mainly. If these options are chosen, then Amazon will be used as a master record.","In questa sezione sono contenute le impostazioni Canale, Ricerca prodotti, Condizioni e altre impostazioni di Amazon.<br/>        <ul class=""list"">        <li>Nella sezione Generale devi specificare un account Amazon al quale saranno associati gli oggetti messi in vendita e il codice prodotto.</li>        <li>Nelle impostazioni di ricerca devi specificare gli identificatori in base ai quali i prodotti verranno cercati su Amazon.</li>        <li>Nella sezione Condizioni è possibile specificare le condizioni degli oggetti e inserire delle note per descriverle meglio.</li>        </ul>        <b>Nota:</b> le opzioni <i>Non impostato</i> e <i>Non impostato/Non modificabile</i> vengono utilizzate principalmente per le inserzioni di terze parti. Se vengono selezionate queste opzioni, Amazon verrà utilizzato come registro principale."
+        <b>Note:</b> <i>Not Set</i> and <i>Not Set / Not Changeable</i> options are used for the Unmanaged Listings mainly. If these options are chosen, then Amazon will be used as a master record.","In questa sezione sono contenute le impostazioni Canale, Ricerca prodotti, Condizioni e altre impostazioni di Amazon.<br/>        <ul class=""list"">        <li>Nella sezione Generale devi specificare un account Amazon al quale saranno associati gli oggetti messi in vendita e il codice prodotto.</li>        <li>Nelle impostazioni di ricerca devi specificare gli identificatori in base ai quali i prodotti verranno cercati su Amazon.</li>        <li>Nella sezione Condizioni è possibile specificare le condizioni degli oggetti e inserire delle note per descriverle meglio.</li>        </ul>        <b>Nota:</b> le opzioni <i>Non impostato</i> e <i>Non impostato/Non modificabile</i> vengono utilizzate principalmente per le inserzioni di terze parti. Se vengono selezionate queste opzioni, Amazon verrà utilizzato come registro principale."
 "Must be not more than 2000 characters long.","La lunghezza non deve superare i 2000 caratteri."
 "Amazon Account","Account Amazon"
 "Amazon accounts previously added in Configuration > Accounts.","Account Amazon precedentemente aggiunti in Configurazione > Account."
@@ -2962,7 +2962,7 @@ You can map these Listings to existing products in Magento and move them to anot
 "SKU Attribute","Attributo codice prodotto"
 "Choose the attribute that contains products identifier.","Scegli l'attributo che contiene l'identificatore del prodotto."
 "Generate Merchant SKU","Genera codice prodotto del venditore"
-"If <i>Yes</i>, then if Merchant SKU of the product you list is found in the 3rd Party or M2E Listings, another one will be automatically created and the product will be listed.
+"If <i>Yes</i>, then if Merchant SKU of the product you list is found in the Unmanaged or M2E Listings, another one will be automatically created and the product will be listed.
                             <br/>Has to be set to <i>Yes</i>  if you are going to use the same Magento product under different ASINs","Se <i>Sì</i>, ovvero se il codice prodotto del venditore per il prodotto messo in vendita viene trovato tra le inserzioni di terze parti o M2E, verrà creato automaticamente e messo in vendita un altro prodotto.                            <br/>Se intendi utilizzare lo stesso prodotto Magento con diversi numeri ASIN, è necessario impostare questa opzione su <i>Sì</i>"
 "Search Settings","Impostazioni ricerca"
 "Search Products on Amazon","Cerca prodotti su Amazon"
@@ -2986,7 +2986,7 @@ You can map these Listings to existing products in Magento and move them to anot
 "Condition","Condizioni"
 "Not Set / Not Changeable","Non impostato/Non modificabile"
 "Condition of the product(s) you want to list on Amazon.<br/>
-                            <b>Note:</b> <i>Not Set / Not Changeable</i>&rlm;&rlm; is used for the 3rd Party Listings mainly. If this option is chosen, Amazon will be used as a master record.","Condizioni dei prodotti che desideri mettere in vendita su Amazon.<br/>                            <b>Nota:</b> l'opzione <i>Non impostato/Non modificabile</i>&rlm;&rlm; viene utilizzata principalmente per le inserzioni di terze parti. Se viene selezionata questa opzione, Amazon verrà utilizzato come registro principale."
+                            <b>Note:</b> <i>Not Set / Not Changeable</i>&rlm;&rlm; is used for the Unmanaged Listings mainly. If this option is chosen, Amazon will be used as a master record.","Condizioni dei prodotti che desideri mettere in vendita su Amazon.<br/>                            <b>Nota:</b> l'opzione <i>Non impostato/Non modificabile</i>&rlm;&rlm; viene utilizzata principalmente per le inserzioni di terze parti. Se viene selezionata questa opzione, Amazon verrà utilizzato come registro principale."
 "Condition Value","Valore condizioni"
 "Collectible - Like New","Collezionismo - Come nuovo"
 "Collectible - Very Good","Collezionismo - Molto buono"
@@ -2997,7 +2997,7 @@ You can map these Listings to existing products in Magento and move them to anot
 "Choose the attribute that contains Condition <a href=""%s"" target=""_blank"">identifier</a>.","Scegli l'attributo che contiene l'identificatore delle <a href=""%s"" target=""_blank"">condizioni</a>."
 "Condition Note","Nota sulle condizioni"
 "Short description of item(s) condition.<br/>
-                            <b>Note:</b> <i>Not Set / Not Changeable</i>&rlm;&rlm; is used for the 3rd Party Listings mainly. If this option is chosen, Amazon will be used as a master record.","Breve descrizione delle condizioni degli oggetti.<br/>                            <b>Nota:</b> l'opzione <i>Non impostato/Non modificabile</i>&rlm;&rlm; viene utilizzata principalmente per le inserzioni di terze parti. Se viene selezionata questa opzione, Amazon verrà utilizzato come registro principale."
+                            <b>Note:</b> <i>Not Set / Not Changeable</i>&rlm;&rlm; is used for the Unmanaged Listings mainly. If this option is chosen, Amazon will be used as a master record.","Breve descrizione delle condizioni degli oggetti.<br/>                            <b>Nota:</b> l'opzione <i>Non impostato/Non modificabile</i>&rlm;&rlm; viene utilizzata principalmente per le inserzioni di terze parti. Se viene selezionata questa opzione, Amazon verrà utilizzato come registro principale."
 "Condition Note Text","Testo nota condizioni"
 "Condition Note Attribute","Attributo nota condizioni"
 "The Products Filter block allows you to filter the products, which you would like to add to the Listing. Filtered Products will be displayed on the next page, after the Next button is pressed.","Il blocco Filtro prodotti consente di filtrare i prodotti che desideri aggiungere all'inserzione. I prodotti filtrati saranno visualizzati nella pagina successiva, dopo aver premuto il pulsante Avanti."
@@ -3107,7 +3107,7 @@ you can create them manually by using appropriate options in the Action dropdown
 "In Progress, start date - ","In corso, data di inizio: "
 "Finished, end date - ","Terminato, data di fine: "
 "Imports and synchronizes Amazon Orders for accounts,<br/>which have enabled Import Amazon Orders in their<br/>Accounts settings.","Importa e sincronizza gli ordini Amazon per gli account<br/>che hanno abilitato Importa ordini Amazon nelle<br/>impostazioni degli account."
-"Imports and synchronizes 3rd Party Listings for Amazon<br/>accounts, which have enabled Import 3rd Party Listings<br/>in their Accounts settings.","Importa e sincronizza le inserzioni di terze parti per gli account Amazon<br/>che hanno abilitato Importa inserzioni di terze parti<br/>nelle impostazioni degli account."
+"Imports and synchronizes Unmanaged Listings for Amazon<br/>accounts, which have enabled Import Unmanaged Listings<br/>in their Accounts settings.","Importa e sincronizza le inserzioni di terze parti per gli account Amazon<br/>che hanno abilitato Importa inserzioni di terze parti<br/>nelle impostazioni degli account."
 "Click 'Confirm' and Revise will be performed by the Inventory Synchronization, 100 items per a cycle.","Clicca su ""Conferma"" per consentire alla sincronizzazione del magazzino di apportare la modifica (100 oggetti per ciclo)."
 "Cancel","Annulla"
 "New ASIN Templates","Nuovi modelli ASIN"
@@ -3394,23 +3394,23 @@ will be automatically fully or partially updated.<br/>
 "FTP New SKU Access","Accesso FTP a nuovi codici prodotto"
 "Set <i>Yes</i>, if you have enabled new SKU creation option on your FTP.
                             <br/><b>Note:</b> The access of getting new SKU must be taken from Rakuten.com","Imposta <i>Sì</i> se hai abilitato sull'FTP l'opzione di creazione di nuovi codici prodotto.                            <br/><b>Nota:</b> l'accesso per la creazione di nuovi codici prodotto deve essere consentito da Rakuten.com"
-"The 3rd Party Listings are the items, which were listed on Rakuten.com without using M2E Pro extension. <br/><br/>
-To allow importing of these listings for the current Rakuten.com Account, set Import 3rd Party Listings to <i>Yes</i>.<br/>
-Imported Listings can be found in %1$s > Manage Listings > 3rd Party Listings.<br/><br/>
-<b>Note:</b> The 3rd Party Listings Synchronization must be enabled in %1$s > Configuration > Synchronization.<br/><br/>
-To map the products of the 3rd Party Listings with existing products in Magento by Reference ID, Rakuten.com Listing title or Rakuten.com SKU, set Product Mapping to <i>Yes</i> and choose appropriate attribute(s).
+"The Unmanaged Listings are the items, which were listed on Rakuten.com without using M2E Pro extension. <br/><br/>
+To allow importing of these listings for the current Rakuten.com Account, set Import Unmanaged Listings to <i>Yes</i>.<br/>
+Imported Listings can be found in %1$s > Manage Listings > Unmanaged Listings.<br/><br/>
+<b>Note:</b> The Unmanaged Listings Synchronization must be enabled in %1$s > Configuration > Synchronization.<br/><br/>
+To map the products of the Unmanaged Listings with existing products in Magento by Reference ID, Rakuten.com Listing title or Rakuten.com SKU, set Product Mapping to <i>Yes</i> and choose appropriate attribute(s).
 A Magento product will be mapped if at least one of the chosen attributes meets the same value in Rakuten.com Listing as it has in Magento.
 <br/><br/>
-After mapping the Rakuten.com Listing can be automatically moved from the 3rd Party Listings to M2E Pro Listings for further management.<br/><br/>
+After mapping the Rakuten.com Listing can be automatically moved from the Unmanaged Listings to M2E Pro Listings for further management.<br/><br/>
 
-<b>Note:</b> Auto mapping and moving actions are performed only once during the first 3rd Party Listings Synchronization.
-Afterwards, it can be performed manually on the 3rd Party Listings page (%1$s > Manage Listings > 3rd Party Listings).","Le inserzioni di terze parti sono gli oggetti che sono stati messi in vendita su Rakuten.com senza utilizzare l'estensione M2E Pro. <br/><br/>Per consentire l'importazione di queste inserzioni per l'account Rakuten.com corrente, imposta Importa inserzioni di terze parti su <i>Sì</i>.<br/>Le inserzioni importate sono disponibili in %1$s > Gestione inserzioni > Inserzioni di terze parti.<br/><br/><b>Nota:</b> la sincronizzazione delle inserzioni di terze parti deve essere abilitata in %1$s > Configurazione > Sincronizzazione.<br/><br/>Per associare prodotti delle inserzioni di terze parti ai prodotti esistenti in Magento tramite ID riferimento, titolo inserzione Rakuten.com o codice prodotto Rakuten.com, imposta Associazione prodotti su <i>Sì</i> e scegli gli attributi appropriati. Un prodotto Magento sarà associato se almeno uno degli attributi scelti soddisfa lo stesso valore presente in Inserzione Rakuten.com e in Magento.<br/><br/>Dopo l'associazione, l'inserzione Rakuten.com può essere spostata automaticamente da Inserzioni di terze parti a Inserzioni M2E Pro per un'ulteriore gestione.<br/><br/><b>Nota:</b> le azioni di associazione e spostamento automatici vengono effettuate solo una volta durante la prima sincronizzazione delle inserzioni di terze parti. Successivamente, può essere effettuata manualmente nella pagina                                Inserzioni di terze parti (%s > Gestione inserzioni > Inserzioni di terze parti)."
+<b>Note:</b> Auto mapping and moving actions are performed only once during the first Unmanaged Listings Synchronization.
+Afterwards, it can be performed manually on the Unmanaged Listings page (%1$s > Manage Listings > Unmanaged Listings).","Le inserzioni di terze parti sono gli oggetti che sono stati messi in vendita su Rakuten.com senza utilizzare l'estensione M2E Pro. <br/><br/>Per consentire l'importazione di queste inserzioni per l'account Rakuten.com corrente, imposta Importa inserzioni di terze parti su <i>Sì</i>.<br/>Le inserzioni importate sono disponibili in %1$s > Gestione inserzioni > Inserzioni di terze parti.<br/><br/><b>Nota:</b> la sincronizzazione delle inserzioni di terze parti deve essere abilitata in %1$s > Configurazione > Sincronizzazione.<br/><br/>Per associare prodotti delle inserzioni di terze parti ai prodotti esistenti in Magento tramite ID riferimento, titolo inserzione Rakuten.com o codice prodotto Rakuten.com, imposta Associazione prodotti su <i>Sì</i> e scegli gli attributi appropriati. Un prodotto Magento sarà associato se almeno uno degli attributi scelti soddisfa lo stesso valore presente in Inserzione Rakuten.com e in Magento.<br/><br/>Dopo l'associazione, l'inserzione Rakuten.com può essere spostata automaticamente da Inserzioni di terze parti a Inserzioni M2E Pro per un'ulteriore gestione.<br/><br/><b>Nota:</b> le azioni di associazione e spostamento automatici vengono effettuate solo una volta durante la prima sincronizzazione delle inserzioni di terze parti. Successivamente, può essere effettuata manualmente nella pagina                                Inserzioni di terze parti (%s > Gestione inserzioni > Inserzioni di terze parti)."
 "Maps Rakuten.com product with Magento product.","Associa il prodotto Rakuten.com al prodotto Magento."
 "Attributes Of Mapping Rakuten.com Items To Magento Products","Attributi dell'associazione tra gli oggetti Rakuten.com e Magento"
 "Auto Moving Mapped Rakuten.com Items To M2E Listings","Lo spostamento automatico ha associato gli oggetti Rakuten.com alle inserzioni M2E"
 "This section allows you automatically move mapped Rakuten.com Items in default created M2E Listing and synchronize their Prices and Quantities with Magento values at once they have been moved.","Questa sezione consente di spostare automaticamente oggetti Rakuten.com associati a inserzioni M2E create in modo predefinito e sincronizzare i relativi prezzi e quantità con i valori Magento non appena vengono spostati."
 "Move Mapped Rakuten.com Items","Sposta oggetti Rakuten.com associati"
-"Automatically moves Rakuten.com Listings from 3rd Party Listings to default created M2E Listing.","Sposta automaticamente le inserzioni Rakuten.com dalle inserzioni di terze parti all'inserzione M2E creata in modo predefinito."
+"Automatically moves Rakuten.com Listings from Unmanaged Listings to default created M2E Listing.","Sposta automaticamente le inserzioni Rakuten.com dalle inserzioni di terze parti all'inserzione M2E creata in modo predefinito."
 "Updates Price and / or Quantity of Rakuten.com Listing with Magento values.","Aggiorna il prezzo e/o la quantità dell'inserzione Rakuten.com con i valori di Magento."
 "This tab contains settings of Rakuten.com Orders, Rakuten.com Customers import; Magento Orders and Products creation.<br/>
 If you set Import Rakuten.com Orders to <i>Yes</i>, a new Rakuten.com order will be imported to the system and can be found in %1$s > Sales > Orders.<br/><br/>
@@ -3451,8 +3451,8 @@ These type of orders can be managed as typical Magento Orders in Magento > Sales
 "Stop on Rakuten.com and Delete from Listing","Interrompi su Rakuten.com ed elimina dall'inserzione"
 "This section contains Rakuten.com Listings, which belong to registered Rakuten.com Accounts (%1$s > Configuration > Rakuten.com Accounts) and were listed not by M2E Pro extension.<br/>
 You can map these Listings to existing products in Magento and move them to another M2E Listings for further management. For that use single actions on appropriate Listing record or use mass Actions in the top right corner.<br/><br/>
-<b>Note:</b> To import Rakuten.com 3rd Party Listings the 3rd Party Listings Import must be enabled in account's settings
-(%1$s > Configuration > Rakuten.com Accounts > General tab) and the 3rd Party Listings Synchronization must be enabled in %1$s > Configuration > Synchronization.","In questa sezione sono contenute le inserzioni Rakuten.com che appartengono ad account Rakuten.com registrati (%1$s > Configurazione > Account Rakuten.com) e che non sono state pubblicate tramite l'estensione M2E Pro.<br/>Puoi associare queste inserzioni a prodotti esistenti in Magento e spostarle nelle altre inserzioni M2E per un'ulteriore gestione. Per farlo, utilizza le singole azioni nel registro delle inserzioni adeguato o le azioni di massa nell'angolo in alto a destra.<br/><br/><b>Nota:</b> per importare le inserzioni di terze parti Rakuten.com, devi abilitare Importazione inserzioni di terze parti nelle impostazioni dell'account (%1$s > Configurazione > Account Rakuten.com > scheda Generale), nonché Sincronizzazione inserzioni di terze parti in %1$s > Configurazione > Sincronizzazione."
+<b>Note:</b> To import Rakuten.com Unmanaged Listings the Unmanaged Listings Import must be enabled in account's settings
+(%1$s > Configuration > Rakuten.com Accounts > General tab) and the Unmanaged Listings Synchronization must be enabled in %1$s > Configuration > Synchronization.","In questa sezione sono contenute le inserzioni Rakuten.com che appartengono ad account Rakuten.com registrati (%1$s > Configurazione > Account Rakuten.com) e che non sono state pubblicate tramite l'estensione M2E Pro.<br/>Puoi associare queste inserzioni a prodotti esistenti in Magento e spostarle nelle altre inserzioni M2E per un'ulteriore gestione. Per farlo, utilizza le singole azioni nel registro delle inserzioni adeguato o le azioni di massa nell'angolo in alto a destra.<br/><br/><b>Nota:</b> per importare le inserzioni di terze parti Rakuten.com, devi abilitare Importazione inserzioni di terze parti nelle impostazioni dell'account (%1$s > Configurazione > Account Rakuten.com > scheda Generale), nonché Sincronizzazione inserzioni di terze parti in %1$s > Configurazione > Sincronizzazione."
 "Enter product name, Rakuten.com SKU, ISBN or UPC","Immetti il nome del prodotto o il numero SKU, ISBN o UPC di Rakuten.com."
 "There was an error during previous automatic Rakuten.com SKU search:","Si è verificato un errore durante la precedente ricerca automatica del codice prodotto Rakuten.com:"
 "Assign Rakuten.com SKU Manually","Assegna manualmente codice prodotto Rakuten.com"
@@ -3468,7 +3468,7 @@ You can map these Listings to existing products in Magento and move them to anot
         <li>In the Shipping section you have to specify Shipping information.</li>
         <li>The Condition section allows specifying item(s) condition and making notes to better describe the condition.</li>
         </ul>
-        <b>Note:</b> <i>Not Set</i> and <i>Not Set / Not Changeable</i> options are used for the 3rd Party Listings mainly. If these options are chosen, Rakuten.com will be used as a master record.","In questa sezione sono contenute le impostazioni Canale, Ricerca prodotto e Condizioni di Rakuten.com.<br/>        <ul class=""list"">        <li>Nella sezione Generale devi specificare un account Rakuten.com al quale associare gli oggetti messi in vendita e l'ID riferimento per i relativi prodotti.</li>        <li>Nelle impostazioni di ricerca devi specificare gli identificatori in base ai quali i prodotti verranno cercati su Rakuten.com.</li>        <li>Nella sezione Spedizione devi specificare le informazioni sulla spedizione.</li>        <li>Nella sezione Condizioni è possibile specificare le condizioni degli oggetti e inserire delle note per descriverle meglio.</li>        </ul>        <b>Nota:</b> le opzioni <i>Non impostato</i> e <i>Non impostato/Non modificabile</i> vengono utilizzate principalmente per le inserzioni di terze parti. Se vengono selezionate queste opzioni, Rakuten.com verrà utilizzato come registro principale."
+        <b>Note:</b> <i>Not Set</i> and <i>Not Set / Not Changeable</i> options are used for the Unmanaged Listings mainly. If these options are chosen, Rakuten.com will be used as a master record.","In questa sezione sono contenute le impostazioni Canale, Ricerca prodotto e Condizioni di Rakuten.com.<br/>        <ul class=""list"">        <li>Nella sezione Generale devi specificare un account Rakuten.com al quale associare gli oggetti messi in vendita e l'ID riferimento per i relativi prodotti.</li>        <li>Nelle impostazioni di ricerca devi specificare gli identificatori in base ai quali i prodotti verranno cercati su Rakuten.com.</li>        <li>Nella sezione Spedizione devi specificare le informazioni sulla spedizione.</li>        <li>Nella sezione Condizioni è possibile specificare le condizioni degli oggetti e inserire delle note per descriverle meglio.</li>        </ul>        <b>Nota:</b> le opzioni <i>Non impostato</i> e <i>Non impostato/Non modificabile</i> vengono utilizzate principalmente per le inserzioni di terze parti. Se vengono selezionate queste opzioni, Rakuten.com verrà utilizzato come registro principale."
 "UPC Attribute","Attributo UPC"
 "Rakuten.com SKU Attribute","Attributo codice prodotto Rakuten.com"
 "Seller SKU Attribute","Attributo codice prodotto venditore"
@@ -3481,7 +3481,7 @@ You can map these Listings to existing products in Magento and move them to anot
                             <b>Note:</b> If you list a product and M2E Pro find a product with the same Reference ID in Rakuten.com inventory, they will be mapped.","ID univoco che identifica un prodotto nel magazzino del venditore Rakuten.com.<br/>                            <b>Nota:</b> se metti in vendita un prodotto e M2E Pro ne trova un altro con lo stesso ID riferimento nel magazzino Rakuten.com, i prodotti verranno associati."
 "Reference ID Attribute","Attributo ID riferimento"
 "Generate Reference ID","Genera ID riferimento"
-"If <i>Yes</i>, then if the Reference ID of the product you list is found in the 3rd Party or M2E Listings, another one will be automatically created and the product will be listed.","Se <i>Sì</i>, ovvero se l'ID riferimento del venditore per il prodotto messo in vendita viene trovato tra le inserzioni di terze parti o M2E, verrà creato automaticamente e messo in vendita un altro prodotto."
+"If <i>Yes</i>, then if the Reference ID of the product you list is found in the Unmanaged or M2E Listings, another one will be automatically created and the product will be listed.","Se <i>Sì</i>, ovvero se l'ID riferimento del venditore per il prodotto messo in vendita viene trovato tra le inserzioni di terze parti o M2E, verrà creato automaticamente e messo in vendita un altro prodotto."
 "Search Products on Rakuten.com","Cerca prodotti su Rakuten.com"
 "Before the list action, each product in listing must have existing Rakuten.com SKU.
 This section contains parameters for action ""Assign Rakuten.com SKU Automatically","Prima dell'azione di messa in vendita, è necessario assegnare un codice prodotto Rakuten.com a ogni prodotto dell'inserzione. Questa sezione contiene i parametri per l'azione ""Assegna automaticamente codice prodotto Rakuten.com"""
@@ -3498,7 +3498,7 @@ This section contains parameters for action ""Assign Rakuten.com SKU Automatical
                 <br/><br/>
                 In each method you can choose:
                 <ul class=""list"">
-                <li><b>Not Set / Not Changeable</b> - is used for the 3rd Party Listings mainly. If this option is chosen, Rakuten.com will be used as a master record.</li>
+                <li><b>Not Set / Not Changeable</b> - is used for the Unmanaged Listings mainly. If this option is chosen, Rakuten.com will be used as a master record.</li>
                 <li><b>Disable</b> - disables Shipping method.</li>
                 <li><b>Free</b> - automatically sets zero value for Shipping Cost.</li>
                 <li><b>Rakuten.com Settings</b> - uses settings, which you have set in your seller account settings on Rakuten.com.</li>
@@ -3512,12 +3512,12 @@ This section contains parameters for action ""Assign Rakuten.com SKU Automatical
 "Free","Gratis"
 "Rakuten.com Settings","Impostazioni Rakuten.com"
 "Condition of the product(s) you want to list on Rakuten.com.<br/>
-                                <b>Note:</b> <i>Not Set</i>&rlm;&rlm; is used for the 3rd Party Listings mainly. If this option is chosen, Rakuten.com will be used as a master record.","Condizioni dei prodotti che desideri mettere in vendita su Rakuten.com.<br/>                                <b>Nota: l'opzione </b> <i>Non impostato</i>&rlm;&rlm; viene utilizzata principalmente per le inserzioni di terze parti. Se viene selezionata questa opzione, Rakuten.com verrà utilizzato come registro principale."
+                                <b>Note:</b> <i>Not Set</i>&rlm;&rlm; is used for the Unmanaged Listings mainly. If this option is chosen, Rakuten.com will be used as a master record.","Condizioni dei prodotti che desideri mettere in vendita su Rakuten.com.<br/>                                <b>Nota: l'opzione </b> <i>Non impostato</i>&rlm;&rlm; viene utilizzata principalmente per le inserzioni di terze parti. Se viene selezionata questa opzione, Rakuten.com verrà utilizzato come registro principale."
 "Condition of the product(s) you want to list on Rakuten.com.<br/>
                                 <b>Note:</b> Condition of Active Items cannot be changed.","Condizioni dei prodotti che desideri mettere in vendita su Rakuten.com.<br/>                                <b>Nota:</b> non è possibile modificare le condizioni degli oggetti attivi."
 "Comment","Commenti"
 "Short description of item(s) condition.<br/>
-                            <b>Note:</b> <i>Not Set / Not Changeable</i>&rlm;&rlm; is used for the 3rd Party Listings mainly. If this option is chosen, Rakuten.com will be used as a master record.","Breve descrizione delle condizioni degli oggetti.<br/>                            <b>Nota:</b> l'opzione <i>Non impostato/Non modificabile</i>&rlm;&rlm; viene utilizzata principalmente per le inserzioni di terze parti. Se viene selezionata questa opzione, Rakuten.com verrà utilizzato come registro principale."
+                            <b>Note:</b> <i>Not Set / Not Changeable</i>&rlm;&rlm; is used for the Unmanaged Listings mainly. If this option is chosen, Rakuten.com will be used as a master record.","Breve descrizione delle condizioni degli oggetti.<br/>                            <b>Nota:</b> l'opzione <i>Non impostato/Non modificabile</i>&rlm;&rlm; viene utilizzata principalmente per le inserzioni di terze parti. Se viene selezionata questa opzione, Rakuten.com verrà utilizzato come registro principale."
 "Comment Text","Testo del commento"
 "Description of the condition of the item(s).","Descrizione delle condizioni degli oggetti."
 "Comment Attribute","Attributo del commento"
@@ -3574,7 +3574,7 @@ you can create them manually by using appropriate options in the Action dropdown
     <br/><br/>
         ","Se per qualche motivo la sincronizzazione delle inserzioni Rakuten.com con i prodotti in Magento è stata disabilitata, <a href=""javascript:"" onclick=""%s"">attiva</a> l'opzione Modifica tutte le azioni per recuperare i dati.        <br/>La modifica viene eseguita dalla sincronizzazione del magazzino (100 oggetti per ciclo).    <br/><br/>        "
 "Imports and synchronizes Rakuten.com Orders for accounts,<br/>which have enabled Import Rakuten.com Orders in their<br/>Accounts settings.","Importa e sincronizza ordini Rakuten.com per gli account<br/>per i quali è stata abilitata l'opzione Importa ordini Rakuten.com nelle<br/>impostazioni degli account."
-"Imports and synchronizes 3rd Party Listings for Rakuten.com<br/>accounts, which have enabled Import 3rd Party Listings<br/>in their Accounts settings.","Importa e sincronizza le inserzioni di terze parti per gli account Rakuten.com<br/>che hanno abilitato Importa inserzioni di terze parti<br/>nelle impostazioni degli account."
+"Imports and synchronizes Unmanaged Listings for Rakuten.com<br/>accounts, which have enabled Import Unmanaged Listings<br/>in their Accounts settings.","Importa e sincronizza le inserzioni di terze parti per gli account Rakuten.com<br/>che hanno abilitato Importa inserzioni di terze parti<br/>nelle impostazioni degli account."
 "New SKU Template (Beta)","Nuovo modello del codice prodotto (beta)"
 "These type of templates is used for creation of new products on Rakuten.com.
         <ul class=""list"">
@@ -3708,7 +3708,7 @@ will be automatically fully or partially updated.<br/>
     Mass actions are in the Actions dropdown at the top right corner of the grid. Select check-boxes of appropriate items,
     choose an Action from the dropdown and press the <span style=""text-decoration: underline;"">Submit</span> button.","In questa pagina sono contenute tutte le inserzioni create. Usa i filtri dei modelli per ordinare le inserzioni in base ai modelli utilizzati nelle relative impostazioni.<br/>    Puoi eseguire diverse azioni su una singola inserzione o su un gruppo di inserzioni.<br/>    Azioni per un'inserzione singola disponibili nella colonna Azione della griglia. Scegli un'opzione necessaria nel menu a discesa Inserzione appropriato per eseguirla.<br/>    Le azioni in massa sono disponibili nel menu a discesa Azioni nell'angolo superiore destro della griglia. Seleziona le caselle di testo degli oggetti appropriati, scegli un'azione nel menu a discesa e premi il pulsante <span style=""text-decoration: underline;"">Invia</span>."
 "This Log contains all information about actions, which were done on all M2E Pro Listings and their items.","Questo registro contiene tutte le informazioni sulle azioni che sono state effettuate su tutte le inserzioni M2E Pro e i relativi oggetti."
-"This Log contains all information about actions, which were done on 3rd Party Listings.","Questo registro contiene tutte le informazioni sulle azioni che sono state effettuate sulle inserzioni di terze parti."
+"This Log contains all information about actions, which were done on Unmanaged Listings.","Questo registro contiene tutte le informazioni sulle azioni che sono state effettuate sulle inserzioni di terze parti."
 "Edit Variation","Modifica variante"
 "To list product variations you have to map each variation to a child product on Amazon.
         <br/>Here you can edit the variations you have selected earlier.","Per elencare le varianti del prodotto devi associare ogni variante a un prodotto secondario su Amazon.        <br/>In questa sezione puoi modificare le varianti selezionate in precedenza."
@@ -3744,23 +3744,23 @@ will be automatically fully or partially updated.<br/>
 "Type of your Play.com account.","Tipo di account Play.com."
 "Login to your Play.com account.","Accedi al tuo account Play.com."
 "Password to your Play.com account.","Password dell'account Play.com."
-"The 3rd Party Listings are the items, which were listed on Play.com without using M2E Pro extension. <br/><br/>
-        To allow importing of these listings for the current Play.com Account, set Import 3rd Party Listings to <i>Yes</i>.<br/>
-        Imported Listings can be found in %1$s > Manage Listings > 3rd Party Listings.<br/><br/>
-        <b>Note:</b> The 3rd Party Listings Synchronization must be enabled in %1$s > Configuration > Synchronization.<br/><br/>
-        To map the products of the 3rd Party Listings with existing products in Magento by Reference Code, Play.com Listing title or another identifier, set Product Mapping to <i>Yes</i> and choose appropriate attribute(s).
+"The Unmanaged Listings are the items, which were listed on Play.com without using M2E Pro extension. <br/><br/>
+        To allow importing of these listings for the current Play.com Account, set Import Unmanaged Listings to <i>Yes</i>.<br/>
+        Imported Listings can be found in %1$s > Manage Listings > Unmanaged Listings.<br/><br/>
+        <b>Note:</b> The Unmanaged Listings Synchronization must be enabled in %1$s > Configuration > Synchronization.<br/><br/>
+        To map the products of the Unmanaged Listings with existing products in Magento by Reference Code, Play.com Listing title or another identifier, set Product Mapping to <i>Yes</i> and choose appropriate attribute(s).
         A Magento product will be mapped if at least one of the chosen attributes meets the same value in Play.com Listing as it has in Magento.
         <br/><br/>
-        After mapping Play.com Listing can be automatically moved from the 3rd Party Listings to M2E Pro Listings for further management.<br/><br/>
+        After mapping Play.com Listing can be automatically moved from the Unmanaged Listings to M2E Pro Listings for further management.<br/><br/>
 
-        <b>Note:</b> Auto mapping and moving actions are performed only once during the first 3rd Party Listings Synchronization.
-        Afterwards, it can be performed manually on the 3rd Party Listings page (%1$s > Manage Listings > 3rd Party Listings).","Le inserzioni di terze parti sono gli oggetti che sono stati messi in vendita su Play.com senza utilizzare l'estensione M2E Pro. <br/><br/>        Per consentire l'importazione di queste inserzioni per l'account Play.com corrente, imposta Importa inserzioni di terze parti su <i>Sì</i>.<br/>        Le inserzioni importate sono disponibili in %1$s > Gestione inserzioni > Inserzioni di terze parti.<br/><br/>        <b>Nota:</b> la sincronizzazione delle inserzioni di terze parti deve essere abilitata in %1$s > Configurazione > Sincronizzazione.<br/><br/>        Per associare prodotti delle inserzioni di terze parti ai prodotti esistenti in Magento tramite codice di riferimento, titolo inserzione Play.com o un altro identificatore, imposta Associazione prodotti su <i>Sì</i> e scegli gli attributi appropriati. Un prodotto Magento sarà associato se almeno uno degli attributi scelti soddisfa lo stesso valore presente in Inserzione Play.com e in Magento.        <br/><br/>        Dopo l'associazione, l'inserzione Play.com può essere spostata automaticamente da Inserzioni di terze parti a Inserzioni M2E Pro per un'ulteriore gestione.<br/><br/>        <b>Nota:</b> le azioni di associazione e spostamento automatici vengono effettuate solo una volta durante la prima sincronizzazione delle inserzioni di terze parti. Successivamente, può essere effettuata manualmente nella pagina                                Inserzioni di terze parti (%s > Gestione inserzioni > Inserzioni di terze parti)."
+        <b>Note:</b> Auto mapping and moving actions are performed only once during the first Unmanaged Listings Synchronization.
+        Afterwards, it can be performed manually on the Unmanaged Listings page (%1$s > Manage Listings > Unmanaged Listings).","Le inserzioni di terze parti sono gli oggetti che sono stati messi in vendita su Play.com senza utilizzare l'estensione M2E Pro. <br/><br/>        Per consentire l'importazione di queste inserzioni per l'account Play.com corrente, imposta Importa inserzioni di terze parti su <i>Sì</i>.<br/>        Le inserzioni importate sono disponibili in %1$s > Gestione inserzioni > Inserzioni di terze parti.<br/><br/>        <b>Nota:</b> la sincronizzazione delle inserzioni di terze parti deve essere abilitata in %1$s > Configurazione > Sincronizzazione.<br/><br/>        Per associare prodotti delle inserzioni di terze parti ai prodotti esistenti in Magento tramite codice di riferimento, titolo inserzione Play.com o un altro identificatore, imposta Associazione prodotti su <i>Sì</i> e scegli gli attributi appropriati. Un prodotto Magento sarà associato se almeno uno degli attributi scelti soddisfa lo stesso valore presente in Inserzione Play.com e in Magento.        <br/><br/>        Dopo l'associazione, l'inserzione Play.com può essere spostata automaticamente da Inserzioni di terze parti a Inserzioni M2E Pro per un'ulteriore gestione.<br/><br/>        <b>Nota:</b> le azioni di associazione e spostamento automatici vengono effettuate solo una volta durante la prima sincronizzazione delle inserzioni di terze parti. Successivamente, può essere effettuata manualmente nella pagina                                Inserzioni di terze parti (%s > Gestione inserzioni > Inserzioni di terze parti)."
 "Maps Play.com product with Magento product.","Associa il prodotto Play.com al prodotto Magento."
 "Attributes Of Mapping Play.com Items To Magento Products","Attributi dell'associazione di oggetti Play.com con prodotti Magento"
 "Auto Moving Mapped Play.com Items To M2E Listings","Lo spostamento automatico ha associato gli oggetti Play.com alle inserzioni M2E"
 "This section allows you automatically move mapped Play.com Items in default created M2E Listing and synchronize their Prices and Quantities with Magento values at once they have been moved.","Questa sezione consente di spostare automaticamente oggetti Play.com associati a inserzioni M2E create in modo predefinito e sincronizzare i relativi prezzi e quantità con i valori Magento non appena vengono spostati."
 "Move Mapped Play.com Items","Sposta oggetti Play.com associati"
-"Automatically moves Play.com Listings from 3rd Party Listings to default created M2E Listing.","Sposta automaticamente le inserzioni Play.com dalle inserzioni di terze parti all'inserzione M2E creata in modo predefinito."
+"Automatically moves Play.com Listings from Unmanaged Listings to default created M2E Listing.","Sposta automaticamente le inserzioni Play.com dalle inserzioni di terze parti all'inserzione M2E creata in modo predefinito."
 "Updates Price and / or Quantity of Play.com Listing with Magento values.","Aggiorna il prezzo e/o la quantità dell'inserzione Play.com con i valori di Magento."
 "This tab contains settings of Play.com Orders, Play.com Customers import; Magento Orders and Products creation.<br/>
 If you set Import Play.com Orders to <i>Yes</i>, a new Play.com order will be imported to the system and can be found in %1$s > Sales > Orders.<br/><br/>
@@ -3807,8 +3807,8 @@ These type of orders can be managed as typical Magento Orders in Magento > Sales
 "Actions, which have to be done to listed products deleted from categories.","Azioni da effettuare con i prodotti messi in vendita eliminati dalle categorie."
 "This section contains Play.com Listings, which belong to registered Play.com Accounts (%1$s > Configuration > Play.com Accounts) and were listed not by M2E Pro extension.<br/>
 You can map these Listings to existing products in Magento and move them to another M2E Listings for further management. For that use single actions on appropriate Listing record or use mass Actions in the top right corner.<br/><br/>
-<b>Note:</b> To import Play.com 3rd Party Listings the 3rd Party Listings Import must be enabled in account's settings
-(%1$s > Configuration > Play.com Accounts > General tab) and the 3rd Party Listings Synchronization must be enabled in %1$s > Configuration > Synchronization.","In questa sezione sono contenute le inserzioni Play.com che appartengono ad account Play.com registrati (%1$s > Configurazione > Account Play.com) e che non sono state pubblicate tramite l'estensione M2E Pro.<br/>Puoi associare queste inserzioni a prodotti esistenti in Magento e spostarle nelle altre inserzioni M2E per un'ulteriore gestione. Per farlo, utilizza le singole azioni nel registro delle inserzioni adeguato o le azioni di massa nell'angolo in alto a destra.<br/><br/><b>Nota:</b> per importare le inserzioni di terze parti Play.com, devi abilitare Importazione inserzioni di terze parti nelle impostazioni dell'account (%1$s > Configurazione > Account Play.com > scheda Generale), nonché Sincronizzazione inserzioni di terze parti in %1$s > Configurazione > Sincronizzazione."
+<b>Note:</b> To import Play.com Unmanaged Listings the Unmanaged Listings Import must be enabled in account's settings
+(%1$s > Configuration > Play.com Accounts > General tab) and the Unmanaged Listings Synchronization must be enabled in %1$s > Configuration > Synchronization.","In questa sezione sono contenute le inserzioni Play.com che appartengono ad account Play.com registrati (%1$s > Configurazione > Account Play.com) e che non sono state pubblicate tramite l'estensione M2E Pro.<br/>Puoi associare queste inserzioni a prodotti esistenti in Magento e spostarle nelle altre inserzioni M2E per un'ulteriore gestione. Per farlo, utilizza le singole azioni nel registro delle inserzioni adeguato o le azioni di massa nell'angolo in alto a destra.<br/><br/><b>Nota:</b> per importare le inserzioni di terze parti Play.com, devi abilitare Importazione inserzioni di terze parti nelle impostazioni dell'account (%1$s > Configurazione > Account Play.com > scheda Generale), nonché Sincronizzazione inserzioni di terze parti in %1$s > Configurazione > Sincronizzazione."
 "Enter product name, ISBN, EAN or UPC","Immetti il nome del prodotto e il numero ISBN, EAN o UPC."
 "There was an error during previous automatic Play ID search:","Si è verificato un errore durante la precedente ricerca automatica dell'ID Play:"
 "Assign Play ID Manually","Assegna manualmente ID Play"
@@ -3823,7 +3823,7 @@ You can map these Listings to existing products in Magento and move them to anot
         <li>In the Shipping section you have to specify Shipping information.</li>
         <li>The Condition section allows specifying item(s) condition and making notes to better describe the condition.</li>
         </ul>
-        <b>Note:</b> <i>Not Set</i> and <i>Not Set / Not Changeable</i> options are used for the 3rd Party Listings mainly. If these options are chosen, Play.com will be used as a master record.</div>","<div>    In questa sezione sono contenute le impostazioni Canale, Ricerca prodotto e Condizioni di Play.com.<br/>        <ul class=""list"">        <li>Nella sezione Generale devi specificare un account Play.com al quale associare gli oggetti messi in vendita e il codice di riferimento per i relativi prodotti.</li>        <li>Nelle impostazioni di ricerca devi specificare gli identificatori in base ai quali i prodotti verranno cercati su Play.com.</li>        <li>Nella sezione Spedizione devi specificare le informazioni sulla spedizione.</li>        <li>Nella sezione Condizioni è possibile specificare le condizioni degli oggetti e inserire delle note per descriverle meglio.</li>        </ul>        <b>Nota:</b> le opzioni <i>Non impostato</i> e <i>Non impostato/Non modificabile</i> vengono utilizzate principalmente per le inserzioni di terze parti. Se vengono selezionate queste opzioni, Play.com verrà utilizzato come registro principale.</div>"
+        <b>Note:</b> <i>Not Set</i> and <i>Not Set / Not Changeable</i> options are used for the Unmanaged Listings mainly. If these options are chosen, Play.com will be used as a master record.</div>","<div>    In questa sezione sono contenute le impostazioni Canale, Ricerca prodotto e Condizioni di Play.com.<br/>        <ul class=""list"">        <li>Nella sezione Generale devi specificare un account Play.com al quale associare gli oggetti messi in vendita e il codice di riferimento per i relativi prodotti.</li>        <li>Nelle impostazioni di ricerca devi specificare gli identificatori in base ai quali i prodotti verranno cercati su Play.com.</li>        <li>Nella sezione Spedizione devi specificare le informazioni sulla spedizione.</li>        <li>Nella sezione Condizioni è possibile specificare le condizioni degli oggetti e inserire delle note per descriverle meglio.</li>        </ul>        <b>Nota:</b> le opzioni <i>Non impostato</i> e <i>Non impostato/Non modificabile</i> vengono utilizzate principalmente per le inserzioni di terze parti. Se vengono selezionate queste opzioni, Play.com verrà utilizzato come registro principale.</div>"
 "UPC/EAN Attribute","Attributo UPC/EAN "
 "Play ID Attribute","Attributo ID Play"
 "Parameter the product search will be performed by.<br/>For ex.: http://www.play.com/Mobiles/Mobile/4-/20020059/-/Product.html.<br/>Play ID = 20020059","Parametro tramite il quale verrà effettuata la ricerca di prodotti.<br/>Ad esempio,: http://www.play.com/Mobiles/Mobile/4-/20020059/-/Product.html.<br/>ID Play = 20020059"
@@ -3834,7 +3834,7 @@ You can map these Listings to existing products in Magento and move them to anot
 <b>Note:</b> If you list a product and M2E Pro find a product with the same Reference Code in Play.com inventory, they will be mapped.","ID univoco che identifica un prodotto nel magazzino del venditore Play.com.<br/><b>Nota:</b> se metti in vendita un prodotto e M2E Pro ne trova un altro con lo stesso codice di riferimento nel magazzino Play.com, i prodotti verranno associati."
 "Reference Code Attribute","Attributo codice di riferimento"
 "Generate Reference Code","Genera codice di riferimento"
-"If <i>Yes</i>, then if the Reference Code of the product you list is found in the 3rd Party or M2E Listings, another one will be automatically created and the product will be listed.","Se <i>Sì</i>, ovvero se il codice di riferimento del venditore per il prodotto messo in vendita viene trovato tra le inserzioni di terze parti o M2E verrà creato automaticamente e messo in vendita un altro prodotto."
+"If <i>Yes</i>, then if the Reference Code of the product you list is found in the Unmanaged or M2E Listings, another one will be automatically created and the product will be listed.","Se <i>Sì</i>, ovvero se il codice di riferimento del venditore per il prodotto messo in vendita viene trovato tra le inserzioni di terze parti o M2E verrà creato automaticamente e messo in vendita un altro prodotto."
 "Search Products On Play.com","Cerca prodotti su Play.com"
 "At the moment, it is possible only to list items existing on Play.com.
 So before the list action, each product in listing must have existing Play ID.
@@ -3843,7 +3843,7 @@ This section contains parameters for action ""Assign Play ID Automatically","Att
 "
                 This section determines information about how your products will be shipped.
                 <br/><br/>
-                <b>Note:</b> <i>Not Set / Not Changeable</i> is used for the 3rd Party Listings mainly. If this option is chosen, Play.com will be used as a master record.
+                <b>Note:</b> <i>Not Set / Not Changeable</i> is used for the Unmanaged Listings mainly. If this option is chosen, Play.com will be used as a master record.
                 ","                Questa sezione fornisce informazioni su come verranno spediti i prodotti.                <br/><br/>                <b>Nota:</b> l'opzione <i>Non impostato/Non modificabile</i> viene utilizzata principalmente per le inserzioni di terze parti. Se viene selezionata questa opzione, Play.com verrà utilizzato come registro principale.                "
 "Delivery Region","Regione di consegna"
 "Region to which you are willing to deliver.","Regione in cui sei disposto a spedire."
@@ -3935,7 +3935,7 @@ you can create them manually by using appropriate options in the Action dropdown
     <br/><br/>
         ","Se per qualche motivo la sincronizzazione delle inserzioni Play.com con i prodotti in Magento è stata disabilitata, <a href=""javascript:"" onclick=""%s"">attiva</a> l'opzione Modifica tutte le azioni per recuperare i dati.        <br/>La modifica viene eseguita dalla sincronizzazione del magazzino (100 oggetti per ciclo).    <br/><br/>        "
 "Imports and synchronizes Play.com Orders for accounts,<br/>which have enabled Import Play.com Orders in their<br/>Accounts settings.","Importa e sincronizza gli ordini Play.com per gli account<br/>che hanno abilitato Importa ordini Play.com nelle<br/>impostazioni degli account."
-"Imports and synchronizes 3rd Party Listings for Play.com<br/>accounts, which have enabled Import 3rd Party Listings<br/>in their Accounts settings.","Importa e sincronizza le inserzioni di terze parti per gli account Play.com<br/>che hanno abilitato Importa inserzioni di terze parti<br/>nelle impostazioni degli account."
+"Imports and synchronizes Unmanaged Listings for Play.com<br/>accounts, which have enabled Import Unmanaged Listings<br/>in their Accounts settings.","Importa e sincronizza le inserzioni di terze parti per gli account Play.com<br/>che hanno abilitato Importa inserzioni di terze parti<br/>nelle impostazioni degli account."
 "Selling Template contains price-related data and quantity for the items, which will be listed on Play.com.<br/><br/>
 Next to each price options dropdown there is a box for Price Change. Price Change is a value you want the Magento Price to be modified while listing on Play.com.<br/><br/>
 <b>Examples:</b><br/>
@@ -4070,7 +4070,7 @@ will be automatically fully or partially updated.<br/>
 "Listings Log Clearing","Cancellazione registro inserzioni"
 "Keep For (days)","Conserva per (giorni)"
 "Saves records for the definite number of days.","Salva le informazioni per un determinato numero di giorni."
-"3rd Party Listings Log Clearing","Cancellazione registro inserzioni di terze parti"
+"Unmanaged Listings Log Clearing","Cancellazione registro inserzioni di terze parti"
 "Synchronization Log Clearing","Cancellazione registro sincronizzazioni"
 "Orders Log Clearing","Cancellazione del registro ordini"
 "Interface","Interfaccia"
@@ -4215,7 +4215,7 @@ will be automatically fully or partially updated.<br/>
 "Cron Info","Info cron"
 "Enter your problem here","Inserisci qui il problema"
 "This Log contains information on processes, which were done in Synchronization tasks.<br/><br/>
-    <b>Note:</b> Logs of Default, Templates, Orders and 3rd Party Listings Synchronizations are only recorded when Error(s) or Warning(s) appears.","Questo registro contiene le informazioni sui processi che sono stati effettuati nelle attività di sincronizzazione.<br/><br/>    <b>Nota:</b> i registri delle sincronizzazioni predefinite, di modelli, ordini e inserzioni di terze parti vengono compilati solo in caso di visualizzazione di errori o avvisi."
+    <b>Note:</b> Logs of Default, Templates, Orders and Unmanaged Listings Synchronizations are only recorded when Error(s) or Warning(s) appears.","Questo registro contiene le informazioni sui processi che sono stati effettuati nelle attività di sincronizzazione.<br/><br/>    <b>Nota:</b> i registri delle sincronizzazioni predefinite, di modelli, ordini e inserzioni di terze parti vengono compilati solo in caso di visualizzazione di errori o avvisi."
 "Step","Fase"
 "Note: If you close the wizard, it never starts again. You will be required to set all settings manually. Press Cancel to continue working with wizard.","Nota: se chiudi la procedure guidata, non verrà più riavviata. Pertanto, dovrai configurare manualmente tutte le impostazioni. Premi Annulla per continuare a utilizzare la procedura guidata."
 "You have set the main M2E Pro settings and now you have to set up the main settings of the chosen Channel(s).","Hai configurato le impostazioni principali di M2E Pro e, a questo punto, devi configurare le impostazioni principali dei canali scelti."
@@ -4244,7 +4244,7 @@ will be automatically fully or partially updated.<br/>
 "Congratulations, you have successfully linked your eBay account to M2E Pro.","Complimenti, hai collegato correttamente il tuo account eBay a M2E Pro."
 "You can change it if you need.","Puoi modificarlo se necessario."
 "Import Orders","Importa ordini"
-"Import 3rd Party Items","Importa oggetti di terze parti"
+"Import Unmanaged Items","Importa oggetti di terze parti"
 "Import Feedback","Importa Feedback"
 "Now, create an M2E Pro Listing. This will allow you to define specific settings on eBay.","Crea ora un'inserzione M2E Pro. Questo ti consentirà di definire impostazioni specifiche su eBay."
 "Please ensure your personal information is correct","Assicurati che le informazioni personali siano corrette"

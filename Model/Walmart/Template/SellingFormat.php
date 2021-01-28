@@ -255,14 +255,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     /**
      * @return bool
      */
-    public function isQtyModeSingle()
-    {
-        return $this->getQtyMode() == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_SINGLE;
-    }
-
-    /**
-     * @return bool
-     */
     public function isQtyModeNumber()
     {
         return $this->getQtyMode() == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_NUMBER;

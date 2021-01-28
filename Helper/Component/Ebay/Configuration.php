@@ -15,7 +15,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const UPLOAD_IMAGES_MODE_AUTO = 1;
     const UPLOAD_IMAGES_MODE_SELF = 2;
-    const UPLOAD_IMAGES_MODE_EPS = 3;
+    const UPLOAD_IMAGES_MODE_EPS  = 3;
 
     const CONFIG_GROUP = '/ebay/configuration/';
 
@@ -214,7 +214,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
             $motorsAttributes[] = $values['ktypes_attribute'];
         }
 
-        if (count($motorsAttributes) != count(array_unique($motorsAttributes))) {
+        if (count(array_filter($motorsAttributes)) != count(array_unique(array_filter($motorsAttributes)))) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Motors Attributes can not be the same.');
         }
 

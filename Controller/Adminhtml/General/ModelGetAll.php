@@ -21,10 +21,11 @@ class ModelGetAll extends General
     {
         $model = $this->getRequest()->getParam('model', '');
         $componentMode = $this->getRequest()->getParam('component_mode', '');
+        $marketplaceId = $this->getRequest()->getParam('marketplace_id', '');
+        $isCustomTemplate = $this->getRequest()->getParam('is_custom_template', null);
 
         $idField = $this->getRequest()->getParam('id_field', 'id');
         $dataField = $this->getRequest()->getParam('data_field', '');
-        $marketplaceId = $this->getRequest()->getParam('marketplace_id', '');
 
         if ($model == '' || $idField == '' || $dataField == '') {
             $this->setJsonContent([]);
@@ -40,6 +41,7 @@ class ModelGetAll extends General
         }
 
         $marketplaceId != '' && $collection->addFieldToFilter('marketplace_id', $marketplaceId);
+        $isCustomTemplate != null && $collection->addFieldToFilter('is_custom_template', $isCustomTemplate);
 
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)
             ->columns([$idField, $dataField]);

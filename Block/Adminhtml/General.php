@@ -139,7 +139,7 @@ class General extends Magento\AbstractBlock
             $synchErrorMessage => $this->__($synchErrorMessage),
             'Unauthorized! Please login again' => $this->__('Unauthorized! Please login again'),
 
-            'Reset 3rd Party Listings' => $this->__('Reset 3rd Party Listings')
+            'Reset Unmanaged Listings' => $this->__('Reset Unmanaged Listings')
         ]);
 
         return parent::_beforeToHtml();

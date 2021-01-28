@@ -10,6 +10,9 @@ namespace Ess\M2ePro\Block\Adminhtml\Order\UploadByUser;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
+/**
+ * Class Ess\M2ePro\Block\Adminhtml\Order\UploadByUser\Popup
+ */
 class Popup extends AbstractContainer
 {
     /** @var string */
@@ -49,7 +52,7 @@ M2E Pro provides an automatic order synchronization as basic functionality.
 Use manual order import as an alternative only in <a href="%url%" target="_blank">these cases</a>.
 HTML
                 ,
-                $this->getHelper('Module_Support')->getSupportUrl('how-to-guide/1594828')
+                $this->getHelper('Module_Support')->getHowToGuideUrl('1594828')
             ),
             'style'   => 'margin-top: 15px;',
             'title'   => $this->__('Order Reimport')

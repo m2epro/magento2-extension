@@ -4,23 +4,22 @@ define([
     'M2ePro/Listing/View/Grid',
     'M2ePro/Amazon/Listing/View/Action',
     'M2ePro/Amazon/Listing/Product/Template/Description'
-], function (MessageObj, modal) {
+], function(MessageObj, modal) {
 
     window.AmazonListingProductVariationManageTabsVariationsGrid = Class.create(ListingViewGrid, {
 
         // ---------------------------------------
 
-        initialize: function($super,gridId,listingId)
-        {
+        initialize: function($super, gridId, listingId) {
             this.messageObj = Object.create(MessageObj);
             this.messageObj.setContainer('#listing_product_variation_action_messages_container');
 
-            $super(gridId,listingId);
+            $super(gridId, listingId);
         },
 
         // ---------------------------------------
 
-        getLogViewUrl: function (rowId) {
+        getLogViewUrl: function(rowId) {
             var idField = M2ePro.php.constant('\\Ess\\M2ePro\\Block\\Adminhtml\\Log\\Listing\\Product\\AbstractGrid::LISTING_PRODUCT_ID_FIELD');
 
             var params = {};
@@ -31,19 +30,19 @@ define([
 
         // ---------------------------------------
 
-        getComponent: function () {
+        getComponent: function() {
             return 'amazon';
         },
 
         // ---------------------------------------
 
-        getMaxProductsInPart: function () {
+        getMaxProductsInPart: function() {
             return 1000;
         },
 
         // ---------------------------------------
 
-        prepareActions: function ($super) {
+        prepareActions: function($super) {
             this.actionHandler = new AmazonListingViewAction(this);
 
             this.actions = {
@@ -64,7 +63,7 @@ define([
 
         // ---------------------------------------
 
-        parseResponse: function (response) {
+        parseResponse: function(response) {
             if (!response.responseText.isJSON()) {
                 return;
             }
@@ -74,13 +73,13 @@ define([
 
         // ---------------------------------------
 
-        afterInitPage: function ($super) {
+        afterInitPage: function($super) {
             $super();
 
             $$('.attributes-options-filter').each(this.initAttributesOptionsFilter, this);
         },
 
-        initAttributesOptionsFilter: function (filterEl) {
+        initAttributesOptionsFilter: function(filterEl) {
             var srcElement = Element.down(filterEl, 'select');
 
             srcElement.observe('change', this.onAttributesOptionsFilterChange.bind(this));
@@ -93,7 +92,7 @@ define([
             }
 
             valuesDiv.optionsIterator = 0;
-            valuesDiv.childElements().each(function (attrValue) {
+            valuesDiv.childElements().each(function(attrValue) {
 
                 var removeImg = Element.down(attrValue, '.filter-param-remove'),
                     attrName = Element.down(attrValue, 'input[type="hidden"]'),
@@ -104,7 +103,7 @@ define([
                 valuesDiv.optionsIterator++;
 
                 removeImg.show();
-                removeImg.observe('click', function () {
+                removeImg.observe('click', function() {
                     valuesDiv.optionsCount--;
                     selectedOption.show();
                     srcElement.show();
@@ -113,7 +112,7 @@ define([
             }, this);
         },
 
-        onAttributesOptionsFilterChange: function (e) {
+        onAttributesOptionsFilterChange: function(e) {
             var srcElement = e.target || e.srcElement,
                 parentDiv = Element.up(srcElement, '.attributes-options-filter'),
                 valuesDiv = Element.down(parentDiv, '.attributes-options-filter-values'),
@@ -157,7 +156,7 @@ define([
 
             valuesDiv.insert({bottom: newOptionContainer});
 
-            removeImg.observe('click', function () {
+            removeImg.observe('click', function() {
                 valuesDiv.optionsCount--;
                 selectedOption.show();
                 srcElement.show();
@@ -167,7 +166,7 @@ define([
             srcElement.value = '';
         },
 
-        editProductOptions: function (el, attributes, variationsTree, listingProductId) {
+        editProductOptions: function(el, attributes, variationsTree, listingProductId) {
             this.renderProductOptionsForm(el, attributes, variationsTree, listingProductId);
             this.validateAttributeOptions(el, variationsTree);
 
@@ -177,18 +176,18 @@ define([
                 options = form.select('select.product-option');
 
             var productOptions = [];
-            listContainer.select('.attribute-row').each(function (el) {
+            listContainer.select('.attribute-row').each(function(el) {
                 productOptions.push(el.down('.value').innerHTML);
             });
 
             var i = 0;
-            options.each(function (el) {
+            options.each(function(el) {
                 el.setValue(productOptions[i]).simulate('change');
                 i++;
             });
         },
 
-        renderProductOptionsForm: function (el, attributes, variationsTree, listingProductId) {
+        renderProductOptionsForm: function(el, attributes, variationsTree, listingProductId) {
             var mainContainer = Element.up(el, '.product-options-main'),
                 editContainer = Element.down(mainContainer, '.product-options-edit'),
                 listContainer = Element.down(mainContainer, '.product-options-list'),
@@ -214,7 +213,7 @@ define([
                     });
 
                 optionLabel.update(attributes[i] + ': ');
-                optionValue.observe('change', function () {
+                optionValue.observe('change', function() {
                     self.validateAttributeOptions(el, variationsTree);
                 });
 
@@ -245,7 +244,7 @@ define([
                 });
 
             confirmBtn.update(M2ePro.translator.translate('Confirm'));
-            confirmBtn.observe('click', function (event) {
+            confirmBtn.observe('click', function(event) {
                 event.stop();
                 var data = editContainer.serialize(true);
 
@@ -259,7 +258,7 @@ define([
                 new Ajax.Request(M2ePro.url.get('amazon_listing_product_variation_manage/setChildListingProductOptions'), {
                     method: 'post',
                     parameters: data,
-                    onSuccess: function (transport) {
+                    onSuccess: function(transport) {
 
                         var response = self.parseResponse(transport);
 
@@ -280,7 +279,7 @@ define([
             });
 
             cancelBtn.update(M2ePro.translator.translate('Cancel'));
-            cancelBtn.observe('click', function (event) {
+            cancelBtn.observe('click', function(event) {
                 event.stop();
                 el.show();
                 listContainer && listContainer.show();
@@ -293,7 +292,7 @@ define([
             editContainer.insert({bottom: confirmBtn});
         },
 
-        validateAttributeOptions: function (el, variations, i) {
+        validateAttributeOptions: function(el, variations, i) {
             var variation = $H(variations),
                 mainContainer = Element.up(el, '.product-options-main'),
                 form = mainContainer.down('.product-options-edit'),
@@ -304,7 +303,7 @@ define([
                 valid = false;
 
             if (index === 0) {
-                options.each(function (el) {
+                options.each(function(el) {
                     el.disable();
                 });
             }
@@ -312,7 +311,7 @@ define([
             if (!attributes[index] || !options[index]) {
                 if (variation.size() === 0) {
                     valid = true;
-                    options.each(function (el) {
+                    options.each(function(el) {
                         if (el.value == '') {
                             valid = false;
                             throw $break;
@@ -331,7 +330,7 @@ define([
             options[index].enable();
             options[index].appendChild(new Element('option', {style: 'display: none'}));
 
-            $H(variation.get(attr)).each(function (option) {
+            $H(variation.get(attr)).each(function(option) {
                 options[index].appendChild(new Element('option', {value: option[0]})).insert(option[0]);
 
                 if (option[0] == oldValue) {
@@ -349,7 +348,7 @@ define([
 
         // ---------------------------------------
 
-        showNewChildForm: function (createNewAsin, productId) {
+        showNewChildForm: function(createNewAsin, productId) {
             var self = this;
 
             new Ajax.Request(M2ePro.url.get('amazon_listing_product_variation_manage/getNewChildForm'), {
@@ -357,7 +356,7 @@ define([
                 parameters: {
                     product_id: productId
                 },
-                onSuccess: function (transport) {
+                onSuccess: function(transport) {
 
                     var containerEl = $('variation_manager_product_options_form_container');
 
@@ -374,26 +373,26 @@ define([
                         type: 'slide',
                         buttons: [{
                             text: M2ePro.translator.translate('Close'),
-                            click: function () {
-                                self.newChildPopup.modal('closeModal')
+                            click: function() {
+                                self.newChildPopup.modal('closeModal');
                             }
-                        },{
+                        }, {
                             text: M2ePro.translator.translate('Confirm'),
                             class: 'action primary ',
-                            click: function () {
+                            click: function() {
                                 self.addNewChildProduct();
-                                self.newChildPopup.modal('closeModal')
+                                self.newChildPopup.modal('closeModal');
                             }
                         }]
                     }, self.newChildPopup);
 
                     self.newChildPopup.modal('openModal');
 
-                    $$('#manage_variations_new_child_product_variation select').each(function (el) {
+                    $$('#manage_variations_new_child_product_variation select').each(function(el) {
                         el.select('option').invoke('remove');
                     });
 
-                    $$('#manage_variations_new_child_channel_variation select').each(function (el) {
+                    $$('#manage_variations_new_child_channel_variation select').each(function(el) {
                         el.select('option').invoke('remove');
                     });
 
@@ -415,7 +414,7 @@ define([
 
         // ---------------------------------------
 
-        validateNewChildAttributeOptions: function (type, variations, i) {
+        validateNewChildAttributeOptions: function(type, variations, i) {
             if (!$('variation_manager_unused_' + type + '_variations_tree')) {
                 return true;
             }
@@ -432,7 +431,7 @@ define([
             }
 
             if (index === 0) {
-                options.each(function (el) {
+                options.each(function(el) {
                     el.disable();
                 });
             }
@@ -460,7 +459,7 @@ define([
                 channelEl.value = oldValue;
             }
 
-            $H(variation.get(attr)).each(function (option) {
+            $H(variation.get(attr)).each(function(option) {
                 options[index].appendChild(new Element('option', {value: option[0]})).insert(option[0]);
 
                 if (option[0] == oldValue) {
@@ -476,12 +475,12 @@ define([
             return valid;
         },
 
-        validateNewChild: function (showErrors) {
+        validateNewChild: function(showErrors) {
             var data = $('variation_manager_product_options_form').serialize(true),
                 valid = true;
 
             $('new_child_product_product_options_error').hide();
-            $$('#manage_variations_new_child_product_variation select').each(function (el) {
+            $$('#manage_variations_new_child_product_variation select').each(function(el) {
                 if (el.value == '') {
                     showErrors && $('new_child_product_product_options_error').show();
                     valid = false;
@@ -491,7 +490,7 @@ define([
 
             if (data.create_new_asin != 1) {
                 $('new_child_product_channel_options_error').hide();
-                $$('#manage_variations_new_child_channel_variation select').each(function (el) {
+                $$('#manage_variations_new_child_channel_variation select').each(function(el) {
                     if (el.value == '') {
                         showErrors && $('new_child_product_channel_options_error').show();
                         valid = false;
@@ -505,7 +504,7 @@ define([
 
         // ---------------------------------------
 
-        addNewChildProduct: function () {
+        addNewChildProduct: function() {
             var self = this,
                 data;
 
@@ -518,7 +517,7 @@ define([
             new Ajax.Request(M2ePro.url.get('amazon_listing_product_variation_manage/createNewChild'), {
                 method: 'post',
                 parameters: data,
-                onSuccess: function (transport) {
+                onSuccess: function(transport) {
                     var response = self.parseResponse(transport);
                     if (response.msg) {
                         self.messageObj.clear();
@@ -537,7 +536,7 @@ define([
 
         // ---------------------------------------
 
-        createNewAsinBtn: function () {
+        createNewAsinBtn: function() {
             var optEl = $('manage_variations_select_options'),
                 newAsinLinkEl = $('manage_variations_create_new_asin');
 
@@ -546,7 +545,7 @@ define([
             $('new_child_product_channel_options_error_row').setStyle({visibility: 'hidden'});
             newAsinLinkEl && newAsinLinkEl.hide();
 
-            $$('.new-child-channel-option').each(function (el) {
+            $$('.new-child-channel-option').each(function(el) {
                 el.disable();
             });
 
@@ -555,7 +554,7 @@ define([
             ListingProductVariationManageVariationsGridObj.validateNewChildAttributeOptions('product');
         },
 
-        selectOptionsBtn: function () {
+        selectOptionsBtn: function() {
             var optEl = $('manage_variations_select_options'),
                 newAsinEl = $('manage_variations_create_new_asin');
 
@@ -564,7 +563,7 @@ define([
             $('new_child_product_channel_options_error_row').setStyle({visibility: 'visible'});
             newAsinEl && newAsinEl.show();
 
-            $$('.new-child-channel-option').each(function (el) {
+            $$('.new-child-channel-option').each(function(el) {
                 el.enable();
                 el.update();
             });
@@ -576,7 +575,7 @@ define([
 
         // ---------------------------------------
 
-        unselectAllAndReload: function ($super) {
+        unselectAllAndReload: function($super) {
             $super();
 
             ListingGridObj.variationProductManageHandler.reloadSettings(null);

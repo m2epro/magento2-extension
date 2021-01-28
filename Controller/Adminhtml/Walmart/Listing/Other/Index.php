@@ -16,7 +16,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other
     public function execute()
     {
         $this->addContent($this->createBlock('Walmart_Listing_Other'));
-        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('3rd Party Listings'));
+        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Unmanaged Listings'));
         $this->setPageHelpLink('x/UgBhAQ');
 
         return $this->getResult();

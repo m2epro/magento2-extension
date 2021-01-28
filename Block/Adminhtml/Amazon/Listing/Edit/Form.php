@@ -19,22 +19,23 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('amazonListingEditForm');
-        // ---------------------------------------
     }
+
+    //########################################
 
     protected function _prepareForm()
     {
-        $form = $this->_formFactory->create([
-            'data' => [
-                'id'    => 'edit_form',
-                'action'  => $this->getUrl('*/amazon_listing/save'),
-                'method' => 'post',
-                'enctype' => 'multipart/form-data'
+        $form = $this->_formFactory->create(
+            [
+                'data' => [
+                    'id'      => 'edit_form',
+                    'action'  => $this->getUrl('*/amazon_listing/save'),
+                    'method'  => 'post',
+                    'enctype' => 'multipart/form-data'
+                ]
             ]
-        ]);
+        );
 
         $form->setUseContainer(true);
         $this->setForm($form);

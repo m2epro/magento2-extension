@@ -240,9 +240,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'header'         => 'Shipping Policy',
             'align'          => 'left',
             'width'          => '170px',
-            'type'           => 'text',
-            'index'          => 'template_shipping_title',
-            'filter_index'   => 'template_shipping_title',
+            'type'          => 'options',
+            'options'       => [
+                0 => $this->__('Use from Listing Settings'),
+                1 => $this->__('Policies')
+            ],
+            'filter_condition_callback' => [$this, 'callbackFilterShippingSettings'],
             'frame_callback' => [$this, 'callbackColumnTemplateShipping']
         ]);
 
@@ -619,6 +622,13 @@ HTML;
             return <<<HTML
 <a target="_blank" href="{$url}">{$templateTitle}</a>
 HTML;
+        } elseif ($this->listing->getChildObject()->getData('template_shipping_id')) {
+            $shippingSettings = $this->__('Use from Listing Settings');
+            return <<<HTML
+<div style="padding: 4px">
+    <span style="color: #666666">{$shippingSettings}</span><br/>
+</div>
+HTML;
         }
 
         return $html;
@@ -671,6 +681,19 @@ HTML;
         $selectValue = $column->getFilter()->getValue('select');
         if ($selectValue !== null) {
             $collection->addFieldToFilter('is_general_id_owner', $selectValue);
+        }
+    }
+
+    protected function callbackFilterShippingSettings($collection, $column)
+    {
+        $value = $column->getFilter()->getValue();
+
+        if ($value) {
+            $collection->addFieldToFilter('template_shipping_id', ['notnull' => true]);
+        } else {
+            if ($this->listing->getChildObject()->getData('template_shipping_id')) {
+                $collection->addFieldToFilter('template_shipping_id', ['null' => true]);
+            }
         }
     }
 

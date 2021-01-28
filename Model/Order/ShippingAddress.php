@@ -9,6 +9,7 @@
 /**
  * Provides simple API to work with address information from the order.
  */
+
 namespace Ess\M2ePro\Model\Order;
 
 /**
@@ -26,7 +27,7 @@ abstract class ShippingAddress extends \Magento\Framework\DataObject
     /** @var \Magento\Directory\Model\Region */
     protected $region;
 
-    /** @var \Magento\Directory\Helper\Data*/
+    /** @var \Magento\Directory\Helper\Data */
     protected $directoryHelper;
 
     //########################################
@@ -129,6 +130,25 @@ abstract class ShippingAddress extends \Magento\Framework\DataObject
         return $region->getCode();
     }
 
+    /**
+     * @return bool
+     */
+    public function hasSameBuyerAndRecipient()
+    {
+        $rawAddressData = $this->order->getShippingAddress()->getRawData();
+
+        $buyerNameParts = array_map('strtolower', explode(' ', $rawAddressData['buyer_name']));
+        $recipientNameParts = array_map('strtolower', explode(' ', $rawAddressData['recipient_name']));
+
+        $buyerNameParts = array_map('trim', $buyerNameParts);
+        $recipientNameParts = array_map('trim', $recipientNameParts);
+
+        sort($buyerNameParts);
+        sort($recipientNameParts);
+
+        return count(array_diff($buyerNameParts, $recipientNameParts)) == 0;
+    }
+
     protected function getState()
     {
         return $this->getData('state');
@@ -142,6 +162,7 @@ abstract class ShippingAddress extends \Magento\Framework\DataObject
         if (empty(array_filter($this->_data))) {
             return true;
         }
+
         return false;
     }
 

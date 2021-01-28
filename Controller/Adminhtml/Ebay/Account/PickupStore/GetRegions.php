@@ -17,11 +17,14 @@ class GetRegions extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 
     public function execute()
     {
-        $countryCode = $this->getRequest()->getParam('country_code');
+        $regions = [];
 
-        $this->setJsonContent(
-            $this->getHelper('Magento')->getRegionsByCountryCode($countryCode)
-        );
+        if ($countryCode = $this->getRequest()->getParam('country_code')) {
+            $regions = $this->getHelper('Magento')->getRegionsByCountryCode($countryCode);
+        }
+
+        $this->setJsonContent($regions);
+
         return $this->getResult();
     }
 

@@ -201,7 +201,9 @@ abstract class Main extends Base
                 $this->addStaticContentWarningNotification();
             }
 
-            $this->addServerNotifications();
+            $this->addNotifications($this->getHelper('Module')->getServerMessages());
+            $this->addNotifications($this->getHelper('Module')->getUpgradeMessages());
+
             $this->addServerMaintenanceInfo();
 
             $this->addCronErrorMessage();
@@ -287,35 +289,36 @@ abstract class Main extends Base
 
     // ---------------------------------------
 
-    protected function addServerNotifications()
+    /**
+     * @param array $messages
+     */
+    protected function addNotifications(array $messages)
     {
-        $messages = $this->getHelper('Module')->getServerMessages();
-
         foreach ($messages as $message) {
             if (isset($message['text']) && isset($message['type']) && $message['text'] != '') {
                 switch ($message['type']) {
-                    case \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_ERROR:
+                    case \Ess\M2ePro\Helper\Module::MESSAGE_TYPE_ERROR:
                         $this->getMessageManager()->addError(
-                            $this->prepareServerNotificationMessage($message),
+                            $this->prepareNotificationMessage($message),
                             self::GLOBAL_MESSAGES_GROUP
                         );
                         break;
-                    case \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_WARNING:
+                    case \Ess\M2ePro\Helper\Module::MESSAGE_TYPE_WARNING:
                         $this->getMessageManager()->addWarning(
-                            $this->prepareServerNotificationMessage($message),
+                            $this->prepareNotificationMessage($message),
                             self::GLOBAL_MESSAGES_GROUP
                         );
                         break;
-                    case \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_SUCCESS:
+                    case \Ess\M2ePro\Helper\Module::MESSAGE_TYPE_SUCCESS:
                         $this->getMessageManager()->addSuccess(
-                            $this->prepareServerNotificationMessage($message),
+                            $this->prepareNotificationMessage($message),
                             self::GLOBAL_MESSAGES_GROUP
                         );
                         break;
-                    case \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_NOTICE:
+                    case \Ess\M2ePro\Helper\Module::MESSAGE_TYPE_NOTICE:
                     default:
                         $this->getMessageManager()->addNotice(
-                            $this->prepareServerNotificationMessage($message),
+                            $this->prepareNotificationMessage($message),
                             self::GLOBAL_MESSAGES_GROUP
                         );
                         break;
@@ -324,9 +327,9 @@ abstract class Main extends Base
         }
     }
 
-    protected function prepareServerNotificationMessage(array $message)
+    protected function prepareNotificationMessage(array $message)
     {
-        if ($message['title']) {
+        if (!empty($message['title'])) {
             return "<strong>{$this->__($message['title'])}</strong><br/>{$this->__($message['text'])}";
         }
         return $this->__($message['text']);
@@ -370,7 +373,7 @@ abstract class Main extends Base
     {
         if (!$this->getHelper('Module_Cron')->isModeEnabled()) {
             return $this->getMessageManager()->addWarning(
-                'Automatic Synchronization is disabled. You can enable it under <i>Stores > Settings > Configuration 
+                'Automatic Synchronization is disabled. You can enable it under <i>Stores > Settings > Configuration
                     > M2E Pro > Advanced Settings > Automatic Synchronization</i>.',
                 \Ess\M2ePro\Controller\Adminhtml\Base::GLOBAL_MESSAGES_GROUP
             );
@@ -529,7 +532,7 @@ abstract class Main extends Base
                  It may affect some elements of your Magento user interface.</p>
                  <p>Please follow <a href="%url_1%" target="_blank">these instructions</a>
                  to deploy static view files.</p>
-                  
+
                  <a href="%url_2%">Don\'t Show Again</a><br>',
                 $docsUrl,
                 $skipMessageUrl

@@ -275,7 +275,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         $failedProductsIds = $collection->getColumnValues('id');
         $this->deleteListingProducts($failedProductsIds);
 
-        //-- Remove successfully moved 3rd party items
+        //-- Remove successfully moved Unmanaged items
         if (isset($additionalData['source']) && $additionalData['source'] == SourceModeBlock::MODE_OTHER) {
             $this->deleteListingOthers();
         }

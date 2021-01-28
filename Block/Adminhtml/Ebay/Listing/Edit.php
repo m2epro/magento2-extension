@@ -13,7 +13,21 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
  */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
-    private $isEdit = false;
+    /** @var \Ess\M2ePro\Model\Listing */
+    protected $listing;
+
+    protected $ebayFactory;
+
+    //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        $this->ebayFactory = $ebayFactory;
+        parent::__construct($context, $data);
+    }
 
     //########################################
 
@@ -21,199 +35,158 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
-        $this->setId('ebayListingTemplateEdit');
+        $this->setId('ebayListingEdit');
         $this->_controller = 'adminhtml_ebay_listing';
-        $this->_mode = 'edit';
-        // ---------------------------------------
+        $this->_mode = 'create_templates';
 
-        // ---------------------------------------
-        $listing = $this->getHelper('Data\GlobalData')->getValue('ebay_listing');
-        // ---------------------------------------
-
-        // Set buttons actions
-        // ---------------------------------------
         $this->removeButton('back');
         $this->removeButton('reset');
         $this->removeButton('delete');
         $this->removeButton('add');
         $this->removeButton('save');
         $this->removeButton('edit');
-        // ---------------------------------------
 
-        if ($listing) {
-            // ---------------------------------------
-            $url = $this->getUrl('*/ebay_listing/view', ['id' => $listing->getId()]);
-
-            if ($this->getRequest()->getParam('back')) {
-                $url = $this->getHelper('Data')->getBackUrl();
-            }
-
-            $this->addButton('back', [
-                'label'     => $this->__('Back'),
-                'onclick'   => 'CommonObj.backClick(\'' . $url . '\')',
-                'class'     => 'back'
-            ]);
-            // ---------------------------------------
-
-            // ---------------------------------------
-            $backUrl = $this->getHelper('Data')->makeBackUrlParam(
-                '*/ebay_listing/view',
-                ['id' => $listing->getId()]
+        if ($this->getRequest()->getParam('back')) {
+            $url = $this->getHelper('Data')->getBackUrl(
+                '*/ebay_listing/index'
             );
-            $url = $this->getUrl(
-                '*/ebay_template/saveListing',
+            $this->addButton(
+                'back',
                 [
-                    'id' => $listing->getId(),
-                    'back' => $backUrl
+                    'label'   => $this->__('Back'),
+                    'onclick' => 'EbayListingSettingsObj.backClick(\'' . $url . '\')',
+                    'class'   => 'back'
                 ]
             );
-            $callback = 'function(params) { CommonObj.postForm(\''.$url.'\', params); }';
-            $saveButtonsProps = ['save' => [
-                'label'     => $this->__('Save And Back'),
-                'onclick'   => 'EbayListingTemplateSwitcherObj.saveSwitchers(' . $callback . ')',
-                'class'     => 'save primary'
-            ]];
-            // ---------------------------------------
-
-            // ---------------------------------------
-            $backUrl = $this->getHelper('Data')->makeBackUrlParam('*/ebay_template/editListing');
-            $url = $this->getUrl(
-                '*/ebay_template/saveListing',
-                [
-                    'id' => $listing->getId(),
-                    'back' => $backUrl
-                ]
-            );
-
-            $callback = 'function(params) { CommonObj.postForm(\''.$url.'\', params); }';
-            $saveButtons = [
-                'id' => 'save_and_continue',
-                'label' => $this->__('Save And Continue Edit'),
-                'class' => 'add',
-                'button_class' => '',
-                'onclick'   => 'EbayListingTemplateSwitcherObj.saveSwitchers(' . $callback . ')',
-                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
-                'options' => $saveButtonsProps
-            ];
-
-            $this->addButton('save_buttons', $saveButtons);
-
-            // ---------------------------------------
         }
 
-        if (!$listing) {
-            // ---------------------------------------
-            $currentStep = (int)$this->getRequest()->getParam('step', 2);
-            $prevStep = $currentStep - 1;
-            // ---------------------------------------
+        $this->addButton(
+            'auto_action',
+            [
+                'label'   => $this->__('Auto Add/Remove Rules'),
+                'onclick' => 'ListingAutoActionObj.loadAutoActionHtml();',
+                'class'   => 'action-primary'
+            ]
+        );
 
-            if ($prevStep >= 1 && $prevStep <= 4) {
-                // ---------------------------------------
-                $url = $this->getUrl(
-                    '*/ebay_listing_create/index',
-                    ['_current' => true, 'step' => $prevStep]
-                );
-                $this->addButton('back', [
-                    'label'     => $this->__('Previous Step'),
-                    'onclick'   => 'CommonObj.backClick(\'' . $url . '\')',
-                    'class'     => 'back primary'
-                ]);
-                // ---------------------------------------
-            }
+        $backUrl = $this->getHelper('Data')->getBackUrlParam('list');
 
-            $nextStepBtnText = 'Next Step';
-
-            $sessionData = $this->getHelper('Data_Session')->getValue(
-                \Ess\M2ePro\Model\Ebay\Listing::CREATE_LISTING_SESSION_DATA
-            );
-            if ($currentStep == 4 && isset($sessionData['creation_mode']) && $sessionData['creation_mode'] ===
-                \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY) {
-                $nextStepBtnText = 'Complete';
-            }
-            // ---------------------------------------
-            $url = $this->getUrl(
-                '*/ebay_listing_create/index',
-                ['_current' => true, 'step' => $currentStep]
-            );
-            $callback = 'function(params) { CommonObj.postForm(\''.$url.'\', params); }';
-            $this->addButton('save', [
-                'label'     => $this->__($nextStepBtnText),
-                'onclick'   => 'EbayListingTemplateSwitcherObj.saveSwitchers(' . $callback . ')',
-                'class'     => 'action-primary forward'
-            ]);
-            // ---------------------------------------
-        }
-
-        $this->css->addFile('ebay/template.css');
-    }
-
-    //########################################
-
-    protected function _beforeToHtml()
-    {
-        parent::_beforeToHtml();
-
-        // ---------------------------------------
-        $data = [
-            'allowed_tabs' => $this->getAllowedTabs()
+        $url = $this->getUrl(
+            '*/ebay_listing/save',
+            [
+                'id'   => $this->getListing()->getId(),
+                'back' => $backUrl
+            ]
+        );
+        $saveButtonsProps = [
+            'save' => [
+                'label'   => $this->__('Save And Back'),
+                'onclick' => 'EbayListingSettingsObj.saveClick(\'' . $url . '\')',
+                'class'   => 'save primary'
+            ]
         ];
-        $tabs = $this->createBlock('Ebay_Listing_Edit_Tabs');
-        $tabs->addData($data);
-        $this->setChild('tabs', $tabs);
-        // ---------------------------------------
 
-        return $this;
+        $editBackUrl = $this->getHelper('Data')->makeBackUrlParam(
+            $this->getUrl(
+                '*/ebay_listing/edit',
+                [
+                    'id'   => $this->listing['id'],
+                    'back' => $backUrl
+                ]
+            )
+        );
+        $url = $this->getUrl(
+            '*/ebay_listing/save',
+            [
+                'id'   => $this->listing['id'],
+                'back' => $editBackUrl
+            ]
+        );
+        $saveButtons = [
+            'id'           => 'save_and_continue',
+            'label'        => $this->__('Save And Continue Edit'),
+            'class'        => 'add',
+            'button_class' => '',
+            'onclick'      => 'EbayListingSettingsObj.saveAndEditClick(\'' . $url . '\', 1)',
+            'class_name'   => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+            'options'      => $saveButtonsProps
+        ];
+
+        $this->addButton('save_buttons', $saveButtons);
     }
 
     //########################################
 
-    public function getAllowedTabs()
+    protected function _prepareLayout()
     {
-        if (!isset($this->_data['allowed_tabs']) || !is_array($this->_data['allowed_tabs'])) {
-            return [];
-        }
+        $this->css->addFile('listing/autoAction.css');
 
-        return $this->_data['allowed_tabs'];
+        $this->jsPhp->addConstants(
+            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class)
+        );
+
+        $this->jsUrl->addUrls(
+            $this->getHelper('Data')->getControllerActions(
+                'Ebay_Listing_AutoAction',
+                ['listing_id' => $this->getListing()->getId()]
+            )
+        );
+
+        $this->jsTranslator->addTranslations(
+            [
+                'Remove Category'                          => $this->__('Remove Category'),
+                'Add New Rule'                             => $this->__('Add New Rule'),
+                'Add/Edit Categories Rule'                 => $this->__('Add/Edit Categories Rule'),
+                'Auto Add/Remove Rules'                    => $this->__('Auto Add/Remove Rules'),
+                'Based on Magento Categories'              => $this->__('Based on Magento Categories'),
+                'You must select at least 1 Category.'     => $this->__('You must select at least 1 Category.'),
+                'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.'),
+                'Compatibility Attribute'                  => $this->__('Compatibility Attribute'),
+                'Sell on Another Marketplace'              => $this->__('Sell on Another Marketplace'),
+                'Create new'                               => $this->__('Create new'),
+            ]
+        );
+
+        $this->js->addOnReadyJs(
+            <<<JS
+    require([
+        'M2ePro/Ebay/Listing/AutoAction'
+    ], function(){
+        window.ListingAutoActionObj = new EbayListingAutoAction();
+    });
+JS
+        );
+
+        return parent::_prepareLayout();
     }
 
     //########################################
 
     public function getFormHtml()
     {
-        $html = '';
-        $tabs = $this->getChildBlock('tabs');
+        $viewHeaderBlock = $this->createBlock(
+            'Listing_View_Header',
+            '',
+            [
+                'data' => ['listing' => $this->getListing()]
+            ]
+        );
 
-        // ---------------------------------------
-        $html .= $this->createBlock('Ebay_Listing_Template_Switcher_Initialization')->toHtml();
-        // ---------------------------------------
+        return $viewHeaderBlock->toHtml() . parent::getFormHtml();
+    }
 
-        // ---------------------------------------
-        $listing = $this->getHelper('Data\GlobalData')->getValue('ebay_listing');
-        $headerHtml = '';
-        if ($listing) {
-            $headerBlock =  $this->createBlock('Listing_View_Header', '', [
-                'data' => ['listing' => $listing]
-            ]);
-            $headerBlock->setListingViewMode(true);
-            $headerHtml = $headerBlock->toHtml();
-        }
-        // ---------------------------------------
+    //########################################
 
-        // hide tabs selector if only one tab is allowed for displaying
-        // ---------------------------------------
-        if (count($this->getAllowedTabs()) == 1) {
-            $this->js->add(<<<JS
-    require([], function(){
-        $('{$tabs->getId()}').hide();
-    });
-JS
+    protected function getListing()
+    {
+        if ($this->listing === null && $this->getRequest()->getParam('id')) {
+            $this->listing = $this->ebayFactory->getCachedObjectLoaded(
+                'Listing',
+                $this->getRequest()->getParam('id')
             );
         }
-        // ---------------------------------------
 
-        return $html . $headerHtml . $tabs->toHtml() . parent::getFormHtml();
+        return $this->listing;
     }
 
     //########################################

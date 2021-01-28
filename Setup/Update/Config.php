@@ -20,12 +20,14 @@ class Config extends AbstractConfig
     public function getFeaturesList()
     {
         return [
-            'dev' => [
+            'dev'     => [
                 'ChangeDevelopVersion',
                 'ReinstallHookWithFix',
                 'PrimaryConfigs',
                 'ModuleConfigs',
-                'AddAmazonCollects'
+                'AddAmazonCollects',
+                'AddGermanyInStorePickUpForDevelop',
+                'DisableInStorePickUpCanadaFr'
             ],
             'y19_m01' => [
                 'NewUpgradesEngine',
@@ -118,23 +120,37 @@ class Config extends AbstractConfig
             'y20_m07' => [
                 'EbayTemplateStoreCategory',
                 'HashLongtextFields',
-                'WalmartOrderItemQty',
-                'WalmartKeywordsFields'
+                'EbayTemplateCustomTemplateId',
+                'WalmartKeywordsFields',
+                'WalmartOrderItemQty'
             ],
             'y20_m08' => [
                 'EbayManagedPayments',
                 'GroupedProduct',
                 'AmazonSkipTax',
-                'AmazonTR'
+                'AmazonTR',
+                'VCSLiteInvoices'
             ],
             'y20_m09' => [
                 'AmazonSE',
                 'SellOnAnotherSite',
-                'InventorySynchronization',
-                'ChangeManufacturerRefurbished',
+                'InventorySynchronization'
             ],
             'y20_m10' => [
-                'SellOnAnotherSite'
+                'ChangeSingleItemOption',
+                'AddInvoiceAndShipment',
+                'SellOnAnotherSite',
+                'AddShipmentToAmazonListing',
+                'AddGermanyInStorePickUp',
+                'AddITCAShippingRateTable',
+                'DefaultValuesInSyncPolicy'
+            ],
+            'y20_m11' => [
+                'WalmartCustomCarrier',
+                'RemoteFulfillmentProgram',
+                'EbayRemoveCustomTemplates',
+                'DisableVCSOnNL',
+                'AddSkipEvtinSetting'
             ]
         ];
     }

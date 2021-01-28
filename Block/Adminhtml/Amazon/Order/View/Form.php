@@ -83,26 +83,26 @@ class Form extends AbstractContainer
         }
         // ---------------------------------------
 
-        if ($this->order->getChildObject()->canSendCreditmemo()) {
+        if ($this->order->getChildObject()->canSendMagentoCreditmemo()) {
             $orderId = $this->order->getId();
-            $documentType = \Ess\M2ePro\Model\Amazon\Order::DOCUMENT_TYPE_CREDIT_NOTE;
+            $documentType = \Ess\M2ePro\Model\Amazon\Order\Invoice::DOCUMENT_TYPE_CREDIT_NOTE;
             $data = [
                 'class'   => 'primary',
                 'label'   => $this->__('Resend Credit Memo'),
                 'onclick' => "AmazonOrderObj.resendInvoice({$orderId}, '{$documentType}');",
             ];
             $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
-            $this->setChild('resend_creditmemo', $buttonBlock);
-        } elseif ($this->order->getChildObject()->canSendInvoice()) {
+            $this->setChild('resend_document', $buttonBlock);
+        } elseif ($this->order->getChildObject()->canSendMagentoInvoice()) {
             $orderId = $this->order->getId();
-            $documentType = \Ess\M2ePro\Model\Amazon\Order::DOCUMENT_TYPE_INVOICE;
+            $documentType = \Ess\M2ePro\Model\Amazon\Order\Invoice::DOCUMENT_TYPE_INVOICE;
             $data = [
                 'class'   => 'primary',
                 'label'   => $this->__('Resend Invoice'),
                 'onclick' => "AmazonOrderObj.resendInvoice({$orderId}, '{$documentType}');",
             ];
             $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
-            $this->setChild('resend_invoice', $buttonBlock);
+            $this->setChild('resend_document', $buttonBlock);
         }
 
         // Shipping data

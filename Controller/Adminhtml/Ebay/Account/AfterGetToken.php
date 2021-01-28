@@ -33,7 +33,13 @@ class AfterGetToken extends Account
         $accountId = (int)$this->getHelper('Data\Session')->getValue('get_token_account_id', true);
 
         if ($accountId == 0) {
-            $this->_redirect('*/*/new', ['_current' => true]);
+            $this->_redirect(
+                '*/*/new',
+                [
+                    'is_show_tables' => true,
+                    '_current'       => true
+                ]
+            );
         } else {
             $data = [];
             $data['mode'] = $this->getHelper('Data\Session')->getValue('get_token_account_mode');
