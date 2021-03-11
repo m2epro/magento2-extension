@@ -21,6 +21,7 @@ class Maintenance extends \Ess\M2ePro\Helper\AbstractHelper
     const MENU_ROOT_NODE_NICK = 'Ess_M2ePro::m2epro_maintenance';
 
     private $resourceConnection;
+    private $cache = [];
 
     //########################################
 
@@ -54,6 +55,10 @@ class Maintenance extends \Ess\M2ePro\Helper\AbstractHelper
 
     protected function getConfig($path)
     {
+        if (isset($this->cache[$path])) {
+            return $this->cache[$path];
+        }
+
         $select = $this->resourceConnection->getConnection()
             ->select()
             ->from($this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('core_config_data'), 'value')
@@ -61,7 +66,7 @@ class Maintenance extends \Ess\M2ePro\Helper\AbstractHelper
             ->where('scope_id = ?', 0)
             ->where('path = ?', $path);
 
-        return $this->resourceConnection->getConnection()->fetchOne($select);
+        return $this->cache[$path] = $this->resourceConnection->getConnection()->fetchOne($select);
     }
 
     protected function setConfig($path, $value)
@@ -78,18 +83,19 @@ class Maintenance extends \Ess\M2ePro\Helper\AbstractHelper
                     'value'    => $value
                 ]
             );
-            return;
+        } else {
+            $connection->update(
+                $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('core_config_data'),
+                ['value' => $value],
+                [
+                    'scope = ?'    => 'default',
+                    'scope_id = ?' => 0,
+                    'path = ?'     => $path
+                ]
+            );
         }
 
-        $connection->update(
-            $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('core_config_data'),
-            ['value' => $value],
-            [
-                'scope = ?'    => 'default',
-                'scope_id = ?' => 0,
-                'path = ?'     => $path
-            ]
-        );
+        unset($this->cache[$path]);
     }
 
     //########################################
