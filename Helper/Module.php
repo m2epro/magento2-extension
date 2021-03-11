@@ -41,6 +41,8 @@ class Module extends AbstractHelper
     /** @var \Magento\Backend\Model\UrlInterface $urlBuilder */
     protected $urlBuilder;
 
+    protected $areImportantTablesExist;
+
     //########################################
 
     public function __construct(
@@ -171,14 +173,18 @@ class Module extends AbstractHelper
 
     public function areImportantTablesExist()
     {
+        if ($this->areImportantTablesExist !== null) {
+            return $this->areImportantTablesExist;
+        }
+
         foreach (['m2epro_config', 'm2epro_setup'] as $table) {
             $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($table);
             if (!$this->resourceConnection->getConnection()->isTableExists($tableName)) {
-                return false;
+                return $this->areImportantTablesExist = false;
             }
         }
 
-        return true;
+        return $this->areImportantTablesExist = true;
     }
 
     // ---------------------------------------
