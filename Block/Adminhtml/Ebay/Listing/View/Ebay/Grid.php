@@ -284,38 +284,32 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->getMassactionBlock()->addItem('list', [
             'label' => $this->__('List Item(s) on eBay'),
-            'url' => '',
-            'confirm' => $this->__('Are you sure?'),
+            'url' => ''
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('revise', [
             'label' => $this->__('Revise Item(s) on eBay'),
-            'url' => '',
-            'confirm' => $this->__('Are you sure?')
+            'url' => ''
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('relist', [
             'label' => $this->__('Relist Item(s) on eBay'),
-            'url' => '',
-            'confirm' => $this->__('Are you sure?')
+            'url' => ''
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('stop', [
             'label' => $this->__('Stop Item(s) on eBay'),
             'url' => '',
-            'confirm' => $this->__('Are you sure?')
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('stopAndRemove', [
             'label' => $this->__('Stop on eBay / Remove From Listing'),
-            'url' => '',
-            'confirm' => $this->__('Are you sure?')
+            'url' => ''
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('previewItems', [
             'label' => $this->__('Preview Items'),
-            'url' => '',
-            'confirm' => $this->__('Are you sure?')
+            'url' => ''
         ], 'other');
         // ---------------------------------------
 

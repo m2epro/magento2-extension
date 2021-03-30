@@ -565,6 +565,13 @@ HTML
             $preparedAttributes[] = $attribute;
         }
 
+        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
+            'label' => $this->__('Insert'),
+            'destination_id' => 'condition_note_value',
+            'class'=>'primary',
+            'style' => 'display: inline-block;'
+        ]);
+
         $fieldset->addField(
             'condition_note_value',
             'textarea',
@@ -575,20 +582,19 @@ HTML
                 'style'              => 'width: 70%;',
                 'class'              => 'textarea M2ePro-required-when-visible',
                 'required'           => true,
-                'after_element_html' => $this->createBlock('Magento_Button_MagentoAttribute')->addData(
-                    [
-                        'label'                    => $this->__('Insert Attribute'),
-                        'destination_id'           => 'condition_note_value',
-                        'magento_attributes'       => $preparedAttributes,
-                        'class'                    => 'primary',
-                        'style'                    => 'display: block; margin: 0; float: right;',
-                        'select_custom_attributes' => [
-                            'allowed_attribute_types'     => 'text,textarea',
-                            'apply_to_all_attribute_sets' => 0
-                        ],
-                    ]
-                )->toHtml(),
                 'value'              => $this->getData('condition_note_value')
+            ]
+        );
+
+        $fieldset->addField(
+            'selectAttr_condition_note_value',
+            self::SELECT,
+            [   'container_id'       => 'condition_custom_tr',
+                'label' => $this->__('Product Attribute'),
+                'title' => $this->__('Product Attribute'),
+                'values' => $preparedAttributes,
+                'create_magento_attribute' => true,
+                'after_element_html' => $button->toHtml()
             ]
         );
 

@@ -67,10 +67,10 @@ HTML;
 
                     <div id="synch_info_complete_{$marketplace['instance']->getId()}"
                         class="value" style="display: none; color: green;">{$this->__('Completed')}</div>
-                        
+
                     <div id="synch_info_error_{$marketplace['instance']->getId()}"
                         class="value" style="display: none; color: red;">{$this->__('Error')}</div>
-                        
+
                     <div id="synch_info_skip_{$marketplace['instance']->getId()}"
                         class="value" style="display: none; color: gray;">{$this->__('Skipped')}</div>
 
@@ -150,7 +150,6 @@ HTML;
         $groupOrder = [
             'america'      => 'America',
             'europe'       => 'Europe',
-            'australia'    => 'Australia Region',
             'asia_pacific' => 'Asia / Pacific',
             'other'        => 'Other'
         ];

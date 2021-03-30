@@ -58,7 +58,7 @@ class ServerConnection extends AbstractInspection implements InspectorInterface
                 $curlInfo = $additionalData['curl_info'];
             }
 
-            $issues[] = $this->helperFactory->createError(
+            $issues[] = $this->resultFactory->createError(
                 $this,
                 $exception->getMessage(),
                 $curlInfo

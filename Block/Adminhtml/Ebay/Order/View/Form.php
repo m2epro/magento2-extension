@@ -50,10 +50,7 @@ class Form extends AbstractContainer
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('ebayOrderViewForm');
-        // ---------------------------------------
 
         $this->order = $this->getHelper('Data\GlobalData')->getValue('order');
     }
@@ -239,6 +236,39 @@ class Form extends AbstractContainer
     public function formatPrice($currencyName, $priceValue)
     {
         return $this->modelFactory->getObject('Currency')->formatPrice($currencyName, $priceValue);
+    }
+
+    //########################################
+
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getStatus()
+    {
+        if ($this->order->getChildObject()->isCanceled()) {
+            $status = [
+                'value' => $this->__('Canceled'),
+                'color' => 'red'
+            ];
+        } elseif ($this->order->getChildObject()->isShippingCompleted()) {
+            $status = [
+                'value' => $this->__('Shipped'),
+                'color' => 'green'
+            ];
+        } elseif ($this->order->getChildObject()->isPaymentCompleted()) {
+            $status = [
+                'value' => $this->__('Unshipped'),
+                'color' => 'black'
+            ];
+        } else {
+            $status = [
+                'value' => $this->__('Pending'),
+                'color' => 'gray'
+            ];
+        }
+
+        return $status;
     }
 
     //########################################

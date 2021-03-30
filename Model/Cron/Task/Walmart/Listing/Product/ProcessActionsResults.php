@@ -39,7 +39,7 @@ class ProcessActionsResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $actionCollection->getSelect()->joinLeft(
             [
                 'rps' => $this->activeRecordFactory->getObject('Request_Pending_Single')
-                ->getResource()->getMainTable()
+                    ->getResource()->getMainTable()
             ],
             'rps.id = main_table.request_pending_single_id',
             []
@@ -101,8 +101,11 @@ class ProcessActionsResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                     'errors' => []
                 ];
 
-                if (isset($resultData['data'][$action->getListingProductId().'-id'])) {
-                    $resultActionData = $resultData['data'][$action->getListingProductId().'-id'];
+                //worker may return different data structure
+                if (isset($resultData[$action->getListingProductId() . '-id'])) {
+                    $resultActionData = $resultData[$action->getListingProductId() . '-id'];
+                } elseif (isset($resultData['data'][$action->getListingProductId() . '-id'])) {
+                    $resultActionData = $resultData['data'][$action->getListingProductId() . '-id'];
                 }
 
                 if (!empty($resultMessages)) {
@@ -132,7 +135,7 @@ class ProcessActionsResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $processing->setData('is_completed', 1);
 
             if ($requestTime !== null) {
-                $processingParams = $processing->getParams();
+                $processingParams                 = $processing->getParams();
                 $processingParams['request_time'] = $requestTime;
                 $processing->setSettings('params', $processingParams);
             }

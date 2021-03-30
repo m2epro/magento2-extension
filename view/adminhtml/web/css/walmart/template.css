@@ -37,7 +37,8 @@
     width: 75px;
 }
 
-#magento_block_walmart_template_description_additional a.action-disabled {
+#magento_block_walmart_template_description_additional a.action-disabled,
+#magento_block_walmart_template_selling_format_attributes a.action-disabled {
     color: gray;
     text-decoration: none;
 }
@@ -458,6 +459,15 @@ td.specifics-grid {
 }
 
 #shipping_override_rule_table [id^="shipping_override_rule_cost_attribute_"] {
+    width: 180px;
+}
+
+.magento-attribute-custom-input {
+    width: 180px !important;
+    margin-left: 5px;
+}
+
+#custom_title_tr input[type="text"].input-text {
     width: 180px;
 }
 

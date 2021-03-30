@@ -25,11 +25,14 @@ class Table extends AbstractModifier
     protected $sqlForCommit = [];
     protected $columnsForCheckBeforeCommit = [];
 
+    private $checkedTableRowFormat = false;
+
     //########################################
 
     public function truncate()
     {
         $this->connection->truncateTable($this->tableName);
+
         return $this;
     }
 
@@ -114,6 +117,10 @@ class Table extends AbstractModifier
     {
         if ($this->isColumnExists($name)) {
             return $this;
+        }
+
+        if ($this->isNeedChangeRowFormat()) {
+            $this->changeRowFormat();
         }
 
         $definition = $this->buildColumnDefinition($type, $default, $after, $autoCommit);
@@ -267,6 +274,7 @@ class Table extends AbstractModifier
     public function isIndexExists($name)
     {
         $indexList = $this->connection->getIndexList($this->tableName);
+
         return isset($indexList[strtoupper($name)]);
     }
 
@@ -382,7 +390,7 @@ class Table extends AbstractModifier
                 }
 
                 if (!empty($matches['nullable'])) {
-                    $definitionData['nullable'] = strpos(strtolower($matches['nullable']), 'not null') ==! false  ?
+                    $definitionData['nullable'] = strpos(strtolower($matches['nullable']), 'not null') == !false ?
                         false : true;
                 }
             }
@@ -448,7 +456,7 @@ class Table extends AbstractModifier
 
         $type = $columnInfo['DATA_TYPE'];
         if (is_numeric($columnInfo['LENGTH']) && $columnInfo['LENGTH'] > 0) {
-            $type .= '('.$columnInfo['LENGTH'].')';
+            $type .= '(' . $columnInfo['LENGTH'] . ')';
         } elseif (is_numeric($columnInfo['PRECISION']) && is_numeric($columnInfo['SCALE'])) {
             $type .= sprintf('(%d,%d)', $columnInfo['PRECISION'], $columnInfo['SCALE']);
         }
@@ -486,6 +494,7 @@ class Table extends AbstractModifier
         }
 
         $this->sqlForCommit[$key][] = $tempQuery;
+
         return $this;
     }
 
@@ -498,14 +507,19 @@ class Table extends AbstractModifier
             }
 
             foreach ($this->sqlForCommit as $key => $sqlData) {
-                if (!is_array($sqlData) || in_array($key, [self::COMMIT_KEY_ADD_INDEX,
-                                                                self::COMMIT_KEY_DROP_INDEX,
-                                                                self::COMMIT_KEY_DROP_COLUMN])
+                if (!is_array($sqlData) || in_array(
+                        $key,
+                        [
+                            self::COMMIT_KEY_ADD_INDEX,
+                            self::COMMIT_KEY_DROP_INDEX,
+                            self::COMMIT_KEY_DROP_COLUMN
+                        ]
+                    )
                 ) {
                     continue;
                 }
 
-                $pattern = '/COLUMN\s(`'.$columnForCheck.'`|`[^`]+`\s`'.$columnForCheck.'`)/';
+                $pattern = '/COLUMN\s(`' . $columnForCheck . '`|`[^`]+`\s`' . $columnForCheck . '`)/';
                 $tempSql = implode(', ', $sqlData);
 
                 if (preg_match($pattern, $tempSql)) {
@@ -568,7 +582,40 @@ class Table extends AbstractModifier
 
         $this->runQuery($resultSql);
         $this->sqlForCommit = [];
+
         return $this;
+    }
+
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Zend_Db_Statement_Exception
+     */
+    private function isNeedChangeRowFormat()
+    {
+        if ($this->checkedTableRowFormat) {
+            return false;
+        }
+
+        $result = array_change_key_case(
+            $this->connection->select()
+                ->from('tables', ['row_format'], 'information_schema')
+                ->where('table_schema =?', $this->getHelper('Magento')->getDatabaseName())
+                ->where('table_name =?', $this->tableName)->query()->fetch()
+        );
+
+        $this->checkedTableRowFormat = true;
+
+        return strtolower($result['row_format']) != 'dynamic';
+    }
+
+    /**
+     * @throws \Zend_Db_Statement_Exception
+     */
+    private function changeRowFormat()
+    {
+        $sql = sprintf('ALTER TABLE %s ROW_FORMAT = DYNAMIC', $this->tableName);
+        $this->connection->query($sql)->fetch();
     }
 
     //########################################

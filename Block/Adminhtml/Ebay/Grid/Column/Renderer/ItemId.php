@@ -38,6 +38,10 @@ class ItemId extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
     {
         $itemId = $this->_getValue($row);
 
+        if ($row->getChildObject() && ($itemId === null || $itemId === '')) {
+            $itemId = $row->getChildObject()->getData($this->getColumn()->getData('index'));
+        }
+
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
             return '<span style="color: gray;">' . $this->getHelper('Module\Translation')->__('Not Listed') . '</span>';
         }

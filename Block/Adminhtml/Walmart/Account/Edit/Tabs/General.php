@@ -199,32 +199,6 @@ HTML
             ]
         );
 
-        $production = $this->__('Production (Live)');
-        $sandbox = $this->__('Sandbox (Test)');
-
-        $fieldset->addField(
-            'mode',
-            'select',
-            [
-                'label'     => $this->__('Environment'),
-                'required'  => true,
-                'name'      => 'mode',
-                'value'     => $formData['mode'],
-                'values'    => [
-                    \Ess\M2ePro\Model\Walmart\Account::MODE_PRODUCTION => $production,
-                    \Ess\M2ePro\Model\Walmart\Account::MODE_SANDBOX    => $sandbox,
-                ],
-                'disabled'  => $isEdit,
-                'css_class' => "marketplace-required-field marketplace-required-field-id{$marketplaceUS}",
-                'tooltip'   => $this->__(
-                    <<<HTML
-<b>Production (Live)</b> - to list real products on a Walmart marketplace so buyers could see your products.<br/>
-<b>Sandbox (Test)</b> - to test actions but buyers on Walmart won’t be able to see your products.
-HTML
-                )
-            ]
-        );
-
         $fieldset->addField(
             'consumer_id',
             'text',

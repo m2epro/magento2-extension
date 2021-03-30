@@ -34,7 +34,7 @@ class InvoicesAndShipments extends AbstractForm
 HTML
         );
 
-        if ($account->getChildObject()->getMarketplace()->getChildObject()->isUploadInvoicesAvailable()) {
+        if ($account->getChildObject()->getMarketplace()->getChildObject()->isVatCalculationServiceAvailable()) {
             $helpText .= $this->__(
                 <<<HTML
     <p>Also, you can set up an <i>Automatic Invoice Uploading</i> to Amazon. Read the <a href="%url%"
@@ -62,16 +62,6 @@ HTML
         );
 
         if ($account->getChildObject()->getMarketplace()->getChildObject()->isVatCalculationServiceAvailable()) {
-            $options = [
-                AmazonAccount::AUTO_INVOICING_DISABLED => $this->__('Disabled')
-            ];
-            if ($account->getChildObject()->getMarketplace()->getChildObject()->isUploadInvoicesAvailable()) {
-                $options[AmazonAccount::AUTO_INVOICING_UPLOAD_MAGENTO_INVOICES] =
-                    $this->__('Upload Magento Invoices');
-            }
-            $options[AmazonAccount::AUTO_INVOICING_VAT_CALCULATION_SERVICE] =
-                $this->__('Use VAT Calculation Service');
-
             $fieldset->addField(
                 'auto_invoicing',
                 'select',
@@ -79,7 +69,13 @@ HTML
                     'label'   => $this->__('Invoice Uploading to Amazon'),
                     'title'   => $this->__('Invoice Uploading to Amazon'),
                     'name'    => 'auto_invoicing',
-                    'options' => $options,
+                    'options' => [
+                        AmazonAccount::AUTO_INVOICING_DISABLED                => $this->__('Disabled'),
+                        AmazonAccount::AUTO_INVOICING_UPLOAD_MAGENTO_INVOICES =>
+                            $this->__('Upload Magento Invoices'),
+                        AmazonAccount::AUTO_INVOICING_VAT_CALCULATION_SERVICE =>
+                            $this->__('Use VAT Calculation Service')
+                    ],
                     'value'   => $formData['auto_invoicing']
                 ]
             );

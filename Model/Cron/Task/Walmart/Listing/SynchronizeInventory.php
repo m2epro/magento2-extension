@@ -52,10 +52,10 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             return;
         }
 
-        $this->getOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
+        $this->getOperationHistory()->addText('Starting Account "' . $account->getTitle() . '"');
         $this->getOperationHistory()->addTimePoint(
-            __METHOD__.'process'.$account->getId(),
-            'Process Account '.$account->getTitle()
+            __METHOD__ . 'process' . $account->getId(),
+            'Process Account ' . $account->getTitle()
         );
 
         try {
@@ -75,7 +75,7 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $this->processTaskException($exception);
         }
 
-        $this->getOperationHistory()->saveTimePoint(__METHOD__.'process'.$account->getId());
+        $this->getOperationHistory()->saveTimePoint(__METHOD__ . 'process' . $account->getId());
     }
 
     //########################################
@@ -111,8 +111,12 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection->getSelect()->group('main_table.id');
         $collection->getSelect()->order(new \Zend_Db_Expr('second_table.inventory_last_synchronization ASC'));
 
+        $interval = $this->getConfigValue('interval_per_account') !== null
+            ? $this->getConfigValue('interval_per_account')
+            : self::DEFAULT_INTERVAL_PER_ACCOUNT;
+
         $dayAgoDate = new \DateTime('now', new \DateTimeZone('UTC'));
-        $dayAgoDate->modify('-' . self::DEFAULT_INTERVAL_PER_ACCOUNT . ' seconds');
+        $dayAgoDate->modify('-' . $interval . ' seconds');
 
         foreach ($collection->getItems() as $account) {
             /**@var \Ess\M2ePro\Model\Account $account */
@@ -148,15 +152,19 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function isTaskInProgress()
     {
         /** @var $lockItemManager \Ess\M2ePro\Model\Lock\Item\Manager */
-        $lockItemManager = $this->modelFactory->getObject('Lock_Item_Manager', [
-            'nick' => ProcessingRunner::LOCK_ITEM_PREFIX
-        ]);
+        $lockItemManager = $this->modelFactory->getObject(
+            'Lock_Item_Manager',
+            [
+                'nick' => ProcessingRunner::LOCK_ITEM_PREFIX
+            ]
+        );
         if (!$lockItemManager->isExist()) {
             return false;
         }
 
         if ($lockItemManager->isInactiveMoreThanSeconds(\Ess\M2ePro\Model\Processing\Runner::MAX_LIFETIME)) {
             $lockItemManager->remove();
+
             return false;
         }
 

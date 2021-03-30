@@ -559,35 +559,6 @@ HTML;
 
         // ---------------------------------------
 
-        if ($this->canDisplayClickAndCollectOption()) {
-            $fieldSet->addField(
-                'click_and_collect_mode',
-                self::SELECT,
-                [
-                    'name'                   => 'shipping[click_and_collect_mode]',
-                    'label'                  => $this->__('Click And Collect Opt-out'),
-                    'title'                  => $this->__('Click And Collect Opt-out'),
-                    'values'                 => [
-                        ['value' => 0, 'label' => __('No')],
-                        ['value' => 1, 'label' => __('Yes')]
-                    ],
-                    'value'                  => $this->formData['click_and_collect_mode'],
-                    'field_extra_attributes' => 'id="click_and_collect_mode_tr"',
-                    'css_class'              => 'local-shipping-tr',
-                    'tooltip'                => $this->__(
-                        'Select "No" to enable the Click & Collect option for your Products in M2E Pro Listing.
-                         Details about the Click & Collect delivery option can be found on
-                         <a href="%url_uk%" target="_blank" class="external-link">eBay UK</a>,
-                         <a href="%url_au%" target="_blank" class="external-link">eBay Australia</a> sites.',
-                        'http://pages.ebay.co.uk/sell/click-and-collect/',
-                        'http://sellercentre.ebay.com.au/click-and-collect/'
-                    )
-                ]
-            );
-        }
-
-        // ---------------------------------------
-
         $fieldSet->addField(
             'local_handling_cost',
             'text',
@@ -1294,7 +1265,7 @@ HTML;
                 'label'                    => $this->__('Weight Source'),
                 'title'                    => $this->__('Weight Source'),
                 'values'                   => $this->getWeightSourceOptions(),
-                'value'                    => $this->formData['weight_mode'] != Shipping\Calculated::WEIGHT_CUSTOM_ATTRIBUTE
+                'value' => $this->formData['weight_mode'] != Shipping\Calculated::WEIGHT_CUSTOM_ATTRIBUTE
                     ? $this->formData['weight_mode'] : '',
                 'class'                    => 'select',
                 'field_extra_attributes'   => 'id="weight_tr"',
@@ -1432,7 +1403,7 @@ HTML;
                     <table style="border: none" cellpadding="0" cellspacing="0">
                         <tfoot>
                             <tr>
-                                <td valign="middle" align="center" style="vertical-align: middle; height: 40px">
+                                <td valign="middle" id="add_local_shipping_method" align="center" style="vertical-align: middle; height: 40px">
                                     {$localShippingMethodButton->setData(
             'label',
             $this->__('Add Shipping Method')
@@ -1788,6 +1759,14 @@ HTML;
     {
         $helper = $this->getHelper('Data');
 
+        $options = [
+            [
+                'value' => Shipping\Calculated::PACKAGE_SIZE_NONE,
+                'label' => 'None',
+                'attrs' => ['id' => 'package_size_none']
+            ]
+        ];
+
         $ebayValues = ['value' => [], 'label' => $this->__('eBay Values')];
         foreach ($this->marketplaceData['packages'] as $package) {
             $tmp = [
@@ -1806,6 +1785,8 @@ HTML;
 
             $ebayValues['value'][] = $tmp;
         }
+
+        $options[] = $ebayValues;
 
         $attributesOptions = [
             'value' => [],
@@ -1839,7 +1820,9 @@ HTML;
             $attributesOptions['value'][] = $tmp;
         }
 
-        return [$ebayValues, $attributesOptions];
+        $options[] = $attributesOptions;
+
+        return $options;
     }
 
     public function getDimensionsOptions($attributeCode)
@@ -2417,11 +2400,6 @@ HTML;
     public function canDisplayLocalShippingRateTable()
     {
         return $this->getMarketplace()->getChildObject()->isLocalShippingRateTableEnabled();
-    }
-
-    public function canDisplayClickAndCollectOption()
-    {
-        return $this->getMarketplace()->getChildObject()->isClickAndCollectEnabled();
     }
 
     public function canDisplayFreightShippingType()

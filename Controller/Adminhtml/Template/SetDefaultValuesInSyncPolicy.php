@@ -6,12 +6,12 @@
  * @license    Commercial use is forbidden
  */
 
-namespace Ess\M2ePro\Controller\Adminhtml\General;
+namespace Ess\M2ePro\Controller\Adminhtml\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Base;
 
 /**
- * Class \Ess\M2ePro\Controller\Adminhtml\General\SetDefaultValuesInSyncPolicy
+ * Class \Ess\M2ePro\Controller\Adminhtml\Template\SetDefaultValuesInSyncPolicy
  */
 class SetDefaultValuesInSyncPolicy extends Base
 {
@@ -26,7 +26,8 @@ class SetDefaultValuesInSyncPolicy extends Base
     {
         $connection = $this->resourceConnection->getConnection();
         foreach (['ebay', 'amazon', 'walmart'] as $component) {
-            $templateTable = $connection->getTableName("m2epro_{$component}_template_synchronization");
+            $templateTable = $this->getHelper('Module_Database_Structure')
+                ->getTableNameWithPrefix("m2epro_{$component}_template_synchronization");
             $templates = $connection
                 ->select()
                 ->from($templateTable, 'template_synchronization_id')

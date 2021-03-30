@@ -15,9 +15,6 @@ namespace Ess\M2ePro\Model\Walmart;
  */
 class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
-    const MODE_SANDBOX    = 0;
-    const MODE_PRODUCTION = 1;
-
     const OTHER_LISTINGS_MAPPING_SKU_MODE_NONE             = 0;
     const OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT          = 1;
     const OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE = 2;
@@ -110,14 +107,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     }
 
     //########################################
-
-    /**
-     * @return int
-     */
-    public function getMode()
-    {
-        return (int)$this->getData('mode');
-    }
 
     /**
      * @return \Ess\M2ePro\Model\Marketplace
@@ -883,6 +872,17 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         }
 
         return $this->getSetting('magento_orders_settings', ['status_mapping', 'shipped']);
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isRefundEnabled()
+    {
+        $setting = $this->getSetting('magento_orders_settings', ['refund_and_cancellation', 'refund_mode']);
+        return (bool)$setting;
     }
 
     // ---------------------------------------

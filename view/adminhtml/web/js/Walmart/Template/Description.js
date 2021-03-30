@@ -1,29 +1,31 @@
 define([
     'M2ePro/Walmart/Template/Edit',
-], function() {
+], function () {
 
     window.WalmartTemplateDescription = Class.create(WalmartTemplateEdit, {
 
         // ---------------------------------------
 
-        initialize: function()
+        initialize: function ()
         {
             this.initValidation();
-        },
+    },
 
-        initValidation: function()
-        {
-            var self = this;
+    initValidation: function () {
+        var self = this;
 
-            self.setValidationCheckRepetitionValue('M2ePro-description-template-title',
-                                                   M2ePro.translator.translate('The specified Title is already used for another Policy. Policy Title must be unique.'),
-                                                   'Template\\Description', 'title', 'id',
-                                                   M2ePro.formData.id,
-                                                   M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart::NICK'));
-        },
+        self.setValidationCheckRepetitionValue(
+            'M2ePro-description-template-title',
+            M2ePro.translator.translate('The specified Title is already used for another Policy. Policy Title must be unique.'),
+            'Template\\Description',
+            'title',
+            'id',
+            M2ePro.formData.id,
+            M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart::NICK')
+        );
+    },
 
-        initObservers: function()
-        {
+        initObservers: function () {
             $('title_mode')
                 .observe('change', WalmartTemplateDescriptionObj.title_mode_change)
                 .simulate('change');
@@ -107,26 +109,28 @@ define([
 
         //########################################
 
-        duplicateClick: function($super, $headId)
-        {
-            this.setValidationCheckRepetitionValue('M2ePro-description-template-title',
-                                                   M2ePro.translator.translate('The specified Title is already used for another Policy. Policy Title must be unique.'),
-                                                   'Template\\Description', 'title', '','',
-                                                   M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart::NICK'));
+        duplicateClick: function ($super, $headId) {
+            this.setValidationCheckRepetitionValue(
+                'M2ePro-description-template-title',
+                M2ePro.translator.translate('The specified Title is already used for another Policy. Policy Title must be unique.'),
+                'Template\\Description',
+                'title',
+                '',
+                '',
+                M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart::NICK')
+            );
 
             $super($headId, M2ePro.translator.translate('Add Description Policy'));
         },
 
         //########################################
 
-        title_mode_change: function()
-        {
+        title_mode_change: function () {
             var customTitle = $('custom_title_tr');
             this.value == 1 ? customTitle.show() : customTitle.hide();
         },
 
-        brand_mode_change: function()
-        {
+        brand_mode_change: function () {
             var customAttribute = $('brand_custom_attribute'),
                 customValueTr   = $('brand_custom_value_tr');
 
@@ -142,8 +146,7 @@ define([
             }
         },
 
-        manufacturer_mode_change: function()
-        {
+        manufacturer_mode_change: function () {
             var customAttribute = $('manufacturer_custom_attribute'),
                 customValueTr   = $('manufacturer_custom_value_tr');
 
@@ -159,8 +162,7 @@ define([
             }
         },
 
-        manufacturer_part_number_mode_change: function()
-        {
+        manufacturer_part_number_mode_change: function () {
             var customAttribute = $('manufacturer_part_number_custom_attribute'),
                 customValueTr   = $('manufacturer_part_number_custom_value_tr');
 
@@ -176,8 +178,7 @@ define([
             }
         },
 
-        model_number_mode_change: function()
-        {
+        model_number_mode_change: function () {
             var customAttribute = $('model_number_custom_attribute'),
                 customValueTr   = $('model_number_custom_value_tr');
 
@@ -193,8 +194,7 @@ define([
             }
         },
 
-        total_count_mode_change: function()
-        {
+        total_count_mode_change: function () {
             var customAttribute = $('total_count_custom_attribute'),
                 customValueTr   = $('total_count_custom_value_tr');
 
@@ -210,8 +210,7 @@ define([
             }
         },
 
-        keywords_mode_change: function()
-        {
+        keywords_mode_change: function () {
             var customAttribute = $('keywords_custom_attribute'),
                 customValueTr   = $('keywords_custom_value_tr');
 
@@ -227,8 +226,7 @@ define([
             }
         },
 
-        onChangeCountPerPackMode: function()
-        {
+        onChangeCountPerPackMode: function () {
             var targetCustomValue     = $('count_per_pack_custom_value_tr'),
                 targetCustomAttribute = $('count_per_pack_custom_attribute');
 
@@ -244,8 +242,7 @@ define([
             }
         },
 
-        onChangeMultipackQuantityMode: function()
-        {
+        onChangeMultipackQuantityMode: function () {
             var targetCustomValue     = $('multipack_quantity_custom_value_tr'),
                 targetCustomAttribute = $('multipack_quantity_custom_attribute');
 
@@ -263,8 +260,7 @@ define([
 
         // ---------------------------------------
 
-        onChangeMsrpRrpMode: function()
-        {
+        onChangeMsrpRrpMode: function () {
             var customAttribute = $('msrp_rrp_custom_attribute');
 
             customAttribute.value = '';
@@ -276,12 +272,11 @@ define([
 
         // ---------------------------------------
 
-        multi_element_mode_change: function(type, max)
-        {
+        multi_element_mode_change: function (type, max) {
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Description::' + type.toUpperCase() + '_MODE_NONE')) {
 
                 $$('.' + type + '_tr').invoke('hide');
-                $$('input[name="' + type + '[]"], input[name="' + type + '_name[]"], input[name="' + type + '_value[]"]').each(function(obj) {
+                $$('input[name="' + type + '[]"], input[name="' + type + '_name[]"], input[name="' + type + '_value[]"]').each(function (obj) {
                     obj.value = '';
                 });
                 $(type + '_actions_tr').hide();
@@ -290,7 +285,7 @@ define([
 
                 var visibleElementsCounter = 0;
 
-                $$('.' + type + '_tr').each(function(obj) {
+                $$('.' + type + '_tr').each(function (obj) {
                     if (visibleElementsCounter == 0 ||
                         ($(obj).select('input[name="' + type + '_value[]"]')[0] && $(obj).select('input[name="' + type + '_value[]"]')[0].value != '') ||
                         ($(obj).select('input[name="' + type + '[]"]')[0] && $(obj).select('input[name="' + type + '[]"]')[0].value != '')
@@ -315,8 +310,7 @@ define([
             }
         },
 
-        multi_element_keyup: function(type, element)
-        {
+        multi_element_keyup: function (type, element) {
             if (!element.value) {
                 return $('show_' + type + '_action').addClassName('action-disabled');
             }
@@ -336,7 +330,7 @@ define([
                 return $('show_' + type + '_action').addClassName('action-disabled');
             }
 
-            var hiddenElements = $$('.' + type + '_tr').findAll(function(obj) {
+            var hiddenElements = $$('.' + type + '_tr').findAll(function (obj) {
                 return !$(obj).visible();
             });
 
@@ -351,13 +345,17 @@ define([
                 this.removeChild(this.options[0]);
             }
 
-            this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Description::DESCRIPTION_MODE_CUSTOM')
-                ? $$('.c-custom_description_tr').invoke('show')
-                : $$('.c-custom_description_tr').invoke('hide');
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Description::DESCRIPTION_MODE_CUSTOM')) {
+                $$('.c-custom_description_tr').invoke('show');
+                $('selectAttr_description_template').up('.admin__field.field').show();
+            } else {
+                $$('.c-custom_description_tr').invoke('hide');
+                $('selectAttr_description_template').up('.admin__field.field').hide();
+            }
+
         },
 
-        image_main_mode_change: function()
-        {
+        image_main_mode_change: function () {
             var self = WalmartTemplateDescriptionObj;
 
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Description::IMAGE_MAIN_MODE_NONE')) {
@@ -374,8 +372,7 @@ define([
             }
         },
 
-        image_variation_difference_mode_change: function()
-        {
+        image_variation_difference_mode_change: function () {
             var self = WalmartTemplateDescriptionObj;
 
             $('image_variation_difference_attribute').value = '';
@@ -384,8 +381,7 @@ define([
             }
         },
 
-        gallery_images_mode_change: function()
-        {
+        gallery_images_mode_change: function () {
             $('gallery_images_limit').value = '';
             $('gallery_images_attribute').value = '';
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Description::GALLERY_IMAGES_MODE_PRODUCT')) {
@@ -399,9 +395,8 @@ define([
 
         // ---------------------------------------
 
-        showElement: function(type)
-        {
-            var emptyVisibleElementsExist = $$('.' + type + '_tr').any(function(obj) {
+        showElement: function (type) {
+            var emptyVisibleElementsExist = $$('.' + type + '_tr').any(function (obj) {
 
                 var element = $(obj);
 
@@ -418,7 +413,7 @@ define([
                 return;
             }
 
-            var hiddenElements = $$('.' + type + '_tr').findAll(function(obj) {
+            var hiddenElements = $$('.' + type + '_tr').findAll(function (obj) {
                 return !$(obj).visible();
             });
 
@@ -432,13 +427,14 @@ define([
             $('show_' + type + '_action').addClassName('action-disabled');
         },
 
-        hideElement: function(type, force)
-        {
+        hideElement: function (type, force) {
             force = force || false;
 
             var visibleElements = [];
-            $$('.' + type + '_tr').each(function(el) {
-                if(el.visible()) visibleElements.push(el);
+            $$('.' + type + '_tr').each(function (el) {
+                if (el.visible()) {
+                    visibleElements.push(el);
+                }
             });
 
             if (visibleElements.length <= 0 || (!force && visibleElements[visibleElements.length - 1].getAttribute('undeletable'))) {
@@ -467,7 +463,7 @@ define([
                 lastVisibleElement.hide();
 
                 var nextVisibleElement = visibleElements.pop();
-                if(!force && nextVisibleElement.getAttribute('undeletable')) {
+                if (!force && nextVisibleElement.getAttribute('undeletable')) {
                     $('hide_' + type + '_action').addClassName('action-disabled');
                 }
             }

@@ -203,11 +203,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
     {
         $data = $this->getSessionValue();
 
-        $data['title'] = $this->getSessionValue('title');
-        $data['account_id'] = $this->getSessionValue('account_id');
-        $data['marketplace_id'] = $this->getSessionValue('marketplace_id');
-        $data['store_id'] = $this->getSessionValue('store_id');
-
         if ($this->getSessionValue('restock_date_value') === '') {
             $data['restock_date_value'] = $this->getHelper('Data')->getCurrentGmtDate();
         } else {

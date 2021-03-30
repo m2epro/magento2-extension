@@ -39,7 +39,8 @@
 
 #magento_block_amazon_template_description_keywords input[id^='target_audience_'],
 #magento_block_amazon_template_description_keywords input[id^='search_terms_'] ,
-#magento_block_amazon_template_description_keywords input[id^='bullet_points_'] {
+#magento_block_amazon_template_description_keywords input[id^='bullet_points_'],
+#magento_block_amazon_template_description_general #custom_title_tr #title_template {
     width: 200px;
 }
 
@@ -51,8 +52,9 @@
 
 #magento_block_amazon_template_description_keywords .target_audience_tr .admin__field-control,
 #magento_block_amazon_template_description_keywords .search_terms_tr .admin__field-control,
-#magento_block_amazon_template_description_keywords .bullet_points_tr .admin__field-control {
-    width: calc( (100%) * 0.48 - 30px );
+#magento_block_amazon_template_description_keywords .bullet_points_tr .admin__field-control,
+#magento_block_amazon_template_description_general #custom_title_tr .admin__field-control {
+    width: calc( (100%) * 0.48 );
 }
 
 #magento_block_amazon_template_description_keywords .field-target_audience_actions .admin__field-control,
@@ -70,6 +72,11 @@
 #magento_block_amazon_template_description_keywords a.action-disabled {
     color: gray;
     text-decoration: none;
+}
+
+.magento-attribute-custom-input {
+    width: 200px !important;
+    margin-left: 5px;
 }
 
 #category_path_span {

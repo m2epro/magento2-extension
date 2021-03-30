@@ -328,44 +328,37 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->getMassactionBlock()->addItem('list', [
             'label'    => $this->__('List Item(s)'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('revise', [
             'label'    => $this->__('Revise Item(s)'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('relist', [
             'label'    => $this->__('Relist Item(s)'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('stop', [
             'label'    => $this->__('Stop Item(s)'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('stopAndRemove', [
             'label'    => $this->__('Stop on Channel / Remove from Listing'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('deleteAndRemove', [
             'label'    => $this->__('Remove from Channel & Listing'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('assignGeneralId', [
             'label'    => $this->__('Search Automatically'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'asin_isbn');
 
         $this->getMassactionBlock()->addItem('newGeneralId', [
@@ -375,8 +368,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->getMassactionBlock()->addItem('unassignGeneralId', [
             'label'    => $this->__('Reset Information'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'asin_isbn');
         // ---------------------------------------
 

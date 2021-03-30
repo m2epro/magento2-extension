@@ -681,6 +681,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
             return false;
         }
 
+        if (!$this->getWalmartAccount()->isRefundEnabled()) {
+            return false;
+        }
+
         return true;
     }
 

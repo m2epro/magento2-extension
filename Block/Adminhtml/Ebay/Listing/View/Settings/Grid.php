@@ -56,6 +56,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->setId('ebayListingViewGrid' . $this->listing->getId());
 
         $this->css->addFile('ebay/template.css');
+        $this->css->addFile('ebay/listing/grid.css');
 
         $this->showAdvancedFilterProductsOption = false;
 
@@ -123,18 +124,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'template_store_category_id'           => 'template_store_category_id',
                 'template_store_category_secondary_id' => 'template_store_category_secondary_id',
 
-                'template_return_policy_mode' => 'template_return_policy_mode',
-                'template_payment_mode' => 'template_payment_mode',
-                'template_shipping_mode' => 'template_shipping_mode',
-                'template_description_mode' => 'template_description_mode',
-                'template_selling_format_mode' => 'template_selling_format_mode',
+                'template_return_policy_mode'   => 'template_return_policy_mode',
+                'template_payment_mode'         => 'template_payment_mode',
+                'template_shipping_mode'        => 'template_shipping_mode',
+                'template_description_mode'     => 'template_description_mode',
+                'template_selling_format_mode'  => 'template_selling_format_mode',
                 'template_synchronization_mode' => 'template_synchronization_mode',
 
-                'template_return_policy_id' => 'template_return_policy_id',
-                'template_payment_id' => 'template_payment_id',
-                'template_shipping_id' => 'template_shipping_id',
-                'template_description_id' => 'template_description_id',
-                'template_selling_format_id' => 'template_selling_format_id',
+                'template_return_policy_id'   => 'template_return_policy_id',
+                'template_payment_id'         => 'template_payment_id',
+                'template_shipping_id'        => 'template_shipping_id',
+                'template_description_id'     => 'template_description_id',
+                'template_selling_format_id'  => 'template_selling_format_id',
                 'template_synchronization_id' => 'template_synchronization_id'
             ]
         );
@@ -276,25 +277,34 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                     1 => $this->__('Filled'),
                     0 => $this->__('Empty')
                 ],
-                'frame_callback' => [$this, 'callbackColumnMotorsAttribute'],
+                'frame_callback'            => [$this, 'callbackColumnMotorsAttribute'],
                 'filter_condition_callback' => [$this, 'callbackFilterMotorsAttribute'],
             ]);
         }
 
-        $title = $this->__('eBay Categories');
-        $isExistsListingSettingsOverwrites = $this->isExistsListingSettingsOverwrites();
-        if ($isExistsListingSettingsOverwrites) {
-            $title = $this->__('eBay Categories / Listing Policies Overrides');
-        }
         $this->addColumn('category', [
-            'header' => $title,
+            'header' => $this->__('eBay Categories'),
             'align'  => 'left',
             'type'   => 'text',
             'index'  => 'name',
-            'is_exists_listing_settings_overwrites' => $isExistsListingSettingsOverwrites,
             'filter' => '\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Grid\Column\Filter\Category',
-            'frame_callback' => [$this, 'callbackColumnCategory'],
+            'frame_callback'            => [$this, 'callbackColumnCategory'],
             'filter_condition_callback' => [$this, 'callbackFilterCategory']
+        ]);
+
+        $this->addColumn('setting', [
+            'index'   => 'name',
+            'header'  => $this->__('Listing Policies Overrides'),
+            'align'   => 'left',
+            'type'    => 'options',
+            'options' => [
+                Manager::MODE_PARENT   => $this->__('Use from Listing Settings'),
+                Manager::MODE_CUSTOM   => $this->__('Custom Settings'),
+                Manager::MODE_TEMPLATE => $this->__('Policies')
+            ],
+            'frame_callback'            => [$this, 'callbackColumnSetting'],
+            'filter_condition_callback' => [$this, 'callbackFilterSetting'],
+            'column_css_class' => 'ebay-listing-grid-column-setting'
         ]);
 
         $this->addColumn('actions', [
@@ -397,23 +407,20 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         if ($this->isMotorsAvailable() && $this->motorsAttribute) {
             $this->getMassactionBlock()->addItem('editMotors', [
                 'label' => $this->__('Add Compatible Vehicles'),
-                'url' => '',
-                'confirm' => $this->__('Are you sure?')
+                'url' => ''
             ], 'other');
         }
 
         $this->getMassactionBlock()->addItem('moving', [
             'label' => $this->__('Move Item(s) to Another Listing'),
-            'url' => '',
-            'confirm' => $this->__('Are you sure?')
+            'url' => ''
         ], 'other');
 
         // ---------------------------------------
 
         $this->getMassactionBlock()->addItem('transferring', [
             'label' => $this->__('Sell on Another Marketplace'),
-            'url' => '',
-            'confirm' => $this->__('Are you sure?')
+            'url' => ''
         ], 'other');
 
         // ---------------------------------------
@@ -486,23 +493,42 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'category_main',
             $categories[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN]
         );
+
         $value .= $this->getStoreCategoryInfoHtml(
             $row,
             'category_secondary',
             $categories[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]
         );
-        $value .= '<br/>';
 
+        return $value;
+    }
+
+    public function callbackColumnSetting($value, $row, $column, $isExport)
+    {
         $templatesNames = [
-            Manager::TEMPLATE_PAYMENT => $this->__('Payment'),
-            Manager::TEMPLATE_SHIPPING => $this->__('Shipping'),
-            Manager::TEMPLATE_RETURN_POLICY => $this->__('Return'),
-            Manager::TEMPLATE_SELLING_FORMAT => $this->__('Selling'),
-            Manager::TEMPLATE_DESCRIPTION => $this->__('Description'),
+            Manager::TEMPLATE_PAYMENT         => $this->__('Payment'),
+            Manager::TEMPLATE_SHIPPING        => $this->__('Shipping'),
+            Manager::TEMPLATE_RETURN_POLICY   => $this->__('Return'),
+            Manager::TEMPLATE_SELLING_FORMAT  => $this->__('Selling'),
+            Manager::TEMPLATE_DESCRIPTION     => $this->__('Description'),
             Manager::TEMPLATE_SYNCHRONIZATION => $this->__('Synchronization'),
         ];
 
-        $productTemplatesHtml = '';
+        // ---------------------------------------
+
+        $modes = array_keys($templatesNames);
+        $listingSettings = array_filter($modes, function ($templateNick) use ($row) {
+            $templateMode = $row->getData('template_' . $templateNick . '_mode');
+            return $templateMode == Manager::MODE_PARENT;
+        });
+
+        if (count($listingSettings) === count($templatesNames)) {
+            return $this->__('Use from Listing Settings');
+        }
+
+        // ---------------------------------------
+
+        $html = '';
         foreach ($templatesNames as $templateNick => $templateTitle) {
             $templateMode = $row->getData('template_' . $templateNick . '_mode');
 
@@ -513,35 +539,29 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             $templateLink = '';
             if ($templateMode == Manager::MODE_CUSTOM) {
                 $templateLink = '<span>' . $this->__('Custom Settings') . '</span>';
-            } else if ($templateMode == Manager::MODE_TEMPLATE) {
+            } elseif ($templateMode == Manager::MODE_TEMPLATE) {
                 $id = (int)$row->getData('template_' . $templateNick . '_id');
+
                 $url = $this->getUrl('m2epro/ebay_template/edit', [
-                    'id' => $id,
+                    'id'   => $id,
                     'nick' => $templateNick
                 ]);
+
                 $objTitle = $this->templateManager->setTemplate($templateNick)
                     ->getTemplateModel()
                     ->load($id)
                     ->getTitle();
-                $templateLink = '<a href="' . $url . '" target="_blank">'
-                    . $objTitle
-                    . '</a>';
+
+                $templateLink = '<a href="' . $url . '" target="_blank">' . $objTitle . '</a>';
             }
 
-            $productTemplatesHtml .= "<div style='padding: 2px 0 0 10px'>
+            $html .= "<div style='padding: 2px 0 0 0px'>
                                     <strong>{$templateTitle}:</strong>
-                                    <span style='padding: 0 10px 0 5px'>{$templateLink}</span>
-                                   </div>";
+                                    <span style='padding: 0 0px 0 5px'>{$templateLink}</span>
+                               </div>";
         }
 
-        if (!empty($productTemplatesHtml)) {
-            $value .= "<div class='product_templates' style='text-decoration: underline;'>
-                        {$this->__('Listing Policies Overrides')}
-                       </div>"
-                . $productTemplatesHtml;
-        }
-
-        return $value;
+        return $html;
     }
 
     public function callbackColumnMotorsAttribute($value, $row, $column, $isExport)
@@ -685,17 +705,26 @@ HTML;
 
             $collection->addFieldToFilter($fieldsToFilter);
         }
+
         $selectValue = $column->getFilter()->getValue('select');
         if ($selectValue !== null) {
             $collection->addFieldToFilter('template_category_id', [($selectValue ? 'notnull' : 'null') => true]);
         }
+    }
 
-        if ($column->getFilter()->getValue('checkbox') !== null) {
-            $fieldsToFilter = [];
-            foreach ($this->templateManager->getAllTemplates() as $templateNick) {
-                $fieldsToFilter[] = ['attribute' => "template_{$templateNick}_mode", 'gt' => 0];
-            }
-            $collection->addFieldToFilter($fieldsToFilter);
+    public function callbackFilterSetting($collection, $column)
+    {
+        $value = $column->getFilter()->getValue();
+
+        if ($value !== null) {
+            $collection->addFieldToFilter([
+                ['attribute' => 'template_return_policy_mode', 'eq' => $value],
+                ['attribute' => 'template_payment_mode', 'eq' => $value],
+                ['attribute' => 'template_shipping_mode', 'eq' => $value],
+                ['attribute' => 'template_description_mode', 'eq' => $value],
+                ['attribute' => 'template_selling_format_mode', 'eq' => $value],
+                ['attribute' => 'template_synchronization_mode', 'eq' => $value]
+            ]);
         }
     }
 
@@ -741,28 +770,6 @@ HTML;
     public function getRowUrl($row)
     {
         return false;
-    }
-
-    //########################################
-
-    public function isExistsListingSettingsOverwrites()
-    {
-        $listingProductCollection = $this->ebayFactory
-            ->getObject('Listing\Product')
-            ->getCollection()
-            ->addFieldToFilter('listing_id', $this->listing->getId());
-
-        $allTemplates = $this->templateManager->getAllTemplates();
-
-        $where = [];
-        $conditions = [];
-        foreach ($allTemplates as $templateNick) {
-            $where[] = ['second_table', 'template_' . $templateNick . '_mode'];
-            $conditions[] = ['gt' => 0];
-        }
-        $listingProductCollection->addFieldToFilter($where, $conditions);
-
-        return $listingProductCollection->getSize();
     }
 
     //########################################

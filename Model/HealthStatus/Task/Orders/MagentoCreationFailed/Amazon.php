@@ -56,7 +56,7 @@ imported Channel orders. See the <a target="_blank" href="%url%">Order Log</a> f
 HTML
                 ,
                 $failedOrders,
-                $this->urlBuilder->getUrl('m2epro/amazon_log_order/index')
+                $this->urlBuilder->getUrl('m2epro/amazon_log_order/index', ['magento_order_failed' => true])
             ]));
         }
 

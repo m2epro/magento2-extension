@@ -323,44 +323,37 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->getMassactionBlock()->addItem('revise', [
             'label'    => $this->__('Revise Item(s)'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('relist', [
             'label'    => $this->__('Relist Item(s)'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('stop', [
             'label'    => $this->__('Stop Item(s)'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('stopAndRemove', [
             'label'    => $this->__('Stop on Channel / Remove from Listing'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('deleteAndRemove', [
             'label'    => $this->__('Remove from Channel & Listing'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('switchToAfn', [
             'label'    => $this->__('Switch to AFN'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'edit_fulfillment');
 
         $this->getMassactionBlock()->addItem('switchToMfn', [
             'label'    => $this->__('Switch to MFN'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'edit_fulfillment');
 
         /** @var \Ess\M2ePro\Model\Account $account */

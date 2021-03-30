@@ -96,7 +96,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'type'     => 'text',
                 'sortable' => false,
                 'index'    => 'identifier',
-                'frame_callback' => [$this, 'callbackColumnIdentifier']
             ]
         );
 
@@ -144,22 +143,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     }
 
     //########################################
-
-    public function callbackColumnIdentifier($value, $row, $column, $isExport)
-    {
-        /** @var AmazonManager|EbayManager|WalmartManager $manager */
-        $manager = $row['_manager_'];
-
-        $state = '';
-        if ($manager->isEnabled()) {
-            $state = <<<HTML
-<br/>
-<span style="color: orange; font-style: italic;">{$this->__('(in progress)')}</span>
-HTML;
-        }
-
-        return $value . $state;
-    }
 
     public function callbackColumnDate($value, $row, $column, $isExport)
     {
@@ -216,8 +199,16 @@ HTML;
             'class' => 'action primary'
         ];
 
+        $state = '';
+        if ($manager->isEnabled()) {
+            $state = <<<HTML
+<br/>
+<span style="color: orange; font-style: italic;">{$this->__('(in progress)')}</span>
+HTML;
+        }
+
         $button = $this->createBlock('Magento\Button')->setData($data);
-        return $button->toHtml();
+        return $button->toHtml() . $state;
     }
 
     //########################################

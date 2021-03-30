@@ -53,6 +53,7 @@ class Data extends AbstractForm
         $isCustomDescription = ($formData['description_mode'] == Description::DESCRIPTION_MODE_CUSTOM);
 
         $form = $this->_formFactory->create();
+        $this->setForm($form);
 
         $form->addField(
             'description_id',
@@ -251,6 +252,13 @@ class Data extends AbstractForm
             ];
         }
 
+        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
+            'label' => $this->__('Insert'),
+            'destination_id' => 'condition_note_template',
+            'class'=>'primary',
+            'style' => 'display: inline-block;'
+        ]);
+
         $fieldset->addField(
             'condition_note_template',
             'textarea',
@@ -262,15 +270,18 @@ class Data extends AbstractForm
                 'style'              => 'width: 70%;margin-top: 0px;margin-bottom: 0px;height: 101px;',
                 'class'              => 'M2ePro-validate-condition-note-length',
                 'required'           => true,
-                'after_element_html' => $this->createBlock('Magento_Button_MagentoAttribute')->addData(
-                    [
-                        'label'              => $this->__('Insert Attribute'),
-                        'destination_id'     => 'condition_note_template',
-                        'magento_attributes' => $preparedAttributes,
-                        'class'              => 'select_attributes_for_title_button primary',
-                        'style'              => 'margin-left: 0px; float: right;'
-                    ]
-                )->toHtml()
+            ]
+        );
+
+        $fieldset->addField(
+            'selectAttr_condition_note_template',
+            self::SELECT,
+            [   'container_id'       => 'custom_condition_note_attributes_tr',
+                'label' => $this->__('Product Attribute'),
+                'title' => $this->__('Product Attribute'),
+                'values' => $preparedAttributes,
+                'create_magento_attribute' => true,
+                'after_element_html' => $button->toHtml()
             ]
         );
 
@@ -566,7 +577,7 @@ class Data extends AbstractForm
                         ]
                     ]
                 ],
-                'value'                    => $formData['variation_images_mode'] != Description::VARIATION_IMAGES_MODE_ATTRIBUTE
+                'value' => $formData['variation_images_mode'] != Description::VARIATION_IMAGES_MODE_ATTRIBUTE
                 && $formData['variation_images_mode'] != Description::VARIATION_IMAGES_MODE_PRODUCT
                     ? $formData['variation_images_mode'] : '',
                 'create_magento_attribute' => true,
@@ -684,7 +695,7 @@ class Data extends AbstractForm
                     'label'        => $this->__('Watermark Preview'),
                     'container_id' => 'watermark_uploaded_image_container',
                     'text'         => <<<HTML
-<img src="data:image/png;base64,{$encodedImage}" style="max-width: 300px;" />
+<img src="data:image/png;base64,{$encodedImage}" style="max-width: 300px;"  alt=""/>
 HTML
                 ]
             );
@@ -774,6 +785,25 @@ HTML
             ];
         }
 
+        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
+            'label' => $this->__('Insert'),
+            'destination_id' => 'title_template',
+            'class'=>'primary',
+            'style' => 'display: inline-block;'
+        ]);
+
+        $selectAttrBlock = $this->elementFactory->create(self::SELECT, [
+            'data' => [
+                'values' =>  $preparedAttributes,
+                'class'  => 'M2ePro-required-when-visible magento-attribute-custom-input',
+                'create_magento_attribute' => true
+            ]
+        ])->addCustomAttribute('allowed_attribute_types', 'text,select,multiselect,boolean,price,date')
+            ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
+
+        $selectAttrBlock->setId('selectAttr_title_template');
+        $selectAttrBlock->setForm($this->_form);
+
         $fieldset->addField(
             'title_template',
             'text',
@@ -784,18 +814,7 @@ HTML
                 'name'               => 'description[title_template]',
                 'class'              => 'input-text-title',
                 'required'           => true,
-                'after_element_html' => $this->createBlock('Magento_Button_MagentoAttribute')->addData(
-                    [
-                        'label'                    => $this->__('Insert Attribute'),
-                        'destination_id'           => 'title_template',
-                        'magento_attributes'       => $preparedAttributes,
-                        'class'                    => 'select_attributes_for_title_button primary',
-                        'select_custom_attributes' => [
-                            'allowed_attribute_types'     => 'text,select,multiselect,boolean,price,date',
-                            'apply_to_all_attribute_sets' => 0
-                        ],
-                    ]
-                )->toHtml()
+                'after_element_html' => $selectAttrBlock->toHtml() . $button->toHtml(),
             ]
         );
 
@@ -827,6 +846,24 @@ HTML
             ];
         }
 
+        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
+            'label' => $this->__('Insert'),
+            'destination_id' => 'subtitle_template',
+            'class'=>'primary',
+            'style' => 'display: inline-block;'
+        ]);
+
+        $selectAttrBlock = $this->elementFactory->create(self::SELECT, [
+            'data' => [
+                'values' =>  $preparedAttributes,
+                'class'  => 'M2ePro-required-when-visible magento-attribute-custom-input',
+                'create_magento_attribute' => true
+            ]
+        ])->addCustomAttribute('allowed_attribute_types', 'text,select,multiselect,boolean,price,date')
+            ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
+
+        $selectAttrBlock->setId('selectAttr_subtitle_template');
+        $selectAttrBlock->setForm($this->_form);
         $fieldset->addField(
             'subtitle_template',
             'text',
@@ -837,18 +874,7 @@ HTML
                 'name'               => 'description[subtitle_template]',
                 'class'              => 'input-text-title',
                 'required'           => true,
-                'after_element_html' => $this->createBlock('Magento_Button_MagentoAttribute')->addData(
-                    [
-                        'label'                    => $this->__('Insert Attribute'),
-                        'destination_id'           => 'subtitle_template',
-                        'magento_attributes'       => $preparedAttributes,
-                        'class'                    => 'select_attributes_for_title_button primary',
-                        'select_custom_attributes' => [
-                            'allowed_attribute_types'     => 'text,select,multiselect,boolean,price,date',
-                            'apply_to_all_attribute_sets' => 0
-                        ],
-                    ]
-                )->toHtml()
+                'after_element_html' => $selectAttrBlock->toHtml() . $button->toHtml()
             ]
         );
 
@@ -1046,7 +1072,7 @@ HTML
                     ]
                 ],
                 'create_magento_attribute' => true,
-                'value'                    => $formData['product_details']['upc']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
+                'value' => $formData['product_details']['upc']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
                     ? $formData['product_details']['upc']['mode'] : '',
                 'tooltip'                  => $this->__(
                     '
@@ -1100,7 +1126,7 @@ HTML
                         ]
                     ]
                 ],
-                'value'                    => $formData['product_details']['ean']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
+                'value' => $formData['product_details']['ean']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
                     ? $formData['product_details']['ean']['mode'] : '',
                 'create_magento_attribute' => true,
                 'tooltip'                  => $this->__(
@@ -1156,7 +1182,7 @@ HTML
                         ]
                     ]
                 ],
-                'value'                    => $formData['product_details']['isbn']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
+                'value' => $formData['product_details']['isbn']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
                     ? $formData['product_details']['isbn']['mode'] : '',
                 'create_magento_attribute' => true,
                 'tooltip'                  => $this->__(
@@ -1210,7 +1236,7 @@ HTML
                         ]
                     ]
                 ],
-                'value'                    => $formData['product_details']['epid']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
+                'value' => $formData['product_details']['epid']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
                     ? $formData['product_details']['epid']['mode'] : '',
                 'create_magento_attribute' => true,
                 'tooltip'                  => $this->__(
@@ -1261,7 +1287,7 @@ HTML
                         ]
                     ]
                 ],
-                'value'                    => $formData['product_details']['brand']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
+                'value' => $formData['product_details']['brand']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
                     ? $formData['product_details']['brand']['mode'] : '',
                 'create_magento_attribute' => true,
                 'tooltip'                  => $this->__(
@@ -1312,7 +1338,7 @@ HTML
                         ]
                     ]
                 ],
-                'value'                    => $formData['product_details']['mpn']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
+                'value' => $formData['product_details']['mpn']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
                     ? $formData['product_details']['mpn']['mode'] : '',
                 'create_magento_attribute' => true,
                 'tooltip'                  => $this->__(
@@ -1342,18 +1368,18 @@ HTML
         );
 
         $fieldset->addField(
-            'product_details_include_details',
+            'product_details_include_ebay_details',
             self::SELECT,
             [
                 'css_class'    => 'product-details-specification',
-                'container_id' => 'product_details_include_details_tr',
+                'container_id' => 'product_details_include_ebay_details_tr',
                 'label'        => $this->__('Use eBay Catalog Item Data'),
-                'name'         => 'description[product_details][include_details]',
+                'name'         => 'description[product_details][include_ebay_details]',
                 'values'       => [
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
-                'value'        => $formData['product_details']['include_details'],
+                'value'        => $formData['product_details']['include_ebay_details'],
                 'tooltip'      => $this->__(
                     'Specify whether you want your product data to include prefilled Catalog item data from eBay.
                     <br><br> If the field is set to <b>No</b>, your product data sent to eBay will not interfere with
@@ -1512,8 +1538,6 @@ HTML
     });
 JS
         );
-
-        $this->setForm($form);
 
         return parent::_prepareForm();
     }
@@ -1952,7 +1976,8 @@ HTML;
             [
                 'label'              => $this->__('Magento Product ID'),
                 'after_element_html' => $button->toHtml(),
-                'class'              => 'M2ePro-required-when-visible validate-digits M2ePro-validate-magento-product-id',
+                'class'              => 'M2ePro-required-when-visible validate-digits
+                                         M2ePro-validate-magento-product-id',
                 'css_class'          => '_required',
                 'style'              => 'width: 200px',
                 'name'               => 'description_preview[magento_product_id]'

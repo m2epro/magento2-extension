@@ -24,7 +24,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
         $this->setDefaultDir('DESC');
         $this->setSaveParametersInSession(true);
         $this->setUseAjax(true);
-        // ---------------------------------------
+
+        $this->entityIdFieldName = self::LISTING_PRODUCT_ID_FIELD;
+        $this->logModelName = 'Listing_Log';
     }
 
     //########################################

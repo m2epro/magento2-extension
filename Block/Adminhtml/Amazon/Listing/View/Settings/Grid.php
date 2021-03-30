@@ -374,26 +374,22 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->getMassactionBlock()->addItem('assignTemplateDescriptionId', [
             'label'    => $this->__('Assign'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'description_policy');
 
         $this->getMassactionBlock()->addItem('unassignTemplateDescriptionId', [
             'label'    => $this->__('Unassign'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'description_policy');
 
         $this->getMassactionBlock()->addItem('assignTemplateShippingId', [
             'label'   => $this->__('Assign'),
-            'url'     => '',
-            'confirm' => $this->__('Are you sure?')
+            'url'     => ''
         ], 'shipping_policy');
 
         $this->getMassactionBlock()->addItem('unassignTemplateShippingId', [
             'label'   => $this->__('Unassign'),
-            'url'     => '',
-            'confirm' => $this->__('Are you sure?')
+            'url'     => ''
         ], 'shipping_policy');
 
         if ($this->listing->getMarketplace()->getChildObject()->isProductTaxCodePolicyAvailable() &&
@@ -401,33 +397,28 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ) {
             $this->getMassactionBlock()->addItem('assignTemplateProductTaxCodeId', [
                 'label'   => $this->__('Assign'),
-                'url'     => '',
-                'confirm' => $this->__('Are you sure?')
+                'url'     => ''
             ], 'edit_template_product_tax_code');
 
             $this->getMassactionBlock()->addItem('unassignTemplateProductTaxCodeId', [
                 'label'   => $this->__('Unassign'),
-                'url'     => '',
-                'confirm' => $this->__('Are you sure?')
+                'url'     => ''
             ], 'edit_template_product_tax_code');
         }
 
         $this->getMassactionBlock()->addItem('moving', [
             'label'    => $this->__('Move Item(s) to Another Listing'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'other');
 
         $this->getMassactionBlock()->addItem('duplicate', [
             'label'    => $this->__('Duplicate'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'other');
 
         $this->getMassactionBlock()->addItem('transferring', [
             'label' => $this->__('Sell on Another Marketplace'),
-            'url' => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url' => ''
         ], 'other');
         // ---------------------------------------
 

@@ -214,6 +214,16 @@ label.mage-error[for="description_template"] {
 #buttonsdescription_template {
     display: none;
 }
+#custom_subtitle_tr #subtitle_template,
+#custom_title_tr #title_template,
+#custom_title_tr #selectAttr_title_template,
+#custom_subtitle_tr #selectAttr_subtitle_template{
+    width: 200px;
+}
+#custom_title_tr #selectAttr_title_template,
+#custom_subtitle_tr #selectAttr_subtitle_template{
+    margin-left: 5px;
+}
 #description_template_tr .admin__field-control {
     width: 64% !important;
 }

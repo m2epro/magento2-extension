@@ -55,18 +55,14 @@ class Creditmemo extends AbstractModel
             return;
         }
 
-        $components = array_intersect(
-            $this->getHelper('Component')->getEnabledComponents(),
-            [\Ess\M2ePro\Helper\Component\Amazon::NICK, \Ess\M2ePro\Helper\Component\Walmart::NICK]
-        );
+        $componentMode = ucfirst($order->getComponentMode());
 
-        if (!in_array($order->getComponentMode(), $components)) {
+        if (!$this->getHelper("Component_{$componentMode}")->isEnabled()) {
             return;
         }
 
         $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
 
-        $componentMode = ucfirst($order->getComponentMode());
         /** @var \Ess\M2ePro\Model\Order\Creditmemo\Handler $handler */
         $handler = $this->modelFactory->getObject("{$componentMode}_Order_Creditmemo_Handler");
         $handler->handle($order, $creditmemo);

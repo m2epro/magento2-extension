@@ -8,17 +8,14 @@
 
 namespace Ess\M2ePro\Model\Ebay;
 
+use \Ess\M2ePro\Helper\Component\Ebay as EbayHelper;
+
 /**
  * @method \Ess\M2ePro\Model\Order getParentObject()
  * @method \Ess\M2ePro\Model\ResourceModel\Ebay\Order getResource()
  */
 class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
-    const ORDER_STATUS_ACTIVE    = 0;
-    const ORDER_STATUS_COMPLETED = 1;
-    const ORDER_STATUS_CANCELLED = 2;
-    const ORDER_STATUS_INACTIVE  = 3;
-
     const CHECKOUT_STATUS_INCOMPLETE = 0;
     const CHECKOUT_STATUS_COMPLETED  = 1;
 
@@ -30,6 +27,15 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     const SHIPPING_STATUS_NOT_SELECTED = 0;
     const SHIPPING_STATUS_PROCESSING   = 1;
     const SHIPPING_STATUS_COMPLETED    = 2;
+
+    const STATUS_PENDING   = 0;
+    const STATUS_UNSHIPPED = 1;
+    const STATUS_SHIPPED   = 2;
+    const STATUS_CANCELED  = 3;
+
+    /** All reasons: https://developer.ebay.com/Devzone/post-order/types/CancelReasonEnum.html */
+    const CANCEL_REASON_DEFAULT   = 'OTHER';
+    const CANCEL_REASON_BUYER_ASK = 'BUYER_ASKED_CANCEL';
 
     //########################################
 
@@ -630,6 +636,14 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             !$this->isShippingInProcess();
     }
 
+    /**
+     * @return bool
+     */
+    public function isCanceled()
+    {
+        return (bool)$this->getData('cancellation_status');
+    }
+
     // ---------------------------------------
 
     /**
@@ -1169,6 +1183,88 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $buyerInfo = $connectorObj->getResponseData();
 
         return $buyerInfo;
+    }
+
+    //########################################
+
+    /**
+     * @return bool
+     */
+    public function canRefund()
+    {
+        if ($this->isCanceled()) {
+            return false;
+        }
+
+        if (!$this->getEbayAccount()->isRefundEnabled()) {
+            return false;
+        }
+
+        $supportedMarketplaces = [
+            EbayHelper::MARKETPLACE_US,
+            EbayHelper::MARKETPLACE_CA,
+            EbayHelper::MARKETPLACE_UK,
+            EbayHelper::MARKETPLACE_AU,
+            EbayHelper::MARKETPLACE_DE
+        ];
+
+        if (!in_array($this->getParentObject()->getMarketplaceId(), $supportedMarketplaces)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function cancel()
+    {
+        if (!$this->canRefund()) {
+            return false;
+        }
+
+        $params = [
+            'channel_order_id' => $this->getEbayOrderId(),
+            'reason'     => self::CANCEL_REASON_BUYER_ASK,
+        ];
+
+        $this->activeRecordFactory->getObject('Order\Change')->create(
+            $this->getParentObject()->getId(),
+            \Ess\M2ePro\Model\Order\Change::ACTION_CANCEL,
+            $this->getParentObject()->getLog()->getInitiator(),
+            \Ess\M2ePro\Helper\Component\Ebay::NICK,
+            $params
+        );
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function refund()
+    {
+        if (!$this->canRefund()) {
+            return false;
+        }
+
+        $params = [
+            'channel_order_id' => $this->getEbayOrderId(),
+            'cancelReason'     => self::CANCEL_REASON_BUYER_ASK,
+        ];
+
+        $this->activeRecordFactory->getObject('Order\Change')->create(
+            $this->getParentObject()->getId(),
+            \Ess\M2ePro\Model\Order\Change::ACTION_REFUND,
+            $this->getParentObject()->getLog()->getInitiator(),
+            \Ess\M2ePro\Helper\Component\Ebay::NICK,
+            $params
+        );
+
+        return true;
     }
 
     //########################################

@@ -94,6 +94,40 @@ class Grid extends AbstractGrid
         }
         // ---------------------------------------
 
+        // Add Order Status column
+        // ---------------------------------------
+        $shippingCompleted = \Ess\M2ePro\Model\Ebay\Order::SHIPPING_STATUS_COMPLETED;
+        $paymentCompleted = \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED;
+
+        $statusList = [
+            'pending'   => \Ess\M2ePro\Model\Ebay\Order::STATUS_PENDING,
+            'unshipped' => \Ess\M2ePro\Model\Ebay\Order::STATUS_UNSHIPPED,
+            'shipped'   => \Ess\M2ePro\Model\Ebay\Order::STATUS_SHIPPED,
+            'canceled'  => \Ess\M2ePro\Model\Ebay\Order::STATUS_CANCELED
+        ];
+
+        $collection->getSelect()->columns(
+            [
+                'status' => new \Zend_Db_Expr(
+                    "IF (
+                        `cancellation_status` = 1,
+                        {$statusList['canceled']},
+                        IF (
+                            `shipping_status` = {$shippingCompleted},
+                            {$statusList['shipped']},
+                            IF (
+                                `payment_status` = {$paymentCompleted},
+                                {$statusList['unshipped']},
+                                {$statusList['pending']}
+                            )
+                        )
+                    )"
+                )
+            ]
+        );
+
+        // ---------------------------------------
+
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
@@ -186,45 +220,20 @@ class Grid extends AbstractGrid
             ]
         ]);
 
-        $this->addColumn('checkout_status', [
-            'header' => $this->__('Checkout'),
-            'align'  => 'left',
-            'width'  => '50px',
-            'index'  => 'checkout_status',
-            'type'   => 'options',
+        $this->addColumn('status', [
+            'header'  => $this->__('Status'),
+            'align'   => 'left',
+            'width'   => '50px',
+            'index'   => 'status',
+            'type'    => 'options',
             'options' => [
-                \Ess\M2ePro\Model\Ebay\Order::CHECKOUT_STATUS_INCOMPLETE => $this->__('No'),
-                \Ess\M2ePro\Model\Ebay\Order::CHECKOUT_STATUS_COMPLETED  => $this->__('Yes')
+                \Ess\M2ePro\Model\Ebay\Order::STATUS_PENDING   => $this->__('Pending'),
+                \Ess\M2ePro\Model\Ebay\Order::STATUS_UNSHIPPED => $this->__('Unshipped'),
+                \Ess\M2ePro\Model\Ebay\Order::STATUS_SHIPPED   => $this->__('Shipped'),
+                \Ess\M2ePro\Model\Ebay\Order::STATUS_CANCELED  => $this->__('Canceled')
             ],
-            'frame_callback' => [$this, 'callbackColumnCheckoutStatus']
-        ]);
-
-        $this->addColumn('payment_status', [
-            'header' => $this->__('Paid'),
-            'align'  => 'left',
-            'width'  => '50px',
-            'index'  => 'payment_status',
-            'type'   => 'options',
-            'options' => [
-                0 => $this->__('No'),
-                1 => $this->__('Yes')
-            ],
-            'frame_callback' => [$this, 'callbackColumnPayment'],
-            'filter_condition_callback' => [$this, 'callbackFilterPaymentCondition']
-        ]);
-
-        $this->addColumn('shipping_status', [
-            'header' => $this->__('Shipped'),
-            'align'  => 'left',
-            'width'  => '50px',
-            'index'  => 'shipping_status',
-            'type'   => 'options',
-            'options' => [
-                0 => $this->__('No'),
-                1 => $this->__('Yes')
-            ],
-            'frame_callback' => [$this, 'callbackColumnShipping'],
-            'filter_condition_callback' => [$this, 'callbackFilterShippingCondition']
+            'frame_callback' => [$this, 'callbackColumnStatus'],
+            'filter_condition_callback' => [$this, 'callbackFilterStatus']
         ]);
 
         return parent::_prepareColumns();
@@ -548,34 +557,20 @@ HTML;
         );
     }
 
-    public function callbackColumnShipping($value, $row, $column, $isExport)
+    public function callbackColumnStatus($value, $row, $column, $isExport)
     {
-        if ($row->getChildObject()->getData('shipping_status')
-                == \Ess\M2ePro\Model\Ebay\Order::SHIPPING_STATUS_COMPLETED) {
-            return $this->__('Yes');
-        } else {
-            return $this->__('No');
-        }
-    }
+        $status = $row->getData('status');
 
-    public function callbackColumnCheckoutStatus($value, $row, $column, $isExport)
-    {
-        if ($row->getChildObject()->getData('checkout_status')
-                == \Ess\M2ePro\Model\Ebay\Order::CHECKOUT_STATUS_COMPLETED) {
-            return $this->__('Yes');
-        } else {
-            return $this->__('No');
-        }
-    }
+        $statusColors = [
+            \Ess\M2ePro\Model\Ebay\Order::STATUS_PENDING  => 'gray',
+            \Ess\M2ePro\Model\Ebay\Order::STATUS_SHIPPED  => 'green',
+            \Ess\M2ePro\Model\Ebay\Order::STATUS_CANCELED => 'red'
+        ];
 
-    public function callbackColumnPayment($value, $row, $column, $isExport)
-    {
-        if ($row->getChildObject()->getData('payment_status')
-                == \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED) {
-            return $this->__('Yes');
-        } else {
-            return $this->__('No');
-        }
+        $color = isset($statusColors[$status]) ? $statusColors[$status] : 'black';
+        $value = '<span style="color: ' . $color . ';">' . $value . '</span>';
+
+        return $value;
     }
 
     //########################################
@@ -634,30 +629,44 @@ HTML;
             ->where('buyer_email LIKE ? OR buyer_user_id LIKE ? OR buyer_name LIKE ?', '%'.$value.'%');
     }
 
-    protected function callbackFilterPaymentCondition($collection, $column)
+    protected function callbackFilterStatus($collection, $column)
     {
         $value = $column->getFilter()->getValue();
-        if ($value === null) {
-            return;
-        }
-        $filterType = ($value == 1) ? 'eq' : 'neq';
-        $this->getCollection()->addFieldToFilter(
-            'payment_status',
-            [$filterType => \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED]
-        );
-    }
 
-    protected function callbackFilterShippingCondition($collection, $column)
-    {
-        $value = $column->getFilter()->getValue();
-        if ($value === null) {
+        if ($value == null) {
             return;
         }
-        $filterType = ($value == 1) ? 'eq' : 'neq';
-        $this->getCollection()->addFieldToFilter(
-            'shipping_status',
-            [$filterType => \Ess\M2ePro\Model\Ebay\Order::SHIPPING_STATUS_COMPLETED]
-        );
+
+        switch ($value) {
+            case \Ess\M2ePro\Model\Ebay\Order::STATUS_CANCELED:
+                $collection->addFieldToFilter('cancellation_status', 1);
+                break;
+
+            case \Ess\M2ePro\Model\Ebay\Order::STATUS_SHIPPED:
+                $collection->addFieldToFilter(
+                    'shipping_status',
+                    \Ess\M2ePro\Model\Ebay\Order::SHIPPING_STATUS_COMPLETED
+                );
+                break;
+
+            case \Ess\M2ePro\Model\Ebay\Order::STATUS_UNSHIPPED:
+                $collection->addFieldToFilter(
+                    'payment_status',
+                    \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED
+                );
+                $collection->addFieldToFilter(
+                    'shipping_status',
+                    ['neq' => \Ess\M2ePro\Model\Ebay\Order::SHIPPING_STATUS_COMPLETED]
+                );
+                break;
+
+            case \Ess\M2ePro\Model\Ebay\Order::STATUS_PENDING:
+                $collection->addFieldToFilter(
+                    'payment_status',
+                    ['neq' => \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED]
+                );
+                break;
+        }
     }
 
     //########################################

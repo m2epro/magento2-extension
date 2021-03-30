@@ -259,20 +259,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->getMassactionBlock()->addItem('changeTemplateCategoryId', [
             'label'    => $this->__('Use Another'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'category_policy');
 
         $this->getMassactionBlock()->addItem('moving', [
             'label'    => $this->__('Move Item(s) to Another Listing'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'other');
 
         $this->getMassactionBlock()->addItem('duplicate', [
             'label'    => $this->__('Duplicate'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
+            'url'      => ''
         ], 'other');
         // ---------------------------------------
 

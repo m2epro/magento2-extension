@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Order;
 
 use Ess\M2ePro\Model\AbstractModel;
+use Ess\M2ePro\Model\Ebay\Order\Helper as OrderHelper;
 
 /**
  * Class \Ess\M2ePro\Model\Ebay\Order\Builder
@@ -22,6 +23,7 @@ class Builder extends AbstractModel
     const UPDATE_COMPLETED_CHECKOUT = 'completed_checkout';
     const UPDATE_COMPLETED_PAYMENT = 'completed_payment';
     const UPDATE_COMPLETED_SHIPPING = 'completed_shipping';
+    const UPDATE_CANCELLATION       = 'cancellation';
     const UPDATE_BUYER_MESSAGE = 'buyer_message';
     const UPDATE_PAYMENT_DATA = 'payment_data';
     const UPDATE_SHIPPING_TAX_DATA = 'shipping_tax_data';
@@ -94,7 +96,7 @@ class Builder extends AbstractModel
         $this->setData('ebay_order_id', $data['identifiers']['ebay_order_id']);
         $this->setData('selling_manager_id', $data['identifiers']['selling_manager_id']);
 
-        $this->setData('order_status', $this->helper->getOrderStatus($data['statuses']['order']));
+        $this->setData('order_status', $data['statuses']['order']);
         $this->setData('checkout_status', $this->helper->getCheckoutStatus($data['statuses']['checkout']));
 
         $this->setData('purchase_update_date', $data['purchase_update_date']);
@@ -136,6 +138,10 @@ class Builder extends AbstractModel
         );
         $this->setData('shipping_status', $shippingStatus);
 
+        $cancellationStatus = $data['statuses']['order'] == OrderHelper::EBAY_ORDER_STATUS_CANCELLED ? 1 : 0;
+        $this->setData('cancellation_status', $cancellationStatus);
+
+        // ---------------------------------------
         $this->items = $data['items'];
     }
 
@@ -491,13 +497,16 @@ class Builder extends AbstractModel
             return true;
         }
 
+        if ($this->getData('order_status') == OrderHelper::EBAY_ORDER_STATUS_CANCELLED &&
+            !$this->order->getChildObject()->isCanceled()) {
+            return true;
+        }
+
         if ($this->getData('checkout_status') == \Ess\M2ePro\Model\Ebay\Order::CHECKOUT_STATUS_COMPLETED) {
             return true;
         }
 
-        if ($this->getData('order_status') == \Ess\M2ePro\Model\Ebay\Order::ORDER_STATUS_CANCELLED ||
-            $this->getData('order_status') == \Ess\M2ePro\Model\Ebay\Order::ORDER_STATUS_INACTIVE
-        ) {
+        if ($this->getData('order_status') == OrderHelper::EBAY_ORDER_STATUS_INACTIVE) {
             return false;
         }
 
@@ -543,10 +552,14 @@ class Builder extends AbstractModel
 
         $this->order->setAccount($this->account);
 
-        if ($this->getData('order_status') == \Ess\M2ePro\Model\Ebay\Order::ORDER_STATUS_CANCELLED &&
-            $this->order->getReserve()->isPlaced()
-        ) {
-            $this->order->getReserve()->cancel();
+        if ($this->getData('order_status') == OrderHelper::EBAY_ORDER_STATUS_CANCELLED) {
+            if ($this->order->getReserve()->isPlaced()) {
+                $this->order->getReserve()->cancel();
+            }
+
+            if ($this->order->getMagentoOrder() !== null && !$this->order->getMagentoOrder()->isCanceled()) {
+                $this->order->cancelMagentoOrder();
+            }
         }
     }
 
@@ -669,6 +682,10 @@ class Builder extends AbstractModel
     {
         if (!$this->isUpdated()) {
             return;
+        }
+
+        if ($this->hasUpdatedCancellationStatus()) {
+            $this->updates[] = self::UPDATE_CANCELLATION;
         }
 
         if ($this->hasUpdatedCompletedCheckout()) {
@@ -821,6 +838,26 @@ class Builder extends AbstractModel
         return false;
     }
 
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function hasUpdatedCancellationStatus()
+    {
+        if (!$this->isUpdated()) {
+            return false;
+        }
+
+        $oldStatus = $this->order->getChildObject()->getData('cancellation_status');
+        $newStatus = $this->getData('cancellation_status');
+
+        if ($newStatus == 0 && ($oldStatus != $newStatus)) {
+            return true;
+        }
+
+        return false;
+    }
+
     // ---------------------------------------
 
     /**
@@ -894,6 +931,11 @@ class Builder extends AbstractModel
 
         if ($this->hasUpdate(self::UPDATE_COMPLETED_SHIPPING)) {
             $this->order->addSuccessLog('Shipping status was updated to Shipped on eBay.');
+            $this->order->setStatusUpdateRequired(true);
+        }
+
+        if ($this->hasUpdate(self::UPDATE_CANCELLATION)) {
+            $this->order->addSuccessLog('Seller canceled order on eBay.');
             $this->order->setStatusUpdateRequired(true);
         }
 

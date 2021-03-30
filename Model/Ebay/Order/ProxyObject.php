@@ -124,6 +124,13 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
                 $customerBuilder->setData($customerInfo);
                 $customerBuilder->updateAddress($customerObject);
 
+                return $customerObject->getDataModel();
+            }
+
+            $customerObject->setWebsiteId($this->order->getEbayAccount()->getMagentoOrdersCustomerNewWebsiteId());
+            $customerObject->loadByEmail($customerInfo['email']);
+
+            if ($customerObject->getId() !== null) {
                 $customerObject->setData(self::USER_ID_ATTRIBUTE_CODE, $this->order->getBuyerUserId());
                 $customerObject->save();
 

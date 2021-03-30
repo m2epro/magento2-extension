@@ -20,6 +20,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     const MARKETPLACE_SYNCHRONIZATION_LOCK_ITEM_NICK = 'ebay_marketplace_synchronization';
 
     const MARKETPLACE_US     = 1;
+    const MARKETPLACE_CA     = 2;
     const MARKETPLACE_UK     = 3;
     const MARKETPLACE_AU     = 4;
     const MARKETPLACE_BE_FR  = 6;

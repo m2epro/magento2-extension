@@ -137,9 +137,10 @@ class Module extends AbstractHelper
     {
         $setupCollection = $this->activeRecordFactory->getObject('Setup')->getCollection();
         $setupCollection->addFieldToFilter('version_from', ['null' => true])
-                        ->addFieldToFilter('version_to', ['notnull' => true])
-                        ->addFieldToFilter('is_completed', 1)
-                        ->setOrder('id', \Magento\Framework\Data\Collection\AbstractDb::SORT_ORDER_ASC);
+            ->addFieldToFilter('version_to', ['notnull' => true])
+            ->addFieldToFilter('is_completed', 1)
+            ->setOrder('id', \Magento\Framework\Data\Collection\AbstractDb::SORT_ORDER_ASC);
+
         return $setupCollection->setPageSize(1)->getFirstItem()->getUpdateDate();
     }
 
@@ -147,9 +148,10 @@ class Module extends AbstractHelper
     {
         $setupCollection = $this->activeRecordFactory->getObject('Setup')->getCollection();
         $setupCollection->addFieldToFilter('version_from', ['notnull' => true])
-                        ->addFieldToFilter('version_to', ['notnull' => true])
-                        ->addFieldToFilter('is_completed', 1)
-                        ->setOrder('id', \Magento\Framework\Data\Collection\AbstractDb::SORT_ORDER_DESC);
+            ->addFieldToFilter('version_to', ['notnull' => true])
+            ->addFieldToFilter('is_completed', 1)
+            ->setOrder('id', \Magento\Framework\Data\Collection\AbstractDb::SORT_ORDER_DESC);
+
         return $setupCollection->setPageSize(1)->getFirstItem()->getUpdateDate();
     }
 
@@ -165,10 +167,10 @@ class Module extends AbstractHelper
     public function isReadyToWork()
     {
         return $this->areImportantTablesExist() &&
-               $this->getHelper('Component')->getEnabledComponents() &&
-               ($this->getHelper('View\Ebay')->isInstallationWizardFinished() ||
-               $this->getHelper('View\Amazon')->isInstallationWizardFinished() ||
-               $this->getHelper('View\Walmart')->isInstallationWizardFinished());
+            $this->getHelper('Component')->getEnabledComponents() &&
+            ($this->getHelper('View\Ebay')->isInstallationWizardFinished() ||
+                $this->getHelper('View\Amazon')->isInstallationWizardFinished() ||
+                $this->getHelper('View\Walmart')->isInstallationWizardFinished());
     }
 
     public function areImportantTablesExist()
@@ -235,14 +237,15 @@ class Module extends AbstractHelper
         $magentoHelper = $this->getHelper('Magento');
         $moduleDir = \Ess\M2ePro\Helper\Module::IDENTIFIER . DIRECTORY_SEPARATOR;
 
-        if (!$magentoHelper->isStaticContentExists($moduleDir.'css') ||
-            !$magentoHelper->isStaticContentExists($moduleDir.'fonts') ||
-            !$magentoHelper->isStaticContentExists($moduleDir.'images') ||
-            !$magentoHelper->isStaticContentExists($moduleDir.'js')) {
+        if (!$magentoHelper->isStaticContentExists($moduleDir . 'css') ||
+            !$magentoHelper->isStaticContentExists($moduleDir . 'fonts') ||
+            !$magentoHelper->isStaticContentExists($moduleDir . 'images') ||
+            !$magentoHelper->isStaticContentExists($moduleDir . 'js')) {
             $result = false;
         }
 
         $this->getHelper('Data_Cache_Runtime')->setValue(__METHOD__, $result);
+
         return $result;
     }
 
@@ -252,7 +255,7 @@ class Module extends AbstractHelper
     {
         $messages = $this->getRegistry()->getValueFromJson('/server/messages/');
 
-        $messages = array_filter($messages, [$this,'getMessagesFilterModuleMessages']);
+        $messages = array_filter($messages, [$this, 'getMessagesFilterModuleMessages']);
         !is_array($messages) && $messages = [];
 
         return $messages;
@@ -262,19 +265,32 @@ class Module extends AbstractHelper
     {
         $messages = $this->getRegistry()->getValueFromJson('/upgrade/messages/');
 
-        $messages = array_filter($messages, [$this,'getMessagesFilterModuleMessages']);
+        $messages = array_filter($messages, [$this, 'getMessagesFilterModuleMessages']);
         !is_array($messages) && $messages = [];
 
         foreach ($messages as &$message) {
-            if (!isset($message['url'])) {
-                continue;
-            }
 
-            $message['text'] = str_replace(
-                '%url%',
-                $this->urlBuilder->getUrl($message['url'], isset($message['url_args']) ? $message['url_args'] : null),
-                $message['text']
-            );
+            preg_match_all('/%[\w\d]+%/', $message['text'], $placeholders);
+            $placeholders = array_unique($placeholders[0]);
+
+            foreach ($placeholders as $placeholder) {
+                $key = substr(substr($placeholder, 1), 0, -1);
+                if (!isset($message[$key])) {
+                    continue;
+                }
+
+                if (!strripos($placeholder, 'url')) {
+                    $message['text'] = str_replace($placeholder, $message[$key], $message['text']);
+                    continue;
+                }
+
+                $message[$key] = $this->urlBuilder->getUrl(
+                    $message[$key],
+                    isset($message[$key . '_args']) ? $message[$key . '_args'] : null
+                );
+
+                $message['text'] = str_replace($placeholder, $message[$key], $message['text']);
+            }
         }
         unset($message);
 

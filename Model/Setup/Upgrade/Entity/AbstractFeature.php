@@ -70,7 +70,7 @@ abstract class AbstractFeature
      * @param $configName
      * @return Config
      */
-    protected function getConfigModifier($configName)
+    protected function getConfigModifier($configName = '')
     {
         $tableName = $configName . '_config';
         if ($this->getConnection()->isTableExists($this->getFullTableName('config'))) {

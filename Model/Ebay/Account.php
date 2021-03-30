@@ -1001,6 +1001,17 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     /**
      * @return bool
      */
+    public function isRefundEnabled()
+    {
+        $setting = $this->getSetting('magento_orders_settings', ['refund_and_cancellation', 'refund_mode']);
+        return (bool)$setting;
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
     public function isMagentoOrdersInvoiceEnabled()
     {
         return (bool)$this->getData('create_magento_invoice');

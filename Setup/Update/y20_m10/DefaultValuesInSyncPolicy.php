@@ -53,10 +53,12 @@ Otherwise, it may <a href="https://support.m2epro.com/knowledgebase/1606824" tar
 affect actual product data updates and lead to overselling</a>.
 <br/>
 <br/>
-<a href="%url%" target="_blank">Confirm</a> the reset of Revise and Stop Rules to default.
+<a href="%url_reset%">Confirm</a> the reset of Revise and Stop Rules to default or
+<a href="%url_skip%"><b>skip this message</b></a>.
 HTML
                 ,
-                'url'      => 'm2epro/general/setDefaultValuesInSyncPolicy',
+                'url_reset' => 'm2epro/template/setDefaultValuesInSyncPolicy',
+                'url_skip'  => 'm2epro/template/skipDefaultValuesInSyncPolicy',
                 'lifetime' => $now->format('Y-m-d H:i:s')
             ];
         }

@@ -466,7 +466,8 @@ HTML
                 ],
                 'required' => true,
                 'value' => $this->formData['price_vat_percent'],
-                'tooltip' => $this->__(<<<HTML
+                'tooltip' => $this->__(
+                    <<<HTML
 Enable this option to add a specified VAT percent value to the Price when a Product is listed on Walmart.
 <br/>
 <br/>
@@ -1238,16 +1239,16 @@ HTML
                 'text',
                 [
                     'data' => [
-                        'name'  => $name.'_name[]',
+                        'name'  => $name . '_name[]',
                         'value' => $value,
-                        'onkeyup' => 'WalmartTemplateSellingFormatObj.multi_element_keyup(\''.$name.'\',this)',
+                        'onkeyup' => 'WalmartTemplateSellingFormatObj.multi_element_keyup(\'' . $name . '\',this)',
                         'class' => 'M2ePro-required-when-visible',
-                        'style' => 'width: 49%',
-                        'css_class' => $name.'_tr no-margin-bottom'
+                        'css_class' => $name . '_tr no-margin-bottom',
+                        'after_element_html' => ' /',
                     ]
                 ]
             );
-            $nameBlock->setId($name.'_name_'.$i);
+            $nameBlock->setId($name . '_name_' . $i);
             $nameBlock->setForm($fieldSet->getForm());
 
             $value = '';
@@ -1259,43 +1260,49 @@ HTML
                 'text',
                 [
                     'data' => [
-                        'name' => $name.'_value[]',
+                        'name' => $name . '_value[]',
                         'value' => $value,
-                        'onkeyup' => 'WalmartTemplateSellingFormatObj.multi_element_keyup(\''.$name.'\',this)',
+                        'onkeyup' => 'WalmartTemplateSellingFormatObj.multi_element_keyup(\'' . $name . '\',this)',
                         'class' => 'M2ePro-required-when-visible',
-                        'style' => 'width: 49%',
-                        'css_class' => $name.'_tr no-margin-bottom',
-                        'tooltip' => $this->__('Max. 100 characters.')
+                        'css_class' => $name . '_tr no-margin-bottom',
+                        'tooltip' => $this->__('Max. 100 characters.'),
                     ]
                 ]
             );
-            $valueBlock->setId($name.'_value_'.$i);
+            $valueBlock->setId($name . '_value_' . $i);
             $valueBlock->setForm($fieldSet->getForm());
 
             $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
-                'label' => $this->__('Insert Attribute'),
-                'destination_id' => $name.'_value_'.$i,
+                'label' => $this->__('Insert'),
+                'destination_id' => $name . '_value_' . $i,
                 'magento_attributes' => $this->getClearAttributesByInputTypesOptions(),
-                'on_click_callback' => "function() {
-                    WalmartTemplateSellingFormatObj.multi_element_keyup('{$name}',$('{$name}_value_{$i}'));
-                }",
+                'on_click_callback' => "WalmartTemplateSellingFormatObj.multi_element_keyup
+                                        ('{$name}',$('{$name}_value_{$i}'));",
                 'class' => 'primary attributes-container-td',
-                'style' => 'display: inline-block; margin: 0;',
-                'select_custom_attributes' => [
-                    'allowed_attribute_types' => 'text,select',
-                    'apply_to_all_attribute_sets' => 0
-                ]
+                'style' => 'display: inline-block; margin-left: 5px;',
             ]);
 
+            $selectAttrBlock = $this->elementFactory->create(self::SELECT, [
+                'data' => [
+                    'values' => $this->getClearAttributesByInputTypesOptions('text_select'),
+                    'class'  => 'M2ePro-required-when-visible magento-attribute-custom-input',
+                    'create_magento_attribute' => true
+                ]
+            ])->addCustomAttribute('allowed_attribute_types', 'text,select')
+                ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
+
+            $selectAttrBlock->setId('selectAttr_' . $name . '_value_' . $i);
+            $selectAttrBlock->setForm($fieldSet->getForm());
+
             $fieldSet->addField(
-                'attributes_container_'.$i,
+                'attributes_container_' . $i,
                 self::CUSTOM_CONTAINER,
-                [
+                [   'container_id' => 'custom_title_tr',
                     'label' => $this->__('Attributes (name / value) #%number%', $i + 1),
                     'title' => $this->__('Attributes (name / value) #%number%', $i + 1),
-                    'style' => 'padding-top: 0; width: 70%; display: inline-block;',
+                    'style' => 'display: inline-block;',
                     'text' => $nameBlock->toHtml() . $valueBlock->toHtml(),
-                    'after_element_html' => $button->toHtml(),
+                    'after_element_html' => $selectAttrBlock->toHtml() . $button->toHtml(),
                     'css_class' => 'attributes_tr',
                     'field_extra_attributes' => 'style="display: none;"'
                 ]
@@ -1303,7 +1310,7 @@ HTML
         }
 
         $fieldSet->addField(
-            $name.'_actions',
+            $name . '_actions',
             self::CUSTOM_CONTAINER,
             [
                 'label' => '',
@@ -1321,7 +1328,7 @@ HTML
                 </a>
 HTML
                 ,
-                'field_extra_attributes' => 'id="'.$name.'_actions_tr" style="display: none;"',
+                'field_extra_attributes' => 'id="' . $name . '_actions_tr" style="display: none;"',
             ]
         );
     }
@@ -1371,20 +1378,22 @@ HTML
             'QTY' => $this->__('QTY'),
             'Price' => $this->__('Price'),
 
-            'The Price, at which you want to sell your Product(s) at specific time.' =>
-                $this->__('The Price, at which you want to sell your Product(s) at specific time.'),
+            'The Price, at which you want to sell your Product(s) at specific time.' => $this->__(
+                'The Price, at which you want to sell your Product(s) at specific time.'
+            ),
             'The Price, at which you want to sell your Product(s) at specific time.<br/>
-            <b>Note:</b> The Final Price is only used for Simple Products.' =>
-                $this->__(
-                    'The Price, at which you want to sell your Product(s) at specific time.<br/>
-                    <b>Note:</b> The Final Price is only used for Simple Products.'
-                ),
+            <b>Note:</b> The Final Price is only used for Simple Products.' => $this->__(
+                'The Price, at which you want to sell your Product(s) at specific time.<br/>
+                <b>Note:</b> The Final Price is only used for Simple Products.'
+            ),
 
             'Add Selling Policy' => $this->__('Add Selling Policy'),
-            'The specified Title is already used for other Policy. Policy Title must be unique.' =>
-                $this->__('The specified Title is already used for other Policy. Policy Title must be unique.'),
-            'You should select Attribute Sets first and press Confirm Button.' =>
-                $this->__('You should select Attribute Sets first and press Confirm Button.'),
+            'The specified Title is already used for other Policy. Policy Title must be unique.' => $this->__(
+                'The specified Title is already used for other Policy. Policy Title must be unique.'
+            ),
+            'You should select Attribute Sets first and press Confirm Button.' => $this->__(
+                'You should select Attribute Sets first and press Confirm Button.'
+            ),
             'Coefficient is not valid.' => $this->__('Coefficient is not valid.'),
             'Date range is not valid.' => $this->__('Incorrect Promotion Dates.'),
 
@@ -1404,10 +1413,12 @@ HTML
             'Any' => $this->__('Any'),
             'Add Shipping Override Policy.' => $this->__('Add Shipping Override Policy.'),
             'You should specify at least one Promotion.' => $this->__('You should specify at least one Promotion.'),
-            'You should specify at least one Override Rule.' =>
-                $this->__('You should specify at least one Override Rule.'),
-            'Must be a 7-digit code assigned to the taxable Items.' =>
-                $this->__('Must be a 7-digit code assigned to the taxable Items.'),
+            'You should specify at least one Override Rule.' => $this->__(
+                'You should specify at least one Override Rule.'
+            ),
+            'Must be a 7-digit code assigned to the taxable Items.' => $this->__(
+                'Must be a 7-digit code assigned to the taxable Items.'
+            ),
             'Sales Tax Codes' => $this->__('Sales Tax Codes'),
         ]);
 
@@ -1420,12 +1431,14 @@ HTML
         $promotions = $this->getHelper('Data')->jsonEncode($this->formData['promotions']);
         $shippingOverride = $this->getHelper('Data')->jsonEncode($this->formData['shipping_override_rule']);
 
-        $this->js->addRequireJs([
+        $this->js->addRequireJs(
+            [
             'jQuery'           => 'jquery',
             'attr'             => 'M2ePro/Attribute',
             'attribute_button' => 'M2ePro/Plugin/Magento/Attribute/Button',
             'sellingFormat'    => 'M2ePro/Walmart/Template/SellingFormat',
-        ], <<<JS
+        ],
+            <<<JS
 
         M2ePro.formData = {$formData};
         M2ePro.customData.marketplaces_with_tax_codes_dictionary = {$marketplacesWithTaxCodes};

@@ -60,6 +60,7 @@ HTML;
     {
         $accountSwitcherBlock = $this->createAccountSwitcherBlock();
         $marketplaceSwitcherBlock = $this->createMarketplaceSwitcherBlock();
+        $uniqueMessageFilterBlock = $this->createUniqueMessageFilterBlock();
 
         $orderId = $this->getRequest()->getParam('id', false);
 
@@ -85,10 +86,12 @@ HTML;
         }
 
         if ($marketplaceSwitcherBlock->isEmpty() && $accountSwitcherBlock->isEmpty()) {
-            return '';
+            return $uniqueMessageFilterBlock->toHtml();
         }
 
-        return $accountSwitcherBlock->toHtml() . $marketplaceSwitcherBlock->toHtml();
+        return $accountSwitcherBlock->toHtml()
+            . $marketplaceSwitcherBlock->toHtml()
+            . $uniqueMessageFilterBlock->toHtml();
     }
 
     protected function getStaticFilterHtml($label, $value)
@@ -112,6 +115,14 @@ HTML;
     {
         return $this->createBlock('Marketplace\Switcher')->setData([
             'component_mode' => $this->getComponentMode(),
+        ]);
+    }
+
+    protected function createUniqueMessageFilterBlock()
+    {
+        return $this->createBlock('Log\UniqueMessageFilter')->setData([
+            'route' => "*/{$this->getComponentMode()}_log_order/",
+            'title' => $this->__('Only messages with a unique Order ID')
         ]);
     }
 

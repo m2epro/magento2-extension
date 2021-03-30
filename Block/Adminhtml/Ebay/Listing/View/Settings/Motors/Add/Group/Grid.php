@@ -92,14 +92,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         //--------------------------------
         $this->getMassactionBlock()->addItem('select', [
             'label'   => $this->__('Select'),
-            'url'     => '',
-            'confirm' => $this->__('Are you sure?')
+            'url'     => ''
         ]);
 
         $this->getMassactionBlock()->addItem('removeGroup', [
             'label'   => $this->__('Remove'),
-            'url'     => '',
-            'confirm' => $this->__('Are you sure?')
+            'url'     => ''
         ]);
         //--------------------------------
 

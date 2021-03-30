@@ -113,13 +113,13 @@ HTML;
         $element = $this->_factoryElement->create('text', [
             'data' => [
                 'name'  => 'specific[custom_' . $index . '][attribute_title]',
-                'style' => 'width: 100%;' . $display,
                 'class' => 'M2ePro-required-when-visible M2ePro-custom-specific-attribute-title custom-item-specific',
                 'value' => isset($specific['attribute_title']) ? $specific['attribute_title'] : '',
                 'disabled' => isset($specific['__template__'])
             ]
         ]);
 
+        $element->addCustomAttribute('style', 'width: 100%;' . $display);
         $element->setNoSpan(true);
         $element->setForm($this->getForm());
         $element->setId('specific_custom_attribute_title_input_' . $index);
@@ -154,14 +154,14 @@ HTML;
             'data' => [
                 'name'     => 'specific[custom_' . $index . '][value_mode]',
                 'class'    => 'M2ePro-required-when-visible specific-value-mode',
-                'style'    => 'width: 100%',
-                'onchange' => 'EbayTemplateCategorySpecificsObj.customSpecificModeChange(this);',
                 'value'    => isset($specific['value_mode']) ? $specific['value_mode'] : '',
                 'values'   => $values,
                 'disabled' => isset($specific['__template__'])
             ]
         ]);
 
+        $element->addCustomAttribute('onchange', 'EbayTemplateCategorySpecificsObj.customSpecificModeChange(this);');
+        $element->addCustomAttribute('style', 'width: 100%');
         $element->setNoSpan(true);
         $element->setForm($this->getForm());
         $element->setId('specific_custom_value_mode_' . $index);
@@ -198,7 +198,6 @@ HTML;
         $element = $this->_factoryElement->create('select', [
             'data' => [
                 'name'                        => 'specific[custom_' . $index . '][value_custom_attribute]',
-                'style'                       => 'width: 100%;' . $display,
                 'class'                       => 'M2ePro-required-when-visible M2ePro-custom-attribute-can-be-created',
                 'value'                       => isset($specific['value_custom_attribute']) ? $specific['value_custom_attribute'] : '',
                 'values'                      => $attributesValues,
@@ -207,6 +206,7 @@ HTML;
             ]
         ]);
 
+        $element->addCustomAttribute('style', 'width: 100%;' . $display);
         $element->setNoSpan(true);
         $element->setForm($this->getForm());
         $element->setId('specific_custom_value_custom_attribute_' . $index);
@@ -233,13 +233,13 @@ HTML;
         $element = $this->_factoryElement->create('text', [
             'data' => [
                 'name'     => 'specific[custom_' . $index . '][value_custom_value][]',
-                'style'    => 'width: 100%;' . $display,
                 'class'    => 'M2ePro-required-when-visible item-specific',
                 'value'    => $customValues[0],
                 'disabled' => isset($specific['__template__'])
             ]
         ]);
 
+        $element->addCustomAttribute('style', 'width: 100%;' . $display);
         $element->setNoSpan(true);
         $element->setForm($this->getForm());
         $element->setId('specific_custom_value_custom_value_' . $index);

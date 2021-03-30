@@ -1,0 +1,27 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Log\UniqueMessageFilter $block */
+
+?>
+
+<div class="switcher">
+    <input
+        id="only_unique_messages_filter"
+        type="checkbox"
+        class="admin__control-checkbox"
+        <?php if ($block->isChecked()) : ?>
+            checked="checked"
+        <?php endif; ?>
+        onclick="setLocation('<?php echo $block->getFilterUrl(); ?>');"
+    >
+    <label for="only_unique_messages_filter" class="admin__field-label">
+        <span><?php echo $block->getTitle(); ?></span>
+    </label>
+</div>

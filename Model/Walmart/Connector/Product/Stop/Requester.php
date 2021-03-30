@@ -161,7 +161,7 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
 
         foreach ($processChildListingsProducts as $childListingProduct) {
             // @codingStandardsIgnoreStart
-            $processingRunner = $this->modelFactory->getObject('M2ePro/Walmart_Connector_Product_ProcessingRunner');
+            $processingRunner = $this->modelFactory->getObject('Walmart_Connector_Product_ProcessingRunner');
             $processingRunner->setParams(
                 [
                     'listing_product_id' => $childListingProduct->getId(),

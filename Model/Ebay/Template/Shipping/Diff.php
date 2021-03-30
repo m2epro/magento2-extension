@@ -41,7 +41,6 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'local_shipping_mode',
             'local_shipping_discount_promotional_mode',
             'local_shipping_discount_combined_profile_id',
-            'click_and_collect_mode',
             'international_shipping_mode',
             'international_shipping_discount_promotional_mode',
             'international_shipping_discount_combined_profile_id',

@@ -52,7 +52,8 @@ class Finish extends Base
         foreach (['ebay', 'amazon', 'walmart'] as $component) {
             $templates = $connection
                 ->select()
-                ->from($connection->getTableName("m2epro_{$component}_template_synchronization"))
+                ->from($this->getHelper('Module_Database_Structure')
+                    ->getTableNameWithPrefix("m2epro_{$component}_template_synchronization"))
                 ->where('relist_qty_calculated = ?', \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_NONE)
                 ->orWhere('stop_qty_calculated = ?', \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_NONE)
                 ->query()
@@ -72,8 +73,8 @@ class Finish extends Base
             $now->modify('+7 days');
 
             $messages['default_values_in_sync_policy'] = [
-                'type'     => \Ess\M2ePro\Helper\Module::MESSAGE_TYPE_WARNING,
-                'text'     => $this->__(
+                'type'      => \Ess\M2ePro\Helper\Module::MESSAGE_TYPE_WARNING,
+                'text'      => $this->__(
                     <<<HTML
 <a href="%url_1%" target="_blank">Magento Multi-Source Inventory feature</a>
 enabled by default starting from Magento v2.3.
@@ -83,14 +84,16 @@ When Quantity option to Is 0.
 Otherwise, it may <a href="%url_2%" target="_blank">affect actual product data updates and lead to overselling</a>.
 <br/>
 <br/>
-<a href="%url%" target="_blank">Confirm</a> the reset of Revise and Stop Rules to default.
+<a href="%url_reset%">Confirm</a> the reset of Revise and Stop Rules to default or
+<a href="%url_skip%"><b>skip this message</b></a>.
 HTML
                     ,
                     $this->getHelper('Module_Support')->getKnowledgebaseUrl('1560897'),
                     $this->getHelper('Module_Support')->getKnowledgebaseUrl('1606824')
                 ),
-                'url'      => 'm2epro/general/setDefaultValuesInSyncPolicy',
-                'lifetime' => $now->format('Y-m-d H:i:s')
+                'url_reset' => 'm2epro/template/setDefaultValuesInSyncPolicy',
+                'url_skip'  => 'm2epro/template/skipDefaultValuesInSyncPolicy',
+                'lifetime'  => $now->format('Y-m-d H:i:s')
             ];
         }
 

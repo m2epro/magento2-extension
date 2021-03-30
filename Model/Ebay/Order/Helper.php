@@ -38,33 +38,6 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function getOrderStatus($orderStatusEbay)
-    {
-        $orderStatus = null;
-
-        switch ($orderStatusEbay) {
-            case self::EBAY_ORDER_STATUS_ACTIVE:
-                $orderStatus = \Ess\M2ePro\Model\Ebay\Order::ORDER_STATUS_ACTIVE;
-                break;
-
-            case self::EBAY_ORDER_STATUS_COMPLETED:
-                $orderStatus = \Ess\M2ePro\Model\Ebay\Order::ORDER_STATUS_COMPLETED;
-                break;
-
-            case self::EBAY_ORDER_STATUS_CANCELLED:
-                $orderStatus = \Ess\M2ePro\Model\Ebay\Order::ORDER_STATUS_CANCELLED;
-                break;
-
-            case self::EBAY_ORDER_STATUS_INACTIVE:
-                $orderStatus = \Ess\M2ePro\Model\Ebay\Order::ORDER_STATUS_INACTIVE;
-                break;
-        }
-
-        return $orderStatus;
-    }
-
-    //########################################
-
     public function getCheckoutStatus($checkoutStatusEbay)
     {
         if ($checkoutStatusEbay == self::EBAY_CHECKOUT_STATUS_COMPLETE) {

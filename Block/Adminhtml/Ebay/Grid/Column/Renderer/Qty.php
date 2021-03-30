@@ -40,6 +40,11 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
     public function render(\Magento\Framework\DataObject $row)
     {
         $value = $this->_getValue($row);
+
+        if ($row->getChildObject() && ($value === null || $value === '')) {
+            $value = $row->getChildObject()->getData($this->getColumn()->getData('index'));
+        }
+
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
             return '<span style="color: gray;">' . $this->getHelper('Module\Translation')->__('Not Listed') . '</span>';
         }

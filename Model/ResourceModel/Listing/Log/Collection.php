@@ -25,4 +25,16 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     }
 
     //########################################
+
+    /**
+     * GroupBy fix
+     */
+    public function getSelectCountSql()
+    {
+        $sql = parent::getSelectCountSql();
+        $sql->reset(\Zend_Db_Select::GROUP);
+        return $sql;
+    }
+
+    //########################################
 }

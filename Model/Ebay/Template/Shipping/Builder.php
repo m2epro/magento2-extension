@@ -139,10 +139,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $data['excluded_locations'] = $this->rawData['excluded_locations'];
         }
 
-        if (isset($this->rawData['click_and_collect_mode'])) {
-            $data['click_and_collect_mode'] = (int)$this->rawData['click_and_collect_mode'];
-        }
-
         $key = 'cash_on_delivery_cost';
         $data[$key] = (isset($this->rawData[$key]) && $this->rawData[$key] != '') ? $this->rawData[$key] : null;
 
@@ -206,41 +202,12 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 
     protected function canSaveCalculatedData()
     {
-        if ($this->rawData['local_shipping_mode'] == Shipping::SHIPPING_TYPE_CALCULATED) {
-            return true;
+        if ($this->rawData['local_shipping_mode'] == Shipping::SHIPPING_TYPE_LOCAL ||
+            $this->rawData['local_shipping_mode'] == Shipping::SHIPPING_TYPE_FREIGHT) {
+            return false;
         }
 
-        if ($this->rawData['international_shipping_mode'] == Shipping::SHIPPING_TYPE_CALCULATED) {
-            return true;
-        }
-
-        $marketplace = $this->ebayFactory->getObjectLoaded('Marketplace', $this->rawData['marketplace_id']);
-
-        $isLocalRateTableEnabled = $marketplace->getChildObject()->isLocalShippingRateTableEnabled();
-        $isInternationalRateTableEnabled = $marketplace->getChildObject()->isInternationalShippingRateTableEnabled();
-
-        if ($isLocalRateTableEnabled
-            && $this->rawData['local_shipping_mode'] == Shipping::SHIPPING_TYPE_FLAT
-            && isset($this->rawData['local_shipping_rate_table'])
-            && $this->isRateTableEnabled($this->rawData['local_shipping_rate_table'])
-        ) {
-            return true;
-        }
-
-        if ($isInternationalRateTableEnabled
-            && $this->rawData['international_shipping_mode'] == Shipping::SHIPPING_TYPE_FLAT
-            && isset($this->rawData['international_shipping_rate_table'])
-            && $this->isRateTableEnabled($this->rawData['international_shipping_rate_table'])
-        ) {
-            return true;
-        }
-
-        if ($marketplace->getChildObject()->isClickAndCollectEnabled() &&
-            !empty($this->rawData['click_and_collect_mode'])) {
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     protected function createCalculated($templateShippingId, array $data)
@@ -401,7 +368,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'local_shipping_discount_combined_profile_id' => $this->getHelper('Data')->jsonEncode([]),
             'local_shipping_rate_table_mode' => 0,
             'local_shipping_rate_table' => null,
-            'click_and_collect_mode' => 1,
 
             'international_shipping_mode' => Shipping::SHIPPING_TYPE_NO_INTERNATIONAL,
             'international_shipping_discount_promotional_mode' => 0,
@@ -413,8 +379,8 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             // ---------------------------------------
             'measurement_system' => ShippingCalculated::MEASUREMENT_SYSTEM_ENGLISH,
 
-            'package_size_mode' => ShippingCalculated::PACKAGE_SIZE_CUSTOM_VALUE,
-            'package_size_value' => 'None',
+            'package_size_mode' => ShippingCalculated::PACKAGE_SIZE_NONE,
+            'package_size_value' => '',
             'package_size_attribute' => '',
 
             'dimension_mode'   => ShippingCalculated::DIMENSION_NONE,

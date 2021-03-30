@@ -111,32 +111,27 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         //--------------------------------
         $this->getMassactionBlock()->addItem('select', [
             'label'   => $this->__('Select'),
-            'url'     => '',
-            'confirm' => $this->__('Are you sure?')
+            'url'     => ''
         ]);
 
         $this->getMassactionBlock()->addItem('setNote', [
             'label'   => $this->__('Set Note'),
-            'url'     => '',
-            'confirm' => $this->__('Are you sure?')
+            'url'     => ''
         ]);
 
         $this->getMassactionBlock()->addItem('resetNote', [
             'label'   => $this->__('Reset Note'),
-            'url'     => '',
-            'confirm' => $this->__('Are you sure?')
+            'url'     => ''
         ]);
 
         $this->getMassactionBlock()->addItem('saveAsGroup', [
             'label'   => $this->__('Save As Group'),
-            'url'     => '',
-            'confirm' => $this->__('Are you sure?')
+            'url'     => ''
         ]);
 
         $this->getMassactionBlock()->addItem('removeFilter', [
             'label'   => $this->__('Remove'),
-            'url'     => '',
-            'confirm' => $this->__('Are you sure?')
+            'url'     => ''
         ]);
         //--------------------------------
 

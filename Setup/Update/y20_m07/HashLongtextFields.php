@@ -89,11 +89,12 @@ SQL
         $value = $this->installer->getConnection()
             ->select()
             ->from($this->getFullTableName($tableName), $column)
-            ->where("`{$column}` IS NOT NULL")
+            ->where("LENGTH(`{$column}`) <> 32")
+            ->limit(1)
             ->query()
             ->fetchColumn();
 
-        if (32 != strlen($value) || !ctype_xdigit($value)) {
+        if ($value !== false && !ctype_xdigit($value)) {
             return false;
         }
 

@@ -87,14 +87,12 @@ define([
 
                 if (marketplace_id == M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart::MARKETPLACE_CA')) {
                     params = {
-                        mode: $('mode').value,
                         consumer_id: $('consumer_id').value,
                         private_key: $('private_key').value,
                         marketplace_id: marketplace_id
                     };
                 } else {
                     params = {
-                        mode: $('mode').value,
                         client_id: $('client_id').value,
                         client_secret: $('client_secret').value,
                         marketplace_id: marketplace_id
@@ -354,9 +352,11 @@ define([
             if ($('magento_orders_listings_other_product_mode').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Walmart\\Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE')) {
                 $('magento_orders_listings_other_product_mode_note').hide();
                 $('magento_orders_listings_other_product_tax_class_id_container').hide();
+                $('magento_orders_listings_other_product_mode_warning').hide();
             } else {
                 $('magento_orders_listings_other_product_mode_note').show();
                 $('magento_orders_listings_other_product_tax_class_id_container').show();
+                $('magento_orders_listings_other_product_mode_warning').show();
             }
         },
 
@@ -431,12 +431,16 @@ define([
                 $('magento_orders_status_mapping_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Walmart\\Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT');
                 self.magentoOrdersStatusMappingModeChange();
 
+                $('magento_block_walmart_accounts_magento_orders_refund_and_cancellation').hide();
+                $('magento_orders_refund').value = 1;
+
                 $('magento_block_walmart_accounts_magento_orders_tax-wrapper').hide();
                 $('magento_orders_tax_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Walmart\\Account::MAGENTO_ORDERS_TAX_MODE_MIXED');
             } else {
                 $('magento_block_walmart_accounts_magento_orders_number-wrapper').show();
                 $('magento_block_walmart_accounts_magento_orders_customer-wrapper').show();
                 $('magento_block_walmart_accounts_magento_orders_status_mapping-wrapper').show();
+                $('magento_block_walmart_accounts_magento_orders_refund_and_cancellation').show();
                 $('magento_block_walmart_accounts_magento_orders_tax-wrapper').show();
             }
         },

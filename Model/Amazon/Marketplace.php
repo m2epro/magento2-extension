@@ -128,14 +128,6 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
         return (bool)$this->getData('is_automatic_token_retrieving_available');
     }
 
-    /**
-     * @return bool
-     */
-    public function isUploadInvoicesAvailable()
-    {
-        return (bool)$this->getData('is_upload_invoices_available');
-    }
-
     //########################################
 
     public function isCacheEnabled()

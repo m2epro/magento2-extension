@@ -39,8 +39,8 @@ class Content extends AbstractForm
                 <<<HTML
 <div>
     Under this section, you can link your Walmart account to M2E Pro.
-    Read how to <a href="%url%" target="_blank">get the API credentials</a> or register on 
-    <a href="https://marketplace-apply.walmart.com/apply?id=00161000012XSxe" target="_blank">Walmart US</a> / 
+    Read how to <a href="%url%" target="_blank">get the API credentials</a> or register on
+    <a href="https://marketplace-apply.walmart.com/apply?id=00161000012XSxe" target="_blank">Walmart US</a> /
     <a href="https://marketplace.walmart.ca/apply?q=ca" target="_blank">Walmart CA</a>.
 </div>
 HTML
@@ -97,25 +97,6 @@ HTML
 
         $marketplaceUS = Walmart::MARKETPLACE_US;
         $marketplaceCA = Walmart::MARKETPLACE_CA;
-
-        $production = $this->__('Production (Live)');
-        $sandbox = $this->__('Sandbox (Test)');
-
-        $fieldset->addField(
-            'mode',
-            'select',
-            [
-                'label'     => $this->__('Environment'),
-                'required'  => true,
-                'name'      => 'mode',
-                'value'     => WalmartAccount::MODE_PRODUCTION,
-                'values'    => [
-                    WalmartAccount::MODE_PRODUCTION => $production,
-                    WalmartAccount::MODE_SANDBOX    => $sandbox,
-                ],
-                'css_class' => "marketplace-required-field marketplace-required-field-id{$marketplaceUS}"
-            ]
-        );
 
         $fieldset->addField(
             'marketplaces_register_url_ca',

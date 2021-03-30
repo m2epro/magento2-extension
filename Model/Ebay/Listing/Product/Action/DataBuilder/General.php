@@ -90,9 +90,9 @@ class General extends AbstractModel
             return $data;
         }
 
-        $data['include_details'] = $this->getEbayListingProduct()
+        $data['include_ebay_details'] = $this->getEbayListingProduct()
             ->getEbayDescriptionTemplate()
-            ->isProductDetailsIncludeDetails();
+            ->isProductDetailsIncludeEbayDetails();
         $data['include_image'] = $this->getEbayListingProduct()
             ->getEbayDescriptionTemplate()
             ->isProductDetailsIncludeImage();

@@ -24,24 +24,24 @@ abstract class AbstractWizard extends AbstractContainer
 
     protected function _beforeToHtml()
     {
-        $this->jsPhp->addConstants($this->getHelper('Data')
-            ->getClassConstants(\Ess\M2ePro\Helper\Module\Wizard::class));
+        $this->jsPhp->addConstants(
+            $this->getHelper('Data')
+                ->getClassConstants(\Ess\M2ePro\Helper\Module\Wizard::class)
+        );
 
-        $this->jsUrl->addUrls([
-            'setStep' => $this->getUrl('*/wizard_'.$this->getNick().'/setStep'),
-            'setStatus' => $this->getUrl('*/wizard_'.$this->getNick().'/setStatus')
-        ]);
+        $this->jsUrl->addUrls(
+            [
+                'setStep'   => $this->getUrl('*/wizard_' . $this->getNick() . '/setStep'),
+                'setStatus' => $this->getUrl('*/wizard_' . $this->getNick() . '/setStatus')
+            ]
+        );
 
-        $this->jsTranslator->addTranslations([
-            'Step' => $this->__('Step'),
-            'Note: If you close the Wizard, it never starts again. You will be required to set all Settings manually.
-            Press Cancel to continue working with Wizard.' =>
-                $this->__(
-                    'Note: If you close the Wizard, it never starts again.
-                    You will be required to set all Settings manually. Press Cancel to continue working with Wizard.'
-                ),
-            'Completed' => $this->__('Completed'),
-        ]);
+        $this->jsTranslator->addTranslations(
+            [
+                'Step'      => $this->__('Step'),
+                'Completed' => $this->__('Completed'),
+            ]
+        );
 
         $step = $this->getHelper('Module\Wizard')->getStep($this->getNick());
         $steps = $this->getHelper('Data')->jsonEncode(
@@ -49,7 +49,8 @@ abstract class AbstractWizard extends AbstractContainer
         );
         $status = $this->getHelper('Module\Wizard')->getStatus($this->getNick());
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Wizard',
     ], function(){

@@ -28,6 +28,12 @@ class RunSynchNow extends Marketplace
             (int)$this->getRequest()->getParam('marketplace_id')
         );
 
+        // Japan only for beta, he have not marketplace build.
+        if ($marketplace->getId() == \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_JP) {
+            $this->setJsonContent(['result' => 'success']);
+            return $this->getResult();
+        }
+
         /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Synchronization $synchronization */
         $synchronization = $this->modelFactory->getObject('Amazon_Marketplace_Synchronization');
         $synchronization->setMarketplace($marketplace);

@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Grid;
  */
 class Massaction extends \Magento\Backend\Block\Widget\Grid\Massaction\Extended
 {
-    protected $_groups      = [];
+    protected $_groups = [];
 
     //########################################
 
@@ -21,7 +21,7 @@ class Massaction extends \Magento\Backend\Block\Widget\Grid\Massaction\Extended
     {
         // also return available if need to display advanced filters, but hide massactions
         return ($this->getCount() > 0 && $this->getParentBlock()->getMassactionIdField())
-        || (isset($this->getParentBlock()->hideMassactionColumn) && $this->getParentBlock()->hideMassactionColumn);
+            || (isset($this->getParentBlock()->hideMassactionColumn) && $this->getParentBlock()->hideMassactionColumn);
     }
 
     public function setGroups(array $groups)
@@ -49,8 +49,20 @@ class Massaction extends \Magento\Backend\Block\Widget\Grid\Massaction\Extended
 
     protected function _toHtml()
     {
-        $html = parent::_toHtml();
+        $html = $this->addFormkey(parent::_toHtml());
+
         return $this->injectOptGroupsIfNeed($html);
+    }
+
+    protected function addFormkey($html)
+    {
+        if (!mb_strpos($html, 'form_key')) {
+            $formKey = '<div><input name="form_key" type="hidden" value="' . $this->getFormKey() . '"></div>';
+
+            return str_replace('<select', $formKey . '<select', $html);
+        }
+
+        return $html;
     }
 
     public function getJavaScript()
@@ -63,6 +75,7 @@ class Massaction extends \Magento\Backend\Block\Widget\Grid\Massaction\Extended
 window['{$this->getJsObjectName()}'] = {$this->getJsObjectName()};
 HTML;
         }
+
         return '';
     }
 
@@ -74,9 +87,9 @@ HTML;
             return $html;
         }
 
-        $selectId    = $this->getHtmlId() . '-select';
+        $selectId = $this->getHtmlId() . '-select';
         $selectClass = 'required-entry local-validation admin__control-select';
-        $pattern     = '/(<select\s*id="'.$selectId.'"\s*class="'.$selectClass.'"[^<]*>.*?<\/select>)/si';
+        $pattern = '/(<select\s*id="' . $selectId . '"\s*class="' . $selectClass . '"[^<]*>.*?<\/select>)/si';
 
         if (!preg_match($pattern, $html, $matches)) {
             return $html;
@@ -107,7 +120,7 @@ HTML;
 
             foreach ($groupData['items'] as $itemId) {
                 $option = $xpathObj->query("//select/option[@value='{$itemId}']", $select)
-                                   ->item(0);
+                    ->item(0);
                 $option = $select->removeChild($option);
                 $optgroup->appendChild($option);
             }
@@ -130,6 +143,7 @@ HTML;
         $dom->replaceChild($dom->firstChild->firstChild->firstChild, $dom->firstChild);
 
         libxml_use_internal_errors(false);
+
         return $dom->saveHTML();
     }
 
@@ -153,6 +167,7 @@ HTML;
         if (!empty($gridIds)) {
             return join(",", $gridIds);
         }
+
         return '';
     }
 

@@ -2,13 +2,13 @@ define([
     'M2ePro/Plugin/Messages',
     'Magento_Ui/js/modal/modal',
     'M2ePro/Grid'
-], function (MessageObj, modal) {
+], function(MessageObj, modal) {
 
     window.EbayListingProductCategorySettingsGrid = Class.create(Grid, {
 
         // ---------------------------------------
 
-        prepareActions: function () {
+        prepareActions: function() {
 
             this.actions = {
                 editCategoriesAction: function(id) {
@@ -22,25 +22,23 @@ define([
             };
         },
 
-        editCategories: function(mode)
-        {
+        editCategories: function(mode) {
             this.selectedProductsIds = this.getSelectedProductsString();
 
             new Ajax.Request(M2ePro.url.get('ebay_listing_product_category_settings/getChooserBlockHtml'), {
                 method: 'post',
                 asynchronous: true,
                 parameters: {
-                    products_ids  : this.selectedProductsIds,
-                    category_mode : mode
+                    products_ids: this.selectedProductsIds,
+                    category_mode: mode
                 },
-                onSuccess: function (transport) {
+                onSuccess: function(transport) {
                     this.openPopUp('Category Settings', transport.responseText);
                 }.bind(this)
             });
         },
 
-        resetCategories: function(id)
-        {
+        resetCategories: function(id) {
             if (id && !confirm('Are you sure?')) {
                 return;
             }
@@ -53,7 +51,7 @@ define([
                 parameters: {
                     products_ids: this.selectedProductsIds.join(',')
                 },
-                onSuccess: function (transport) {
+                onSuccess: function(transport) {
                     this.getGridObj().doFilter();
                     this.unselectAll();
                 }.bind(this)
@@ -62,8 +60,7 @@ define([
 
         //----------------------------------------
 
-        openPopUp: function(title, content)
-        {
+        openPopUp: function(title, content) {
             var self = this;
             var popupId = 'modal_view_action_dialog';
 
@@ -84,7 +81,7 @@ define([
                     text: M2ePro.translator.translate('Cancel'),
                     attr: {id: 'cancel_button'},
                     class: 'action-dismiss',
-                    click: function (event) {
+                    click: function(event) {
                         self.unselectAllAndReload();
                         this.closeModal(event);
                     }
@@ -92,10 +89,10 @@ define([
                     text: M2ePro.translator.translate('Save'),
                     attr: {id: 'done_button'},
                     class: 'action-primary action-accept',
-                    click: function (event) {
+                    click: function(event) {
                         self.confirmCategoriesData();
-                    },
-                }],
+                    }
+                }]
             }));
 
             this.popUp.modal('openModal');
@@ -103,11 +100,11 @@ define([
             try {
                 modalDialogMessage.innerHTML = content;
                 modalDialogMessage.innerHTML.evalScripts();
-            } catch (ignored) {}
+            } catch (ignored) {
+            }
         },
 
-        confirmCategoriesData: function()
-        {
+        confirmCategoriesData: function() {
             this.initFormValidation('#modal_view_action_dialog');
 
             if (!jQuery('#modal_view_action_dialog').valid()) {
@@ -125,14 +122,14 @@ define([
 
         //----------------------------------------
 
-        saveCategoriesData: function (templateData) {
+        saveCategoriesData: function(templateData) {
             new Ajax.Request(M2ePro.url.get('ebay_listing_product_category_settings/stepTwoSaveToSession'), {
                 method: 'post',
                 parameters: {
-                    products_ids  : this.getSelectedProductsString(),
-                    template_data : Object.toJSON(templateData)
+                    products_ids: this.getSelectedProductsString(),
+                    template_data: Object.toJSON(templateData)
                 },
-                onSuccess: function (transport) {
+                onSuccess: function(transport) {
 
                     jQuery('#modal_view_action_dialog').modal('closeModal');
                     this.unselectAllAndReload();
@@ -142,17 +139,17 @@ define([
 
         // ---------------------------------------
 
-        completeCategoriesDataStep: function (validateCategory, validateSpecifics) {
+        completeCategoriesDataStep: function(validateCategory, validateSpecifics) {
             MessageObj.clear();
 
             new Ajax.Request(M2ePro.url.get('ebay_listing_product_category_settings/stepTwoModeValidate'), {
                 method: 'post',
                 asynchronous: true,
                 parameters: {
-                    validate_category  : validateCategory,
-                    validate_specifics : validateSpecifics
+                    validate_category: validateCategory,
+                    validate_specifics: validateSpecifics
                 },
-                onSuccess: function (transport) {
+                onSuccess: function(transport) {
 
                     var response = transport.responseText.evalJSON();
 
@@ -164,11 +161,11 @@ define([
                         return MessageObj.addError(response['message']);
                     }
 
-                    $('next_step_warning_popup_content').select('span.total_count').each(function(el){
+                    $('next_step_warning_popup_content').select('span.total_count').each(function(el) {
                         $(el).update(response['total_count']);
                     });
 
-                    $('next_step_warning_popup_content').select('span.failed_count').each(function(el){
+                    $('next_step_warning_popup_content').select('span.failed_count').each(function(el) {
                         $(el).update(response['failed_count']);
                     });
 
@@ -180,14 +177,14 @@ define([
                         buttons: [{
                             text: M2ePro.translator.translate('Cancel'),
                             class: 'action-secondary action-dismiss',
-                            click: function () {
+                            click: function() {
                                 this.closeModal();
                             }
-                        },{
+                        }, {
                             text: M2ePro.translator.translate('Continue'),
                             class: 'action-primary action-accept forward',
                             id: 'save_popup_button',
-                            click: function () {
+                            click: function() {
                                 this.closeModal();
                                 setLocation(M2ePro.url.get('ebay_listing_product_category_settings'));
                             }
@@ -202,14 +199,14 @@ define([
 
         // ---------------------------------------
 
-        validateCategories: function (isAlLeasOneCategorySelected, showErrorMessage) {
+        validateCategories: function(isAlLeasOneCategorySelected, showErrorMessage) {
             MessageObj.setContainer('#anchor-content');
             MessageObj.clear();
             var button = $('ebay_listing_category_continue_btn');
             if (parseInt(isAlLeasOneCategorySelected)) {
                 button.addClassName('disabled');
                 button.disable();
-                if (showErrorMessage) {
+                if (parseInt(showErrorMessage)) {
                     MessageObj.addError(M2ePro.translator.translate('select_relevant_category'));
                 }
             } else {
@@ -221,7 +218,7 @@ define([
 
         // ---------------------------------------
 
-        getComponent: function () {
+        getComponent: function() {
             return 'ebay';
         }
 

@@ -102,6 +102,7 @@ define([
                 if (attributeCode == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::CONDITION_NEW')) {
                     $('condition_note_mode_tr').hide();
                     $('condition_note_value_tr').hide();
+                    $('condition_custom_tr').hide();
                 } else {
                     self.condition_note_mode_change();
                 }
@@ -187,8 +188,10 @@ define([
 
             if ($('condition_note_mode').value == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::CONDITION_NOTE_MODE_CUSTOM_VALUE')) {
                 $('condition_note_value_tr').show();
+                $('condition_custom_tr').show();
             } else {
                 $('condition_note_value_tr').hide();
+                $('condition_custom_tr').hide();
             }
         },
 

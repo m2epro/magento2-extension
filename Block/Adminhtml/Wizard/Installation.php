@@ -23,10 +23,15 @@ abstract class Installation extends AbstractWizard
     {
         parent::_construct();
 
-        $this->addButton('continue', [
-            'label' => $this->__('Continue'),
-            'class' => 'primary forward',
-        ]);
+        $this->addButton(
+            'continue',
+            [
+                'label' => $this->__('Continue'),
+                'class' => 'primary forward',
+            ],
+            1,
+            0
+        );
     }
 
     protected function _beforeToHtml()
@@ -38,32 +43,51 @@ abstract class Installation extends AbstractWizard
 
     protected function _toHtml()
     {
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
-            $this->nameBuilder->buildClassName([
-                'Wizard', $this->getNick()
-            ]),
-            [],
-            true
-        ));
+        $this->jsUrl->addUrls(
+            $this->getHelper('Data')->getControllerActions(
+                $this->nameBuilder->buildClassName(
+                    [
+                        'Wizard',
+                        $this->getNick()
+                    ]
+                ),
+                [],
+                true
+            )
+        );
 
         $stepsBlock = $this->createBlock(
-            $this->nameBuilder->buildClassName([
-                'Wizard', $this->getNick(), 'Breadcrumb'
-            ])
+            $this->nameBuilder->buildClassName(
+                [
+                    'Wizard',
+                    $this->getNick(),
+                    'Breadcrumb'
+                ]
+            )
         )->setSelectedStep($this->getStep());
 
-        $helpBlock = $this->createBlock('HelpBlock', 'wizard.help.block')->setData([
-            'no_collapse' => true,
-            'no_hide' => true
-        ]);
+        $helpBlock = $this->createBlock('HelpBlock', 'wizard.help.block')->setData(
+            [
+                'no_collapse' => true,
+                'no_hide'     => true
+            ]
+        );
 
         $contentBlock = $this->createBlock(
-            $this->nameBuilder->buildClassName([
-                'Wizard', $this->getNick(), 'Installation', $this->getStep(), 'Content'
-            ])
-        )->setData([
-            'nick' => $this->getNick()
-        ]);
+            $this->nameBuilder->buildClassName(
+                [
+                    'Wizard',
+                    $this->getNick(),
+                    'Installation',
+                    $this->getStep(),
+                    'Content'
+                ]
+            )
+        )->setData(
+            [
+                'nick' => $this->getNick()
+            ]
+        );
 
         return parent::_toHtml() .
             $stepsBlock->toHtml() .

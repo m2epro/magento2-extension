@@ -39,11 +39,6 @@
                 type="Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote\TotalsCollectorList" />
     </type>
 
-    <type name="Magento\Quote\Model\QuoteRepository\LoadHandler">
-        <plugin name="m2epro_plugin_order_magento_quote_model_quoteRepository_loadHandler"
-                type="Ess\M2ePro\Plugin\Order\Magento\Quote\Model\QuoteRepository\LoadHandler" />
-    </type>
-
     <!-- MSI -->
 
     <type name="Magento\Inventory\Model\Source\Command\SaveInterface">

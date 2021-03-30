@@ -23,6 +23,15 @@ abstract class AbstractView extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
 
     protected function getFiltersHtml()
     {
+        $sessionViewMode = $this->getHelper('Data\Session')->getValue(
+            "{$this->getComponentMode()}_log_listing_view_mode"
+        );
+
+        $uniqueMessageFilterBlockHtml = '';
+        if ($sessionViewMode == \Ess\M2ePro\Block\Adminhtml\Log\Listing\View\Switcher::VIEW_MODE_SEPARATED) {
+            $uniqueMessageFilterBlockHtml = $this->uniqueMessageFilterBlock->toHtml();
+        }
+
         if ($this->getListingId()) {
             $html = $this->getStaticFilterHtml(
                 $this->accountSwitcherBlock->getLabel(),
@@ -31,7 +40,8 @@ abstract class AbstractView extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
                 . $this->getStaticFilterHtml(
                     $this->marketplaceSwitcherBlock->getLabel(),
                     $this->getListing()->getMarketplace()->getTitle()
-                );
+                )
+                . $uniqueMessageFilterBlockHtml;
         } elseif ($this->getListingProductId()) {
             $html = $this->getStaticFilterHtml(
                 $this->accountSwitcherBlock->getLabel(),
@@ -43,7 +53,8 @@ abstract class AbstractView extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
                 );
         } else {
             $html = $this->accountSwitcherBlock->toHtml()
-                . $this->marketplaceSwitcherBlock->toHtml();
+                . $this->marketplaceSwitcherBlock->toHtml()
+                . $uniqueMessageFilterBlockHtml;
         }
 
         return

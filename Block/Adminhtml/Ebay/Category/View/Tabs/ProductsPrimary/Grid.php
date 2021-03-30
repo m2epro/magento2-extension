@@ -124,8 +124,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\AbstractG
             'resetSpecificsToDefault',
             [
                 'label'   => $this->__('Reset to Default'),
-                'url'     => '',
-                'confirm' => $this->__('Are you sure?')
+                'url'     => ''
             ]
         );
 

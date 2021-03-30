@@ -231,6 +231,11 @@ class Active extends AbstractModel
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
         $amazonListingProduct = $listingProduct->getChildObject();
+
+        if ($amazonListingProduct->isAfnChannel()) {
+            return false;
+        }
+
         $variationManager = $amazonListingProduct->getVariationManager();
         if ($variationManager->isRelationParentType()) {
             return false;

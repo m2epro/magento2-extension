@@ -78,7 +78,21 @@ define([
                     if (el.multiple) {
                         specifics[temp[1]][temp[2]] = self.getSelectValues(el);
                     } else {
-                        specifics[temp[1]][temp[2]] = el.value;
+                        let specific = specifics[temp[1]]['value_custom_value'];
+                        if (typeof specific !== 'undefined' && Object.keys(specific).length !== 0) {
+                            let multi_input = [];
+                            if (Object.isArray(specific)) {
+                                specifics[temp[1]][temp[2]].forEach(function(item) {
+                                    multi_input.push(item);
+                                });
+                            } else {
+                                multi_input.push(specifics[temp[1]][temp[2]]);
+                            }
+                            multi_input.push(el.value);
+                            specifics[temp[1]][temp[2]] = multi_input;
+                        } else {
+                            specifics[temp[1]][temp[2]] = el.value;
+                        }
                     }
                 }
             );

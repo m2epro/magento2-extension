@@ -33,9 +33,15 @@ class Index extends Developers
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Developers\Tabs $tabsBlock */
-        $tabsBlock = $this->createBlock('Developers\Tabs', '', ['data' => [
-            'active_tab' => $activeTab
-        ]]);
+        $tabsBlock = $this->createBlock(
+            'Developers\Tabs',
+            '',
+            [
+                'data' => [
+                    'active_tab' => $activeTab
+                ]
+            ]
+        );
 
         if ($this->isAjax()) {
             $this->setAjaxContent(
@@ -48,15 +54,7 @@ class Index extends Developers
         $this->addLeft($tabsBlock);
         $this->addContent($this->createBlock('Developers'));
 
-        $referrer = $this->getRequest()->getParam('referrer', false);
-
-        if ($referrer === 'ebay') {
-            $this->setPageHelpLink('x/sglPAQ');
-        } elseif ($referrer === 'walmart') {
-            $this->setPageHelpLink('x/qIFwAQ');
-        } else {
-            $this->setPageHelpLink('x/nxBPAQ');
-        }
+        $this->setPageHelpLink('x/sglPAQ');
 
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Help Center'));
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Developers / Administrators Area'));

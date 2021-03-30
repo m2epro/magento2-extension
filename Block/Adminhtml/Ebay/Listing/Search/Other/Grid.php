@@ -102,6 +102,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
             . '&nbsp;' . $marketplace->getTitle();
 
         $sku = $row->getData('sku');
+        if ($row->getChildObject() && ($sku === null || $sku === '')) {
+             $sku = $row->getChildObject()->getData('sku');
+        }
+
         if ($sku === null && $row->getData('product_id') !== null) {
             $sku = $this->modelFactory->getObject('Magento\Product')
                 ->setProductId($row->getData('product_id'))

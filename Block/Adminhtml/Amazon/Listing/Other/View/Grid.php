@@ -191,23 +191,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // ---------------------------------------
         $this->getMassactionBlock()->addItem('autoMapping', [
             'label'   => $this->__('Map Item(s) Automatically'),
-            'url'     => '',
-            'confirm' => $this->__('Are you sure?')
+            'url'     => ''
         ], 'mapping');
         $this->getMassactionBlock()->addItem('moving', [
             'label'   => $this->__('Move Item(s) to Listing'),
-            'url'     => '',
-            'confirm' => $this->__('Are you sure?')
+            'url'     => ''
         ], 'other');
         $this->getMassactionBlock()->addItem('removing', [
             'label'   => $this->__('Remove Item(s)'),
-            'url'     => '',
-            'confirm' => $this->__('Are you sure?')
+            'url'     => ''
         ], 'other');
         $this->getMassactionBlock()->addItem('unmapping', [
             'label'   => $this->__('Unmap Item(s)'),
-            'url'     => '',
-            'confirm' => $this->__('Are you sure?')
+            'url'     => ''
         ], 'mapping');
         // ---------------------------------------
 

@@ -30,9 +30,22 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Prod
 
         $this->applyFilters($collection);
 
+        $isNeedCombine = $this->isNeedCombineMessages();
+
+        if ($isNeedCombine) {
+            $collection->getSelect()->columns(['create_date' => new \Zend_Db_Expr('MAX(main_table.create_date)')]);
+            $collection->getSelect()->group(['main_table.listing_product_id', 'main_table.description']);
+        }
+
         $this->setCollection($collection);
 
-        return parent::_prepareCollection();
+        $result = parent::_prepareCollection();
+
+        if ($isNeedCombine) {
+            $this->prepareMessageCount($collection);
+        }
+
+        return $result;
     }
 
     //########################################

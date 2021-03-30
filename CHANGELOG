@@ -1,4 +1,52 @@
-* 1.10.1 (r4669) (11/03/2021) 
+* 1.12.1 (r4687) (30/03/2021) 
+
+eBay: [Fixed] "Use eBay Catalog Item Data" option is set to Yes in Description Policy despite the value in "m2epro_ebay_template_description" table [M2-1106]
+eBay: [Improved] Managed Payments option for Italy, France, Spain, eBay Motors marketplaces [M2-1041]
+
+* 1.12.0 (r4665) (11/03/2021)
+
+Common: [Improved] Behavior of Insert Attributes actions in M2E Pro Policies [M2-850]
+Common: [Improved] Message is displayed when the import of Unmanaged products is in progress [M2-1046]
+Common: [Improved] Health Status - Logs filtration of Channel orders that do not have Magento orders created for them [M2-940]
+Common: [Improved] Migration of online data to md5 values [M2-1103]
+Common: [Added] Skip button in the Initial Configuration Wizard [M2-859]
+Common: [Added] Filter by unique Order/Product ID and Description on the Logs & Events page [M2-1031]
+Common: [Fixed] Table m2epro_config is not found during migration if postfix is used in databases [M2-1064]
+Common: [Fixed] Unexpected relist actions after order creation [M2-1001]
+Common: [Fixed] Exception is displayed once the search for Order logs by the Creation Date is initiated (Magento v2.4.1) [M2-1060]
+Common: [Fixed] The form_key is removed when orders are filtered and mass actions are submitted on the Orders page [M2-1088]
+Common: [Fixed] Uncaught Error: Call to undefined method Ess\M2ePro\Model\Exception\Connection::getHelper() [M2-1098]
+eBay: [Improved] Moving Unmanaged Listings to M2E Pro Listings when the category was not present in M2E Pro before [M2-998]
+eBay: [Improved] Listing grid in the Settings View Mode [M2-932]
+eBay: [Improved] Extra validation by email if a new Magento customer is created for the order [M2-1074]
+eBay: [Fixed] Status filter doesn't work in the eBay Order grid [M2-1078]
+eBay: [Fixed] Unable to save multiple custom values when adding Item Specifics [M2-1096]
+eBay: [Fixed] SKU of Unmanaged products is not displayed on the Search Products page [M2-1093]
+eBay: [Fixed] Fields are not displayed on the Specifics page after clicking on the Add Specific button (Magento v2.4.1) [M2-1094]
+eBay: [Fixed] SKU of Unmanaged products is not displayed on the Search Products page [M2-1093]
+Amazon: [Added] Amazon Poland Marketplace (PL) [M2-952]
+Amazon: [Fixed] "No Magento Order Created" option is selected after checking the No Invoice/CreditMemo Sent box [M2-1097]
+Walmart: [Fixed] Successful message on product actions in spite of errors happened [M2-1099]
+
+* 1.11.0 (r4622) (19/02/2021)
+
+Common: [Improved] Create Product and Order feature [M2-660]
+Common: [Fixed] License Page link redirects to Dashboard [M2-1010]
+Common: [Fixed] Confirmation pop-up is displayed after any action was applied to Product [M2-1065]
+eBay: [Improved] Move Australia marketplace from Australia Region to Asia / Pacific [M2-1018]
+eBay: [Improved] Add Calculated Data for all shipping types except Local pickup and Freight [M2-810]
+eBay: [Fixed] Confirmation pop-up is displayed after Stop action was applied to Product [M2-1059]
+eBay: [Fixed] Notice: Trying to access array offset on the value of type bool in Model/Ebay/Template/Shipping.php on line 494 in case Shipping Rate Tables were not downloaded [M2-990]
+eBay: [Added] Ability to Cancel/Refund eBay orders [M2-573]
+eBay: [Removed] Click and Collect option from eBay Shipping Policy [M2-810]
+Amazon: [Improved] Move Australia marketplace from Australia Region to Asia / Pacific [M2-1018]
+Amazon: [Improved] Remove duplicated feature options for Amazon Marketplaces [M2-874]
+Amazon: [Fixed] Magento Invoice Creation/Magento Shipment Creation settings are set to Disabled after upgrade to 1.10.0 [M2-1054]
+Amazon: [Added] Add Amazon Japan marketplace (ASIN assignment only) [M2-984]
+Walmart: [Fixed] Confirmation pop-up is displayed after the Product was duplicated [M2-1045]
+Walmart: [Added] Cancel or Refund if Credit Memo is Created option [M2-835]
+
+* 1.10.1 (r4669) (11/03/2021)
 Common: [Improved] Boost loading time of Magento pages
 
 * 1.10.0 (r4552) (28/01/2021)
@@ -63,6 +111,7 @@ Walmart: [Fixed] The page is reloaded before the sync is completed on Walmart Wi
 Walmart: [Added] Custom shipping carriers for US and Canada marketplaces
 
 * 1.9.5 (r4467) (24/12/2020)
+
 Common:  [Fixed] Dynamic behavior compatibility in Magento 2.4.* and 2.3.*
 Common:  [Fixed] "TypeError: Cannot read property 'readAttribute' of undefined js/Marketplace.js:100" is occured when try to Update Now Marketplace on eBay/Amazon/Walmart -> Configuration -> Marketplaces (magento version 2.4)
 Common:  [Fixed] Remove button does not work for Promotions and Override Mode in Walmart Selling Policy and for Shipping Methods in Ebay Shipping Policy if second field was added (magento version 2.4)

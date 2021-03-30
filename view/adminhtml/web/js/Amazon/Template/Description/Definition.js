@@ -481,9 +481,13 @@ define([
 
         description_mode_change: function()
         {
-            this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Template\\Description\\Definition::DESCRIPTION_MODE_CUSTOM')
-                ? $$('.c-custom_description_tr').invoke('show')
-                : $$('.c-custom_description_tr').invoke('hide');
+            if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Template\\Description\\Definition::DESCRIPTION_MODE_CUSTOM')) {
+                $$('.c-custom_description_tr').invoke('show');
+                $('selectAttr_description_template').up('.admin__field.field').show();
+            } else {
+                $$('.c-custom_description_tr').invoke('hide');
+                $('selectAttr_description_template').up('.admin__field.field').hide();
+            }
         },
 
         image_main_mode_change: function()

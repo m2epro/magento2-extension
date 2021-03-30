@@ -87,6 +87,7 @@ class VCSLiteInvoices extends AbstractFeature
             )
             ->commit();
 
+
         $this->getTableModifier('amazon_order')
             ->addColumn(
                 'invoice_data_report', 'LONGTEXT', 'NULL', 'is_credit_memo_sent', false, false
@@ -109,17 +110,11 @@ class VCSLiteInvoices extends AbstractFeature
                 $magentoOrdersSettings = $dataHelper->jsonDecode($row['magento_orders_settings']);
 
                 $data = [
-                    'is_magento_invoice_creation_disabled' => empty($magentoOrdersSettings['invoice_mode']) ?
-                        0 : $magentoOrdersSettings['invoice_mode'],
-                    'create_magento_shipment'              => empty($magentoOrdersSettings['shipment_mode']) ?
-                        0 : $magentoOrdersSettings['shipment_mode']
+                    'is_magento_invoice_creation_disabled' => isset($magentoOrdersSettings['invoice_mode']) ?
+                        $magentoOrdersSettings['invoice_mode'] : 0,
+                    'create_magento_shipment'              => isset($magentoOrdersSettings['shipment_mode']) ?
+                        $magentoOrdersSettings['invoice_mode'] : 0
                 ];
-
-                // if VCS was enabled
-                if ($row['auto_invoicing'] == 1) {
-                    // revert old "is disabled" value
-                    $data['is_magento_invoice_creation_disabled'] = !$row['is_magento_invoice_creation_disabled'];
-                }
 
                 // clearing old data
                 unset($magentoOrdersSettings['invoice_mode']);
@@ -129,7 +124,7 @@ class VCSLiteInvoices extends AbstractFeature
                 $this->getConnection()->update(
                     $amazonAccountTable,
                     $data,
-                    ['account_id = ?' => (int)$row['account_id']]
+                    ['account_id = ?' => $row['account_id']]
                 );
             }
 

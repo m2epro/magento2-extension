@@ -6,14 +6,18 @@
  * @license    Commercial use is forbidden
  */
 
-namespace Ess\M2ePro\Model\Order;
+namespace Ess\M2ePro\Setup\Upgrade\v1_7_1__v1_7_2;
 
-/**
- * Class \Ess\M2ePro\Model\Order\DuplicateException
- */
-class DuplicateException extends \Exception
+use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractConfig;
+
+class Config extends AbstractConfig
 {
     //########################################
+
+    public function getFeaturesList()
+    {
+        return [];
+    }
 
     //########################################
 }

@@ -317,8 +317,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $this->getMassactionBlock()->addItem('unassign', [
             'label' => $this->__('Unassign'),
-            'url' => '',
-            'confirm' => $this->__('Are you sure?')
+            'url' => ''
         ]);
 
         return parent::_prepareMassaction();

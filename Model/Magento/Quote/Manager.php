@@ -13,15 +13,15 @@ namespace Ess\M2ePro\Model\Magento\Quote;
  */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {
-    /** @var \Magento\Quote\Api\CartRepositoryInterface  */
+    /** @var \Magento\Quote\Api\CartRepositoryInterface */
     protected $quoteRepository;
-    /** @var \Ess\M2ePro\Model\Magento\Backend\Model\Session\Quote  */
+    /** @var \Ess\M2ePro\Model\Magento\Backend\Model\Session\Quote */
     protected $sessionQuote;
     /** @var \Magento\Quote\Model\QuoteManagement */
     protected $quoteManagement;
-    /** @var \Magento\Checkout\Model\Session  */
+    /** @var \Magento\Checkout\Model\Session */
     protected $checkoutSession;
-    /** @var \Magento\Sales\Model\OrderFactory  */
+    /** @var \Magento\Sales\Model\OrderFactory */
     protected $orderFactory;
 
     //########################################
@@ -52,7 +52,11 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function getBlankQuote()
     {
         $this->clearQuoteSessionStorage();
-        return $this->sessionQuote->getQuote();
+
+        $quote = $this->sessionQuote->getQuote();
+        $quote->setIsSuperMode(false);
+
+        return $quote;
     }
 
     /**
@@ -65,6 +69,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     {
         try {
             $order = $this->quoteManagement->submit($quote);
+
             return $order;
         } catch (\Exception $e) {
             $order = $this->orderFactory
@@ -94,6 +99,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function save(\Magento\Quote\Model\Quote $quote)
     {
         $this->quoteRepository->save($quote);
+
         return $quote;
     }
 

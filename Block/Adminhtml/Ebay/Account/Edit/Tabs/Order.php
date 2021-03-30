@@ -217,6 +217,23 @@ HTML
             ]
         );
 
+        $fieldset->addField(
+            'magento_orders_listings_other_product_mode_warning',
+            self::MESSAGES,
+            [
+                'messages' => [
+                    [
+                        'type'    => \Magento\Framework\Message\MessageInterface::TYPE_NOTICE,
+                        'content' => $this->__(
+                            'Please note that a new Magento Product will be created 
+                            if the corresponding SKU is not found in your Catalog.'
+                        )
+                    ]
+                ],
+                'style'    => 'max-width:450px; margin-left:20%'
+            ]
+        );
+
         $values = [];
         foreach ($productTaxClasses as $taxClass) {
             $values[$taxClass['value']] = $taxClass['label'];
@@ -522,6 +539,34 @@ HTML
                 'tooltip'      => $this->__(
                     'Choose for how long M2E Pro should reserve Magento Product quantity per eBay Order until
                     Magento Order is created.'
+                )
+            ]
+        );
+
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_accounts_magento_orders_refund_and_cancellation',
+            [
+                'legend'      => $this->__('Refund & Cancellation') . ' [Beta]',
+                'collapsable' => true
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_refund',
+            'select',
+            [
+                'container_id' => 'magento_orders_refund_container',
+                'name'         => 'magento_orders_settings[refund_and_cancellation][refund_mode]',
+                'label'        => $this->__('Cancel/Refund eBay orders'),
+                'values'       => [
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
+                ],
+                'value'        => $formData['magento_orders_settings']['refund_and_cancellation']['refund_mode'],
+                'tooltip'      => $this->__(
+                    'Enable to cancel or refund eBay orders and automatically update their statuses on the Channel.
+                    Find more details <a href="%url%" target="_blank">here</a>.',
+                    $this->getHelper('Module\Support')->getDocumentationUrl()
                 )
             ]
         );

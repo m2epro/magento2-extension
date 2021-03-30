@@ -123,7 +123,7 @@ HTML
             'prepareData' => $this->getUrl('*/listing_other_moving/prepareMoveToListing'),
             'moveToListingGridHtml' => $this->getUrl('*/listing_other_moving/moveToListingGrid'),
             'moveToListing' => $this->getUrl('*/ebay_listing_other/moveToListing'),
-            'categorySettings' => $this->getUrl('*/ebay_listing_product_category_settings/index'),
+            'categorySettings' => $this->getUrl('*/ebay_listing_product_category_settings/otherCategories'),
 
             'removingProducts' => $this->getUrl('*/ebay_listing_other/removing'),
             'unmappingProducts' => $this->getUrl('*/listing_other_mapping/unmapping')

@@ -16,16 +16,17 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     const MEASUREMENT_SYSTEM_ENGLISH = 1;
     const MEASUREMENT_SYSTEM_METRIC  = 2;
 
+    const PACKAGE_SIZE_NONE             = 0;
     const PACKAGE_SIZE_CUSTOM_VALUE     = 1;
     const PACKAGE_SIZE_CUSTOM_ATTRIBUTE = 2;
 
-    const DIMENSION_NONE               = 0;
-    const DIMENSION_CUSTOM_VALUE       = 1;
-    const DIMENSION_CUSTOM_ATTRIBUTE   = 2;
+    const DIMENSION_NONE             = 0;
+    const DIMENSION_CUSTOM_VALUE     = 1;
+    const DIMENSION_CUSTOM_ATTRIBUTE = 2;
 
-    const WEIGHT_NONE                   = 0;
-    const WEIGHT_CUSTOM_VALUE           = 1;
-    const WEIGHT_CUSTOM_ATTRIBUTE       = 2;
+    const WEIGHT_NONE             = 0;
+    const WEIGHT_CUSTOM_VALUE     = 1;
+    const WEIGHT_CUSTOM_ATTRIBUTE = 2;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Shipping
@@ -145,6 +146,14 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     //########################################
 
     /**
+     * @return bool
+     */
+    public function isPackageSizeSet()
+    {
+        return (int)$this->getData('package_size_mode') !== self::PACKAGE_SIZE_NONE;
+    }
+
+    /**
      * @return array
      */
     public function getPackageSizeSource()
@@ -172,6 +181,14 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     }
 
     // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isDimensionSet()
+    {
+        return (int)$this->getData('dimension_mode') !== self::DIMENSION_NONE;
+    }
 
     /**
      * @return array
@@ -210,6 +227,14 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     }
 
     // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isWeightSet()
+    {
+        return (int)$this->getData('weight_mode') !== self::WEIGHT_NONE;
+    }
 
     /**
      * @return array

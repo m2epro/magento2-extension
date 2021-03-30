@@ -107,7 +107,11 @@ class Plugin extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function getMethods($class)
     {
-        $reflection = new \ReflectionClass($class);
+        try {
+            $reflection = new \ReflectionClass($class);
+        } catch (\ReflectionException $e) {
+            return [];
+        }
 
         $methods = [];
         foreach ($reflection->getMethods() as $method) {

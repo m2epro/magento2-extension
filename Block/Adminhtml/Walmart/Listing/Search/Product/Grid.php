@@ -309,7 +309,7 @@ HTML;
 
             $searchedChildHtml = <<<HTML
 <br/>
-<div class="fix-magento-tooltip searched_child_product" style="margin-top: 4px; padding-left: 20px;">
+<div class="fix-magento-tooltip searched_child_product" style="margin-top: 4px; padding-left: 10px;">
     {$this->getTooltipHtml($this->__(
                 'A Product you are searching for is found as part of a Multi-Variational Product.' .
                 ' Click on the arrow icon to manage it individually.'

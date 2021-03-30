@@ -40,22 +40,30 @@ class Form extends AbstractForm
             );
 
             foreach ($group['marketplaces'] as $marketplace) {
-                $afterElementHtml = '
+                $afterElementHtml = '';
+                if ($marketplace['instance']->getId() == \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_JP) {
+                    $afterElementHtml .= <<<HTML
+                    <span id="beta_{$marketplace['instance']->getId()}"
+                        class="value" style=color:gray;">&nbsp; {$this->__('Beta')}</span>
+HTML;
+                } else {
+                    $afterElementHtml .= '
                 <div id="run_single_button_'.$marketplace['instance']->getId().'" class="control-value"';
-                $marketplace['instance']->getStatus() == \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE &&
-                $afterElementHtml .= ' style="display: none;"';
-                $afterElementHtml .= '">';
+                    $marketplace['instance']->getStatus() == \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE &&
+                    $afterElementHtml .= ' style="display: none;"';
+                    $afterElementHtml .= '">';
 
-                $afterElementHtml .= $this->getLayout()
-                    ->createBlock(\Magento\Backend\Block\Widget\Button::class)
-                    ->setData([
-                        'label'   => $this->__('Update Now'),
-                        'onclick' => 'MarketplaceObj.runSingleSynchronization(this)',
-                        'class' => 'run_single_button primary'
-                    ])->toHtml();
+                    $afterElementHtml .= $this->getLayout()
+                        ->createBlock(\Magento\Backend\Block\Widget\Button::class)
+                        ->setData([
+                            'label'   => $this->__('Update Now'),
+                            'onclick' => 'MarketplaceObj.runSingleSynchronization(this)',
+                            'class' => 'run_single_button primary'
+                        ])->toHtml();
+                    $afterElementHtml .= '</div>';
+                }
 
                 $afterElementHtml .= <<<HTML
-                </div>
                 <div id="synch_info_container" class="control-value">
                     <div id="synch_info_wait_{$marketplace['instance']->getId()}"
                         class="value" style="display: none; color: gray;">&nbsp; {$this->__('Waiting')}</div>
@@ -65,10 +73,10 @@ class Form extends AbstractForm
 
                     <div id="synch_info_complete_{$marketplace['instance']->getId()}"
                         class="value" style="display: none; color: green;">{$this->__('Completed')}</div>
-                        
+
                     <div id="synch_info_error_{$marketplace['instance']->getId()}"
                         class="value" style="display: none; color: red;">{$this->__('Error')}</div>
-                        
+
                     <div id="synch_info_skip_{$marketplace['instance']->getId()}"
                         class="value" style="display: none; color: gray;">{$this->__('Skipped')}</div>
 
@@ -122,8 +130,6 @@ HTML;
             }
         }
 
-        $this->addStaticMarketplaces($form);
-
         $form->setUseContainer(true);
         $this->setForm($form);
 
@@ -150,7 +156,6 @@ HTML;
         $groupOrder = [
             'america'      => 'America',
             'europe'       => 'Europe',
-            'australia'    => 'Australia Region',
             'asia_pacific' => 'Asia / Pacific'
         ];
 
@@ -189,39 +194,6 @@ HTML;
         $this->groups = $groups;
         $this->storedStatuses = $storedStatuses;
         // ---------------------------------------
-    }
-
-    protected function addStaticMarketplaces(\Magento\Framework\Data\Form $form)
-    {
-        $staticData = [
-            [
-                'group_id' => 4,
-                'label' => $this->__('Japan'),
-                'note' => 'amazon.co.jp',
-            ],
-            [
-                'group_id' => 4,
-                'label' => $this->__('China'),
-                'note' => 'amazon.cn',
-            ],
-            [
-                'group_id' => 4,
-                'label' => $this->__('India'),
-                'note' => 'amazon.in',
-            ],
-        ];
-
-        foreach ($staticData as $marketplace) {
-            $form->getElement('marketplaces_group_' . $marketplace['group_id'])->addField(
-                $this->mathRandom->getUniqueHash('select_'),
-                self::SELECT,
-                array_merge($marketplace, [
-                    'values' => [\Ess\M2ePro\Model\Marketplace::STATUS_DISABLE => $this->__('Disabled - Coming Soon')],
-                    'value' => \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE,
-                    'disabled' => true
-                ])
-            );
-        }
     }
 
     //########################################

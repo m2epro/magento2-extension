@@ -133,17 +133,11 @@ define([
                     .on('change', EbayTemplateShippingObj.rateTableModeChange);
             }
 
-            EbayTemplateShippingObj.prepareMeasurementObservers('local');
+            EbayTemplateShippingObj.prepareMeasurementObservers();
 
             jQuery('#dispatch_time_mode')
                 .on('change', EbayTemplateShippingObj.dispatchTimeChange)
                 .trigger('change');
-
-            if ($('click_and_collect_mode')) {
-                jQuery('#click_and_collect_mode')
-                    .on('change', EbayTemplateShippingObj.clickAndCollectModeChange)
-                    .trigger('change');
-            }
 
             if ($('cross_border_trade')) {
                 jQuery('#cross_border_trade')
@@ -236,27 +230,6 @@ define([
 
                 self.updateHiddenValue(this, $('dispatch_time_attribute'));
             }
-
-            if (!$('click_and_collect_mode')) {
-                return;
-            }
-
-            if (this.value != M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Shipping::DISPATCH_TIME_MODE_VALUE')) {
-                return;
-            }
-
-            if ($('dispatch_time_value').value > 3 || (!EbayTemplateShippingObj.isLocalShippingModeFlat()
-                && !EbayTemplateShippingObj.isLocalShippingModeCalculated())
-            ) {
-                $('click_and_collect_mode_tr').hide();
-                $('click_and_collect_mode').selectedIndex = 1;
-                jQuery('#click_and_collect_mode').trigger('change');
-
-                return;
-            }
-
-            $('click_and_collect_mode_tr').show();
-            jQuery('#click_and_collect_mode').trigger('change');
         },
 
         // ---------------------------------------
@@ -291,11 +264,6 @@ define([
                 $('domestic_shipping_fieldset-wrapper').setStyle({
                     borderBottom: '0px'
                 });
-
-                if ($('click_and_collect_mode')) {
-                    $('click_and_collect_mode').selectedIndex = 1;
-                    jQuery('#click_and_collect_mode').trigger('change');
-                }
             }
             // ---------------------------------------
 
@@ -429,17 +397,6 @@ define([
             }
 
             return false;
-        },
-
-        // ---------------------------------------
-
-        isClickAndCollectEnabled: function ()
-        {
-            if (!$('click_and_collect_mode')) {
-                return false;
-            }
-
-            return $('click_and_collect_mode').value == 1;
         },
 
         // ---------------------------------------
@@ -729,13 +686,6 @@ define([
 
         // ---------------------------------------
 
-        clickAndCollectModeChange: function ()
-        {
-            EbayTemplateShippingObj.updatePackageBlockState();
-        },
-
-        // ---------------------------------------
-
         updateLocalHandlingCostVisibility: function ()
         {
             if (!$('local_handling_cost_cv_tr')) {
@@ -890,6 +840,9 @@ define([
             } else if (packageSizeMode == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Shipping\\Calculated::PACKAGE_SIZE_CUSTOM_ATTRIBUTE')) {
                 self.updateHiddenValue(this, $('package_size_attribute'));
                 self.updateDimensionVisibility(true);
+            } else if (packageSizeMode == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Shipping\\Calculated::PACKAGE_SIZE_NONE')) {
+                self.updateHiddenValue(this, $('package_size_value'));
+                self.updateDimensionVisibility(false);
             }
         },
 
@@ -962,57 +915,23 @@ define([
 
         updateMeasurementVisibility: function ()
         {
-            if (EbayTemplateShippingObj.isLocalShippingModeCalculated()) {
-                EbayTemplateShippingObj.showMeasurementOptions('local', 'calculated');
-                EbayTemplateShippingObj.updatePackageBlockState();
-                return;
-            }
-
-            if (EbayTemplateShippingObj.isInternationalShippingModeCalculated()) {
-                EbayTemplateShippingObj.showMeasurementOptions('international', 'calculated');
-                EbayTemplateShippingObj.updatePackageBlockState();
-                return;
-            }
-
-            if (EbayTemplateShippingObj.isLocalShippingModeFlat()
-                && EbayTemplateShippingObj.isRateTableEnabled()
-            ) {
-                EbayTemplateShippingObj.showMeasurementOptions('local', 'flat');
-            }
-
             EbayTemplateShippingObj.updatePackageBlockState();
+            EbayTemplateShippingObj.prepareMeasurementObservers();
         },
 
-        showMeasurementOptions: function (locationType, shippingMode)
-        {
-            $$('#block_shipping_template_calculated_options tr').each(function (element) {
-                if (element.hasClassName('visible-for-' + shippingMode + '-by-default')) {
-                    element.show();
-                } else {
-                    element.hide();
-                }
-            });
-
-            EbayTemplateShippingObj.prepareMeasurementObservers(shippingMode);
-        },
-
-        prepareMeasurementObservers: function (shippingMode)
+        prepareMeasurementObservers: function ()
         {
             jQuery('#measurement_system')
                 .on('change', EbayTemplateShippingObj.measurementSystemChange)
                 .trigger('change');
 
-            if (shippingMode == 'calculated') {
-                jQuery('#package_size')
-                    .on('change', EbayTemplateShippingObj.packageSizeChange)
-                    .trigger('change');
-            }
+            jQuery('#package_size')
+                .on('change', EbayTemplateShippingObj.packageSizeChange)
+                .trigger('change');
 
-            if ($('dimension_mode')) {
-                jQuery('#dimension_mode')
-                    .on('change', EbayTemplateShippingObj.dimensionModeChange)
-                    .trigger('change');
-            }
+            jQuery('#dimension_mode')
+                .on('change', EbayTemplateShippingObj.dimensionModeChange)
+                .trigger('change');
 
             jQuery('#weight')
                 .on('change', EbayTemplateShippingObj.weightChange)
@@ -1518,131 +1437,61 @@ define([
         {
             if (this.isLocalShippingModeCalculated() || this.isInternationalShippingModeCalculated()) {
                 this.setCalculatedPackageBlockState();
-                return;
+            } else if (this.isLocalShippingModeLocal() || this.isLocalShippingModeFreight()) {
+                this.setNonePackageBlockState();
+            } else {
+                this.setCommonPackageBlockState();
             }
-
-            if (this.isClickAndCollectEnabled() &&
-                (this.isLocalShippingModeFlat() || this.isLocalShippingModeCalculated()) &&
-                $('dispatch_time_mode').value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Shipping::DISPATCH_TIME_MODE_VALUE')
-                && $('dispatch_time_value').value <= 3
-            ) {
-                this.setClickAndCollectPackageBlockState();
-                return;
-            }
-
-            if (this.isRateTableEnabled()) {
-                this.setRateTablePackageBlockState();
-                return;
-            }
-
-            this.setNonePackageBlockState();
         },
 
         setCalculatedPackageBlockState: function ()
         {
             $('magento_block_ebay_template_shipping_form_data_calculated-wrapper').show();
 
-            var dimensionsTr = $('dimensions_tr');
-            var dimensionSelect = $('dimension_mode');
-            if (dimensionsTr) {
-                dimensionsTr.show();
-                jQuery(dimensionSelect).trigger('change');
+            jQuery('dimension_mode').trigger('change');
+
+            if ($('package_size').selectedIndex == 0) {
+                $('package_size').selectedIndex = 1;
             }
 
-            var packageSizeTr = $('package_size_tr');
-            var packageSizeSelect = $('package_size');
-            if (packageSizeTr) {
-                packageSizeTr.show();
-                jQuery(packageSizeSelect).trigger('change');
+            $('package_size_none').hide();
+            jQuery('package_size').trigger('change');
+
+            if ($('weight').selectedIndex == 0) {
+                $('weight').selectedIndex = 1;
             }
 
-            var weightTr = $('weight_tr');
-            var weightSelect = $('weight');
-            if (weightTr) {
-                if ($('weight').selectedIndex == 0) {
-                    $('weight').selectedIndex = 1;
-                }
-
-                weightTr.show();
-                $('weight_mode_none').hide();
-                jQuery(weightSelect).trigger('change');
-            }
+            $('weight_mode_none').hide();
+            jQuery('weight').trigger('change');
         },
 
-        setRateTablePackageBlockState: function ()
+        setCommonPackageBlockState: function()
         {
             $('magento_block_ebay_template_shipping_form_data_calculated-wrapper').show();
 
-            var dimensionsTr = $('dimensions_tr');
-            var dimensionSelect = $('dimension_mode');
-            if (dimensionsTr) {
-                dimensionsTr.hide();
-                dimensionSelect.selectedIndex = 0;
-                jQuery(dimensionSelect).trigger('change');
-            }
+            $('package_size_none').show();
+            jQuery('package_size').trigger('change');
 
-            var packageSizeTr = $('package_size_tr');
-            var packageSizeSelect = $('package_size');
-            if (packageSizeTr) {
-                packageSizeTr.hide();
-                packageSizeSelect.selectedIndex = 0;
-                jQuery(packageSizeSelect).trigger('change');
-            }
+            $('weight_mode_none').show();
+            jQuery('weight').trigger('change');
 
-            var weightTr = $('weight_tr');
-            var weightSelect = $('weight');
-            if (weightTr) {
-                weightTr.show();
-                $('weight_mode_none').show();
-                jQuery(weightSelect).trigger('change');
-            }
+            jQuery('dimension_mode').trigger('change');
         },
 
-        setClickAndCollectPackageBlockState: function ()
+        setNonePackageBlockState: function()
         {
-            $('magento_block_ebay_template_shipping_form_data_calculated-wrapper').show();
+            $('package_size_none').show();
+            $('package_size').selectedIndex = 0;
+            jQuery('package_size').trigger('change');
 
-            var dimensionsTr = $('dimensions_tr');
-            var dimensionSelect = $('dimension_mode');
-            if (dimensionsTr) {
-                dimensionsTr.show();
-                jQuery(dimensionSelect).trigger('change');
-            }
+            $('dimension_mode').selectedIndex = 0;
+            jQuery('dimension_mode').trigger('change');
 
-            var packageSizeTr = $('package_size_tr');
-            var packageSizeSelect = $('package_size');
-            if (packageSizeTr) {
-                packageSizeTr.hide();
-                packageSizeSelect.selectedIndex = 0;
-                jQuery(packageSizeSelect).trigger('change');
-            }
+            $('weight_mode_none').show();
+            $('weight').selectedIndex = 0;
+            jQuery('weight').trigger('change');
 
-            var weightTr = $('weight_tr');
-            var weightSelect = $('weight');
-            if (weightTr) {
-                weightTr.show();
-                $('weight_mode_none').show();
-                jQuery(weightSelect).trigger('change');
-            }
-        },
-
-        setNonePackageBlockState: function ()
-        {
             $('magento_block_ebay_template_shipping_form_data_calculated-wrapper').hide();
-
-            var dimensionsTr = $('dimensions_tr');
-            var dimensionSelect = $('dimension_mode');
-            if (dimensionsTr) {
-                dimensionSelect.selectedIndex = 0;
-                jQuery(dimensionSelect).trigger('change');
-            }
-
-            var weightTr = $('weight_tr');
-            var weightSelect = $('weight');
-            if (weightTr) {
-                weightSelect.selectedIndex = 0;
-                jQuery(weightSelect).trigger('change');
-            }
         },
 
         // ---------------------------------------

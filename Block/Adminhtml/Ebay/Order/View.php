@@ -21,86 +21,70 @@ class View extends AbstractContainer
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('ebayOrderView');
         $this->_controller = 'adminhtml_ebay_order';
         $this->_mode = 'view';
-        // ---------------------------------------
 
         /** @var $order \Ess\M2ePro\Model\Order */
         $order = $this->getHelper('Data\GlobalData')->getValue('order');
 
-        // Set buttons actions
-        // ---------------------------------------
         $this->removeButton('back');
         $this->removeButton('reset');
         $this->removeButton('delete');
         $this->removeButton('add');
         $this->removeButton('save');
         $this->removeButton('edit');
-        // ---------------------------------------
 
-        // ---------------------------------------
         $url = $this->getHelper('Data')->getBackUrl('*/ebay_order/index');
         $this->addButton('back', [
             'label'     => $this->__('Back'),
             'onclick'   => 'CommonObj.backClick(\''.$url.'\')',
             'class'     => 'back'
         ]);
-        // ---------------------------------------
 
-        if ($order->getChildObject()->canUpdateShippingStatus()) {
-            // ---------------------------------------
+        $isCanceled = $order->getChildObject()->isCanceled();
+
+        if ($order->getChildObject()->canUpdateShippingStatus() && !$isCanceled) {
             $url = $this->getUrl('*/*/updateShippingStatus', ['id' => $order->getId()]);
             $this->addButton('ship', [
                 'label'     => $this->__('Mark as Shipped'),
                 'onclick'   => "setLocation('".$url."');",
                 'class'     => 'primary'
             ]);
-            // ---------------------------------------
         }
 
-        if ($order->getChildObject()->canUpdatePaymentStatus()) {
-            // ---------------------------------------
+        if ($order->getChildObject()->canUpdatePaymentStatus() && !$isCanceled) {
             $url = $this->getUrl('*/*/updatePaymentStatus', ['id' => $order->getId()]);
             $this->addButton('pay', [
                 'label'     => $this->__('Mark as Paid'),
                 'onclick'   => "setLocation('".$url."');",
                 'class'     => 'primary'
             ]);
-            // ---------------------------------------
         }
 
         if ($order->getReserve()->isPlaced()) {
-            // ---------------------------------------
             $url = $this->getUrl('*/order/reservationCancel', ['ids' => $order->getId()]);
             $this->addButton('reservation_cancel', [
                 'label'     => $this->__('Cancel QTY Reserve'),
                 'onclick'   => "confirmSetLocation(M2ePro.translator.translate('Are you sure?'), '".$url."');",
                 'class'     => 'primary'
             ]);
-            // ---------------------------------------
-        } elseif ($order->isReservable()) {
-            // ---------------------------------------
+        } elseif ($order->isReservable() && !$isCanceled) {
             $url = $this->getUrl('*/order/reservationPlace', ['ids' => $order->getId()]);
             $this->addButton('reservation_place', [
                 'label'     => $this->__('Reserve QTY'),
                 'onclick'   => "confirmSetLocation(M2ePro.translator.translate('Are you sure?'), '".$url."');",
                 'class'     => 'primary'
             ]);
-            // ---------------------------------------
         }
 
-        if ($order->getMagentoOrderId() === null) {
-            // ---------------------------------------
+        if ($order->getMagentoOrderId() === null && !$isCanceled) {
             $url = $this->getUrl('*/*/createMagentoOrder', ['id' => $order->getId()]);
             $this->addButton('order', [
                 'label'     => $this->__('Create Magento Order'),
                 'onclick'   => "setLocation('".$url."');",
                 'class'     => 'primary'
             ]);
-            // ---------------------------------------
         } elseif ($order->getMagentoOrder() === null || $order->getMagentoOrder()->isCanceled()) {
             // ---------------------------------------
             $url = $this->getUrl('*/*/createMagentoOrder', ['id' => $order->getId(), 'force' => 'yes']);
@@ -113,7 +97,6 @@ class View extends AbstractContainer
                 'onclick'   => "confirmSetLocation('".$confirm."','".$url."');",
                 'class'     => 'primary'
             ]);
-            // ---------------------------------------
         }
     }
 

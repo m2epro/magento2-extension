@@ -149,8 +149,25 @@ class Config extends AbstractConfig
                 'WalmartCustomCarrier',
                 'RemoteFulfillmentProgram',
                 'EbayRemoveCustomTemplates',
+                'SynchronizeInventoryConfigs',
                 'DisableVCSOnNL',
-                'AddSkipEvtinSetting'
+                'AmazonDuplicatedMarketplaceFeature',
+                'AddSkipEvtinSetting',
+                'EbayOrderCancelRefund'
+            ],
+            'y21_m01' => [
+                'AmazonJP',
+                'WalmartCancelRefundOption',
+                'EbayRemoveClickAndCollect'
+            ],
+            'y21_m02' => [
+                'MoveAUtoAsiaPacific',
+                'AmazonPL',
+                'EbayManagedPayments'
+            ],
+            'y21_m03' => [
+                'IncludeeBayProductDetails',
+                'EbayMotorsAddManagedPayments'
             ]
         ];
     }

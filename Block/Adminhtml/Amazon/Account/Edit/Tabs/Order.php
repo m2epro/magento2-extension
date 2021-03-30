@@ -234,6 +234,23 @@ HTML
             ]
         );
 
+        $fieldset->addField(
+            'magento_orders_listings_other_product_mode_warning',
+            self::MESSAGES,
+            [
+                'messages' => [
+                    [
+                        'type'    => \Magento\Framework\Message\MessageInterface::TYPE_NOTICE,
+                        'content' => $this->__(
+                            'Please note that a new Magento Product will be created 
+                            if the corresponding SKU is not found in your Catalog.'
+                        )
+                    ]
+                ],
+                'style'    => 'max-width:450px; margin-left:20%'
+            ]
+        );
+
         $values = [];
         foreach ($productTaxClasses as $taxClass) {
             $values[$taxClass['value']] = $taxClass['label'];

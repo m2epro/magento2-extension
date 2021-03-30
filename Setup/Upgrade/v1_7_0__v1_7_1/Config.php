@@ -6,7 +6,7 @@
  * @license    Commercial use is forbidden
  */
 
-namespace Ess\M2ePro\Setup\Upgrade\v1_7_0__v1_7_2;
+namespace Ess\M2ePro\Setup\Upgrade\v1_7_0__v1_7_1;
 
 use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractConfig;
 

@@ -52,21 +52,28 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getSettingsUrl(array $params = [])
     {
-        return $this->urlBuilder->getUrl('m2epro/ebay_settings/index', $params);
+        return $this->urlBuilder->getUrl("m2epro/{$this->getFirstEnabledComponent()}_settings/index", $params);
     }
 
     public function getLogsClearingUrl(array $params = [])
     {
-        return $this->urlBuilder->getUrl('m2epro/ebay_settings/index', array_merge([
+        return $this->urlBuilder->getUrl("m2epro/{$this->getFirstEnabledComponent()}_settings/index", array_merge([
             'active_tab' => \Ess\M2ePro\Block\Adminhtml\Settings\Tabs::TAB_ID_LOGS_CLEARING
         ], $params));
     }
 
     public function getLicenseUrl(array $params = [])
     {
-        return $this->urlBuilder->getUrl('m2epro/ebay_settings/index', array_merge([
+        return $this->urlBuilder->getUrl("m2epro/{$this->getFirstEnabledComponent()}_settings/index", array_merge([
             'active_tab' => \Ess\M2ePro\Block\Adminhtml\Settings\Tabs::TAB_ID_LICENSE
         ], $params));
+    }
+
+    private function getFirstEnabledComponent()
+    {
+        $components = $this->getHelper('Component')->getEnabledComponents();
+
+        return !empty($components) ? $components[0] : \Ess\M2ePro\Helper\Component\Ebay::NICK;
     }
 
     //########################################

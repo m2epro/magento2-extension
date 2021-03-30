@@ -326,7 +326,7 @@ class InstallData implements InstallDataInterface
                     'url'            => 'ebay.com.au',
                     'status'         => 0,
                     'sorder'         => 4,
-                    'group_title'    => 'Australia Region',
+                    'group_title'    => 'Asia / Pacific',
                     'component_mode' => 'ebay',
                     'update_date'    => '2013-05-08 00:00:00',
                     'create_date'    => '2013-05-08 00:00:00'
@@ -592,7 +592,6 @@ class InstallData implements InstallDataInterface
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 1,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 0,
                     'is_in_store_pickup'                   => 1,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
@@ -619,7 +618,6 @@ class InstallData implements InstallDataInterface
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 0,
                     'is_in_store_pickup'                   => 1,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
@@ -646,7 +644,6 @@ class InstallData implements InstallDataInterface
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 1,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 1,
                     'is_in_store_pickup'                   => 1,
                     'is_return_description'                => 0,
                     'is_epid'                              => 1,
@@ -673,7 +670,6 @@ class InstallData implements InstallDataInterface
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 1,
                     'is_in_store_pickup'                   => 1,
                     'is_return_description'                => 0,
                     'is_epid'                              => 1,
@@ -700,7 +696,6 @@ class InstallData implements InstallDataInterface
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 0,
                     'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 1,
                     'is_epid'                              => 0,
@@ -727,7 +722,6 @@ class InstallData implements InstallDataInterface
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 0,
                     'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
@@ -750,11 +744,10 @@ class InstallData implements InstallDataInterface
                     'is_international_shipping_rate_table' => 0,
                     'is_english_measurement_system'        => 0,
                     'is_metric_measurement_system'         => 1,
-                    'is_managed_payments'                  => 0,
+                    'is_managed_payments'                  => 1,
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 0,
                     'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 1,
                     'is_epid'                              => 0,
@@ -781,7 +774,6 @@ class InstallData implements InstallDataInterface
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 1,
                     'is_in_store_pickup'                   => 1,
                     'is_return_description'                => 1,
                     'is_epid'                              => 1,
@@ -804,11 +796,10 @@ class InstallData implements InstallDataInterface
                     'is_international_shipping_rate_table' => 0,
                     'is_english_measurement_system'        => 1,
                     'is_metric_measurement_system'         => 0,
-                    'is_managed_payments'                  => 0,
+                    'is_managed_payments'                  => 1,
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 1,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 0,
                     'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 1,
@@ -831,11 +822,10 @@ class InstallData implements InstallDataInterface
                     'is_international_shipping_rate_table' => 1,
                     'is_english_measurement_system'        => 0,
                     'is_metric_measurement_system'         => 1,
-                    'is_managed_payments'                  => 0,
+                    'is_managed_payments'                  => 1,
                     'is_cash_on_delivery'                  => 1,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 0,
                     'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 1,
                     'is_epid'                              => 0,
@@ -862,7 +852,6 @@ class InstallData implements InstallDataInterface
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 0,
                     'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
@@ -889,7 +878,6 @@ class InstallData implements InstallDataInterface
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 0,
                     'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
@@ -912,11 +900,10 @@ class InstallData implements InstallDataInterface
                     'is_international_shipping_rate_table' => 0,
                     'is_english_measurement_system'        => 0,
                     'is_metric_measurement_system'         => 1,
-                    'is_managed_payments'                  => 0,
+                    'is_managed_payments'                  => 1,
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 0,
                     'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 1,
                     'is_epid'                              => 0,
@@ -943,7 +930,6 @@ class InstallData implements InstallDataInterface
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 0,
                     'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
@@ -970,7 +956,6 @@ class InstallData implements InstallDataInterface
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 0,
                     'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
@@ -997,7 +982,6 @@ class InstallData implements InstallDataInterface
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 0,
                     'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
@@ -1024,7 +1008,6 @@ class InstallData implements InstallDataInterface
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 0,
                     'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
@@ -1051,7 +1034,6 @@ class InstallData implements InstallDataInterface
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 0,
                     'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
@@ -1078,7 +1060,6 @@ class InstallData implements InstallDataInterface
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 0,
                     'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
@@ -1105,7 +1086,6 @@ class InstallData implements InstallDataInterface
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 0,
                     'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
@@ -1132,7 +1112,6 @@ class InstallData implements InstallDataInterface
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 0,
                     'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
@@ -1159,7 +1138,6 @@ class InstallData implements InstallDataInterface
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_click_and_collect'                 => 0,
                     'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
@@ -1176,6 +1154,7 @@ class InstallData implements InstallDataInterface
         $moduleConfig->insert('/amazon/', 'application_name', 'M2ePro - Amazon Magento Integration');
         $moduleConfig->insert('/component/amazon/', 'mode', '1');
         $moduleConfig->insert('/cron/task/amazon/listing/product/process_instructions/', 'mode', '1');
+        $moduleConfig->insert('/cron/task/amazon/listing/synchronize_inventory/', 'interval_per_account', '86400');
         $moduleConfig->insert('/listing/product/inspector/amazon/', 'max_allowed_instructions_count', '2000');
         $moduleConfig->insert('/amazon/listing/product/instructions/cron/', 'listings_products_per_one_time', '1000');
         $moduleConfig->insert('/amazon/listing/product/action/scheduled_data/', 'limit', '20000');
@@ -1312,7 +1291,7 @@ class InstallData implements InstallDataInterface
                     'url'            => 'amazon.com.au',
                     'status'         => 0,
                     'sorder'         => 1,
-                    'group_title'    => 'Australia Region',
+                    'group_title'    => 'Asia / Pacific',
                     'component_mode' => 'amazon',
                     'update_date'    => '2017-10-17 00:00:00',
                     'create_date'    => '2017-10-17 00:00:00'
@@ -1355,6 +1334,32 @@ class InstallData implements InstallDataInterface
                     'component_mode' => 'amazon',
                     'update_date'    => '2020-09-03 00:00:00',
                     'create_date'    => '2020-09-03 00:00:00'
+                ],
+                [
+                    'id'             => 42,
+                    'native_id'      => 14,
+                    'title'          => 'Japan',
+                    'code'           => 'JP',
+                    'url'            => 'amazon.co.jp',
+                    'status'         => 0,
+                    'sorder'         => 16,
+                    'group_title'    => 'Asia / Pacific',
+                    'component_mode' => 'amazon',
+                    'update_date'    => '2021-01-11 00:00:00',
+                    'create_date'    => '2021-01-11 00:00:00'
+                ],
+                [
+                    'id'             => 43,
+                    'native_id'      => 15,
+                    'title'          => 'Poland',
+                    'code'           => 'PL',
+                    'url'            => 'amazon.pl',
+                    'status'         => 0,
+                    'sorder'         => 17,
+                    'group_title'    => 'Europe',
+                    'component_mode' => 'amazon',
+                    'update_date'    => '2021-02-01 00:00:00',
+                    'create_date'    => '2021-02-01 00:00:00'
                 ]
             ]
         );
@@ -1371,8 +1376,7 @@ class InstallData implements InstallDataInterface
                     'is_business_available'                   => 0,
                     'is_vat_calculation_service_available'    => 0,
                     'is_product_tax_code_policy_available'    => 0,
-                    'is_automatic_token_retrieving_available' => 1,
-                    'is_upload_invoices_available'            => 0,
+                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 25,
@@ -1383,8 +1387,7 @@ class InstallData implements InstallDataInterface
                     'is_business_available'                   => 1,
                     'is_vat_calculation_service_available'    => 1,
                     'is_product_tax_code_policy_available'    => 1,
-                    'is_automatic_token_retrieving_available' => 1,
-                    'is_upload_invoices_available'            => 1,
+                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 26,
@@ -1395,8 +1398,7 @@ class InstallData implements InstallDataInterface
                     'is_business_available'                   => 1,
                     'is_vat_calculation_service_available'    => 1,
                     'is_product_tax_code_policy_available'    => 1,
-                    'is_automatic_token_retrieving_available' => 1,
-                    'is_upload_invoices_available'            => 1,
+                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 28,
@@ -1407,8 +1409,7 @@ class InstallData implements InstallDataInterface
                     'is_business_available'                   => 1,
                     'is_vat_calculation_service_available'    => 1,
                     'is_product_tax_code_policy_available'    => 1,
-                    'is_automatic_token_retrieving_available' => 1,
-                    'is_upload_invoices_available'            => 1,
+                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 29,
@@ -1419,8 +1420,7 @@ class InstallData implements InstallDataInterface
                     'is_business_available'                   => 1,
                     'is_vat_calculation_service_available'    => 0,
                     'is_product_tax_code_policy_available'    => 0,
-                    'is_automatic_token_retrieving_available' => 1,
-                    'is_upload_invoices_available'            => 0,
+                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 30,
@@ -1431,8 +1431,7 @@ class InstallData implements InstallDataInterface
                     'is_business_available'                   => 1,
                     'is_vat_calculation_service_available'    => 1,
                     'is_product_tax_code_policy_available'    => 1,
-                    'is_automatic_token_retrieving_available' => 1,
-                    'is_upload_invoices_available'            => 1,
+                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 31,
@@ -1443,8 +1442,7 @@ class InstallData implements InstallDataInterface
                     'is_business_available'                   => 1,
                     'is_vat_calculation_service_available'    => 1,
                     'is_product_tax_code_policy_available'    => 1,
-                    'is_automatic_token_retrieving_available' => 1,
-                    'is_upload_invoices_available'            => 1,
+                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 34,
@@ -1455,8 +1453,7 @@ class InstallData implements InstallDataInterface
                     'is_business_available'                   => 0,
                     'is_vat_calculation_service_available'    => 0,
                     'is_product_tax_code_policy_available'    => 0,
-                    'is_automatic_token_retrieving_available' => 1,
-                    'is_upload_invoices_available'            => 0,
+                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 35,
@@ -1467,8 +1464,7 @@ class InstallData implements InstallDataInterface
                     'is_business_available'                   => 0,
                     'is_vat_calculation_service_available'    => 0,
                     'is_product_tax_code_policy_available'    => 0,
-                    'is_automatic_token_retrieving_available' => 1,
-                    'is_upload_invoices_available'            => 0,
+                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 39,
@@ -1479,8 +1475,7 @@ class InstallData implements InstallDataInterface
                     'is_business_available'                   => 1,
                     'is_vat_calculation_service_available'    => 0,
                     'is_product_tax_code_policy_available'    => 1,
-                    'is_automatic_token_retrieving_available' => 1,
-                    'is_upload_invoices_available'            => 0,
+                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 40,
@@ -1491,8 +1486,7 @@ class InstallData implements InstallDataInterface
                     'is_business_available'                   => 0,
                     'is_vat_calculation_service_available'    => 0,
                     'is_product_tax_code_policy_available'    => 0,
-                    'is_automatic_token_retrieving_available' => 1,
-                    'is_upload_invoices_available'            => 0
+                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 41,
@@ -1503,8 +1497,29 @@ class InstallData implements InstallDataInterface
                     'is_business_available'                   => 0,
                     'is_vat_calculation_service_available'    => 0,
                     'is_product_tax_code_policy_available'    => 0,
-                    'is_automatic_token_retrieving_available' => 1,
-                    'is_upload_invoices_available'            => 0
+                    'is_automatic_token_retrieving_available' => 1
+                ],
+                [
+                    'marketplace_id'                          => 42,
+                    'developer_key'                           => '7078-7205-1944',
+                    'default_currency'                        => 'JPY',
+                    'is_new_asin_available'                   => 0,
+                    'is_merchant_fulfillment_available'       => 1,
+                    'is_business_available'                   => 0,
+                    'is_vat_calculation_service_available'    => 0,
+                    'is_product_tax_code_policy_available'    => 0,
+                    'is_automatic_token_retrieving_available' => 1
+                ],
+                [
+                    'marketplace_id'                          => 43,
+                    'developer_key'                           => '7078-7205-1944',
+                    'default_currency'                        => 'PLN',
+                    'is_new_asin_available'                   => 1,
+                    'is_merchant_fulfillment_available'       => 1,
+                    'is_business_available'                   => 0,
+                    'is_vat_calculation_service_available'    => 0,
+                    'is_product_tax_code_policy_available'    => 0,
+                    'is_automatic_token_retrieving_available' => 1
                 ]
             ]
         );
@@ -1517,6 +1532,7 @@ class InstallData implements InstallDataInterface
         $moduleConfig->insert('/walmart/', 'application_name', 'M2ePro - Walmart Magento Integration');
         $moduleConfig->insert('/component/walmart/', 'mode', '1');
         $moduleConfig->insert('/cron/task/walmart/listing/product/process_instructions/', 'mode', '1');
+        $moduleConfig->insert('/cron/task/walmart/listing/synchronize_inventory/', 'interval_per_account', '86400');
         $moduleConfig->insert('/listing/product/inspector/walmart/', 'max_allowed_instructions_count', '2000');
         $moduleConfig->insert('/walmart/configuration/', 'sku_mode', '1');
         $moduleConfig->insert('/walmart/configuration/', 'sku_custom_attribute', null);

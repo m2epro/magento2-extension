@@ -17,7 +17,7 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'amazon/listing/synchronize_inventory';
 
-    const INTERVAL_PER_ACCOUNT = 86400;
+    const DEFAULT_INTERVAL_PER_ACCOUNT = 86400;
 
     //####################################
 
@@ -63,10 +63,10 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             return;
         }
 
-        $this->getOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
+        $this->getOperationHistory()->addText('Starting Account "' . $account->getTitle() . '"');
         $this->getOperationHistory()->addTimePoint(
-            __METHOD__.'process'.$account->getId(),
-            'Process Account '.$account->getTitle()
+            __METHOD__ . 'process' . $account->getId(),
+            'Process Account ' . $account->getTitle()
         );
 
         try {
@@ -100,7 +100,7 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $this->processTaskException($exception);
         }
 
-        $this->getOperationHistory()->saveTimePoint(__METHOD__.'process'.$account->getId());
+        $this->getOperationHistory()->saveTimePoint(__METHOD__ . 'process' . $account->getId());
     }
 
     //########################################
@@ -113,8 +113,12 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
      */
     protected function getAccountForProcess()
     {
+        $interval = $this->getConfigValue('interval_per_account') !== null
+            ? $this->getConfigValue('interval_per_account')
+            : self::DEFAULT_INTERVAL_PER_ACCOUNT;
+
         $date = new \DateTime('now', new \DateTimeZone('UTC'));
-        $date->modify('-' . self::INTERVAL_PER_ACCOUNT . ' seconds');
+        $date->modify('-' . $interval . ' seconds');
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $collection */
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Account')
@@ -145,9 +149,12 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function isTaskInProgress()
     {
         /** @var $lockItemManager \Ess\M2ePro\Model\Lock\Item\Manager */
-        $lockItemManager = $this->modelFactory->getObject('Lock_Item_Manager', [
-            'nick' => ProcessingRunner::LOCK_ITEM_PREFIX
-        ]);
+        $lockItemManager = $this->modelFactory->getObject(
+            'Lock_Item_Manager',
+            [
+                'nick' => ProcessingRunner::LOCK_ITEM_PREFIX
+            ]
+        );
 
         if (!$lockItemManager->isExist()) {
             return false;
@@ -155,6 +162,7 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         if ($lockItemManager->isInactiveMoreThanSeconds(\Ess\M2ePro\Model\Processing\Runner::MAX_LIFETIME)) {
             $lockItemManager->remove();
+
             return false;
         }
 
@@ -169,6 +177,7 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function isFullItemsDataAlreadyReceived(\Ess\M2ePro\Model\Account $account)
     {
         $additionalData = (array)$this->getHelper('Data')->jsonDecode($account->getAdditionalData());
+
         return !empty($additionalData['is_amazon_other_listings_full_items_data_already_received']);
     }
 

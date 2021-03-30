@@ -1,13 +1,12 @@
 define([
     'M2ePro/Plugin/Messages'
-], function (MessageObj) {
+], function(MessageObj) {
 
     window.Wizard = Class.create(Common, {
 
         // ---------------------------------------
 
-        initialize: function(currentStatus, currentStep, hiddenSteps)
-        {
+        initialize: function(currentStatus, currentStep, hiddenSteps) {
             this.currentStatus = currentStatus;
 
             this.steps = {};
@@ -18,30 +17,17 @@ define([
 
         // ----------------)-----------------------
 
-        skip: function(url)
-        {
-            this.confirm({
-                content: M2ePro.translator.translate('Note: If you close the Wizard, it never starts again. You will be required to set all Settings manually. Press Cancel to continue working with Wizard.'),
-                actions: {
-                    confirm: function () {
-                        setLocation(url);
-                    },
-                    cancel: function () {
-                        return false;
-                    }
-                }
-            });
+        skip: function(url) {
+            setLocation(url);
         },
 
-        complete: function()
-        {
+        complete: function() {
             window.location.reload();
         },
 
         // ---------------------------------------
 
-        setStatus: function(status, callback)
-        {
+        setStatus: function(status, callback) {
             new Ajax.Request(M2ePro.url.get('setStatus'), {
                 method: 'get',
                 parameters: {
@@ -64,11 +50,10 @@ define([
                     }
 
                 }).bind(this)
-            })
+            });
         },
 
-        setStep: function(step, callback)
-        {
+        setStep: function(step, callback) {
             new Ajax.Request(M2ePro.url.get('setStep'), {
                 method: 'get',
                 parameters: {
@@ -91,13 +76,12 @@ define([
                     }
 
                 }).bind(this)
-            })
+            });
         },
 
         // ---------------------------------------
 
-        getNextStep: function()
-        {
+        getNextStep: function() {
             var stepIndex = this.steps.all.indexOf(this.steps.current);
 
             if (stepIndex == -1) {
@@ -115,16 +99,14 @@ define([
 
         // ---------------------------------------
 
-        disableContinueButton: function ()
-        {
+        disableContinueButton: function() {
             jQuery('#continue').prop('disabled', true);
         },
 
         // Steps
         // ---------------------------------------
 
-        registrationStep: function (url)
-        {
+        registrationStep: function(url) {
             this.initFormValidation();
 
             if (!this.isValidForm()) {
@@ -134,8 +116,8 @@ define([
             MessageObj.clear();
 
             new Ajax.Request(url, {
-                method       : 'post',
-                parameters   : $('edit_form').serialize(),
+                method: 'post',
+                parameters: $('edit_form').serialize(),
                 onSuccess: function(transport) {
 
                     var response = transport.responseText.evalJSON();

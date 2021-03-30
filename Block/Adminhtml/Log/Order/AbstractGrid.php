@@ -32,11 +32,23 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         $this->setSaveParametersInSession(true);
         $this->setUseAjax(true);
         $this->setCustomPageSize(true);
+
+        $this->entityIdFieldName = self::ORDER_ID_FIELD;
+        $this->logModelName = 'Order_Log';
     }
 
     protected function _prepareCollection()
     {
         $collection = $this->activeRecordFactory->getObject('Order\Log')->getCollection();
+
+        $isNeedCombine = $this->isNeedCombineMessages();
+
+        if ($isNeedCombine) {
+            $collection->getSelect()->columns(
+                ['create_date' => new \Zend_Db_Expr('MAX(main_table.create_date)')]
+            );
+            $collection->getSelect()->group(['main_table.order_id', 'main_table.description']);
+        }
 
         $collection->getSelect()->joinLeft(
             ['mo' => $this->activeRecordFactory->getObject('Order')->getResource()->getMainTable()],
@@ -87,11 +99,25 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             $collection->addFieldToFilter('main_table.order_id', (int)$orderId);
         }
 
+        $backToDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        $backToDate->modify('- 1 days');
+
+        if ($this->getRequest()->getParam('magento_order_failed')) {
+            $text = 'Magento Order was not created';
+            $collection->addFieldToFilter('main_table.description', ['like' => '%' . $text . '%']);
+            $collection->addFieldToFilter('main_table.create_date', ['gt' => $backToDate->format('Y-m-d H:i:s')]);
+        }
+
         $collection->addFieldToFilter('main_table.component_mode', $this->getComponentMode());
 
         $this->setCollection($collection);
+        $result = parent::_prepareCollection();
 
-        return parent::_prepareCollection();
+        if ($isNeedCombine) {
+            $this->prepareMessageCount($collection);
+        }
+
+        return $result;
     }
 
     protected function _prepareColumns()
@@ -189,7 +215,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
                 $url = '#';
         }
 
-        return '<a href="'.$url.'" target="_blank">'.$this->getHelper('Data')->escapeHtml($channelOrderId).'</a>';
+        return '<a href="' . $url . '" target="_blank">' . $this->getHelper('Data')->escapeHtml($channelOrderId) . '</a>';
     }
 
     public function callbackColumnMagentoOrderNumber($value, $row, $column, $isExport)
@@ -201,8 +227,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             $result = $this->__('N/A');
         } else {
             $url = $this->getUrl('sales/order/view', ['order_id' => $magentoOrderId]);
-            $result = '<a href="'.$url.'" target="_blank">'
-                        .$this->getHelper('Data')->escapeHtml($magentoOrderNumber).'</a>';
+            $result = '<a href="' . $url . '" target="_blank">'
+                        . $this->getHelper('Data')->escapeHtml($magentoOrderNumber) . '</a>';
         }
 
         return "<span style='min-width: 110px; display: block;'>{$result}</span>";
@@ -220,7 +246,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         if ($this->getHelper('Component\Ebay')->isEnabled()) {
             $tempOrdersIds = $this->activeRecordFactory->getObject('Ebay\Order')
                 ->getCollection()
-                ->addFieldToFilter('ebay_order_id', ['like' => '%'.$value.'%'])
+                ->addFieldToFilter('ebay_order_id', ['like' => '%' . $value . '%'])
                 ->getColumnValues('order_id');
             $ordersIds = array_merge($ordersIds, $tempOrdersIds);
         }
@@ -228,7 +254,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         if ($this->getHelper('Component\Amazon')->isEnabled()) {
             $tempOrdersIds = $this->activeRecordFactory->getObject('Amazon\Order')
                 ->getCollection()
-                ->addFieldToFilter('amazon_order_id', ['like' => '%'.$value.'%'])
+                ->addFieldToFilter('amazon_order_id', ['like' => '%' . $value . '%'])
                 ->getColumnValues('order_id');
             $ordersIds = array_merge($ordersIds, $tempOrdersIds);
         }
@@ -236,7 +262,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         if ($this->getHelper('Component\Walmart')->isEnabled()) {
             $tempOrdersIds = $this->activeRecordFactory->getObject('Walmart\Order')
                 ->getCollection()
-                ->addFieldToFilter('walmart_order_id', ['like' => '%'.$value.'%'])
+                ->addFieldToFilter('walmart_order_id', ['like' => '%' . $value . '%'])
                 ->getColumnValues('order_id');
             $ordersIds = array_merge($ordersIds, $tempOrdersIds);
         }

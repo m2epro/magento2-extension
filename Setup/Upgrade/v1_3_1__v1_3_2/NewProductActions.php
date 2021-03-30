@@ -831,7 +831,7 @@ WHERE `apab`.`processing_id` = {$oldProcessingRow['id']}
      * @param $configName
      * @return \Ess\M2ePro\Model\Setup\Database\Modifier\Config
      */
-    protected function getConfigModifier($configName)
+    protected function getConfigModifier($configName = '')
     {
         $tableName = $configName.'_config';
 

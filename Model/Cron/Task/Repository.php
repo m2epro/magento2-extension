@@ -149,6 +149,14 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'group'     => self::GROUP_EBAY,
         ],
+        \Ess\M2ePro\Model\Cron\Task\Ebay\Order\Cancel::NICK => [
+            'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
+            'group'     => self::GROUP_EBAY,
+        ],
+        \Ess\M2ePro\Model\Cron\Task\Ebay\Order\Refund::NICK => [
+            'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
+            'group'     => self::GROUP_EBAY,
+        ],
         \Ess\M2ePro\Model\Cron\Task\Ebay\PickupStore\ScheduleForUpdate::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'group'     => self::GROUP_EBAY,

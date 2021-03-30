@@ -26,19 +26,12 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Ab
     public function getHtml()
     {
         $value = $this->getValue('select');
-        $checkbox = $this->getValue('checkbox') ? 'checked' : '';
-
-        $hideListingSettingsOverwritesFilter = 'display: none;';
-        if ($this->getColumn()->getData('is_exists_listing_settings_overwrites')) {
-            $hideListingSettingsOverwritesFilter = '';
-        }
-
         $optionsHtml = '';
+
         foreach ($this->_getOptions() as $option) {
             $optionsHtml .= $this->_renderOption($option, $value);
         }
 
-        //eBay Catalog Primary Category Assigned
         $label = $this->getHelper('Component_Ebay_Category')
             ->getCategoryTitle(\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN);
         $label = $this->__('%1% Assigned', $label);
@@ -56,21 +49,6 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Ab
         {$optionsHtml}
     </select>
 </div>
-<div style="padding: 5px 0; text-align: right; font-weight: normal; {$hideListingSettingsOverwritesFilter}">
-        <label for="{$this->_getHtmlId()}_checkbox">
-            {$this->__('With Listing Policies Overrides')}
-        </label>
-        <div style="display: inline-block; line-height: 2;">
-            <input name="{$this->_getHtmlName()}[checkbox]"
-                   id="{$this->_getHtmlId()}_checkbox"
-                   value="1" class="admin__control-checkbox"
-                   type="checkbox" {$checkbox}>
-            <label style="margin: 0 0 -4px 2px;" class="addafter" for="{$this->_getHtmlId()}_checkbox">
-                <label for="{$this->_getHtmlId()}_checkbox"></label>
-            </label>
-        </div>
-</div>
-
 HTML;
 
         return parent::getHtml() . $html;

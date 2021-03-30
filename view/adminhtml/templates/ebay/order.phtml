@@ -9,6 +9,8 @@
 
 /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Order\View\Form $block */
 
+$status = $this->getStatus();
+
 echo $block->getChildHtml('item_edit');
 ?>
 
@@ -75,6 +77,13 @@ echo $block->getChildHtml('item_edit');
                             <td class="label"><?php echo $block->__('Order Status'); ?></td>
                             <td class="value">
                                 <strong>
+
+                                    <span style="color: <?php echo $status['color']; ?>">
+                                        <b><?php echo $status['value']; ?></b>
+                                    </span>
+
+                                    <br/>
+                                    <hr style="border: 1px solid #CCCCCC; border-bottom-width: 0;">
 
                                     <b><?php echo $block->__('Checkout'); ?>: </b>
 

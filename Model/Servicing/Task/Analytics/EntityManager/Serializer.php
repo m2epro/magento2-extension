@@ -96,6 +96,10 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
                 $data['services'] = $this->unsetDataInRelatedItems($item->getServices(), 'template_shipping_id');
                 break;
 
+            case \Ess\M2ePro\Helper\Component\Ebay::NICK . '::Template_Description':
+                unset($data['watermark_image'], $data['description_template']);
+                break;
+
             case \Ess\M2ePro\Helper\Component\Ebay::NICK . '::Ebay_Template_Category':
                 /**@var $item \Ess\M2ePro\Model\Ebay\Template\Category */
                 $data['specifics'] = $this->unsetDataInRelatedItems($item->getSpecifics(), 'template_category_id');
@@ -117,6 +121,10 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
                     $item->getChildObject()->getPromotions(),
                     'template_selling_format_id'
                 );
+                break;
+
+            case \Ess\M2ePro\Helper\Component\Walmart::NICK . '::Template_Description':
+                unset($data['description_template']);
                 break;
 
             case \Ess\M2ePro\Helper\Component\Walmart::NICK . '::Template_Category':

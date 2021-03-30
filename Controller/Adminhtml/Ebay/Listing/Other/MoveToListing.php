@@ -11,6 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Main;
 use Ess\M2ePro\Helper\Component\Ebay as ComponentEbay;
 use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode as SourceModeBlock;
+use Ess\M2ePro\Helper\Component\Ebay\Category as EbayCategory;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other\MoveToListing
@@ -50,11 +51,14 @@ class MoveToListing extends Main
             $tempProducts[] = $listingProduct->getId();
 
             $categoryData = $this->getCategoryData($listingProduct->getOnlineMainCategory(), $listingInstance);
-            if (!empty($categoryData)) {
+            if (!empty($categoryData) && !isset($categoryData['create_new_category'])) {
                 $this->assignMainCategoryToProduct($listingProduct->getId(), $categoryData, $listingInstance);
 
                 $productsHaveOnlineCategory[] = $listingProduct->getId();
                 $listingOther->moveToListingSucceed();
+            } elseif (!empty($categoryData) && isset($categoryData['create_new_category'])) {
+                $categoryData[EbayCategory::TYPE_EBAY_MAIN] = $categoryData['create_new_category'];
+                unset($categoryData['create_new_category']);
             }
         }
 
@@ -129,7 +133,7 @@ class MoveToListing extends Main
 
         $categoryTpl = $this->modelFactory->getObject('Ebay_Template_Category_Builder')->build(
             $this->activeRecordFactory->getObject('Ebay_Template_Category'),
-            $converter->getCategoryDataForTemplate(\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN)
+            $converter->getCategoryDataForTemplate(EbayCategory::TYPE_EBAY_MAIN)
         );
 
         $this->activeRecordFactory->getObject('Ebay_Listing_Product')->assignTemplatesToProducts(
@@ -159,12 +163,20 @@ class MoveToListing extends Main
             ->getFirstItem();
 
         if ($templateCategory->getId()) {
-            $categoryData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN] = [
+            $categoryData[EbayCategory::TYPE_EBAY_MAIN] = [
                 'mode'               => \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY,
                 'value'              => $templateCategory->getCategoryValue(),
                 'path'               => $path,
                 'is_custom_template' => $templateCategory->getIsCustomTemplate(),
                 'specific'           => $templateCategory->getSpecifics()
+            ];
+        } else {
+            $categoryData['create_new_category'] = [
+                'mode'               => \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY,
+                'value'              => $value,
+                'path'               => $path,
+                'is_custom_template' => 0,
+                'specific'           => []
             ];
         }
 

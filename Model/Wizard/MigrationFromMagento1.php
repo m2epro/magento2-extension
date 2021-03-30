@@ -82,7 +82,7 @@ class MigrationFromMagento1 extends Wizard
     public function getM1TablesPrefix()
     {
         if ($this->m1TablesPrefix === null) {
-            $allM2eProTables = $this->resourceConnection->getConnection()->getTables('%m2epro_config%');
+            $allM2eProTables = $this->resourceConnection->getConnection()->getTables('%m2epro_config');
             $this->m1TablesPrefix = (string)preg_replace('/m2epro_[A-Za-z0-9_]+$/', '', reset($allM2eProTables));
         }
 

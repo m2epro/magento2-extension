@@ -31,12 +31,16 @@ class Index extends HealthStatus
         $currentStatus->set($resultSet);
 
         /** @var \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs $tabsBlock */
-        $tabsBlock = $this->createBlock('HealthStatus\Tabs', '', [
-            'resultSet' => $resultSet,
-            'data' => [
-                'active_tab' => $activeTab
+        $tabsBlock = $this->createBlock(
+            'HealthStatus\Tabs',
+            '',
+            [
+                'resultSet' => $resultSet,
+                'data'      => [
+                    'active_tab' => $activeTab
+                ]
             ]
-        ]);
+        );
 
         if ($this->isAjax()) {
             $this->setAjaxContent(
@@ -49,13 +53,7 @@ class Index extends HealthStatus
         $this->addLeft($tabsBlock);
         $this->addContent($this->createBlock('HealthStatus'));
 
-        $referrer = $this->getRequest()->getParam('referrer', false);
-
-        if ($referrer == 'ebay') {
-            $this->setPageHelpLink('x/sglPAQ');
-        } else {
-            $this->setPageHelpLink('x/qIFwAQ');
-        }
+        $this->setPageHelpLink('x/sglPAQ');
 
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Help Center'));
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Health Status'));

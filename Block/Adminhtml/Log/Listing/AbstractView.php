@@ -24,6 +24,9 @@ abstract class AbstractView extends AbstractContainer
     /** @var  \Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher  */
     protected $marketplaceSwitcherBlock;
 
+    /** @var  \Ess\M2ePro\Block\Adminhtml\Log\UniqueMessageFilter  */
+    protected $uniqueMessageFilterBlock;
+
     //#######################################
 
     abstract protected function getComponentMode();
@@ -37,6 +40,7 @@ abstract class AbstractView extends AbstractContainer
         $this->viewModeSwitcherBlock    = $this->createViewModeSwitcherBlock();
         $this->accountSwitcherBlock     = $this->createAccountSwitcherBlock();
         $this->marketplaceSwitcherBlock = $this->createMarketplaceSwitcherBlock();
+        $this->uniqueMessageFilterBlock = $this->createUniqueMessageFilterBlock();
 
         $gridClass = $this->nameBuilder->buildClassName([
             $this->getComponentMode(),
@@ -83,6 +87,14 @@ JS
     {
         return $this->createBlock('Marketplace\Switcher')->setData([
             'component_mode' => $this->getComponentMode(),
+        ]);
+    }
+
+    protected function createUniqueMessageFilterBlock()
+    {
+        return $this->createBlock('Log\UniqueMessageFilter')->setData([
+            'route' => "*/{$this->getComponentMode()}_log_listing_product/",
+            'title' => $this->__('Only messages with a unique Product ID')
         ]);
     }
 

@@ -498,11 +498,11 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     /**
      * @return bool
      */
-    public function isProductDetailsIncludeDetails()
+    public function isProductDetailsIncludeEbayDetails()
     {
         $productDetails = $this->getProductDetails();
 
-        return isset($productDetails['include_details']) ? (bool)$productDetails['include_details'] : true;
+        return isset($productDetails['include_ebay_details']) ? (bool)$productDetails['include_ebay_details'] : true;
     }
 
     /**

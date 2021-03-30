@@ -42,7 +42,8 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text' => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text']),
             'text_select' => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text', 'select']),
             'text_select_multiselect' => $magentoAttributeHelper->filterByInputTypes(
-                $this->allAttributes, ['text', 'select', 'multiselect']
+                $this->allAttributes,
+                ['text', 'select', 'multiselect']
             ),
             'text_weight' => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text', 'weight']),
             'text_images' => $magentoAttributeHelper->filterByInputTypes(
@@ -110,6 +111,25 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
+        $selectAttrBlock = $this->elementFactory->create(self::SELECT, [
+            'data' => [
+                'values' => $this->getClearAttributesByInputTypesOptions('text_select'),
+                'class'  => 'M2ePro-required-when-visible magento-attribute-custom-input',
+                'create_magento_attribute' => true
+            ]
+        ])->addCustomAttribute('allowed_attribute_types', 'text,select')
+            ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
+
+        $selectAttrBlock->setId('selectAttr_title_template');
+        $selectAttrBlock->setForm($this->_form);
+
+        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
+            'label' => $this->__('Insert'),
+            'destination_id' => 'title_template',
+            'class' => 'select_attributes_for_title_button primary',
+            'style' => 'display: inline-block;'
+        ]);
+
         $fieldSet->addField(
             'title_template',
             'text',
@@ -121,17 +141,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'class' => 'input-text M2ePro-required-when-visible',
                 'required' => true,
                 'field_extra_attributes' => 'id="custom_title_tr" style="display: none;"',
-                'after_element_html' => $this->createBlock('Magento_Button_MagentoAttribute')->addData([
-                    'label' => $this->__('Insert Attribute'),
-                    'destination_id' => 'title_template',
-                    'magento_attributes' => $this->getClearAttributesByInputTypesOptions('text_select'),
-                    'class' => 'select_attributes_for_title_button primary',
-                    'select_custom_attributes' => [
-                        'allowed_attribute_types' => 'text,select',
-                        'apply_to_all_attribute_sets' => 0
-                    ],
-                    'style' => 'display: block; margin-left: 0; margin-top: 5px;'
-                ])->toHtml()
+                'after_element_html' => $selectAttrBlock->toHtml() . $button->toHtml()
             ]
         );
 
@@ -640,13 +650,25 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'required' => true,
                 'css_class' => 'c-custom_description_tr',
                 'field_extra_attributes' => 'style="display: none;"',
-                'after_element_html' => $this->createBlock('Magento_Button_MagentoAttribute')->addData([
-                    'label' => $this->__('Insert Attribute'),
-                    'destination_id' => 'description_template',
-                    'magento_attributes' => $options,
-                    'class' => 'primary',
-                    'style' => 'margin-left: 0; margin-top: 5px;'
-                ])->toHtml()
+            ]
+        );
+
+        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
+            'label' => $this->__('Insert'),
+            'destination_id' => 'description_template',
+            'class' => 'primary',
+            'style' => 'display: inline-block;'
+        ]);
+
+        $fieldSet->addField(
+            'selectAttr_description_template',
+            self::SELECT,
+            [
+                'label' => $this->__('Product Attribute'),
+                'title' => $this->__('Product Attribute'),
+                'values' => $options,
+                'create_magento_attribute' => true,
+                'after_element_html' => $button->toHtml()
             ]
         );
 
@@ -1039,8 +1061,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     . $widthBlock->toHtml() . ' x '
                     . $heightBlock->toHtml(),
                 'required' => true,
-                'field_extra_attributes' =>
-                    'id="package_dimensions_volume_custom_attribute_tr" style="display: none;"',
+                'field_extra_attributes' => 'id="package_dimensions_volume_custom_attribute_tr" style="display: none;"',
             ]
         );
 
@@ -1387,24 +1408,36 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         for ($i = 0; $i < $fieldCount; $i++) {
             $button = $this->getMultiElementButton($name, $i);
 
+            $selectAttrBlock = $this->elementFactory->create(self::SELECT, [
+                'data' => [
+                    'values' => $this->getClearAttributesByInputTypesOptions('text_select_multiselect'),
+                    'class'  => 'M2ePro-required-when-visible magento-attribute-custom-input',
+                    'create_magento_attribute' => true
+                ]
+            ])->addCustomAttribute('allowed_attribute_types', 'text,select,multiselect')
+                ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
+
+            $selectAttrBlock->setId('selectAttr_' . $name . '_' . $i);
+            $selectAttrBlock->setForm($this->_form);
+
             $value = '';
             if (!empty($this->formData[$name][$i])) {
                 $value = $helper->escapeHtml($this->formData[$name][$i]);
             }
 
             $fieldSet->addField(
-                $name.'_'.$i,
+                $name . '_' . $i,
                 'text',
                 [
-                    'name' => 'definition['.$name.']['.$i.']',
+                    'name' => 'definition[' . $name . '][' . $i . ']',
                     'label' => $this->__('%title% Value #%number%', $fieldTitle, $i + 1),
                     'title' => $this->__('%title% Value #%number%', $fieldTitle, $i + 1),
                     'value' => $value,
-                    'onkeyup' => 'AmazonTemplateDescriptionDefinitionObj.multi_element_keyup(\''.$name.'\',this)',
+                    'onkeyup' => 'AmazonTemplateDescriptionDefinitionObj.multi_element_keyup(\'' . $name . '\',this)',
                     'required' => true,
-                    'css_class' => $name.'_tr no-margin-bottom',
+                    'css_class' => $name . '_tr no-margin-bottom',
                     'field_extra_attributes' => 'style="display: none;"',
-                    'after_element_html' => $button->toHtml(),
+                    'after_element_html' => $selectAttrBlock->toHtml() . $button->toHtml(),
                     'maxlength' => $maxlength,
                     'tooltip' => $this->__('Max. ' . $maxlength . ' characters.')
                 ]
@@ -1412,7 +1445,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         $fieldSet->addField(
-            $name.'_actions',
+            $name . '_actions',
             self::CUSTOM_CONTAINER,
             [
                 'text' => <<<HTML
@@ -1429,7 +1462,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 </a>
 HTML
             ,
-                'field_extra_attributes' => 'id="'.$name.'_actions_tr" style="display: none;"',
+                'field_extra_attributes' => 'id="' . $name . '_actions_tr" style="display: none;"',
             ]
         );
     }
@@ -1950,18 +1983,11 @@ HTML
     private function getMultiElementButton($type, $index)
     {
         return $this->createBlock('Magento_Button_MagentoAttribute')->addData([
-            'label' => $this->__('Insert Attribute'),
-            'destination_id' => $type.'_'.$index,
-            'magento_attributes' => $this->getClearAttributesByInputTypesOptions('text_select_multiselect'),
-            'on_click_callback' => "function() {
-                AmazonTemplateDescriptionDefinitionObj.multi_element_keyup('{$type}',{value:' '});
-            }",
+            'label' => $this->__('Insert'),
+            'destination_id' => $type . '_' . $index,
+            'on_click_callback' => "AmazonTemplateDescriptionDefinitionObj.multi_element_keyup('{$type}',{value:' '});",
             'class' => 'primary attributes-container-td',
-            'style' => 'display: block; margin: 0; float: right;',
-            'select_custom_attributes' => [
-                'allowed_attribute_types' => 'text,select,multiselect',
-                'apply_to_all_attribute_sets' => 0
-            ]
+            'style' => 'display: inline-block;',
         ]);
     }
 

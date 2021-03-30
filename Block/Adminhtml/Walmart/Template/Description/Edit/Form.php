@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Description\Edit;
 
-use \Ess\M2ePro\Model\Walmart\Template\Description as Description;
+use Ess\M2ePro\Model\Walmart\Template\Description as Description;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Description\Edit\Form
@@ -60,6 +60,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'action'  => $this->getUrl('*/*/save'),
             'enctype' => 'multipart/form-data'
         ]]);
+        $this->setForm($form);
 
         $form->addField(
             'walmart_description_general_help',
@@ -125,6 +126,25 @@ HTML
             ];
         }
 
+        $selectAttrBlock = $this->elementFactory->create(self::SELECT, [
+            'data' => [
+                'values' => $preparedAttributes,
+                'class'  => 'M2ePro-required-when-visible magento-attribute-custom-input',
+                'create_magento_attribute' => true
+            ]
+        ])->addCustomAttribute('allowed_attribute_types', 'text,select,multiselect,boolean,price,date')
+            ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
+
+        $selectAttrBlock->setId('selectAttr_title_template');
+        $selectAttrBlock->setForm($this->_form);
+
+        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
+            'label' => $this->__('Insert'),
+            'destination_id' => 'title_template',
+            'class' => 'select_attributes_for_title_button primary',
+            'style' => 'display: inline-block;'
+        ]);
+
         $fieldSet->addField(
             'title_template',
             'text',
@@ -135,16 +155,7 @@ HTML
                 'name' => 'title_template',
                 'class' => 'input-text-title M2ePro-required-when-visible',
                 'required' => true,
-                'after_element_html' => $this->createBlock('Magento_Button_MagentoAttribute')->addData([
-                    'label' => $this->__('Insert Attribute'),
-                    'destination_id' => 'title_template',
-                    'magento_attributes' => $preparedAttributes,
-                    'class' => 'select_attributes_for_title_button primary',
-                    'select_custom_attributes' => [
-                        'allowed_attribute_types' => 'text,select,multiselect,boolean,price,date',
-                        'apply_to_all_attribute_sets' => 0
-                    ],
-                ])->toHtml()
+                'after_element_html' => $selectAttrBlock->toHtml() . $button->toHtml(),
             ]
         );
 
@@ -540,16 +551,25 @@ HTML
                 'value' => $this->formData['description_template'],
                 'class' => ' admin__control-textarea left M2ePro-validate-description-template',
                 'wysiwyg' => false,
-                'after_element_html' => $this->createBlock('Magento_Button_MagentoAttribute')->addData([
-                    'label' => $this->__('Custom Inserts'),
-                    'destination_id' => 'description_template',
-                    'magento_attributes' => $preparedAttributes,
-                    'class' => 'select_attributes_for_description_button primary',
-                    'select_custom_attributes' => [
-                        'allowed_attribute_types' => 'text,select,multiselect,boolean,price,date',
-                        'apply_to_all_attribute_sets' => 0
-                    ],
-                ])->toHtml()
+            ]
+        );
+
+        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
+            'label' => $this->__('Insert'),
+            'destination_id' => 'description_template',
+            'class' => 'primary',
+            'style' => 'display: inline-block;'
+        ]);
+
+        $fieldSet->addField(
+            'selectAttr_description_template',
+            self::SELECT,
+            [
+                'label' => $this->__('Product Attribute'),
+                'title' => $this->__('Product Attribute'),
+                'values' => $preparedAttributes,
+                'create_magento_attribute' => true,
+                'after_element_html' => $button->toHtml()
             ]
         );
 
@@ -837,7 +857,6 @@ HTML
         // ---------------------------------------
 
         $form->setUseContainer(true);
-        $this->setForm($form);
 
         return parent::_prepareForm();
     }
@@ -1088,11 +1107,13 @@ HTML
             'Not Selected'    => $this->__('Not Selected'),
             'Select'          => $this->__('Select'),
 
-            'The specified Title is already used for another Policy. Policy Title must be unique.' =>
-                $this->__('The specified Title is already used for another Policy. Policy Title must be unique.'),
+            'The specified Title is already used for another Policy. Policy Title must be unique.' => $this->__(
+                'The specified Title is already used for another Policy. Policy Title must be unique.'
+            ),
             'You should select Marketplace first.' => $this->__('You should select Marketplace first.'),
-            'You should select Category and Product Type first' =>
-                $this->__('You should select Category and Product Type first'),
+            'You should select Category and Product Type first' => $this->__(
+                'You should select Category and Product Type first'
+            ),
 
             'Recommended' => $this->__('Recommended'),
             'Recent'      => $this->__('Recent'),
@@ -1102,13 +1123,15 @@ HTML
         $isEdit = $this->templateModel->getId() ? 'true' : 'false';
         $allAttributes = $this->getHelper('Data')->jsonEncode($this->getHelper('Magento\Attribute')->getAll());
 
-        $this->js->addRequireJs([
+        $this->js->addRequireJs(
+            [
             'jQuery' => 'jquery',
             'attr' => 'M2ePro/Attribute',
             'description' => 'M2ePro/Walmart/Template/Description',
 
             'attribute_button' => 'M2ePro/Plugin/Magento/Attribute/Button'
-        ], <<<JS
+        ],
+            <<<JS
 
         M2ePro.formData = {$formData};
 
@@ -1179,32 +1202,39 @@ JS
                 $value = $helper->escapeHtml($this->formData[$name][$i]);
             }
 
+            $selectAttrBlock = $this->elementFactory->create(self::SELECT, [
+                'data' => [
+                    'values' => $this->getClearAttributesByInputTypesOptions('text_select'),
+                    'class'  => 'M2ePro-required-when-visible magento-attribute-custom-input',
+                    'create_magento_attribute' => true
+                ]
+            ])->addCustomAttribute('allowed_attribute_types', 'text,select')
+                ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
+
+            $selectAttrBlock->setId('selectAttr_' . $name . '_' . $i);
+            $selectAttrBlock->setForm($fieldSet->getForm());
+
             $fieldSet->addField(
-                $name.'_'.$i,
+                $name . '_' . $i,
                 'text',
-                [
-                    'name' => $name.'[]',
+                [   'container_id'=>'custom_title_tr',
+                    'name' => $name . '[]',
                     'label' => $this->__('%title% Value #%number%', $fieldTitle, $i + 1),
                     'title' => $this->__('%title% Value #%number%', $fieldTitle, $i + 1),
                     'value' => $value,
-                    'onkeyup' => 'WalmartTemplateDescriptionObj.multi_element_keyup(\''.$name.'\',this)',
+                    'onkeyup' => 'WalmartTemplateDescriptionObj.multi_element_keyup(\'' . $name . '\',this)',
                     'class' => 'M2ePro-required-when-visible',
-                    'style' => 'width: 65%',
                     'required' => true,
-                    'css_class' => $name.'_tr no-margin-bottom',
+                    'css_class' => $name . '_tr no-margin-bottom',
                     'field_extra_attributes' => 'style="display: none;"',
-                    'after_element_html' => <<<HTML
-<span class="fix-magento-tooltip" style="margin-left: 10px; margin-right: 10px; margin-bottom: 5px;">
-    {$this->getTooltipHtml($this->__('Max. 50 characters.'))}
-</span>
-{$button->toHtml()}
-HTML
+                    'after_element_html' =>$selectAttrBlock->toHtml() . $button->toHtml(),
+                    'tooltip' => $this->__('Max. 50 characters.')
                 ]
             );
         }
 
         $fieldSet->addField(
-            $name.'_actions',
+            $name . '_actions',
             self::CUSTOM_CONTAINER,
             [
                 'label' => '',
@@ -1222,7 +1252,7 @@ HTML
                 </a>
 HTML
                 ,
-                'field_extra_attributes' => 'id="'.$name.'_actions_tr" style="display: none;"',
+                'field_extra_attributes' => 'id="' . $name . '_actions_tr" style="display: none;"',
             ]
         );
     }
@@ -1243,16 +1273,16 @@ HTML
                 'text',
                 [
                     'data' => [
-                        'name'  => $name.'_name[]',
+                        'name'  => $name . '_name[]',
                         'value' => $value,
-                        'onkeyup' => 'WalmartTemplateDescriptionObj.multi_element_keyup(\''.$name.'\',this)',
+                        'onkeyup' => 'WalmartTemplateDescriptionObj.multi_element_keyup(\'' . $name . '\',this)',
                         'class' => 'M2ePro-required-when-visible',
-                        'style' => 'width: 49%',
-                        'css_class' => $name.'_tr no-margin-bottom'
+                        'css_class' => $name . '_tr no-margin-bottom',
+                        'after_element_html' => ' /',
                     ]
                 ]
             );
-            $nameBlock->setId($name.'_name_'.$i);
+            $nameBlock->setId($name . '_name_' . $i);
             $nameBlock->setForm($fieldSet->getForm());
 
             $value = '';
@@ -1264,43 +1294,49 @@ HTML
                 'text',
                 [
                     'data' => [
-                        'name' => $name.'_value[]',
+                        'name' => $name . '_value[]',
                         'value' => $value,
-                        'onkeyup' => 'WalmartTemplateDescriptionObj.multi_element_keyup(\''.$name.'\',this)',
+                        'onkeyup' => 'WalmartTemplateDescriptionObj.multi_element_keyup(\'' . $name . '\',this)',
                         'class' => 'M2ePro-required-when-visible',
-                        'style' => 'width: 49%',
-                        'css_class' => $name.'_tr no-margin-bottom',
+                        'css_class' => $name . '_tr no-margin-bottom',
                         'tooltip' => $this->__('Max. 100 characters.')
                     ]
                 ]
             );
-            $valueBlock->setId($name.'_value_'.$i);
+            $valueBlock->setId($name . '_value_' . $i);
             $valueBlock->setForm($fieldSet->getForm());
 
             $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
-                'label' => $this->__('Insert Attribute'),
-                'destination_id' => $name.'_value_'.$i,
+                'label' => $this->__('Insert'),
+                'destination_id' => $name . '_value_' . $i,
                 'magento_attributes' => $this->getClearAttributesByInputTypesOptions(),
-                'on_click_callback' => "function() {
-                    WalmartTemplateDescriptionObj.multi_element_keyup('{$name}',$('{$name}_value_{$i}'));
-                }",
+                'on_click_callback' => "WalmartTemplateDescriptionObj.multi_element_keyup
+                                        ('{$name}',$('{$name}_value_{$i}'));",
                 'class' => 'primary attributes-container-td',
-                'style' => 'display: inline-block; margin: 0;',
-                'select_custom_attributes' => [
-                    'allowed_attribute_types' => 'text,select',
-                    'apply_to_all_attribute_sets' => 0
-                ]
+                'style' => 'display: inline-block; margin-left: 5px;',
             ]);
 
+            $selectAttrBlock = $this->elementFactory->create(self::SELECT, [
+                'data' => [
+                    'values' => $this->getClearAttributesByInputTypesOptions('text_select'),
+                    'class'  => 'M2ePro-required-when-visible magento-attribute-custom-input',
+                    'create_magento_attribute' => true
+                ]
+            ])->addCustomAttribute('allowed_attribute_types', 'text,select')
+                ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
+
+            $selectAttrBlock->setId('selectAttr_' . $name . '_value_' . $i);
+            $selectAttrBlock->setForm($fieldSet->getForm());
+
             $fieldSet->addField(
-                'attributes_container_'.$i,
+                'attributes_container_' . $i,
                 self::CUSTOM_CONTAINER,
-                [
+                [   'container_id'=>'custom_title_tr',
                     'label' => $this->__('Attributes (name / value) #%number%', $i + 1),
                     'title' => $this->__('Attributes (name / value) #%number%', $i + 1),
-                    'style' => 'padding-top: 0; width: 70%; display: inline-block;',
+                    'style' => 'display: inline-block;',
                     'text' => $nameBlock->toHtml() . $valueBlock->toHtml(),
-                    'after_element_html' => $button->toHtml(),
+                    'after_element_html' => $selectAttrBlock->toHtml() . $button->toHtml(),
                     'css_class' => 'attributes_tr',
                     'field_extra_attributes' => 'style="display: none;"'
                 ]
@@ -1308,7 +1344,7 @@ HTML
         }
 
         $fieldSet->addField(
-            $name.'_actions',
+            $name . '_actions',
             self::CUSTOM_CONTAINER,
             [
                 'label' => '',
@@ -1326,7 +1362,7 @@ HTML
                 </a>
 HTML
                 ,
-                'field_extra_attributes' => 'id="'.$name.'_actions_tr" style="display: none;"',
+                'field_extra_attributes' => 'id="' . $name . '_actions_tr" style="display: none;"',
             ]
         );
     }
@@ -1334,18 +1370,12 @@ HTML
     private function getMultiElementButton($type, $index)
     {
         return $this->createBlock('Magento_Button_MagentoAttribute')->addData([
-            'label' => $this->__('Insert Attribute'),
-            'destination_id' => $type.'_'.$index,
-            'magento_attributes' => $this->getClearAttributesByInputTypesOptions(),
-            'on_click_callback' => "function() {
-                WalmartTemplateDescriptionObj.multi_element_keyup('{$type}',$('{$type}_{$index}'));
-            }",
+            'label' => $this->__('Insert'),
+            'destination_id' => $type . '_' . $index,
+            'on_click_callback' => "WalmartTemplateDescriptionObj.multi_element_keyup
+                                    ('{$type}',$('{$type}_{$index}'));",
             'class' => 'primary attributes-container-td',
-            'style' => 'margin: 0;',
-            'select_custom_attributes' => [
-                'allowed_attribute_types' => 'text,select',
-                'apply_to_all_attribute_sets' => 0
-            ]
+            'style' => 'display: inline-block;',
         ]);
     }
 

@@ -907,7 +907,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
      */
     public function canSendMagentoCreditmemo()
     {
-        if (!$this->getAmazonAccount()->getMarketplace()->getChildObject()->isUploadInvoicesAvailable()) {
+        if (!$this->getAmazonAccount()->getMarketplace()->getChildObject()->isVatCalculationServiceAvailable()) {
             return false;
         }
 
@@ -963,7 +963,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
      */
     public function canSendMagentoInvoice()
     {
-        if (!$this->getAmazonAccount()->getMarketplace()->getChildObject()->isUploadInvoicesAvailable()) {
+        if (!$this->getAmazonAccount()->getMarketplace()->getChildObject()->isVatCalculationServiceAvailable()) {
             return false;
         }
 
@@ -1016,7 +1016,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
     public function canSendInvoiceFromReport()
     {
-        if (!$this->getAmazonAccount()->getMarketplace()->getChildObject()->isUploadInvoicesAvailable()) {
+        if (!$this->getAmazonAccount()->getMarketplace()->getChildObject()->isVatCalculationServiceAvailable()) {
             return false;
         }
 

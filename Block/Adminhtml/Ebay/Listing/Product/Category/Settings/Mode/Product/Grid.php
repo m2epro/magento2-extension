@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Product;
 
-use Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
-use Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
-
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Product\Grid
  */

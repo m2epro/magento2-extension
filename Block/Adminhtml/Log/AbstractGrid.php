@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Log;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid as WidgetAbstractGrid;
+use \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
@@ -18,11 +19,16 @@ abstract class AbstractGrid extends WidgetAbstractGrid
     const LISTING_ID_FIELD                = 'listing_id';
     const LISTING_PRODUCT_ID_FIELD        = 'listing_product_id';
     const LISTING_PARENT_PRODUCT_ID_FIELD = 'parent_listing_product_id';
+    const ORDER_ID_FIELD                  = 'order_id';
 
     protected $resourceConnection;
 
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct = null;
+
+    protected $messageCount = [];
+    protected $entityIdFieldName;
+    protected $logModelName;
 
     //########################################
 
@@ -86,6 +92,17 @@ abstract class AbstractGrid extends WidgetAbstractGrid
     {
         $listingProductId = $this->getRequest()->getParam($this::LISTING_PRODUCT_ID_FIELD);
         return !empty($listingProductId);
+    }
+
+    public function isSingleOrderLog()
+    {
+        return $this->getRequest()->getParam(self::ORDER_ID_FIELD);
+    }
+
+    public function isNeedCombineMessages()
+    {
+        return !$this->isListingProductLog() && !$this->isSingleOrderLog() &&
+            $this->getRequest()->getParam('only_unique_messages', true);
     }
 
     //########################################
@@ -205,18 +222,37 @@ abstract class AbstractGrid extends WidgetAbstractGrid
 
         $renderedText = $this->stripTags($fullDescription, '<br>');
         if (strlen($renderedText) < 200) {
-            return $fullDescription;
-        }
+            $html = $fullDescription;
+        } else {
+            $renderedText = $this->filterManager->truncate($renderedText, ['length' => 200]);
 
-        $renderedText = $this->filterManager->truncate($renderedText, ['length' => 200]);
-
-        return <<<HTML
+            $html = <<<HTML
 {$renderedText}
 <a href="javascript://" onclick="LogObj.showFullText(this);">
     {$this->__('more')}
 </a>
 <div class="no-display">{$fullDescription}</div>
 HTML;
+        }
+
+        $countHtml = '';
+
+        if (isset($this->messageCount[$row[$this->entityIdFieldName]])) {
+            $colorMap = [
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE  => 'gray',
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'green',
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 'orange',
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR   => 'red',
+            ];
+
+            $count = $this->messageCount[$row[$this->entityIdFieldName]][$row['description']]['count'];
+            if ($count > 1) {
+                $color = $colorMap[$row['type']];
+                $countHtml = " <span style='color: {$color}; font-weight: bold'>({$count})</span>";
+            }
+        }
+
+        return $html . $countHtml;
     }
 
     //########################################
@@ -249,6 +285,21 @@ HTML;
         $this->js->addRequireJs(['l' => 'M2ePro/Log'], "window.LogObj = new Log();");
 
         return parent::_toHtml();
+    }
+
+    //########################################
+
+    protected function prepareMessageCount(AbstractCollection $collection)
+    {
+        $select = clone $collection->getSelect();
+        $select->columns(['number' => 'COUNT(*)']);
+        $stmt = $select->query();
+
+        while ($log = $stmt->fetch()) {
+            if ($log[$this->entityIdFieldName]) {
+                $this->messageCount[$log[$this->entityIdFieldName]][$log['description']]['count'] = $log['number'];
+            }
+        }
     }
 
     //########################################

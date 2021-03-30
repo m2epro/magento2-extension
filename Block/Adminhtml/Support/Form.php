@@ -49,7 +49,7 @@ class Form extends AbstractForm
                 terms and conditions will be sent to your request.</p>
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/u4AVAQ'),
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('help/m2'),
                 $this->getHelper('Module\Support')->getKnowledgebaseUrl(),
                 $this->getHelper('Module\Support')->getIdeasUrl(),
                 $this->getHelper('Module\Support')->getForumUrl()

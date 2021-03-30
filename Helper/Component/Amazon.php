@@ -22,7 +22,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
     const MARKETPLACE_CA = 24;
     const MARKETPLACE_DE = 25;
     const MARKETPLACE_US = 29;
-    const MARKETPLACE_JP = 27;
+    const MARKETPLACE_JP = 42;
     const MARKETPLACE_CN = 32;
 
     protected $regionCollection;

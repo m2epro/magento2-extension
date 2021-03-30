@@ -24,7 +24,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         // tab: general
         // ---------------------------------------
         $keys = [
-            'mode',
             'title',
             'marketplace_id',
             'consumer_id',
@@ -273,6 +272,21 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
+        // refund & cancellation
+        // ---------------------------------------
+        $tempKey = 'refund_and_cancellation';
+        $tempSettings = !empty($this->rawData['magento_orders_settings'][$tempKey])
+            ? $this->rawData['magento_orders_settings'][$tempKey] : [];
+
+        $keys = [
+            'refund_mode',
+        ];
+        foreach ($keys as $key) {
+            if (isset($tempSettings[$key])) {
+                $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
+            }
+        }
+
         $data['magento_orders_settings'] = $this->getHelper('Data')->jsonEncode($data['magento_orders_settings']);
 
         // tab invoice and shipment
@@ -309,7 +323,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     public function getDefaultData()
     {
         return [
-            'mode'           => \Ess\M2ePro\Model\Walmart\Account::MODE_PRODUCTION,
             'title'          => '',
             'marketplace_id' => 0,
             'consumer_id'    => '',
@@ -331,7 +344,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                 ],
                 'listing_other'  => [
                     'mode'                 => 1,
-                    'product_mode'         => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT,
+                    'product_mode'         => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE,
                     'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
                     'store_id'             => null,
                 ],
@@ -358,7 +371,10 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                     'mode'       => Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT,
                     'processing' => Account::MAGENTO_ORDERS_STATUS_MAPPING_PROCESSING,
                     'shipped'    => Account::MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED,
-                ]
+                ],
+                'refund_and_cancellation' => [
+                    'refund_mode' => 1,
+                ],
             ],
             'create_magento_invoice'  => 1,
             'create_magento_shipment' => 1,
