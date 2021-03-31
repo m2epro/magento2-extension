@@ -18,7 +18,9 @@ abstract class AbstractModel
     protected $supportedVersionPatterns = [
         '6.8.*',
         '6.9.*',
-        '6.10.*'
+        '6.10.*',
+        '6.11.*',
+        '6.12.*'
     ];
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */

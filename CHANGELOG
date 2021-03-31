@@ -1,4 +1,8 @@
-* 1.12.1 (r4687) (30/03/2021) 
+* 1.12.2 (r4702) (31/03/2021) 
+
+Common: [Common][Added] Support for migration from 6.11.* and 6.12.* versions [M2-1157]
+
+* 1.12.1 (r4674) (23/03/2021)
 
 eBay: [Fixed] "Use eBay Catalog Item Data" option is set to Yes in Description Policy despite the value in "m2epro_ebay_template_description" table [M2-1106]
 eBay: [Improved] Managed Payments option for Italy, France, Spain, eBay Motors marketplaces [M2-1041]
