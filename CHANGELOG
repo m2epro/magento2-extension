@@ -1,6 +1,10 @@
-* 1.12.2 (r4702) (31/03/2021) 
+* 1.12.3 (r4706) (31/03/2021) 
 
-Common: [Common][Added] Support for migration from 6.11.* and 6.12.* versions [M2-1157]
+Common: [Fixed] SQLSTATE[HY000]: General error in zendframework1/library/Zend/Db/Statement/Pdo.php:254 after upgrade [M2-1141]
+
+* 1.12.2 (r4701) (31/03/2021)
+
+Common: [Added] Support for migration from 6.11.* and 6.12.* versions [M2-1157]
 
 * 1.12.1 (r4674) (23/03/2021)
 

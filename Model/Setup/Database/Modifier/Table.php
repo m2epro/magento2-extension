@@ -615,7 +615,7 @@ class Table extends AbstractModifier
     private function changeRowFormat()
     {
         $sql = sprintf('ALTER TABLE %s ROW_FORMAT = DYNAMIC', $this->tableName);
-        $this->connection->query($sql)->fetch();
+        $this->connection->query($sql)->execute();
     }
 
     //########################################
