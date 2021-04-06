@@ -300,7 +300,7 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
         $products["{$optionId}::{$valueId}"] = $this->magentoValue['product_ids'];
     }
 
-    private function getGroupedAssociatedProduct()
+    public function getGroupedAssociatedProduct()
     {
         $variationName = array_shift($this->channelOptions);
 
