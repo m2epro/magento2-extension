@@ -97,7 +97,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
 
         if ($this->getResponse()->getMessages() && $this->getResponse()->getMessages()->hasErrorEntities()) {
             //try to download inventory again in an hour
-            $newSynchDate = date('Y-m-d H:i:s', strtotime($acc->getData('inventory_last_synchronization')) + 3600);
+            $newSynchDate = date('Y-m-d H:i:s', strtotime($newSynchDate) + 3600);
         }
 
         $acc->setData('inventory_last_synchronization', $newSynchDate)->save();

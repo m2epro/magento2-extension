@@ -17,29 +17,34 @@ class Currency extends AbstractModel
 {
     protected $storeManager;
     protected $currency;
+    protected $currencyHelper;
 
     //########################################
 
     public function __construct(
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\Locale\CurrencyInterface $currency,
+        \Magento\Directory\Helper\Data $currencyHelper,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         Factory $modelFactory
     ) {
         $this->storeManager = $storeManager;
         $this->currency = $currency;
+        $this->currencyHelper = $currencyHelper;
         parent::__construct($helperFactory, $modelFactory);
     }
 
     public function isBase($currencyCode, $store)
     {
         $baseCurrency = $this->storeManager->getStore($store)->getBaseCurrencyCode();
+
         return $baseCurrency == $currencyCode;
     }
 
     public function isAllowed($currencyCode, $store)
     {
         $allowedCurrencies = $this->storeManager->getStore($store)->getAvailableCurrencyCodes();
+
         return in_array($currencyCode, $allowedCurrencies);
     }
 
@@ -98,6 +103,11 @@ class Currency extends AbstractModel
     public function formatPrice($currencyName, $priceValue)
     {
         return $this->currency->getCurrency($currencyName)->toCurrency($priceValue);
+    }
+
+    public function convertPriceToCurrency($price, $currentCurrency, $toCurrency)
+    {
+        return $this->currencyHelper->currencyConvert($price, $currentCurrency, $toCurrency);
     }
 
     //########################################

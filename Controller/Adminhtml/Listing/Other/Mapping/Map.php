@@ -28,27 +28,26 @@ class Map extends Listing
 
     public function execute()
     {
-        $componentMode = $this->getRequest()->getParam('componentMode');
-        $productId = $this->getRequest()->getPost('productId');
-        $sku = $this->getRequest()->getPost('sku');
-        $productOtherId = $this->getRequest()->getPost('otherProductId');
+        $componentMode = $this->getRequest()->getParam('component_mode');
+        $productId = $this->getRequest()->getPost('product_id');
+        $productOtherId = $this->getRequest()->getPost('other_product_id');
 
-        if ((!$productId && !$sku) || !$productOtherId || !$componentMode) {
-            return;
+        if (!$productId || !$productOtherId || !$componentMode) {
+            $this->setJsonContent(['result' => false]);
+            return $this->getResult();
         }
 
         $collection = $this->productFactory->create()->getCollection();
 
         $productId && $collection->addFieldToFilter('entity_id', $productId);
-        $sku && $collection->addFieldToFilter('sku', $sku);
 
-        $tempData = $collection->getSelect()->query()->fetch();
-        if (!$tempData) {
-            $this->setAjaxContent('1', false);
+        $magentoCatalogProductModel = $collection->getFirstItem();
+        if ($magentoCatalogProductModel->isEmpty()) {
+            $this->setJsonContent(['result' => false]);
             return $this->getResult();
         }
 
-        $productId || $productId = $tempData['entity_id'];
+        $productId || $productId = $magentoCatalogProductModel->getId();
 
         $productOtherInstance = $this->parentFactory->getObjectLoaded(
             $componentMode,
@@ -58,7 +57,7 @@ class Map extends Listing
 
         $productOtherInstance->mapProduct($productId);
 
-        $this->setAjaxContent('0', false);
+        $this->setJsonContent(['result' => true]);
         return $this->getResult();
     }
 }

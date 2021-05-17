@@ -31,8 +31,8 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
         $itemsForRefund = [];
 
         $refundReason = $this->isOrderStatusShipped($order) || $order->isOrderStatusUpdatingToShipped() ?
-                        self::AMAZON_REFUND_REASON_CUSTOMER_RETURN :
-                        self::AMAZON_REFUND_REASON_NO_INVENTORY;
+            self::AMAZON_REFUND_REASON_CUSTOMER_RETURN :
+            self::AMAZON_REFUND_REASON_NO_INVENTORY;
 
         /** @var \Ess\M2ePro\Model\Order\ProxyObject $proxy */
         $proxy = $order->getProxy()->setStore($order->getStore());
@@ -97,7 +97,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
                 }
 
                 $price = $creditmemoItem->getPriceInclTax();
-                $tax   = $creditmemoItem->getTaxAmount();
+                $tax = $creditmemoItem->getTaxAmount();
 
                 if ($price > $item->getChildObject()->getPrice()) {
                     $price = $item->getChildObject()->getPrice();
@@ -108,23 +108,23 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
                 }
 
                 $itemForRefund = [
-                    'item_id'  => $orderItemId,
-                    'reason'   => $refundReason,
-                    'qty'      => $itemQty,
-                    'prices'   => [
+                    'item_id' => $orderItemId,
+                    'reason'  => $refundReason,
+                    'qty'     => $itemQty,
+                    'prices'  => [
                         'product' => $price,
                     ],
-                    'taxes'    => [
+                    'taxes'   => [
                         'product' => $tax,
                     ],
                 ];
 
                 if ($fullShippingCostRefunded) {
-                    $itemToRefund['prices']['shipping'] = $item->getChildObject()->getShippingPrice();
+                    $itemForRefund['prices']['shipping'] = $item->getChildObject()->getShippingPrice();
                 }
 
                 if ($fullShippingTaxRefunded || ($fullShippingCostRefunded && $isTaxAddedToShippingCost)) {
-                    $itemToRefund['taxes']['shipping'] = $item->getChildObject()->getShippingTaxAmount();
+                    $itemForRefund['taxes']['shipping'] = $item->getChildObject()->getShippingTaxAmount();
                 }
 
                 $itemsForRefund[] = $itemForRefund;

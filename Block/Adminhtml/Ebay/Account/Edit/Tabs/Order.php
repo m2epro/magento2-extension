@@ -170,7 +170,7 @@ HTML
                 ],
                 'value'   => $formData['magento_orders_settings']['listing_other']['mode'],
                 'tooltip' => $this->__(
-                    'Choose whether a Magento Order should be created if an eBay Order is received for an item 
+                    'Choose whether a Magento Order should be created if an eBay Order is received for an item
                     that does <b>not</b> belong to the M2E Pro Listing.'
                 )
             ]
@@ -225,7 +225,7 @@ HTML
                     [
                         'type'    => \Magento\Framework\Message\MessageInterface::TYPE_NOTICE,
                         'content' => $this->__(
-                            'Please note that a new Magento Product will be created 
+                            'Please note that a new Magento Product will be created
                             if the corresponding SKU is not found in your Catalog.'
                         )
                     ]
@@ -566,7 +566,7 @@ HTML
                 'tooltip'      => $this->__(
                     'Enable to cancel or refund eBay orders and automatically update their statuses on the Channel.
                     Find more details <a href="%url%" target="_blank">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationUrl()
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/aAL9AQ')
                 )
             ]
         );

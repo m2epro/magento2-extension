@@ -21,18 +21,28 @@ class Action extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Ac
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Helper\Factory $helperFactory,
         Renderer\CssRenderer $css,
         Renderer\JsPhpRenderer $jsPhp,
         Renderer\JsRenderer $js,
         Renderer\JsTranslatorRenderer $jsTranslatorRenderer,
         Renderer\JsUrlRenderer $jsUrlRenderer,
         \Magento\Backend\Block\Context $context,
-        \Magento\Framework\Json\EncoderInterface
-        $jsonEncoder,
+        \Magento\Framework\Json\EncoderInterface $jsonEncoder,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         array $data = []
     ) {
-        parent::__construct($css, $jsPhp, $js, $jsTranslatorRenderer, $jsUrlRenderer, $context, $jsonEncoder, $data);
+        parent::__construct(
+            $helperFactory,
+            $css,
+            $jsPhp,
+            $js,
+            $jsTranslatorRenderer,
+            $jsUrlRenderer,
+            $context,
+            $jsonEncoder,
+            $data
+        );
         $this->ebayFactory = $ebayFactory;
     }
 

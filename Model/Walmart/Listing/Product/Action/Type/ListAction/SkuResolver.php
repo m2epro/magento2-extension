@@ -45,12 +45,14 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
         $this->listingProduct = $listingProduct;
+
         return $this;
     }
 
     public function setSkusInCurrentRequest(array $skus)
     {
         $this->skusInCurrentRequest = $skus;
+
         return $this;
     }
 
@@ -72,6 +74,7 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
 
         if (empty($sku)) {
             $this->addMessage('SKU is not provided. Please, check Listing Settings.');
+
             return null;
         }
 
@@ -108,6 +111,7 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
     private function getRandomSku()
     {
         $hash = sha1(rand(0, 10000) . microtime(1));
+
         return $this->getUnifiedSku() . '_' . substr($hash, 0, 10);
     }
 
@@ -135,6 +139,7 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
                 'Another Product with the same SKU is being Listed simultaneously with this one.
                 Please change the SKU or enable the Option Generate Merchant SKU.'
             );
+
             return true;
         }
 
@@ -143,6 +148,7 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
                 'Product with the same SKU is found in other M2E Pro Listing that is created
                  from the same Merchant ID for the same Marketplace.'
             );
+
             return true;
         }
 
@@ -151,6 +157,7 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
                 'Product with the same SKU is found in M2E Pro Unmanaged Listing.
                 Please change the SKU or enable the Option Generate Merchant SKU.'
             );
+
             return true;
         }
 
@@ -210,9 +217,12 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
         $processingActionListCollection = $this->activeRecordFactory
             ->getObject('Walmart_Listing_Product_Action_ProcessingList')
             ->getCollection();
-        $processingActionListCollection->addFieldToFilter('account_id', $this->getListingProduct()
-                                                                                ->getListing()
-                                                                                ->getAccountId());
+        $processingActionListCollection->addFieldToFilter(
+            'account_id',
+            $this->getListingProduct()
+                ->getListing()
+                ->getAccountId()
+        );
 
         return $this->skusInProcessing = $processingActionListCollection->getColumnValues('sku');
     }
@@ -238,7 +248,6 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
 
             if (!empty($sku)) {
                 $sku = $this->applySkuModification($sku);
-                $sku = $this->removeUnsupportedCharacters($sku);
             }
 
             /**
@@ -274,7 +283,6 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
 
         if (!empty($sku)) {
             $sku = $this->applySkuModification($sku);
-            $sku = $this->removeUnsupportedCharacters($sku);
         }
 
         return $sku;
@@ -299,28 +307,6 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $sku;
-    }
-
-    private function removeUnsupportedCharacters($sku)
-    {
-        if (!preg_match('/[.\s-]/', $sku)) {
-            return $sku;
-        }
-
-        $newSku = preg_replace('/[.\s-]/', '_', $sku);
-        $this->addMessage(
-            sprintf(
-                'The Item SKU will be automatically changed to "%s".
-                Special characters, i.e. hyphen (-), space ( ), and period (.), are not allowed by Walmart and
-                will be replaced with the underscore ( _ ).
-                The Item will remain associated with Magento Product "%s".',
-                $newSku,
-                $sku
-            ),
-            \Ess\M2ePro\Model\Response\Message::TYPE_WARNING
-        );
-
-        return $newSku;
     }
 
     //########################################

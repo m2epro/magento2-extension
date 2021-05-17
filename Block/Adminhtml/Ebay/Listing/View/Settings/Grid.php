@@ -78,15 +78,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $collection->setListing($this->listing);
         $collection->setStoreId($this->listing->getStoreId());
 
-        if ($this->isFilterOrSortByPriceIsUsed(null, 'ebay_online_current_price')) {
-            $collection->setIsNeedToUseIndexerParent(true);
-        }
-
         $collection->addAttributeToSelect('sku');
         $collection->addAttributeToSelect('name');
 
-        // Join listing product tables
-        // ---------------------------------------
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
         $collection->joinTable(
             ['lp' => $lpTable],
@@ -226,10 +220,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             );
         }
 
-        // ---------------------------------------
-
-        // Set collection to grid
-        if ($collection->isNeedUseIndexerParent()) {
+        if ($this->isFilterOrSortByPriceIsUsed(null, 'ebay_online_current_price')) {
             $collection->joinIndexerParent();
         }
 
@@ -950,6 +941,15 @@ HTML;
                 'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editMotorsAction\']'
             ];
         }
+
+        $actions['remapProduct'] = [
+            'caption'            => $this->__('Link to another Magento Product'),
+            'group'              => 'other',
+            'field'              => 'id',
+            'only_remap_product' => true,
+            'style'              => 'width: 215px',
+            'onclick_action'     => 'EbayListingViewSettingsGridObj.actions[\'remapProductAction\']'
+        ];
 
         // ---------------------------------------
 

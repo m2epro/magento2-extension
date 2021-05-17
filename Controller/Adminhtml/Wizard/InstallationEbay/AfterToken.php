@@ -9,26 +9,29 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay;
 
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay;
-use Ess\M2ePro\Model\Ebay\Account as AccountModel;
+use Ess\M2ePro\Model\Ebay\Account as EbayAccount;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay\AfterToken
  */
 class AfterToken extends InstallationEbay
 {
+    //########################################
+    
     public function execute()
     {
         $tokenSessionId = $this->getHelper('Data\Session')->getValue('token_session_id', true);
 
         if (!$tokenSessionId) {
             $this->messageManager->addError($this->__('Token is not defined'));
+
             return $this->_redirect('*/*/installation');
         }
 
         $accountMode = $this->getRequest()->getParam('mode');
 
-        $requestParams = [
-            'mode' => $accountMode,
+        $params = [
+            'mode'          => $accountMode,
             'token_session' => $tokenSessionId
         ];
 
@@ -37,42 +40,44 @@ class AfterToken extends InstallationEbay
             'account',
             'add',
             'entity',
-            $requestParams,
+            $params,
             null,
             null,
             null
         );
 
         $dispatcherObject->process($connectorObj);
-        $response = array_filter($connectorObj->getResponseData());
+        $responseData = array_filter($connectorObj->getResponseData());
 
-        if (empty($response)) {
+        if (empty($responseData)) {
             $this->messageManager->addError($this->__('Account Add Entity failed.'));
+
             return $this->_redirect('*/*/installation');
         }
 
         if ($accountMode == 'sandbox') {
-            $accountMode = AccountModel::MODE_SANDBOX;
+            $accountMode = EbayAccount::MODE_SANDBOX;
         } else {
-            $accountMode = AccountModel::MODE_PRODUCTION;
+            $accountMode = EbayAccount::MODE_PRODUCTION;
         }
 
         $data = array_merge(
             $this->getEbayAccountDefaultSettings(),
             [
-                'title' => $response['info']['UserID'],
-                'user_id' => $response['info']['UserID'],
-                'mode' => $accountMode,
-                'info' => $this->getHelper('Data')->jsonEncode($response['info']),
-                'server_hash' => $response['hash'],
+                'title'   => $responseData['info']['UserID'],
+                'user_id' => $responseData['info']['UserID'],
+                'mode'    => $accountMode,
+                'info'    => $this->getHelper('Data')->jsonEncode($responseData['info']),
+                'server_hash'   => $responseData['hash'],
                 'token_session' => $tokenSessionId,
-                'token_expired_date' => $response['token_expired_date']
+                'token_expired_date' => $responseData['token_expired_date']
             ]
         );
 
-        $accountModel = $this->ebayFactory->getObject('Account');
-        $this->modelFactory->getObject('Ebay_Account_Builder')->build($accountModel, $data);
-        $accountModel->getChildObject()->updateEbayStoreInfo();
+        /** @var \Ess\M2ePro\Model\Account $account */
+        $account = $this->ebayFactory->getObject('Account');
+        $this->modelFactory->getObject('Ebay_Account_Builder')->build($account, $data);
+        $account->getChildObject()->updateEbayStoreInfo();
 
         $this->setStep($this->getNextStep());
 
@@ -80,20 +85,20 @@ class AfterToken extends InstallationEbay
     }
 
     /**
-     * @return array
+     * @return mixed
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     private function getEbayAccountDefaultSettings()
     {
         $data = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
-
         $data['marketplaces_data'] = [];
-
         $data['other_listings_synchronization'] = 0;
-
         $data['magento_orders_settings']['listing_other']['store_id'] = $this->getHelper('Magento\Store')
             ->getDefaultStoreId();
         $data['magento_orders_settings']['qty_reservation']['days'] = 0;
 
         return $data;
     }
+
+    //########################################
 }

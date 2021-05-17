@@ -758,4 +758,11 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     }
 
     //########################################
+
+    public function mapChannelItemProduct()
+    {
+        $this->getResource()->mapChannelItemProduct($this);
+    }
+
+    //########################################
 }

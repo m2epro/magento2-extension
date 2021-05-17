@@ -44,9 +44,10 @@ abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\RealTime
         $request = parent::buildRequestInstance();
 
         $requestData = $request->getData();
-        if ($this->account !== null) {
+        if ($this->account !== null && $this->account->getId() !== null) {
             $requestData['account'] = $this->account->getChildObject()->getServerHash();
         }
+
         $request->setData($requestData);
 
         return $request;

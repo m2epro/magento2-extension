@@ -29,6 +29,7 @@ class Inactive extends AbstractModel
             \Ess\M2ePro\Model\Walmart\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_PROMOTIONS_DATA_CHANGED,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
+            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
             \Ess\M2ePro\Model\Walmart\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
             \Ess\M2ePro\Model\Walmart\Listing\Product::INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED,
             \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction\Response::INSTRUCTION_TYPE_CHECK_QTY,

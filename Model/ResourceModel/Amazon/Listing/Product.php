@@ -142,4 +142,35 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     }
 
     //########################################
+
+    public function mapChannelItemProduct(\Ess\M2ePro\Model\Amazon\Listing\Product $listingProduct)
+    {
+        $amazonItemTable = $this->activeRecordFactory->getObject('Amazon\Item')->getResource()->getMainTable();
+        $existedRelation = $this->getConnection()
+            ->select()
+            ->from(['ei' => $amazonItemTable])
+            ->where('`account_id` = ?', $listingProduct->getListing()->getAccountId())
+            ->where('`marketplace_id` = ?', $listingProduct->getListing()->getMarketplaceId())
+            ->where('`sku` = ?', $listingProduct->getSku())
+            ->where('`product_id` = ?', $listingProduct->getParentObject()->getProductId())
+            ->query()
+            ->fetchColumn();
+
+        if ($existedRelation) {
+            return;
+        }
+
+        $this->getConnection()->update(
+            $amazonItemTable,
+            ['product_id' => $listingProduct->getParentObject()->getProductId()],
+            [
+                'account_id = ?' => $listingProduct->getListing()->getAccountId(),
+                'marketplace_id = ?' => $listingProduct->getListing()->getMarketplaceId(),
+                'sku = ?' => $listingProduct->getSku(),
+                'product_id = ?' => $listingProduct->getParentObject()->getOrigData('product_id')
+            ]
+        );
+    }
+
+    //########################################
 }

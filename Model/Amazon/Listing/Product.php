@@ -1194,4 +1194,11 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     }
 
     //########################################
+
+    public function mapChannelItemProduct()
+    {
+        $this->getResource()->mapChannelItemProduct($this);
+    }
+
+    //########################################
 }

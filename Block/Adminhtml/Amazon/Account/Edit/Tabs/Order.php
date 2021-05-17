@@ -663,6 +663,33 @@ HTML
         );
 
         $fieldset->addField(
+            'magento_orders_tax_amazon_collects_for_uk_shipment',
+            'select',
+            [
+                'container_id'       => 'magento_orders_tax_amazon_collects_for_uk_shipment_container',
+                'name'               => 'magento_orders_settings[tax][amazon_collect_for_uk]',
+                'label'              => $this->__('Skip Tax in UK Orders'),
+                'values'             => [
+                    Account::SKIP_TAX_FOR_UK_SHIPMENT_NONE               => $this->__('None'),
+                    Account::SKIP_TAX_FOR_UK_SHIPMENT                    => $this->__('All orders with UK shipments'),
+                    Account::SKIP_TAX_FOR_UK_SHIPMENT_WITH_CERTAIN_PRICE => $this->__(
+                        'Orders under 135GBP price'
+                    )
+                ],
+                'value'              => $formData['magento_orders_settings']['tax']['amazon_collect_for_uk'],
+                'after_element_html' => $this->getTooltipHtml(
+                    $this->__(
+                        'The option allows skipping tax for orders with UK shipment.</br></br>
+<strong>None</strong> - the tax won\'t be skipped and will be displayed in all orders.</br></br>
+<strong>All orders with UK shipments</strong> - M2E Pro will skip tax for all orders with UK shipments.</br></br>
+<strong>Orders under 135GBP price</strong> - 
+M2E Pro will skip tax only for orders with a total price of all products under 135GBP price.'
+                    )
+                )
+            ]
+        );
+
+        $fieldset->addField(
             'magento_orders_tax_excluded_states',
             'hidden',
             [

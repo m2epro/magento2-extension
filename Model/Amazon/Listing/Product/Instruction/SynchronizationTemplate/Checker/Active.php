@@ -27,6 +27,7 @@ class Active extends AbstractModel
             ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_STATUS_DATA_POTENTIALLY_CHANGED,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
+            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
             \Ess\M2ePro\Model\Amazon\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
             \Ess\M2ePro\Model\Amazon\Listing\Product::INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED,
             \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
@@ -151,23 +152,15 @@ class Active extends AbstractModel
             }
         }
 
-        if ($this->input->hasInstructionWithTypes($this->getRevisePriceRegularInstructionTypes())) {
-            if ($this->isMeetRevisePriceRegularRequirements()) {
-                $configurator->allowRegularPrice();
-                $tags['price_regular'] = true;
-            } else {
-                $configurator->disallowRegularPrice();
-                unset($tags['price_regular']);
-            }
-        }
+        $priceInstructionTypes = array_merge(
+            $this->getRevisePriceRegularInstructionTypes(),
+            $this->getRevisePriceBusinessInstructionTypes()
+        );
 
-        if ($this->input->hasInstructionWithTypes($this->getRevisePriceBusinessInstructionTypes())) {
-            if ($this->isMeetRevisePriceBusinessRequirements()) {
-                $configurator->allowBusinessPrice();
-                $tags['price_business'] = true;
-            } else {
-                $configurator->disallowBusinessPrice();
-                unset($tags['price_business']);
+        if ($this->input->hasInstructionWithTypes($priceInstructionTypes)) {
+            if ($this->isMeetRevisePriceRegularRequirements() || $this->isMeetRevisePriceBusinessRequirements()) {
+                $configurator->allowRegularPrice()->allowBusinessPrice();
+                $tags['price'] = true;
             }
         }
 

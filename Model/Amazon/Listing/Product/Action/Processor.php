@@ -288,8 +288,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                                 }
                                 break;
 
-                            case 'price_regular':
-                            case 'price_business':
+                            case 'price':
                                 if ($listingProductConfigurator->isRegularPriceAllowed()) {
                                     $configurator->allowRegularPrice();
                                 }
@@ -585,8 +584,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                         $existedConfigurator->disallowRegularPrice();
                         $existedConfigurator->disallowBusinessPrice();
 
-                        unset($tags['price_regular']);
-                        unset($tags['price_business']);
+                        unset($tags['price']);
 
                         break;
 
@@ -736,8 +734,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 $this->getRelistQtyScheduledActionsPreparedCollection($merchantId)->getSelect(),
                 $this->getRelistPriceScheduledActionsPreparedCollection($merchantId)->getSelect(),
                 $this->getReviseQtyScheduledActionsPreparedCollection($merchantId)->getSelect(),
-                $this->getRevisePriceRegularScheduledActionsPreparedCollection($merchantId)->getSelect(),
-                $this->getRevisePriceBusinessScheduledActionsPreparedCollection($merchantId)->getSelect(),
+                $this->getRevisePriceScheduledActionsPreparedCollection($merchantId)->getSelect(),
                 $this->getReviseDetailsScheduledActionsPreparedCollection($merchantId)->getSelect(),
                 $this->getReviseImagesScheduledActionsPreparedCollection($merchantId)->getSelect(),
                 $this->getStopScheduledActionsPreparedCollection($merchantId)->getSelect(),
@@ -885,7 +882,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    protected function getRevisePriceRegularScheduledActionsPreparedCollection($merchantId)
+    protected function getRevisePriceScheduledActionsPreparedCollection($merchantId)
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $collection */
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
@@ -895,39 +892,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
             )
             ->joinAccountTable()
-            ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("'price_regular'"))
-            ->addTagFilter('price_regular', true)
-            ->addFieldToFilter('account.merchant_id', $merchantId);
-
-        if ($this->getHelper('Module')->isProductionEnvironment()) {
-            $minAllowedWaitInterval = (int)$this->getConfigValue(
-                '/amazon/listing/product/action/revise_price/',
-                'min_allowed_wait_interval'
-            );
-            $collection->addCreatedBeforeFilter($minAllowedWaitInterval);
-        }
-
-        return $collection;
-    }
-
-    /**
-     * @param $merchantId
-     * @return \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    protected function getRevisePriceBusinessScheduledActionsPreparedCollection($merchantId)
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $collection */
-        $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
-        $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Amazon::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::REVISE_PRICE_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-            )
-            ->joinAccountTable()
-            ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("'price_business'"))
-            ->addTagFilter('price_business', true)
+            ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("'price'"))
+            ->addTagFilter('price', true)
             ->addFieldToFilter('account.merchant_id', $merchantId);
 
         if ($this->getHelper('Module')->isProductionEnvironment()) {
@@ -1128,13 +1094,16 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 return [self::FEED_TYPE_ADD];
 
             case \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST:
-                $feedTypes = [
-                    self::FEED_TYPE_UPDATE_QTY
-                ];
+                $feedTypes = [];
+
+                if ($tag == 'qty') {
+                    $feedTypes[] = self::FEED_TYPE_UPDATE_QTY;
+                }
 
                 if ($tag == 'price') {
                     $feedTypes[] = self::FEED_TYPE_UPDATE_PRICE;
                 }
+
                 return $feedTypes;
 
             case \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE:
@@ -1144,7 +1113,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                     $feedTypes[] = self::FEED_TYPE_UPDATE_QTY;
                 }
 
-                if ($tag == 'price_regular' || $tag == 'price_business') {
+                if ($tag == 'price') {
                     $feedTypes[] = self::FEED_TYPE_UPDATE_PRICE;
                 }
 

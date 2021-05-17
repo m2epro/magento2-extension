@@ -15,6 +15,8 @@ use Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
  */
 class Save extends Account
 {
+    //########################################
+
     public function execute()
     {
         $post = $this->getRequest()->getPost();
@@ -24,26 +26,38 @@ class Save extends Account
         }
 
         $id = $this->getRequest()->getParam('id');
+        $data = $post->toArray();
 
-        $accountExists = $this->getExistsAccount($post['merchant_id'], $post['marketplace_id']);
-        if (empty($id) && !empty($accountExists)) {
-            $this->getMessageManager()->addError(
-                $this->__('An account with the same Amazon Merchant ID and Marketplace already exists.')
+        try {
+            $account = $id ? $this->updateAccount($id, $data) : $this->addAccount($data);
+        } catch (\Exception $exception) {
+            $this->getHelper('Module\Exception')->process($exception);
+
+            $message = $this->__(
+                'The Amazon access obtaining is currently unavailable.<br/>Reason: %error_message%',
+                $exception->getMessage()
             );
 
-            return $this->_redirect('*/*/new');
-        }
+            if ($this->isAjax()) {
+                $this->setJsonContent([
+                    'success' => false,
+                    'message' => $message
+                ]);
 
-        // Add or update model
-        // ---------------------------------------
-        $model = $this->updateAccount($id, $post->toArray());
+                return $this->getResult();
+            }
+
+            $this->messageManager->addError($message);
+
+            return $this->_redirect('*/amazon_account');
+        }
 
         // Repricing
         // ---------------------------------------
-        if (!empty($post['repricing']) && $model->getChildObject()->isRepricing()) {
+        if (!empty($post['repricing']) && $account->getChildObject()->isRepricing()) {
 
             /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing $repricingModel */
-            $repricingModel = $model->getChildObject()->getRepricing();
+            $repricingModel = $account->getChildObject()->getRepricing();
 
             /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing\SnapshotBuilder $snapshotBuilder */
             $snapshotBuilder = $this->modelFactory->getObject('Amazon_Account_Repricing_SnapshotBuilder');
@@ -76,37 +90,11 @@ class Save extends Account
         }
         // ---------------------------------------
 
-        try {
-            // Add or update server
-            // ---------------------------------------
-            $this->sendDataToServer($model);
-        } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
-
-            $error = $this->__(
-                'The Amazon access obtaining is currently unavailable.<br/>Reason: %error_message%',
-                $exception->getMessage()
-            );
-
-            $model->delete();
-
-            if ($this->isAjax()) {
-                $this->setJsonContent([
-                    'success' => false,
-                    'message' => $error
-                ]);
-                return $this->getResult();
-            }
-
-            $this->messageManager->addError($error);
-
-            return $this->_redirect('*/amazon_account');
-        }
-
         if ($this->isAjax()) {
             $this->setJsonContent([
                 'success' => true
             ]);
+
             return $this->getResult();
         }
 
@@ -115,27 +103,13 @@ class Save extends Account
         /** @var $wizardHelper \Ess\M2ePro\Helper\Module\Wizard */
         $wizardHelper = $this->getHelper('Module\Wizard');
 
-        $routerParams = ['id' => $model->getId(), '_current' => true];
+        $routerParams = ['id' => $account->getId(), '_current' => true];
         if ($wizardHelper->isActive(\Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK) &&
             $wizardHelper->getStep(\Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK) == 'account') {
             $routerParams['wizard'] = true;
         }
 
         return $this->_redirect($this->getHelper('Data')->getBackUrl('list', [], ['edit'=>$routerParams]));
-    }
-
-    protected function getExistsAccount($merchantId, $marketplaceId)
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $account */
-        $account = $this->amazonFactory->getObject('Account')->getCollection()
-            ->addFieldToFilter('merchant_id', $merchantId)
-            ->addFieldToFilter('marketplace_id', $marketplaceId);
-
-        if (!$account->getSize()) {
-            return null;
-        }
-
-        return $account->getFirstItem();
     }
 
     //########################################

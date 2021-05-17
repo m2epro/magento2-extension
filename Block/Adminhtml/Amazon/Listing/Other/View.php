@@ -95,11 +95,7 @@ HTML
         );
         // ---------------------------------------
 
-        $mapToProductBlock = $this->createBlock(
-            'Listing_Other_Mapping'
-        );
-
-        return $viewHeaderBlock->toHtml() . $mapToProductBlock->toHtml() . parent::getGridHtml();
+        return $viewHeaderBlock->toHtml() . parent::getGridHtml();
     }
 
     //########################################
@@ -109,6 +105,13 @@ HTML
         $componentMode = \Ess\M2ePro\Helper\Component\Amazon::NICK;
 
         $this->jsUrl->addUrls([
+            'mapProductPopupHtml' => $this->getUrl(
+                '*/listing_other_mapping/mapProductPopupHtml',
+                [
+                    'account_id'     => $this->getRequest()->getParam('account'),
+                    'marketplace_id' => $this->getRequest()->getParam('marketplace')
+                ]
+            ),
             'listing_other_mapping/map' => $this->getUrl('*/listing_other_mapping/map'),
 
             'prepareData' => $this->getUrl('*/listing_other_moving/prepareMoveToListing'),
@@ -140,9 +143,8 @@ HTML
                 'Map Item "%product_title%" with Magento Product'
             ),
             'Product does not exist.' => $this->__('Product does not exist.'),
-            'Please enter correct Product ID.' => $this->__('Please enter correct Product ID.'),
             'Product(s) was Mapped.' => $this->__('Product(s) was Mapped.'),
-            'Please enter correct Product ID or SKU' => $this->__('Please enter correct Product ID or SKU'),
+            'Mapping Product' => $this->__('Mapping Product'),
 
             'Current version only supports Simple Products. Please, choose Simple Product.' => $this->__(
                 'Current version only supports Simple Products. Please, choose Simple Product.'
@@ -184,7 +186,7 @@ HTML
             'p' => 'M2ePro/Plugin/ProgressBar',
             'a' => 'M2ePro/Plugin/AreaWrapper',
             'lm' => 'M2ePro/Listing/Moving',
-            'lom' => 'M2ePro/Listing/Other/Mapping',
+            'lom' => 'M2ePro/Listing/Mapping',
             'loa' => 'M2ePro/Listing/Other/AutoMapping',
             'lor' => 'M2ePro/Listing/Other/Removing',
             'lou' => 'M2ePro/Listing/Other/Unmapping',
@@ -197,8 +199,8 @@ HTML
         M2ePro.customData.componentMode = '{$componentMode}';
         M2ePro.customData.gridId = 'amazonListingOtherGrid';
 
-        window.AmazonListingOtherGridObj    = new AmazonListingOtherGrid('amazonListingOtherGrid');
-        window.AmazonListingOtherMappingObj = new ListingOtherMapping(AmazonListingOtherGridObj, 'amazon');
+        window.AmazonListingOtherGridObj = new AmazonListingOtherGrid('amazonListingOtherGrid');
+        window.ListingOtherMappingObj = new ListingMapping(AmazonListingOtherGridObj, 'amazon');
 
         AmazonListingOtherGridObj.movingHandler.setProgressBar('listing_other_progress_bar');
         AmazonListingOtherGridObj.movingHandler.setGridWrapper('listing_other_content_container');

@@ -204,16 +204,28 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
         }
 
         $value = $this->getHelper('Data')->escapeHtml($value);
+        $productId = (int)$row->getData('product_id');
 
+        $urlData = [
+            'id'     => $row->getData('listing_id'),
+            'filter' => base64_encode("product_id[from]={$productId}&product_id[to]={$productId}")
+        ];
+
+        $manageUrl = $this->getUrl('*/' . $row->getData('component_mode') . '_listing/view', $urlData);
         if ($row->getData('listing_id')) {
             $url = $this->getUrl(
-                '*/'.$row->getData('component_mode').'_listing/view',
+                '*/' . $row->getData('component_mode') . '_listing/view',
                 ['id' => $row->getData('listing_id')]
             );
 
-            $value = '<a target="_blank" href="'.$url.'">' .
+            $value = '<a target="_blank" href="' . $url . '">' .
                 $value .
-                '</a><br/>ID: '.$row->getData('listing_id');
+                '</a><br/>ID: ' . $row->getData('listing_id');
+
+            if ($productId) {
+                $value .= '<br/>Product:<br/>' .
+                    '<a target="_blank" href="' . $manageUrl . '">' . $row->getData('product_title') . '</a>';
+            }
         }
 
         return $value;
@@ -226,9 +238,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
         }
 
         $url = $this->getUrl('catalog/product/edit', ['id' => $row->getData('product_id')]);
-        $value = '<a target="_blank" href="'.$url.'" target="_blank">'.
-            $this->getHelper('Data')->escapeHtml($value).
-            '</a><br/>ID: '.$row->getData('product_id');
+        $value = '<a target="_blank" href="' . $url . '" target="_blank">' .
+            $this->getHelper('Data')->escapeHtml($value) .
+            '</a><br/>ID: ' . $row->getData('product_id');
 
         $additionalData = $this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
         if (empty($additionalData['variation_options'])) {
@@ -238,9 +250,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
         $value .= '<div style="font-size: 11px; color: grey;">';
         foreach ($additionalData['variation_options'] as $attribute => $option) {
             !$option && $option = '--';
-            $value .= '<strong>'.
+            $value .= '<strong>' .
                 $this->getHelper('Data')->escapeHtml($attribute) .
-                '</strong>:&nbsp;'.
+                '</strong>:&nbsp;' .
                 $this->getHelper('Data')->escapeHtml($option) . '<br/>';
         }
         $value .= '</div>';
@@ -258,9 +270,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
         $result = '<div style="font-size: 11px; color: grey;">';
         foreach ($additionalData['variation_options'] as $attribute => $option) {
             !$option && $option = '--';
-            $result .= '<strong>'.
+            $result .= '<strong>' .
                 $this->getHelper('Data')->escapeHtml($attribute) .
-                '</strong>:&nbsp;'.
+                '</strong>:&nbsp;' .
                 $this->getHelper('Data')->escapeHtml($option) . '<br/>';
         }
         $result .= '</div>';
@@ -289,7 +301,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
             return;
         }
 
-        $where = 'listing_title LIKE ' . $collection->getSelect()->getAdapter()->quote('%'. $value .'%');
+        $where = 'listing_title LIKE ' . $collection->getSelect()->getAdapter()->quote('%' . $value . '%');
         is_numeric($value) && $where .= ' OR listing_id = ' . $value;
 
         $collection->getSelect()->where($where);
@@ -303,7 +315,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
             return;
         }
 
-        $where = 'product_title LIKE ' . $collection->getSelect()->getAdapter()->quote('%'. $value .'%');
+        $where = 'product_title LIKE ' . $collection->getSelect()->getAdapter()->quote('%' . $value . '%');
         is_numeric($value) && $where .= ' OR product_id = ' . $value;
 
         $collection->getSelect()->where($where);
@@ -317,7 +329,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
             return;
         }
 
-        $collection->getSelect()->where('main_table.additional_data LIKE ?', '%'. $value .'%');
+        $collection->getSelect()->where('main_table.additional_data LIKE ?', '%' . $value . '%');
     }
 
     //########################################

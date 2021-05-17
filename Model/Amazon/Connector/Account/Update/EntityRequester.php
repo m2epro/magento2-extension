@@ -11,15 +11,21 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Account\Update;
 /**
  * Class \Ess\M2ePro\Model\Amazon\Connector\Account\Update\EntityRequester
  */
-class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
+class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 {
     //########################################
 
+    /**
+     * @return array
+     */
     protected function getRequestData()
     {
         return $this->params;
     }
 
+    /**
+     * @return array
+     */
     protected function getCommand()
     {
         return ['account','update','entity'];
@@ -27,9 +33,33 @@ class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending
 
     //########################################
 
-    protected function getProcessingRunnerModelName()
+    /**
+     * @return bool
+     */
+    protected function validateResponse()
     {
-        return 'Amazon_Connector_Account_Update_ProcessingRunner';
+        $responseData = $this->getResponse()->getResponseData();
+        if (!isset($responseData['info']) && !$this->getResponse()->getMessages()->hasErrorEntities()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function processResponseData()
+    {
+        foreach ($this->getResponse()->getMessages()->getEntities() as $message) {
+            if (!$message->isError()) {
+                continue;
+            }
+
+            throw new \Exception($message->getText());
+        }
+
+        $this->responseData = $this->getResponse()->getResponseData();
     }
 
     //########################################

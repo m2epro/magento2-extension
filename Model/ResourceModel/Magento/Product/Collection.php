@@ -21,11 +21,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
 
-    /** @var bool  */
-    protected $isNeedToInjectPrices = false;
+    /** @var string */
+    protected $componentMode;
 
     /** @var bool  */
-    protected $isNeedToUseIndexerParent = false;
+    protected $isNeedToInjectPrices = false;
 
     /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
@@ -116,21 +116,24 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         return $this;
     }
 
+    public function setComponentMode($componentMode)
+    {
+        $components = $this->helperFactory->getObject('Component')->getComponents();
+
+        if (!in_array($componentMode, $components)) {
+            throw new \Ess\M2ePro\Model\Exception\Logic(
+                "Wrong component provided [$componentMode]"
+            );
+        }
+
+        $this->componentMode = $componentMode;
+        return $this;
+    }
+
     public function setIsNeedToInjectPrices($value)
     {
         $this->isNeedToInjectPrices = $value;
         return $this;
-    }
-
-    public function setIsNeedToUseIndexerParent($value)
-    {
-        $this->isNeedToUseIndexerParent = $value;
-        return $this;
-    }
-
-    public function isNeedUseIndexerParent()
-    {
-        return $this->isNeedToUseIndexerParent;
     }
 
     //########################################
@@ -170,13 +173,13 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
     /**
      * @return int
+     * @throws \Zend_Db_Select_Exception
      */
     public function getSize()
     {
         if ($this->_totalRecords === null) {
             $this->_renderFilters();
-            $countSelect = $this->_getClearSelect()
-                ->reset(\Zend_Db_Select::HAVING);
+            $countSelect = $this->_getClearSelect();
 
             $tableAlias = 'lp';
 
@@ -194,6 +197,58 @@ SQL;
             $this->_totalRecords = $this->getConnection()->fetchOne($query, $this->_bindParams);
         }
         return intval($this->_totalRecords);
+    }
+
+    /**
+     * @return \Magento\Framework\DB\Select
+     * @throws \Zend_Db_Select_Exception
+     */
+    protected function _getClearSelect()
+    {
+        $havingColumns = $this->getHavingColumns();
+        $parentSelect  = parent::_getClearSelect();
+
+        if (empty($havingColumns)) {
+            return $parentSelect;
+        }
+
+        foreach ($this->getSelect()->getPart('columns') as $columnData) {
+            if (in_array($columnData[2], $havingColumns, true)) {
+                $parentSelect->columns([$columnData[2] => $columnData[1]], $columnData[0]);
+            }
+        }
+
+        return $parentSelect;
+    }
+
+    /**
+     * @return array
+     * @throws \Zend_Db_Select_Exception
+     */
+    protected function getHavingColumns()
+    {
+        $having = $this->getSelect()->getPart('having');
+
+        if (empty($having)) {
+            return [];
+        }
+
+        $columnsInHaving = [];
+
+        foreach ($having as $havingPart) {
+            preg_match_all(
+                '/((`{0,1})\w+(`{0,1}))' .
+                '( = | > | < | >= | <= | <> | <=> | != | LIKE | NOT | BETWEEN | IS NULL| IS NOT NULL| IN\(.*?\))/i',
+                $havingPart,
+                $matches
+            );
+
+            foreach ($matches[1] as $match) {
+                $columnsInHaving[] = trim($match);
+            }
+        }
+
+        return array_unique($columnsInHaving);
     }
 
     //########################################

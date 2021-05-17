@@ -28,7 +28,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     protected $storeConfig;
     protected $productResource;
 
-    /** @var \Ess\M2ePro\Model\Magento\Quote\Manager  */
+    /** @var \Ess\M2ePro\Model\Magento\Quote\Manager */
     protected $quoteManager;
 
     /** @var \Ess\M2ePro\Model\Magento\Quote\Store\Configurator */
@@ -51,13 +51,13 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Magento\Quote\Manager $quoteManager,
         \Magento\Sales\Model\OrderIncrementIdChecker $orderIncrementIdChecker
     ) {
-        $this->proxyOrder              = $proxyOrder;
-        $this->currency                = $currency;
-        $this->magentoCurrencyFactory  = $magentoCurrencyFactory;
-        $this->calculation             = $calculation;
-        $this->storeConfig             = $storeConfig;
-        $this->productResource         = $productResource;
-        $this->quoteManager            = $quoteManager;
+        $this->proxyOrder = $proxyOrder;
+        $this->currency = $currency;
+        $this->magentoCurrencyFactory = $magentoCurrencyFactory;
+        $this->calculation = $calculation;
+        $this->storeConfig = $storeConfig;
+        $this->productResource = $productResource;
+        $this->quoteManager = $quoteManager;
         $this->orderIncrementIdChecker = $orderIncrementIdChecker;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -93,9 +93,15 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             $this->quote = $this->quoteManager->save($this->quote);
 
             $this->prepareOrderNumber();
+
             return $this->quote;
             // ---------------------------------------
         } catch (\Exception $e) {
+            if ($this->quote === null) {
+                $this->getHelper('Module_Exception')->process($e, false);
+
+                throw $e;
+            }
 
             // Remove ordered items from customer cart
             $this->quote->setIsActive(false);
@@ -103,6 +109,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             $this->quote->removeAllItems();
 
             $this->quote->save();
+
             throw $e;
         }
     }
@@ -288,10 +295,13 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             $this->clearQuoteItemsCache();
 
             /** @var \Ess\M2ePro\Model\Magento\Quote\Item $quoteItemBuilder */
-            $quoteItemBuilder = $this->modelFactory->getObject('Magento_Quote_Item', [
-                'quote' => $this->quote,
-                'proxyItem' => $item
-            ]);
+            $quoteItemBuilder = $this->modelFactory->getObject(
+                'Magento_Quote_Item',
+                [
+                    'quote'     => $this->quote,
+                    'proxyItem' => $item
+                ]
+            );
 
             $product = $quoteItemBuilder->getProduct();
 
@@ -317,7 +327,6 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             // ---------------------------------------
 
             foreach ($products as $associatedProduct) {
-
                 $item->setQty($associatedProduct->getQty() * $item->getOriginalQty());
 
                 $productPriceInSetPercent = ($associatedProduct->getPrice() / $totalPrice) * 100;
@@ -327,10 +336,13 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                 $associatedProduct->setTaxClassId($product->getTaxClassId());
 
                 /** @var \Ess\M2ePro\Model\Magento\Quote\Item $quoteItemBuilder */
-                $quoteItemBuilder = $this->modelFactory->getObject('Magento_Quote_Item', [
-                    'quote' => $this->quote,
-                    'proxyItem' => $item
-                ]);
+                $quoteItemBuilder = $this->modelFactory->getObject(
+                    'Magento_Quote_Item',
+                    [
+                        'quote'     => $this->quote,
+                        'proxyItem' => $item
+                    ]
+                );
 
                 $this->initializeQuoteItem(
                     $item,
@@ -390,6 +402,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             $this->orderIncrementIdChecker->isIncrementIdUsed($orderNumber) && $orderNumber .= '(1)';
 
             $this->quote->setReservedOrderId($orderNumber);
+
             return;
         }
 

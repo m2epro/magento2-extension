@@ -49,7 +49,8 @@ abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\RealTime
         if ($this->marketplace !== null) {
             $requestData['marketplace'] = $this->marketplace->getNativeId();
         }
-        if ($this->account !== null) {
+
+        if ($this->account !== null && $this->account->getId() !== null) {
             $requestData['account'] = $this->account->getChildObject()->getServerHash();
         }
 

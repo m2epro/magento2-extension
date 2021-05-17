@@ -15,42 +15,49 @@ use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
  */
 class AfterGetToken extends Account
 {
+    //########################################
+
     public function execute()
     {
-        // Get eBay session id
-        // ---------------------------------------
         $sessionId = $this->getHelper('Data\Session')->getValue('get_token_session_id', true);
         $sessionId === null && $this->_redirect('*/*/index');
-        // ---------------------------------------
 
-        // Get account form data
-        // ---------------------------------------
         $this->getHelper('Data\Session')->setValue('get_token_account_token_session', $sessionId);
-        // ---------------------------------------
 
-        // Goto account add or edit page
-        // ---------------------------------------
-        $accountId = (int)$this->getHelper('Data\Session')->getValue('get_token_account_id', true);
+        $id = (int)$this->getHelper('Data\Session')->getValue('get_token_account_id', true);
 
-        if ($accountId == 0) {
-            $this->_redirect(
+        if ((int)$id <= 0) {
+            return $this->_redirect(
                 '*/*/new',
                 [
                     'is_show_tables' => true,
                     '_current'       => true
                 ]
             );
-        } else {
-            $data = [];
-            $data['mode'] = $this->getHelper('Data\Session')->getValue('get_token_account_mode');
-            $data['token_session'] = $sessionId;
-
-            $data = $this->sendDataToServer($accountId, $data);
-            $id = $this->updateAccount($accountId, $data);
-
-            $this->messageManager->addSuccess($this->__('Token was saved'));
-            $this->_redirect('*/*/edit', ['id' => $id, '_current' => true]);
         }
-        // ---------------------------------------
+
+        $data = [
+            'mode' => $this->getHelper('Data\Session')->getValue('get_token_account_mode'),
+            'token_session' => $sessionId
+        ];
+
+        try {
+            $this->updateAccount($id, $data);
+        } catch (\Exception $exception) {
+            $this->getHelper('Module\Exception')->process($exception);
+
+            $this->messageManager->addError($this->__(
+                'The Ebay access obtaining is currently unavailable.<br/>Reason: %error_message%',
+                $exception->getMessage()
+            ));
+
+            return $this->_redirect('*/ebay_account');
+        }
+
+        $this->messageManager->addSuccess($this->__('Token was saved'));
+
+        return $this->_redirect('*/*/edit', ['id' => $id, '_current' => true]);
     }
+
+    //########################################
 }

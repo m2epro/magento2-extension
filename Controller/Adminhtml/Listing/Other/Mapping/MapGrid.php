@@ -18,7 +18,15 @@ class MapGrid extends Listing
     public function execute()
     {
         $block = $this->createBlock(
-            'Listing_Other_Mapping_Grid'
+            'Listing_Mapping_Grid',
+            '',
+            [
+               'data' => [
+                   'grid_url' => '*/listing_other_mapping/mapGrid',
+                   'mapping_handler_js' => 'ListingOtherMappingObj',
+                   'mapping_action' => 'map'
+               ]
+            ]
         );
 
         $this->setAjaxContent($block);

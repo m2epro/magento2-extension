@@ -83,6 +83,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     public function setConfigurator(\Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator $configurator)
     {
         $this->configurator = $configurator;
+
         return $this;
     }
 
@@ -220,6 +221,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     public function setValidatorData($data)
     {
         $this->data = $data;
+
         return $this;
     }
 
@@ -229,22 +231,15 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     {
         if (!$this->getWalmartListingProduct()->getSku()) {
             $this->addMessage('You have to list Item first.');
+
             return false;
         }
 
         $params = $this->getParams();
         if (isset($params['changed_sku'])) {
-            if (preg_match('/[.\s-]+/', $params['changed_sku'])) {
-                $this->addMessage(
-                    'Item SKU was not updated because it contains special characters,
-                    i.e. hyphen (-), space ( ), and period (.), that are not allowed by Walmart.
-                    Please enter SKU in a correct format. M2E Pro will resubmit the new value automatically.'
-                );
-                return false;
-            }
-
             if (strlen($params['changed_sku']) > \Ess\M2ePro\Helper\Component\Walmart::SKU_MAX_LENGTH) {
                 $this->addMessage('The length of SKU must be less than 50 characters.');
+
                 return false;
             }
         }
@@ -277,6 +272,7 @@ The action cannot be submitted. Your Item is in Inactive (Blocked) status becaus
 HTML;
 
             $this->addMessage($message);
+
             return false;
         }
 
@@ -292,6 +288,7 @@ The action cannot be submitted. Your Item is in Inactive (Blocked) status becaus
 HTML;
 
             $this->addMessage($message);
+
             return false;
         }
 
@@ -311,6 +308,7 @@ The action cannot be submitted. Your Item is in Inactive (Blocked) status becaus
 HTML;
 
             $this->addMessage($message);
+
             return false;
         }
 
@@ -389,6 +387,7 @@ HTML;
 
         if (!empty($startDate) && !strtotime($startDate)) {
             $this->addMessage('Start Date has invalid format.');
+
             return false;
         }
 
@@ -397,11 +396,13 @@ HTML;
         if (!empty($endDate)) {
             if (!strtotime($endDate)) {
                 $this->addMessage('End Date has invalid format.');
+
                 return false;
             }
 
             if (strtotime($endDate) < $this->getHelper('Data')->getCurrentGmtDate(true)) {
                 $this->addMessage('End Date must be greater than current date');
+
                 return false;
             }
         }
@@ -415,11 +416,15 @@ HTML;
     {
         if ($this->getListingProduct()->getData('no_child_for_processing')) {
             $this->addMessage('This Parent has no Child Products on which the chosen Action can be performed.');
+
             return false;
         }
         if ($this->getListingProduct()->getData('child_locked')) {
-            $this->addMessage('This Action cannot be fully performed because there are
-                                different Actions in progress on some Child Products');
+            $this->addMessage(
+                'This Action cannot be fully performed because there are
+                                different Actions in progress on some Child Products'
+            );
+
             return false;
         }
 
@@ -432,6 +437,7 @@ HTML;
     {
         if (!$this->getVariationManager()->isPhysicalUnit() && !$this->getVariationManager()->isSimpleType()) {
             $this->addMessage('Only physical Products can be processed.');
+
             return false;
         }
 
@@ -442,6 +448,7 @@ HTML;
     {
         if (!$this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
             $this->addMessage('You have to select Magento Variation.');
+
             return false;
         }
 
@@ -467,6 +474,7 @@ Only Product Variations created based on Magento Configurable or Grouped Product
 the Walmart website.
 HTML;
             $this->addMessage($message);
+
             return false;
         }
 
@@ -526,6 +534,7 @@ Invalid Promotion #%s. The Promotion Price has no defined value.
  Please adjust Magento Attribute "%s" value set for the Promotion Price in your Selling Policy.
 HTML;
                     $this->addMessage(sprintf($message, $promotionIndex + 1, $requiredAttributeTitle));
+
                     return false;
                 }
             }
@@ -536,6 +545,7 @@ Invalid Promotion #%s. The Start Date has incorrect format.
  Please adjust Magento Attribute value set for the Promotion Start Date in your Selling Policy.
 HTML;
                 $this->addMessage(sprintf($message, $promotionIndex + 1));
+
                 return false;
             }
 
@@ -545,6 +555,7 @@ Invalid Promotion #%s. The End Date has incorrect format.
  Please adjust Magento Attribute value set for the Promotion End Date in your Selling Policy.
 HTML;
                 $this->addMessage(sprintf($message, $promotionIndex + 1));
+
                 return false;
             }
 
@@ -554,6 +565,7 @@ Invalid Promotion #%s. The Start and End Date range is incorrect.
  Please adjust the Promotion Dates set in your Selling Policy.
 HTML;
                 $this->addMessage(sprintf($message, $promotionIndex + 1));
+
                 return false;
             }
 
@@ -563,6 +575,7 @@ Invalid Promotion #%s. Comparison Price must be greater than Promotion Price.
  Please adjust the Price settings for the given Promotion in your Selling Policy.
 HTML;
                 $this->addMessage(sprintf($message, $promotionIndex + 1));
+
                 return false;
             }
         }
@@ -635,6 +648,7 @@ HTML;
                         ['!id' => $gtin]
                     )
                 );
+
                 return false;
             }
 
@@ -653,6 +667,7 @@ HTML;
                         ['!id' => $upc]
                     )
                 );
+
                 return false;
             }
 
@@ -671,6 +686,7 @@ HTML;
                         ['!id' => $ean]
                     )
                 );
+
                 return false;
             }
 
@@ -689,6 +705,7 @@ HTML;
                         ['!id' => $isbn]
                     )
                 );
+
                 return false;
             }
 
@@ -702,6 +719,7 @@ HTML;
                 on the website have Product IDs. Please provide a valid GTIN, UPC, EAN or ISBN for the Product.
                 M2E Pro will try to list the Item again.'
             );
+
             return false;
         }
 

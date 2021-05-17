@@ -19,36 +19,31 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 
         if (!$post->count()) {
             $this->_forward('index');
-            return;
         }
 
         $id = $this->getRequest()->getParam('id');
+        $data = $post->toArray();
 
         try {
-            $data = $this->sendDataToServer($id, $post);
-
-            $accountExists = $this->getExistsAccount($data['user_id']);
-            if (empty($id) && !empty($accountExists)) {
-                $data['title'] = $accountExists->getTitle();
-                $this->updateAccount($accountExists->getAccountId(), $data->toArray());
-
-                $this->getMessageManager()->addError(
-                    $this->__('An account with the same eBay User ID already exists.')
-                );
-
-                return $this->_redirect('*/*/new');
-            }
-            $id = $this->updateAccount($id, $data->toArray());
+            $account = $id ? $this->updateAccount($id, $data) : $this->addAccount($data);
         } catch (\Exception $exception) {
+            $this->getHelper('Module\Exception')->process($exception);
+
+            $message = $this->__(
+                'The Ebay access obtaining is currently unavailable.<br/>Reason: %error_message%',
+                $exception->getMessage()
+            );
+
             if ($this->isAjax()) {
                 $this->setJsonContent([
                     'success' => false,
-                    'message' => $exception->getMessage()
+                    'message' => $message
                 ]);
+
                 return $this->getResult();
             }
 
-            $this->messageManager->addError($exception->getMessage());
+            $this->messageManager->addError($message);
 
             return $this->_redirect('*/ebay_account');
         }
@@ -57,6 +52,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
             $this->setJsonContent([
                 'success' => true,
             ]);
+
             return $this->getResult();
         }
 
@@ -67,28 +63,12 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
             [],
             [
                 'edit' => [
-                    'id'                => $id,
+                    'id'                => $account->getId(),
                     'update_ebay_store' => null,
                     '_current'          => true
                 ]
             ]
         ));
-    }
-
-    //########################################
-
-    protected function getExistsAccount($userId)
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $account */
-        $account = $this->ebayFactory->getObject('Account')->getCollection()
-            ->addFieldToSelect('title')
-            ->addFieldToFilter('user_id', $userId);
-
-        if (!$account->getSize()) {
-            return null;
-        }
-
-        return $account->getFirstItem();
     }
 
     //########################################

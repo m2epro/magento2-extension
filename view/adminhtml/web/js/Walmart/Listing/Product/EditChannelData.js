@@ -2,7 +2,7 @@ define([
     'Magento_Ui/js/modal/modal',
     'M2ePro/Plugin/Messages',
     'M2ePro/Common'
-], function (modal, MessageObj) {
+], function(modal, MessageObj) {
     window.WalmartListingProductEditChannelData = Class.create(Common, {
 
         gridHandler: null,
@@ -14,8 +14,7 @@ define([
 
         // ---------------------------------------
 
-        initialize: function(gridHandler)
-        {
+        initialize: function(gridHandler) {
             this.gridHandler = gridHandler;
 
             jQuery.validator.addMethod('M2ePro-validate-walmart-sku', function(value, el) {
@@ -24,14 +23,13 @@ define([
                     return true;
                 }
 
-                return !value.match(/[.\s-]+/g);
-            }, M2ePro.translator.translate('SKU contains the special characters that are not allowed by Walmart.'));
+                return value.length < 50;
+            }, M2ePro.translator.translate('The length of SKU must be less than 50 characters.'));
         },
 
         //########################################
 
-        showIdentifiersPopup: function (productId)
-        {
+        showIdentifiersPopup: function(productId) {
             if (window.top !== window) {
                 window.top.ListingGridObj.editChannelDataHandler.frameObj = window;
                 window.top.ListingGridObj.editChannelDataHandler.showIdentifiersPopup(productId);
@@ -51,13 +49,13 @@ define([
                         buttons: [{
                             text: M2ePro.translator.translate('Close'),
                             class: 'action-secondary action-dismiss',
-                            click: function (event) {
+                            click: function(event) {
                                 ListingGridObj.editChannelDataHandler.cancelEditIdentifier();
                             }
                         }, {
                             text: M2ePro.translator.translate('Submit'),
                             class: 'action-primary action-accept',
-                            click: function (event) {
+                            click: function(event) {
                                 ListingGridObj.editChannelDataHandler.editIdentifier();
                             }
                         }]
@@ -67,8 +65,7 @@ define([
             });
         },
 
-        editIdentifier: function()
-        {
+        editIdentifier: function() {
             var self = this,
                 identifier = $('identifier'),
                 identifierName = identifier.selectedOptions[0].textContent;
@@ -81,8 +78,8 @@ define([
                 method: 'post',
                 parameters: {
                     product_id: self.editIdentifierPopup.productId,
-                    type:       identifier.value,
-                    value:      $('new_identifier_value').value
+                    type: identifier.value,
+                    value: $('new_identifier_value').value
                 },
                 onSuccess: function(transport) {
 
@@ -105,15 +102,14 @@ define([
                     self.cancelEditIdentifier();
 
                     self.getAppropriateMessageObj().addSuccess(
-                        M2ePro.translator.translate("Updating "+identifierName+" has submitted to be processed.")
+                        M2ePro.translator.translate("Updating " + identifierName + " has submitted to be processed.")
                     );
                     self.getAppropriateGridObj().reload();
                 }
             });
         },
 
-        cancelEditIdentifier: function()
-        {
+        cancelEditIdentifier: function() {
             var self = this;
 
             if (typeof self.editIdentifierPopup == null) {
@@ -126,8 +122,7 @@ define([
 
         // ---------------------------------------
 
-        showEditSkuPopup: function (productId)
-        {
+        showEditSkuPopup: function(productId) {
             if (window.top !== window) {
                 window.top.ListingGridObj.editChannelDataHandler.frameObj = window;
                 window.top.ListingGridObj.editChannelDataHandler.showEditSkuPopup(productId);
@@ -147,13 +142,13 @@ define([
                         buttons: [{
                             text: M2ePro.translator.translate('Close'),
                             class: 'action-secondary action-dismiss',
-                            click: function (event) {
+                            click: function(event) {
                                 ListingGridObj.editChannelDataHandler.cancelEditSku();
                             }
                         }, {
                             text: M2ePro.translator.translate('Submit'),
                             class: 'action-primary action-accept',
-                            click: function (event) {
+                            click: function(event) {
                                 ListingGridObj.editChannelDataHandler.editSku();
                             }
                         }]
@@ -163,8 +158,7 @@ define([
             });
         },
 
-        editSku: function ()
-        {
+        editSku: function() {
             var self = this;
 
             if (!self.validateForm()) {
@@ -175,7 +169,7 @@ define([
                 method: 'post',
                 parameters: {
                     product_id: self.editSkuPopup.productId,
-                    value:      $('new_sku_value').value
+                    value: $('new_sku_value').value
                 },
                 onSuccess: function(transport) {
 
@@ -206,8 +200,7 @@ define([
             });
         },
 
-        cancelEditSku: function()
-        {
+        cancelEditSku: function() {
             var self = this;
 
             if (typeof self.editSkuPopup == null) {
@@ -220,8 +213,7 @@ define([
 
         // ---------------------------------------
 
-        showPopup: function(html, id, options)
-        {
+        showPopup: function(html, id, options) {
             var containerEl = $(id);
 
             if (containerEl) {
@@ -243,8 +235,7 @@ define([
             return popup;
         },
 
-        validateForm: function()
-        {
+        validateForm: function() {
             var validationResult = [];
 
             if ($('popup-edit-form')) {
@@ -260,14 +251,12 @@ define([
 
         // ---------------------------------------
 
-        getAppropriateGridObj: function()
-        {
+        getAppropriateGridObj: function() {
             return this.frameObj ? this.frameObj.ListingGridObj.editChannelDataHandler.gridHandler.getGridObj()
-                                 : this.gridHandler.getGridObj();
+                : this.gridHandler.getGridObj();
         },
 
-        getAppropriateMessageObj: function()
-        {
+        getAppropriateMessageObj: function() {
             return this.frameObj ? this.frameObj.ListingGridObj.MessageObj : MessageObj;
         }
 

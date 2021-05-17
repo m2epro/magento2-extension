@@ -60,8 +60,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareCollection()
     {
-        // Get collection
-        // ---------------------------------------
         /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
@@ -75,12 +73,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             ->addAttributeToSelect('type_id')
             ->joinStockItem();
 
-        if ($this->isFilterOrSortByPriceIsUsed(null, 'ebay_online_current_price')) {
-            $collection->setIsNeedToUseIndexerParent(true);
-        }
-        // ---------------------------------------
-
-        // ---------------------------------------
         $collection->joinTable(
             ['lp' => $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable()],
             'product_id=entity_id',
@@ -123,10 +115,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             null,
             'left'
         );
-        // ---------------------------------------
 
-        // Set filter store
-        // ---------------------------------------
         $store = $this->_getStore();
 
         if ($store->getId()) {
@@ -168,10 +157,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             $collection->addAttributeToSelect('visibility');
             $collection->addAttributeToSelect('thumbnail');
         }
-        // ---------------------------------------
 
-        // Set collection to grid
-        if ($collection->isNeedUseIndexerParent()) {
+        if ($this->isFilterOrSortByPriceIsUsed(null, 'ebay_online_current_price')) {
             $collection->joinIndexerParent();
         }
 

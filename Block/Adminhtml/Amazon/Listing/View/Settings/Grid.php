@@ -54,8 +54,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareCollection()
     {
-        // Get collection
-        // ---------------------------------------
         /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
@@ -63,19 +61,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $collection->setStoreId($this->listing->getStoreId());
         $collection->setListing($this->listing->getId());
 
-        if ($this->isFilterOrSortByPriceIsUsed(null, 'amazon_online_price')) {
-            $collection->setIsNeedToUseIndexerParent(true);
-        }
-
         $collection
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('sku')
             ->joinStockItem();
 
-        // ---------------------------------------
-
-        // Join listing product tables
-        // ---------------------------------------
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
         $collection->joinTable(
             ['lp' => $lpTable],
@@ -168,13 +158,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             );
         }
 
-        if ($collection->isNeedUseIndexerParent()) {
+        if ($this->isFilterOrSortByPriceIsUsed(null, 'amazon_online_price')) {
             $collection->joinIndexerParent();
         }
 
-        // ---------------------------------------
-
-        // Set collection to grid
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
@@ -286,7 +273,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         $groups = [
             'edit_template_description' => $this->__('Description Policy'),
-            'edit_template_shipping'    => $this->__('Shipping Policy')
+            'edit_template_shipping'    => $this->__('Shipping Policy'),
+            'other' => $this->__('Other')
         ];
 
         if ($this->listing->getMarketplace()->getChildObject()->isProductTaxCodePolicyAvailable() &&
@@ -347,6 +335,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'onclick_action' => 'ListingGridObj.unassignTemplateProductTaxCodeIdActionConfrim'
             ];
         }
+
+        $actions['remapProduct'] = [
+            'caption'            => $this->__('Link to another Magento Product'),
+            'group'              => 'other',
+            'field'              => 'id',
+            'only_remap_product' => true,
+            'style'              => 'width: 130px',
+            'onclick_action'     => 'ListingGridObj.actions[\'remapProductAction\']'
+        ];
 
         return $actions;
     }

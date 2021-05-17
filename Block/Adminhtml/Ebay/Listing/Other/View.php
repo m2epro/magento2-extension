@@ -116,6 +116,13 @@ HTML
 
         $this->jsUrl->addUrls($helper->getControllerActions('Listing\Other'));
         $this->jsUrl->addUrls([
+            'mapProductPopupHtml' => $this->getUrl(
+                '*/listing_other_mapping/mapProductPopupHtml',
+                [
+                    'account_id'     => $this->getRequest()->getParam('account'),
+                    'marketplace_id' => $this->getRequest()->getParam('marketplace')
+                ]
+            ),
             'listing_other_mapping/map' => $this->getUrl('*/listing_other_mapping/map'),
             'mapAutoToProduct' => $this->getUrl('*/listing_other_mapping/autoMap'),
             'ebay_listing/view' => $this->getUrl('*/ebay_listing/view'),
@@ -135,19 +142,15 @@ HTML
                 'Map Item "%product_title%" with Magento Product'
             ),
             'Product does not exist.' => $this->__('Product does not exist.'),
-            'Please enter correct Product ID.' => $this->__('Please enter correct Product ID.'),
             'Product(s) was Mapped.' => $this->__('Product(s) was Mapped.'),
-            'Please enter correct Product ID or SKU' => $this->__('Please enter correct Product ID or SKU'),
             'Add New Listing' => $this->__('Add New Listing'),
             'failed_mapped' => $someProductsWereNotMappedMessage,
             'Product was Mapped.' => $this->__('Product was Mapped.'),
-            'mapping_product_title' => $this->__('Mapping Product'),
+            'Mapping Product' => $this->__('Mapping Product'),
             'product_does_not_exist' => $this->__('Product does not exist.'),
             'select_simple_product' => $this->__(
                 'Current eBay version only supports Simple Products in Mapping. Please, choose Simple Product.'
             ),
-            'invalid_data' => $this->__('Please enter correct Product ID.'),
-            'enter_product_or_sku' => $this->__('Please enter correct Product ID or SKU'),
             'automap_progress_title' => $this->__('Map Item(s) to Products'),
             'processing_data_message' => $this->__('Processing %product_title% Product(s).'),
             'popup_title' => $this->__('Moving eBay Items'),
@@ -169,7 +172,7 @@ HTML
             'p' => 'M2ePro/Plugin/ProgressBar',
             'a' => 'M2ePro/Plugin/AreaWrapper',
             'lm' => 'M2ePro/Listing/Moving',
-            'lom' => 'M2ePro/Listing/Other/Mapping',
+            'lom' => 'M2ePro/Listing/Mapping',
             'loa' => 'M2ePro/Listing/Other/AutoMapping',
             'lor' => 'M2ePro/Listing/Other/Removing',
             'lou' => 'M2ePro/Listing/Other/Unmapping',
@@ -181,7 +184,7 @@ HTML
         M2ePro.customData.gridId = 'ebayListingOtherGrid';
 
         window.EbayListingOtherGridObj = new EbayListingOtherGrid('ebayListingOtherViewGrid');
-        window.EbayListingOtherMappingObj = new ListingOtherMapping(EbayListingOtherGridObj,'ebay');
+        window.ListingOtherMappingObj = new ListingMapping(EbayListingOtherGridObj,'ebay');
 
         EbayListingOtherGridObj.movingHandler.setProgressBar('listing_other_progress_bar');
         EbayListingOtherGridObj.movingHandler.setGridWrapper('listing_other_content_container');
@@ -195,10 +198,7 @@ HTML
 JS
         );
 
-        $mapToProductBlock = $this->createBlock('Listing_Other_Mapping');
-
-        return  $mapToProductBlock->toHtml() .
-                '<div id="listing_other_progress_bar"></div>' .
+        return '<div id="listing_other_progress_bar"></div>' .
                 '<div id="listing_container_errors_summary" class="errors_summary" style="display: none;"></div>' .
                 '<div id="listing_other_content_container">' .
                 parent::_toHtml() .

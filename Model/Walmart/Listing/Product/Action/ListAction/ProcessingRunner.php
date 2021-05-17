@@ -44,12 +44,14 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
         $this->listingProduct = $listingProduct;
+
         return $this;
     }
 
     public function setProcessingAction(\Ess\M2ePro\Model\Walmart\Listing\Product\Action\Processing $processingAction)
     {
         $this->processingAction = $processingAction;
+
         return $this;
     }
 
@@ -77,7 +79,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         $this->getProcessingAction()->save();
 
         $accountId = (int)$params['account_id'];
-        $sku       = (string)$params['request_data']['sku'];
+        $sku = (string)$params['requester_params']['sku'];
 
         $processingActionList = $this->activeRecordFactory->getObject('Walmart_Listing_Product_Action_ProcessingList');
         $processingActionList->setData(
@@ -133,7 +135,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         $params = $this->getParams();
 
         $accountId = (int)$params['account_id'];
-        $sku       = (string)$params['request_data']['sku'];
+        $sku = (string)$params['request_data']['sku'];
 
         $processingActionListSkuCollection = $this->activeRecordFactory
             ->getObject('Walmart_Listing_Product_Action_ProcessingList')->getCollection();
@@ -159,6 +161,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
             $responser->process();
         } catch (\Exception $exception) {
             $this->getResponser()->failDetected($exception->getMessage());
+
             return false;
         }
 
@@ -173,10 +176,13 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
             $response->initFromPreparedResponse($resultData);
 
             $responser = $this->modelFactory
-                ->getObject('Walmart_Connector_Product_ListAction_UpdateInventory_Responser', [
-                    'params'   => $this->getResponserParams(),
-                    'response' => $response
-                ]);
+                ->getObject(
+                    'Walmart_Connector_Product_ListAction_UpdateInventory_Responser',
+                    [
+                        'params'   => $this->getResponserParams(),
+                        'response' => $response
+                    ]
+                );
 
             $responser->setParams($this->getResponserParams());
             $responser->setResponse($response);
@@ -185,6 +191,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
             $responser->process();
         } catch (\Exception $exception) {
             $responser->failDetected($exception->getMessage());
+
             return false;
         }
 
@@ -198,6 +205,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         // listing product can be removed during processing action
         if ($this->getListingProduct()->getId() === null) {
             $this->getProcessingObject()->delete();
+
             return;
         }
 

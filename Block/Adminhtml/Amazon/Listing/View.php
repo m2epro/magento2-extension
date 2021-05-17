@@ -209,6 +209,15 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->jsUrl->add($this->getUrl('*/listing_moving/prepareMoveToListing'), 'prepareData');
         $this->jsUrl->add($this->getUrl('*/listing_moving/moveToListing'), 'moveToListing');
 
+        $this->jsUrl->add($this->getUrl(
+            '*/listing_mapping/mapProductPopupHtml',
+            [
+                'account_id'     => $this->listing->getAccountId(),
+                'marketplace_id' => $this->listing->getMarketplaceId()
+            ]
+        ), 'mapProductPopupHtml');
+        $this->jsUrl->add($this->getUrl('*/listing_mapping/remap'), 'listing_mapping/remap');
+
         $this->jsUrl->add($this->getUrl('*/amazon_marketplace/index'), 'marketplaceSynchUrl');
 
         $this->jsUrl->add($this->getUrl('*/listing/saveListingAdditionalData', [
@@ -315,6 +324,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.'),
             'Sell on Another Marketplace' => $this->__('Sell on Another Marketplace'),
             'Create new' => $this->__('Create new'),
+            'Mapping Product' => $this->__('Mapping Product'),
 
             'Add New Shipping Policy' => $this->__('Add New Shipping Policy'),
             'Add New Product Tax Code Policy'  => $this->__('Add New Product Tax Code Policy'),

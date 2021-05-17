@@ -2,6 +2,7 @@ define([
     'M2ePro/Plugin/Messages',
     'M2ePro/Listing/View/Grid',
     'M2ePro/Listing/Moving',
+    'M2ePro/Listing/Mapping',
     'M2ePro/Walmart/Listing/View/Action',
     'M2ePro/Walmart/Listing/Product/Template/Category',
     'M2ePro/Walmart/Listing/Product/Variation/Manage',
@@ -48,6 +49,7 @@ define([
             };
 
             this.movingHandler = new ListingMoving(this);
+            this.mappingHandler = new ListingMapping(this, 'walmart');
 
             this.templateCategoryHandler    = new WalmartListingProductTemplateCategory(this);
 
@@ -63,7 +65,11 @@ define([
                 changeTemplateCategoryIdAction: (function(id) {
                     id = id || this.getSelectedProductsString();
                     this.templateCategoryHandler.validateProductsForTemplateCategoryAssign(id, null)
-                }).bind(this)
+                }).bind(this),
+
+                remapProductAction: function(id) {
+                    this.mappingHandler.openPopUp(id, null, this.listingId);
+                }.bind(this)
             });
         },
 

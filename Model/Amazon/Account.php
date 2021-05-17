@@ -43,6 +43,10 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     const MAGENTO_ORDERS_TAX_MODE_MAGENTO = 2;
     const MAGENTO_ORDERS_TAX_MODE_MIXED   = 3;
 
+    const SKIP_TAX_FOR_UK_SHIPMENT_NONE               = 0;
+    const SKIP_TAX_FOR_UK_SHIPMENT                    = 1;
+    const SKIP_TAX_FOR_UK_SHIPMENT_WITH_CERTAIN_PRICE = 2;
+
     const MAGENTO_ORDERS_CUSTOMER_MODE_GUEST      = 0;
     const MAGENTO_ORDERS_CUSTOMER_MODE_PREDEFINED = 1;
     const MAGENTO_ORDERS_CUSTOMER_MODE_NEW        = 2;
@@ -213,6 +217,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getMerchantId()
     {
         return $this->getData('merchant_id');
+    }
+
+    public function getToken()
+    {
+        return $this->getData('token');
     }
 
     /**
@@ -721,6 +730,20 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getExcludedStates()
     {
         return $this->getSetting('magento_orders_settings', ['tax', 'excluded_states'], []);
+    }
+
+    public function isAmazonCollectsTaxForUKShipmentAvailable()
+    {
+        $setting = $this->getSetting('magento_orders_settings', ['tax', 'amazon_collect_for_uk'], 0);
+
+        return $setting == self::SKIP_TAX_FOR_UK_SHIPMENT;
+    }
+
+    public function isAmazonCollectsTaxForUKShipmentWithCertainPrice()
+    {
+        $setting = $this->getSetting('magento_orders_settings', ['tax', 'amazon_collect_for_uk'], 0);
+
+        return $setting == self::SKIP_TAX_FOR_UK_SHIPMENT_WITH_CERTAIN_PRICE;
     }
 
     // ---------------------------------------

@@ -225,6 +225,44 @@ class Grid extends AbstractGrid
             'frame_callback' => [$this, 'callbackColumnStatus']
         ]);
 
+        $this->addColumn('actions', [
+            'header'    => $this->__('Actions'),
+            'align'     => 'left',
+            'width'     => '100px',
+            'type'      => 'action',
+            'index'     => 'actions',
+            'filter'    => false,
+            'sortable'  => false,
+            'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+            'getter'    => 'getId',
+            'actions'   => [
+                [
+                    'caption'   => $this->__('View'),
+                    'url'       => [
+                        'base' => '*/amazon_order/view'
+                    ],
+                    'field' => 'id'
+                ],
+                [
+                    'caption'   => $this->__('Create Magento Order'),
+                    'url'       => [
+                        'base' => '*/amazon_order/createMagentoOrder',
+                    ],
+                    'field'    => 'id'
+                ],
+                [
+                    'caption'   => $this->__('Mark As Shipped'),
+                    'field'    => 'id',
+                    'onclick_action' => 'AmazonOrderMerchantFulfillmentObj.markAsShippedAction'
+                ],
+                [
+                    'caption'   => $this->__('Amazon\'s Shipping Services'),
+                    'field'    => 'id',
+                    'onclick_action' => 'AmazonOrderMerchantFulfillmentObj.getPopupAction'
+                ]
+            ]
+        ]);
+
         return parent::_prepareColumns();
     }
 
@@ -591,7 +629,7 @@ HTML;
         return $this->getUrl('*/amazon_order/view', ['id' => $row->getId(), 'back' => $back]);
     }
 
-    protected function _toHtml()
+    protected function _prepareLayout()
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
@@ -599,14 +637,7 @@ HTML;
                 OrderObj.initializeGrids();
 JS
             );
-
-            return parent::_toHtml();
         }
-
-        $tempGridIds = [];
-        $this->getHelper('Component\Amazon')->isEnabled() && $tempGridIds[] = $this->getId();
-
-        $tempGridIds = $this->getHelper('Data')->jsonEncode($tempGridIds);
 
         $this->jsPhp->addConstants($this->getHelper('Data')
             ->getClassConstants(\Ess\M2ePro\Model\Log\AbstractModel::class));
@@ -615,22 +646,44 @@ JS
             'amazon_order/view' => $this->getUrl(
                 '*/amazon_order/view',
                 ['back'=>$this->getHelper('Data')->makeBackUrlParam('*/amazon_order/index')]
+            ),
+            'getEditShippingAddressForm' => $this->getUrl(
+                '*/amazon_order_shippingAddress/edit/'
             )
         ]);
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Order'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Order\MerchantFulfillment'));
 
-        $this->jsTranslator->add('View Full Order Log', $this->__('View Full Order Log'));
+        $this->jsTranslator->addTranslations([
+            'View Full Order Log' => $this->__('View Full Order Log'),
+            'Amazon\'s Shipping Services' => $this->__('Amazon\'s Shipping Services'),
+            'Please select an option.' => $this->__('Please select an option.'),
+            'This is a required fields.' => $this->__('This is a required fields.'),
+            'Please enter a number greater than 0 in this fields.' =>
+                $this->__('Please enter a number greater than 0 in this fields.'),
+            'Are you sure you want to create Shipment now?' =>
+                $this->__('Are you sure you want to create Shipment now?'),
+            'Please enter a valid date.' => $this->__('Please enter a valid date.'), 
+        ]);
+
+        $tempGridIds = [];
+        $this->getHelper('Component\Amazon')->isEnabled() && $tempGridIds[] = $this->getId();
+
+        $tempGridIds = $this->getHelper('Data')->jsonEncode($tempGridIds);
 
         $this->js->add(<<<JS
     require([
         'M2ePro/Order',
+        'M2ePro/Amazon/Order/MerchantFulfillment'
     ], function(){
+        window.AmazonOrderMerchantFulfillmentObj = new AmazonOrderMerchantFulfillment();
         window.OrderObj = new Order('$tempGridIds');
         OrderObj.initializeGrids();
     });
 JS
         );
 
-        return parent::_toHtml();
+        return parent::_prepareLayout();
     }
 
     //########################################

@@ -219,5 +219,24 @@ HTML;
         return false;
     }
 
+    protected function isFilterOrSortByPriceIsUsed($filterName = null, $advancedFilterName = null)
+    {
+        if ($filterName) {
+            $filters = $this->getParam($this->getVarNameFilter());
+            is_string($filters) && $filters = $this->_backendHelper->prepareFilterString($filters);
+
+            if (is_array($filters) && array_key_exists($filterName, $filters)) {
+                return true;
+            }
+
+            $sort = $this->getParam($this->getVarNameSort());
+            if ($sort == $filterName) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     //########################################
 }

@@ -1,0 +1,23 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Listing\Mapping\View $block */
+
+?>
+
+<div id="pop_up_content">
+    <div class="hor-scroll" style="padding-top: 15px; ">
+        <input id="other_product_id" type="hidden" name="other_product_id" />
+        <div id="help_grid" style="margin: 0 auto; padding-top: 10px;">
+            <?php echo $block->getChildHtml('help_block'); ?>
+            <?php echo $block->getChildHtml('listing_mapping_grid') ?>
+        </div>
+
+    </div>
+</div>

@@ -46,14 +46,16 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->css->addFile('walmart/listing/product/variation/grid.css');
 
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            $this->appendHelpBlock([
-                'content' => $this->__(
-                    '<p>M2E Pro Listing is a group of Magento Products sold on a certain Marketplace from a
+            $this->appendHelpBlock(
+                [
+                    'content' => $this->__(
+                        '<p>M2E Pro Listing is a group of Magento Products sold on a certain Marketplace from a
                     particular Account. M2E Pro has several options to display the content of Listings
                     referring to different data details. Each of the view options contains a unique set of
                     available Actions accessible in the Mass Actions drop-down.</p>'
-                )
-            ]);
+                    )
+                ]
+            );
 
             $this->setPageActionsBlock(
                 'Walmart_Listing_View_Switcher',
@@ -62,43 +64,59 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         }
 
         // ---------------------------------------
-        $this->addButton('back', [
-            'label'   => $this->__('Back'),
-            'onclick' => 'setLocation(\''.$this->getUrl('*/walmart_listing/index') . '\');',
-            'class'   => 'back'
-        ]);
+        $this->addButton(
+            'back',
+            [
+                'label'   => $this->__('Back'),
+                'onclick' => 'setLocation(\'' . $this->getUrl('*/walmart_listing/index') . '\');',
+                'class'   => 'back'
+            ]
+        );
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('view_logs', [
-            'label'   => $this->__('Logs & Events'),
-            'onclick' => 'window.open(\''.$this->getUrl('*/walmart_log_listing_product/index', [
-                \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD =>
-                    $this->listing->getId()
-            ]) . '\');',
-            'class'   => '',
-        ]);
+        $this->addButton(
+            'view_logs',
+            [
+                'label'   => $this->__('Logs & Events'),
+                'onclick' => 'window.open(\'' . $this->getUrl(
+                        '*/walmart_log_listing_product/index',
+                        [
+                            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD =>
+                                $this->listing->getId()
+                        ]
+                    ) . '\');',
+                'class'   => '',
+            ]
+        );
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('edit_settings', [
-            'label'   => $this->__('Edit Settings'),
-            'onclick' => '',
-            'class'   => 'drop_down edit_default_settings_drop_down primary',
-            'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
-            'options' => $this->getSettingsButtonDropDownItems()
-        ]);
+        $this->addButton(
+            'edit_settings',
+            [
+                'label'      => $this->__('Edit Settings'),
+                'onclick'    => '',
+                'class'      => 'drop_down edit_default_settings_drop_down primary',
+                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
+                'options'    => $this->getSettingsButtonDropDownItems()
+            ]
+        );
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->addButton('add_products', [
-            'id'        => 'add_products',
-            'label'     => $this->__('Add Products'),
-            'class'     => 'add',
-            'button_class' => '',
-            'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
-            'options' => $this->getAddProductsDropDownItems(),
-        ]);
+        $this->addButton(
+            'add_products',
+            [
+                'id'           => 'add_products',
+                'label'        => $this->__('Add Products'),
+                'class'        => 'add',
+                'button_class' => '',
+                'class_name'   => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
+                'options'      => $this->getAddProductsDropDownItems(),
+            ]
+        );
+
         // ---------------------------------------
 
         return parent::_prepareLayout();
@@ -126,9 +144,11 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->jsPhp->addConstants(
             $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class)
         );
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::class
-        ));
+        $this->jsPhp->addConstants(
+            $this->getHelper('Data')->getClassConstants(
+                \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::class
+            )
+        );
 
         $this->jsPhp->addConstants(
             $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Walmart\Account::class)
@@ -137,36 +157,52 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $showAutoAction = $this->getHelper('Data')->jsonEncode((bool)$this->getRequest()->getParam('auto_actions'));
 
         // ---------------------------------------
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
-            'Walmart_Listing_AutoAction',
-            ['listing_id' => $this->getRequest()->getParam('id')]
-        ));
+        $this->jsUrl->addUrls(
+            $this->getHelper('Data')->getControllerActions(
+                'Walmart_Listing_AutoAction',
+                ['listing_id' => $this->getRequest()->getParam('id')]
+            )
+        );
 
         $path = 'walmart_listing_autoAction/getCategoryTemplatesList';
-        $this->jsUrl->add($this->getUrl('*/' . $path, [
-            'marketplace_id' => $this->listing->getMarketplaceId()
-        ]), $path);
+        $this->jsUrl->add(
+            $this->getUrl(
+                '*/' . $path,
+                [
+                    'marketplace_id' => $this->listing->getMarketplaceId()
+                ]
+            ),
+            $path
+        );
 
         $path = 'walmart_log_listing_product/index';
         $this->jsUrl->add($this->getUrl('*/' . $path), $path);
 
-        $this->jsUrl->add($this->getUrl('*/walmart_log_listing_product/index', [
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD => $this->listing['id'],
-        ]), 'logViewUrl');
+        $this->jsUrl->add(
+            $this->getUrl(
+                '*/walmart_log_listing_product/index',
+                [
+                    \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD => $this->listing['id'],
+                ]
+            ),
+            'logViewUrl'
+        );
 
         $this->jsUrl->add($this->getUrl('*/listing/getErrorsSummary'), 'getErrorsSummary');
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Listing'));
 
-        $this->jsUrl->addUrls([
-            'runListProducts' => $this->getUrl('*/walmart_listing/runListProducts'),
-            'runRelistProducts' => $this->getUrl('*/walmart_listing/runRelistProducts'),
-            'runReviseProducts' => $this->getUrl('*/walmart_listing/runReviseProducts'),
-            'runStopProducts' => $this->getUrl('*/walmart_listing/runStopProducts'),
-            'runStopAndRemoveProducts' => $this->getUrl('*/walmart_listing/runStopAndRemoveProducts'),
-            'runDeleteAndRemoveProducts' => $this->getUrl('*/walmart_listing/runDeleteAndRemoveProducts'),
-            'runResetProducts' => $this->getUrl('*/walmart_listing/runResetProducts'),
-        ]);
+        $this->jsUrl->addUrls(
+            [
+                'runListProducts'            => $this->getUrl('*/walmart_listing/runListProducts'),
+                'runRelistProducts'          => $this->getUrl('*/walmart_listing/runRelistProducts'),
+                'runReviseProducts'          => $this->getUrl('*/walmart_listing/runReviseProducts'),
+                'runStopProducts'            => $this->getUrl('*/walmart_listing/runStopProducts'),
+                'runStopAndRemoveProducts'   => $this->getUrl('*/walmart_listing/runStopAndRemoveProducts'),
+                'runDeleteAndRemoveProducts' => $this->getUrl('*/walmart_listing/runDeleteAndRemoveProducts'),
+                'runResetProducts'           => $this->getUrl('*/walmart_listing/runResetProducts'),
+            ]
+        );
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart_Listing_Product'));
         $this->jsUrl->addUrls(
@@ -187,21 +223,38 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->jsUrl->add($this->getUrl('*/listing_moving/prepareMoveToListing'), 'prepareData');
         $this->jsUrl->add($this->getUrl('*/listing_moving/moveToListing'), 'moveToListing');
 
+        $this->jsUrl->add($this->getUrl(
+            '*/listing_mapping/mapProductPopupHtml',
+            [
+                'account_id'     => $this->listing->getAccountId(),
+                'marketplace_id' => $this->listing->getMarketplaceId()
+            ]
+        ), 'mapProductPopupHtml');
+        $this->jsUrl->add($this->getUrl('*/listing_mapping/remap'), 'listing_mapping/remap');
+
         $this->jsUrl->add($this->getUrl('*/walmart_marketplace/index'), 'marketplaceSynchUrl');
 
-        $this->jsUrl->add($this->getUrl('*/listing/saveListingAdditionalData', [
-            'id' => $this->listing['id']
-        ]), 'saveListingAdditionalData');
+        $this->jsUrl->add(
+            $this->getUrl(
+                '*/listing/saveListingAdditionalData',
+                [
+                    'id' => $this->listing['id']
+                ]
+            ),
+            'saveListingAdditionalData'
+        );
 
         // ---------------------------------------
 
         $component = \Ess\M2ePro\Helper\Component\Walmart::NICK;
         $gridId = $this->getChildBlock('grid')->getId();
         $ignoreListings = $this->getHelper('Data')->jsonEncode([$this->listing['id']]);
-        $marketplace = $this->getHelper('Data')->jsonEncode(array_merge(
-            $this->listing->getMarketplace()->getData(),
-            $this->listing->getMarketplace()->getChildObject()->getData()
-        ));
+        $marketplace = $this->getHelper('Data')->jsonEncode(
+            array_merge(
+                $this->listing->getMarketplace()->getData(),
+                $this->listing->getMarketplace()->getChildObject()->getData()
+            )
+        );
 
         $temp = $this->getHelper('Data\Session')->getValue('products_ids_for_list', true);
         $productsIdsForList = empty($temp) ? '' : $temp;
@@ -259,91 +312,94 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $emptySkuError = $this->__('Please enter Walmart Parent Product SKU.');
 
-        $this->jsTranslator->addTranslations([
-            'Remove Category' => $this->__('Remove Category'),
-            'Add New Rule' => $this->__('Add New Rule'),
-            'Add/Edit Categories Rule' => $this->__('Add/Edit Categories Rule'),
-            'Auto Add/Remove Rules' => $this->__('Auto Add/Remove Rules'),
-            'Based on Magento Categories' => $this->__('Based on Magento Categories'),
-            'You must select at least 1 Category.' => $this->__('You must select at least 1 Category.'),
-            'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.'),
+        $this->jsTranslator->addTranslations(
+            [
+                'Remove Category'                          => $this->__('Remove Category'),
+                'Add New Rule'                             => $this->__('Add New Rule'),
+                'Add/Edit Categories Rule'                 => $this->__('Add/Edit Categories Rule'),
+                'Auto Add/Remove Rules'                    => $this->__('Auto Add/Remove Rules'),
+                'Based on Magento Categories'              => $this->__('Based on Magento Categories'),
+                'You must select at least 1 Category.'     => $this->__('You must select at least 1 Category.'),
+                'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.'),
 
-            'Add New Shipping Template Policy' => $this->__('Add New Shipping Template Policy'),
-            'Add New Shipping Override Policy' => $this->__('Add New Shipping Override Policy'),
-            'Add New Product Tax Code Policy'  => $this->__('Add New Product Tax Code Policy'),
-            'Add New Listing' => $this->__('Add New Listing'),
+                'Add New Shipping Template Policy' => $this->__('Add New Shipping Template Policy'),
+                'Add New Shipping Override Policy' => $this->__('Add New Shipping Override Policy'),
+                'Add New Product Tax Code Policy'  => $this->__('Add New Product Tax Code Policy'),
+                'Add New Listing'                  => $this->__('Add New Listing'),
 
-            'popup_title' => $popupTitle,
+                'popup_title' => $popupTitle,
 
-            'task_completed_message' => $taskCompletedMessage,
-            'task_completed_success_message' => $taskCompletedSuccessMessage,
-            'task_completed_warning_message' => $taskCompletedWarningMessage,
-            'task_completed_error_message' => $taskCompletedErrorMessage,
+                'task_completed_message'         => $taskCompletedMessage,
+                'task_completed_success_message' => $taskCompletedSuccessMessage,
+                'task_completed_warning_message' => $taskCompletedWarningMessage,
+                'task_completed_error_message'   => $taskCompletedErrorMessage,
 
-            'sending_data_message' => $sendingDataToWalmartMessage,
-            'view_all_product_log_message' => $viewAllProductLogMessage,
+                'sending_data_message'         => $sendingDataToWalmartMessage,
+                'view_all_product_log_message' => $viewAllProductLogMessage,
 
-            'listing_locked_message' => $listingLockedMessage,
-            'listing_empty_message' => $listingEmptyMessage,
+                'listing_locked_message' => $listingLockedMessage,
+                'listing_empty_message'  => $listingEmptyMessage,
 
-            'listing_all_items_message' => $listingAllItemsMessage,
-            'listing_selected_items_message' => $listingSelectedItemsMessage,
-            'revising_selected_items_message' => $revisingSelectedItemsMessage,
-            'relisting_selected_items_message' => $relistingSelectedItemsMessage,
-            'stopping_selected_items_message' => $stoppingSelectedItemsMessage,
-            'stopping_and_removing_selected_items_message' => $stoppingAndRemovingSelectedItemsMessage,
-            'deleting_and_removing_selected_items_message' => $deletingAndRemovingSelectedItemsMessage,
-            'removing_selected_items_message' => $removingSelectedItemsMessage,
-            'reset_blocked_products_message' => $resetBlockedProductsMessage,
+                'listing_all_items_message'                    => $listingAllItemsMessage,
+                'listing_selected_items_message'               => $listingSelectedItemsMessage,
+                'revising_selected_items_message'              => $revisingSelectedItemsMessage,
+                'relisting_selected_items_message'             => $relistingSelectedItemsMessage,
+                'stopping_selected_items_message'              => $stoppingSelectedItemsMessage,
+                'stopping_and_removing_selected_items_message' => $stoppingAndRemovingSelectedItemsMessage,
+                'deleting_and_removing_selected_items_message' => $deletingAndRemovingSelectedItemsMessage,
+                'removing_selected_items_message'              => $removingSelectedItemsMessage,
+                'reset_blocked_products_message'               => $resetBlockedProductsMessage,
 
-            'select_items_message' => $selectItemsMessage,
-            'select_action_message' => $selectActionMessage,
+                'select_items_message'  => $selectItemsMessage,
+                'select_action_message' => $selectActionMessage,
 
-            'templateCategoryPopupTitle' => $templateCategoryPopupTitle,
+                'templateCategoryPopupTitle' => $templateCategoryPopupTitle,
 
-            'assign' => $assignString,
+                'assign' => $assignString,
 
-            'no_variations_left' => $noVariationsLeftText,
+                'no_variations_left' => $noVariationsLeftText,
 
-            'not_set' => $notSet,
-            'set_attributes' => $setAttributes,
-            'variation_manage_matched_attributes_error' => $variationManageMatchedAttributesError,
-            'variation_manage_matched_attributes_error_duplicate' =>
-                $variationManageMatchedAttributesErrorDuplicateSelection,
+                'not_set'                                             => $notSet,
+                'set_attributes'                                      => $setAttributes,
+                'variation_manage_matched_attributes_error'           => $variationManageMatchedAttributesError,
+                'variation_manage_matched_attributes_error_duplicate' =>
+                    $variationManageMatchedAttributesErrorDuplicateSelection,
 
-            'error_changing_product_options' => $this->__('Please Select Product Options.'),
+                'error_changing_product_options' => $this->__('Please Select Product Options.'),
 
-            'variation_manage_matched_sku_popup_title' => $variationManageSkuPopUpTitle,
-            'empty_sku_error' => $emptySkuError,
+                'variation_manage_matched_sku_popup_title' => $variationManageSkuPopUpTitle,
+                'empty_sku_error'                          => $emptySkuError,
 
-            'switch_to_individual_mode_popup_title' => $switchToIndividualModePopUpTitle,
-            'switch_to_parent_mode_popup_title' => $switchToParentModePopUpTitle,
+                'switch_to_individual_mode_popup_title' => $switchToIndividualModePopUpTitle,
+                'switch_to_parent_mode_popup_title'     => $switchToParentModePopUpTitle,
 
-            'Add New Category Policy' => $this->__('Add New Category Policy'),
-            'Add New Child Product' => $this->__('Add New Child Product'),
+                'Add New Category Policy' => $this->__('Add New Category Policy'),
+                'Add New Child Product'   => $this->__('Add New Child Product'),
 
-            'Edit SKU'        => $this->__('Edit SKU'),
-            'Edit Product ID' => $this->__('Edit Product ID'),
+                'Edit SKU'        => $this->__('Edit SKU'),
+                'Edit Product ID' => $this->__('Edit Product ID'),
+                'Mapping Product' => $this->__('Mapping Product'),
 
-            'Updating SKU has submitted to be processed.' =>
-                $this->__('Updating SKU has submitted to be processed.'),
-            'Updating GTIN has submitted to be processed.' =>
-                $this->__('Updating GTIN has submitted to be processed.'),
-            'Updating UPC has submitted to be processed.' =>
-                $this->__('Updating UPC has submitted to be processed.'),
-            'Updating EAN has submitted to be processed.' =>
-                $this->__('Updating EAN has submitted to be processed.'),
-            'Updating ISBN has submitted to be processed.' =>
-                $this->__('Updating ISBN has submitted to be processed.'),
+                'Updating SKU has submitted to be processed.'  =>
+                    $this->__('Updating SKU has submitted to be processed.'),
+                'Updating GTIN has submitted to be processed.' =>
+                    $this->__('Updating GTIN has submitted to be processed.'),
+                'Updating UPC has submitted to be processed.'  =>
+                    $this->__('Updating UPC has submitted to be processed.'),
+                'Updating EAN has submitted to be processed.'  =>
+                    $this->__('Updating EAN has submitted to be processed.'),
+                'Updating ISBN has submitted to be processed.' =>
+                    $this->__('Updating ISBN has submitted to be processed.'),
 
-            'Required at least one identifier' => $this->__('Required at least one identifier'),
-            'At least one Variant Attribute must be selected.' =>
-                $this->__('At least one Variant Attribute must be selected.'),
+                'Required at least one identifier'                 => $this->__('Required at least one identifier'),
+                'At least one Variant Attribute must be selected.' =>
+                    $this->__('At least one Variant Attribute must be selected.'),
 
-            'SKU contains the special characters that are not allowed by Walmart.' => $this->__(
-                'Hyphen (-), space ( ), and period (.) are not allowed by Walmart. Please use a correct format.'
-            )
-        ]);
+                'The length of SKU must be less than 50 characters.' => $this->__(
+                    'The length of SKU must be less than 50 characters.'
+                )
+            ]
+        );
 
         $this->js->add(
             <<<JS
@@ -393,9 +449,14 @@ JS
         );
 
         // ---------------------------------------
-        $viewHeaderBlock = $this->createBlock('Listing_View_Header', '', [
-            'data' => ['listing' => $this->listing]
-        ]);
+        $viewHeaderBlock = $this->createBlock(
+            'Listing_View_Header',
+            '',
+            [
+                'data' => ['listing' => $this->listing]
+            ]
+        );
+
         // ---------------------------------------
 
         return $viewHeaderBlock->toHtml()
@@ -407,23 +468,29 @@ JS
     {
         $items = [];
 
-        $backUrl = $this->getHelper('Data')->makeBackUrlParam('*/walmart_listing/view', [
-            'id' => $this->listing['id']
-        ]);
+        $backUrl = $this->getHelper('Data')->makeBackUrlParam(
+            '*/walmart_listing/view',
+            [
+                'id' => $this->listing['id']
+            ]
+        );
 
-        $url = $this->getUrl('*/walmart_listing/edit', [
-            'id' => $this->listing['id'],
-            'back' => $backUrl
-        ]);
+        $url = $this->getUrl(
+            '*/walmart_listing/edit',
+            [
+                'id'   => $this->listing['id'],
+                'back' => $backUrl
+            ]
+        );
         $items[] = [
-            'label' => $this->__('Configuration'),
+            'label'   => $this->__('Configuration'),
             'onclick' => 'window.open(\'' . $url . '\',\'_blank\');',
             'default' => true
         ];
 
         $items[] = [
             'onclick' => 'ListingAutoActionObj.loadAutoActionHtml();',
-            'label' => $this->__('Auto Add/Remove Rules')
+            'label'   => $this->__('Auto Add/Remove Rules')
         ];
 
         return $items;
@@ -435,41 +502,51 @@ JS
     {
         $items = [];
 
-        $backUrl = $this->getHelper('Data')->makeBackUrlParam('*/walmart_listing/view', [
-            'id' => $this->listing['id']
-        ]);
+        $backUrl = $this->getHelper('Data')->makeBackUrlParam(
+            '*/walmart_listing/view',
+            [
+                'id' => $this->listing['id']
+            ]
+        );
 
         // ---------------------------------------
-        $url = $this->getUrl('*/walmart_listing_product_add/index', [
-            'id' => $this->listing['id'],
-            'back' => $backUrl,
-            'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'clear' => 1,
-            'step' => 2,
-            'source' => \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_PRODUCT
-        ]);
+        $url = $this->getUrl(
+            '*/walmart_listing_product_add/index',
+            [
+                'id'        => $this->listing['id'],
+                'back'      => $backUrl,
+                'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                'clear'     => 1,
+                'step'      => 2,
+                'source'    => \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_PRODUCT
+            ]
+        );
         $items[] = [
-            'id' => 'add_products_mode_product',
-            'label' => $this->__('From Products List'),
+            'id'      => 'add_products_mode_product',
+            'label'   => $this->__('From Products List'),
             'onclick' => "setLocation('" . $url . "')",
             'default' => true
         ];
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getUrl('*/walmart_listing_product_add/index', [
-            'id' => $this->listing['id'],
-            'back' => $backUrl,
-            'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'clear' => 1,
-            'step' => 2,
-            'source' => \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_CATEGORY
-        ]);
+        $url = $this->getUrl(
+            '*/walmart_listing_product_add/index',
+            [
+                'id'        => $this->listing['id'],
+                'back'      => $backUrl,
+                'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                'clear'     => 1,
+                'step'      => 2,
+                'source'    => \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_CATEGORY
+            ]
+        );
         $items[] = [
-            'id' => 'add_products_mode_category',
-            'label' => $this->__('From Categories'),
+            'id'      => 'add_products_mode_category',
+            'label'   => $this->__('From Categories'),
             'onclick' => "setLocation('" . $url . "')"
         ];
+
         // ---------------------------------------
 
         return $items;

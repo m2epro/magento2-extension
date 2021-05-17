@@ -1,20 +1,18 @@
 define([
     'M2ePro/Template/Edit'
-], function () {
+], function() {
 
     window.AmazonTemplateEdit = Class.create(TemplateEdit, {
 
         // ---------------------------------------
 
-        getComponent: function()
-        {
+        getComponent: function() {
             return 'amazon';
         },
 
         // ---------------------------------------
 
-        saveAndCloseClick: function(confirmText, templateNick)
-        {
+        saveAndCloseClick: function(confirmText, templateNick) {
             if (!this.isValidForm()) {
                 return;
             }
@@ -27,8 +25,7 @@ define([
             this.saveFormUsingAjax();
         },
 
-        saveFormUsingAjax: function ()
-        {
+        saveFormUsingAjax: function() {
             new Ajax.Request(M2ePro.url.get('formSubmit'), {
                 method: 'post',
                 parameters: Form.serialize($('edit_form')),

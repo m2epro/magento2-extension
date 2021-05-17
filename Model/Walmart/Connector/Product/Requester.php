@@ -131,12 +131,14 @@ abstract class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
         if ($this->validateAndProcessParentListingProduct()) {
             $this->writeStoredLogMessages();
             $this->getProcessingRunner()->stop();
+
             return;
         }
 
         if (!$this->validateListingProduct() || !$this->validateConfigurator()) {
             $this->writeStoredLogMessages();
             $this->getProcessingRunner()->stop();
+
             return;
         }
 
@@ -194,6 +196,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
             );
 
             $this->storeLogMessage($message);
+
             return false;
         }
 
@@ -217,6 +220,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
 
         if (empty($childProducts)) {
             $this->listingProduct->setData('no_child_for_processing', true);
+
             return false;
         }
 
@@ -237,9 +241,13 @@ abstract class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
     {
         $resultListingProducts = [];
         foreach ($listingProducts as $listingProduct) {
-            $lockItem = $this->modelFactory->getObject('Lock_Item_Manager', [
-                'nick' => \Ess\M2ePro\Helper\Component\Walmart::NICK.'_listing_product_'.$listingProduct->getId()
-            ]);
+            $lockItem = $this->modelFactory->getObject(
+                'Lock_Item_Manager',
+                [
+                    'nick' => \Ess\M2ePro\Helper\Component\Walmart::NICK . '_listing_product_' . $listingProduct->getId(
+                        )
+                ]
+            );
 
             if ($listingProduct->isSetProcessingLock('in_action') || $lockItem->isExist()) {
                 continue;
@@ -276,6 +284,11 @@ abstract class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
         $requestDataRaw = array_merge($requestDataRaw, ['id' => $this->listingProduct->getId()]);
 
         $this->buildRequestDataObject($requestDataRaw);
+
+        if (isset($requestDataRaw['sku'])) {
+            $helperProductData = $this->getHelper('Component_Walmart_ProductData');
+            $requestDataRaw['sku'] = $helperProductData->encodeWalmartSku($requestDataRaw['sku']);
+        }
 
         return $requestDataRaw;
     }

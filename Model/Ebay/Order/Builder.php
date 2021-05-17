@@ -17,18 +17,18 @@ use Ess\M2ePro\Model\Ebay\Order\Helper as OrderHelper;
 class Builder extends AbstractModel
 {
     const STATUS_NOT_MODIFIED = 0;
-    const STATUS_NEW = 1;
-    const STATUS_UPDATED = 2;
+    const STATUS_NEW          = 1;
+    const STATUS_UPDATED      = 2;
 
     const UPDATE_COMPLETED_CHECKOUT = 'completed_checkout';
-    const UPDATE_COMPLETED_PAYMENT = 'completed_payment';
+    const UPDATE_COMPLETED_PAYMENT  = 'completed_payment';
     const UPDATE_COMPLETED_SHIPPING = 'completed_shipping';
     const UPDATE_CANCELLATION       = 'cancellation';
-    const UPDATE_BUYER_MESSAGE = 'buyer_message';
-    const UPDATE_PAYMENT_DATA = 'payment_data';
-    const UPDATE_SHIPPING_TAX_DATA = 'shipping_tax_data';
-    const UPDATE_ITEMS_COUNT = 'items_count';
-    const UPDATE_EMAIL = 'email';
+    const UPDATE_BUYER_MESSAGE      = 'buyer_message';
+    const UPDATE_PAYMENT_DATA       = 'payment_data';
+    const UPDATE_SHIPPING_TAX_DATA  = 'shipping_tax_data';
+    const UPDATE_ITEMS_COUNT        = 'items_count';
+    const UPDATE_EMAIL              = 'email';
 
     private $helper;
 
@@ -255,7 +255,7 @@ class Builder extends AbstractModel
     protected function getExistedOrders()
     {
         $orderIds = [$this->getData('ebay_order_id')];
-        if ($oldFormatId = $this->getOldFormatId()) {
+        if ($this->getData('selling_manager_id') && $oldFormatId = $this->getOldFormatId()) {
             $orderIds[] = $oldFormatId;
         }
 
@@ -263,13 +263,12 @@ class Builder extends AbstractModel
             ->addFieldToFilter('account_id', $this->account->getId())
             ->setOrder('id', \Magento\Framework\Data\Collection::SORT_ORDER_DESC);
 
-        $existed->getSelect()->where(
-            sprintf(
-                'ebay_order_id IN (%s) OR selling_manager_id = %s',
-                implode(',', $orderIds),
-                $this->getData('selling_manager_id')
-            )
-        );
+        $whereExpression = sprintf('ebay_order_id IN (%s) ', implode(',', $orderIds));
+        if ($this->getData('selling_manager_id')) {
+            $whereExpression .= sprintf(' OR selling_manager_id = %s', $this->getData('selling_manager_id'));
+        }
+
+        $existed->getSelect()->where($whereExpression);
 
         return $existed->getItems();
     }
@@ -301,6 +300,7 @@ class Builder extends AbstractModel
             ['ebay_order_id' => 'ebay_order_id']
         );
         $collection->addFieldToFilter('ebay_order_id', ['neq' => $this->getData('ebay_order_id')]);
+        $collection->addFieldToFilter('e_order.selling_manager_id', ['neq' => 0]);
         $collection->addFieldToFilter('transaction_id', ['in' => $transactionIds]);
         $possibleOldFormatIds = array_unique($collection->getColumnValues('ebay_order_id'));
 
@@ -433,6 +433,7 @@ class Builder extends AbstractModel
     public function isRefund()
     {
         $paymentDetails = $this->getData('payment_details');
+
         return $paymentDetails['is_refund'];
     }
 
@@ -618,10 +619,14 @@ class Builder extends AbstractModel
         }
 
         if (!$this->order->getChildObject()->canCreateMagentoOrder()) {
-            $this->order->addWarningLog('Magento Order was not created. Reason: %msg%', [
-                'msg' => 'Order Creation Rules were not met. ' .
-                    'Press Create Order Button at Order View Page to create it anyway.'
-            ]);
+            $this->order->addWarningLog(
+                'Magento Order was not created. Reason: %msg%',
+                [
+                    'msg' => 'Order Creation Rules were not met. ' .
+                        'Press Create Order Button at Order View Page to create it anyway.'
+                ]
+            );
+
             return;
         }
     }
@@ -644,7 +649,7 @@ class Builder extends AbstractModel
                     $description,
                     [
                         '!order_id' => $order->getMagentoOrder()->getRealOrderId(),
-                        '!new_id' => $this->order->getChildObject()->getEbayOrderId()
+                        '!new_id'   => $this->order->getChildObject()->getEbayOrderId()
                     ]
                 );
 

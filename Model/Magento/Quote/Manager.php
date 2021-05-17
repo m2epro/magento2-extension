@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Magento\Quote;
 
+use Ess\M2ePro\Model\Exception;
+
 /**
  * Class \Ess\M2ePro\Model\Magento\Quote\Manager
  */
@@ -38,10 +40,10 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         parent::__construct($helperFactory, $modelFactory);
 
         $this->quoteRepository = $quoteRepository;
-        $this->sessionQuote    = $sessionQuote;
+        $this->sessionQuote = $sessionQuote;
         $this->quoteManagement = $quoteManagement;
         $this->checkoutSession = $checkoutSession;
-        $this->orderFactory    = $orderFactory;
+        $this->orderFactory = $orderFactory;
     }
 
     //########################################
@@ -68,16 +70,23 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function submit(\Magento\Quote\Model\Quote $quote)
     {
         try {
+
             $order = $this->quoteManagement->submit($quote);
+            if ($order === null) {
+                throw new Exception(
+                    'You are trying to create an order for Parent Product or Product that has been deleted.'
+                );
+            }
 
             return $order;
+
         } catch (\Exception $e) {
             $order = $this->orderFactory
-                          ->create()
-                          ->loadByIncrementIdAndStoreId(
-                              $quote->getReservedOrderId(),
-                              $quote->getStoreId()
-                          );
+                ->create()
+                ->loadByIncrementIdAndStoreId(
+                    $quote->getReservedOrderId(),
+                    $quote->getStoreId()
+                );
 
             if ($order->getId()) {
                 $this->helperFactory->getObject('Module\Exception')->process($e, false);

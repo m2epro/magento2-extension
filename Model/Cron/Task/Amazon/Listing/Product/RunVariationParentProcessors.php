@@ -37,6 +37,7 @@ class RunVariationParentProcessors extends \Ess\M2ePro\Model\Cron\Task\AbstractM
             return;
         }
 
+        /** @var MassProcessor $massProcessor */
         $massProcessor = $this->modelFactory->getObject(
             'Amazon_Listing_Product_Variation_Manager_Type_Relation_ParentRelation_Processor_Mass'
         );

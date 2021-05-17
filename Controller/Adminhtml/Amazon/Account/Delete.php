@@ -45,27 +45,6 @@ class Delete extends Account
                 continue;
             }
 
-            try {
-                $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
-
-                if ($dispatcherObject) {
-                    $connectorObj = $dispatcherObject->getConnector(
-                        'account',
-                        'delete',
-                        'entityRequester',
-                        [],
-                        $account
-                    );
-                    $dispatcherObject->process($connectorObj);
-                }
-            } catch (\Exception $e) {
-                $account->deleteProcessings();
-                $account->deleteProcessingLocks();
-                $account->delete();
-
-                throw $e;
-            }
-
             $account->deleteProcessings();
             $account->deleteProcessingLocks();
             $account->delete();

@@ -79,8 +79,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareCollection()
     {
-        // Get collection
-        // ---------------------------------------
         /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
@@ -88,19 +86,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $collection->setStoreId($this->listing->getStoreId());
         $collection->setListing($this->listing->getId());
 
-        if ($this->isFilterOrSortByPriceIsUsed('online_price', 'walmart_online_price')) {
-            $collection->setIsNeedToUseIndexerParent(true);
-        }
-
         $collection
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('sku')
             ->joinStockItem();
 
-        // ---------------------------------------
-
-        // Join listing product tables
-        // ---------------------------------------
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
         $collection->joinTable(
             ['lp' => $lpTable],
@@ -140,7 +130,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             '{{table}}.variation_parent_id is NULL'
         );
 
-        if ($collection->isNeedUseIndexerParent()) {
+        if ($this->isFilterOrSortByPriceIsUsed('online_price', 'walmart_online_price')) {
             $collection->joinIndexerParent();
         } else {
             $collection->setIsNeedToInjectPrices(true);

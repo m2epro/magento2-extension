@@ -75,6 +75,10 @@ class Table extends AbstractModifier
             );
         }
 
+        if ($this->isNeedChangeRowFormat()) {
+            $this->changeRowFormat();
+        }
+
         $definition = $this->buildColumnDefinitionByName($from, $autoCommit);
 
         if (empty($definition)) {
@@ -164,6 +168,10 @@ class Table extends AbstractModifier
             );
         }
 
+        if ($this->isNeedChangeRowFormat()) {
+            $this->changeRowFormat();
+        }
+
         $definition = $this->buildColumnDefinition($type, $default, $after, $autoCommit);
 
         if (empty($definition)) {
@@ -216,6 +224,10 @@ class Table extends AbstractModifier
             );
         }
 
+        if ($this->isNeedChangeRowFormat()) {
+            $this->changeRowFormat();
+        }
+
         $definition = $this->buildColumnDefinition($type, $default, $after, $autoCommit);
 
         if (empty($definition)) {
@@ -251,6 +263,10 @@ class Table extends AbstractModifier
     {
         if (!$this->isColumnExists($name)) {
             return $this;
+        }
+
+        if ($this->isNeedChangeRowFormat()) {
+            $this->changeRowFormat();
         }
 
         if ($autoCommit) {

@@ -272,11 +272,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $productTitle = $this->getHelper('Data')->escapeJs($productTitle);
 
             $htmlValue = '&nbsp;<a href="javascript:void(0);"
-                                    onclick="EbayListingOtherMappingObj.openPopUp(\''.
-                                        $productTitle.
-                                        '\','.
-                                        (int)$row->getId().
-                                    ');">' . $this->__('Map') . '</a>';
+                                    onclick="ListingOtherMappingObj.openPopUp(
+                                    '. (int)$row->getId(). ',
+                                    \''. $productTitle. '\'
+                                    );">' . $this->__('Map') . '</a>';
+
             return $htmlValue;
         }
 

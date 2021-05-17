@@ -18,11 +18,11 @@ class Builder extends AbstractModel
     const INSTRUCTION_INITIATOR = 'order_builder';
 
     const STATUS_NOT_MODIFIED = 0;
-    const STATUS_NEW = 1;
-    const STATUS_UPDATED = 2;
+    const STATUS_NEW          = 1;
+    const STATUS_UPDATED      = 2;
 
     const UPDATE_STATUS = 'status';
-    const UPDATE_EMAIL = 'email';
+    const UPDATE_EMAIL  = 'email';
 
     //########################################
 
@@ -183,7 +183,41 @@ class Builder extends AbstractModel
         return $data['tax_details'];
     }
 
-    private function isNeedSkipTax($data)
+    protected function isNeedSkipTax($data)
+    {
+        if ($this->isSkipTaxForUS($data)) {
+            return true;
+        }
+
+        if ($this->isSkipTaxForUkShipment($data)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function isSkipTaxForUkShipment(array $data)
+    {
+        $countryCode = strtoupper($data['shipping_address']['country_code']);
+        if (!in_array($countryCode, ['GB', 'UK'])) {
+            return false;
+        }
+
+        if ($this->account->getChildObject()->isAmazonCollectsTaxForUKShipmentAvailable()) {
+            return true;
+        }
+
+        if ($this->account->getChildObject()->isAmazonCollectsTaxForUKShipmentWithCertainPrice()
+            && $this->isSumOfItemPriceLessThan135GBP(
+                $data['items']
+            )) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function isSkipTaxForUS(array $data)
     {
         if (!$this->account->getChildObject()->isAmazonCollectsEnabled()) {
             return false;
@@ -209,6 +243,27 @@ class Builder extends AbstractModel
         }
 
         return false;
+    }
+
+    protected function calculateItemPrice(array $items)
+    {
+        $result = 0.0;
+
+        foreach ($items as $item) {
+            $result += $this->convertPricetoGBP($item['price'], trim($item['currency']));
+        }
+
+        return $result;
+    }
+
+    protected function convertPriceToGBP($price, $currency)
+    {
+        return $this->modelFactory->getObject('Currency')->convertPriceToCurrency($price, $currency, 'GBP');
+    }
+
+    protected function isSumOfItemPriceLessThan135GBP($items)
+    {
+        return $this->calculateItemPrice($items) < 135;
     }
 
     //########################################
@@ -376,6 +431,7 @@ class Builder extends AbstractModel
 
         if ($this->hasUpdate(self::UPDATE_STATUS) && $this->order->getChildObject()->isCanceled()) {
             $this->cancelMagentoOrder();
+
             return;
         }
 
@@ -478,13 +534,15 @@ class Builder extends AbstractModel
                 }
 
                 $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
-                $instruction->setData([
-                    'listing_product_id' => $listingProduct->getId(),
-                    'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-                    'type' =>  \Ess\M2ePro\Model\Amazon\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
-                    'initiator' => self::INSTRUCTION_INITIATOR,
-                    'priority' => 80,
-                ]);
+                $instruction->setData(
+                    [
+                        'listing_product_id' => $listingProduct->getId(),
+                        'component'          => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+                        'type'               => \Ess\M2ePro\Model\Amazon\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
+                        'initiator'          => self::INSTRUCTION_INITIATOR,
+                        'priority'           => 80,
+                    ]
+                );
                 $instruction->save();
 
                 if ($currentOnlineQty > $orderItem['qty_purchased']) {

@@ -15,6 +15,8 @@ use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
  */
 abstract class AfterGetTokenAbstract extends InstallationAmazon
 {
+    //########################################
+
     public function execute()
     {
         try {
@@ -26,32 +28,41 @@ abstract class AfterGetTokenAbstract extends InstallationAmazon
             return $this->indexAction();
         }
 
-        $accountModel = $this->amazonFactory->getObject('Account');
-        $this->modelFactory->getObject('Amazon_Account_Builder')->build($accountModel, $accountData);
+        $account = $this->amazonFactory->getObject('Account');
+        $this->modelFactory->getObject('Amazon_Account_Builder')->build($account, $accountData);
 
         try {
+            $params = [
+                'marketplace_id' => $accountData['marketplace_id'],
+                'merchant_id'    => $accountData['merchant_id'],
+                'token'          => $accountData['token'],
+            ];
+
             /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
             $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
-
-            $params = [
-                'title'            => $accountData['merchant_id'],
-                'marketplace_id'   => $accountData['marketplace_id'],
-                'merchant_id'      => $accountData['merchant_id'],
-                'token'            => $accountData['token'],
-            ];
 
             $connectorObj = $dispatcherObject->getConnector(
                 'account',
                 'add',
                 'entityRequester',
                 $params,
-                $accountModel->getId()
+                $account
             );
             $dispatcherObject->process($connectorObj);
+            $responseData = $connectorObj->getResponseData();
+
+            $account->getChildObject()->addData(
+                [
+                    'server_hash' => $responseData['hash'],
+                    'info'        => $this->getHelper('Data')->jsonEncode($responseData['info'])
+                ]
+            );
+            $account->getChildObject()->save();
         } catch (\Exception $exception) {
             $this->getHelper('Module\Exception')->process($exception);
             $this->messageManager->addError($this->__($exception->getMessage()));
-            $accountModel->delete();
+
+            $account->delete();
 
             return $this->indexAction();
         }
@@ -69,6 +80,7 @@ abstract class AfterGetTokenAbstract extends InstallationAmazon
 
     /**
      * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function getAmazonAccountDefaultSettings()
     {
@@ -87,4 +99,6 @@ abstract class AfterGetTokenAbstract extends InstallationAmazon
 
         return $data;
     }
+
+    //########################################
 }

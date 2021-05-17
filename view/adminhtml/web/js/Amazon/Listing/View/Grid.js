@@ -2,6 +2,7 @@ define([
     'M2ePro/Plugin/Messages',
     'M2ePro/Listing/View/Grid',
     'M2ePro/Listing/Moving',
+    'M2ePro/Listing/Mapping',
     'M2ePro/Amazon/Listing/View/Action',
     'M2ePro/Amazon/Listing/View/Fulfillment',
     'M2ePro/Amazon/Listing/Product/Repricing',
@@ -49,6 +50,7 @@ define([
             };
 
             this.movingHandler = new ListingMoving(this);
+            this.mappingHandler = new ListingMapping(this, 'amazon');
             this.productSearchHandler = new AmazonListingProductSearch(this);
 
             this.templateDescriptionHandler    = new AmazonListingProductTemplateDescription(this);
@@ -126,7 +128,11 @@ define([
                 }).bind(this),
                 unassignGeneralIdAction: (function() {
                     this.productSearchHandler.unmapFromGeneralId(this.getSelectedProductsString())
-                }).bind(this)
+                }).bind(this),
+
+                remapProductAction: function(id) {
+                    this.mappingHandler.openPopUp(id, null, this.listingId);
+                }.bind(this),
             });
         },
 

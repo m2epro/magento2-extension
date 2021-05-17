@@ -244,7 +244,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             ? $this->rawData['magento_orders_settings'][$tempKey] : [];
 
         $keys = [
-            'mode'
+            'mode',
+            'amazon_collect_for_uk'
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -372,9 +373,10 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                     'apply_to_amazon' => 0
                 ],
                 'tax'                     => [
-                    'mode'            => Account::MAGENTO_ORDERS_TAX_MODE_MIXED,
-                    'amazon_collects' => 1,
-                    'excluded_states' => $this->getGeneralExcludedStates()
+                    'mode'                  => Account::MAGENTO_ORDERS_TAX_MODE_MIXED,
+                    'amazon_collects'       => 1,
+                    'excluded_states'       => $this->getGeneralExcludedStates(),
+                    'amazon_collect_for_uk' => Account::SKIP_TAX_FOR_UK_SHIPMENT_NONE
                 ],
                 'customer'                => [
                     'mode'                 => Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST,

@@ -204,6 +204,15 @@ class View extends AbstractContainer
             $path
         );
 
+        $this->jsUrl->add($this->getUrl(
+            '*/listing_mapping/mapProductPopupHtml',
+            [
+                'account_id'     => $this->listing->getAccountId(),
+                'marketplace_id' => $this->listing->getMarketplaceId()
+            ]
+        ), 'mapProductPopupHtml');
+        $this->jsUrl->add($this->getUrl('*/listing_mapping/remap'), 'listing_mapping/remap');
+
         $path = 'ebay_listing_transferring/getListings';
         $this->jsUrl->add($this->getUrl('*/' . $path), $path);
 
@@ -219,6 +228,7 @@ class View extends AbstractContainer
                 'Compatibility Attribute'                  => $this->__('Compatibility Attribute'),
                 'Sell on Another Marketplace'              => $this->__('Sell on Another Marketplace'),
                 'Create new'                               => $this->__('Create new'),
+                'Mapping Product'                          => $this->__('Mapping Product')
             ]
         );
 

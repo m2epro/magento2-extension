@@ -2,6 +2,7 @@ define([
     'jquery',
     'M2ePro/Ebay/Listing/View/Grid',
     'M2ePro/Listing/Moving',
+    'M2ePro/Listing/Mapping',
     'Magento_Ui/js/modal/modal'
 ], function (jQuery) {
 
@@ -36,6 +37,7 @@ define([
             $super();
 
             this.movingHandler = new ListingMoving(this);
+            this.mappingHandler = new ListingMapping(this, 'ebay');
 
             this.actions = Object.extend(this.actions, {
                 editPriceQuantityFormatSettingsAction: function(id) {
@@ -75,6 +77,10 @@ define([
 
                 editMotorsAction: function(id) {
                     this.openMotorsPopup(id);
+                }.bind(this),
+
+                remapProductAction: function(id) {
+                    this.mappingHandler.openPopUp(id, null, this.listingId);
                 }.bind(this),
 
                 movingAction: this.movingHandler.run.bind(this.movingHandler),

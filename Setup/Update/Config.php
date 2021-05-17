@@ -168,6 +168,9 @@ class Config extends AbstractConfig
             'y21_m03' => [
                 'IncludeeBayProductDetails',
                 'EbayMotorsAddManagedPayments'
+            ],
+            'y21_m04' => [
+                'AmazonRelistPrice'
             ]
         ];
     }

@@ -22,6 +22,9 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
     private $phpEnvironmentRequest;
     private $storeManager;
 
+    protected $systemLogTableName;
+    protected $resourceConnection;
+
     //########################################
 
     public function __construct(
@@ -30,12 +33,14 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest,
-        \Magento\Store\Model\StoreManagerInterface $storeManager
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Framework\App\ResourceConnection $resourceConnection
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
-        $this->modelFactory = $modelFactory;
+        $this->activeRecordFactory   = $activeRecordFactory;
+        $this->modelFactory          = $modelFactory;
         $this->phpEnvironmentRequest = $phpEnvironmentRequest;
-        $this->storeManager = $storeManager;
+        $this->storeManager          = $storeManager;
+        $this->resourceConnection    = $resourceConnection;
         parent::__construct($helperFactory, $context);
     }
 
@@ -47,7 +52,7 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
 
         try {
             $class = get_class($throwable);
-            $info = $this->getExceptionDetailedInfo($throwable);
+            $info  = $this->getExceptionDetailedInfo($throwable);
 
             $type = \Ess\M2ePro\Model\Log\System::TYPE_EXCEPTION;
             if ($throwable instanceof \Ess\M2ePro\Model\Exception\Connection) {
@@ -82,7 +87,7 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
 
             $this->getHelper('Data\GlobalData')->unsetValue('send_exception_to_server');
 
-        // @codingStandardsIgnoreLine
+            // @codingStandardsIgnoreLine
         } catch (\Exception $exceptionTemp) {
         }
     }
@@ -91,6 +96,18 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
     {
         try {
             $class = 'Fatal Error';
+
+            if (isset($error['message']) && strpos($error['message'], 'Allowed memory size') !== false) {
+                $this->writeSystemLogByDirectSql(
+                    300, //\Ess\M2ePro\Model\Log\System::TYPE_FATAL_ERROR
+                    $class,
+                    $error['message'],
+                    $this->getFatalInfo($error, 'Fatal Error')
+                );
+
+                return;
+            }
+
             $info = $this->getFatalErrorDetailedInfo($error, $traceInfo);
 
             $this->systemLog(
@@ -118,7 +135,7 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
 
             $this->getHelper('Data\GlobalData')->unsetValue('send_exception_to_server');
 
-        // @codingStandardsIgnoreLine
+            // @codingStandardsIgnoreLine
         } catch (\Exception $exceptionTemp) {
         }
     }
@@ -135,7 +152,11 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
 
         $this->getHelper('Data\GlobalData')->setValue('set_fatal_error_handler', true);
 
-        $exceptionHelper = $this->getHelper('Module\Exception');
+        $this->systemLogTableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(
+            'm2epro_system_log'
+        );
+
+        $exceptionHelper  = $this->getHelper('Module\Exception');
         $shutdownFunction = function () use ($exceptionHelper) {
             $error = error_get_last();
 
@@ -146,7 +167,7 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
             $fatalErrors = [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR];
 
             if (in_array((int)$error['type'], $fatalErrors)) {
-                $trace = debug_backtrace(false);
+                $trace     = debug_backtrace(false);
                 $traceInfo = $exceptionHelper->getFatalStackTraceInfo($trace);
                 $exceptionHelper->processFatal($error, $traceInfo);
             }
@@ -193,11 +214,11 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
     {
         // @codingStandardsIgnoreLine
         $trace = debug_backtrace();
-        $file = isset($trace[1]['file']) ? $trace[1]['file'] : 'not set';
-        $line = isset($trace[1]['line']) ? $trace[1]['line'] : 'not set';
+        $file  = isset($trace[1]['file']) ? $trace[1]['file'] : 'not set';
+        $line  = isset($trace[1]['line']) ? $trace[1]['line'] : 'not set';
 
         $additionalData = [
-            'called-from' => $file .' : '. $line
+            'called-from' => $file . ' : ' . $line
         ];
 
         /** @var \Ess\M2ePro\Model\Log\System $log */
@@ -215,6 +236,22 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
         $log->save();
     }
 
+    private function writeSystemLogByDirectSql($type, $class, $message, $description)
+    {
+        $date = new \DateTime('now', new \DateTimeZone('UTC'));
+
+        $this->resourceConnection->getConnection()->insert(
+            $this->systemLogTableName,
+            [
+                'type'                 => $type,
+                'class'                => $class,
+                'description'          => $message,
+                'detailed_description' => $description,
+                'create_date'          => $date->format('Y-m-d H:i:s')
+            ]
+        );
+    }
+
     //########################################
 
     private function getExceptionInfo($throwable, $type)
@@ -222,7 +259,7 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
         /**@var \Exception $throwable */
 
         $additionalData = $throwable instanceof \Ess\M2ePro\Model\Exception ? $throwable->getAdditionalData()
-                                                                            : '';
+            : '';
         // @codingStandardsIgnoreLine
         is_array($additionalData) && $additionalData = print_r($additionalData, true);
 
@@ -276,7 +313,7 @@ FATAL;
         }
 
         $stackTrace = array_reverse($stackTrace);
-        $info = '';
+        $info       = '';
 
         if (count($stackTrace) > 1) {
             foreach ($stackTrace as $key => $trace) {
@@ -317,8 +354,8 @@ TRACE;
     {
         // @codingStandardsIgnoreStart
         $server = print_r($this->phpEnvironmentRequest->getServer()->toArray(), true);
-        $get = print_r($this->phpEnvironmentRequest->getQuery()->toArray(), true);
-        $post = print_r($this->phpEnvironmentRequest->getPost()->toArray(), true);
+        $get    = print_r($this->phpEnvironmentRequest->getQuery()->toArray(), true);
+        $post   = print_r($this->phpEnvironmentRequest->getPost()->toArray(), true);
         // @codingStandardsIgnoreEnd
 
         $actionInfo = <<<ACTION
@@ -350,7 +387,7 @@ ACTION;
     private function send($info, $message, $type)
     {
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector(
+        $connectorObj     = $dispatcherObject->getVirtualConnector(
             'exception',
             'add',
             'entity',

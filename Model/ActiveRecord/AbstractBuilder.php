@@ -26,6 +26,7 @@ abstract class AbstractBuilder extends \Ess\M2ePro\Model\AbstractModel
      * @param array $rawData
      *
      * @return ActiveRecordAbstract|AbstractModel
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function build($model, array $rawData)
     {
@@ -36,7 +37,16 @@ abstract class AbstractBuilder extends \Ess\M2ePro\Model\AbstractModel
         $this->model   = $model;
         $this->rawData = $rawData;
 
-        $this->save($this->prepareData());
+        $preparedData = $this->prepareData();
+        $this->model->addData($preparedData);
+
+        if ($this->model instanceof \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel &&
+            $this->model->hasChildObjectLoaded()
+        ) {
+            $this->model->getChildObject()->addData($preparedData);
+        }
+
+        $this->model->save();
 
         return $this->model;
     }
@@ -52,21 +62,6 @@ abstract class AbstractBuilder extends \Ess\M2ePro\Model\AbstractModel
      * @return array
      */
     abstract public function getDefaultData();
-
-    //########################################
-
-    protected function save(array $preparedData)
-    {
-        $this->model->addData($preparedData);
-
-        if ($this->model instanceof \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel &&
-            $this->model->hasChildObjectLoaded()
-        ) {
-            $this->model->getChildObject()->addData($preparedData);
-        }
-
-        $this->model->save();
-    }
 
     //########################################
 

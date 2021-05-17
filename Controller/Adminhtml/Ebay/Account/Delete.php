@@ -36,26 +36,6 @@ class Delete extends Account
                 continue;
             }
 
-            try {
-                $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
-                $connectorObj = $dispatcherObject->getVirtualConnector(
-                    'account',
-                    'delete',
-                    'entity',
-                    [],
-                    null,
-                    null,
-                    $account->getId()
-                );
-                $dispatcherObject->process($connectorObj);
-            } catch (\Exception $e) {
-                $account->deleteProcessings();
-                $account->deleteProcessingLocks();
-                $account->delete();
-
-                throw $e;
-            }
-
             $account->deleteProcessings();
             $account->deleteProcessingLocks();
             $account->delete();

@@ -77,4 +77,36 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     }
 
     //########################################
+
+    public function mapChannelItemProduct(\Ess\M2ePro\Model\Ebay\Listing\Product $listingProduct)
+    {
+        /** @var \Ess\M2ePro\Model\Ebay\Item $ebayItem */
+        $ebayItem = $this->activeRecordFactory->getObjectLoaded(
+            'Ebay\Item',
+            $listingProduct->getEbayItemId()
+        );
+        $ebayItemTable = $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable();
+        $existedRelation = $this->getConnection()
+            ->select()
+            ->from(['ei' => $ebayItemTable])
+            ->where('`account_id` = ?', $ebayItem->getAccountId())
+            ->where('`marketplace_id` = ?', $ebayItem->getMarketplaceId())
+            ->where('`item_id` = ?', $ebayItem->getItemId())
+            ->where('`product_id` = ?', $listingProduct->getParentObject()->getProductId())
+            ->where('`store_id` = ?', $ebayItem->getStoreId())
+            ->query()
+            ->fetchColumn();
+
+        if ($existedRelation) {
+            return;
+        }
+
+        $this->getConnection()->update(
+            $ebayItemTable,
+            ['product_id' => $listingProduct->getParentObject()->getProductId()],
+            ['id = ?' => $listingProduct->getEbayItemId()]
+        );
+    }
+
+    //########################################
 }

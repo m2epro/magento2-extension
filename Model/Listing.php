@@ -26,6 +26,9 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     const INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING       = 'listing_product_moved_from_listing';
     const INSTRUCTION_INITIATOR_MOVING_PRODUCT_FROM_LISTING = 'moving_product_from_listing_to_listing';
 
+    const INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING         = 'listing_product_remap_from_listing';
+    const INSTRUCTION_INITIATOR_REMAPING_PRODUCT_FROM_LISTING = 'remaping_product_from_listing_to_listing';
+
     const SOURCE_PRODUCTS_CUSTOM     = 1;
     const SOURCE_PRODUCTS_CATEGORIES = 2;
 

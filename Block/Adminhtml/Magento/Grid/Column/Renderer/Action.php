@@ -10,6 +10,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 use Ess\M2ePro\Block\Adminhtml\Traits;
+use Ess\M2ePro\Model\Listing\Product as Listing_Product;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action
@@ -18,7 +19,11 @@ class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
 {
     use Traits\RendererTrait;
 
+    /** @var \Ess\M2ePro\Helper\Factory  */
+    protected $helperFactory;
+
     public function __construct(
+        \Ess\M2ePro\Helper\Factory $helperFactory,
         Renderer\CssRenderer $css,
         Renderer\JsPhpRenderer $jsPhp,
         Renderer\JsRenderer $js,
@@ -33,6 +38,7 @@ class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
         $this->js = $js;
         $this->jsTranslator = $jsTranslatorRenderer;
         $this->jsUrl = $jsUrlRenderer;
+        $this->helperFactory = $helperFactory;
 
         parent::__construct($context, $jsonEncoder, $data);
     }
@@ -85,6 +91,18 @@ JS
         if (empty($actions) || !is_array($actions)) {
             return '&nbsp;';
         }
+        $style = '';
+        foreach ($actions as $columnName => $value) {
+            if (array_key_exists('only_remap_product', $value) && $value['only_remap_product']) {
+                $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+                $style = isset($value['style']) ? $value['style'] : '';
+                if (!isset($additionalData[Listing_Product::MOVING_LISTING_OTHER_SOURCE_KEY])) {
+                    unset($actions[$columnName]);
+                    $style = '';
+                }
+
+            }
+        }
 
         if (sizeof($actions) == 1 && !$this->getColumn()->getNoLink()) {
             foreach ($actions as $action) {
@@ -107,7 +125,7 @@ JS
         }
 
         return <<<HTML
-<select class="admin__control-select" onchange="M2eProVarienGridAction.execute(this, '{$itemId}');">
+<select class="admin__control-select" style="{$style}" onchange="M2eProVarienGridAction.execute(this, '{$itemId}');">
     <option value=""></option>
     {$this->renderOptions($actions, $row)}
 </select>
@@ -224,5 +242,10 @@ HTML;
         }
 
         return parent::_transformActionData($action, $actionCaption, $row);
+    }
+
+    protected function getHelper($helper, array $arguments = [])
+    {
+        return $this->helperFactory->getObject($helper, $arguments);
     }
 }

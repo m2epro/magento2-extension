@@ -75,6 +75,11 @@ class ProductData extends \Ess\M2ePro\Helper\AbstractHelper
         $this->getHelper('Module')->getRegistry()->setValue($this->getConfigGroup(), $allRecent);
     }
 
+    public function encodeWalmartSku($sku)
+    {
+        return rawurlencode($sku);
+    }
+
     //########################################
 
     private function getConfigGroup()

@@ -11,8 +11,9 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Account\Add;
 /**
  * Class \Ess\M2ePro\Model\Amazon\Connector\Account\Add\EntityRequester
  */
-class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
+class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
 
     //########################################
@@ -30,6 +31,9 @@ class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending
 
     //########################################
 
+    /**
+     * @return array
+     */
     protected function getRequestData()
     {
         /** @var $marketplaceObject \Ess\M2ePro\Model\Marketplace */
@@ -47,6 +51,9 @@ class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending
         ];
     }
 
+    /**
+     * @return array
+     */
     protected function getCommand()
     {
         return ['account','add','entity'];
@@ -54,9 +61,35 @@ class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending
 
     //########################################
 
-    protected function getProcessingRunnerModelName()
+    /**
+     * @return bool
+     */
+    protected function validateResponse()
     {
-        return 'Amazon_Connector_Account_Add_ProcessingRunner';
+        $responseData = $this->getResponse()->getResponseData();
+        if ((empty($responseData['hash']) || !isset($responseData['info'])) &&
+            !$this->getResponse()->getMessages()->hasErrorEntities()
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function prepareResponseData()
+    {
+        foreach ($this->getResponse()->getMessages()->getEntities() as $message) {
+            if (!$message->isError()) {
+                continue;
+            }
+
+            throw new \Exception($message->getText());
+        }
+
+        $this->responseData = $this->getResponse()->getResponseData();
     }
 
     //########################################

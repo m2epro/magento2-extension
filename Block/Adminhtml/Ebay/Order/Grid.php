@@ -148,93 +148,117 @@ class Grid extends AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('purchase_create_date', [
-            'header' => $this->__('Sale Date'),
-            'align'  => 'left',
-            'type'   => 'datetime',
-            'filter' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
-            'format' => \IntlDateFormatter::MEDIUM,
-            'filter_time' => true,
-            'index'  => 'purchase_create_date',
-            'width'  => '170px',
-            'frame_callback' => [$this, 'callbackPurchaseCreateDate'],
-        ]);
-
-        $this->addColumn('magento_order_num', [
-            'header' => $this->__('Magento Order #'),
-            'align'  => 'left',
-            'index'  => 'so.increment_id',
-            'width'  => '200px',
-            'frame_callback' => [$this, 'callbackColumnMagentoOrder']
-        ]);
-
-        $this->addColumn('ebay_order_id', [
-            'header' => $this->__('eBay Order #'),
-            'align'  => 'left',
-            'width'  => '145px',
-            'index'  => 'ebay_order_id',
-            'frame_callback' => [$this, 'callbackColumnEbayOrder'],
-            'filter'   => 'Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\OrderId',
-            'filter_condition_callback' => [$this, 'callbackFilterEbayOrderId']
-        ]);
-
-        $this->addColumn('ebay_order_items', [
-            'header' => $this->__('Items'),
-            'align'  => 'left',
-            'index'  => 'ebay_order_items',
-            'sortable' => false,
-            'width'  => '*',
-            'frame_callback' => [$this, 'callbackColumnItems'],
-            'filter_condition_callback' => [$this, 'callbackFilterItems']
-        ]);
-
-        $this->addColumn('buyer', [
-            'header' => $this->__('Buyer'),
-            'align'  => 'left',
-            'index'  => 'buyer_user_id',
-            'frame_callback' => [$this, 'callbackColumnBuyer'],
-            'filter_condition_callback' => [$this, 'callbackFilterBuyer'],
-            'width'  => '120px'
-        ]);
-
-        $this->addColumn('paid_amount', [
-            'header' => $this->__('Total Paid'),
-            'align'  => 'left',
-            'width'  => '110px',
-            'index'  => 'paid_amount',
-            'type'   => 'number',
-            'frame_callback' => [$this, 'callbackColumnTotal']
-        ]);
-
-        $this->addColumn('reservation_state', [
-            'header' => $this->__('Reservation'),
-            'align'  => 'left',
-            'width'  => '50px',
-            'index'  => 'reservation_state',
-            'type'   => 'options',
-            'options' => [
-                \Ess\M2ePro\Model\Order\Reserve::STATE_UNKNOWN  => $this->__('Not Reserved'),
-                \Ess\M2ePro\Model\Order\Reserve::STATE_PLACED   => $this->__('Reserved'),
-                \Ess\M2ePro\Model\Order\Reserve::STATE_RELEASED => $this->__('Released'),
-                \Ess\M2ePro\Model\Order\Reserve::STATE_CANCELED => $this->__('Canceled'),
+        $this->addColumn(
+            'purchase_create_date',
+            [
+                'header'         => $this->__('Sale Date'),
+                'align'          => 'left',
+                'type'           => 'datetime',
+                'filter'         => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+                'format'         => \IntlDateFormatter::MEDIUM,
+                'filter_time'    => true,
+                'index'          => 'purchase_create_date',
+                'width'          => '170px',
+                'frame_callback' => [$this, 'callbackPurchaseCreateDate'],
             ]
-        ]);
+        );
 
-        $this->addColumn('status', [
-            'header'  => $this->__('Status'),
-            'align'   => 'left',
-            'width'   => '50px',
-            'index'   => 'status',
-            'type'    => 'options',
-            'options' => [
-                \Ess\M2ePro\Model\Ebay\Order::STATUS_PENDING   => $this->__('Pending'),
-                \Ess\M2ePro\Model\Ebay\Order::STATUS_UNSHIPPED => $this->__('Unshipped'),
-                \Ess\M2ePro\Model\Ebay\Order::STATUS_SHIPPED   => $this->__('Shipped'),
-                \Ess\M2ePro\Model\Ebay\Order::STATUS_CANCELED  => $this->__('Canceled')
-            ],
-            'frame_callback' => [$this, 'callbackColumnStatus'],
-            'filter_condition_callback' => [$this, 'callbackFilterStatus']
-        ]);
+        $this->addColumn(
+            'magento_order_num',
+            [
+                'header'         => $this->__('Magento Order #'),
+                'align'          => 'left',
+                'index'          => 'so.increment_id',
+                'width'          => '200px',
+                'frame_callback' => [$this, 'callbackColumnMagentoOrder']
+            ]
+        );
+
+        $this->addColumn(
+            'ebay_order_id',
+            [
+                'header'                    => $this->__('eBay Order #'),
+                'align'                     => 'left',
+                'width'                     => '145px',
+                'index'                     => 'ebay_order_id',
+                'frame_callback'            => [$this, 'callbackColumnEbayOrder'],
+                'filter'                    => 'Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\OrderId',
+                'filter_condition_callback' => [$this, 'callbackFilterEbayOrderId']
+            ]
+        );
+
+        $this->addColumn(
+            'ebay_order_items',
+            [
+                'header'                    => $this->__('Items'),
+                'align'                     => 'left',
+                'index'                     => 'ebay_order_items',
+                'sortable'                  => false,
+                'width'                     => '*',
+                'frame_callback'            => [$this, 'callbackColumnItems'],
+                'filter_condition_callback' => [$this, 'callbackFilterItems']
+            ]
+        );
+
+        $this->addColumn(
+            'buyer',
+            [
+                'header'                    => $this->__('Buyer'),
+                'align'                     => 'left',
+                'index'                     => 'buyer_user_id',
+                'frame_callback'            => [$this, 'callbackColumnBuyer'],
+                'filter_condition_callback' => [$this, 'callbackFilterBuyer'],
+                'width'                     => '120px'
+            ]
+        );
+
+        $this->addColumn(
+            'paid_amount',
+            [
+                'header'         => $this->__('Total Paid'),
+                'align'          => 'left',
+                'width'          => '110px',
+                'index'          => 'paid_amount',
+                'type'           => 'number',
+                'frame_callback' => [$this, 'callbackColumnTotal']
+            ]
+        );
+
+        $this->addColumn(
+            'reservation_state',
+            [
+                'header'  => $this->__('Reservation'),
+                'align'   => 'left',
+                'width'   => '50px',
+                'index'   => 'reservation_state',
+                'type'    => 'options',
+                'options' => [
+                    \Ess\M2ePro\Model\Order\Reserve::STATE_UNKNOWN  => $this->__('Not Reserved'),
+                    \Ess\M2ePro\Model\Order\Reserve::STATE_PLACED   => $this->__('Reserved'),
+                    \Ess\M2ePro\Model\Order\Reserve::STATE_RELEASED => $this->__('Released'),
+                    \Ess\M2ePro\Model\Order\Reserve::STATE_CANCELED => $this->__('Canceled'),
+                ]
+            ]
+        );
+
+        $this->addColumn(
+            'status',
+            [
+                'header'                    => $this->__('Status'),
+                'align'                     => 'left',
+                'width'                     => '50px',
+                'index'                     => 'status',
+                'type'                      => 'options',
+                'options'                   => [
+                    \Ess\M2ePro\Model\Ebay\Order::STATUS_PENDING   => $this->__('Pending'),
+                    \Ess\M2ePro\Model\Ebay\Order::STATUS_UNSHIPPED => $this->__('Unshipped'),
+                    \Ess\M2ePro\Model\Ebay\Order::STATUS_SHIPPED   => $this->__('Shipped'),
+                    \Ess\M2ePro\Model\Ebay\Order::STATUS_CANCELED  => $this->__('Canceled')
+                ],
+                'frame_callback'            => [$this, 'callbackColumnStatus'],
+                'filter_condition_callback' => [$this, 'callbackFilterStatus']
+            ]
+        );
 
         return parent::_prepareColumns();
     }
@@ -259,64 +283,100 @@ class Grid extends AbstractGrid
 
         // Set mass-action
         // ---------------------------------------
-        $this->getMassactionBlock()->addItem('reservation_place', [
-            'label'    => $this->__('Reserve QTY'),
-            'url'      => $this->getUrl('*/order/reservationPlace'),
-            'confirm'  => $this->__('Are you sure?')
-        ], 'general');
+        $this->getMassactionBlock()->addItem(
+            'reservation_place',
+            [
+                'label'   => $this->__('Reserve QTY'),
+                'url'     => $this->getUrl('*/order/reservationPlace'),
+                'confirm' => $this->__('Are you sure?')
+            ],
+            'general'
+        );
 
-        $this->getMassactionBlock()->addItem('reservation_cancel', [
-            'label'    => $this->__('Cancel QTY Reserve'),
-            'url'      => $this->getUrl('*/order/reservationCancel'),
-            'confirm'  => $this->__('Are you sure?')
-        ], 'general');
+        $this->getMassactionBlock()->addItem(
+            'reservation_cancel',
+            [
+                'label'   => $this->__('Cancel QTY Reserve'),
+                'url'     => $this->getUrl('*/order/reservationCancel'),
+                'confirm' => $this->__('Are you sure?')
+            ],
+            'general'
+        );
 
-        $this->getMassactionBlock()->addItem('ship', [
-            'label'    => $this->__('Mark Order(s) as Shipped'),
-            'url'      => $this->getUrl('*/ebay_order/updateShippingStatus'),
-            'confirm'  => $this->__('Are you sure?')
-        ], 'general');
+        $this->getMassactionBlock()->addItem(
+            'ship',
+            [
+                'label'   => $this->__('Mark Order(s) as Shipped'),
+                'url'     => $this->getUrl('*/ebay_order/updateShippingStatus'),
+                'confirm' => $this->__('Are you sure?')
+            ],
+            'general'
+        );
 
-        $this->getMassactionBlock()->addItem('pay', [
-            'label'    => $this->__('Mark Order(s) as Paid'),
-            'url'      => $this->getUrl('*/ebay_order/updatePaymentStatus'),
-            'confirm'  => $this->__('Are you sure?')
-        ], 'general');
+        $this->getMassactionBlock()->addItem(
+            'pay',
+            [
+                'label'   => $this->__('Mark Order(s) as Paid'),
+                'url'     => $this->getUrl('*/ebay_order/updatePaymentStatus'),
+                'confirm' => $this->__('Are you sure?')
+            ],
+            'general'
+        );
 
-        $this->getMassactionBlock()->addItem('resend_shipping', [
-            'label'    => $this->__('Resend Shipping Information'),
-            'url'      => $this->getUrl('*/order/resubmitShippingInfo'),
-            'confirm'  => $this->__('Are you sure?')
-        ], 'general');
+        $this->getMassactionBlock()->addItem(
+            'resend_shipping',
+            [
+                'label'   => $this->__('Resend Shipping Information'),
+                'url'     => $this->getUrl('*/order/resubmitShippingInfo'),
+                'confirm' => $this->__('Are you sure?')
+            ],
+            'general'
+        );
 
-        $this->getMassactionBlock()->addItem('create_order', [
-            'label'    => $this->__('Create Magento Order'),
-            'url'      => $this->getUrl('*/ebay_order/CreateMagentoOrder'),
-            'confirm'  => $this->__('Are you sure?')
-        ], 'general');
+        $this->getMassactionBlock()->addItem(
+            'create_order',
+            [
+                'label'   => $this->__('Create Magento Order'),
+                'url'     => $this->getUrl('*/ebay_order/CreateMagentoOrder'),
+                'confirm' => $this->__('Are you sure?')
+            ],
+            'general'
+        );
         // ---------------------------------------
 
         if (!$this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
             return parent::_prepareMassaction();
         }
 
-        $this->getMassactionBlock()->addItem('mark_as_ready_for_pickup', [
-            'label'    => $this->__('Mark as Ready For Pickup'),
-            'url'      => $this->getUrl('*/ebay_order/markAsReadyForPickup'),
-            'confirm'  => $this->__('Are you sure?')
-        ], 'in_store_pickup');
+        $this->getMassactionBlock()->addItem(
+            'mark_as_ready_for_pickup',
+            [
+                'label'   => $this->__('Mark as Ready For Pickup'),
+                'url'     => $this->getUrl('*/ebay_order/markAsReadyForPickup'),
+                'confirm' => $this->__('Are you sure?')
+            ],
+            'in_store_pickup'
+        );
 
-        $this->getMassactionBlock()->addItem('mark_as_picked_up', [
-            'label'    => $this->__('Mark as Picked Up'),
-            'url'      => $this->getUrl('*/ebay_order/markAsPickedUp'),
-            'confirm'  => $this->__('Are you sure?')
-        ], 'in_store_pickup');
+        $this->getMassactionBlock()->addItem(
+            'mark_as_picked_up',
+            [
+                'label'   => $this->__('Mark as Picked Up'),
+                'url'     => $this->getUrl('*/ebay_order/markAsPickedUp'),
+                'confirm' => $this->__('Are you sure?')
+            ],
+            'in_store_pickup'
+        );
 
-        $this->getMassactionBlock()->addItem('mark_as_cancelled', [
-            'label'    => $this->__('Mark as Cancelled'),
-            'url'      => $this->getUrl('*/ebay_order/markAsCancelled'),
-            'confirm'  => $this->__('Are you sure?')
-        ], 'in_store_pickup');
+        $this->getMassactionBlock()->addItem(
+            'mark_as_cancelled',
+            [
+                'label'   => $this->__('Mark as Cancelled'),
+                'url'     => $this->getUrl('*/ebay_order/markAsCancelled'),
+                'confirm' => $this->__('Are you sure?')
+            ],
+            'in_store_pickup'
+        );
 
         return parent::_prepareMassaction();
     }
@@ -335,7 +395,7 @@ class Grid extends AbstractGrid
                 $orderUrl = $this->getUrl('sales/order/view', ['order_id' => $magentoOrderId]);
                 $returnString = '<a href="' . $orderUrl . '" target="_blank">' . $magentoOrderNumber . '</a>';
             } else {
-                $returnString = '<span style="color: red;">'.$this->__('Deleted').'</span>';
+                $returnString = '<span style="color: red;">' . $this->__('Deleted') . '</span>';
             }
         }
 
@@ -402,7 +462,7 @@ HTML;
             return $returnString;
         }
 
-        $returnString = '<img src="/images/in_store_pickup.png" />&nbsp;'.$returnString;
+        $returnString = '<img src="/images/in_store_pickup.png" />&nbsp;' . $returnString;
 
         return $returnString;
     }
@@ -541,7 +601,7 @@ HTML;
 
         $buyerEmail = $row->getChildObject()->getData('buyer_email');
         if ($buyerEmail && $buyerEmail != 'Invalid Request') {
-            $returnString .= '&lt;' . $buyerEmail  . '&gt;<br/>';
+            $returnString .= '&lt;' . $buyerEmail . '&gt;<br/>';
         }
 
         $returnString .= $this->getHelper('Data')->escapeHtml($row->getChildObject()->getData('buyer_user_id'));
@@ -585,7 +645,7 @@ HTML;
         if (!empty($value['value'])) {
             $collection
                 ->getSelect()
-                ->where('ebay_order_id LIKE ? OR selling_manager_id LIKE ?', '%'.$value['value'].'%');
+                ->where('ebay_order_id LIKE ? OR selling_manager_id LIKE ?', '%' . $value['value'] . '%');
         }
 
         if (!empty($value['is_in_store_pickup'])) {
@@ -611,7 +671,7 @@ HTML;
 
         $orderItemsCollection
             ->getSelect()
-            ->where('item_id LIKE ? OR title LIKE ? OR sku LIKE ? OR transaction_id LIKE ?', '%'.$value.'%');
+            ->where('item_id LIKE ? OR title LIKE ? OR sku LIKE ? OR transaction_id LIKE ?', '%' . $value . '%');
 
         $ordersIds = $orderItemsCollection->getColumnValues('order_id');
         $collection->addFieldToFilter('main_table.id', ['in' => $ordersIds]);
@@ -626,13 +686,12 @@ HTML;
 
         $collection
             ->getSelect()
-            ->where('buyer_email LIKE ? OR buyer_user_id LIKE ? OR buyer_name LIKE ?', '%'.$value.'%');
+            ->where('buyer_email LIKE ? OR buyer_user_id LIKE ? OR buyer_name LIKE ?', '%' . $value . '%');
     }
 
     protected function callbackFilterStatus($collection, $column)
     {
         $value = $column->getFilter()->getValue();
-
         if ($value == null) {
             return;
         }
@@ -664,6 +723,10 @@ HTML;
                 $collection->addFieldToFilter(
                     'payment_status',
                     ['neq' => \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED]
+                );
+                $collection->addFieldToFilter(
+                    'shipping_status',
+                    ['neq' => \Ess\M2ePro\Model\Ebay\Order::SHIPPING_STATUS_COMPLETED]
                 );
                 break;
         }
@@ -703,19 +766,24 @@ JS
         $this->getHelper('Component\Ebay')->isEnabled() && $tempGridIds[] = $this->getId();
         $tempGridIds = $this->getHelper('Data')->jsonEncode($tempGridIds);
 
-        $this->jsPhp->addConstants($this->getHelper('Data')
-            ->getClassConstants(\Ess\M2ePro\Model\Log\AbstractModel::class));
+        $this->jsPhp->addConstants(
+            $this->getHelper('Data')
+                ->getClassConstants(\Ess\M2ePro\Model\Log\AbstractModel::class)
+        );
 
-        $this->jsUrl->addUrls([
-            'ebay_order/view' => $this->getUrl(
-                '*/ebay_order/view',
-                ['back'=>$this->getHelper('Data')->makeBackUrlParam('*/ebay_order/index')]
-            )
-        ]);
+        $this->jsUrl->addUrls(
+            [
+                'ebay_order/view' => $this->getUrl(
+                    '*/ebay_order/view',
+                    ['back' => $this->getHelper('Data')->makeBackUrlParam('*/ebay_order/index')]
+                )
+            ]
+        );
 
         $this->jsTranslator->add('View Full Order Log', $this->__('View Full Order Log'));
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Order',
     ], function(){

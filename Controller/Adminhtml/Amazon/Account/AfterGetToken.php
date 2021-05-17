@@ -8,13 +8,13 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 
-use Ess\M2ePro\Model\Amazon\Account as AccountModel;
-
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Account\AfterGetToken
  */
 class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
 {
+    //########################################
+
     public function execute()
     {
         $params = $this->getRequest()->getParams();
@@ -44,22 +44,22 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
         $this->getHelper('Data\Session')->setValue('merchant_id', $params['Merchant']);
         $this->getHelper('Data\Session')->setValue('mws_token', $params['MWSAuthToken']);
 
-        $accountId = $this->getHelper('Data\Session')->getValue('account_id');
+        $id = $this->getHelper('Data\Session')->getValue('account_id');
 
-        if ((int)$accountId <= 0) {
+        if ((int)$id <= 0) {
             return $this->_redirect('*/*/new', [
                 'close_on_save' => $this->getRequest()->getParam('close_on_save')
             ]);
         }
 
         try {
-            $data = [
-                'merchant_id' => $params['Merchant'],
-                'token'       => $params['MWSAuthToken']
-            ];
-
-            $model = $this->updateAccount($accountId, $data);
-            $this->sendDataToServer($model);
+            $this->updateAccount(
+                $id,
+                [
+                    'merchant_id' => $params['Merchant'],
+                    'token'       => $params['MWSAuthToken']
+                ]
+            );
         } catch (\Exception $exception) {
             $this->getHelper('Module\Exception')->process($exception);
 
@@ -70,10 +70,13 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
 
             return $this->_redirect('*/amazon_account');
         }
+
         $this->messageManager->addSuccess($this->__('Token was saved'));
 
         return $this->_redirect('*/*/edit', [
-            'id' => $accountId, 'close_on_save' => $this->getRequest()->getParam('close_on_save')
+            'id' => $id, 'close_on_save' => $this->getRequest()->getParam('close_on_save')
         ]);
     }
+
+    //########################################
 }

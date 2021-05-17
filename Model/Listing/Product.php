@@ -482,6 +482,37 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
     //########################################
 
+    public function remapProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
+    {
+        $data = ['product_id' => $magentoProduct->getProductId()];
+
+        if ($this->getMagentoProduct()->isStrictVariationProduct()
+            && $magentoProduct->isSimpleTypeWithoutCustomOptions()) {
+            $data['is_variation_product'] = 0;
+            $data['is_variation_parent'] = 0;
+            $data['variation_parent_id'] = null;
+        }
+
+        $this->addData($data)->save();
+        $this->getChildObject()->addData($data)->save();
+        $this->getChildObject()->mapChannelItemProduct();
+
+        $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
+        $instruction->setData(
+            [
+                'listing_product_id' => $this->getId(),
+                'component'          => $this->getComponentMode(),
+                'type'               => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
+                'initiator'          => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_REMAPING_PRODUCT_FROM_LISTING,
+                'priority'           => 50,
+            ]
+        );
+
+        $instruction->save();
+    }
+
+    //########################################
+
     public function canBeForceDeleted($value = null)
     {
         if ($value === null) {

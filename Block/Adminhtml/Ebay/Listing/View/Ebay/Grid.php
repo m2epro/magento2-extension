@@ -70,9 +70,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         $listingData = $this->listing->getData();
 
-        // ---------------------------------------
-        // Get collection
-        // ---------------------------------------
         /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
@@ -80,15 +77,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $collection->setListing($this->listing);
         $collection->setStoreId($this->listing->getStoreId());
 
-        if ($this->isFilterOrSortByPriceIsUsed('price', 'ebay_online_current_price')) {
-            $collection->setIsNeedToUseIndexerParent(true);
-        }
-
         $collection->addAttributeToSelect('sku');
         $collection->addAttributeToSelect('name');
 
-        // Join listing product tables
-        // ---------------------------------------
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
         $collection->joinTable(
             ['lp' => $lpTable],
@@ -138,7 +129,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'left'
         );
 
-        if ($collection->isNeedUseIndexerParent()) {
+        if ($this->isFilterOrSortByPriceIsUsed('price', 'ebay_online_current_price')) {
             $collection->joinIndexerParent();
         } else {
             $collection->setIsNeedToInjectPrices(true);
