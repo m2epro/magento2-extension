@@ -171,6 +171,9 @@ class Config extends AbstractConfig
             ],
             'y21_m04' => [
                 'AmazonRelistPrice'
+            ],
+            'y21_m05' => [
+                'EbayStoreCategoryIDs'
             ]
         ];
     }

@@ -33,7 +33,7 @@ class EbayCategoryId extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Abstr
 
     public function getValueByProductInstance(\Magento\Catalog\Model\Product $product)
     {
-        $onlineCategory = $product->getData('online_category');
+        $onlineCategory = $product->getData('online_main_category');
         if (empty($onlineCategory)) {
             return null;
         }

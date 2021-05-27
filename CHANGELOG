@@ -1,4 +1,9 @@
-* 1.13.0 (r4815) (17/05/2021) 
+* 1.13.1 (r4824) (27/05/2021) 
+
+eBay: [Fixed] eBay Store Category IDs are not saved correctly [M2-1251]
+eBay: [Fixed] Advanced filter doesn't work by Category ID and Category Path [M2-1252]
+
+* 1.13.0 (r4814) (17/05/2021)
 
 Common: [Fixed] 'SQLSTATE[42000]: Row size too large. The maximum row size for the used table type, not counting BLOBs, is 8126' error occurs during upgrade [M2-1221]
 Common: [Fixed] 'Payment' and 'Shipping & Handling' information blocks are not displayed next to each other on the View Order Details page [M2-1156]
