@@ -146,7 +146,7 @@ TEXT
                 }
             }
 
-            if ($lastCategory['title'] == $pathPart) {
+            if (isset($lastCategory['title']) && $lastCategory['title'] == $pathPart) {
                 $resultCategory = $lastCategory;
             } else {
                 $resultCategory = null;

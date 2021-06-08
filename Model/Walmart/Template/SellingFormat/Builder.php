@@ -146,6 +146,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
             'attributes_mode' => WalmartSellingFormat::ATTRIBUTES_MODE_NONE,
             'attributes' => '',
+            'attributes_name' => $this->getHelper('Data')->jsonEncode([]),
+            'attributes_value' => $this->getHelper('Data')->jsonEncode([]),
 
             'shipping_override_rule_mode' => WalmartSellingFormat::SHIPPING_OVERRIDE_RULE_MODE_NO,
             'shipping_override_rule' => []

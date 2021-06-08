@@ -620,7 +620,7 @@ define([
             input.setAttribute('disabled', 'disabled');
             input.value = value;
 
-            neededTr.down('.admin__field.field').appendChild(new Element('input', {
+            neededTr.down('.admin__field').appendChild(new Element('input', {
                 name  : input.name,
                 type  : 'hidden',
                 value : value

@@ -133,6 +133,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
             'attributes_mode' => Description::ATTRIBUTES_MODE_NONE,
             'attributes'      => $this->getHelper('Data')->jsonEncode([]),
+            'attributes_name' => $this->getHelper('Data')->jsonEncode([]),
+            'attributes_value' => $this->getHelper('Data')->jsonEncode([])
         ];
     }
 

@@ -1,4 +1,11 @@
-* 1.13.1 (r4824) (27/05/2021) 
+* 1.13.2 (r4842) (08/06/2021) 
+
+Common: [Fixed] 'Exception: Notice: Array offset on value of type null in /Setup/Update/y21_m05/EbayStoreCategoryIDs.php' occurs during upgrade to version 1.13.1 [M2-1279]
+Amazon: [Fixed] 'You should select Category and Product Type first' message is displayed in Description policy although the Category and Type fields are completed [M2-1272]
+Walmart: [Fixed] Some Walmart orders cannot be updated to Shipped status [M2-1228]
+Walmart: [Fixed] Custom attributes values are not saved for duplicated Walmart Description policy [M2-1270]
+
+* 1.13.1 (r4823) (27/05/2021)
 
 eBay: [Fixed] eBay Store Category IDs are not saved correctly [M2-1251]
 eBay: [Fixed] Advanced filter doesn't work by Category ID and Category Path [M2-1252]
