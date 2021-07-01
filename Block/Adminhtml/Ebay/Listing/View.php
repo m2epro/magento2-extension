@@ -228,7 +228,7 @@ class View extends AbstractContainer
                 'Compatibility Attribute'                  => $this->__('Compatibility Attribute'),
                 'Sell on Another Marketplace'              => $this->__('Sell on Another Marketplace'),
                 'Create new'                               => $this->__('Create new'),
-                'Mapping Product'                          => $this->__('Mapping Product')
+                'Linking Product'                          => $this->__('Linking Product')
             ]
         );
 

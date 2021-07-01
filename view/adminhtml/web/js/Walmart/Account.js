@@ -38,22 +38,27 @@ define([
                 return checkResult;
             }, M2ePro.translator.translate('No Customer entry is found for specified ID.'));
 
-            jQuery.validator.addMethod('M2ePro-require-select-attribute', function(value, el) {
-
-                if ($('other_listings_mapping_mode').value == 0) {
-                    return true;
-                }
-
-                var isAttributeSelected = false;
-
-                $$('.attribute-mode-select').each(function(obj) {
-                    if (obj.value != 0) {
-                        isAttributeSelected = true;
+            jQuery.validator.addMethod(
+                'M2ePro-require-select-attribute',
+                function(value, el) {
+                    if ($('other_listings_mapping_mode').value == 0) {
+                        return true;
                     }
-                });
 
-                return isAttributeSelected;
-            }, M2ePro.translator.translate('If Yes is chosen, you must select at least one Attribute for Product Mapping.'));
+                    var isAttributeSelected = false;
+
+                    $$('.attribute-mode-select').each(function(obj) {
+                        if (obj.value != 0) {
+                            isAttributeSelected = true;
+                        }
+                    });
+
+                    return isAttributeSelected;
+                },
+                M2ePro.translator.translate(
+                    'If Yes is chosen, you must select at least one Attribute for Product Linking.'
+                )
+            );
 
             jQuery.validator.addMethod('M2ePro-validate-price-coefficient', function(value) {
 

@@ -32,8 +32,7 @@ class Mapping extends AbstractContainer
                      you are supposed to find and map it manualy.
                      <br/><br/><b>Note:</b> Magento Order can be only created when all Products of
                      Order are found in Magento Catalog.'
-                )
-            ])
+                )])
         );
 
         return parent::_beforeToHtml();

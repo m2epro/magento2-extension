@@ -154,16 +154,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             $item->delete();
         }
 
-        $tempLog = $this->activeRecordFactory->getObject('Listing\Log');
-        $tempLog->setComponentMode($this->getComponentMode());
-        $tempLog->addProductMessage(
-            $this->getListingId(),
-            $this->getProductId(),
-            $this->getId(),
-            \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
-            null,
-            \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_PRODUCT_FROM_LISTING,
+        $this->logProductMessage(
             'Product was Deleted',
+            \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
+            \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_PRODUCT_FROM_LISTING,
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
         );
 
@@ -484,7 +478,9 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
     public function remapProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
-        $data = ['product_id' => $magentoProduct->getProductId()];
+        $exMagentoProductId = $this->getProductId();
+        $newMagentoProductId = $magentoProduct->getProductId();
+        $data = ['product_id' => $newMagentoProductId];
 
         if ($this->getMagentoProduct()->isStrictVariationProduct()
             && $magentoProduct->isSimpleTypeWithoutCustomOptions()) {
@@ -509,6 +505,17 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         );
 
         $instruction->save();
+
+        $this->logProductMessage(
+            sprintf(
+                "Item was relinked from Magento Product ID [%s] to ID [%s]",
+                $exMagentoProductId,
+                $newMagentoProductId
+            ),
+            \Ess\M2ePro\Helper\Data::INITIATOR_USER,
+            \Ess\M2ePro\Model\Listing\Log::ACTION_REMAP_LISTING_PRODUCT,
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS
+        );
     }
 
     //########################################
@@ -521,6 +528,25 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
         $this->canBeForceDeleted = $value;
         return $this;
+    }
+
+    //########################################
+
+    public function logProductMessage($text, $initiator, $action, $type)
+    {
+        /** @var \Ess\M2ePro\Model\Listing\Log $log */
+        $log = $this->activeRecordFactory->getObject('Listing\Log');
+        $log->setComponentMode($this->getComponentMode());
+        $log->addProductMessage(
+            $this->getListingId(),
+            $this->getProductId(),
+            $this->getId(),
+            $initiator,
+            null,
+            $action,
+            $text,
+            $type
+        );
     }
 
     //########################################

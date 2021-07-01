@@ -333,44 +333,60 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
      */
     public function getShippingData()
     {
-        $shippingData = [
-            'shipping_price'  => $this->getBaseShippingPrice(),
-            'carrier_title'   => $this->getHelper('Module\Translation')->__('eBay Shipping'),
-            'shipping_method' => $this->order->getShippingService(),
-        ];
+        $additionalData = '';
+
+        if ($this->order->isUseClickAndCollect() || $this->order->isUseInStorePickup()) {
+            if ($this->order->isUseClickAndCollect()) {
+                $additionalData .= 'Click And Collect | ';
+                $details = $this->order->getClickAndCollectDetails();
+            } else {
+                $additionalData .= 'In Store Pickup | ';
+                $details = $this->order->getInStorePickupDetails();
+            }
+
+            if (!empty($details['location_id'])) {
+                $additionalData .= 'Store ID: ' . $details['location_id'] . ' | ';
+            }
+
+            if (!empty($details['reference_id'])) {
+                $additionalData .= 'Reference ID: ' . $details['reference_id'] . ' | ';
+            }
+
+            if (!empty($details['delivery_date'])) {
+                $additionalData .= 'Delivery Date: ' . $details['delivery_date' . ' | '];
+            }
+        }
+
+        $shippingDateTo = $this->order->getShippingDateTo();
+        if (!empty($shippingDateTo)) {
+            $shippingDate = $this->getHelper('Data')->gmtDateToTimezone(
+                $shippingDateTo,
+                false,
+                'M d, Y, H:i:s'
+            );
+            $additionalData .= "Ship By Date: {$shippingDate} | ";
+        }
+
+        if ($taxReference = $this->order->getTaxReference()) {
+            $additionalData .= 'IOSS/OSS Number: ' . $taxReference . ' | ';
+        }
+
+        $shippingMethod = $this->order->getShippingService();
 
         if ($this->order->isUseGlobalShippingProgram()) {
             $globalShippingDetails = $this->order->getGlobalShippingDetails();
             $globalShippingDetails = $globalShippingDetails['service_details'];
 
             if (!empty($globalShippingDetails['service_details']['service'])) {
-                $shippingData['shipping_method'] = $globalShippingDetails['service_details']['service'];
+                $shippingMethod = $globalShippingDetails['service_details']['service'];
             }
         }
 
-        if ($this->order->isUseClickAndCollect() || $this->order->isUseInStorePickup()) {
-            if ($this->order->isUseClickAndCollect()) {
-                $shippingData['shipping_method'] = 'Click And Collect | ' . $shippingData['shipping_method'];
-                $details = $this->order->getClickAndCollectDetails();
-            } else {
-                $shippingData['shipping_method'] = 'In Store Pickup | ' . $shippingData['shipping_method'];
-                $details = $this->order->getInStorePickupDetails();
-            }
-
-            if (!empty($details['location_id'])) {
-                $shippingData['shipping_method'] .= ' | Store ID: ' . $details['location_id'];
-            }
-
-            if (!empty($details['reference_id'])) {
-                $shippingData['shipping_method'] .= ' | Reference ID: ' . $details['reference_id'];
-            }
-
-            if (!empty($details['delivery_date'])) {
-                $shippingData['shipping_method'] .= ' | Delivery Date: ' . $details['delivery_date'];
-            }
-        }
-
-        return $shippingData;
+        return [
+            'carrier_title'   => $additionalData . $this->getHelper('Module\Translation')->__('eBay Shipping'),
+            'shipping_method' => $shippingMethod,
+            'shipping_price'  => $this->getBaseShippingPrice()
+        ];
     }
 
     /**

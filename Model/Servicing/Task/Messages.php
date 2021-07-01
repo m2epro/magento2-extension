@@ -89,7 +89,7 @@ class Messages extends \Ess\M2ePro\Model\Servicing\Task
      */
     private function updateUpgradeMessages()
     {
-        $messages = $this->getHelper('Module')->getUpgradeMessages();
+        $messages = $this->getHelper('Module')->getRegistry()->getValueFromJson('/upgrade/messages/');
         if (empty($messages)) {
             return;
         }

@@ -46,10 +46,7 @@ class Grid extends AbstractGrid
         // Initialization block
         // ---------------------------------------
         $this->setId('amazonOrderGrid');
-        // ---------------------------------------
 
-        // Set default values
-        // ---------------------------------------
         $this->setDefaultSort('purchase_create_date');
         $this->setDefaultDir('DESC');
         $this->setSaveParametersInSession(true);
@@ -104,6 +101,7 @@ class Grid extends AbstractGrid
         // ---------------------------------------
 
         $this->setCollection($collection);
+
         return parent::_prepareCollection();
     }
 
@@ -122,146 +120,176 @@ class Grid extends AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('purchase_create_date', [
-            'header' => $this->__('Sale Date'),
-            'align'  => 'left',
-            'type'   => 'datetime',
-            'filter' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
-            'format' => \IntlDateFormatter::MEDIUM,
-            'filter_time' => true,
-            'index'  => 'purchase_create_date',
-            'width'  => '170px',
-            'frame_callback' => [$this, 'callbackPurchaseCreateDate']
-        ]);
-
-        $this->addColumn('magento_order_num', [
-            'header' => $this->__('Magento Order #'),
-            'align'  => 'left',
-            'index'  => 'so.increment_id',
-            'width'  => '110px',
-            'frame_callback' => [$this, 'callbackColumnMagentoOrder']
-        ]);
-
-        $this->addColumn('amazon_order_id', [
-            'header' => $this->__('Amazon Order #'),
-            'align'  => 'left',
-            'width'  => '110px',
-            'index'  => 'amazon_order_id',
-            'frame_callback' => [$this, 'callbackColumnAmazonOrderId']
-        ]);
-
-        $this->addColumn('amazon_order_items', [
-            'header' => $this->__('Items'),
-            'align'  => 'left',
-            'index'  => 'amazon_order_items',
-            'sortable' => false,
-            'width'  => '*',
-            'frame_callback' => [$this, 'callbackColumnItems'],
-            'filter_condition_callback' => [$this, 'callbackFilterItems']
-        ]);
-
-        $this->addColumn('buyer', [
-            'header' => $this->__('Buyer'),
-            'align'  => 'left',
-            'index'  => 'buyer_name',
-            'width'  => '120px',
-            'frame_callback' => [$this, 'callbackColumnBuyer'],
-            'filter_condition_callback' => [$this, 'callbackFilterBuyer']
-        ]);
-
-        $this->addColumn('paid_amount', [
-            'header' => $this->__('Total Paid'),
-            'align'  => 'left',
-            'width'  => '110px',
-            'index'  => 'paid_amount',
-            'type'   => 'number',
-            'frame_callback' => [$this, 'callbackColumnTotal']
-        ]);
-
-        $this->addColumn('is_afn_channel', [
-            'header' => $this->__('Fulfillment'),
-            'width' => '100px',
-            'index' => 'is_afn_channel',
-            'filter_index' => 'second_table.is_afn_channel',
-            'type' => 'options',
-            'sortable' => false,
-            'options' => [
-                0 => $this->__('Merchant'),
-                1 => $this->__('Amazon')
-            ],
-            'frame_callback' => [$this, 'callbackColumnAfnChannel']
-        ]);
-
-        $this->addColumn('reservation_state', [
-            'header' => $this->__('Reservation'),
-            'align'  => 'left',
-            'width'  => '50px',
-            'index'  => 'reservation_state',
-            'type'   => 'options',
-            'options' => [
-                \Ess\M2ePro\Model\Order\Reserve::STATE_UNKNOWN  => $this->__('Not Reserved'),
-                \Ess\M2ePro\Model\Order\Reserve::STATE_PLACED   => $this->__('Reserved'),
-                \Ess\M2ePro\Model\Order\Reserve::STATE_RELEASED => $this->__('Released'),
-                \Ess\M2ePro\Model\Order\Reserve::STATE_CANCELED => $this->__('Canceled'),
+        $this->addColumn(
+            'purchase_create_date',
+            [
+                'header'         => $this->__('Sale Date'),
+                'align'          => 'left',
+                'type'           => 'datetime',
+                'filter'         => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+                'format'         => \IntlDateFormatter::MEDIUM,
+                'filter_time'    => true,
+                'index'          => 'purchase_create_date',
+                'width'          => '170px',
+                'frame_callback' => [$this, 'callbackPurchaseCreateDate']
             ]
-        ]);
+        );
 
-        $this->addColumn('status', [
-            'header'  => $this->__('Status'),
-            'align'   => 'left',
-            'width'   => '50px',
-            'index'   => 'status',
-            'filter_index' => 'second_table.status',
-            'type'    => 'options',
-            'options' => [
-                \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING             => $this->__('Pending'),
-                \Ess\M2ePro\Model\Amazon\Order::STATUS_UNSHIPPED           => $this->__('Unshipped'),
-                \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED_PARTIALLY   => $this->__('Partially Shipped'),
-                \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED             => $this->__('Shipped'),
-                \Ess\M2ePro\Model\Amazon\Order::STATUS_INVOICE_UNCONFIRMED => $this->__('Invoice Not Confirmed'),
-                \Ess\M2ePro\Model\Amazon\Order::STATUS_UNFULFILLABLE       => $this->__('Unfulfillable'),
-                \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED            => $this->__('Canceled')
-            ],
-            'frame_callback' => [$this, 'callbackColumnStatus']
-        ]);
+        $this->addColumn(
+            'shipping_date_to',
+            [
+                'header'         => $this->__('Ship By Date'),
+                'align'          => 'left',
+                'type'           => 'datetime',
+                'filter'         => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+                'format'         => \IntlDateFormatter::MEDIUM,
+                'filter_time'    => true,
+                'index'          => 'shipping_date_to',
+                'width'          => '170px',
+                'frame_callback' => [$this, 'callbackShippingDateTo'],
+            ]
+        );
 
-        $this->addColumn('actions', [
-            'header'    => $this->__('Actions'),
-            'align'     => 'left',
-            'width'     => '100px',
-            'type'      => 'action',
-            'index'     => 'actions',
-            'filter'    => false,
-            'sortable'  => false,
-            'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
-            'getter'    => 'getId',
-            'actions'   => [
-                [
-                    'caption'   => $this->__('View'),
-                    'url'       => [
-                        'base' => '*/amazon_order/view'
+        $this->addColumn(
+            'magento_order_num',
+            [
+                'header'         => $this->__('Magento Order #'),
+                'align'          => 'left',
+                'index'          => 'so.increment_id',
+                'width'          => '110px',
+                'frame_callback' => [$this, 'callbackColumnMagentoOrder']
+            ]
+        );
+
+        $this->addColumn(
+            'amazon_order_id',
+            [
+                'header'         => $this->__('Amazon Order #'),
+                'align'          => 'left',
+                'width'          => '160px',
+                'index'          => 'amazon_order_id',
+                'frame_callback' => [$this, 'callbackColumnAmazonOrderId']
+            ]
+        );
+
+        $this->addColumn(
+            'amazon_order_items',
+            [
+                'header'                    => $this->__('Items'),
+                'align'                     => 'left',
+                'index'                     => 'amazon_order_items',
+                'sortable'                  => false,
+                'width'                     => '*',
+                'frame_callback'            => [$this, 'callbackColumnItems'],
+                'filter_condition_callback' => [$this, 'callbackFilterItems']
+            ]
+        );
+
+        $this->addColumn(
+            'buyer',
+            [
+                'header'                    => $this->__('Buyer'),
+                'align'                     => 'left',
+                'index'                     => 'buyer_name',
+                'width'                     => '120px',
+                'frame_callback'            => [$this, 'callbackColumnBuyer'],
+                'filter_condition_callback' => [$this, 'callbackFilterBuyer']
+            ]
+        );
+
+        $this->addColumn(
+            'paid_amount',
+            [
+                'header'         => $this->__('Total Paid'),
+                'align'          => 'left',
+                'width'          => '110px',
+                'index'          => 'paid_amount',
+                'type'           => 'number',
+                'frame_callback' => [$this, 'callbackColumnTotal']
+            ]
+        );
+
+        $this->addColumn(
+            'is_afn_channel',
+            [
+                'header'         => $this->__('Fulfillment'),
+                'width'          => '100px',
+                'index'          => 'is_afn_channel',
+                'filter_index'   => 'second_table.is_afn_channel',
+                'type'           => 'options',
+                'sortable'       => false,
+                'options'        => [
+                    0 => $this->__('Merchant'),
+                    1 => $this->__('Amazon')
+                ],
+                'frame_callback' => [$this, 'callbackColumnAfnChannel']
+            ]
+        );
+
+        $this->addColumn(
+            'status',
+            [
+                'header'         => $this->__('Status'),
+                'align'          => 'left',
+                'width'          => '50px',
+                'index'          => 'status',
+                'filter_index'   => 'second_table.status',
+                'type'           => 'options',
+                'options'        => [
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING             => $this->__('Pending'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING_RESERVED    => $this->__('Pending / QTY Reserved'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_UNSHIPPED           => $this->__('Unshipped'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED_PARTIALLY   => $this->__('Partially Shipped'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED             => $this->__('Shipped'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_INVOICE_UNCONFIRMED => $this->__('Invoice Not Confirmed'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_UNFULFILLABLE       => $this->__('Unfulfillable'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED            => $this->__('Canceled')
+                ],
+                'frame_callback' => [$this, 'callbackColumnStatus'],
+                'filter_condition_callback' => [$this, 'callbackFilterStatus']
+            ]
+        );
+
+        $this->addColumn(
+            'actions',
+            [
+                'header'   => $this->__('Actions'),
+                'align'    => 'left',
+                'width'    => '100px',
+                'type'     => 'action',
+                'index'    => 'actions',
+                'filter'   => false,
+                'sortable' => false,
+                'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+                'getter'   => 'getId',
+                'actions'  => [
+                    [
+                        'caption' => $this->__('View'),
+                        'url'     => [
+                            'base' => '*/amazon_order/view'
+                        ],
+                        'field'   => 'id'
                     ],
-                    'field' => 'id'
-                ],
-                [
-                    'caption'   => $this->__('Create Magento Order'),
-                    'url'       => [
-                        'base' => '*/amazon_order/createMagentoOrder',
+                    [
+                        'caption' => $this->__('Create Magento Order'),
+                        'url'     => [
+                            'base' => '*/amazon_order/createMagentoOrder',
+                        ],
+                        'field'   => 'id'
                     ],
-                    'field'    => 'id'
-                ],
-                [
-                    'caption'   => $this->__('Mark As Shipped'),
-                    'field'    => 'id',
-                    'onclick_action' => 'AmazonOrderMerchantFulfillmentObj.markAsShippedAction'
-                ],
-                [
-                    'caption'   => $this->__('Amazon\'s Shipping Services'),
-                    'field'    => 'id',
-                    'onclick_action' => 'AmazonOrderMerchantFulfillmentObj.getPopupAction'
+                    [
+                        'caption'        => $this->__('Mark As Shipped'),
+                        'field'          => 'id',
+                        'onclick_action' => 'AmazonOrderMerchantFulfillmentObj.markAsShippedAction'
+                    ],
+                    [
+                        'caption'        => $this->__('Amazon\'s Shipping Services'),
+                        'field'          => 'id',
+                        'onclick_action' => 'AmazonOrderMerchantFulfillmentObj.getPopupAction'
+                    ]
                 ]
             ]
-        ]);
+        );
 
         return parent::_prepareColumns();
     }
@@ -276,41 +304,60 @@ class Grid extends AbstractGrid
 
         // Set mass-action
         // ---------------------------------------
-        $this->getMassactionBlock()->addItem('reservation_place', [
-            'label'    => $this->__('Reserve QTY'),
-            'url'      => $this->getUrl('*/order/reservationPlace'),
-            'confirm'  => $this->__('Are you sure?')
-        ]);
+        $this->getMassactionBlock()->addItem(
+            'reservation_place',
+            [
+                'label'   => $this->__('Reserve QTY'),
+                'url'     => $this->getUrl('*/order/reservationPlace'),
+                'confirm' => $this->__('Are you sure?')
+            ]
+        );
 
-        $this->getMassactionBlock()->addItem('reservation_cancel', [
-            'label'    => $this->__('Cancel QTY Reserve'),
-            'url'      => $this->getUrl('*/order/reservationCancel'),
-            'confirm'  => $this->__('Are you sure?')
-        ]);
+        $this->getMassactionBlock()->addItem(
+            'reservation_cancel',
+            [
+                'label'   => $this->__('Cancel QTY Reserve'),
+                'url'     => $this->getUrl('*/order/reservationCancel'),
+                'confirm' => $this->__('Are you sure?')
+            ]
+        );
 
-        $this->getMassactionBlock()->addItem('ship', [
-            'label'    => $this->__('Mark Order(s) as Shipped'),
-            'url'      => $this->getUrl('*/amazon_order/updateShippingStatus'),
-            'confirm'  => $this->__('Are you sure?')
-        ]);
+        $this->getMassactionBlock()->addItem(
+            'ship',
+            [
+                'label'   => $this->__('Mark Order(s) as Shipped'),
+                'url'     => $this->getUrl('*/amazon_order/updateShippingStatus'),
+                'confirm' => $this->__('Are you sure?')
+            ]
+        );
 
-        $this->getMassactionBlock()->addItem('resend_shipping', [
-            'label'    => $this->__('Resend Shipping Information'),
-            'url'      => $this->getUrl('*/order/resubmitShippingInfo'),
-            'confirm'  => $this->__('Are you sure?')
-        ]);
+        $this->getMassactionBlock()->addItem(
+            'resend_shipping',
+            [
+                'label'   => $this->__('Resend Shipping Information'),
+                'url'     => $this->getUrl('*/order/resubmitShippingInfo'),
+                'confirm' => $this->__('Are you sure?')
+            ]
+        );
 
-        $this->getMassactionBlock()->addItem('resend_invoice_creditmemo', [
-            'label'    => $this->__('Resend Invoice / Credit Memo'),
-            'url'      => $this->getUrl('*/amazon_order/resendInvoiceCreditmemo'),
-            'confirm'  => $this->__('Are you sure?')
-        ]);
+        $this->getMassactionBlock()->addItem(
+            'resend_invoice_creditmemo',
+            [
+                'label'   => $this->__('Resend Invoice / Credit Memo'),
+                'url'     => $this->getUrl('*/amazon_order/resendInvoiceCreditmemo'),
+                'confirm' => $this->__('Are you sure?')
+            ]
+        );
 
-        $this->getMassactionBlock()->addItem('create_order', [
-            'label'    => $this->__('Create Magento Order'),
-            'url'      => $this->getUrl('*/amazon_order/createMagentoOrder'),
-            'confirm'  => $this->__('Are you sure?')
-        ]);
+        $this->getMassactionBlock()->addItem(
+            'create_order',
+            [
+                'label'   => $this->__('Create Magento Order'),
+                'url'     => $this->getUrl('*/amazon_order/createMagentoOrder'),
+                'confirm' => $this->__('Are you sure?')
+            ]
+        );
+
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -327,10 +374,26 @@ class Grid extends AbstractGrid
         );
     }
 
+    public function callbackShippingDateTo($value, $row, $column, $isExport)
+    {
+        return $this->_localeDate->formatDate(
+            $row->getChildObject()->getData('shipping_date_to'),
+            \IntlDateFormatter::MEDIUM,
+            true
+        );
+    }
+
     public function callbackColumnAmazonOrderId($value, $row, $column, $isExport)
     {
+        $back = $this->getHelper('Data')->makeBackUrlParam('*/amazon_order/index');
+        $itemUrl = $this->getUrl('*/amazon_order/view', ['id' => $row->getId(), 'back' => $back]);
+
         $orderId = $this->getHelper('Data')->escapeHtml($row->getChildObject()->getData('amazon_order_id'));
         $url = $this->getHelper('Component\Amazon')->getOrderUrl($orderId, $row->getData('marketplace_id'));
+
+        $returnString = <<<HTML
+<a href="{$itemUrl}">{$orderId}</a>
+HTML;
 
         $primeImageHtml = '';
         if ($row->getChildObject()->getData('is_prime')) {
@@ -348,7 +411,11 @@ HTML;
 HTML;
         }
 
-        $returnString = '<a href="' . $url . '" target="_blank">' . $orderId . '</a> ';
+        $returnString .= <<<HTML
+<a title="{$this->__('View on Amazon')}" target="_blank" href="{$url}">
+<img style="margin-bottom: -3px; float: right"
+ src="{$this->getViewFileUrl('Ess_M2ePro::images/view_amazon.png')}" alt="{$this->__('View on Amazon')}" /></a>
+HTML;
         $returnString .= $primeImageHtml;
         $returnString .= $businessImageHtml;
 
@@ -387,7 +454,7 @@ HTML;
                 $orderUrl = $this->getUrl('sales/order/view', ['order_id' => $magentoOrderId]);
                 $returnString = '<a href="' . $orderUrl . '" target="_blank">' . $magentoOrderNumber . '</a>';
             } else {
-                $returnString = '<span style="color: red;">'.$this->__('Deleted').'</span>';
+                $returnString = '<span style="color: red;">' . $this->__('Deleted') . '</span>';
             }
         }
 
@@ -465,6 +532,12 @@ HTML;
             if ($item->getChildObject()->getSku()) {
                 $skuLabel = $this->__('SKU');
                 $sku = $this->getHelper('Data')->escapeHtml($item->getChildObject()->getSku());
+                if ($product !== null) {
+                    $productUrl = $this->getUrl('catalog/product/edit', ['id' => $product->getId()]);
+                    $sku = <<<STRING
+<a href="{$productUrl}" target="_blank">{$sku}</a>
+STRING;
+                }
 
                 $skuHtml = <<<STRING
 <span style="padding-left: 10px;"><b>{$skuLabel}:</b>&nbsp;{$sku}</span><br/>
@@ -479,7 +552,7 @@ STRING;
                 $row->getData('marketplace_id')
             );
 
-            $itemLink = '<a href="'.$itemUrl.'" target="_blank">'.$generalId.'</a>';
+            $itemLink = '<a href="' . $itemUrl . '" target="_blank">' . $generalId . '</a>';
 
             $generalIdHtml = <<<STRING
 <span style="padding-left: 10px;"><b>{$generalIdLabel}:</b>&nbsp;{$itemLink}</span><br/>
@@ -506,15 +579,7 @@ HTML;
             return $this->__('N/A');
         }
 
-        $html = $this->getHelper('Data')->escapeHtml($row->getChildObject()->getData('buyer_name'));
-
-        if ($row->getChildObject()->getData('buyer_email') != '') {
-            $html .= '<br/>';
-            $html .= '&lt;' . $this->getHelper('Data')->escapeHtml($row->getChildObject()->getData('buyer_email'))
-                  . '&gt;';
-        }
-
-        return $html;
+        return $this->getHelper('Data')->escapeHtml($row->getChildObject()->getData('buyer_name'));
     }
 
     public function callbackColumnTotal($value, $row, $column, $isExport)
@@ -571,12 +636,12 @@ HTML;
         ];
 
         $color = isset($statusColors[$status]) ? $statusColors[$status] : 'black';
-        $value = '<span style="color: '.$color.';">'.$value.'</span>';
+        $value = '<span style="color: ' . $color . ';">' . $value . '</span>';
 
         if ($row->isSetProcessingLock('update_order_status')) {
             $value .= '<br/>';
             $value .= '<span style="color: gray;">['
-                .$this->__('Status Update in Progress...').']</span>';
+                . $this->__('Status Update in Progress...') . ']</span>';
         }
 
         return $value;
@@ -597,7 +662,10 @@ HTML;
         $orderItemsCollection->getSelect()->columns('order_id');
         $orderItemsCollection->getSelect()->distinct(true);
 
-        $orderItemsCollection->getSelect()->where('title LIKE ? OR sku LIKE ? or general_id LIKE ?', '%'.$value.'%');
+        $orderItemsCollection->getSelect()->where(
+            'title LIKE ? OR sku LIKE ? or general_id LIKE ?',
+            '%' . $value . '%'
+        );
 
         $totalResult = $orderItemsCollection->getColumnValues('order_id');
         $collection->addFieldToFilter('main_table.id', ['in' => $totalResult]);
@@ -612,7 +680,72 @@ HTML;
 
         $collection
             ->getSelect()
-            ->where('buyer_email LIKE ? OR buyer_name LIKE ?', '%'.$value.'%');
+            ->where('buyer_email LIKE ? OR buyer_name LIKE ?', '%' . $value . '%');
+    }
+
+    protected function callbackFilterStatus($collection, $column)
+    {
+        $value = $column->getFilter()->getValue();
+        if ($value == null) {
+            return;
+        }
+
+        switch ($value) {
+            case \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING:
+                $collection->addFieldToFilter(
+                    'second_table.status',
+                    [\Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING]
+                );
+                break;
+
+            case \Ess\M2ePro\Model\Amazon\Order::STATUS_UNSHIPPED:
+                $collection->addFieldToFilter(
+                    'second_table.status',
+                    [\Ess\M2ePro\Model\Amazon\Order::STATUS_UNSHIPPED]
+                );
+                break;
+
+            case \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED_PARTIALLY:
+                $collection->addFieldToFilter(
+                    'second_table.status',
+                    [\Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED_PARTIALLY]
+                );
+                break;
+            case \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED:
+                $collection->addFieldToFilter(
+                    'second_table.status',
+                    [\Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED]
+                );
+                break;
+            case \Ess\M2ePro\Model\Amazon\Order::STATUS_UNFULFILLABLE:
+                $collection->addFieldToFilter(
+                    'second_table.status',
+                    [\Ess\M2ePro\Model\Amazon\Order::STATUS_UNFULFILLABLE]
+                );
+                break;
+            case \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED:
+                $collection->addFieldToFilter(
+                    'second_table.status',
+                    [\Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED]
+                );
+                break;
+            case \Ess\M2ePro\Model\Amazon\Order::STATUS_INVOICE_UNCONFIRMED:
+                $collection->addFieldToFilter(
+                    'second_table.status',
+                    [\Ess\M2ePro\Model\Amazon\Order::STATUS_INVOICE_UNCONFIRMED]
+                );
+                break;
+            case \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING_RESERVED:
+                $collection->addFieldToFilter(
+                    'second_table.status',
+                    [\Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING]
+                );
+                $collection->addFieldToFilter(
+                    'reservation_state',
+                    [\Ess\M2ePro\Model\Order\Reserve::STATE_PLACED]
+                );
+                break;
+        }
     }
 
     //########################################
@@ -624,9 +757,7 @@ HTML;
 
     public function getRowUrl($row)
     {
-        $back = $this->getHelper('Data')->makeBackUrlParam('*/amazon_order/index');
-
-        return $this->getUrl('*/amazon_order/view', ['id' => $row->getId(), 'back' => $back]);
+        return false;
     }
 
     protected function _prepareLayout()
@@ -639,39 +770,46 @@ JS
             );
         }
 
-        $this->jsPhp->addConstants($this->getHelper('Data')
-            ->getClassConstants(\Ess\M2ePro\Model\Log\AbstractModel::class));
+        $this->jsPhp->addConstants(
+            $this->getHelper('Data')
+                ->getClassConstants(\Ess\M2ePro\Model\Log\AbstractModel::class)
+        );
 
-        $this->jsUrl->addUrls([
-            'amazon_order/view' => $this->getUrl(
-                '*/amazon_order/view',
-                ['back'=>$this->getHelper('Data')->makeBackUrlParam('*/amazon_order/index')]
-            ),
-            'getEditShippingAddressForm' => $this->getUrl(
-                '*/amazon_order_shippingAddress/edit/'
-            )
-        ]);
+        $this->jsUrl->addUrls(
+            [
+                'amazon_order/view'          => $this->getUrl(
+                    '*/amazon_order/view',
+                    ['back' => $this->getHelper('Data')->makeBackUrlParam('*/amazon_order/index')]
+                ),
+                'getEditShippingAddressForm' => $this->getUrl(
+                    '*/amazon_order_shippingAddress/edit/'
+                )
+            ]
+        );
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Order'));
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Order\MerchantFulfillment'));
 
-        $this->jsTranslator->addTranslations([
-            'View Full Order Log' => $this->__('View Full Order Log'),
-            'Amazon\'s Shipping Services' => $this->__('Amazon\'s Shipping Services'),
-            'Please select an option.' => $this->__('Please select an option.'),
-            'This is a required fields.' => $this->__('This is a required fields.'),
-            'Please enter a number greater than 0 in this fields.' =>
-                $this->__('Please enter a number greater than 0 in this fields.'),
-            'Are you sure you want to create Shipment now?' =>
-                $this->__('Are you sure you want to create Shipment now?'),
-            'Please enter a valid date.' => $this->__('Please enter a valid date.'), 
-        ]);
+        $this->jsTranslator->addTranslations(
+            [
+                'View Full Order Log'                                  => $this->__('View Full Order Log'),
+                'Amazon\'s Shipping Services'                          => $this->__('Amazon\'s Shipping Services'),
+                'Please select an option.'                             => $this->__('Please select an option.'),
+                'This is a required fields.'                           => $this->__('This is a required fields.'),
+                'Please enter a number greater than 0 in this fields.' =>
+                    $this->__('Please enter a number greater than 0 in this fields.'),
+                'Are you sure you want to create Shipment now?'        =>
+                    $this->__('Are you sure you want to create Shipment now?'),
+                'Please enter a valid date.'                           => $this->__('Please enter a valid date.'),
+            ]
+        );
 
         $tempGridIds = [];
         $this->getHelper('Component\Amazon')->isEnabled() && $tempGridIds[] = $this->getId();
 
         $tempGridIds = $this->getHelper('Data')->jsonEncode($tempGridIds);
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Order',
         'M2ePro/Amazon/Order/MerchantFulfillment'

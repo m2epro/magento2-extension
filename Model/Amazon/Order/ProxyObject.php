@@ -128,42 +128,52 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
      */
     public function getShippingData()
     {
-        $shippingData = [
-            'shipping_method' => $this->order->getShippingService(),
-            'shipping_price' => $this->getBaseShippingPrice(),
-            'carrier_title' => $this->getHelper('Module\Translation')->__('Amazon Shipping')
-        ];
+        $additionalData = '';
 
         if ($this->order->isPrime()) {
-            $shippingData['shipping_method'] .= ' | Is Prime';
+            $additionalData .= 'Is Prime | ';
         }
 
         if ($this->order->isBusiness()) {
-            $shippingData['shipping_method'] .= ' | Is Business';
+            $additionalData .= 'Is Business | ';
         }
 
         if ($this->order->isMerchantFulfillmentApplied()) {
             $merchantFulfillmentInfo = $this->order->getMerchantFulfillmentData();
 
-            $shippingData['shipping_method'] .= ' | Amazon\'s Shipping Services';
+            $additionalData .= 'Amazon\'s Shipping Services | ';
 
             if (!empty($merchantFulfillmentInfo['shipping_service']['carrier_name'])) {
                 $carrier = $merchantFulfillmentInfo['shipping_service']['carrier_name'];
-                $shippingData['shipping_method'] .= ' | Carrier: ' . $carrier;
+                $additionalData .= 'Carrier: ' . $carrier . ' | ';
             }
 
             if (!empty($merchantFulfillmentInfo['shipping_service']['name'])) {
                 $service = $merchantFulfillmentInfo['shipping_service']['name'];
-                $shippingData['shipping_method'] .= ' | Service: ' . $service;
+                $additionalData .= 'Service: ' . $service . ' | ';
             }
 
             if (!empty($merchantFulfillmentInfo['shipping_service']['date']['estimated_delivery']['latest'])) {
                 $deliveryDate = $merchantFulfillmentInfo['shipping_service']['date']['estimated_delivery']['latest'];
-                $shippingData['shipping_method'] .= ' | Delivery Date: ' . $deliveryDate;
+                $additionalData .= 'Delivery Date: ' . $deliveryDate . ' | ';
             }
         }
 
-        return $shippingData;
+        $shippingDateTo = $this->order->getShippingDateTo();
+        if (!empty($shippingDateTo)) {
+            $shippingDate = $this->getHelper('Data')->gmtDateToTimezone(
+                $shippingDateTo,
+                false,
+                'M d, Y, H:i:s'
+            );
+            $additionalData .= "Ship By Date: {$shippingDate} | ";
+        }
+
+        return [
+            'carrier_title'   => $additionalData . $this->getHelper('Module\Translation')->__('Amazon Shipping'),
+            'shipping_method' => $this->order->getShippingService(),
+            'shipping_price'  => $this->getBaseShippingPrice()
+        ];
     }
 
     /**

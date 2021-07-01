@@ -219,7 +219,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'width'          => '170px',
             'type'           => 'text',
             'index'          => 'template_description_title',
+            'filter'         => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\PolicySettings',
             'filter_index'   => 'template_description_title',
+            'filter_condition_callback' => [$this, 'callbackFilterDescriptionSettings'],
             'frame_callback' => [$this, 'callbackColumnTemplateDescription']
         ]);
 
@@ -227,11 +229,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'header'         => 'Shipping Policy',
             'align'          => 'left',
             'width'          => '170px',
-            'type'          => 'options',
-            'options'       => [
-                0 => $this->__('Use from Listing Settings'),
-                1 => $this->__('Policies')
-            ],
+            'type'           => 'text',
+            'index'          => 'template_shipping_title',
+            'filter'         => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\PolicySettings',
+            'filter_index'   => 'template_shipping_title',
             'filter_condition_callback' => [$this, 'callbackFilterShippingSettings'],
             'frame_callback' => [$this, 'callbackColumnTemplateShipping']
         ]);
@@ -675,12 +676,58 @@ HTML;
     protected function callbackFilterShippingSettings($collection, $column)
     {
         $value = $column->getFilter()->getValue();
+        $inputValue = null;
 
-        if ($value) {
-            $collection->addFieldToFilter('template_shipping_id', ['notnull' => true]);
-        } else {
-            if ($this->listing->getChildObject()->getData('template_shipping_id')) {
-                $collection->addFieldToFilter('template_shipping_id', ['null' => true]);
+        if (is_array($value) && isset($value['input'])) {
+            $inputValue = $value['input'];
+        } elseif (is_string($value)) {
+            $inputValue = $value;
+        }
+
+        if ($inputValue !== null) {
+            /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+            $collection->addAttributeToFilter('template_shipping_title',  ['like' => '%' . $inputValue . '%']);
+        }
+
+        if (isset($value['select'])) {
+            switch ($value['select']) {
+                case '0':
+                    $collection->addAttributeToFilter('template_shipping_id', ['null' => true]);
+                    break;
+                case '1':
+                    $collection->addAttributeToFilter('template_shipping_id', ['notnull' => true]);
+                    break;
+            }
+        }
+    }
+
+    protected function callbackFilterDescriptionSettings($collection, $column)
+    {
+        $value = $column->getFilter()->getValue();
+        $inputValue = null;
+
+        if (is_array($value) && isset($value['input'])) {
+            $inputValue = $value['input'];
+        } elseif (is_string($value)) {
+            $inputValue = $value;
+        }
+
+        if ($inputValue !== null) {
+            /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+            $collection->addAttributeToFilter(
+                'template_description_title',
+                ['like' => '%' . $inputValue . '%']
+            );
+        }
+
+        if (isset($value['select'])) {
+            switch ($value['select']) {
+                case '0':
+                    $collection->addAttributeToFilter('template_description_id', ['null' => true]);
+                    break;
+                case '1':
+                    $collection->addAttributeToFilter('template_description_id', ['notnull' => true]);
+                    break;
             }
         }
     }

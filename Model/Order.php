@@ -360,7 +360,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     // ---------------------------------------
 
     /**
-     * Check whether the order has items, listed by M2E Pro (also true for mapped Unmanaged listings)
+     * Check whether the order has items, listed by M2E Pro (also true for linked Unmanaged listings)
      *
      * @return bool
      */
@@ -831,6 +831,17 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     public function createShipments()
     {
+        if (!$this->getChildObject()->canCreateShipments()) {
+            if ($this->getMagentoOrder() && $this->getMagentoOrder()->getIsVirtual()) {
+                $this->addNoticeLog(
+                    'Magento Order was created without the Shipping Address since your Virtual Product ' .
+                    'has no weight and cannot be shipped.'
+                );
+            }
+
+            return null;
+        }
+
         $shipments = [];
 
         try {

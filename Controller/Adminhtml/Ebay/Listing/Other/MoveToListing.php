@@ -52,7 +52,10 @@ class MoveToListing extends Main
 
             $categoryData = $this->getCategoryData($listingProduct->getOnlineMainCategory(), $listingInstance);
             if (!empty($categoryData) && !isset($categoryData['create_new_category'])) {
-                $this->assignMainCategoryToProduct($listingProduct->getId(), $categoryData, $listingInstance);
+                $this->activeRecordFactory->getObject('Ebay_Listing_Product')->assignTemplatesToProducts(
+                    $listingProduct->getId(),
+                    $categoryData['id']
+                );
 
                 $productsHaveOnlineCategory[] = $listingProduct->getId();
                 $listingOther->moveToListingSucceed();
@@ -121,29 +124,6 @@ class MoveToListing extends Main
 
     //########################################
 
-    protected function assignMainCategoryToProduct($productId, $categoryData, \Ess\M2ePro\Model\Listing $listing)
-    {
-        /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Chooser\Converter $converter */
-        $converter = $this->modelFactory->getObject('Ebay_Template_Category_Chooser_Converter');
-        $converter->setAccountId($listing->getAccountId());
-        $converter->setMarketplaceId($listing->getMarketplaceId());
-        foreach ($categoryData as $type => $templateData) {
-            $converter->setCategoryDataFromChooser($templateData, $type);
-        }
-
-        $categoryTpl = $this->modelFactory->getObject('Ebay_Template_Category_Builder')->build(
-            $this->activeRecordFactory->getObject('Ebay_Template_Category'),
-            $converter->getCategoryDataForTemplate(EbayCategory::TYPE_EBAY_MAIN)
-        );
-
-        $this->activeRecordFactory->getObject('Ebay_Listing_Product')->assignTemplatesToProducts(
-            $productId,
-            $categoryTpl->getId()
-        );
-    }
-
-    //----------------------------------------
-
     protected function getCategoryData($onlineMainCategory, \Ess\M2ePro\Model\Listing $listing)
     {
         $categoryData = [];
@@ -163,13 +143,7 @@ class MoveToListing extends Main
             ->getFirstItem();
 
         if ($templateCategory->getId()) {
-            $categoryData[EbayCategory::TYPE_EBAY_MAIN] = [
-                'mode'               => \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY,
-                'value'              => $templateCategory->getCategoryValue(),
-                'path'               => $path,
-                'is_custom_template' => $templateCategory->getIsCustomTemplate(),
-                'specific'           => $templateCategory->getSpecifics()
-            ];
+            $categoryData['id'] = $templateCategory->getId();
         } else {
             $categoryData['create_new_category'] = [
                 'mode'               => \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY,

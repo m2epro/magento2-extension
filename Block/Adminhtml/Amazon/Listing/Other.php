@@ -76,7 +76,7 @@ class Other extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
                 can be managed for different Accounts separately.</p><br>
 
                 <p>Information in this section can be used to see which Items have not been fully managed via M2E Pro
-                yet. It allows mapping the imported Channel Products to the Magento Products and further moving
+                yet. It allows linking the imported Channel Products to the Magento Products and further moving
                 them into M2E Pro Listings.</p>
 
 HTML

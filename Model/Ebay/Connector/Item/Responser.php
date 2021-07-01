@@ -12,8 +12,6 @@ use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator;
 use Ess\M2ePro\Model\Ebay\Listing\Product\Variation as EbayVariation;
 use Ess\M2ePro\Model\Exception\Logic;
-use Ess\M2ePro\Model\Listing\Product\Variation;
-use Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection;
 
 /**
  * Class \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
@@ -21,19 +19,22 @@ use Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection;
 abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Responser
 {
     /** @var \Ess\M2ePro\Model\Listing\Product */
-    protected $listingProduct = null;
+    protected $listingProduct;
 
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
-    protected $configurator = null;
+    protected $configurator;
 
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Response */
-    protected $responseObject = null;
+    protected $responseObject;
 
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\RequestData */
-    protected $requestDataObject = null;
+    protected $requestDataObject;
 
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Logger $logger */
-    protected $logger = null;
+    protected $logger;
+
+    /** @var EbayVariation\Resolver */
+    protected $variationResolver;
 
     protected $isSuccess = false;
 
@@ -47,6 +48,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
+        EbayVariation\Resolver $variationResolver,
         array $params = []
     ) {
         parent::__construct(
@@ -60,6 +62,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
             $params
         );
 
+        $this->variationResolver = $variationResolver;
         $this->listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $this->params['product']['id']);
     }
 
@@ -224,10 +227,27 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
      *
      * 21919301: (UPC/EAN/ISBN) is missing a value. Enter a value and try again.
      */
-    protected function isNewRequiredSpecificNeeded(array $messages)
+    protected function isProductIdentifierNeeded(array $messages)
     {
         foreach ($messages as $message) {
             if ($message->getCode() == 21919301) {
+                return $message;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param Message[] $messages
+     * @return Message|bool
+     *
+     * 21919303: The item specific Type is missing. Add Type to this listing, enter a valid value, and then try again.
+     */
+    protected function isNewRequiredSpecificNeeded(array $messages)
+    {
+        foreach ($messages as $message) {
+            if ($message->getCode() == 21919303) {
                 return $message;
             }
         }
@@ -293,7 +313,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
      * @param Message[] $messages
      * @return Message|bool
      *
-     * 488: The specified UUID has already been used; ListedByRequestAppId=1, item ID=%ited_id%.
+     * 488: The specified UUID has already been used; ListedByRequestAppId=1, item ID=%item_id%.
      */
     protected function isDuplicateErrorByUUIDAppeared(array $messages)
     {
@@ -310,7 +330,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
      * @param Message[] $messages
      * @return Message|bool
      *
-     * 21919067: This Listing is a duplicate of your item: %tem_title% (%item_id%).
+     * 21919067: This Listing is a duplicate of your item: %item_title% (%item_id%).
      */
     protected function isDuplicateErrorByEbayEngineAppeared(array $messages)
     {
@@ -348,28 +368,41 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     //########################################
 
-    protected function tryToResolveVariationMpnErrors()
+    /**
+     * @throws Logic
+     * @throws \Ess\M2ePro\Model\Exception
+     */
+    protected function tryToResolveVariationErrors()
     {
+        if (isset($this->params['params']['is_additional_action']) &&
+            $this->params['params']['is_additional_action'] === true
+        ) {
+            return;
+        }
+
         if (!$this->canPerformGetItemCall()) {
             return;
         }
 
-        $variationMpnValues = $this->getVariationMpnDataFromEbay();
-        if ($variationMpnValues === false) {
-            return;
-        }
+        $additionalData = $this->listingProduct->getAdditionalData();
 
-        $isVariationMpnFilled = !empty($variationMpnValues);
+        $this->variationResolver
+            ->setListingProduct($this->listingProduct)
+            ->setIsAllowedToSave(true)
+            ->setIsAllowedToProcessVariationsWhichAreNotExistInTheModule(true)
+            ->setIsAllowedToProcessVariationMpnErrors(!isset($additionalData['is_variation_mpn_filled']));
 
-        $this->listingProduct->setSetting('additional_data', 'is_variation_mpn_filled', $isVariationMpnFilled);
-        if (!$isVariationMpnFilled) {
-            $this->listingProduct->setSetting('additional_data', 'without_mpn_variation_issue', true);
-        }
+        $this->variationResolver->resolve();
 
-        $this->listingProduct->save();
+        foreach ($this->variationResolver->getMessagesSet()->getEntities() as $resolverMessage) {
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
+            $message->initFromPreparedData(
+                $resolverMessage->getText(),
+                $resolverMessage->getType()
+            );
 
-        if (!empty($variationMpnValues)) {
-            $this->fillVariationMpnValues($variationMpnValues);
+            $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
         }
 
         /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
@@ -425,122 +458,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
         $this->listingProduct->save();
 
         return true;
-    }
-
-    protected function getVariationMpnDataFromEbay()
-    {
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct = $this->listingProduct->getChildObject();
-
-        /** @var \Ess\M2ePro\Model\Connector\Command\RealTime\Virtual $connector */
-        $connector = $this->modelFactory->getObject('Ebay_Connector_Dispatcher')->getVirtualConnector(
-            'item',
-            'get',
-            'info',
-            [
-                'item_id' => $ebayListingProduct->getEbayItemIdReal(),
-                'parser_type' => 'standard',
-                'full_variations_mode' => true
-            ],
-            'result',
-            $this->ebayFactory->getObjectLoaded('Marketplace', $this->getMarketplaceId()),
-            $this->ebayFactory->getObjectLoaded('Account', $this->getAccountId())
-        );
-
-        try {
-            $connector->process();
-        } catch (\Exception $exception) {
-            $this->helperFactory->getObject('Module\Exception')->process($exception);
-            return false;
-        }
-
-        $itemData = $connector->getResponseData();
-        if (empty($itemData['variations'])) {
-            return [];
-        }
-
-        $variationMpnValues = [];
-
-        foreach ($itemData['variations'] as $variation) {
-            if (empty($variation['specifics']['MPN'])) {
-                continue;
-            }
-
-            $mpnValue = $variation['specifics']['MPN'];
-            unset($variation['specifics']['MPN']);
-
-            $variationMpnValues[] = [
-                'mpn' => $mpnValue,
-                'sku' => $variation['sku'],
-                'specifics' => $variation['specifics'],
-            ];
-        }
-
-        return $variationMpnValues;
-    }
-
-    /**
-     * @param $variationMpnValues
-     * @throws Logic
-     */
-    protected function fillVariationMpnValues($variationMpnValues)
-    {
-        /** @var Collection $variationCollection */
-        $variationCollection = $this->activeRecordFactory->getObject('Listing_Product_Variation')->getCollection();
-        $variationCollection->addFieldToFilter('listing_product_id', $this->listingProduct->getId());
-
-        /** @var Collection $variationOptionCollection */
-        $variationOptionCollection = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')
-            ->getCollection();
-        $variationOptionCollection->addFieldToFilter(
-            'listing_product_variation_id',
-            $variationCollection->getColumnValues('id')
-        );
-
-        /** @var Variation[] $variations */
-        $variations = $variationCollection->getItems();
-
-        /** @var Variation\Option[] $variationOptions */
-        $variationOptions = $variationOptionCollection->getItems();
-
-        foreach ($variations as $variation) {
-            $specifics = [];
-
-            foreach ($variationOptions as $id => $variationOption) {
-                if ($variationOption->getListingProductVariationId() != $variation->getId()) {
-                    continue;
-                }
-
-                $specifics[$variationOption->getAttribute()] = $variationOption->getOption();
-                unset($variationOptions[$id]);
-            }
-
-            /** @var EbayVariation $ebayVariation */
-            $ebayVariation = $variation->getChildObject();
-
-            foreach ($variationMpnValues as $id => $variationMpnValue) {
-                if ($ebayVariation->getOnlineSku() != $variationMpnValue['sku'] &&
-                    $specifics != $variationMpnValue['specifics']
-                ) {
-                    continue;
-                }
-
-                $additionalData = $variation->getAdditionalData();
-
-                if (!isset($additionalData['online_product_details']['mpn']) ||
-                    $additionalData['online_product_details']['mpn'] != $variationMpnValue['mpn']
-                ) {
-                    $additionalData['online_product_details']['mpn'] = $variationMpnValue['mpn'];
-
-                    $variation->setSettings('additional_data', $additionalData);
-                    $variation->save();
-                }
-
-                unset($variationMpnValues[$id]);
-
-                break;
-            }
-        }
     }
 
     protected function processDuplicateByUUID(Message $message)
@@ -681,6 +598,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
             [
                 'status_changer' => $this->getStatusChanger(),
                 'is_realtime' => true,
+                'is_additional_action' => true
             ]
         );
 

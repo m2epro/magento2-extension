@@ -64,13 +64,10 @@ define([
             }
 
             var self = OrderObj;
-            var trElement = Event.findElement(event, 'tr');
             var tdElement = Event.findElement(event, 'td');
 
             if ($(tdElement).down('input')) {
                 self[grid.containerId](grid, event);
-            } else {
-                setLocation(trElement.title);
             }
         },
 

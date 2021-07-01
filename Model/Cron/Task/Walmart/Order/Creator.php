@@ -126,9 +126,7 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
             $order->createInvoice();
         }
 
-        if ($order->getChildObject()->canCreateShipments()) {
-            $order->createShipments();
-        }
+        $order->createShipments();
 
         if ($order->getStatusUpdateRequired()) {
             $order->updateMagentoOrderStatus();

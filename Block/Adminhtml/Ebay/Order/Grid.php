@@ -164,6 +164,21 @@ class Grid extends AbstractGrid
         );
 
         $this->addColumn(
+            'shipping_date_to',
+            [
+                'header'         => $this->__('Ship By Date'),
+                'align'          => 'left',
+                'type'           => 'datetime',
+                'filter'         => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+                'format'         => \IntlDateFormatter::MEDIUM,
+                'filter_time'    => true,
+                'index'          => 'shipping_date_to',
+                'width'          => '170px',
+                'frame_callback' => [$this, 'callbackShippingDateTo'],
+            ]
+        );
+
+        $this->addColumn(
             'magento_order_num',
             [
                 'header'         => $this->__('Magento Order #'),
@@ -225,23 +240,6 @@ class Grid extends AbstractGrid
         );
 
         $this->addColumn(
-            'reservation_state',
-            [
-                'header'  => $this->__('Reservation'),
-                'align'   => 'left',
-                'width'   => '50px',
-                'index'   => 'reservation_state',
-                'type'    => 'options',
-                'options' => [
-                    \Ess\M2ePro\Model\Order\Reserve::STATE_UNKNOWN  => $this->__('Not Reserved'),
-                    \Ess\M2ePro\Model\Order\Reserve::STATE_PLACED   => $this->__('Reserved'),
-                    \Ess\M2ePro\Model\Order\Reserve::STATE_RELEASED => $this->__('Released'),
-                    \Ess\M2ePro\Model\Order\Reserve::STATE_CANCELED => $this->__('Canceled'),
-                ]
-            ]
-        );
-
-        $this->addColumn(
             'status',
             [
                 'header'                    => $this->__('Status'),
@@ -251,6 +249,7 @@ class Grid extends AbstractGrid
                 'type'                      => 'options',
                 'options'                   => [
                     \Ess\M2ePro\Model\Ebay\Order::STATUS_PENDING   => $this->__('Pending'),
+                    \Ess\M2ePro\Model\Ebay\Order::STATUS_PENDING_RESERVED => $this->__('Pending / QTY Reserved'),
                     \Ess\M2ePro\Model\Ebay\Order::STATUS_UNSHIPPED => $this->__('Unshipped'),
                     \Ess\M2ePro\Model\Ebay\Order::STATUS_SHIPPED   => $this->__('Shipped'),
                     \Ess\M2ePro\Model\Ebay\Order::STATUS_CANCELED  => $this->__('Canceled')
@@ -421,11 +420,25 @@ class Grid extends AbstractGrid
         );
     }
 
+    public function callbackShippingDateTo($value, $row, $column, $isExport)
+    {
+        return $this->_localeDate->formatDate(
+            $row->getChildObject()->getData('shipping_date_to'),
+            \IntlDateFormatter::MEDIUM,
+            true
+        );
+    }
+
     public function callbackColumnEbayOrder($value, $row, $column, $isExport)
     {
-        $returnString = $row->getChildObject()->getData('ebay_order_id');
+        $back = $this->getHelper('Data')->makeBackUrlParam('*/ebay_order/index');
+        $itemUrl = $this->getUrl('*/ebay_order/view', ['id' => $row->getId(), 'back' => $back]);
 
-        if ($row->getChildObject()->getData('selling_manager_id') > 0) {
+        $returnString = <<<HTML
+<a href="{$itemUrl}">{$row->getChildObject()->getData('ebay_order_id')}</a>
+HTML;
+
+        if ($row->getChildObject()->getData('selling_manager_id')) {
             $returnString .= '<br/> [ <b>SM: </b> # ' . $row->getChildObject()->getData('selling_manager_id') . ' ]';
         }
 
@@ -528,6 +541,12 @@ HTML;
             if ($item->getChildObject()->getSku()) {
                 $skuLabel = $this->__('SKU');
                 $sku = $this->getHelper('Data')->escapeHtml($item->getChildObject()->getSku());
+                if ($product !== null) {
+                    $productUrl = $this->getUrl('catalog/product/edit', ['id' => $product->getId()]);
+                    $sku = <<<STRING
+<a href="{$productUrl}" target="_blank">{$sku}</a>
+STRING;
+                }
 
                 $skuHtml = <<<HTML
 <span style="padding-left: 10px;"><b>{$skuLabel}:</b>&nbsp;{$sku}</span><br/>
@@ -596,14 +615,7 @@ HTML;
 
     public function callbackColumnBuyer($value, $row, $column, $isExport)
     {
-        $returnString = '';
-        $returnString .= $this->getHelper('Data')->escapeHtml($row->getChildObject()->getData('buyer_name')) . '<br/>';
-
-        $buyerEmail = $row->getChildObject()->getData('buyer_email');
-        if ($buyerEmail && $buyerEmail != 'Invalid Request') {
-            $returnString .= '&lt;' . $buyerEmail . '&gt;<br/>';
-        }
-
+        $returnString = $this->getHelper('Data')->escapeHtml($row->getChildObject()->getData('buyer_name')) . '<br/>';
         $returnString .= $this->getHelper('Data')->escapeHtml($row->getChildObject()->getData('buyer_user_id'));
 
         return $returnString;
@@ -729,6 +741,16 @@ HTML;
                     ['neq' => \Ess\M2ePro\Model\Ebay\Order::SHIPPING_STATUS_COMPLETED]
                 );
                 break;
+            case \Ess\M2ePro\Model\Ebay\Order::STATUS_PENDING_RESERVED:
+                $collection->addFieldToFilter(
+                    'payment_status',
+                    ['neq' => \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED]
+                );
+                $collection->addFieldToFilter(
+                    'reservation_state',
+                    [\Ess\M2ePro\Model\Order\Reserve::STATE_PLACED]
+                );
+                break;
         }
     }
 
@@ -741,11 +763,7 @@ HTML;
 
     public function getRowUrl($row)
     {
-        $back = $this->getHelper('Data')->makeBackUrlParam(
-            '*/ebay_order/index'
-        );
-
-        return $this->getUrl('*/ebay_order/view', ['id' => $row->getId(), 'back' => $back]);
+        return false;
     }
 
     //########################################

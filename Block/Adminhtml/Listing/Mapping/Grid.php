@@ -184,7 +184,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $actions = '&nbsp;<a href="javascript:void(0);"';
         $actions .= 'onclick="' . $this->getData('mapping_handler_js') . '.';
         $actions .= $this->getData('mapping_action') . '(' . $row->getId() . ');">';
-        $actions .= $this->__('Map To This Product') . '</a>';
+        $actions .= $this->__('Link To This Product') . '</a>';
 
         return $actions;
     }

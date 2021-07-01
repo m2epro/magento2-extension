@@ -38,7 +38,7 @@ class EditItem extends Order
             $block = $this->createBlock('Order_Item_Product_Mapping');
 
             $this->setJsonContent([
-                'title' => $this->__('Mapping Product "%title%"', $item->getChildObject()->getTitle()),
+                'title' => $this->__('Linking Product "%title%"', $item->getChildObject()->getTitle()),
                 'html' => $block->toHtml(),
                 'type' => self::MAPPING_PRODUCT,
             ]);

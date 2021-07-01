@@ -378,7 +378,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
                 'Edit SKU'        => $this->__('Edit SKU'),
                 'Edit Product ID' => $this->__('Edit Product ID'),
-                'Mapping Product' => $this->__('Mapping Product'),
+                'Linking Product' => $this->__('Linking Product'),
 
                 'Updating SKU has submitted to be processed.'  =>
                     $this->__('Updating SKU has submitted to be processed.'),

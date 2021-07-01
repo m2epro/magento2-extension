@@ -103,7 +103,8 @@ class Builder extends AbstractModel
         $this->setData('shipping_service', $data['shipping_service']);
         $this->setData('shipping_address', $data['shipping_address']);
         $this->setData('shipping_price', (float)$data['shipping_price']);
-        $this->setData('shipping_dates', $this->getHelper('Data')->jsonEncode($data['shipping_dates']));
+        $this->setData('shipping_date_to', $data['shipping_date_to']);
+        $this->setData('delivery_date_to', $data['delivery_date_to']);
         // ---------------------------------------
 
         $this->items = $data['items'];

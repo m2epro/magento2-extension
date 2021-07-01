@@ -180,9 +180,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'              => 'number',
             'index'             => 'available_qty',
             'sortable'          => true,
-            'filter'            => false,
+            'filter_index'      => 'online_qty',
             'renderer'          => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty',
-            'render_online_qty' => OnlineQty::ONLINE_AVAILABLE_QTY
+            'render_online_qty' => OnlineQty::ONLINE_AVAILABLE_QTY,
+            'filter_condition_callback' => [$this, 'callbackFilterAvailableQty']
         ]);
 
         $this->addColumn('online_qty_sold', [
@@ -453,6 +454,35 @@ HTML;
                 ['attribute' => 'online_main_category', 'like' => '%' . $value . '%']
             ]
         );
+    }
+
+    protected function callbackFilterAvailableQty($collection, $column)
+    {
+        $cond = $column->getFilter()->getCondition();
+
+        if (empty($cond)) {
+            return;
+        }
+
+        $where = '';
+        $availableQty = 'elp.online_qty - elp.online_qty_sold';
+
+        if (isset($cond['from']) || isset($cond['to'])) {
+            if (isset($cond['from']) && $cond['from'] != '') {
+                $value = $collection->getConnection()->quote($cond['from']);
+                $where .= "{$availableQty} >= {$value}";
+            }
+
+            if (isset($cond['to']) && $cond['to'] != '') {
+                if (isset($cond['from']) && $cond['from'] != '') {
+                    $where .= ' AND ';
+                }
+                $value = $collection->getConnection()->quote($cond['to']);
+                $where .= "{$availableQty} <= {$value}";
+            }
+        }
+
+        $collection->getSelect()->where($where);
     }
 
     protected function callbackFilterPrice($collection, $column)

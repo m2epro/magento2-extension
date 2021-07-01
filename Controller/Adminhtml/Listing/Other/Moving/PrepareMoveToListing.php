@@ -55,7 +55,7 @@ class PrepareMoveToListing extends Listing
             $this->setJsonContent(
                 [
                     'result'  => false,
-                    'message' => $this->__('Only Mapped Products must be selected.')
+                    'message' => $this->__('Only Linked Products must be selected.')
                 ]
             );
 

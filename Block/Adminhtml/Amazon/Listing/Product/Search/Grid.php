@@ -531,7 +531,7 @@ HTML;
 
         if ($row->getData('is_variation_product') && !$row->getData('bad_parent')) {
             $msg = $this->__(
-                'Please map Amazon and Magento Attributes for this Amazon Product to be able to assign ASIN/ISBN.'
+                'Please link Amazon and Magento Attributes for this Amazon Product to be able to assign ASIN/ISBN.'
             );
 
             $variations = $row->getData('variations');
@@ -542,13 +542,13 @@ HTML;
 
             if ($this->matcherAttributes->isSourceAmountGreater()) {
                 $msg = $this->__(
-                    'Please map Magento and Amazon Attributes for this Amazon Product to be able to assign ASIN/ISBN.
+                    'Please link Magento and Amazon Attributes for this Amazon Product to be able to assign ASIN/ISBN.
                     Be careful, as the number of  Magento Attributes is more than the number of Attributes in Amazon
                     Parent Product. Thus you should select fixed Value for unmatched Magento Variational Attribute.'
                 );
             } elseif ($this->matcherAttributes->isDestinationAmountGreater()) {
                 $msg = $this->__(
-                    'Please map Magento and Amazon Attributes for this Amazon Product to be able to assign ASIN/ISBN.
+                    'Please link Magento and Amazon Attributes for this Amazon Product to be able to assign ASIN/ISBN.
                     Be careful, as the number of Attributes in Amazon Parent Product is more than the number of
                     Magento Attributes. Thus you should select fixed Value for unmatched Amazon Variational Attribute.'
                 );

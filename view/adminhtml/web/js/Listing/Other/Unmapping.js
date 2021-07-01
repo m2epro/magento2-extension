@@ -29,7 +29,7 @@ define([
 
                     if (transport.responseText == '1') {
                         MessagesObj.addSuccess(
-                            M2ePro.translator.translate('Product(s) was Unmapped.')
+                            M2ePro.translator.translate('Product(s) was Unlinked.')
                         );
                     } else {
                         MessagesObj.addError(

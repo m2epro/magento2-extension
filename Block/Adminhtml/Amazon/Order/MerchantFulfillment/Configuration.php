@@ -76,7 +76,7 @@ class Configuration extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFor
             'package_weight_measure'                    => MerchantFulfillment::WEIGHT_MEASURE_OUNCES,
         ];
 
-        if ($this->getData('delivery_date_to') !== null) {
+        if (!empty($this->getData('delivery_date_to'))) {
             $mustArriveByDate = new \DateTime($this->getData('delivery_date_to'));
             $defaults['must_arrive_by_date'] = $mustArriveByDate->format('Y-m-d');
         }
@@ -204,7 +204,7 @@ HTML;
                 'value'    => $formData['declared_value'],
                 'required' => true,
                 'tooltip'  => $this->__(
-                    'Based on this Value, the Carrier will determine for how much to insure the Shipment. By default, 
+                    'Based on this Value, the Carrier will determine for how much to insure the Shipment. By default,
                     this Value is calculated as a subtotal of all of the purchased Items.'
                 ),
                 'note'     => <<<HTML
@@ -280,8 +280,8 @@ HTML
                 'required' => true,
                 'tooltip'  => $this->__(
                     <<<HTML
-    You can select between a <strong>Custom Value</strong> and the <strong>Predefined Package Dimensions</strong> 
-    offered by the Carriers. It is recommended to use Custom Value only if the Item Package Dimensions do not confirm 
+    You can select between a <strong>Custom Value</strong> and the <strong>Predefined Package Dimensions</strong>
+    offered by the Carriers. It is recommended to use Custom Value only if the Item Package Dimensions do not confirm
     to the predefined Options.
 HTML
                 )
@@ -506,7 +506,7 @@ HTML
 
             $tooltipHtml = $this->getTooltipHtml(
                 $this->__(
-                    'Enter a Weight Value and select the appropriate Measurement Units. Please, note the 
+                    'Enter a Weight Value and select the appropriate Measurement Units. Please, note the
                             selected Measurement Units will be Saved Up till the next Changes are Made.'
                 )
             );
@@ -570,7 +570,7 @@ HTML
                     ,
                     'required' => true,
                     'tooltip'  => $this->__(
-                        'Enter a Weight Value and select the appropriate Measurement Units. Please, note the selected 
+                        'Enter a Weight Value and select the appropriate Measurement Units. Please, note the selected
                         Measurement Units will be Saved Up till the next Changes are Made.'
                     )
                 ]
@@ -753,7 +753,7 @@ HTML
                 'value'    => $formData['carrier_will_pickup'],
                 'required' => true,
                 'tooltip'  => $this->__(
-                    'Indicates whether the Carrier will pick up the Package. Please, note the selected Values will be 
+                    'Indicates whether the Carrier will pick up the Package. Please, note the selected Values will be
                     Saved Up till the next changes are made.'
                 )
             ]
@@ -779,7 +779,7 @@ HTML
                 'value'    => $formData['delivery_experience'],
                 'required' => true,
                 'tooltip'  => $this->__(
-                    'Select a delivery confirmation level. Please, note the selected Value will be Saved Up till the 
+                    'Select a delivery confirmation level. Please, note the selected Value will be Saved Up till the
                     next changes are made.'
                 )
             ]
@@ -837,16 +837,16 @@ JS
                 'title'   => $this->__('Amazon\'s Shipping Services'),
                 'content' => $this->__(
                     <<<HTML
-<p>Amazon's Shipping Services offer a variety of <strong>Shipping Benefits</strong>, including several Shipping Options 
+<p>Amazon's Shipping Services offer a variety of <strong>Shipping Benefits</strong>, including several Shipping Options
 if you need to expedite your delivery.</p>
 <br/>
-<p>This Tool provides <strong>programmatic access</strong> to Amazon’s Shipping Services for Sellers, including 
-competitive rates from Amazon-partnered Carriers. Sellers can find out what Shipping Service offers are available by 
-<strong>submitting information</strong> about a proposed Shipment, such as <strong>Package Size</strong> and 
-<strong>Weight</strong>, <strong>Shipment Origin</strong>, and <strong>Delivery Date</strong> requirements. Sellers 
-can choose from the Shipping Service offers returned by Amazon, and then Purchase Shipping Labels for Fulfilling 
+<p>This Tool provides <strong>programmatic access</strong> to Amazon’s Shipping Services for Sellers, including
+competitive rates from Amazon-partnered Carriers. Sellers can find out what Shipping Service offers are available by
+<strong>submitting information</strong> about a proposed Shipment, such as <strong>Package Size</strong> and
+<strong>Weight</strong>, <strong>Shipment Origin</strong>, and <strong>Delivery Date</strong> requirements. Sellers
+can choose from the Shipping Service offers returned by Amazon, and then Purchase Shipping Labels for Fulfilling
 their Orders.</p>
-<br/> 
+<br/>
 <p>For more information about Amazon's Shipping Services Program, see the Seller Central Help.</p>
 <br/>
 <p>Amazon's Shipping Service tool is required to be used for Amazon Prime Orders.</p>

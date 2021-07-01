@@ -96,7 +96,7 @@ class Remap extends Listing
         $this->setJsonContent(
             [
                 'result'  => true,
-                'message' => $this->__('Product(s) was Mapped.')
+                'message' => $this->__('Product(s) was Linked.')
             ]
         );
 

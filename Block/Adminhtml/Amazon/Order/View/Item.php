@@ -245,7 +245,7 @@ HTML;
 
         $editLink = '';
         if (!$row->getProductId()) {
-            $editLink = sprintf($jsTemplate, 'edit', $translationHelper->__('Map to Magento Product'));
+            $editLink = sprintf($jsTemplate, 'edit', $translationHelper->__('Link to Magento Product'));
         }
 
         $isPretendedToBeSimple = false;
@@ -261,7 +261,7 @@ HTML;
 
         $discardLink = '';
         if ($row->getProductId()) {
-            $discardLink = sprintf($jsTemplate, 'unassignProduct', $translationHelper->__('Unmap'));
+            $discardLink = sprintf($jsTemplate, 'unassignProduct', $translationHelper->__('Unlink'));
         }
 
         return <<<HTML

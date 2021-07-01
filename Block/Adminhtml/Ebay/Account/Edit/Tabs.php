@@ -164,8 +164,8 @@ class Tabs extends AbstractTabs
                 'No Customer entry is found for specified ID.'                                         => $this->__(
                     'No Customer entry is found for specified ID.'
                 ),
-                'If Yes is chosen, you must select at least one Attribute for Product Mapping.'        => $this->__(
-                    'If Yes is chosen, you must select at least one Attribute for Product Mapping.'
+                'If Yes is chosen, you must select at least one Attribute for Product Linking.'        => $this->__(
+                    'If Yes is chosen, you must select at least one Attribute for Product Linking.'
                 ),
                 'You should create at least one Response Template.'                                    => $this->__(
                     'You should create at least one Response Template.'

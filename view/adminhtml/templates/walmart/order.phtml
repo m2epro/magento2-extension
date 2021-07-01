@@ -10,6 +10,7 @@
 /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Order\View\Form $block */
 echo $block->getChildHtml('item_edit');
 
+$shippingDateTo = $block->order->getChildObject()->getShippingDateTo();
 $currency = $block->order->getChildObject()->getData('currency');
 if (empty($currency)) {
     $currency = $block->order->getMarketplace()->getChildObject()->getDefaultCurrency();
@@ -215,13 +216,13 @@ if (empty($currency)) {
 
                                     <?php
                                     if (!$block->isCurrencyAllowed()) {
-                                        echo '<br/><b>' . $block->__('Attention!') . '</b> ' . $block->__(
-                                                'Order Currency is not enabled in Magento. Please, enable it in System > Configuration > Currency Setup.'
-                                            );
+                                        echo '<br/><b>' . $block->__('Attention!') . '</b> '
+                                            . $block->__('Order Currency is not enabled in Magento. Please, enable it in ')
+                                            . '<i>' . $block->__('Stores > Settings > Configuration > General > Currency Setup.') . '</i>';
                                     } elseif (!$block->hasCurrencyConversionRate()) {
-                                        echo '<br/><b>' . $block->__('Attention!') . '</b> ' . $block->__(
-                                                'There\'s no rate for Order Currency in Magento. Please, add Currency convert rate in System > Manage Currency > Rates.'
-                                            );
+                                        echo '<br/><b>' . $block->__('Attention!') . '</b> '
+                                            . $block->__('There\'s no rate for Order Currency in Magento. Please, add Currency convert rate in ')
+                                            . '<i>' . $block->__('Stores > Currency > Currency Rates.') . '</i>';
                                     }
                                     ?>
                                 <?php else : ?>
@@ -253,6 +254,19 @@ if (empty($currency)) {
 
                     <table class="form-list order-info" cellspacing="0">
                         <tbody>
+
+                        <tr>
+                            <td class="label"><?php echo $block->__('Ship By Date'); ?>:</td>
+                            <td class="value">
+                                <strong>
+                                    <?php if (empty($shippingDateTo)) { ?>
+                                        <?php echo $block->__('N/A'); ?>
+                                    <?php } else { ?>
+                                        <?php echo $block->getHelper('Data')->gmtDateToTimezone($shippingDateTo, false, 'M d, Y, H:i:s'); ?>
+                                    <?php } ?>
+                                </strong>
+                            </td>
+                        </tr>
 
                         <tr>
                             <td class="label"><?php echo $block->__('Shipping Service'); ?></td>

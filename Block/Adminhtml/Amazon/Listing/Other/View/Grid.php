@@ -183,14 +183,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // ---------------------------------------
 
         $this->getMassactionBlock()->setGroups([
-            'mapping' => $this->__('Mapping'),
+            'mapping' => $this->__('Linking'),
             'other'   => $this->__('Other')
         ]);
 
         // Set mass-action
         // ---------------------------------------
         $this->getMassactionBlock()->addItem('autoMapping', [
-            'label'   => $this->__('Map Item(s) Automatically'),
+            'label'   => $this->__('Link Item(s) Automatically'),
             'url'     => ''
         ], 'mapping');
         $this->getMassactionBlock()->addItem('moving', [
@@ -202,7 +202,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'url'     => ''
         ], 'other');
         $this->getMassactionBlock()->addItem('unmapping', [
-            'label'   => $this->__('Unmap Item(s)'),
+            'label'   => $this->__('Unlink Item(s)'),
             'url'     => ''
         ], 'mapping');
         // ---------------------------------------
@@ -232,7 +232,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                                     onclick="ListingOtherMappingObj.openPopUp(
                                     '. (int)$row->getId(). ',
                                     \''. $productTitle. '\'
-                                    );">' . $this->__('Map') . '</a>';
+                                    );">' . $this->__('Link') . '</a>';
             return $htmlValue;
         }
 
@@ -339,7 +339,7 @@ HTML;
                 $icon = 'repricing-disabled';
                 $text = $this->__(
                     'This product is disabled on Amazon Repricing Tool. <br>
-                    You can map it to Magento Product and Move into M2E Pro Listing to make the
+                    You can link it to Magento Product and Move into M2E Pro Listing to make the
                     Price being updated via M2E Pro.'
                 );
             }

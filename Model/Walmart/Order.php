@@ -156,6 +156,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         )->setData($address);
     }
 
+    public function getShippingDateTo()
+    {
+        return $this->getData('shipping_date_to');
+    }
+
     //########################################
 
     /**

@@ -10,6 +10,7 @@
 /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Order\View\Form $block */
 echo $block->getChildHtml('item_edit');
 
+$shippingDateTo = $block->order->getChildObject()->getShippingDateTo();
 $status = $this->getStatus();
 ?>
 
@@ -236,13 +237,13 @@ $status = $this->getStatus();
 
                                 <?php
                                 if (!$block->isCurrencyAllowed()) {
-                                    echo '<br/><b>' . $block->__('Attention!') . '</b> ' . $block->__(
-                                            'Order Currency is not enabled in Magento.<br/>Please, enable it in System > Configuration > Currency Setup.'
-                                        );
+                                    echo '<br/><b>' . $block->__('Attention!') . '</b> '
+                                        . $block->__('Order Currency is not enabled in Magento. Please, enable it in ')
+                                        . '<i>' . $block->__('Stores > Settings > Configuration > General > Currency Setup.') . '</i>';
                                 } elseif (!$block->hasCurrencyConversionRate()) {
-                                    echo '<br/><b>' . $block->__('Attention!') . '</b> ' . $block->__(
-                                            'There\'s no rate for Order Currency in Magento.<br/>Please, add Currency convert rate in System > Manage Currency > Rates.'
-                                        );
+                                    echo '<br/><b>' . $block->__('Attention!') . '</b> '
+                                        . $block->__('There\'s no rate for Order Currency in Magento. Please, add Currency convert rate in ')
+                                        . '<i>' . $block->__('Stores > Currency > Currency Rates.') . '</i>';
                                 }
                                 ?>
                             </td>
@@ -347,6 +348,26 @@ $status = $this->getStatus();
                                         <?php } ?>
                                     </strong>
                                 </td>
+                            </tr>
+                        <?php endif; ?>
+
+                        <tr>
+                            <td class="label"><?php echo $block->__('Ship By Date'); ?>:</td>
+                            <td class="value">
+                                <strong>
+                                    <?php if (empty($shippingDateTo)) { ?>
+                                        <?php echo $block->__('N/A'); ?>
+                                    <?php } else { ?>
+                                        <?php echo $block->getHelper('Data')->gmtDateToTimezone($shippingDateTo, false, 'M d, Y, H:i:s'); ?>
+                                    <?php } ?>
+                                </strong>
+                            </td>
+                        </tr>
+
+                        <?php if ($taxReference = $block->order->getChildObject()->getTaxReference()): ?>
+                            <tr>
+                                <td class="label"><?php echo $block->__('IOSS/OSS Number');?>:</td>
+                                <td class="value"><strong><?php echo $taxReference; ?></strong></td>
                             </tr>
                         <?php endif; ?>
 

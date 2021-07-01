@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Connector\Item\ListAction;
 
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
+use Ess\M2ePro\Model\Ebay\Listing\Product\Variation as EbayVariation;
 
 /**
  * Class \Ess\M2ePro\Model\Ebay\Connector\Item\ListAction\Responser
@@ -29,6 +30,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
+        EbayVariation\Resolver $variationResolver,
         array $params = []
     ) {
         $this->localeCurrency = $localeCurrency;
@@ -40,6 +42,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
             $response,
             $helperFactory,
             $modelFactory,
+            $variationResolver,
             $params
         );
     }

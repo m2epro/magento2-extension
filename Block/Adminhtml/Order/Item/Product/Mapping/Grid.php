@@ -177,7 +177,7 @@ class Grid extends AbstractGrid
     {
         $productId = (int)$row->getId();
         $productSku = $row->getSku();
-        $label = $this->__('Map To This Product');
+        $label = $this->__('Link To This Product');
 
         $js = <<<JS
 OrderEditItemObj.assignProduct('{$productId}', '{$productSku}');

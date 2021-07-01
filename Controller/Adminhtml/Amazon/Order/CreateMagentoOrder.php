@@ -46,9 +46,7 @@ class CreateMagentoOrder extends Order
                 $order->createInvoice();
             }
 
-            if ($order->getChildObject()->canCreateShipments()) {
-                $order->createShipments();
-            }
+            $order->createShipments();
 
             // ---------------------------------------
             $order->updateMagentoOrderStatus();

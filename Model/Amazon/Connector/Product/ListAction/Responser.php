@@ -46,19 +46,24 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
 
     protected function getSuccessfulMessage()
     {
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $amazonListingProduct = $this->listingProduct->getChildObject();
         $currency = $this->localeCurrency->getCurrency(
             $this->listingProduct->getMarketplace()->getChildObject()->getCurrency()
         );
+        $parts = [];
 
-        $parts = [
-            sprintf('Product was Listed with QTY %d', $this->listingProduct->getChildObject()->getOnlineQty())
-        ];
+        if ($amazonListingProduct->getVariationManager()->isRelationParentType()) {
+            $parts[] = 'Parent Product was Listed';
+        } else {
+            $parts[] = sprintf('Product was Listed with QTY %d', $amazonListingProduct->getOnlineQty());
+        }
 
-        if ($regularPrice = $this->listingProduct->getChildObject()->getOnlineRegularPrice()) {
+        if ($regularPrice = $amazonListingProduct->getOnlineRegularPrice()) {
             $parts[] = sprintf('Regular Price %s', $currency->toCurrency($regularPrice));
         }
 
-        if ($businessPrice = $this->listingProduct->getChildObject()->getOnlineBusinessPrice()) {
+        if ($businessPrice = $amazonListingProduct->getOnlineBusinessPrice()) {
             $parts[] = sprintf('Business Price %s', $currency->toCurrency($businessPrice));
         }
 

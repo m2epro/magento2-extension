@@ -88,7 +88,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
                     $quote->getStoreId()
                 );
 
-            if ($order->getId()) {
+            if ($order !== null && $order->getId()) {
                 $this->helperFactory->getObject('Module\Exception')->process($e, false);
                 throw new \Ess\M2ePro\Model\Magento\Quote\FailDuringEventProcessing(
                     $order,

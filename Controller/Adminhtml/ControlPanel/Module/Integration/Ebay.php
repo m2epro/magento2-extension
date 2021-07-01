@@ -311,11 +311,15 @@ HTML;
             $lpId = $this->getRequest()->getParam('listing_product_id');
             $lp = $this->parentFactory->getObjectLoaded(EbayHelper::NICK, 'Listing\Product', $lpId);
 
-            $resolver = $this->modelFactory->getObject('Ebay_Listing_Product_Variation_Resolver', [
-                'listingProduct' => $lp
-            ]);
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Resolver $resolver */
+            $resolver = $this->modelFactory->getObject('Ebay_Listing_Product_Variation_Resolver');
+            $resolver->setListingProduct($lp);
             $resolver->setIsAllowedToSave((bool)$this->getRequest()->getParam('allowed_to_save'));
-            $resolver->process();
+            $resolver->setIsAllowedToProcessVariationsWhichAreNotExistInTheModule(true);
+            $resolver->setIsAllowedToProcessExistedVariations(true);
+            $resolver->setIsAllowedToProcessVariationMpnErrors(true);
+
+            $resolver->resolve();
 
             $errors = $warnings = $notices = [];
             foreach ($resolver->getMessagesSet()->getEntities() as $message) {

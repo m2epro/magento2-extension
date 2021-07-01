@@ -13,6 +13,24 @@ namespace Ess\M2ePro\Observer\Shipment;
  */
 class Track extends \Ess\M2ePro\Observer\AbstractModel
 {
+    protected $orderFactory;
+    protected $orderResource;
+
+    //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ResourceModel\Order $orderResource,
+        \Ess\M2ePro\Model\OrderFactory $orderFactory
+    ) {
+        parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
+
+        $this->orderFactory = $orderFactory;
+        $this->orderResource = $orderResource;
+    }
+
     //########################################
 
     /**
@@ -45,16 +63,13 @@ class Track extends \Ess\M2ePro\Observer\AbstractModel
 
         try {
             /** @var $order \Ess\M2ePro\Model\Order */
-            $order = $this->activeRecordFactory->getObjectLoaded(
-                'Order',
-                $magentoOrderId,
-                'magento_order_id'
-            );
+            $order = $this->orderFactory->create();
+            $this->orderResource->load($order, $magentoOrderId, 'magento_order_id');
         } catch (\Exception $e) {
             return;
         }
 
-        if ($order === null) {
+        if ($order->isEmpty()) {
             return;
         }
 

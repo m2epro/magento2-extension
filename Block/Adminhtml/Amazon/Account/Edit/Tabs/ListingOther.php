@@ -55,7 +55,7 @@ class ListingOther extends AbstractForm
                     <<<HTML
 <p>Under this tab you can manage the Unmanaged Listings - Items that were listed directly via your Seller Central
 Account or via some other Unmanaged software. Specify whether you would like to import the Unmanaged Listings,
-configure the automatic mapping and moving settings.</p><br>
+configure the automatic linking and moving settings.</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
@@ -108,14 +108,14 @@ HTML
                 'container_id' => 'other_listings_mapping_mode_tr',
                 'name' => 'other_listings_mapping_mode',
                 'class' => 'M2ePro-require-select-attribute',
-                'label' => $this->__('Product Mapping'),
+                'label' => $this->__('Product Linking'),
                 'values' => [
                     1 => $this->__('Yes'),
                     0 => $this->__('No'),
                 ],
                 'value' => $formData['other_listings_mapping_mode'],
                 'tooltip' => $this->__(
-                    'Choose whether imported Amazon Listings should automatically map to a
+                    'Choose whether imported Amazon Listings should automatically link to a
                     Product in your Magento Inventory.'
                 )
             ]
@@ -124,12 +124,12 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_amazon_accounts_other_listings_product_mapping',
             [
-                'legend' => $this->__('Magento Product Mapping Settings'),
+                'legend' => $this->__('Magento Product Linking Settings'),
                 'collapsable' => false,
                 'tooltip' => $this->__(
-                    '<p>In this section you can provide settings for automatic Mapping of the newly imported
+                    '<p>In this section you can provide settings for automatic Linking of the newly imported
                     Unmanaged Listings to the appropriate Magento Products. </p><br>
-                    <p>The imported Items are mapped based on the correspondence between Amazon Item values and
+                    <p>The imported Items are linked based on the correspondence between Amazon Item values and
                     Magento Product Attribute values. </p>'
                 )
             ]
@@ -330,8 +330,8 @@ HTML
         $this->setForm($form);
 
         $this->jsTranslator->add(
-            'If Yes is chosen, you must select at least one Attribute for Product Mapping.',
-            $this->__('If Yes is chosen, you must select at least one Attribute for Product Mapping.')
+            'If Yes is chosen, you must select at least one Attribute for Product Linking.',
+            $this->__('If Yes is chosen, you must select at least one Attribute for Product Linking.')
         );
 
         return parent::_prepareForm();

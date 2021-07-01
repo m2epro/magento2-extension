@@ -72,6 +72,10 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
             'component' => self::COMPONENT_GENERAL,
             'group'     => self::GROUP_SYSTEM,
         ],
+        \Ess\M2ePro\Model\Cron\Task\Magento\Product\DetectSpecialPriceEndDate::NICK => [
+            'component' => self::COMPONENT_GENERAL,
+            'group'     => self::GROUP_SYSTEM,
+        ],
         \Ess\M2ePro\Model\Cron\Task\Magento\GlobalNotifications::NICK => [
             'component' => self::COMPONENT_GENERAL,
             'group'     => self::GROUP_SYSTEM,

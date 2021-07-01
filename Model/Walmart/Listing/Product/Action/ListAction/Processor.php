@@ -253,8 +253,11 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
                 $resultActionData = [];
 
+                //worker may return different data structure
                 if (isset($resultData[$processingAction->getListingProductId() . '-id'])) {
                     $resultActionData = $resultData[$processingAction->getListingProductId() . '-id'];
+                } elseif (isset($resultData['data'][$processingAction->getListingProductId().'-id'])) {
+                    $resultActionData = $resultData['data'][$processingAction->getListingProductId().'-id'];
                 }
 
                 if (empty($resultActionData['errors'])) {
@@ -537,8 +540,11 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
                 $resultActionData = [];
 
+                //worker may return different data structure
                 if (isset($resultData[$processingAction->getListingProductId() . '-id'])) {
                     $resultActionData = $resultData[$processingAction->getListingProductId() . '-id'];
+                } elseif (isset($resultData['data'][$processingAction->getListingProductId().'-id'])) {
+                    $resultActionData = $resultData['data'][$processingAction->getListingProductId().'-id'];
                 }
 
                 if (empty($resultActionData['errors'])) {
@@ -671,17 +677,23 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    //todo: move to responser
     protected function getSuccessMessage(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
+        $walmartListingProduct = $listingProduct->getChildObject();
+
+        if ($walmartListingProduct->getVariationManager()->isRelationParentType()) {
+            return 'Parent Product was Listed';
+        }
+        
         $currency = $this->localeCurrency->getCurrency(
             $listingProduct->getMarketplace()->getChildObject()->getCurrency()
         );
 
         return sprintf(
             'Product was Listed with QTY %d, Price %s',
-            $listingProduct->getChildObject()->getOnlineQty(),
-            $currency->toCurrency($listingProduct->getChildObject()->getOnlinePrice())
+            $walmartListingProduct->getOnlineQty(),
+            $currency->toCurrency($walmartListingProduct->getOnlinePrice())
         );
     }
 

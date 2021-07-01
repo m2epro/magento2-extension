@@ -102,6 +102,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $this->setData('shipping_service', $data['shipping']['level']);
         $this->setData('shipping_address', $this->getHelper('Data')->jsonEncode($data['shipping']['address']));
         $this->setData('shipping_price', (float)$data['shipping']['price']);
+        $this->setData('shipping_date_to', $data['shipping']['estimated_ship_date']);
         // ---------------------------------------
 
         $this->items = $data['items'];

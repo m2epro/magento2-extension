@@ -115,22 +115,15 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
 
         $from = $this->listingProduct->getChildObject()->getOrigData('online_regular_price');
         $to = $this->listingProduct->getChildObject()->getOnlineRegularPrice();
-        if ($from == $to) {
-            return;
+        if ($from != $to) {
+            $this->logSuccessMessage(
+                sprintf(
+                    'Regular Price was revised from %s to %s',
+                    $currency->toCurrency($from),
+                    $currency->toCurrency($to)
+                )
+            );
         }
-
-        /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
-        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
-        $message->initFromPreparedData(
-            sprintf(
-                'Regular Price was revised from %s to %s',
-                $currency->toCurrency($from),
-                $currency->toCurrency($to)
-            ),
-            \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS
-        );
-
-        $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
     }
 
     protected function processSuccessReviseBusinessPrice()
@@ -145,22 +138,15 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
 
         $from = $this->listingProduct->getChildObject()->getOrigData('online_business_price');
         $to = $this->listingProduct->getChildObject()->getOnlineBusinessPrice();
-        if ($from == $to) {
-            return;
+        if ($from != $to) {
+            $this->logSuccessMessage(
+                sprintf(
+                    'Business Price was revised from %s to %s',
+                    $currency->toCurrency($from),
+                    $currency->toCurrency($to)
+                )
+            );
         }
-
-        /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
-        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
-        $message->initFromPreparedData(
-            sprintf(
-                'Business Price was revised from %s to %s',
-                $currency->toCurrency($from),
-                $currency->toCurrency($to)
-            ),
-            \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS
-        );
-
-        $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
     }
 
     protected function processSuccessReviseQty()
@@ -169,21 +155,34 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
             return;
         }
 
-        $from = $this->listingProduct->getChildObject()->getOrigData('online_qty');
-        $to = $this->listingProduct->getChildObject()->getOnlineQty();
-        if ($from == $to) {
-            return;
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $amazonListingProduct = $this->listingProduct->getChildObject();
+        
+        $handlingTimeFrom = $amazonListingProduct->getOrigData('online_handling_time');
+        $handlingTimeTo = $amazonListingProduct->getOnlineHandlingTime();
+
+        if ($handlingTimeFrom != $handlingTimeTo) {
+            $this->logSuccessMessage(
+                sprintf('Handling Time was revised from %s to %s', $handlingTimeFrom, $handlingTimeTo)
+            );
         }
 
-        /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
-        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
-        $message->initFromPreparedData(
-            sprintf('QTY was revised from %s to %s', $from, $to),
-            \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS
-        );
-
-        $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
+        $qtyFrom = $amazonListingProduct->getOrigData('online_qty');
+        $qtyTo = $amazonListingProduct->getOnlineQty();
+        if ($qtyFrom != $qtyTo) {
+            $this->logSuccessMessage(sprintf('QTY was revised from %s to %s', $qtyFrom, $qtyTo));
+        }
     }
 
+    //########################################
+    
+    protected function logSuccessMessage($text)
+    {
+        /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
+        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
+        $message->initFromPreparedData($text, \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS);
+        $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
+    }
+    
     //########################################
 }

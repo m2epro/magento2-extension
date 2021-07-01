@@ -363,7 +363,7 @@ HTML;
                     if ($this->getId() == 'amazonListingSearchOtherGrid') {
                         $text = $this->__(
                             'This product is disabled on Amazon Repricing Tool. <br>
-                            You can map it to Magento Product and Move into M2E Pro Listing to make the
+                            You can link it to Magento Product and Move into M2E Pro Listing to make the
                             Price being updated via M2E Pro.'
                         );
                     } else {

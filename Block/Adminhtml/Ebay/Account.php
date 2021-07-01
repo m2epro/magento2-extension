@@ -30,7 +30,7 @@ class Account extends AbstractContainer
             'content' => $this->__(<<<HTML
 <p>On this Page you can find information about eBay Accounts which can be managed via M2E Pro.</p><br>
 <p>Settings for such configurations as eBay Orders along with Magento Order creation conditions,
-Unmanaged Listings import including options of Mapping them to Magento Products and Moving them to M2E Pro Listings,
+Unmanaged Listings import including options of Linking them to Magento Products and Moving them to M2E Pro Listings,
 etc. can be specified for each Account separately.</p><br>
 <p><strong>Note:</strong> eBay Account can be deleted only if it is not being used for any of M2E Pro Listings.</p>
 HTML

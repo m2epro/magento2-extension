@@ -145,7 +145,7 @@ class Mapping extends AbstractContainer
             $this->createBlock('HelpBlock')->setData([
                 'content' => $this->__(
                     'As M2E Pro was not able to find appropriate Option in Magento Product you are supposed
-                    find and Map it manualy.
+                    find and Link it manualy.
                     <br/>If you want to use the same Settings for the similar subsequent Orders,
                     select appropriate check-box at the bottom.
                     <br/><br/><b>Note:</b> Magento Order can be only created when all Products of Order are

@@ -16,7 +16,7 @@ define([
         openPopUp: function(otherProductId, productTitle) {
             this.gridHandler.unselectAll();
             let self = this;
-            let title = M2ePro.translator.translate('Mapping Product');
+            let title = M2ePro.translator.translate('Linking Product');
 
             if (productTitle) {
                 title = title + ' "' + productTitle + '"';
@@ -86,7 +86,7 @@ define([
                         this.gridHandler.unselectAllAndReload();
                         this.popUp.modal('closeModal');
                         this.scrollPageToTop();
-                        MessagesObj.addSuccess(M2ePro.translator.translate('Product(s) was Mapped.'));
+                        MessagesObj.addSuccess(M2ePro.translator.translate('Product(s) was Linked.'));
                     } else {
                         alert(M2ePro.translator.translate('Product does not exist.'));
                     }

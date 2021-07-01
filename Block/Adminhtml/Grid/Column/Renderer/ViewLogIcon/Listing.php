@@ -54,6 +54,7 @@ class Listing extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
             Log::ACTION_RELIST_PRODUCT_ON_COMPONENT => $translator->__('Relist'),
             Log::ACTION_REVISE_PRODUCT_ON_COMPONENT => $translator->__('Revise'),
             Log::ACTION_STOP_PRODUCT_ON_COMPONENT   => $translator->__('Stop'),
+            Log::ACTION_REMAP_LISTING_PRODUCT       => $translator->__('Relink'),
             Log::ACTION_STOP_AND_REMOVE_PRODUCT     => $translator->__('Stop on Channel / Remove from Listing'),
             Log::ACTION_CHANNEL_CHANGE              => $translator->__('Channel Change')
         ];

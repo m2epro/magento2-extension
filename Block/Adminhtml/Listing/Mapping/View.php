@@ -28,7 +28,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             [
                 'content' => $this->__(
                     'From the list below you should select a Magento Product to which you would like the Item
-                 to be linked. Click on Map To This Product link to set accordance.'
+                 to be linked. Click on Link To This Product link to set accordance.'
                 )
             ]
         );

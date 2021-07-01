@@ -94,7 +94,7 @@ class ListingOther extends AbstractForm
 <p>This tab of the Account settings contains main configurations for the Unmanaged Listing management.
 You can set preferences whether you would like to import Unmanaged Listings
 (Items that were Listed on eBay either directly on the channel or with the help of other than M2E Pro tool),
-automatically map them to Magento Product, etc.</p><br>
+automatically link them to Magento Product, etc.</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
@@ -136,7 +136,7 @@ HTML
             [
                 'container_id' => 'other_listings_mapping_mode_tr',
                 'name'         => 'other_listings_mapping_mode',
-                'label'        => $this->__('Product Mapping'),
+                'label'        => $this->__('Product Linking'),
                 'class'        => 'M2ePro-require-select-attribute',
                 'values'       => [
                     1 => $this->__('Yes'),
@@ -144,7 +144,7 @@ HTML
                 ],
                 'value'        => $formData['other_listings_mapping_mode'],
                 'tooltip'      => $this->__(
-                    'Choose whether imported eBay Listings should automatically map to a
+                    'Choose whether imported eBay Listings should automatically link to a
                     Product in your Magento Inventory.'
                 )
             ]
@@ -153,12 +153,12 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_ebay_accounts_other_listings_product_mapping',
             [
-                'legend'      => $this->__('Magento Product Mapping Settings'),
+                'legend'      => $this->__('Magento Product Linking Settings'),
                 'collapsable' => true,
                 'tooltip'     => $this->__(
-                    '<p>In this section you can provide settings for automatic Mapping of the newly
+                    '<p>In this section you can provide settings for automatic Linking of the newly
                     imported Unmanaged Listings to the appropriate Magento Products.</p><br>
-                    <p>The imported Items are mapped based on the correspondence between eBay Item
+                    <p>The imported Items are linked based on the correspondence between eBay Item
                     values and Magento Product Attribute values. </p>'
                 )
             ]

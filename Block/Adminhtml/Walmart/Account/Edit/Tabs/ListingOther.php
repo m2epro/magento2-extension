@@ -59,12 +59,12 @@ class ListingOther extends AbstractForm
         enable the Import Unmanaged Listings option. The imported Unmanaged Items can be found
         under <i>Walmart Integration > Listings > Unmanaged</i>.<br/><br/>
 
-        The Unmanaged Items can be automatically mapped to the related Magento Product by SKU, UPC, GTIN,
-        Walmart ID or Title values. To do this, enable the Product Mapping option and
+        The Unmanaged Items can be automatically linked to the related Magento Product by SKU, UPC, GTIN,
+        Walmart ID or Title values. To do this, enable the Product Linking option and
         select appropriate Attribute.<br/><br/>
 
-        <strong>Note:</strong> Automatic mapping of the Unmanaged Item is performed only during
-        the initial Unmanaged Listing importing. Afterward, you can map and move the Unmanaged Items manually
+        <strong>Note:</strong> Automatic linking of the Unmanaged Item is performed only during
+        the initial Unmanaged Listing importing. Afterward, you can link and move the Unmanaged Items manually
         under <i>Walmart Integration > Listings > Unmanaged</i>.<br/><br/>
 
         The detailed information can be found <a href="%url%" target="_blank">here</a>.
@@ -119,15 +119,15 @@ HTML
                 'container_id' => 'other_listings_mapping_mode_tr',
                 'name' => 'other_listings_mapping_mode',
                 'class' => 'M2ePro-require-select-attribute',
-                'label' => $this->__('Product Mapping'),
+                'label' => $this->__('Product Linking'),
                 'values' => [
                     1 => $this->__('Yes'),
                     0 => $this->__('No'),
                 ],
                 'value' => $formData['other_listings_mapping_mode'],
                 'tooltip' => $this->__(
-                    'Enable to automatically map your Unmanaged Items to Magento
-                    Products based on the mapping Attribute settings.'
+                    'Enable to automatically link your Unmanaged Items to Magento
+                    Products based on the linking Attribute settings.'
                 )
             ]
         );
@@ -135,12 +135,12 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_walmart_accounts_other_listings_product_mapping',
             [
-                'legend' => $this->__('Attributes Of Mapping Walmart Items To Magento Products'),
+                'legend' => $this->__('Attributes Of Linking Walmart Items To Magento Products'),
                 'collapsable' => false,
                 'tooltip' => $this->__(
-                    '<p>In this section you can provide settings for automatic Mapping of the newly imported
+                    '<p>In this section you can provide settings for automatic Linking of the newly imported
                     Unmanaged Listings to the appropriate Magento Products. </p><br>
-                    <p>The imported Items are mapped based on the correspondence between Walmart Item values and
+                    <p>The imported Items are linked based on the correspondence between Walmart Item values and
                     Magento Product Attribute values. </p>'
                 )
             ]
@@ -473,8 +473,8 @@ HTML
         $this->setForm($form);
 
         $this->jsTranslator->add(
-            'If Yes is chosen, you must select at least one Attribute for Product Mapping.',
-            $this->__('If Yes is chosen, you must select at least one Attribute for Product Mapping.')
+            'If Yes is chosen, you must select at least one Attribute for Product Linking.',
+            $this->__('If Yes is chosen, you must select at least one Attribute for Product Linking.')
         );
 
         return parent::_prepareForm();

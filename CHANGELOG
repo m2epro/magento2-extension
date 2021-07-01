@@ -1,4 +1,25 @@
-* 1.13.2 (r4842) (08/06/2021) 
+* 1.14.0 (r4900) (01/07/2021) 
+
+[Common] [Added] Add Ship By Date filter to Orders grid [M2-1281]
+[Common] [Added] Display Ship By Date in Channel Orders [M2-1134]
+[Common] [Added] Pass Ship By Date value to Magento Orders [M2-1282]
+[Common] [Fixed] Exception after clicking the Ship button on the Magento Order View page if the order is created not via M2E Pro [M2-1302]
+[Common] [Fixed] 'Skip this message' redirects to the dashboard and the message is not skipped [M2-1205]
+[Common] [Fixed] Uncaught Error: Call to a member function getId() on null in app/code/Ess/M2ePro/Model/Order.php:677 when trying to create a Magento Order for a Disabled variation of a Configurable Product [M2-1229]
+[Common] [Improved] Channel Orders grid and viewing Orders [M2-1113]
+[Common] [Improved] Detect End Date expiration for Special Price and submit Product Price value during the Revise action [M2-1249]
+[Common] [Improved] "Map" renamed to "Link" across the Unmanaged Listings functionality [M2-1108]
+[eBay] [Fixed] Default set of Item Specifics is displayed as Custom after moving Products from Unmanaged Listings to M2E Pro Listings [M2-1284]
+[eBay] [Fixed] "MPN is not allowed as variation specific" error when trying to list Variational Products [M2-1135]
+[eBay] [Improved] Display IOSS/OSS number in Channel and Magento Orders [M2-1291]
+[eBay] [Improved] Filter Products in Listings by Policy title [M2-1160]
+[eBay] [Improved] Resend newly required specifics during the Relist or Revise actions after the error is received [M2-1264]
+[eBay] [Improved] Sort products via the "Available QTY" filter in the Listing grid [M2-1083]
+[eBay] [Improved] Variational Product data is updated automatically if the data is changed on eBay [M2-1095]
+[Amazon] [Improved] Filter Products in Listings by Policy title [M2-1160]
+[Walmart] [Fixed] "The Item was not listed due to the unexpected error on Walmart side" received instead of the actual error [M2-1192]
+
+* 1.13.2 (r4838) (08/06/2021)
 
 Common: [Fixed] 'Exception: Notice: Array offset on value of type null in /Setup/Update/y21_m05/EbayStoreCategoryIDs.php' occurs during upgrade to version 1.13.1 [M2-1279]
 Amazon: [Fixed] 'You should select Category and Product Type first' message is displayed in Description policy although the Category and Type fields are completed [M2-1272]

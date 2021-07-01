@@ -43,6 +43,9 @@ class Data extends AbstractForm
         /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
         $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
 
+        /** @var \Ess\M2ePro\Helper\Module\Support $supportHelper */
+        $supportHelper = $this->helperFactory->getObject('Module_Support');
+
         $attributesByInputTypes = $this->getAttributesByInputTypes();
 
         $formData = $this->getFormData();
@@ -396,7 +399,6 @@ class Data extends AbstractForm
                 'tooltip' => $this->__(
                     'The number of Items you want to sell on eBay.<br/><br/>
                     <b>Product Quantity:</b> the number of Items on eBay will be the same as in Magento.<br/>
-                    <b>Single Item:</b> only one Item will be available on eBay.<br/>
                     <b>Custom Value:</b> set a Quantity in the Policy here.<br/>
                     <b>Magento Attribute:</b> takes the number from the Attribute you specify.'
                 )
@@ -608,11 +610,7 @@ class Data extends AbstractForm
                 'name' => 'selling_format[vat_percent]',
                 'value' => $formData['vat_percent'],
                 'class' => 'M2ePro-validate-vat',
-                'tooltip' => $this->__(
-                    'To specify a VAT Rate, you must have an eBay business Account and list the Item on a
-                    VAT-enabled Site: Ireland, India, Switzerland, Spain, Holland, Belgium, Italy, Germany, France,
-                    Austria or United Kingdom. The Item\'s VAT information appears on the Item\'s Listing Page.'
-                )
+                'tooltip' => $this->__('Specify a VAT Rate (%) that will be applied to your items.')
             ]
         );
 
@@ -753,16 +751,18 @@ class Data extends AbstractForm
                 ],
                 'value' => $formData['price_increase_vat_percent'],
                 'tooltip' => $this->__(
-                    <<<HTML
-Choose whether you want to add VAT to the Price when a Product is listed on eBay,
-using the VAT Rate field or eBay Tax Table in the Taxation section above.
-<br/>
-<br/>
-The final product price on eBay will be calculated according to the following formula:
-<br/>
-<br/>
-(Product Price + Price Change) + VAT Rate
-HTML
+                    "Choose whether you want to add VAT Rate to the price when an item is listed on eBay:
+                    <br/>
+                    <br/>
+                    <b>Yes</b> - VAT Rate will act as excluded and will be added to the item price.
+                    <br/>
+                    <br/>
+                    <b>No</b> - VAT Rate will be included in the final item price.
+                    <br/>
+                    <br/>
+                    See <a href='%url%' target='_blank'>our docs</a> to learn how the final
+                     eBay item price is calculated.",
+                    $supportHelper->getDocumentationArticleUrl('x/UwItAQ#Selling-Price')
                 ),
                 'css_class' => 'no-margin-top'
             ]
@@ -1036,11 +1036,11 @@ HTML
 
             'The Price for Fixed Price Items.' => $this->__('The Price for Fixed Price Items.'),
             'The Fixed Price for immediate purchase.<br/>Find out more about
-             <a href="http://sellercentre.ebay.co.uk/add-buy-it-now-price-auction"
+             <a href="https://www.ebay.com/help/selling/listings/selling-buy-now?id=4109#section2"
                 target="_blank">adding a Buy It Now Price</a> to your Listing.' =>
                 $this->__(
                     'The Fixed Price for immediate purchase.<br/>Find out more about
-                 <a href="http://sellercentre.ebay.co.uk/add-buy-it-now-price-auction"
+                 <a href="https://www.ebay.com/help/selling/listings/selling-buy-now?id=4109#section2"
                     target="_blank">adding a Buy It Now Price</a> to your Listing.'
                 ),
 

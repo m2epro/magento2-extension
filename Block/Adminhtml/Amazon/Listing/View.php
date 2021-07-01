@@ -324,7 +324,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.'),
             'Sell on Another Marketplace' => $this->__('Sell on Another Marketplace'),
             'Create new' => $this->__('Create new'),
-            'Mapping Product' => $this->__('Mapping Product'),
+            'Linking Product' => $this->__('Linking Product'),
 
             'Add New Shipping Policy' => $this->__('Add New Shipping Policy'),
             'Add New Product Tax Code Policy'  => $this->__('Add New Product Tax Code Policy'),

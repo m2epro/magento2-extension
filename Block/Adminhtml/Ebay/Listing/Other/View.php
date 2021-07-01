@@ -67,8 +67,8 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'content' => $this->__(
                 <<<HTML
                 <p>The list below shows the Unmanaged Listings imported from a particular Account and Marketplace.
-                It contains the functionality of manual and automatic Item Mapping and Moving. After the imported
-                Items are Mapped to Magento Products, they can be Moved into an M2E Pro
+                It contains the functionality of manual and automatic Item Linking and Moving. After the imported
+                Items are Linked to Magento Products, they can be Moved into an M2E Pro
                 Listing for further management.</p><br>
 
                 <p>The list is automatically updated if the import option is enabled in the Account settings.</p>
@@ -110,8 +110,8 @@ HTML
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
 
         $someProductsWereNotMappedMessage = $this->__(
-            'Some Items were not mapped. Please edit <i>Product Mapping Settings</i> under
-            <i>Configuration > Account > Unmanaged Listings</i> or try to map manually.'
+            'Some Items were not linked. Please edit <i>Product Linking Settings</i> under
+            <i>Configuration > Account > Unmanaged Listings</i> or try to link manually.'
         );
 
         $this->jsUrl->addUrls($helper->getControllerActions('Listing\Other'));
@@ -138,24 +138,24 @@ HTML
         ]);
 
         $this->jsTranslator->addTranslations([
-            'Map Item "%product_title%" with Magento Product' => $this->__(
-                'Map Item "%product_title%" with Magento Product'
+            'Link Item "%product_title%" with Magento Product' => $this->__(
+                'Link Item "%product_title%" with Magento Product'
             ),
             'Product does not exist.' => $this->__('Product does not exist.'),
-            'Product(s) was Mapped.' => $this->__('Product(s) was Mapped.'),
+            'Product(s) was Linked.' => $this->__('Product(s) was Linked.'),
             'Add New Listing' => $this->__('Add New Listing'),
             'failed_mapped' => $someProductsWereNotMappedMessage,
-            'Product was Mapped.' => $this->__('Product was Mapped.'),
-            'Mapping Product' => $this->__('Mapping Product'),
+            'Product was Linked.' => $this->__('Product was Linked.'),
+            'Linking Product' => $this->__('Linking Product'),
             'product_does_not_exist' => $this->__('Product does not exist.'),
             'select_simple_product' => $this->__(
-                'Current eBay version only supports Simple Products in Mapping. Please, choose Simple Product.'
+                'Current eBay version only supports Simple Products in Linking. Please, choose Simple Product.'
             ),
-            'automap_progress_title' => $this->__('Map Item(s) to Products'),
+            'automap_progress_title' => $this->__('Link Item(s) to Products'),
             'processing_data_message' => $this->__('Processing %product_title% Product(s).'),
             'popup_title' => $this->__('Moving eBay Items'),
             'Not enough data' => $this->__('Not enough data.'),
-            'Product(s) was Unmapped.' => $this->__('Product(s) was Unmapped.'),
+            'Product(s) was Unlinked.' => $this->__('Product(s) was Unlinked.'),
             'Product(s) was Removed.' => $this->__('Product(s) was Removed.'),
             'task_completed_message' => $this->__('Task completed. Please wait ...'),
             'sending_data_message' => $this->__('Sending %product_title% Product(s) data on eBay.'),

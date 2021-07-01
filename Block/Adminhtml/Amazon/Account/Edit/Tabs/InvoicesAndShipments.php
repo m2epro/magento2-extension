@@ -41,7 +41,7 @@ HTML
     target="_blank">article</a> for more details.</p>
 HTML
                 ,
-                $this->getHelper('Module_Support')->getHowToGuideUrl('1602134')
+                $this->getHelper('Module_Support')->getHowToGuideUrl('1586245')
             );
         }
 

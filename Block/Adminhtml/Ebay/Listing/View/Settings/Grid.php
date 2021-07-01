@@ -220,6 +220,56 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             );
         }
 
+        $tdTable = $this->activeRecordFactory->getObject('Template_Description')->getResource()->getMainTable();
+        $etpTable = $this->activeRecordFactory->getObject('Ebay_Template_Payment')->getResource()->getMainTable();
+        $etrpTable = $this->activeRecordFactory->getObject('Ebay_Template_ReturnPolicy')->getResource()->getMainTable();
+        $tsfTable = $this->activeRecordFactory->getObject('Template_SellingFormat')->getResource()->getMainTable();
+        $etsTable = $this->activeRecordFactory->getObject('Ebay_Template_Shipping')->getResource()->getMainTable();
+        $tsTable = $this->activeRecordFactory->getObject('Template_Synchronization')->getResource()->getMainTable();
+        $collection
+            ->joinTable(
+                ['td' => $tdTable],
+                'id=template_description_id',
+                ['description_policy_title' => 'title'],
+                null,
+                'left'
+            )
+            ->joinTable(
+                ['etp' => $etpTable],
+                'id=template_payment_id',
+                ['payment_policy_title' => 'title'],
+                null,
+                'left'
+            )
+            ->joinTable(
+                ['etrp' => $etrpTable],
+                'id=template_return_policy_id',
+                ['return_policy_title' => 'title'],
+                null,
+                'left'
+            )
+            ->joinTable(
+                ['tsf' => $tsfTable],
+                'id=template_selling_format_id',
+                ['selling_policy_title' => 'title'],
+                null,
+                'left'
+            )
+            ->joinTable(
+                ['ets' => $etsTable],
+                'id=template_shipping_id',
+                ['shipping_policy_title' => 'title'],
+                null,
+                'left'
+            )
+            ->joinTable(
+                ['ts' => $tsTable],
+                'id=template_synchronization_id',
+                ['synchronization_policy_title' => 'title'],
+                null,
+                'left'
+            );
+
         if ($this->isFilterOrSortByPriceIsUsed(null, 'ebay_online_current_price')) {
             $collection->joinIndexerParent();
         }
@@ -287,12 +337,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'index'   => 'name',
             'header'  => $this->__('Listing Policies Overrides'),
             'align'   => 'left',
-            'type'    => 'options',
-            'options' => [
-                Manager::MODE_PARENT   => $this->__('Use from Listing Settings'),
-                Manager::MODE_CUSTOM   => $this->__('Custom Settings'),
-                Manager::MODE_TEMPLATE => $this->__('Policies')
-            ],
+            'type'    => 'text',
+            'sortable'                  => false,
+            'filter' => '\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Grid\Column\Filter\PolicySettings',
             'frame_callback'            => [$this, 'callbackColumnSetting'],
             'filter_condition_callback' => [$this, 'callbackFilterSetting'],
             'column_css_class' => 'ebay-listing-grid-column-setting'
@@ -706,16 +753,90 @@ HTML;
     public function callbackFilterSetting($collection, $column)
     {
         $value = $column->getFilter()->getValue();
+        $inputValue = null;
 
-        if ($value !== null) {
-            $collection->addFieldToFilter([
-                ['attribute' => 'template_return_policy_mode', 'eq' => $value],
-                ['attribute' => 'template_payment_mode', 'eq' => $value],
-                ['attribute' => 'template_shipping_mode', 'eq' => $value],
-                ['attribute' => 'template_description_mode', 'eq' => $value],
-                ['attribute' => 'template_selling_format_mode', 'eq' => $value],
-                ['attribute' => 'template_synchronization_mode', 'eq' => $value]
-            ]);
+        if (is_array($value) && isset($value['input'])) {
+            $inputValue = $value['input'];
+        } elseif (is_string($value)) {
+            $inputValue = $value;
+        }
+
+        if ($inputValue !== null) {
+            /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+            $collection->addAttributeToFilter(
+                [
+                    ['attribute' => 'description_policy_title', 'like' => '%' . $inputValue . '%'],
+                    ['attribute' => 'payment_policy_title', 'like' => '%' . $inputValue . '%'],
+                    ['attribute' => 'return_policy_title', 'like' => '%' . $inputValue . '%'],
+                    ['attribute' => 'selling_policy_title', 'like' => '%' . $inputValue . '%'],
+                    ['attribute' => 'shipping_policy_title', 'like' => '%' . $inputValue . '%'],
+                    ['attribute' => 'synchronization_policy_title', 'like' => '%' . $inputValue . '%'],
+                ]
+            );
+        }
+
+        if (isset($value['select'])) {
+            switch ($value['select']) {
+                case Manager::MODE_PARENT:
+                    // no policy overrides
+                    $collection->addAttributeToFilter(
+                        'template_payment_mode',
+                        ['eq' => Manager::MODE_PARENT]
+                    );
+                    $collection->addAttributeToFilter(
+                        'template_shipping_mode',
+                        ['eq' => Manager::MODE_PARENT]
+                    );
+                    $collection->addAttributeToFilter(
+                        'template_return_policy_mode',
+                        ['eq' => Manager::MODE_PARENT]
+                    );
+                    $collection->addAttributeToFilter(
+                        'template_description_mode',
+                        ['eq' => Manager::MODE_PARENT]
+                    );
+                    $collection->addAttributeToFilter(
+                        'template_selling_format_mode',
+                        ['eq' => Manager::MODE_PARENT]
+                    );
+                    $collection->addAttributeToFilter(
+                        'template_synchronization_mode',
+                        ['eq' => Manager::MODE_PARENT]
+                    );
+                    break;
+                case Manager::MODE_TEMPLATE:
+                case Manager::MODE_CUSTOM:
+                    // policy templates and custom settings
+                    $collection->addAttributeToFilter(
+                        [
+                            [
+                                'attribute' => 'template_payment_mode',
+                                'eq' => (int) $value['select']
+                            ],
+                            [
+                                'attribute' => 'template_shipping_mode',
+                                'eq' => (int) $value['select']
+                            ],
+                            [
+                                'attribute' => 'template_return_policy_mode',
+                                'eq' => (int) $value['select']
+                            ],
+                            [
+                                'attribute' => 'template_description_mode',
+                                'eq' => (int) $value['select']
+                            ],
+                            [
+                                'attribute' => 'template_selling_format_mode',
+                                'eq' => (int) $value['select']
+                            ],
+                            [
+                                'attribute' => 'template_synchronization_mode',
+                                'eq' => (int) $value['select']
+                            ],
+                        ]
+                    );
+                    break;
+            }
         }
     }
 

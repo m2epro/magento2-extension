@@ -4849,6 +4849,12 @@ class InstallSchema implements InstallSchemaInterface
                 ['default' => null]
             )
             ->addColumn(
+                'shipping_date_to',
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
                 'payment_details',
                 Table::TYPE_TEXT,
                 null,
@@ -4858,6 +4864,12 @@ class InstallSchema implements InstallSchemaInterface
                 'tax_details',
                 Table::TYPE_TEXT,
                 null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'tax_reference',
+                Table::TYPE_TEXT,
+                72,
                 ['default' => null]
             )
             ->addColumn(
@@ -4882,6 +4894,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('payment_status', 'payment_status')
             ->addIndex('shipping_status', 'shipping_status')
             ->addIndex('purchase_create_date', 'purchase_create_date')
+            ->addIndex('shipping_date_to', 'shipping_date_to')
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci')
@@ -8139,8 +8152,14 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'shipping_dates',
-                Table::TYPE_TEXT,
+                'shipping_date_to',
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'delivery_date_to',
+                Table::TYPE_DATETIME,
                 null,
                 ['default' => null]
             )
@@ -8214,6 +8233,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('buyer_name', 'buyer_name')
             ->addIndex('paid_amount', 'paid_amount')
             ->addIndex('purchase_create_date', 'purchase_create_date')
+            ->addIndex('shipping_date_to', 'shipping_date_to')
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci')
@@ -10861,6 +10881,12 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
+                'shipping_date_to',
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
                 'paid_amount',
                 Table::TYPE_DECIMAL,
                 [12, 4],
@@ -10902,6 +10928,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('paid_amount', 'paid_amount')
             ->addIndex('is_tried_to_acknowledge', 'is_tried_to_acknowledge')
             ->addIndex('purchase_create_date', 'purchase_create_date')
+            ->addIndex('shipping_date_to', 'shipping_date_to')
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci')

@@ -16,7 +16,7 @@ use Ess\M2ePro\Model\Ebay\Template\Description;
  */
 class Data extends AbstractForm
 {
-    protected $attributes       = [];
+    protected $attributes = [];
     protected $M2eProAttributes = [];
 
     protected function _construct()
@@ -47,7 +47,7 @@ class Data extends AbstractForm
 
         $formData = $this->getFormData();
 
-        $default  = $this->getDefault();
+        $default = $this->getDefault();
         $formData = array_replace_recursive($default, $formData);
 
         $isCustomDescription = ($formData['description_mode'] == Description::DESCRIPTION_MODE_CUSTOM);
@@ -146,7 +146,7 @@ class Data extends AbstractForm
             ) {
                 $condition['attrs']['selected'] = 'selected';
             }
-            $condition['value']   = Description::CONDITION_MODE_EBAY;
+            $condition['value'] = Description::CONDITION_MODE_EBAY;
             $preparedConditions[] = $condition;
         }
 
@@ -252,36 +252,39 @@ class Data extends AbstractForm
             ];
         }
 
-        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
-            'label' => $this->__('Insert'),
-            'destination_id' => 'condition_note_template',
-            'class'=>'primary',
-            'style' => 'display: inline-block;'
-        ]);
+        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData(
+            [
+                'label'          => $this->__('Insert'),
+                'destination_id' => 'condition_note_template',
+                'class'          => 'primary',
+                'style'          => 'display: inline-block;'
+            ]
+        );
 
         $fieldset->addField(
             'condition_note_template',
             'textarea',
             [
-                'container_id'       => 'custom_condition_note_tr',
-                'label'              => $this->__('Seller Notes Value'),
-                'value'              => $formData['condition_note_template'],
-                'name'               => 'description[condition_note_template]',
-                'style'              => 'width: 70%;margin-top: 0px;margin-bottom: 0px;height: 101px;',
-                'class'              => 'M2ePro-validate-condition-note-length',
-                'required'           => true,
+                'container_id' => 'custom_condition_note_tr',
+                'label'        => $this->__('Seller Notes Value'),
+                'value'        => $formData['condition_note_template'],
+                'name'         => 'description[condition_note_template]',
+                'style'        => 'width: 70%;margin-top: 0px;margin-bottom: 0px;height: 101px;',
+                'class'        => 'M2ePro-validate-condition-note-length',
+                'required'     => true,
             ]
         );
 
         $fieldset->addField(
             'selectAttr_condition_note_template',
             self::SELECT,
-            [   'container_id'       => 'custom_condition_note_attributes_tr',
-                'label' => $this->__('Product Attribute'),
-                'title' => $this->__('Product Attribute'),
-                'values' => $preparedAttributes,
+            [
+                'container_id'             => 'custom_condition_note_attributes_tr',
+                'label'                    => $this->__('Product Attribute'),
+                'title'                    => $this->__('Product Attribute'),
+                'values'                   => $preparedAttributes,
                 'create_magento_attribute' => true,
-                'after_element_html' => $button->toHtml()
+                'after_element_html'       => $button->toHtml()
             ]
         );
 
@@ -517,7 +520,7 @@ class Data extends AbstractForm
         );
 
         $preparedImages = [];
-        $attrs          = ['attribute_code' => 1];
+        $attrs = ['attribute_code' => 1];
         if ($formData['variation_images_limit'] == 1) {
             $attrs['selected'] = 'selected';
         }
@@ -785,20 +788,25 @@ HTML
             ];
         }
 
-        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
-            'label' => $this->__('Insert'),
-            'destination_id' => 'title_template',
-            'class'=>'primary',
-            'style' => 'display: inline-block;'
-        ]);
-
-        $selectAttrBlock = $this->elementFactory->create(self::SELECT, [
-            'data' => [
-                'values' =>  $preparedAttributes,
-                'class'  => 'M2ePro-required-when-visible magento-attribute-custom-input',
-                'create_magento_attribute' => true
+        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData(
+            [
+                'label'          => $this->__('Insert'),
+                'destination_id' => 'title_template',
+                'class'          => 'primary',
+                'style'          => 'display: inline-block;'
             ]
-        ])->addCustomAttribute('allowed_attribute_types', 'text,select,multiselect,boolean,price,date')
+        );
+
+        $selectAttrBlock = $this->elementFactory->create(
+            self::SELECT,
+            [
+                'data' => [
+                    'values'                   => $preparedAttributes,
+                    'class'                    => 'M2ePro-required-when-visible magento-attribute-custom-input',
+                    'create_magento_attribute' => true
+                ]
+            ]
+        )->addCustomAttribute('allowed_attribute_types', 'text,select,multiselect,boolean,price,date')
             ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
 
         $selectAttrBlock->setId('selectAttr_title_template');
@@ -846,20 +854,25 @@ HTML
             ];
         }
 
-        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
-            'label' => $this->__('Insert'),
-            'destination_id' => 'subtitle_template',
-            'class'=>'primary',
-            'style' => 'display: inline-block;'
-        ]);
-
-        $selectAttrBlock = $this->elementFactory->create(self::SELECT, [
-            'data' => [
-                'values' =>  $preparedAttributes,
-                'class'  => 'M2ePro-required-when-visible magento-attribute-custom-input',
-                'create_magento_attribute' => true
+        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData(
+            [
+                'label'          => $this->__('Insert'),
+                'destination_id' => 'subtitle_template',
+                'class'          => 'primary',
+                'style'          => 'display: inline-block;'
             ]
-        ])->addCustomAttribute('allowed_attribute_types', 'text,select,multiselect,boolean,price,date')
+        );
+
+        $selectAttrBlock = $this->elementFactory->create(
+            self::SELECT,
+            [
+                'data' => [
+                    'values'                   => $preparedAttributes,
+                    'class'                    => 'M2ePro-required-when-visible magento-attribute-custom-input',
+                    'create_magento_attribute' => true
+                ]
+            ]
+        )->addCustomAttribute('allowed_attribute_types', 'text,select,multiselect,boolean,price,date')
             ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
 
         $selectAttrBlock->setId('selectAttr_subtitle_template');
@@ -1329,6 +1342,7 @@ HTML
                 'label'                    => $this->__('MPN'),
                 'name'                     => 'description[product_details][mpn][mode]',
                 'values'                   => [
+                    Description::PRODUCT_DETAILS_MODE_NONE           => $this->__('None'),
                     Description::PRODUCT_DETAILS_MODE_DOES_NOT_APPLY => $this->__('Does Not Apply'),
                     [
                         'label' => $this->__('Magento Attributes'),
@@ -1645,12 +1659,12 @@ JS
     {
         $default = $this->modelFactory->getObject('Ebay_Template_Description_Builder')->getDefaultData();
 
-        $default['enhancement']                   = explode(',', $default['enhancement']);
-        $default['product_details']               = $this->getHelper('Data')->jsonDecode($default['product_details']);
+        $default['enhancement'] = explode(',', $default['enhancement']);
+        $default['product_details'] = $this->getHelper('Data')->jsonDecode($default['product_details']);
         $default['variation_configurable_images'] = $this->getHelper('Data')->jsonDecode(
             $default['variation_configurable_images']
         );
-        $default['watermark_settings']            = $this->getHelper('Data')->jsonDecode(
+        $default['watermark_settings'] = $this->getHelper('Data')->jsonDecode(
             $default['watermark_settings']
         );
 

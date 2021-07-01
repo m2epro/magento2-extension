@@ -64,7 +64,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->appendHelpBlock([
             'content' => $this->__(
                 <<<HTML
-                You can Map the Unmanaged Items to the related Magento Products and Move them to the
+                You can Link the Unmanaged Items to the related Magento Products and Move them to the
                 selected M2E Pro Listing. Manage each Item individually or use the
                 Mass Actions to update the Items in bulk.
 HTML
@@ -123,8 +123,8 @@ HTML
         ]);
 
         $someProductsWereNotMappedMessage = $this->__(
-            'Some Items were not mapped. Please edit <i>Product Mapping Settings</i> under
-            <i>Configuration > Account > Unmanaged Listings</i> or try to map manually.'
+            'Some Items were not linked. Please edit <i>Product Linking Settings</i> under
+            <i>Configuration > Account > Unmanaged Listings</i> or try to link manually.'
         );
 
         $createListing = $this->__(
@@ -133,19 +133,19 @@ HTML
         $createListing .= $this->__('Would you like to create one with Default Settings ?');
 
         $this->jsTranslator->addTranslations([
-            'Map Item "%product_title%" with Magento Product' => $this->__(
-                'Map Item "%product_title%" with Magento Product'
+            'Link Item "%product_title%" with Magento Product' => $this->__(
+                'Link Item "%product_title%" with Magento Product'
             ),
             'Product does not exist.' => $this->__('Product does not exist.'),
-            'Product(s) was Mapped.' => $this->__('Product(s) was Mapped.'),
-            'Mapping Product' => $this->__('Mapping Product'),
+            'Product(s) was Linked.' => $this->__('Product(s) was Linked.'),
+            'Linking Product' => $this->__('Linking Product'),
 
             'Current version only supports Simple Products. Please, choose Simple Product.' => $this->__(
                 'Current version only supports Simple Products. Please, choose Simple Product.'
             ),
 
-            'Item was not Mapped as the chosen %product_id% Simple Product has Custom Options.' => $this->__(
-                'Item was not Mapped as the chosen %product_id% Simple Product has Custom Options.'
+            'Item was not Linked as the chosen %product_id% Simple Product has Custom Options.' => $this->__(
+                'Item was not Linked as the chosen %product_id% Simple Product has Custom Options.'
             ),
             'Add New Listing' => $this->__('Add New Listing'),
 
@@ -154,15 +154,15 @@ HTML
             'confirm' => $this->__('Are you sure?'),
 
             'Not enough data' => $this->__('Not enough data'),
-            'Product(s) was Unmapped.' => $this->__('Product(s) was Unmapped.'),
+            'Product(s) was Unlinked.' => $this->__('Product(s) was Unlinked.'),
             'Product(s) was Removed.' => $this->__('Product(s) was Removed.'),
 
             'select_items_message' => $this->__('Please select the Products you want to perform the Action on.'),
             'select_action_message' => $this->__('Please select Action.'),
 
-            'automap_progress_title' => $this->__('Map Item(s) to Products'),
+            'automap_progress_title' => $this->__('Link Item(s) to Products'),
             'processing_data_message' => $this->__('Processing %product_title% Product(s).'),
-            'Product was Mapped.' => $this->__('Product was Mapped.'),
+            'Product was Linked.' => $this->__('Product was Linked.'),
             'failed_mapped' => $someProductsWereNotMappedMessage,
 
             'success_word' => $this->__('Success'),

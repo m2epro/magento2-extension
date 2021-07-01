@@ -31,7 +31,7 @@ class ProductId extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\R
 <div class="range" style="width: 145px;">
     <div class="range-line" style="width: auto;">
         <span class="label" style="width: auto;">
-            {$this->__('Mapped')}:&nbsp;
+            {$this->__('Linked')}:&nbsp;
         </span>
         <select id="{$this->_getHtmlName()}"
                 style="margin-left:6px; margin-top:5px; float:none; width:auto !important;"

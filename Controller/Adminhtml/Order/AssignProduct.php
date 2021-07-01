@@ -64,7 +64,7 @@ class AssignProduct extends Order
 
         $orderItem->getOrder()->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_USER);
         $orderItem->getOrder()->addSuccessLog(
-            'Order Item "%title%" was Mapped.',
+            'Order Item "%title%" was Linked.',
             [
                 'title' => $orderItem->getChildObject()->getTitle(),
             ]
@@ -77,7 +77,7 @@ class AssignProduct extends Order
         }
 
         $this->setJsonContent([
-            'success'  => $this->__('Order Item was Mapped.'),
+            'success'  => $this->__('Order Item was Linked.'),
             'continue' => $orderItem->getMagentoProduct()->isProductWithVariations() && !$isPretendedToBeSimple
         ]);
 

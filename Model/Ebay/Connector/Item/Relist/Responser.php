@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Connector\Item\Relist;
 
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
+use Ess\M2ePro\Model\Ebay\Listing\Product\Variation as EbayVariation;
 
 /**
  * @method \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Relist\Response getResponseObject()
@@ -29,6 +30,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
+        EbayVariation\Resolver $variationResolver,
         array $params = []
     ) {
         $this->localeCurrency = $localeCurrency;
@@ -40,6 +42,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
             $response,
             $helperFactory,
             $modelFactory,
+            $variationResolver,
             $params
         );
     }
@@ -94,6 +97,11 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         parent::processCompleted($data, $params);
     }
 
+    /**
+     * @return void|null
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function eventAfterExecuting()
     {
         $responseMessages = $this->getResponse()->getMessages()->getEntities();
@@ -161,34 +169,33 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         }
 
         if ($this->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH &&
-            $this->getConfigurator()->isIncludingMode() &&
-            $this->isNewRequiredSpecificNeeded($responseMessages)) {
-            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
-            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
-            $message->initFromPreparedData(
-                $this->getHelper('Module\Translation')->__(
-                    'It has been detected that the Category you are using is going to require the Product Identifiers
+            $this->getConfigurator()->isIncludingMode()) {
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator $configurator */
+            $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
+
+            if ($this->isProductIdentifierNeeded($responseMessages)) {
+                /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
+                $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
+                $message->initFromPreparedData(
+                    $this->getHelper('Module\Translation')->__(
+                        'It has been detected that the Category you are using is going to require the Product Identifiers
                     to be specified (UPC, EAN, ISBN, etc.). The Relist Action will be automatically performed
                     to send the value(s) of the required Identifier(s) based on the settings
                     provided in eBay Catalog Identifiers section of the Description Policy.'
-                ),
-                Message::TYPE_WARNING
-            );
+                    ),
+                    Message::TYPE_WARNING
+                );
 
-            $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
-
-            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator $configurator */
-            $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
-            $this->processAdditionalAction($this->getActionType(), $configurator);
+                $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
+                $this->processAdditionalAction($this->getActionType(), $configurator);
+            } elseif ($this->isNewRequiredSpecificNeeded($responseMessages)) {
+                $configurator->allowCategories();
+                $this->processAdditionalAction($this->getActionType(), $configurator);
+            }
         }
 
-        $additionalData = $this->listingProduct->getAdditionalData();
-
-        if ($this->isVariationErrorAppeared($responseMessages) &&
-            $this->getRequestDataObject()->hasVariations() &&
-            !isset($additionalData['is_variation_mpn_filled'])
-        ) {
-            $this->tryToResolveVariationMpnErrors();
+        if ($this->isVariationErrorAppeared($responseMessages) && $this->getRequestDataObject()->hasVariations()) {
+            $this->tryToResolveVariationErrors();
         }
 
         if ($message = $this->isDuplicateErrorByUUIDAppeared($responseMessages)) {

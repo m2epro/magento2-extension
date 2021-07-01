@@ -49,14 +49,14 @@ class UnassignProduct extends Order
         $orderItem->unassignProduct();
 
         $orderItem->getOrder()->addSuccessLog(
-            'Item "%title%" was Unmapped.',
+            'Item "%title%" was Unlinked.',
             [
                 'title' => $orderItem->getChildObject()->getTitle()
             ]
         );
 
         $this->setJsonContent([
-            'success' => $this->__('Item was Unmapped.')
+            'success' => $this->__('Item was Unlinked.')
         ]);
 
         return $this->getResult();

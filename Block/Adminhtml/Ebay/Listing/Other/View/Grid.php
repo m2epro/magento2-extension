@@ -205,7 +205,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
            'filter_time'  => true,
            'index'        => 'end_date',
            'filter_index' => 'second_table.end_date',
-            'renderer'    => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\DateTime'
+           'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\DateTime'
         ]);
 
         $back = $this->getHelper('Data')->makeBackUrlParam('*/ebay_listing_other/view', [
@@ -226,12 +226,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // ---------------------------------------
 
         $this->getMassactionBlock()->setGroups([
-            'mapping' => $this->__('Mapping'),
+            'mapping' => $this->__('Linking'),
             'other' => $this->__('Other')
         ]);
 
         $this->getMassactionBlock()->addItem('autoMapping', [
-            'label'   => $this->__('Map Item(s) Automatically'),
+            'label'   => $this->__('Link Item(s) Automatically'),
             'url'     => ''
         ], 'mapping');
 
@@ -244,7 +244,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'url'     => ''
         ], 'other');
         $this->getMassactionBlock()->addItem('unmapping', [
-            'label'   => $this->__('Unmap Item(s)'),
+            'label'   => $this->__('Unlink Item(s)'),
             'url'     => ''
         ], 'mapping');
         // ---------------------------------------
@@ -275,7 +275,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                                     onclick="ListingOtherMappingObj.openPopUp(
                                     '. (int)$row->getId(). ',
                                     \''. $productTitle. '\'
-                                    );">' . $this->__('Map') . '</a>';
+                                    );">' . $this->__('Link') . '</a>';
 
             return $htmlValue;
         }

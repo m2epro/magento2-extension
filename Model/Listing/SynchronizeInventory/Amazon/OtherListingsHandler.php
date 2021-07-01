@@ -44,6 +44,9 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
 
             $stmtTemp = $this->getPdoStatementExistingListings($skuPack);
             while ($existingItem = $stmtTemp->fetch()) {
+                if (!isset($this->responseData[$existingItem['sku']])) {
+                    continue;
+                }
 
                 $receivedItem = $this->responseData[$existingItem['sku']];
                 unset($this->responseData[$existingItem['sku']]);
