@@ -109,4 +109,15 @@ abstract class AbstractFeature
     }
 
     //########################################
+
+    /**
+     * @param array|string $tableName
+     * @param string $columnName
+     * @return string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getEavColumn($tableName, $columnName)
+    {
+        return $this->helperFactory->getObject('Module_Database_Tables')->normalizeEavColumn($tableName, $columnName);
+    }
 }

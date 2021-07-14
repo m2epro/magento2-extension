@@ -10,6 +10,7 @@ namespace Ess\M2ePro\Helper\Module\Database;
 
 use Ess\M2ePro\Helper\AbstractHelper;
 use Ess\M2ePro\Helper\Factory;
+use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\ResourceConnection;
 
@@ -68,6 +69,30 @@ class Tables extends AbstractHelper
         }
 
         return false;
+    }
+
+    /**
+     * @param array|string $table
+     * @param string $columnName
+     * @return string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function normalizeEavColumn($table, $columnName)
+    {
+        /** @var \Ess\M2ePro\Helper\Magento\Staging $helper */
+        $helper = $this->helperFactory->getObject('Magento\Staging');
+
+        if ($helper->isInstalled() &&
+            $helper->isStagedTable($table, ProductAttributeInterface::ENTITY_TYPE_CODE) &&
+            strpos($columnName, 'entity_id') !== false) {
+            $columnName = str_replace(
+                'entity_id',
+                $helper->getTableLinkField(ProductAttributeInterface::ENTITY_TYPE_CODE),
+                $columnName
+            );
+        }
+
+        return $columnName;
     }
 
     //########################################

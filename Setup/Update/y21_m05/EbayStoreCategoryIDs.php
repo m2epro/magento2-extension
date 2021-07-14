@@ -73,6 +73,7 @@ SQL
         $listingLogTable = $this->getFullTableName('listing_log');
         $catalogProductEntityVarcharTable = $this->installer->getTable('catalog_product_entity_varchar');
         $eavAttributeTable = $this->installer->getTable('eav_attribute');
+        $entityColumn = $this->getEavColumn($catalogProductEntityVarcharTable, 'entity_id');
 
         $logActionId = $this->getNextLogActionId();
         $nowDate = new \DateTime();
@@ -84,7 +85,7 @@ SQL
 SELECT `value`
 FROM `{$catalogProductEntityVarcharTable}` as `cpev`
     LEFT JOIN `{$eavAttributeTable}` as `ea` ON `ea`.attribute_id = cpev.attribute_id 
-WHERE `ea`.attribute_code = 'name' AND `cpev`.entity_id = {$row['product_id']}
+WHERE `ea`.attribute_code = 'name' AND `cpev`.{$entityColumn} = {$row['product_id']}
 SQL
             )->fetch();
 

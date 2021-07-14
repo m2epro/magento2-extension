@@ -353,7 +353,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             }
 
             if (!empty($details['delivery_date'])) {
-                $additionalData .= 'Delivery Date: ' . $details['delivery_date' . ' | '];
+                $additionalData .= 'Delivery Date: ' . $details['delivery_date'] . ' | ';
             }
         }
 
@@ -371,6 +371,10 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             $additionalData .= 'IOSS/OSS Number: ' . $taxReference . ' | ';
         }
 
+        if (!empty($additionalData)) {
+            $additionalData = ' | ' . $additionalData;
+        }
+
         $shippingMethod = $this->order->getShippingService();
 
         if ($this->order->isUseGlobalShippingProgram()) {
@@ -383,8 +387,8 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         }
 
         return [
-            'carrier_title'   => $additionalData . $this->getHelper('Module\Translation')->__('eBay Shipping'),
-            'shipping_method' => $shippingMethod,
+            'carrier_title'   => $this->getHelper('Module\Translation')->__('eBay Shipping'),
+            'shipping_method' => $shippingMethod . $additionalData,
             'shipping_price'  => $this->getBaseShippingPrice()
         ];
     }

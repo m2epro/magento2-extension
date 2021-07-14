@@ -1,4 +1,13 @@
-* 1.14.0 (r4900) (01/07/2021) 
+* 1.14.1 (r4923) (14/07/2021) 
+
+[Common] [Improved] Display shipping service in the beginning of the line in Magento Orders [M2-1338]
+[Common] [Fixed] Get wrong table m2epro_config in migration [M2-1352]
+[Common] [Fixed] Column not found: 1054 Unknown column 'cpev.entity_id' [M2-1350]
+[Ebay] [Fixed] Different time for ship by date in orders grid [M2-1356]
+[Ebay] [Fixed] Magento Order was not created. Reason: Notice: Undefined index: delivery_date [M2-1348]
+[Amazon] [Improved] Import IOSS for Amazon Orders [M2-1341]
+
+* 1.14.0 (r4898) (01/07/2021)
 
 [Common] [Added] Add Ship By Date filter to Orders grid [M2-1281]
 [Common] [Added] Display Ship By Date in Channel Orders [M2-1134]

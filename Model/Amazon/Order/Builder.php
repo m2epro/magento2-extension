@@ -90,6 +90,7 @@ class Builder extends AbstractModel
         // ---------------------------------------
         $this->setData('paid_amount', (float)$data['paid_amount']);
         $this->setData('tax_details', $this->getHelper('Data')->jsonEncode($this->prepareTaxDetails($data)));
+        $this->setData('ioss_number', $data['items'][0]['ioss_number']);
         $this->setData('discount_details', $this->getHelper('Data')->jsonEncode($data['discount_details']));
         $this->setData('currency', $data['currency']);
         $this->setData('qty_shipped', $data['qty_shipped']);

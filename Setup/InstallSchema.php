@@ -8176,6 +8176,12 @@ class InstallSchema implements InstallSchemaInterface
                 ['default' => null]
             )
             ->addColumn(
+                'ioss_number',
+                Table::TYPE_TEXT,
+                72,
+                ['default' => null]
+            )
+            ->addColumn(
                 'discount_details',
                 Table::TYPE_TEXT,
                 null,

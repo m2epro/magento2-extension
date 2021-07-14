@@ -194,6 +194,7 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
                         'gift_message'         => trim($item['gift_message']),
                         'currency'             => trim($item['prices']['product']['currency']),
                         'tax_details'          => $item['taxes'],
+                        'ioss_number'          => $item['ioss_number'],
                         'discount_details'     => $item['discounts'],
                         'qty_purchased'        => (int)$item['qty']['ordered'],
                         'qty_shipped'          => (int)$item['qty']['shipped']

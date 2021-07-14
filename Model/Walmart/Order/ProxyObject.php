@@ -65,9 +65,13 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             $additionalData .= "Ship By Date: {$shippingDate} | ";
         }
 
+        if (!empty($additionalData)) {
+            $additionalData = ' | ' . $additionalData;
+        }
+
         return [
-            'carrier_title'   => $additionalData . $this->getHelper('Module\Translation')->__('Walmart Shipping'),
-            'shipping_method' => $this->order->getShippingService(),
+            'carrier_title'   => $this->getHelper('Module\Translation')->__('Walmart Shipping'),
+            'shipping_method' => $this->order->getShippingService() . $additionalData,
             'shipping_price'  => $this->getBaseShippingPrice(),
         ];
     }

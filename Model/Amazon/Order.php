@@ -188,6 +188,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
     //########################################
 
+    public function getIossNumber()
+    {
+        return $this->getData('ioss_number');
+    }
+
     /**
      * @return float
      */

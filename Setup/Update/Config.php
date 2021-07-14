@@ -179,6 +179,9 @@ class Config extends AbstractConfig
             'y21_m06' => [
                 'FixBrokenUrl',
                 'EbayTaxReference'
+            ],
+            'y21_m07' => [
+                'AmazonIossNumber'
             ]
         ];
     }

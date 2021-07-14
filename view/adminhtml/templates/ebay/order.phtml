@@ -358,7 +358,7 @@ $status = $this->getStatus();
                                     <?php if (empty($shippingDateTo)) { ?>
                                         <?php echo $block->__('N/A'); ?>
                                     <?php } else { ?>
-                                        <?php echo $block->getHelper('Data')->gmtDateToTimezone($shippingDateTo, false, 'M d, Y, H:i:s'); ?>
+                                        <?php echo $block->formatDate($shippingDateTo, \IntlDateFormatter::MEDIUM, true); ?>
                                     <?php } ?>
                                 </strong>
                             </td>
