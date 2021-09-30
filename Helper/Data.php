@@ -52,9 +52,12 @@ class Data extends AbstractHelper
         $this->localeDate    = $localeDate;
         $this->timezone      = $timezone;
         $this->objectManager = $objectManager;
-        $this->phpSerialize  = version_compare($this->getHelper('Magento')->getVersion(), '2.3.5', '>=')
-            ? \Laminas\Serializer\Serializer::getDefaultAdapter()
-            : \Zend\Serializer\Serializer::getDefaultAdapter();
+
+        if (version_compare($this->getHelper('Magento')->getVersion(), '2.4.3', '<')) {
+            $this->phpSerialize  = version_compare($this->getHelper('Magento')->getVersion(), '2.3.5', '>=')
+                ? \Laminas\Serializer\Serializer::getDefaultAdapter()
+                : \Zend\Serializer\Serializer::getDefaultAdapter();
+        }
 
         if (interface_exists(\Magento\Framework\Serialize\SerializerInterface::class)) {
             $this->serializerInterface = $this->objectManager->get(
@@ -531,7 +534,7 @@ class Data extends AbstractHelper
         }
 
         try {
-            return preg_match('/^((s|i|d|b|a|O|C):|N;)/', $data)
+            return $this->phpSerialize !== null && preg_match('/^((s|i|d|b|a|O|C):|N;)/', $data)
                 ? $this->phpSerialize->unserialize($data)
                 : $this->serializerInterface->unserialize($data);
 

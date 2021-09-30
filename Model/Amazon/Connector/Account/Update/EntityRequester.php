@@ -13,6 +13,22 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Account\Update;
  */
 class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
+    protected $amazonFactory;
+
+    //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+                                                                       $account,
+        array $params
+    ) {
+        $this->amazonFactory = $amazonFactory;
+        parent::__construct($helperFactory, $modelFactory, $account, $params);
+    }
+
     //########################################
 
     /**
@@ -20,7 +36,18 @@ class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTim
      */
     protected function getRequestData()
     {
-        return $this->params;
+        /** @var $marketplaceObject \Ess\M2ePro\Model\Marketplace */
+
+        $marketplaceObject = $this->amazonFactory->getCachedObjectLoaded(
+            'Marketplace',
+            $this->params['marketplace_id']
+        );
+
+        return [
+            'merchant_id'    => $this->params['merchant_id'],
+            'token'          => $this->params['token'],
+            'marketplace_id' => $marketplaceObject->getNativeId(),
+        ];
     }
 
     /**

@@ -18,7 +18,14 @@ use Ess\M2ePro\Model\Amazon\Order\Invoice as AmazonOrderInvoice;
 class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'amazon/order/send_invoice';
-    const ORDER_CHANGES_PER_ACCOUNT = 100;
+
+    /** ~4-10 seconds on call, ~5-10 invoices per minute, 50 requests in 10 minutes */
+    const LIMIT_ORDER_CHANGES = 50;
+
+    /** @var int $interval (in seconds) */
+    protected $interval = 600;
+
+    protected $maxOrderChangesPerTask = 0;
 
     protected $universalFactory;
     protected $invocePdfFactory;
@@ -98,6 +105,10 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         foreach ($permittedAccounts as $account) {
             /** @var \Ess\M2ePro\Model\Account $account */
+
+            if ($this->maxOrderChangesPerTask === self::LIMIT_ORDER_CHANGES) {
+                break;
+            }
 
             $this->getOperationHistory()->addText('Starting account "' . $account->getTitle() . '"');
 
@@ -219,7 +230,8 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         /** @var \Ess\M2ePro\Model\Cron\Task\Amazon\Order\SendInvoice\Requester $connectorObj */
         $connectorObj = $dispatcherObject->getCustomConnector(
             'Cron_Task_Amazon_Order_SendInvoice_Requester',
-            ['order' => $requestData], $account
+            ['order' => $requestData],
+            $account
         );
 
         $dispatcherObject->process($connectorObj);
@@ -351,7 +363,8 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         /** @var \Ess\M2ePro\Model\Cron\Task\Amazon\Order\SendInvoice\Requester $connectorObj */
         $connectorObj = $dispatcherObject->getCustomConnector(
             'Cron_Task_Amazon_Order_SendInvoice_Requester',
-            ['order' => $requestData], $order->getAccount()
+            ['order' => $requestData],
+            $order->getAccount()
         );
 
         $dispatcherObject->process($connectorObj);
@@ -418,7 +431,8 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             /** @var \Ess\M2ePro\Model\Cron\Task\Amazon\Order\SendInvoice\Requester $connectorObj */
             $connectorObj = $dispatcherObject->getCustomConnector(
                 'Cron_Task_Amazon_Order_SendInvoice_Requester',
-                ['order' => $requestData], $order->getAccount()
+                ['order' => $requestData],
+                $order->getAccount()
             );
 
             $dispatcherObject->process($connectorObj);
@@ -446,8 +460,10 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             []
         );
         $changesCollection->addFieldToFilter('pl.id', ['null' => true]);
-        $changesCollection->getSelect()->limit(self::ORDER_CHANGES_PER_ACCOUNT);
+        $changesCollection->getSelect()->limit(self::LIMIT_ORDER_CHANGES);
         $changesCollection->getSelect()->group(['order_id']);
+
+        $this->maxOrderChangesPerTask += $changesCollection->count();
 
         return $changesCollection->getItems();
     }

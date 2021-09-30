@@ -21,22 +21,25 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Connector\Command\Re
 
     protected $activeRecordFactory;
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
+    protected $ebayFactory;
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\Marketplace $marketplace = null,
         \Ess\M2ePro\Model\Account $account = null,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $params
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
-
-        $this->order = $this->getHelper('Component\Ebay')->getObject('Order', $params['order_id']);
-        $this->orderChange = $this->activeRecordFactory->getObject('Order\Change')->load($params['change_id']);
-
         parent::__construct($helperFactory, $modelFactory, $marketplace, $account, $params);
+        $this->activeRecordFactory = $activeRecordFactory;
+        $this->ebayFactory = $ebayFactory;
+
+        $this->order = $this->ebayFactory->getObject('Order')->load($params['order_id']);
+        $this->orderChange = $this->activeRecordFactory->getObject('Order\Change')->load($params['change_id']);
     }
 
     //########################################

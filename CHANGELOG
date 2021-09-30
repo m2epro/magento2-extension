@@ -1,4 +1,15 @@
-* 1.14.1 (r4923) (14/07/2021) 
+* 1.14.2 (30/09/2021) 
+
+[Common] [Fixed] Error "[Request ip has wrong value.]" occurs on the Module Registration step of the initial set-up Wizard [#2586]
+[Common] [Fixed] "Error: Class 'Laminas\Serializer\Serializer' not found" occurs on Magento 2.4.3 [#2632]
+[Common] [Fixed] "Error: Class 'Zend\Serializer\Serializer' not found" occurs on Magento 2.4.3 [#2592]
+[eBay] [Fixed] Magento Order was not created. Reason: Warning: A non-numeric value encountered [#2594]
+[eBay] [Fixed] eBay order was not refunded as per Magento credit memo creation [#1220]
+[Amazon] [Fixed] Different Grand Totals in Amazon and Magento orders for Grouped Products listed as Set [#1218]
+[Amazon] [Fixed] Internal Server Error(s) [Marketplace ID is not valid. It differs from the current.] occurs when trying to update the MWS token [#1215]
+[Amazon] [Improved] Self-upload of Amazon invoices without receiving and checking the results of the GetFeedSubmissionResult command [#2939]
+
+* 1.14.1 (r4923) (14/07/2021)
 
 [Common] [Improved] Display shipping service in the beginning of the line in Magento Orders [M2-1338]
 [Common] [Fixed] Get wrong table m2epro_config in migration [M2-1352]

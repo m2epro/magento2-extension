@@ -859,7 +859,7 @@ class Builder extends AbstractModel
         $oldStatus = $this->order->getChildObject()->getData('cancellation_status');
         $newStatus = $this->getData('cancellation_status');
 
-        if ($newStatus == 0 && ($oldStatus != $newStatus)) {
+        if ($newStatus == 1 && ($oldStatus != $newStatus)) {
             return true;
         }
 

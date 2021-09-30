@@ -400,7 +400,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     {
         if ($this->order->isUseGlobalShippingProgram()) {
             $globalShippingDetails = $this->order->getGlobalShippingDetails();
-            $price = $globalShippingDetails['service_details']['price'];
+            $price = (float)$globalShippingDetails['service_details']['price'];
         } else {
             $price = $this->order->getShippingPrice();
         }

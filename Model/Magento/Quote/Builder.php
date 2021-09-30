@@ -333,8 +333,6 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                 $productPriceInItem = (($item->getOriginalPrice() * $productPriceInSetPercent) / 100);
                 $item->setPrice($productPriceInItem / $associatedProduct->getQty());
 
-                $associatedProduct->setTaxClassId($product->getTaxClassId());
-
                 /** @var \Ess\M2ePro\Model\Magento\Quote\Item $quoteItemBuilder */
                 $quoteItemBuilder = $this->modelFactory->getObject(
                     'Magento_Quote_Item',
@@ -347,7 +345,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                 $this->initializeQuoteItem(
                     $item,
                     $quoteItemBuilder,
-                    $associatedProduct,
+                    $quoteItemBuilder->setTaxClassIntoProduct($associatedProduct),
                     $quoteItemBuilder->getRequest()
                 );
             }

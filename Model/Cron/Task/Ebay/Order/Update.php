@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Ebay\Order;
 
+use Ess\M2ePro\Model\Order\Change;
+
 /**
  * Class \Ess\M2ePro\Model\Cron\Task\Ebay\Order\Update
  */
@@ -108,6 +110,8 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $changesCollection = $this->activeRecordFactory->getObject('Order\Change')->getCollection();
         $changesCollection->addAccountFilter($account->getId());
         $changesCollection->addProcessingAttemptDateFilter();
+        $changesCollection->addFieldToFilter('action', ['in' => [Change::ACTION_UPDATE_SHIPPING,
+                                                                 Change::ACTION_UPDATE_PAYMENT]]);
         $changesCollection->setPageSize(self::MAX_UPDATES_PER_TIME);
         $changesCollection->getSelect()->group(['order_id']);
 

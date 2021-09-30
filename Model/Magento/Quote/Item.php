@@ -80,10 +80,8 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
             }
         }
 
-        // tax class id should be set before price calculation
-        $this->product->setTaxClassId($this->getProductTaxClassId());
-
-        return $this->product;
+       // tax class id should be set before price calculation
+       return $this->setTaxClassIntoProduct($this->product);
     }
 
     // ---------------------------------------
@@ -102,7 +100,10 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    private function getProductTaxClassId()
+   /**
+     * @return \Magento\Catalog\Model\Product
+     */
+    public function setTaxClassIntoProduct(\Magento\Catalog\Model\Product $product)
     {
         $proxyOrder = $this->proxyItem->getProxyOrder();
         $itemTaxRate = $this->proxyItem->getTaxRate();
@@ -115,14 +116,14 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
             || ($proxyOrder->isTaxModeMagento() && !$hasRatesForCountry && !$calculationBasedOnOrigin)
             || ($proxyOrder->isTaxModeMixed() && $itemTaxRate <= 0 && $isOrderHasTax)
         ) {
-            return \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE;
+            return $product->setTaxClassId(\Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE);
         }
 
         if ($proxyOrder->isTaxModeMagento()
             || $itemTaxRate <= 0
-            || $itemTaxRate == $this->getProductTaxRate()
+            || $itemTaxRate == $this->getProductTaxRate($product->getTaxClassId())
         ) {
-            return $this->getProduct()->getTaxClassId();
+            return $product;
         }
 
         // Create tax rule according to channel tax rate
@@ -139,10 +140,10 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
         $productTaxClasses = $taxRule->getProductTaxClasses();
         // ---------------------------------------
 
-        return array_shift($productTaxClasses);
+        return $product->setTaxClassId(array_shift($productTaxClasses));
     }
 
-    private function getProductTaxRate()
+    private function getProductTaxRate($productTaxClassId)
     {
         /** @var $taxCalculator \Magento\Tax\Model\Calculation */
         $taxCalculator = $this->calculation;
@@ -153,7 +154,7 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
             $this->quote->getCustomerTaxClassId(),
             $this->quote->getStore()
         );
-        $request->setProductClassId($this->getProduct()->getTaxClassId());
+        $request->setProductClassId($productTaxClassId);
 
         return $taxCalculator->getRate($request);
     }

@@ -121,13 +121,21 @@ class Client extends AbstractHelper
     protected function getServerIp()
     {
         $ip = $this->phpEnvironmentRequest->getServer('SERVER_ADDR');
-        empty($ip) && $ip = $this->phpEnvironmentRequest->getServer('LOCAL_ADDR');
-        empty($ip) && $ip = gethostbyname(gethostname());
+        !$this->isValidIp($ip) && $ip = $this->phpEnvironmentRequest->getServer('LOCAL_ADDR');
+        !$this->isValidIp($ip) && $ip = gethostbyname(gethostname());
 
         return strtolower(trim((string)$ip));
     }
 
-     //########################################
+    protected function isValidIp($ip)
+    {
+        return !empty($ip) && (
+                filter_var($ip, FILTER_VALIDATE_IP) ||
+                filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)
+            );
+    }
+
+    //########################################
 
     public function getPhpVersion($asArray = false)
     {

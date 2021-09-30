@@ -144,7 +144,7 @@ class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             );
             $dispatcherObject->process($connectorObj);
 
-            $cancelResponseData = $connectorObj->getRequestData();
+            $cancelResponseData = $connectorObj->getResponseData();
 
             if (!$cancelResponseData['result'] && $cancelResponseData['cancelId'] === null) {
                 continue;

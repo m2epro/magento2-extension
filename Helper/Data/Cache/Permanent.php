@@ -66,7 +66,7 @@ class Permanent extends \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
         }
 
         $this->cache->save(
-            \Zend\Serializer\Serializer::getDefaultAdapter()->serialize($value),
+            $this->getHelper('Data')->serialize($value),
             $cacheKey,
             $preparedTags,
             (int)$lifeTime
