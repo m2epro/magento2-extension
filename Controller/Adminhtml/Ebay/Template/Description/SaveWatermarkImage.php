@@ -71,7 +71,8 @@ class SaveWatermarkImage extends Description
         $template->getChildObject()->updateWatermarkHashes();
 
         $data = [
-            'watermark_image' => file_get_contents($watermarkImageFile['tmp_name'])
+            // @codingStandardsIgnoreLine
+            'watermark_image' => base64_encode(file_get_contents($watermarkImageFile['tmp_name']))
         ];
 
         $template->getChildObject()->addData($data);

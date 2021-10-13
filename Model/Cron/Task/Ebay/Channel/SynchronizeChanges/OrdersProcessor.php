@@ -51,17 +51,6 @@ class OrdersProcessor extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function isPossibleToRun()
-    {
-        if ($this->getHelper('Server\Maintenance')->isNow()) {
-            return false;
-        }
-
-        return parent::isPossibleToRun();
-    }
-
-    //########################################
-
     public function process()
     {
         /** @var $accountsCollection \Ess\M2ePro\Model\ResourceModel\Account\Collection */

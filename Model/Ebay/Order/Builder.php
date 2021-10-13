@@ -497,12 +497,25 @@ class Builder extends AbstractModel
             return false;
         }
 
-        if (empty($this->relatedOrders)) {
-            return true;
+        if ($this->order->getId()) {
+            $newPurchaseUpdateDate = new \DateTime(
+                $this->getData('purchase_update_date'),
+                new \DateTimeZone('UTC')
+            );
+            $oldPurchaseUpdateDate = new \DateTime(
+                $this->order->getChildObject()->getPurchaseUpdateDate(),
+                new \DateTimeZone('UTC')
+            );
+
+            if ($newPurchaseUpdateDate <= $oldPurchaseUpdateDate) {
+                return false;
+            }
         }
 
         if ($this->getData('order_status') == OrderHelper::EBAY_ORDER_STATUS_CANCELLED &&
-            !$this->order->getChildObject()->isCanceled()) {
+            $this->order->getId() &&
+            !$this->order->getChildObject()->isCanceled()
+        ) {
             return true;
         }
 
@@ -510,8 +523,14 @@ class Builder extends AbstractModel
             return true;
         }
 
-        if ($this->getData('order_status') == OrderHelper::EBAY_ORDER_STATUS_INACTIVE) {
+        if ($this->getData('order_status') == OrderHelper::EBAY_ORDER_STATUS_CANCELLED ||
+            $this->getData('order_status') == OrderHelper::EBAY_ORDER_STATUS_INACTIVE
+        ) {
             return false;
+        }
+
+        if (empty($this->relatedOrders)) {
+            return true;
         }
 
         if (count($this->relatedOrders) == 1) {

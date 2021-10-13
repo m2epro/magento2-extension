@@ -34,7 +34,8 @@ class Price extends AbstractModel
         $data = array_merge(
             $data,
             $this->getPriceDiscountStpData(),
-            $this->getPriceDiscountMapData()
+            $this->getPriceDiscountMapData(),
+            $this->getBestOfferData()
         );
 
         return $data;
@@ -44,6 +45,7 @@ class Price extends AbstractModel
 
     /**
      * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function getPriceDiscountStpData()
     {
@@ -68,6 +70,25 @@ class Price extends AbstractModel
 
     /**
      * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function getBestOfferData()
+    {
+        $data = [
+            'bestoffer_mode' => $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->isBestOfferEnabled(),
+        ];
+
+        if ($data['bestoffer_mode']) {
+            $data['bestoffer_accept_price'] = $this->getEbayListingProduct()->getBestOfferAcceptPrice();
+            $data['bestoffer_reject_price'] = $this->getEbayListingProduct()->getBestOfferRejectPrice();
+        }
+
+        return $data;
+    }
+
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function getPriceDiscountMapData()
     {

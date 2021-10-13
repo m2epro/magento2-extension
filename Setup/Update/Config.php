@@ -182,6 +182,12 @@ class Config extends AbstractConfig
             ],
             'y21_m07' => [
                 'AmazonIossNumber'
+            ],
+            'y21_m08' => [
+                'FixedStuckedManualPriceRevise'
+            ],
+            'y21_m10' => [
+                'UpdateWatermarkImage'
             ]
         ];
     }

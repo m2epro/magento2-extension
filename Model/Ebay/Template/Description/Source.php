@@ -456,6 +456,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
         $fileDriver = $this->driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
 
+        // @codingStandardsIgnoreLine
         $fileExtension = pathinfo($imageObj->getPath(), PATHINFO_EXTENSION);
         $pathWithoutExtension = preg_replace('/\.'.$fileExtension.'$/', '', $imageObj->getPath());
 
@@ -464,6 +465,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
         if ($fileDriver->isFile($markingImagePath)) {
             $currentTime = $this->getHelper('Data')->getCurrentGmtDate(true);
+            // @codingStandardsIgnoreLine
             if (filemtime($markingImagePath) + \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_CACHE_TIME >
                 $currentTime) {
                 $imageObj->setPath($markingImagePath)
@@ -490,7 +492,8 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $watermarkPath = $varDir->getPath().$this->getEbayDescriptionTemplate()->getId().'.png';
         if (!$fileDriver->isFile($watermarkPath)) {
             $varDir->create();
-            file_put_contents($watermarkPath, $this->getEbayDescriptionTemplate()->getWatermarkImage());
+            // @codingStandardsIgnoreLine
+            file_put_contents($watermarkPath, base64_decode($this->getEbayDescriptionTemplate()->getWatermarkImage()));
         }
 
         $watermarkPositions = [

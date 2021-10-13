@@ -1,4 +1,14 @@
-* 1.14.2 (30/09/2021) 
+* 1.14.3 (13/10/2021) 
+
+[Common] [Improved] Handling of exceptions that may occur on grid callbacks [#2276]
+[eBay] [Fixed] Best Offer value is not updated during Automatic Revise after changing Price in Magento [#2523]
+[eBay] [Fixed] Magento Product cannot be saved after upgrade to 6.14.2 [#2988]
+[eBay] [Fixed] Product status is displayed as Inactive (Stopped) for Active eBay Items [#2926]
+[eBay] [Fixed] Exception "Instance must be loaded first" occurs when importing Combined orders in Canceled status [#2574]
+[Amazon] [Fixed] Item price is not updated during Manual Revise [#2518]
+[Walmart] [Fixed] Unmanaged Listings are not imported from the Channel [#1236]
+
+* 1.14.2 (30/09/2021)
 
 [Common] [Fixed] Error "[Request ip has wrong value.]" occurs on the Module Registration step of the initial set-up Wizard [#2586]
 [Common] [Fixed] "Error: Class 'Laminas\Serializer\Serializer' not found" occurs on Magento 2.4.3 [#2632]

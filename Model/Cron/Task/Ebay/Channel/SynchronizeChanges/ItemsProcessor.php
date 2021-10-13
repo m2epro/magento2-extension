@@ -8,16 +8,14 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges;
 
+use \Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges\ItemsProcessor\StatusResolver;
+
 /**
  * Class \Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges\ItemsProcessor
  */
 class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 {
     const INSTRUCTION_INITIATOR = 'channel_changes_synchronization';
-
-    const EBAY_STATUS_ACTIVE    = 'Active';
-    const EBAY_STATUS_ENDED     = 'Ended';
-    const EBAY_STATUS_COMPLETED = 'Completed';
 
     const INCREASE_SINCE_TIME_MAX_ATTEMPTS     = 10;
     const INCREASE_SINCE_TIME_BY               = 2;
@@ -59,17 +57,6 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
     {
         $this->receiveChangesToDate = $toDate;
         return $this;
-    }
-
-    //####################################
-
-    public function isPossibleToRun()
-    {
-        if ($this->getHelper('Server\Maintenance')->isNow()) {
-            return false;
-        }
-
-        return parent::isPossibleToRun();
     }
 
     //####################################
@@ -129,16 +116,26 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
                     continue;
                 }
 
-                // Listing product isn't listed and it child must have another item_id
-                if ($listingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED &&
-                    $listingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN) {
+                /** @var StatusResolver $statusResolver */
+                $statusResolver = $this->modelFactory->getObject(
+                    'Cron_Task_Ebay_Channel_SynchronizeChanges_ItemsProcessor_StatusResolver'
+                );
+
+                $isStatusResolved = $statusResolver->resolveStatus(
+                    (int)$change['quantity'] <= 0 ? 0 : (int)$change['quantity'],
+                    (int)$change['quantitySold'] <= 0 ? 0 : (int)$change['quantitySold'],
+                    $change['listingStatus'],
+                    $listingProduct
+                );
+
+                if (!$isStatusResolved) {
                     continue;
                 }
 
                 // @codingStandardsIgnoreLine
                 $dataForUpdate = array_merge(
+                    $this->getProductStatusChanges($listingProduct, $statusResolver),
                     $this->getProductDatesChanges($change),
-                    $this->getProductStatusChanges($listingProduct, $change),
                     $this->getProductQtyChanges($listingProduct, $change)
                 );
 
@@ -340,35 +337,19 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         ];
     }
 
-    protected function getProductStatusChanges(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $change)
-    {
+    protected function getProductStatusChanges(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        StatusResolver $statusResolver
+    ) {
         $data = [];
+        $data['status'] = $statusResolver->getProductStatus();
 
-        $qty = (int)$change['quantity'] < 0 ? 0 : (int)$change['quantity'];
-        $qtySold = (int)$change['quantitySold'] < 0 ? 0 : (int)$change['quantitySold'];
-
-        if (($change['listingStatus'] == self::EBAY_STATUS_COMPLETED ||
-             $change['listingStatus'] == self::EBAY_STATUS_ENDED) &&
-             $listingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN &&
-             $qty == $qtySold
-        ) {
-            $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD;
-        } elseif ($change['listingStatus'] == self::EBAY_STATUS_COMPLETED) {
-            $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
-        } elseif ($change['listingStatus'] == self::EBAY_STATUS_ENDED) {
-            $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED;
-        } elseif ($change['listingStatus'] == self::EBAY_STATUS_ACTIVE &&
-                   $qty - $qtySold <= 0) {
-            $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN;
-        } elseif ($change['listingStatus'] == self::EBAY_STATUS_ACTIVE) {
-            $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
+        if ($onlineDuration = $statusResolver->getOnlineDuration()) {
+            $data['online_duration'] = $onlineDuration;
         }
 
-        if ($data['status'] == \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN) {
-            // Listed Hidden Status can be only for GTC items
-            if ($listingProduct->getChildObject()->getOnlineDuration() === null) {
-                $data['online_duration'] = \Ess\M2ePro\Helper\Component\Ebay::LISTING_DURATION_GTC;
-            }
+        if ($additionalData = $statusResolver->getProductAdditionalData()) {
+            $data['additional_data'] = $additionalData;
         }
 
         if ($listingProduct->getStatus() == $data['status']) {

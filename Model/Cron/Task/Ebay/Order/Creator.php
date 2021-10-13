@@ -150,7 +150,11 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
     public function isOrderChangedInParallelProcess(\Ess\M2ePro\Model\Order $order)
     {
         /** @var \Ess\M2ePro\Model\Order $dbOrder */
-        $dbOrder = $this->activeRecordFactory->getObjectLoaded('Order', $order->getId());
+        $dbOrder = $this->activeRecordFactory->getObjectLoaded('Order', $order->getId(), null, false);
+
+        if ($dbOrder === null) {
+            return false;
+        }
 
         if ($dbOrder->getMagentoOrderId() != $order->getMagentoOrderId()) {
             return true;

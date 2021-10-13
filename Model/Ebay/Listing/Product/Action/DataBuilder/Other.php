@@ -21,7 +21,6 @@ class Other extends AbstractModel
             $this->getConditionData(),
             $this->getConditionNoteData(),
             $this->getVatTaxData(),
-            $this->getBestOfferData(),
             $this->getCharityData(),
             $this->getLotSizeData()
         );
@@ -33,6 +32,7 @@ class Other extends AbstractModel
 
     /**
      * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function getConditionData()
     {
@@ -50,6 +50,7 @@ class Other extends AbstractModel
 
     /**
      * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function getConditionNoteData()
     {
@@ -64,6 +65,7 @@ class Other extends AbstractModel
 
     /**
      * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function getVatTaxData()
     {
@@ -86,23 +88,7 @@ class Other extends AbstractModel
 
     /**
      * @return array
-     */
-    protected function getBestOfferData()
-    {
-        $data = [
-            'bestoffer_mode' => $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->isBestOfferEnabled(),
-        ];
-
-        if ($data['bestoffer_mode']) {
-            $data['bestoffer_accept_price'] = $this->getEbayListingProduct()->getBestOfferAcceptPrice();
-            $data['bestoffer_reject_price'] = $this->getEbayListingProduct()->getBestOfferRejectPrice();
-        }
-
-        return $data;
-    }
-
-    /**
-     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function getCharityData()
     {
@@ -120,6 +106,7 @@ class Other extends AbstractModel
 
     /**
      * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getLotSizeData()
     {

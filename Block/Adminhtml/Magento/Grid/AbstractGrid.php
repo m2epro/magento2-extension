@@ -68,7 +68,23 @@ abstract class AbstractGrid extends Extended
             }
         }
 
-        return parent::addColumn($columnId, $column);
+        if (is_array($column)) {
+            $this->getColumnSet()->setChild(
+                $columnId,
+                $this->getLayout()
+                    ->createBlock(\Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite::class)
+                    ->setData($column)
+                    ->setId($columnId)
+                    ->setGrid($this)
+            );
+            $this->getColumnSet()->getChildBlock($columnId)->setGrid($this);
+        } else {
+            throw new \Exception($this->__('Please correct the column format and try again.'));
+        }
+
+        $this->_lastColumnId = $columnId;
+
+        return $this;
     }
 
     //####################################

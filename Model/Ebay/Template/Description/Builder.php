@@ -216,7 +216,8 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         if (!empty($watermarkImageFile['tmp_name'])) {
             $hashChange = true;
 
-            $data['watermark_image'] = file_get_contents($watermarkImageFile['tmp_name']);
+            // @codingStandardsIgnoreLine
+            $data['watermark_image'] = base64_encode(file_get_contents($watermarkImageFile['tmp_name']));
 
             if (isset($data['id'])) {
                 /** @var \Ess\M2ePro\Model\VariablesDir $varDir */
@@ -232,7 +233,8 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
                 }
             }
         } elseif (!empty($this->rawData['old_watermark_image']) && isset($data['id'])) {
-            $data['watermark_image'] = base64_decode($this->rawData['old_watermark_image']);
+            // @codingStandardsIgnoreLine
+            $data['watermark_image'] = $this->rawData['old_watermark_image'];
         }
 
         // ---------------------------------------

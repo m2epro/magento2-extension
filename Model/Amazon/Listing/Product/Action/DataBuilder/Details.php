@@ -39,6 +39,8 @@ class Details extends AbstractModel
     {
         $data = [];
 
+        $this->getListingProduct()->getId();
+
         if (!$this->getVariationManager()->isRelationParentType()) {
             $data = array_merge(
                 $data,

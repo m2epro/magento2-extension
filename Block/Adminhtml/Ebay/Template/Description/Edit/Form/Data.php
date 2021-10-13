@@ -681,7 +681,7 @@ class Data extends AbstractForm
         )->addCustomAttribute('accept', 'image/png');
 
         if ($formData['watermark_image'] !== null) {
-            $encodedImage = base64_encode($formData['watermark_image']);
+            $encodedImage = $formData['watermark_image'];
             $watermarkFieldset->addField(
                 'old_watermark_image',
                 'hidden',

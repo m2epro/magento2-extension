@@ -29,7 +29,7 @@ class RunReviseProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator $configurator */
         $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
         $configurator->enableAll();
-        $tag = '/qty/price_regular/price_business/details/images/';
+        $tag = '/qty/price/details/images/';
         $params['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER;
 
         if (isset($params['switch_to'])) {

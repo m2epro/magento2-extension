@@ -53,6 +53,10 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
             $stmtTemp = $this->getPdoStatementExistingListings($wpids);
 
             while ($existingItem = $stmtTemp->fetch()) {
+                if (!isset($this->responseData[$existingItem['wpid']])) {
+                    continue;
+                }
+
                 $receivedItem = $this->responseData[$existingItem['wpid']];
                 unset($this->responseData[$existingItem['wpid']]);
 
