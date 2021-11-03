@@ -24,10 +24,12 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     const MARKETPLACE_UK     = 3;
     const MARKETPLACE_AU     = 4;
     const MARKETPLACE_BE_FR  = 6;
+    const MARKETPLACE_FR     = 7;
     const MARKETPLACE_DE     = 8;
     const MARKETPLACE_MOTORS = 9;
     const MARKETPLACE_IT     = 10;
     const MARKETPLACE_BE_NL  = 11;
+    const MARKETPLACE_ES     = 13;
 
     const LISTING_DURATION_GTC = 100;
     const MAX_LENGTH_FOR_OPTION_VALUE = 50;

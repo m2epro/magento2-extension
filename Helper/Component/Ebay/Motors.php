@@ -32,17 +32,23 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
 
     private $resourceConnection;
     private $eBayFactory;
+    private $eavConfig;
+    private $catalogProductCollectionFactory;
 
     //########################################
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $eBayFactory,
+        \Magento\Eav\Model\Config $eavConfig,
+        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $catalogProductCollectionFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->eBayFactory = $eBayFactory;
+        $this->eavConfig = $eavConfig;
+        $this->catalogProductCollectionFactory = $catalogProductCollectionFactory;
         parent::__construct($helperFactory, $context);
     }
 
@@ -379,6 +385,115 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
         $marketplaceCollection->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
 
         return (bool)$marketplaceCollection->getSize();
+    }
+
+    //########################################
+
+    public function getGroupsAssociatedWithFilter($filterId)
+    {
+        $connRead = $this->resourceConnection->getConnection('core/read');
+        $table = $this->getHelper('Module_Database_Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
+
+        $select = $connRead->select();
+        $select->from(['emftg' => $table], ['group_id'])
+            ->where('filter_id = ?', $filterId);
+
+        return $connRead->fetchCol($select);
+    }
+
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getAssociatedProducts($objectId, $objectType)
+    {
+        if ($objectType !== 'GROUP' && $objectType !== 'FILTER') {
+            throw new \Ess\M2ePro\Model\Exception\Logic("Incorrect object type: $objectType");
+        }
+
+        $attributesIds = $this->getPartsCompatibilityAttributesIds();
+        if (empty($attributesIds)) {
+            return [];
+        }
+
+        $collection = $this->catalogProductCollectionFactory->create();
+
+        $sqlTemplateLike = "%\"$objectType\"|\"$objectId\"%";
+
+        $attributesIdsTemplate = implode(',', $attributesIds);
+        $collection->getSelect()->joinInner(
+            [
+                'pet' => $this->getHelper('Module_Database_Structure')
+                    ->getTableNameWithPrefix('catalog_product_entity_text')
+            ],
+            '(`pet`.`entity_id` = `e`.`entity_id` AND pet.attribute_id IN(' . $attributesIdsTemplate . ')
+                AND value LIKE \'' . $sqlTemplateLike . '\')',
+            ['value' => 'pet.value']
+        );
+        $collection->getSelect()->where('value IS NOT NULL');
+
+        $collection->getSelect()->joinInner(
+            [
+                'lp' => $this->getHelper('Module_Database_Structure')
+                    ->getTableNameWithPrefix('m2epro_listing_product')
+            ],
+            '(`lp`.`product_id` = `e`.`entity_id` AND `lp`.`component_mode` = "' .
+            \Ess\M2ePro\Helper\Component\Ebay::NICK . '")',
+            ['listing_product_id' => 'lp.id']
+        );
+
+        $data = $collection->getData();
+        $listingProductIds = [];
+        foreach ($data as $product) {
+            $listingProductIds[] = $product['listing_product_id'];
+        }
+
+        return array_unique($listingProductIds);
+    }
+
+    public function resetOnlinePartsData($listingProductIds)
+    {
+        if (empty($listingProductIds)) {
+            return;
+        }
+
+        $connWrite = $this->resourceConnection->getConnection('core/write');
+
+        $ebayListingProductTable = $this->getHelper('Module_Database_Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_listing_product');
+
+        $connWrite->update(
+            $ebayListingProductTable,
+            ['online_parts_data' => ''],
+            ['listing_product_id IN(?)' => $listingProductIds]
+        );
+    }
+
+    public function getPartsCompatibilityAttributesIds()
+    {
+        $result = [];
+        $keys = [
+            'motors_epids_attribute',
+            'uk_epids_attribute',
+            'de_epids_attribute',
+            'au_epids_attribute',
+            'ktypes_attribute'
+        ];
+
+        /** @var \Ess\M2ePro\Model\Config\Manager $config */
+        $config = $this->getHelper('Module')->getConfig();
+
+        foreach ($keys as $attributeConfigKey) {
+            $motorsEpidAttribute = $config->getGroupValue('/ebay/configuration/', $attributeConfigKey);
+            $attribute = $this->eavConfig->getAttribute('catalog_product', $motorsEpidAttribute);
+
+            if ($attributeId = $attribute->getId()) {
+                $result[] = $attributeId;
+            }
+        }
+
+        return $result;
     }
 
     //########################################

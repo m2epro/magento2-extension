@@ -210,6 +210,23 @@ HTML
         );
 
         $fieldset->addField(
+            'revise_update_parts',
+            self::SELECT,
+            [
+                'name' => 'synchronization[revise_update_parts]',
+                'label' => $this->__('eBay Parts Compatibility'),
+                'value' => $formData['revise_update_parts'],
+                'values' => [
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
+                ],
+                'tooltip' => $this->__(
+                    'Automatically revises Parts Compatibility data on eBay once the related data is modified.'
+                )
+            ]
+        );
+
+        $fieldset->addField(
             'revise_update_shipping',
             self::SELECT,
             [

@@ -18,6 +18,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
     const INSTRUCTION_TYPE_DESCRIPTION_DATA_CHANGED = 'magento_product_description_data_changed';
     const INSTRUCTION_TYPE_IMAGES_DATA_CHANGED = 'magento_product_images_data_changed';
     const INSTRUCTION_TYPE_CATEGORIES_DATA_CHANGED = 'magento_product_categories_data_changed';
+    const INSTRUCTION_TYPE_PARTS_DATA_CHANGED = 'magento_product_parts_data_changed';
     const INSTRUCTION_TYPE_SHIPPING_DATA_CHANGED = 'magento_product_shipping_data_changed';
     const INSTRUCTION_TYPE_OTHER_DATA_CHANGED = 'magento_product_other_data_changed';
 

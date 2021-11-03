@@ -301,7 +301,8 @@ class Details extends AbstractModel
         foreach ($this->getDescriptionTemplate()->getSpecifics(true) as $specific) {
             $source = $specific->getSource($this->getAmazonListingProduct()->getActualMagentoProduct());
 
-            if (!$specific->isRequired() && !$specific->isModeNone() && !$source->getValue()) {
+            if (!$specific->isRequired() && !$specific->isModeNone()
+                && ($source->getValue() === null || $source->getValue() === '' || $source->getValue() === [])) {
                 continue;
             }
 

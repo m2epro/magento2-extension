@@ -619,6 +619,18 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         return $data;
     }
 
+    protected function appendPartsValues($data)
+    {
+        $requestMetadata = $this->getRequestMetaData();
+        if (!isset($requestMetadata['parts_data_hash'])) {
+            return $data;
+        }
+
+        $data['online_parts_data'] = $requestMetadata['parts_data_hash'];
+
+        return $data;
+    }
+
     protected function appendPaymentValues($data)
     {
         $requestMetadata = $this->getRequestMetaData();

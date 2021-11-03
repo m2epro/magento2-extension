@@ -396,7 +396,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
         $unitOfMeasure = $src['custom_value'];
         if ($this->getDescriptionDefinitionTemplate()->isItemDimensionsVolumeUnitOfMeasureModeCustomAttribute()) {
-            $unitOfMeasure = trim($this->getMagentoProduct()->getAttributeValue($src['custom_attribute']));
+            $unitOfMeasure = trim($this->getMagentoProduct()->getAttributeValue($src['custom_attribute'], false));
         }
 
         return $unitOfMeasure;
@@ -705,7 +705,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     protected function getMagentoProductAttributeValue($attributeCode, $store)
     {
-        $attributeValue = $this->getMagentoProduct()->getAttributeValue($attributeCode);
+        $attributeValue = $this->getMagentoProduct()->getAttributeValue($attributeCode, false);
 
         if (empty($attributeValue) || $store === null) {
             return $attributeValue;

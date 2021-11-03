@@ -390,7 +390,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->getAmazonListing()->isGiftWrapModeAttribute()) {
-            $attributeValue = $this->getMagentoProduct()->getAttributeValue($src['attribute']);
+            $attributeValue = $this->getMagentoProduct()->getAttributeValue($src['attribute'], false);
 
             if ($attributeValue == $this->getHelper('Module\Translation')->__('Yes')) {
                 $result = true;
@@ -421,7 +421,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->getAmazonListing()->isGiftMessageModeAttribute()) {
-            $attributeValue = $this->getMagentoProduct()->getAttributeValue($src['attribute']);
+            $attributeValue = $this->getMagentoProduct()->getAttributeValue($src['attribute'], false);
 
             if ($attributeValue == $this->getHelper('Module\Translation')->__('Yes')) {
                 $result = true;

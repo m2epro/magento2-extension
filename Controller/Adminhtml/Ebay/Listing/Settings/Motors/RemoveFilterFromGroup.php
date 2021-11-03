@@ -24,22 +24,9 @@ class RemoveFilterFromGroup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listin
             $filtersIds = explode(',', $filtersIds);
         }
 
-        $connection = $this->resourceConnection->getConnection();
-
-        $filterGroupRelation = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
-
-        $connection->delete($filterGroupRelation, [
-            'filter_id in (?)' => $filtersIds,
-            'group_id = ?' => $groupId,
-        ]);
-
         /** @var \Ess\M2ePro\Model\Ebay\Motor\Group $model */
         $model = $this->activeRecordFactory->getObjectLoaded('Ebay_Motor_Group', $groupId);
-
-        if (count($model->getFiltersIds()) == 0) {
-            $model->delete();
-        }
+        $model->removeFiltersByIds($filtersIds);
 
         $this->setAjaxContent(0, false);
 

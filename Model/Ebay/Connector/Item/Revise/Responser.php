@@ -83,6 +83,11 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
             $isPlural = true;
         }
 
+        if ($this->getConfigurator()->isPartsAllowed()) {
+            $sequenceStrings[] = 'eBay Parts Compatibility';
+            $isPlural = true;
+        }
+
         if ($this->getConfigurator()->isPaymentAllowed()) {
             $sequenceStrings[] = 'Payment';
         }

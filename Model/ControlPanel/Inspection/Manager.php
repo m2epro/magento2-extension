@@ -24,7 +24,7 @@ class Manager
     /** @var array */
     protected $_byGroup = [];
 
-    /** @var \Magento\Framework\ObjectManagerInterface  */
+    /** @var \Magento\Framework\ObjectManagerInterface */
     protected $objectManager;
 
     //########################################
@@ -38,14 +38,14 @@ class Manager
 
     protected function initInspections($dirName)
     {
-        $directoryIterator = new \DirectoryIterator(__DIR__ .DIRECTORY_SEPARATOR. $dirName);
+        $directoryIterator = new \DirectoryIterator(__DIR__ . DIRECTORY_SEPARATOR . $dirName);
         foreach ($directoryIterator as $item) {
             if (!$item->isFile()) {
                 continue;
             }
 
             $namespace = "Ess\M2ePro\Model\ControlPanel\Inspection\\{$dirName}\\";
-            $modelName =   $namespace . str_replace('.php', '', $item->getFilename());
+            $modelName = $namespace . str_replace('.php', '', $item->getFilename());
             $model = $this->objectManager->create($modelName);
             if (!$model instanceof AbstractInspection) {
                 continue;
@@ -58,6 +58,14 @@ class Manager
             $this->_byExecution[$model->getGroup()][] = $id;
             $this->_byGroup[$model->getExecutionSpeed()][] = $id;
         }
+    }
+
+    public function runInspection($name)
+    {
+        $modelName = "Ess\M2ePro\Model\ControlPanel\Inspection\\Inspector\\" . $name;
+        $model = $this->objectManager->create($modelName);
+
+        return $model->getResults();
     }
 
     //########################################
@@ -118,7 +126,9 @@ class Manager
 
     public function getId(AbstractInspection $inspection)
     {
-        return get_class($inspection);
+        $fullName = explode('\\', get_class($inspection));
+
+        return end($fullName);
     }
 
     //########################################

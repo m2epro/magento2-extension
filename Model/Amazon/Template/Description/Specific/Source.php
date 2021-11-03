@@ -122,12 +122,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $value = $templateObj->getData($templateObj->getMode());
 
         if ($templateObj->isModeCustomAttribute()) {
-            $value = $this->getMagentoProduct()->getAttributeValue($value);
+            $value = $this->getMagentoProduct()->getAttributeValue($value, false);
         }
 
         $templateObj->isTypeInt() && $value = (int)$value;
         $templateObj->isTypeFloat() && $value = (float)str_replace(',', '.', $value);
         $templateObj->isTypeDateTime() && $value = str_replace(' ', 'T', $value);
+        $templateObj->isTypeBoolean() && $value = $this->convertValueToBoolean($value);
 
         return $value;
     }
@@ -146,7 +147,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
             $attributeValue = ($attributeData['mode'] ==
                 \Ess\M2ePro\Model\Amazon\Template\Description\Specific::DICTIONARY_MODE_CUSTOM_VALUE)
                     ? $attributeData['custom_value']
-                    : $this->getMagentoProduct()->getAttributeValue($attributeData['custom_attribute']);
+                    : $this->getMagentoProduct()->getAttributeValue($attributeData['custom_attribute'], false);
 
             $attributes[$index] = [
                 'name'  => str_replace(' ', '', $attributeName),
@@ -155,6 +156,19 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $this->getHelper('Data')->jsonEncode($attributes);
+    }
+
+    //########################################
+
+    private function convertValueToBoolean($value)
+    {
+        if ($value === true) {
+            $value = 'true';
+        } elseif ($value === false) {
+            $value = 'false';
+        }
+
+        return $value;
     }
 
     //########################################

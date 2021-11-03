@@ -39,11 +39,7 @@ define([
         },
 
         sku_modification_mode_change: function() {
-            var self = WalmartSettingsMainObj;
-
-            if ($('sku_modification_mode').value == M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart_Configuration::SKU_MODIFICATION_MODE_TEMPLATE')) {
-                $('sku_modification_custom_value').value = '%value%';
-            } else {
+            if ($('sku_modification_mode').value != M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart_Configuration::SKU_MODIFICATION_MODE_TEMPLATE')) {
                 $('sku_modification_custom_value').value = '';
             }
 

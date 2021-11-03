@@ -26,6 +26,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         'images',
         'variations',
         'categories',
+        'parts',
         'shipping',
         'payment',
         'returnPolicy',
@@ -504,6 +505,24 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         $data = $dataBuilder->getBuilderData();
 
         $this->addMetaData('categories_data', $data);
+
+        return $data;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPartsData()
+    {
+        if (!$this->getConfigurator()->isPartsAllowed()) {
+            return [];
+        }
+
+        $dataBuilder = $this->getDataBuilder('parts');
+        $data = $dataBuilder->getBuilderData();
+        $hash = $dataBuilder->getHash();
+
+        $this->addMetaData('parts_data_hash', $hash);
 
         return $data;
     }

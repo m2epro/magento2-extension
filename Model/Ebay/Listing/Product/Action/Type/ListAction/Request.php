@@ -65,6 +65,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
             $this->getDescriptionData(),
             $this->getImagesData(),
             $this->getCategoriesData(),
+            $this->getPartsData(),
             $this->getPaymentData(),
             $this->getReturnData(),
             $this->getShippingData(),

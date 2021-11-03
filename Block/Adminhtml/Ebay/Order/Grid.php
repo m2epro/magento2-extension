@@ -708,11 +708,13 @@ HTML;
             return;
         }
 
-        switch ($value) {
-            case \Ess\M2ePro\Model\Ebay\Order::STATUS_CANCELED:
-                $collection->addFieldToFilter('cancellation_status', 1);
-                break;
+        if ($value == \Ess\M2ePro\Model\Ebay\Order::STATUS_CANCELED) {
+            $collection->addFieldToFilter('cancellation_status', 1);
+            return;
+        }
 
+        $collection->addFieldToFilter('cancellation_status', 0);
+        switch ($value) {
             case \Ess\M2ePro\Model\Ebay\Order::STATUS_SHIPPED:
                 $collection->addFieldToFilter(
                     'shipping_status',

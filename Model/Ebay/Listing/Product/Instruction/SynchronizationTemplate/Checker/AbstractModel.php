@@ -30,6 +30,7 @@ abstract class AbstractModel extends CheckerAbstractModel
                 $this->getReviseDescriptionInstructionTypes(),
                 $this->getReviseImagesInstructionTypes(),
                 $this->getReviseCategoriesInstructionTypes(),
+                $this->getRevisePartsInstructionTypes(),
                 $this->getReviseShippingInstructionTypes(),
                 $this->getRevisePaymentInstructionTypes(),
                 $this->getReviseReturnInstructionTypes(),
@@ -204,6 +205,28 @@ abstract class AbstractModel extends CheckerAbstractModel
         ];
     }
 
+    protected function getRevisePartsInstructionTypes()
+    {
+        return [
+            \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_PARTS_DATA_CHANGED,
+            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::
+            INSTRUCTION_TYPE_PARTS_DATA_CHANGED,
+            \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::
+            INSTRUCTION_TYPE_REVISE_PARTS_ENABLED,
+            \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::
+            INSTRUCTION_TYPE_REVISE_PARTS_DISABLED,
+            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
+            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
+            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
+            \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Relist\Response::
+            INSTRUCTION_TYPE_CHECK_PARTS,
+            \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
+            \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel::
+            INSTRUCTION_TYPE_MAGMI_PLUGIN_PRODUCT_CHANGED,
+            \Ess\M2ePro\Model\Cron\Task\Listing\Product\InspectDirectChanges::INSTRUCTION_TYPE,
+        ];
+    }
+
     protected function getReviseShippingInstructionTypes()
     {
         return [
@@ -314,6 +337,10 @@ abstract class AbstractModel extends CheckerAbstractModel
 
         if ($this->input->hasInstructionWithTypes($this->getReviseCategoriesInstructionTypes())) {
             $propertiesData[] = 'categories';
+        }
+
+        if ($this->input->hasInstructionWithTypes($this->getRevisePartsInstructionTypes())) {
+            $propertiesData[] = 'parts';
         }
 
         if ($this->input->hasInstructionWithTypes($this->getReviseShippingInstructionTypes())) {

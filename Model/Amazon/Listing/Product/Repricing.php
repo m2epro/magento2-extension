@@ -387,7 +387,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         if ($source['mode'] == AccountRepricing::DISABLE_MODE_ATTRIBUTE) {
             return filter_var(
-                $this->getActualMagentoProduct()->getAttributeValue($source['attribute']),
+                $this->getActualMagentoProduct()->getAttributeValue($source['attribute'], false),
                 FILTER_VALIDATE_BOOLEAN
             );
         }

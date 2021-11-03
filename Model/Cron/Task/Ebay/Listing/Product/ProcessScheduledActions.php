@@ -25,6 +25,7 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     const REVISE_DESCRIPTION_PRIORITY = 50;
     const REVISE_IMAGES_PRIORITY      = 50;
     const REVISE_CATEGORIES_PRIORITY  = 50;
+    const REVISE_PARTS_PRIORITY       = 50;
     const REVISE_PAYMENT_PRIORITY     = 50;
     const REVISE_SHIPPING_PRIORITY    = 50;
     const REVISE_RETURN_PRIORITY      = 50;
@@ -160,6 +161,7 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $this->getReviseDescriptionScheduledActionsPreparedCollection()->getSelect(),
             $this->getReviseImagesScheduledActionsPreparedCollection()->getSelect(),
             $this->getReviseCategoriesScheduledActionsPreparedCollection()->getSelect(),
+            $this->getRevisePartsScheduledActionsPreparedCollection()->getSelect(),
             $this->getRevisePaymentScheduledActionsPreparedCollection()->getSelect(),
             $this->getReviseShippingScheduledActionsPreparedCollection()->getSelect(),
             $this->getReviseReturnScheduledActionsPreparedCollection()->getSelect(),
@@ -350,6 +352,25 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
             )
             ->addTagFilter('categories');
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    protected function getRevisePartsScheduledActionsPreparedCollection()
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $collection */
+        $collection = $this->activeRecordFactory
+            ->getObject('Listing_Product_ScheduledAction')->getCollection();
+
+        return $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK)
+            ->getScheduledActionsPreparedCollection(
+                self::REVISE_PARTS_PRIORITY,
+                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+            )
+            ->addTagFilter('parts');
     }
 
     /**

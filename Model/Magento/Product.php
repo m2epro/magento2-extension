@@ -1256,7 +1256,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         return $attribute->getFrontendInput();
     }
 
-    public function getAttributeValue($attributeCode)
+    public function getAttributeValue($attributeCode, $convertBoolean = true)
     {
         $productObject = $this->getProduct();
 
@@ -1315,8 +1315,12 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
             // YES NO
         } elseif ($attribute->getFrontendInput() == 'boolean') {
-            (bool)$value ? $value = $this->helperFactory->getObject('Module\Translation')->__('Yes') :
-                $value = $this->helperFactory->getObject('Module\Translation')->__('No');
+            if ($convertBoolean) {
+                (bool)$value ? $value = $this->helperFactory->getObject('Module\Translation')->__('Yes') :
+                    $value = $this->helperFactory->getObject('Module\Translation')->__('No');
+            } else {
+                (bool)$value ? $value = 'true' : $value = 'false';
+            }
 
             // PRICE
         } elseif ($attribute->getFrontendInput() == 'price') {

@@ -117,8 +117,9 @@ abstract class Account extends Main
 
         try {
             $params = $this->getDataForServer($data);
+            $paramsOld = $this->getDataForServer($oldData);
 
-            if (!$this->isNeedSendDataToServer($params, $oldData)) {
+            if (!$this->isNeedSendDataToServer($params, $paramsOld)) {
                 return $account;
             }
 

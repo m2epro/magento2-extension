@@ -177,7 +177,7 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
 
     //########################################
 
-    public function getAttributeValue($attributeCode)
+    public function getAttributeValue($attributeCode, $convertBoolean = true)
     {
         $args = func_get_args();
         return $this->getMethodData(__FUNCTION__, $args);

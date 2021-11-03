@@ -3976,6 +3976,12 @@ class InstallSchema implements InstallSchemaInterface
                 ['default' => null]
             )
             ->addColumn(
+                'online_parts_data',
+                Table::TYPE_TEXT,
+                32,
+                ['default' => null]
+            )
+            ->addColumn(
                 'online_shipping_data',
                 Table::TYPE_TEXT,
                 40,
@@ -6451,6 +6457,12 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'revise_update_categories',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'revise_update_parts',
                 Table::TYPE_SMALLINT,
                 null,
                 ['unsigned' => true, 'nullable' => false]

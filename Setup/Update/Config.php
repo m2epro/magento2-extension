@@ -187,7 +187,8 @@ class Config extends AbstractConfig
                 'FixedStuckedManualPriceRevise'
             ],
             'y21_m10' => [
-                'UpdateWatermarkImage'
+                'UpdateWatermarkImage',
+                'PartsCompatibilityImprovement'
             ]
         ];
     }

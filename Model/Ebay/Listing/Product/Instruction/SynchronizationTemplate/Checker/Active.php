@@ -161,6 +161,7 @@ class Active extends AbstractModel
             return;
         }
 
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator $configurator */
         $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
         $configurator->disableAll();
 
@@ -256,6 +257,16 @@ class Active extends AbstractModel
             } else {
                 $configurator->disallowCategories();
                 unset($tags['categories']);
+            }
+        }
+
+        if ($this->input->hasInstructionWithTypes($this->getRevisePartsInstructionTypes())) {
+            if ($this->isMeetRevisePartsRequirements()) {
+                $configurator->allowParts();
+                $tags['parts'] = true;
+            } else {
+                $configurator->disallowParts();
+                unset($tags['parts']);
             }
         }
 
@@ -657,6 +668,33 @@ class Active extends AbstractModel
         $actionDataBuilder->setListingProduct($listingProduct);
 
         if ($actionDataBuilder->getBuilderData() == $ebayListingProduct->getOnlineCategoriesData()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    // ---------------------------------------
+
+    public function isMeetRevisePartsRequirements()
+    {
+        $listingProduct = $this->input->getListingProduct();
+
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+        $ebayListingProduct = $listingProduct->getChildObject();
+
+        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
+
+        if (!$ebaySynchronizationTemplate->isReviseUpdateParts()) {
+            return false;
+        }
+
+        $actionDataBuilder = $this->modelFactory->getObject(
+            'Ebay_Listing_Product_Action_DataBuilder_Parts'
+        );
+        $actionDataBuilder->setListingProduct($listingProduct);
+
+        if ($actionDataBuilder->getHash() == $ebayListingProduct->getData('online_parts_data')) {
             return false;
         }
 

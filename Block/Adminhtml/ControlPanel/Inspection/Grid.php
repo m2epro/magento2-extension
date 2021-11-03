@@ -34,9 +34,6 @@ class Grid extends WidgetAbstractGrid
         $this->objectManager = $objectManager;
         $this->setId('controlPanelInspectionsGrid');
 
-        $this->setDefaultSort('state');
-        $this->setDefaultDir('DESC');
-        $this->setDefaultFilter(['state' => self::NOT_SUCCESS_FILTER]);
         $this->setSaveParametersInSession(true);
         $this->setUseAjax(true);
     }
@@ -51,18 +48,16 @@ class Grid extends WidgetAbstractGrid
         foreach ($manager->getInspections() as $inspection) {
             /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection $inspection */
             $row = [
-                'id' => $manager->getId($inspection),
-                'title' => $inspection->getTitle(),
+                'id'          => $manager->getId($inspection),
+                'title'       => $inspection->getTitle(),
                 'description' => $inspection->getDescription(),
-                'execution_speed' => $inspection->getExecutionSpeed(),
-                'state' => (string)$inspection->getState(),
-                'need_attention' => (string)(int)($inspection->getState() > Result::STATE_NOTICE),
-                'inspection' => $inspection
+                'inspection'  => $inspection
             ];
             $collection->addItem(new DataObject($row));
         }
 
         $this->setCollection($collection);
+
         return parent::_prepareCollection();
     }
 
@@ -71,65 +66,62 @@ class Grid extends WidgetAbstractGrid
         $this->addColumn(
             'title',
             [
-                'header' => $this->__('Title'),
-                'align' => 'left',
-                'type' => 'text',
-                'width' => '20%',
-                'index' => 'title',
-                'filter_index' => 'title',
+                'header'                    => $this->__('Title'),
+                'align'                     => 'left',
+                'type'                      => 'text',
+                'width'                     => '20%',
+                'index'                     => 'title',
+                'filter_index'              => 'title',
                 'filter_condition_callback' => [$this, 'callbackFilterLike'],
-                'frame_callback' => [$this, 'callbackColumnTitle']
+                'frame_callback'            => [$this, 'callbackColumnTitle']
             ]
         );
 
         $this->addColumn(
             'details',
             [
-                'header' => $this->__('Details'),
-                'align' => 'left',
-                'type' => 'text',
-                'width' => '40%',
-                'filter_index' => false,
-                'frame_callback' => [$this, 'callbackColumnDetails']
+                'header'           => $this->__('Details'),
+                'align'            => 'left',
+                'type'             => 'text',
+                'width'            => '40%',
+                'column_css_class' => 'details',
+                'filter_index'     => false,
             ]
         );
 
         $this->addColumn(
-            'state',
+            'actions',
             [
-                'header' => $this->__('State'),
-                'align' => 'right',
-                'width' => '10%',
-                'index' => 'state',
-                'type' => 'options',
-                'options' => [
-                    self::NOT_SUCCESS_FILTER => $this->__('Error | Warning'),
-                    Result::STATE_ERROR => $this->__('Error'),
-                    Result::STATE_WARNING => $this->__('Warning'),
-                    Result::STATE_NOTICE => $this->__('Notice'),
-                    Result::STATE_SUCCESS => $this->__('Success'),
+                'header'   => $this->__('Actions'),
+                'align'    => 'left',
+                'width'    => '150px',
+                'type'     => 'action',
+                'index'    => 'actions',
+                'filter'   => false,
+                'sortable' => false,
+                'getter'   => 'getId',
+                'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+                'actions'  => [
+                    'checkAction' => [
+                        'caption' => $this->__('Check'),
+                        'field'   => 'id',
+                        'onclick' => 'ControlPanelInspectionObj.checkAction()',
+                    ]
                 ],
-                'filter_index' => 'state',
-                'filter_condition_callback' => [$this, 'callbackFilterMatch'],
-                'frame_callback' => [$this, 'callbackColumnState']
             ]
         );
 
         $this->addColumn(
-            'execution_speed',
+            'id',
             [
-                'header'       => $this->__('Execution Speed'),
-                'align'        => 'right',
-                'type'         => 'options',
-                'options'      => [
-                    Manager::EXECUTION_SPEED_FAST => $this->__('Fast'),
-                    Manager::EXECUTION_SPEED_SLOW => $this->__('Slow')
-                ],
-                'width'        => '10%',
-                'index'        => 'execution_speed',
-                'filter_index' => 'execution_speed',
-                'filter_condition_callback' => [$this, 'callbackFilterMatch'],
-                'frame_callback' => [$this, 'callbackColumnSpeed']
+                'header'           => $this->__('ID'),
+                'align'            => 'right',
+                'width'            => '100px',
+                'type'             => 'text',
+                'index'            => 'id',
+                'column_css_class' => 'no-display id',
+                'header_css_class' => 'no-display',
+
             ]
         );
 
@@ -203,11 +195,12 @@ HTML;
 HTML;
     }
 
-    public function callbackColumnDetails($value, $row, $column, $isExport)
+    //########################################
+
+    protected function _toHtml()
     {
-        /** @var Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection $inspection */
-        $inspection = $row->getData('inspection');
-        $this->js->addOnReadyJs(<<<JS
+        $this->js->addOnReadyJs(
+            <<<JS
 require([
     'M2ePro/ControlPanel/Inspection'
 ], function(){
@@ -216,60 +209,26 @@ require([
 });
 JS
         );
+        $urls = $this->getHelper('Data')->jsonEncode(
+            [
+                'checkInspection' =>
+                    $this->getUrl(
+                        'm2epro/controlPanel_inspection/checkInspection'
+                    )
+            ]
+        );
 
-        $html = '';
-        foreach ($inspection->getResults() as $result) {
-            $html .= '<div>';
-            $html .= <<<HTML
-{$this->getMarkupByResult($result->getState(), $result->getMessage())}
-HTML;
-            if ($result->getMetadata()) {
-                $html .= <<<HTML
-&nbsp;&nbsp;
-<a href="javascript://" onclick="ControlPanelInspectionObj.showMetaData(this);">[{$this->__('details')}]</a>
-<div class="no-display">{$result->getMetadata()}</div>
-HTML;
-            }
+        $this->js->add(
+            <<<JS
+    require([
+        'M2ePro/M2ePro',
+    ],function() {
+        M2ePro.url.add({$urls});
+        
+    });
+JS
+        );
 
-            $html .= '</div>';
-        }
-
-        return $html;
-    }
-
-    public function callbackColumnState($value, $row, $column, $isExport)
-    {
-        return $this->getMarkupByResult($row->getData($column->getIndex()), $value);
-    }
-
-    public function callbackColumnSpeed($value, $row, $column, $isExport)
-    {
-        /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection $inspection */
-        $inspection = $row->getData('inspection');
-
-        return <<<HTML
-{$value} <span style="color: grey;">[{$inspection->getTimeToExecute()} sec.]</span>
-HTML;
-    }
-
-    //########################################
-
-    protected function getMarkupByResult($result, $text)
-    {
-        switch ($result) {
-            case Result::STATE_ERROR:
-                return "<span style='color: red; font-weight: bold;'>{$text}</span>";
-
-            case Result::STATE_WARNING:
-                return "<span style='color: darkorange; font-weight: bold;'>{$text}</span>";
-
-            case Result::STATE_NOTICE:
-                return "<span style='color: dodgerblue; font-weight: bold;'>{$text}</span>";
-
-            case Result::STATE_SUCCESS:
-                return "<span style='color: green; font-weight: bold;'>{$text}</span>";
-        }
-
-        return $text;
+        return parent::_toHtml();
     }
 }

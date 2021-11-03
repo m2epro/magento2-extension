@@ -25,6 +25,20 @@ class Filter extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function delete()
     {
+        /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors $ebayMotorsHelper */
+        $ebayMotorsHelper = $this->getHelper('Component_Ebay_Motors');
+        $groupsIds = $ebayMotorsHelper->getGroupsAssociatedWithFilter($this->getId());
+
+        foreach ($groupsIds as $groupId) {
+            /** @var \Ess\M2ePro\Model\Ebay\Motor\Group $group */
+            $group = $this->activeRecordFactory->getObject('Ebay_Motor_Group');
+            $group->load($groupId);
+            $group->removeFiltersByIds([$this->getId()]);
+        }
+
+        $associatedProductsIds = $ebayMotorsHelper->getAssociatedProducts($this->getId(), 'FILTER');
+        $ebayMotorsHelper->resetOnlinePartsData($associatedProductsIds);
+
         if (!parent::delete()) {
             return false;
         }

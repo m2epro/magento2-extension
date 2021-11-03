@@ -28,6 +28,12 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function delete()
     {
+        /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors $ebayMotorsHelper */
+        $ebayMotorsHelper = $this->getHelper('Component_Ebay_Motors');
+
+        $associatedProductsIds = $ebayMotorsHelper->getAssociatedProducts($this->getId(), 'GROUP');
+        $ebayMotorsHelper->resetOnlinePartsData($associatedProductsIds);
+
         if (!parent::delete()) {
             return false;
         }
@@ -138,6 +144,88 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
                ->where('group_id IN (?)', $this->getId());
 
         return $connection->fetchCol($select);
+    }
+
+    //########################################
+
+    /**
+     * @param array $itemsIds
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function removeItemsByIds($itemsIds)
+    {
+        if (!$this->getId()) {
+            throw new \Ess\M2ePro\Model\Exception\Logic('Instance must be loaded first.');
+        }
+
+        if (!$this->isModeItem()) {
+            throw new \Ess\M2ePro\Model\Exception\Logic(
+                'Method should be used for item mode only instead of filter mode'
+            );
+        }
+
+        $items = $this->getItems();
+
+        foreach ($itemsIds as $itemId) {
+            unset($items[$itemId]);
+        }
+
+        if (!empty($items)) {
+            $this->setItemsData($this->getHelper('Component_Ebay_Motors')->buildItemsAttributeValue($items));
+            $this->save();
+        } else {
+            $this->delete();
+        }
+
+        /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors $ebayMotorsHelper */
+        $ebayMotorsHelper = $this->getHelper('Component_Ebay_Motors');
+        $associatedProductsIds = $ebayMotorsHelper->getAssociatedProducts($this->getId(), 'GROUP');
+        $ebayMotorsHelper->resetOnlinePartsData($associatedProductsIds);
+    }
+
+    /**
+     * @param array $filtersIds
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function removeFiltersByIds($filtersIds)
+    {
+        if (!$this->getId()) {
+            throw new \Ess\M2ePro\Model\Exception\Logic('Instance must be loaded first.');
+        }
+        $groupId = $this->getId();
+
+        if (!$this->isModeFilter()) {
+            throw new \Ess\M2ePro\Model\Exception\Logic(
+                'Method should be used for filter mode only instead of item mode'
+            );
+        }
+
+        $connWrite = $this->getResource()->getConnection('core/write');
+
+        $filterGroupRelation = $this->getHelper('Module_Database_Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
+
+        $connWrite->delete(
+            $filterGroupRelation,
+            [
+                'filter_id in (?)' => $filtersIds,
+                'group_id = ?' => $groupId,
+            ]
+        );
+
+        /** @var \Ess\M2ePro\Model\Ebay\Motor\Group $model */
+        $model = $this->activeRecordFactory->getObject('Ebay_Motor_Group');
+        $model->load($groupId);
+        $ids = $model->getFiltersIds();
+
+        if (empty($ids)) {
+            $model->delete();
+        }
+
+        /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors $ebayMotorsHelper */
+        $ebayMotorsHelper = $this->getHelper('Component_Ebay_Motors');
+        $associatedProductsIds = $ebayMotorsHelper->getAssociatedProducts($this->getId(), 'GROUP');
+        $ebayMotorsHelper->resetOnlinePartsData($associatedProductsIds);
     }
 
     //########################################

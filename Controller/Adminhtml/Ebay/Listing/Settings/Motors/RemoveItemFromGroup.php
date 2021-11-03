@@ -26,18 +26,7 @@ class RemoveItemFromGroup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         /** @var \Ess\M2ePro\Model\Ebay\Motor\Group $model */
         $model = $this->activeRecordFactory->getObjectLoaded('Ebay_Motor_Group', $groupId);
-        $items = $model->getItems();
-
-        foreach ($itemsIds as $itemId) {
-            unset($items[$itemId]);
-        }
-
-        if (!empty($items)) {
-            $model->setItemsData($this->getHelper('Component_Ebay_Motors')->buildItemsAttributeValue($items));
-            $model->save();
-        } else {
-            $model->delete();
-        }
+        $model->removeItemsByIds($itemsIds);
 
         $this->setAjaxContent(0, false);
 

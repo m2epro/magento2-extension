@@ -625,10 +625,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $countOfFilters = count($motorsData['filters']);
         $countOfGroups = count($motorsData['groups']);
 
-        $showAll = false;
-
         if ($countOfItems + $countOfFilters + $countOfGroups === 0) {
-            $showAll = true;
+            return $this->__('N/A');
         }
 
         if ($this->getHelper('Component_Ebay_Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
@@ -641,64 +639,37 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $labelFilters = $this->__('Filters');
         $labelGroups = $this->__('Groups');
 
-        if ($showAll || $countOfItems > 0) {
+        if ($countOfItems > 0) {
             $html .= <<<HTML
 <span style="text-decoration: underline;">{$motorsTypeTitle}</span>:&nbsp;
-HTML;
-
-            if ($countOfItems > 0) {
-                $html .= <<<HTML
 <a href="javascript:void(0);"
     onclick="EbayListingViewSettingsMotorsObj.openViewItemPopup(
         {$row->getData('id')},
         EbayListingViewSettingsGridObj
     );">{$countOfItems}</a><br/>
 HTML;
-            } else {
-                $html .= <<<HTML
-    <span>0</span><br/>
-HTML;
-            }
         }
 
-        if ($showAll || $countOfFilters > 0) {
+        if ($countOfFilters > 0) {
             $html .= <<<HTML
 <span style="text-decoration: underline;">{$labelFilters}</span>:&nbsp;
-HTML;
-
-            if ($countOfFilters) {
-                $html .= <<<HTML
 <a href="javascript:void(0);"
     onclick="EbayListingViewSettingsMotorsObj.openViewFilterPopup(
         {$row->getData('id')},
         EbayListingViewSettingsGridObj
     );">{$countOfFilters}</a><br/>
 HTML;
-            } else {
-                $html .= <<<HTML
-    <span>0</span><br/>
-HTML;
-            }
         }
 
-        if ($showAll || $countOfGroups > 0) {
+        if ($countOfGroups > 0) {
             $html .= <<<HTML
 <span style="text-decoration: underline;">{$labelGroups}</span>:&nbsp;
-HTML;
-
-            if ($countOfGroups) {
-                $html .= <<<HTML
 <a href="javascript:void(0);"
     onclick="EbayListingViewSettingsMotorsObj.openViewGroupPopup(
         {$row->getData('id')},
         EbayListingViewSettingsGridObj
     );">{$countOfGroups}</a>
 HTML;
-            } else {
-                $html .= <<<HTML
-    <span>0</span><br/>
-HTML;
-            }
         }
 
         $html .= '</div>';

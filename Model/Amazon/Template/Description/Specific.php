@@ -25,6 +25,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     const TYPE_INT      = 'int';
     const TYPE_FLOAT    = 'float';
     const TYPE_DATETIME = 'date_time';
+    const TYPE_BOOLEAN  = 'boolean';
 
     /**
      * @var \Ess\M2ePro\Model\Template\Description
@@ -116,7 +117,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getAmazonDescriptionTemplate()
     {
-        $this->getDescriptionTemplate()->getChildObject();
+        return $this->getDescriptionTemplate()->getChildObject();
     }
 
     //########################################
@@ -243,6 +244,21 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function isTypeDateTime()
     {
         return $this->getType() == self::TYPE_DATETIME;
+    }
+
+    public function isTypeBoolean()
+    {
+        $value = $this->getData($this->getMode());
+
+        if ($this->getType() == self::TYPE_BOOLEAN || is_bool($value)) {
+            return true;
+        }
+
+        if (is_string($value) && in_array($value, ['true', 'false'], true)) {
+            return true;
+        }
+
+        return false;
     }
 
     //########################################
