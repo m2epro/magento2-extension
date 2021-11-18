@@ -186,6 +186,10 @@ class Shipping extends AbstractModel
             $data['rate_table_id'] = $this->getShippingTemplate()->getLocalShippingRateTableId($this->getAccount());
         }
 
+        if ($this->getEbayAccount()->isRateTablesExist()) {
+            $data['account_moved_to_rate_table_id'] = 1;
+        }
+
         if ($this->getShippingTemplate()->isLocalShippingCalculatedEnabled()) {
             $data['handing_cost'] = $this->getCalculatedShippingTemplate()->getLocalHandlingCost();
         }
@@ -285,6 +289,10 @@ class Shipping extends AbstractModel
 
         if ($this->getShippingTemplate()->isInternationalShippingCalculatedEnabled()) {
             $data['handing_cost'] = $this->getCalculatedShippingTemplate()->getInternationalHandlingCost();
+        }
+
+        if ($this->getEbayAccount()->isRateTablesExist()) {
+            $data['account_moved_to_rate_table_id'] = 1;
         }
 
         $data['methods'] = $this->getInternationalServices();

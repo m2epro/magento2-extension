@@ -238,6 +238,10 @@ HTML;
     {
         /**@var \Ess\M2ePro\Model\Order\Item $row */
 
+        if (!$row->isMagentoProductExists()) {
+            return '<span style="color: red;">'.$this->__('Product Not Found').'</span>';
+        }
+
         if ($row->getMagentoProduct() === null) {
             return $this->__('N/A');
         }

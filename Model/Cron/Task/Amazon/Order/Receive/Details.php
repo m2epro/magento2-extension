@@ -16,7 +16,7 @@ class Details extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     const NICK = 'amazon/order/receive/details';
 
     /** @var int $interval (in seconds) */
-    protected $interval = 7200;
+    protected $interval = 86400;
 
     //####################################
 

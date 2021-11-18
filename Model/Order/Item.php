@@ -166,6 +166,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
             return null;
         }
 
+        if (!$this->isMagentoProductExists()) {
+            return null;
+        }
+
         return $this->getMagentoProduct()->getProduct();
     }
 
@@ -494,6 +498,21 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
     public function getAdditionalData()
     {
         return $this->getSettings('additional_data');
+    }
+
+    //########################################
+
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMagentoProductExists()
+    {
+        /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
+        $magentoProduct = $this->modelFactory->getObject('Magento\Product');
+        $magentoProduct->setProductId($this->getProductId());
+
+        return $magentoProduct->exists();
     }
 
     //########################################

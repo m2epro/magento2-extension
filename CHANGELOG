@@ -1,4 +1,11 @@
-* 1.15.0 (03/11/2021) 
+* 1.15.1 (18/11/2021) 
+
+Common: [Fixed] Log "Magento Product does not exist" keeps appearing for old Channel orders [#2591]
+eBay: [Fixed] Warning "A shipping rate table ID is already applied to the listing" when trying to revise Products that have Shipping Rate Tables disabled [#2987]
+eBay: [Fixed] Internal Server Error(s) [Please specify item_id for revise] due to eBay item ID equal to 0 in the Listing grid [#3017]
+Amazon: [Improved] Throttling limits of the command _GET_AMAZON_FULFILLED_SHIPMENTS_DATA_ [#3055]
+
+* 1.15.0 (02/11/2021)
 
 eBay: [Improved] Optimization of the eBay Parts Compatibility data storage and processing [#1203]
 eBay: [Fixed] Internal Server Error(s) [The access Token cannot be retrieved. Please repeat the action again.] when trying to save the eBay account configurations [#1208]

@@ -15,8 +15,8 @@ class InvoiceDataReport extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'amazon/order/receive/invoice_data_report';
 
-    /** @var int $_interval (in seconds) */
-    protected $_interval = 3600;
+    /** @var int $interval (in seconds) */
+    protected $interval = 3600;
 
     //####################################
 

@@ -1124,6 +1124,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $this->setData('rate_tables', $this->getHelper('Data')->jsonEncode($responseData))->save();
     }
 
+    public function isRateTablesExist()
+    {
+        return !empty($this->getRateTables());
+    }
+
     //########################################
 
     public function isPickupStoreEnabled()
