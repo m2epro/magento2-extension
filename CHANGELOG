@@ -1,4 +1,8 @@
-* 1.15.1 (18/11/2021) 
+* 1.16.0 (23/11/2021) 
+
+eBay: [Improved] Use ReviseInventoryStatus call to update products' QTY and Price [#2875]
+
+* 1.15.1 (18/11/2021)
 
 Common: [Fixed] Log "Magento Product does not exist" keeps appearing for old Channel orders [#2591]
 eBay: [Fixed] Warning "A shipping rate table ID is already applied to the listing" when trying to revise Products that have Shipping Rate Tables disabled [#2987]

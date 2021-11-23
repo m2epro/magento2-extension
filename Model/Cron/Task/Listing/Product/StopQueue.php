@@ -176,7 +176,7 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             ];
 
             $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
-            $connector = $dispatcher->getVirtualConnector('item', 'update', 'revise', $requestData);
+            $connector = $dispatcher->getVirtualConnector('item', 'update', 'reviseManager', $requestData);
             $dispatcher->process($connector);
         }
     }

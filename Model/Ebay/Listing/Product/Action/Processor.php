@@ -526,7 +526,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 return ['item', 'update', 'relist'];
 
             case Processing::TYPE_REVISE:
-                return ['item', 'update', 'revise'];
+                return ['item', 'update', 'reviseManager'];
 
             case Processing::TYPE_STOP:
                 return ['item', 'update', 'end'];
@@ -543,7 +543,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             case ['item', 'update', 'relist']:
                 return 3;
 
-            case ['item', 'update', 'revise']:
+            case ['item', 'update', 'reviseManager']:
                 return 4;
 
             case ['item', 'update', 'end']:
