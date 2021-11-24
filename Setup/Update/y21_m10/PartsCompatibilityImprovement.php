@@ -82,6 +82,11 @@ class PartsCompatibilityImprovement extends AbstractFeature
             $listingsInfo[$marketplaceId][$partsCompatibilityMode][] = $row['id'];
         }
 
+        $isRowIdColumnExists = $this->getConnection()->tableColumnExists(
+            $this->installer->getTable('catalog_product_entity_text'),
+            'row_id'
+        );
+        $entityIdColumnName = $isRowIdColumnExists ? 'row_id' : 'entity_id';
         foreach ($listingsInfo as $marketplaceId => $marketplaceInfo) {
             foreach ($marketplaceInfo as $partsCompatibilityMode => $listingsIds) {
                 $attributeConfigKey = $this->getPartsCompatibilityAttributeConfigKey(
@@ -111,9 +116,10 @@ UPDATE `{$this->getFullTableName('ebay_listing_product')}` AS `main`
         ON ea.attribute_code = '$attributeCode'
     LEFT JOIN `{$this->installer->getTable('catalog_product_entity_text')}` AS `cpev_default`
         ON cpev_default.attribute_id = ea.attribute_id
-            AND cpev_default.entity_id=lp.product_id AND cpev_default.store_id = 0
+            AND cpev_default.{$entityIdColumnName}=lp.product_id AND cpev_default.store_id = 0
     LEFT JOIN `{$this->installer->getTable('catalog_product_entity_text')}` AS `cpev`
-        ON cpev.attribute_id = ea.attribute_id AND cpev.entity_id=lp.product_id AND cpev.store_id = l.store_id
+        ON cpev.attribute_id = ea.attribute_id AND cpev.{$entityIdColumnName}=lp.product_id
+            AND cpev.store_id = l.store_id
 SET main.online_parts_data = MD5(IFNULL(cpev.value, cpev_default.value))
 WHERE IFNULL(cpev.value, cpev_default.value) IS NOT NULL;
 SQL

@@ -1,4 +1,8 @@
-* 1.16.0 (23/11/2021) 
+* 1.16.1 (24/11/2021) 
+
+eBay: [Fixed] Error "Unknown column 'cpev_default.entity_id'" during M2E Pro upgrade on Magento Cloud [#3089]
+
+* 1.16.0 (23/11/2021)
 
 eBay: [Improved] Use ReviseInventoryStatus call to update products' QTY and Price [#2875]
 
