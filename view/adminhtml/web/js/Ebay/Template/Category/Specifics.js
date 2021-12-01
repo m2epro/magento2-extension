@@ -243,6 +243,9 @@ define([
             var tbody = $('specific_custom_table_body');
 
             var newRow = Element.clone(tbody.childElements()[0], true);
+
+            newRow.down('button.remove_custom_specific_button').addEventListener('click', this.removeCustomSpecific.bind(this));
+
             newRow.show();
             newRow.select('[id*=specific_custom_]').each(function(el){
 
@@ -268,10 +271,17 @@ define([
         removeCustomSpecific: function(button)
         {
             var tbody = $('specific_custom_table_body');
-            var removingRow = $(button).up('tr');
+            var targetNode;
+
+            if (button.nodeType === Node.ELEMENT_NODE) {
+                targetNode = button;
+            } else {
+                targetNode = button.target;
+            }
+
+            var removingRow = $(targetNode).up('tr');
 
             if (tbody.childElements().length > 1) {
-
                 removingRow.remove();
                 this.checkSpecificsCounter();
                 return;

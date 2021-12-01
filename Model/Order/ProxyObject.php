@@ -304,14 +304,18 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
             $rawAddressData = $this->order->getShippingAddress()->getRawData();
 
             $recipientNameParts = $this->getNameParts($rawAddressData['recipient_name']);
-            $this->addressData['firstname']  = $recipientNameParts['firstname'];
-            $this->addressData['lastname']   = $recipientNameParts['lastname'];
+            $this->addressData['prefix'] = $recipientNameParts['prefix'];
+            $this->addressData['firstname'] = $recipientNameParts['firstname'];
             $this->addressData['middlename'] = $recipientNameParts['middlename'];
+            $this->addressData['lastname'] = $recipientNameParts['lastname'];
+            $this->addressData['suffix'] = $recipientNameParts['suffix'];
 
             $customerNameParts = $this->getNameParts($rawAddressData['buyer_name']);
-            $this->addressData['customer_firstname']  = $customerNameParts['firstname'];
-            $this->addressData['customer_lastname']   = $customerNameParts['lastname'];
+            $this->addressData['customer_prefix'] = $customerNameParts['prefix'];
+            $this->addressData['customer_firstname'] = $customerNameParts['firstname'];
             $this->addressData['customer_middlename'] = $customerNameParts['middlename'];
+            $this->addressData['customer_lastname'] = $customerNameParts['lastname'];
+            $this->addressData['customer_suffix'] = $customerNameParts['suffix'];
 
             $this->addressData['email'] = $rawAddressData['email'];
             $this->addressData['country_id'] = $rawAddressData['country_id'];
@@ -346,32 +350,50 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
+    /**
+     * @param $fullName
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception
+     */
     protected function getNameParts($fullName)
     {
         $fullName = trim($fullName);
+        $parts = explode(' ', $fullName);
 
-        $parts      = explode(' ', $fullName);
-        $partsCount = count($parts);
+        $currentInfo = [
+            'prefix'     => null,
+            'middlename' => null,
+            'suffix'     => null
+        ];
 
-        $firstName  = '';
-        $middleName = '';
-        $lastName   = '';
-
-        if ($partsCount > 1) {
-            $firstName = array_shift($parts);
-            $lastName  = array_pop($parts);
-            if (!empty($parts)) {
-                $middleName = implode(' ', $parts);
+        if (count($parts) > 2) {
+            $prefixOptions = $this->options->getNamePrefixOptions($this->getStore());
+            if (isset($prefixOptions[$parts[0]])) {
+                $currentInfo['prefix'] = array_shift($parts);
             }
-        } else {
-            $firstName = $fullName;
         }
 
-        return [
-            'firstname'  => $firstName ? $firstName : 'N/A',
-            'middlename' => $middleName ? trim($middleName) : '',
-            'lastname'   => $lastName ? $lastName : 'N/A'
-        ];
+        $partsCount = count($parts);
+        if ($partsCount > 2) {
+            $suffixOptions = $this->options->getNameSuffixOptions($this->getStore());
+            if (isset($suffixOptions[$parts[$partsCount - 1]])) {
+                $currentInfo['suffix'] = array_pop($parts);
+            }
+        }
+
+        if (count($parts) >= 2) {
+            $currentInfo['firstname'] = array_shift($parts);
+            $currentInfo['lastname'] = array_pop($parts);
+            if (!empty($parts)) {
+                $currentInfo['middlename'] = implode(' ', $parts);
+            }
+        } else {
+            throw new \Ess\M2ePro\Model\Exception(
+                "Full name must consist of at least firstname and lastname. Name `$fullName` is incorrect."
+            );
+        }
+
+        return $currentInfo;
     }
 
     //########################################

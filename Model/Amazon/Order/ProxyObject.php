@@ -70,16 +70,18 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         $customerNameParts = $this->getNameParts($this->order->getBuyerName());
 
         return [
-            'firstname' => $customerNameParts['firstname'],
+            'prefix'     => $customerNameParts['prefix'],
+            'firstname'  => $customerNameParts['firstname'],
             'middlename' => $customerNameParts['middlename'],
-            'lastname' => $customerNameParts['lastname'],
+            'lastname'   => $customerNameParts['lastname'],
+            'suffix'     => $customerNameParts['suffix'],
             'country_id' => '',
-            'region' => '',
-            'region_id' => '',
-            'city' => 'Amazon does not supply the complete billing Buyer information.',
-            'postcode' => '',
-            'street' => '',
-            'company' => ''
+            'region'     => '',
+            'region_id'  => '',
+            'city'       => 'Amazon does not supply the complete billing Buyer information.',
+            'postcode'   => '',
+            'street'     => '',
+            'company'    => ''
         ];
     }
 

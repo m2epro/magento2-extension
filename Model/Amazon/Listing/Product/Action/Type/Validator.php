@@ -106,42 +106,6 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     /**
-     * @return \Ess\M2ePro\Model\Marketplace
-     */
-    protected function getMarketplace()
-    {
-        $this->getAmazonAccount()->getMarketplace();
-    }
-
-    /**
-     * @return \Ess\M2ePro\Model\Amazon\Marketplace
-     */
-    protected function getAmazonMarketplace()
-    {
-        return $this->getMarketplace()->getChildObject();
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return \Ess\M2ePro\Model\Account
-     */
-    protected function getAccount()
-    {
-        return $this->getListing()->getAccount();
-    }
-
-    /**
-     * @return \Ess\M2ePro\Model\Amazon\Account
-     */
-    protected function getAmazonAccount()
-    {
-        return $this->getAccount()->getChildObject();
-    }
-
-    // ---------------------------------------
-
-    /**
      * @return \Ess\M2ePro\Model\Listing
      */
     protected function getListing()
@@ -245,6 +209,17 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $qty = $this->getQty();
+        $clearQty = $this->getClearQty();
+
+        if ($clearQty > 0 && $qty <= 0) {
+            $message = 'You’re submitting an item with QTY contradicting the QTY settings in your Selling Policy. 
+            Please check Minimum Quantity to Be Listed and Quantity Percentage options.';
+
+            $this->addMessage($message);
+
+            return false;
+        }
+
         if ($qty <= 0) {
             if (isset($this->params['status_changer']) &&
                 $this->params['status_changer'] == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER) {
@@ -272,6 +247,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->setData('qty', $qty);
+        $this->setData('clear_qty', $clearQty);
 
         return true;
     }
@@ -436,6 +412,15 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $this->getAmazonListingProduct()->getQty();
+    }
+
+    protected function getClearQty()
+    {
+        if (isset($this->getData()['clear_qty'])) {
+            return $this->getData('clear_qty');
+        }
+
+        return $this->getAmazonListingProduct()->getQty(true);
     }
 
     //########################################

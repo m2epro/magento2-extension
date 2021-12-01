@@ -811,7 +811,8 @@ HTML
                 'value' => $defaultValue,
                 'class' => 'select',
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__('Specify the relevant keywords that buyer would use to find your Item.')
+                'tooltip' => $this->__('Specify the relevant keywords that buyers would use to find your Item.<br>
+                    Either enter the value manually or use the value from a selected Magento Attribute.')
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select,textarea');
 
@@ -848,7 +849,12 @@ HTML
                     ['value' => Description::ATTRIBUTES_MODE_CUSTOM, 'label' => $this->__('Custom Value')],
                 ],
                 'value' => $this->formData['attributes_mode'],
-                'tooltip' => $this->__('Specify up to 5 additional features that describe your Item.')
+                'tooltip' => $this->__('Specify up to 5 additional features that describe your Item.<br>
+                    To add Attributes, you can either:<br>
+                    - Enter both the name and the value manually<br>
+                    - Enter the name manually, then select a Magento Attribute with the relevant value and 
+                        click <strong>Insert</strong>.
+                    ')
             ]
         );
 
@@ -1228,7 +1234,8 @@ JS
                     'css_class' => $name . '_tr no-margin-bottom',
                     'field_extra_attributes' => 'style="display: none;"',
                     'after_element_html' =>$selectAttrBlock->toHtml() . $button->toHtml(),
-                    'tooltip' => $this->__('Max. 50 characters.')
+                    'tooltip' => $this->__('Either enter the value manually or select a Magento Attribute with the 
+                        relevant value and click <strong>Insert</strong>. Max. 50 characters allowed.')
                 ]
             );
         }

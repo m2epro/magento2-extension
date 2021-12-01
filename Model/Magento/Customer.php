@@ -76,9 +76,11 @@ class Customer extends AbstractModel
          * Customers -> Customer Configuration -> Create new account options -> Automatic Assignment to Customer Group
          */
         $customerData = $this->customerDataFactory->create()
+            ->setPrefix($this->getData('customer_prefix'))
             ->setFirstname($this->getData('customer_firstname'))
             ->setMiddlename($this->getData('customer_middlename'))
             ->setLastname($this->getData('customer_lastname'))
+            ->setSuffix($this->getData('customer_suffix'))
             ->setWebsiteId($this->getData('website_id'))
             ->setGroupId($this->getData('group_id'))
             ->setEmail($this->getData('email'))
@@ -127,9 +129,11 @@ class Customer extends AbstractModel
         }
 
         $addressData = $this->addressDataFactory->create()
+            ->setPrefix($this->getData('prefix'))
             ->setFirstname($this->getData('firstname'))
             ->setMiddlename($this->getData('middlename'))
             ->setLastname($this->getData('lastname'))
+            ->setSuffix($this->getData('suffix'))
             ->setCountryId($this->getData('country_id'))
             ->setCity($this->getData('city'))
             ->setPostcode($this->getData('postcode'))

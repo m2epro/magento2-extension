@@ -189,6 +189,9 @@ class Config extends AbstractConfig
             'y21_m10' => [
                 'UpdateWatermarkImage',
                 'PartsCompatibilityImprovement'
+            ],
+            'y21_m11' => [
+                'EbayAddVatMode',
             ]
         ];
     }

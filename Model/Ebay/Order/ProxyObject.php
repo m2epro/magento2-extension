@@ -174,14 +174,18 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         $addressData = [];
 
         $recipientNameParts = $this->getNameParts($rawAddressData['recipient_name']);
+        $addressData['prefix'] = $recipientNameParts['prefix'];
         $addressData['firstname'] = $recipientNameParts['firstname'];
-        $addressData['lastname'] = $recipientNameParts['lastname'];
         $addressData['middlename'] = $recipientNameParts['middlename'];
+        $addressData['lastname'] = $recipientNameParts['lastname'];
+        $addressData['suffix'] = $recipientNameParts['suffix'];
 
         $customerNameParts = $this->getNameParts($rawAddressData['buyer_name']);
+        $addressData['customer_prefix'] = $customerNameParts['prefix'];
         $addressData['customer_firstname'] = $customerNameParts['firstname'];
-        $addressData['customer_lastname'] = $customerNameParts['lastname'];
         $addressData['customer_middlename'] = $customerNameParts['middlename'];
+        $addressData['customer_lastname'] = $customerNameParts['lastname'];
+        $addressData['customer_suffix'] = $customerNameParts['suffix'];
 
         $addressData['email'] = $rawAddressData['email'];
         $addressData['country_id'] = $rawAddressData['country_id'];
@@ -248,9 +252,11 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         $customerNameParts = $this->getNameParts($this->order->getBuyerName());
 
         return [
+            'prefix'     => $customerNameParts['prefix'],
             'firstname'  => $customerNameParts['firstname'],
             'middlename' => $customerNameParts['middlename'],
             'lastname'   => $customerNameParts['lastname'],
+            'suffix'     => $customerNameParts['suffix'],
             'country_id' => '',
             'region'     => '',
             'region_id'  => '',

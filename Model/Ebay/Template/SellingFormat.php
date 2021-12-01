@@ -31,6 +31,9 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
     const QTY_MODIFICATION_MODE_OFF = 0;
     const QTY_MODIFICATION_MODE_ON = 1;
 
+    const VAT_MODE_NO = 0;
+    const VAT_MODE_YES = 1;
+
     const QTY_MIN_POSTED_DEFAULT_VALUE = 1;
     const QTY_MAX_POSTED_DEFAULT_VALUE = 100;
 
@@ -482,6 +485,14 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
     }
 
     //----------------------------------------
+
+    /**
+     * @return int
+     */
+    public function getVatMode()
+    {
+        return (int)$this->getData('vat_mode');
+    }
 
     /**
      * @return float

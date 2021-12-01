@@ -18,6 +18,42 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product;
  */
 class QtyCalculator extends \Ess\M2ePro\Model\Listing\Product\QtyCalculator
 {
+    /**
+     * @var bool
+     */
+    private $isMagentoMode = false;
+
+    //########################################
+
+    /**
+     * @param $value
+     * @return $this
+     */
+    public function setIsMagentoMode($value)
+    {
+        $this->isMagentoMode = (bool)$value;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function getIsMagentoMode()
+    {
+        return $this->isMagentoMode;
+    }
+
+    //########################################
+
+    public function getProductValue()
+    {
+        if ($this->getIsMagentoMode()) {
+            return (int)$this->getMagentoProduct()->getQty(true);
+        }
+
+        return parent::getProductValue();
+    }
+
     //########################################
 
     public function getVariationValue(\Ess\M2ePro\Model\Listing\Product\Variation $variation)
@@ -38,14 +74,30 @@ class QtyCalculator extends \Ess\M2ePro\Model\Listing\Product\QtyCalculator
             return 0;
         }
 
-        if ($this->getSource('mode') == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT) {
+        if ($this->getIsMagentoMode() ||
+            $this->getSource('mode') == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT) {
             if (!$this->getMagentoProduct()->isStatusEnabled() ||
                 !$this->getMagentoProduct()->isStockAvailability()) {
                 return 0;
             }
         }
 
+        if ($this->getIsMagentoMode()) {
+            return (int)$option->getMagentoProduct()->getQty(true);
+        }
+
         return parent::getOptionBaseValue($option);
+    }
+
+    //########################################
+
+    protected function applySellingFormatTemplateModifications($value)
+    {
+        if ($this->getIsMagentoMode()) {
+            return $value;
+        }
+
+        return parent::applySellingFormatTemplateModifications($value);
     }
 
     //########################################

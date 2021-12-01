@@ -1150,10 +1150,11 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     //########################################
 
     /**
-     * @return int
+     * @param false $magentoMode
+     * @return int|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getQty()
+    public function getQty($magentoMode = false)
     {
         if ($this->isListingTypeAuction()) {
             return 1;
@@ -1164,7 +1165,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
             foreach ($this->getVariations(true) as $variation) {
                 /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
-                $qty += $variation->getChildObject()->getQty();
+                $qty += $variation->getChildObject()->getQty($magentoMode);
             }
 
             return $qty;
@@ -1173,6 +1174,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         /** @var $calculator \Ess\M2ePro\Model\Ebay\Listing\Product\QtyCalculator */
         $calculator = $this->modelFactory->getObject('Ebay_Listing_Product_QtyCalculator');
         $calculator->setProduct($this->getParentObject());
+        $calculator->setIsMagentoMode($magentoMode);
 
         return $calculator->getProductValue();
     }

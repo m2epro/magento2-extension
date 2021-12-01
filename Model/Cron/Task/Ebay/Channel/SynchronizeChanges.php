@@ -37,8 +37,8 @@ class SynchronizeChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function performActions()
     {
-        $this->processItemsChanges();
         $this->processOrdersChanges();
+        $this->processItemsChanges();
     }
 
     //########################################

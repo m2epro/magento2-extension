@@ -757,6 +757,106 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         return $resultPromotions;
     }
 
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getValidPromotions()
+    {
+        $promotionsData = $this->getValidPromotionsData();
+
+        return $promotionsData['promotions'];
+    }
+
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getPromotionsErrorMessages()
+    {
+        $promotionsData = $this->getValidPromotionsData();
+
+        return $promotionsData['messages'];
+    }
+
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function getValidPromotionsData()
+    {
+        $translationHelper = $this->helperFactory->getObject('Module\Translation');
+        $requiredAttributesMap = [
+            'start_date'       => $translationHelper->__('Start Date'),
+            'end_date'         => $translationHelper->__('End Date'),
+            'price'            => $translationHelper->__('Promotion Price'),
+            'comparison_price' => $translationHelper->__('Comparison Price'),
+        ];
+
+        $messages = [];
+        $promotions = $this->getPromotions();
+
+        foreach ($promotions as $promotionIndex => $promotionRow) {
+            $isValidPromotion = true;
+
+            foreach ($requiredAttributesMap as $requiredAttributeKey => $requiredAttributeTitle) {
+                if (empty($promotionRow[$requiredAttributeKey])) {
+                    $message = <<<HTML
+Invalid Promotion #%s. The Promotion Price has no defined value.
+ Please adjust Magento Attribute "%s" value set for the Promotion Price in your Selling Policy.
+HTML;
+                    $messages[] = sprintf($message, $promotionIndex + 1, $requiredAttributeTitle);
+                    $isValidPromotion = false;
+                }
+            }
+
+            if (!strtotime($promotionRow['start_date'])) {
+                $message = <<<HTML
+Invalid Promotion #%s. The Start Date has incorrect format.
+ Please adjust Magento Attribute value set for the Promotion Start Date in your Selling Policy.
+HTML;
+                $messages[] = sprintf($message, $promotionIndex + 1);
+                $isValidPromotion = false;
+            }
+
+            if (!strtotime($promotionRow['end_date'])) {
+                $message = <<<HTML
+Invalid Promotion #%s. The End Date has incorrect format.
+ Please adjust Magento Attribute value set for the Promotion End Date in your Selling Policy.
+HTML;
+                $messages[] = sprintf($message, $promotionIndex + 1);
+                $isValidPromotion = false;
+            }
+
+            if (strtotime($promotionRow['end_date']) < strtotime($promotionRow['start_date'])) {
+                $message = <<<HTML
+Invalid Promotion #%s. The Start and End Date range is incorrect.
+ Please adjust the Promotion Dates set in your Selling Policy.
+HTML;
+                $messages[] = sprintf($message, $promotionIndex + 1);
+                $isValidPromotion = false;
+            }
+
+            if ($promotionRow['comparison_price'] <= $promotionRow['price']) {
+                $message = <<<HTML
+Invalid Promotion #%s. Comparison Price must be greater than Promotion Price.
+ Please adjust the Price settings for the given Promotion in your Selling Policy.
+HTML;
+                $messages[] = sprintf($message, $promotionIndex + 1);
+                $isValidPromotion = false;
+            }
+
+            if (!$isValidPromotion) {
+                unset($promotions[$promotionIndex]);
+            }
+        }
+
+        return ['messages' => $messages, 'promotions' => $promotions];
+    }
+
     //########################################
 
     public function mapChannelItemProduct()

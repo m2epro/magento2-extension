@@ -21,9 +21,11 @@ class ShippingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
      */
     public function getRawData()
     {
+        $buyerName = $this->order->getChildObject()->getBuyerName();
+        $recipientName = $this->getData('recipient_name');
         return [
-            'buyer_name'     => $this->order->getChildObject()->getBuyerName(),
-            'recipient_name' => $this->getData('recipient_name'),
+            'buyer_name'     => $buyerName,
+            'recipient_name' => $recipientName ? $recipientName : $buyerName,
             'email'          => $this->getBuyerEmail(),
             'country_id'     => $this->getData('country_code'),
             'region'         => $this->getData('state'),

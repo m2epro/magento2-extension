@@ -23,7 +23,7 @@ class Promotions extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBu
         $data = [];
 
         if (!isset($this->cachedData['promotions'])) {
-            $this->cachedData['promotions'] = $this->getWalmartListingProduct()->getPromotions();
+            $this->cachedData['promotions'] = $this->getWalmartListingProduct()->getValidPromotions();
         }
 
         $data['promotion_prices'] = $this->cachedData['promotions'];

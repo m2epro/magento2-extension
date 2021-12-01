@@ -5768,6 +5768,12 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
+                'vat_mode',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
                 'vat_percent',
                 Table::TYPE_FLOAT,
                 null,

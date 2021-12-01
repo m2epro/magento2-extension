@@ -1,4 +1,20 @@
-* 1.16.1 (24/11/2021) 
+* 1.17.0 (01/12/2021) 
+
+Common: [Added] Compatibility with prefixes and suffixes of customer names in Magento [#2443]
+Common: [Improved] Error log appears if the Product was not listed due to the contradicting Quantity settings in Selling Policy [#1091]
+eBay: [Fixed] Additional Specifics are not deleted after clicking the Remove button on the Edit Category tab [#2629]
+eBay: [Fixed] Message is not displayed once the Category has been saved [#1247]
+eBay: [Fixed] Product is relisted too fast prior to the order's import to M2E Pro [#2419]
+eBay: [Improved] VAT Rate settings in Selling Policy [#1205]
+Amazon: [Fixed] Changes are not saved in the "Condition Note Value" field when editing Selling Settings [#1243]
+Amazon: [Fixed] Internal Server Error when trying to save Selling Settings [#3038]
+Amazon: [Fixed] Repricing Tool tab is displayed in Account settings for the unsupported Marketplaces [#1152]
+Walmart: [Fixed] Endless revise of Product Details [#3013]
+Walmart: [Improved] Additional Attributes hints in Description Policy [#2472]
+Walmart: [Improved] Text of the successful Revise Promotion log [#3045]
+Walmart: [Improved] Revise/Relist actions are not skipped despite invalid Promotions in Selling Policy [#2957]
+
+* 1.16.1 (24/11/2021)
 
 eBay: [Fixed] Error "Unknown column 'cpev_default.entity_id'" during M2E Pro upgrade on Magento Cloud [#3089]
 

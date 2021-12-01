@@ -486,11 +486,13 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
     /**
      * @return int
      */
-    public function getQty()
+    public function getQty($magentoMode = false)
     {
         /** @var $calculator \Ess\M2ePro\Model\Ebay\Listing\Product\QtyCalculator */
         $calculator = $this->modelFactory->getObject('Ebay_Listing_Product_QtyCalculator');
         $calculator->setProduct($this->getListingProduct());
+        $calculator->setIsMagentoMode($magentoMode);
+
         return $calculator->getVariationValue($this->getParentObject());
     }
 

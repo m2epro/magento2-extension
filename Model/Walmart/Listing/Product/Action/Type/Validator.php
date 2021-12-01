@@ -324,6 +324,17 @@ HTML;
         }
 
         $qty = $this->getQty();
+        $clearQty = $this->getClearQty();
+
+        if ($clearQty > 0 && $qty <= 0) {
+            $message = 'You’re submitting an item with QTY contradicting the QTY settings in your Selling Policy. 
+            Please check Minimum Quantity to Be Listed and Quantity Percentage options.';
+
+            $this->addMessage($message);
+
+            return false;
+        }
+
         if ($qty <= 0) {
             if (isset($this->params['status_changer']) &&
                 $this->params['status_changer'] == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER) {
@@ -351,6 +362,7 @@ HTML;
         }
 
         $this->data['qty'] = $qty;
+        $this->data['clear_qty'] = $clearQty;
 
         return true;
     }
@@ -501,13 +513,22 @@ HTML;
         return $this->getWalmartListingProduct()->getQty();
     }
 
-    protected function getPromotions()
+    protected function getClearQty()
     {
-        if (isset($this->data['promotions'])) {
-            return $this->data['promotions'];
+        if (isset($this->data['clear_qty'])) {
+            return $this->data['clear_qty'];
         }
 
-        return $this->getWalmartListingProduct()->getPromotions();
+        return $this->getWalmartListingProduct()->getQty(true);
+    }
+
+    protected function getPromotionsMessages()
+    {
+        if (isset($this->data['promotions_messages'])) {
+            return $this->data['promotions_messages'];
+        }
+
+        return $this->getWalmartListingProduct()->getPromotionsErrorMessages();
     }
 
     //########################################
@@ -518,69 +539,12 @@ HTML;
             return true;
         }
 
-        $requiredAttributesMap = [
-            'start_date'       => $this->helperFactory->getObject('Module\Translation')->__('Start Date'),
-            'end_date'         => $this->helperFactory->getObject('Module\Translation')->__('End Date'),
-            'price'            => $this->helperFactory->getObject('Module\Translation')->__('Promotion Price'),
-            'comparison_price' => $this->helperFactory->getObject('Module\Translation')->__('Comparison Price'),
-        ];
-
-        $promotions = $this->getPromotions();
-        foreach ($promotions as $promotionIndex => $promotionRow) {
-            foreach ($requiredAttributesMap as $requiredAttributeKey => $requiredAttributeTitle) {
-                if (empty($promotionRow[$requiredAttributeKey])) {
-                    $message = <<<HTML
-Invalid Promotion #%s. The Promotion Price has no defined value.
- Please adjust Magento Attribute "%s" value set for the Promotion Price in your Selling Policy.
-HTML;
-                    $this->addMessage(sprintf($message, $promotionIndex + 1, $requiredAttributeTitle));
-
-                    return false;
-                }
-            }
-
-            if (!strtotime($promotionRow['start_date'])) {
-                $message = <<<HTML
-Invalid Promotion #%s. The Start Date has incorrect format.
- Please adjust Magento Attribute value set for the Promotion Start Date in your Selling Policy.
-HTML;
-                $this->addMessage(sprintf($message, $promotionIndex + 1));
-
-                return false;
-            }
-
-            if (!strtotime($promotionRow['end_date'])) {
-                $message = <<<HTML
-Invalid Promotion #%s. The End Date has incorrect format.
- Please adjust Magento Attribute value set for the Promotion End Date in your Selling Policy.
-HTML;
-                $this->addMessage(sprintf($message, $promotionIndex + 1));
-
-                return false;
-            }
-
-            if (strtotime($promotionRow['end_date']) < strtotime($promotionRow['start_date'])) {
-                $message = <<<HTML
-Invalid Promotion #%s. The Start and End Date range is incorrect.
- Please adjust the Promotion Dates set in your Selling Policy.
-HTML;
-                $this->addMessage(sprintf($message, $promotionIndex + 1));
-
-                return false;
-            }
-
-            if ($promotionRow['comparison_price'] <= $promotionRow['price']) {
-                $message = <<<HTML
-Invalid Promotion #%s. Comparison Price must be greater than Promotion Price.
- Please adjust the Price settings for the given Promotion in your Selling Policy.
-HTML;
-                $this->addMessage(sprintf($message, $promotionIndex + 1));
-
-                return false;
-            }
+        $messages = $this->getPromotionsMessages();
+        foreach ($messages as $message) {
+            $this->addMessage($message);
         }
 
-        $this->data['promotions'] = $promotions;
+        $this->data['promotions_messages'] = $messages;
 
         return true;
     }

@@ -9,17 +9,18 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
+use Ess\M2ePro\Helper\Component\Amazon;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs
  */
 class Tabs extends AbstractTabs
 {
-    const TAB_ID_GENERAL             = 'general';
-    const TAB_ID_LISTING_OTHER       = 'listingOther';
-    const TAB_ID_ORDERS              = 'orders';
+    const TAB_ID_GENERAL                = 'general';
+    const TAB_ID_LISTING_OTHER          = 'listingOther';
+    const TAB_ID_ORDERS                 = 'orders';
     const TAB_ID_INVOICES_AND_SHIPMENTS = 'invoices_and_shipments';
-    const TAB_ID_REPRICING           = 'repricing';
+    const TAB_ID_REPRICING              = 'repricing';
 
     protected function _construct()
     {
@@ -60,10 +61,7 @@ class Tabs extends AbstractTabs
             ]);
         }
 
-        if ($account !== null
-            && $account->getId()
-            && $this->getHelper('Component_Amazon_Repricing')->isEnabled()
-        ) {
+        if ($this->isRepricingSupported($account)) {
             $this->addTab(self::TAB_ID_REPRICING, [
                 'label'   => $this->__('Repricing Tool'),
                 'title'   => $this->__('Repricing Tool'),
@@ -88,5 +86,30 @@ JS
         );
 
         return parent::_prepareLayout();
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Account|null $account
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function isRepricingSupported($account)
+    {
+        $supportedMarketplaces = [
+            Amazon::MARKETPLACE_US,
+            Amazon::MARKETPLACE_CA,
+            Amazon::MARKETPLACE_MX,
+            Amazon::MARKETPLACE_UK,
+            Amazon::MARKETPLACE_DE,
+            Amazon::MARKETPLACE_IT,
+            Amazon::MARKETPLACE_FR,
+            Amazon::MARKETPLACE_ES,
+            Amazon::MARKETPLACE_AU,
+        ];
+
+        return $account !== null
+            && $account->getId()
+            && $this->getHelper('Component_Amazon_Repricing')->isEnabled()
+            && in_array($account->getChildObject()->getMarketplaceId(), $supportedMarketplaces);
     }
 }

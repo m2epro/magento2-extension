@@ -469,26 +469,12 @@ class Active extends AbstractModel
 
         $currentDetailsData = $detailsActionDataBuilder->getBuilderData();
 
-        $currentStartDate = $currentDetailsData['start_date'];
-        unset($currentDetailsData['start_date']);
-
-        $currentEndDate = $currentDetailsData['end_date'];
-        unset($currentDetailsData['end_date']);
-
         $hashDetailsData = $this->getHelper('Data')->hashString(
             $this->getHelper('Data')->jsonEncode($currentDetailsData),
             'md5'
         );
 
         if ($hashDetailsData != $walmartListingProduct->getOnlineDetailsData()) {
-            return true;
-        }
-
-        if ($currentStartDate != $walmartListingProduct->getOnlineStartDate()) {
-            return true;
-        }
-
-        if ($currentEndDate != $walmartListingProduct->getOnlineEndDate()) {
             return true;
         }
 

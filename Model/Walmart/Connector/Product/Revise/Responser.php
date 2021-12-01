@@ -63,7 +63,8 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
         $isPlural = false;
 
         if ($this->getConfigurator()->isPromotionsAllowed()) {
-            $sequenceStrings[] = 'Promotions';
+            $sequenceStrings[] = 'Promotions details';
+            $isPlural = true;
         }
 
         if ($this->getConfigurator()->isDetailsAllowed()) {

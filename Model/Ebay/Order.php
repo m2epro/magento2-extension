@@ -783,7 +783,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $shippingDetails = $this->getShippingDetails();
         $shippingDetails['address'] = $buyerInfo['address'];
 
-        $buyerName = trim($buyerInfo['first_name']) . ' ' . trim($buyerInfo['last_name']);
+        $buyerName = trim($buyerInfo['name']);
 
         $this->getParentObject()->setData('buyer_name', $buyerName);
         $this->getParentObject()->setSettings('shipping_details', $shippingDetails);

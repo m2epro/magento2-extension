@@ -21,9 +21,19 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 
     const MARKETPLACE_CA = 24;
     const MARKETPLACE_DE = 25;
+    const MARKETPLACE_FR = 26;
+    const MARKETPLACE_UK = 28;
     const MARKETPLACE_US = 29;
-    const MARKETPLACE_JP = 42;
+    const MARKETPLACE_ES = 30;
+    const MARKETPLACE_IT = 31;
     const MARKETPLACE_CN = 32;
+    const MARKETPLACE_MX = 34;
+    const MARKETPLACE_AU = 35;
+    const MARKETPLACE_NL = 39;
+    const MARKETPLACE_TR = 40;
+    const MARKETPLACE_SE = 41;
+    const MARKETPLACE_JP = 42;
+    const MARKETPLACE_PL = 43;
 
     protected $regionCollection;
     protected $amazonFactory;

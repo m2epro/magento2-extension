@@ -582,7 +582,7 @@ HTML
                 'style'              => 'width: 70%;',
                 'class'              => 'textarea M2ePro-required-when-visible',
                 'required'           => true,
-                'value'              => $this->getData('condition_note_value')
+                'value'              => $formData['condition_note_value']
             ]
         );
 

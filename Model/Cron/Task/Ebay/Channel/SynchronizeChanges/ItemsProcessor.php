@@ -178,6 +178,11 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
+    /**
+     * @param \Ess\M2ePro\Model\Account $account
+     * @return array
+     * @throws \Exception
+     */
     protected function getChangesByAccount(\Ess\M2ePro\Model\Account $account)
     {
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -194,6 +199,8 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
                 $sinceTime->modify('- 1 minute');
             }
         }
+
+        $toTime = $this->modifyToTimeConsideringOrderLastSynch($account, $toTime);
 
         $response = $this->receiveChangesFromEbay(
             $account,
@@ -262,6 +269,28 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         // --
 
         return [];
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Account $account
+     * @param \DateTime $toTime
+     * @return \DateTime
+     * @throws \Exception
+     *
+     * Do not download inventory events until order will be imported to avoid excessive relist action
+     */
+    protected function modifyToTimeConsideringOrderLastSynch(\Ess\M2ePro\Model\Account $account, \DateTime $toTime)
+    {
+        $orderLastSynchDate = new \DateTime(
+            $account->getChildObject()->getData('orders_last_synchronization'),
+            new \DateTimeZone('UTC')
+        );
+
+        if ($orderLastSynchDate->getTimestamp() < $toTime->getTimestamp()) {
+            return $orderLastSynchDate;
+        }
+
+        return $toTime;
     }
 
     //########################################

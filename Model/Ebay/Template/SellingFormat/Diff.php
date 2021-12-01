@@ -78,6 +78,7 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'best_offer_reject_value',
             'best_offer_reject_attribute',
             'charity',
+            'vat_mode',
             'vat_percent',
             'tax_table_mode',
             'tax_category_mode',

@@ -53,6 +53,8 @@ class SaveTemplateCategorySpecifics extends \Ess\M2ePro\Controller\Adminhtml\Eba
         $changeProcessor = $this->modelFactory->getObject('Ebay_Template_Category_ChangeProcessor');
         $changeProcessor->process($diff, $affectedListingsProducts->getObjectsData(['id', 'status']));
 
+        $this->messageManager->addSuccess($this->__('Category data was saved.'));
+
         if ($this->getRequest()->getParam('back') === 'edit') {
             return $this->_redirect('*/*/view', ['template_id' => $post['template_id']]);
         }

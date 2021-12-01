@@ -8,6 +8,7 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder;
 
+use Ess\M2ePro\Helper\Component\Walmart\Configuration as ConfigurationHelper;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
 /**
@@ -39,14 +40,14 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
         if (!empty($startDate)) {
             $data['start_date'] = $startDate;
         } else {
-            $data['start_date'] = $this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d');
+            $data['start_date'] = '1970-01-01 00:00:00';
         }
 
         $endDate = $this->getWalmartListingProduct()->getSellingFormatTemplateSource()->getEndDate();
         if (!empty($endDate)) {
             $data['end_date'] = $endDate;
         } else {
-            $data['end_date'] = '9999-01-01';
+            $data['end_date'] = '9999-01-01 00:00:00';
         }
 
         $mapPrice = $this->getWalmartListingProduct()->getMapPrice();
@@ -125,6 +126,52 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
 
     private function getProductIdsData()
     {
+        if (empty($this->cachedData)) {
+            $walmartListingProduct = $this->getListingProduct()->getChildObject();
+
+            /** @var \Ess\M2ePro\Helper\Data $helperData */
+            $helperData = $this->getHelper('Data');
+
+            $ids = [
+                'gtin' => $walmartListingProduct->getGtin(),
+                'upc' => $walmartListingProduct->getUpc(),
+                'ean' => $walmartListingProduct->getEan(),
+                'isbn' => $walmartListingProduct->getIsbn()
+            ];
+
+            if (!$ids['gtin'] ||
+                (strtoupper($ids['gtin']) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
+                    !$helperData->isGTIN($ids['gtin']))
+            ) {
+                unset($ids['gtin']);
+            }
+
+            if (!$ids['upc'] ||
+                (strtoupper($ids['upc']) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
+                    !$helperData->isUPC($ids['upc']))
+            ) {
+                unset($ids['upc']);
+            }
+
+            if (!$ids['ean'] ||
+                (strtoupper($ids['ean']) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
+                    !$helperData->isEAN($ids['ean']))
+            ) {
+                unset($ids['ean']);
+            }
+
+            if (!$ids['isbn'] ||
+                (strtoupper($ids['isbn']) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
+                    !$helperData->isISBN($ids['isbn']))
+            ) {
+                unset($ids['isbn']);
+            }
+
+            foreach ($ids as $idType => $value) {
+                $this->cachedData[$idType] = $value;
+            }
+        }
+
         $data = [];
 
         $idsTypes = ['gtin', 'upc', 'ean', 'isbn'];

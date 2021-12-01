@@ -244,6 +244,17 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $qty = $this->getQty();
+        $clearQty = $this->getClearQty();
+
+        if ($clearQty > 0 && $qty <= 0) {
+            $message = 'You’re submitting an item with QTY contradicting the QTY settings in your Selling Policy. 
+            Please check Minimum Quantity to Be Listed and Quantity Percentage options.';
+
+            $this->addMessage($message);
+
+            return false;
+        }
+
         if ($qty <= 0) {
             if (isset($this->params['status_changer']) &&
                 $this->params['status_changer'] == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER) {
@@ -271,6 +282,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->setData('qty', $qty);
+        $this->setData('clear_qty', $clearQty);
 
         return true;
     }
@@ -505,6 +517,15 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $this->getEbayListingProduct()->getQty();
+    }
+
+    protected function getClearQty()
+    {
+        if (isset($this->getData()['clear_qty'])) {
+            return $this->getData()['clear_qty'];
+        }
+
+        return $this->getEbayListingProduct()->getQty(true);
     }
 
     protected function getFixedPrice()

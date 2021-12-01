@@ -602,6 +602,25 @@ class Data extends AbstractForm
         );
 
         $fieldset->addField(
+            'vat_mode',
+            self::SELECT,
+            [
+                'container_id' => 'vat_mode_tr',
+                'label' => $this->__('Add VAT Rate'),
+                'name' => 'selling_format[vat_mode]',
+                'value' => $formData['vat_mode'],
+                'values' => [
+                    SellingFormat::VAT_MODE_NO  => $this->__('No'),
+                    SellingFormat::VAT_MODE_YES => $this->__('Yes'),
+                ],
+                'tooltip' => $this->__(<<<HTML
+Set "<b>Yes</b>" if you want VAT Rate to be added to your items.
+HTML
+                )
+            ]
+        );
+
+        $fieldset->addField(
             'vat_percent',
             'text',
             [
@@ -610,7 +629,7 @@ class Data extends AbstractForm
                 'name' => 'selling_format[vat_percent]',
                 'value' => $formData['vat_percent'],
                 'class' => 'M2ePro-validate-vat',
-                'tooltip' => $this->__('Specify a VAT Rate (%) that will be applied to your items.')
+                'tooltip' => $this->__('Specify the amount(%) of VAT that will be applied to your items.')
             ]
         );
 
@@ -743,7 +762,7 @@ class Data extends AbstractForm
             'price_increase_vat_percent',
             self::SELECT,
             [
-                'label' => $this->__('Add VAT Percentage'),
+                'label' => $this->__('Add VAT% on top of Price'),
                 'name' => 'selling_format[price_increase_vat_percent]',
                 'values' => [
                     0 => $this->__('No'),
@@ -754,14 +773,14 @@ class Data extends AbstractForm
                     "Choose whether you want to add VAT Rate to the price when an item is listed on eBay:
                     <br/>
                     <br/>
-                    <b>Yes</b> - VAT Rate will act as excluded and will be added to the item price.
+                    <b>Yes</b> - VAT Rate will be added on top of an item price.
                     <br/>
                     <br/>
-                    <b>No</b> - VAT Rate will be included in the final item price.
+                    <b>No</b> - VAT Rate will stay included and an item price won't be changed.
                     <br/>
                     <br/>
-                    See <a href='%url%' target='_blank'>our docs</a> to learn how the final
-                     eBay item price is calculated.",
+                    See our <a href='%url%' target='_blank'>article</a> to learn
+                     how the final eBay item price is calculated.",
                     $supportHelper->getDocumentationArticleUrl('x/UwItAQ#Selling-Price')
                 ),
                 'css_class' => 'no-margin-top'

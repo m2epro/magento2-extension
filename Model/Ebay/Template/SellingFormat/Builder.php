@@ -83,6 +83,10 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $data['lot_size_attribute'] = $this->rawData['lot_size_attribute'];
         }
 
+        if (isset($this->rawData['vat_mode'])) {
+            $data['vat_mode'] = (int)$this->rawData['vat_mode'];
+        }
+
         if (isset($this->rawData['vat_percent'])) {
             $data['vat_percent'] = (float)$this->rawData['vat_percent'];
         }
@@ -315,6 +319,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'qty_min_posted_value' => SellingFormat::QTY_MIN_POSTED_DEFAULT_VALUE,
             'qty_max_posted_value' => SellingFormat::QTY_MAX_POSTED_DEFAULT_VALUE,
 
+            'vat_mode'       => 0,
             'vat_percent'    => 0,
             'tax_table_mode' => 0,
 

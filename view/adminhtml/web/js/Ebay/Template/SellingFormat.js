@@ -55,7 +55,11 @@ define([
                 return true;
             }, M2ePro.translator.translate('Wrong value. Only integer numbers.'));
 
-            jQuery.validator.addMethod('M2ePro-validate-vat', function (value) {
+            jQuery.validator.addMethod('M2ePro-validate-vat', function (value, el) {
+
+                if (self.isElementHiddenFromPage(el)) {
+                    return true;
+                }
 
                 if (!value) {
                     return true;
@@ -123,6 +127,10 @@ define([
 
             $('lot_size_mode')
                 .observe('change', EbayTemplateSellingFormatObj.lotSizeMode_change)
+                .simulate('change');
+
+            $('vat_mode')
+                .observe('change', EbayTemplateSellingFormatObj.vatModeChange)
                 .simulate('change');
 
             if ($('tax_category_mode')) {
@@ -497,6 +505,18 @@ define([
 
             if (this.value != M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::LOT_SIZE_MODE_CUSTOM_VALUE')) {
                 $('lot_size_custom_value').value = '';
+            }
+        },
+
+        // ---------------------------------------
+
+        vatModeChange: function () {
+            var vatPercentTr = $('vat_percent_tr');
+
+            vatPercentTr.hide();
+
+            if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::VAT_MODE_YES')) {
+                vatPercentTr.show();
             }
         },
 

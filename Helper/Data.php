@@ -34,6 +34,9 @@ class Data extends AbstractHelper
     protected $serializerInterface;
     protected $phpSerialize;
 
+    /** @var \Magento\Framework\Locale\ResolverInterface */
+    protected $localeResolverInterface;
+
     //########################################
 
     public function __construct(
@@ -43,15 +46,17 @@ class Data extends AbstractHelper
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timezone,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context,
-        \Magento\Framework\ObjectManagerInterface $objectManager
+        \Magento\Framework\ObjectManagerInterface $objectManager,
+        \Magento\Framework\Locale\ResolverInterface $localeResolverInterface
     ) {
         parent::__construct($helperFactory, $context);
 
-        $this->dir           = $dir;
-        $this->urlBuilder    = $urlBuilder;
-        $this->localeDate    = $localeDate;
-        $this->timezone      = $timezone;
+        $this->dir = $dir;
+        $this->urlBuilder = $urlBuilder;
+        $this->localeDate = $localeDate;
+        $this->timezone = $timezone;
         $this->objectManager = $objectManager;
+        $this->localeResolverInterface = $localeResolverInterface;
 
         if (version_compare($this->getHelper('Magento')->getVersion(), '2.4.3', '<')) {
             $this->phpSerialize  = version_compare($this->getHelper('Magento')->getVersion(), '2.3.5', '>=')
@@ -167,7 +172,7 @@ class Data extends AbstractHelper
         }
 
         $formatter = new \IntlDateFormatter(
-            $localTimezone,
+            $this->localeResolverInterface->getLocale(),
             $localIntlDateFormat,
             $localIntlTimeFormat,
             new \DateTimeZone($localTimezone),
