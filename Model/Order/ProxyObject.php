@@ -44,12 +44,16 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
     /** @var array */
     protected $addressData = [];
 
+    /** @var \Magento\Customer\Model\Options */
+    protected $options;
+
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\Currency $currency,
         \Ess\M2ePro\Model\Magento\Payment $payment,
         \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel $order,
+        \Magento\Customer\Model\Options $options,
         \Magento\Customer\Model\CustomerFactory $customerFactory,
         \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -58,6 +62,7 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         $this->currency = $currency;
         $this->payment = $payment;
         $this->order = $order;
+        $this->options = $options;
 
         $this->customerFactory = $customerFactory;
         $this->customerRepository = $customerRepository;

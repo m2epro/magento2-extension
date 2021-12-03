@@ -1,4 +1,10 @@
-* 1.17.0 (01/12/2021) 
+* 1.17.1 (03/12/2021) 
+
+eBay: [Fixed] Unable to create Magento order. Reason: Undefined property: Ess\M2ePro\Model\eBay\Order\ProxyObject::$options [#3106]
+Amazon: [Fixed] Unable to create Magento order. Reason: Undefined property: Ess\M2ePro\Model\Amazon\Order\ProxyObject::$options [#3106]
+Walmart: [Fixed] Unable to create Magento order. Reason: Undefined property: Ess\M2ePro\Model\Walmart\Order\ProxyObject::$options [#3106]
+
+* 1.17.0 (1/12/2021)
 
 Common: [Added] Compatibility with prefixes and suffixes of customer names in Magento [#2443]
 Common: [Improved] Error log appears if the Product was not listed due to the contradicting Quantity settings in Selling Policy [#1091]
