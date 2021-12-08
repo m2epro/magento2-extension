@@ -189,7 +189,7 @@ HTML
                 ],
                 'value'   => $formData['magento_orders_settings']['listing_other']['mode'],
                 'tooltip' => $this->__(
-                    'Choose whether a Magento Order should be created if an Amazon Order is received for an item that 
+                    'Choose whether a Magento Order should be created if an Amazon Order is received for an item that
                     does <b>not</b> belong to the M2E Pro Listing.'
                 )
             ]
@@ -242,7 +242,7 @@ HTML
                     [
                         'type'    => \Magento\Framework\Message\MessageInterface::TYPE_NOTICE,
                         'content' => $this->__(
-                            'Please note that a new Magento Product will be created 
+                            'Please note that a new Magento Product will be created
                             if the corresponding SKU is not found in your Catalog.'
                         )
                     ]
@@ -582,16 +582,8 @@ HTML
                 'value'   => $formData['magento_orders_settings']['customer']['billing_address_mode'],
                 'note'    => $this->__('When to use shipping address as billing.'),
                 'tooltip' => $this->__(
-                    'The Amazon does not supply the complete billing Buyer information,
-                     only the Buyer\'s name and email address. The only way to fill in billing address in the
-                     Customer\'s invoice is to use information from shipping address.<br/><br/>
-                     You should select the appropriate Option how to handle billing address for imported Customer:<br/>
-                     <br/>
-                     <strong>Always</strong> - the shipping address is always used as billing address. <br/>
-                     <strong>Buyer & Recipient have the same name</strong> - the shipping address is used as billing
-                     address, only when Buyer\'s name and Recipient\'s name are the same. Otherwise,
-                     billing address fields will be empty and next message will appear in the city field:
-                     "Amazon does not supply the complete billing Buyer information". <br/>'
+                    'Choose if you want to use your customer’s shipping address as the billing one regularly
+                    or only if the buyer and recipient have the same names.'
                 )
             ]
         );
@@ -682,7 +674,7 @@ HTML
                         'The option allows skipping tax for orders with UK shipment.</br></br>
 <strong>None</strong> - the tax won\'t be skipped and will be displayed in all orders.</br></br>
 <strong>All orders with UK shipments</strong> - M2E Pro will skip tax for all orders with UK shipments.</br></br>
-<strong>Orders under 135GBP price</strong> - 
+<strong>Orders under 135GBP price</strong> -
 M2E Pro will skip tax only for orders with a total price of all products under 135GBP price.'
                     )
                 )

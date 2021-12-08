@@ -49,6 +49,10 @@ class Website extends AbstractMode
                 }
             }
 
+            if ($this->existsDuplicateListingProduct($listing)) {
+                continue;
+            }
+
             $this->getListingObject($listing)->addProductByWebsiteListing($this->getProduct(), $listing);
         }
     }

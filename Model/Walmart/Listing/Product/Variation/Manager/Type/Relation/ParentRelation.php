@@ -664,7 +664,10 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
                 ->getVariationInstance()
                 ->getVariationTypeStandard($productOptions);
 
-            $childTypeModel->setProductVariation($productVariation);
+            if ($productVariation !== null) {
+                $childTypeModel->setProductVariation($productVariation);
+            }
+
             $childTypeModel->setChannelVariation($channelOptions);
         }
 

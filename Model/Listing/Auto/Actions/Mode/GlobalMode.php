@@ -36,6 +36,10 @@ class GlobalMode extends AbstractMode
                 }
             }
 
+            if ($this->existsDuplicateListingProduct($listing)) {
+                continue;
+            }
+
             $this->getListingObject($listing)->addProductByGlobalListing($this->getProduct(), $listing);
         }
     }

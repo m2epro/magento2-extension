@@ -27,12 +27,14 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
             self::HELP_BLOCK,
             [
                 'content' => $this->__(
-                    '<p>These Rules of the automatic product adding and removal act globally for all
-                    Magento Catalog. When a new Magento Product is added to Magento Catalog, it will
-                    be automatically added to the current M2E Pro Listing if the settings are enabled.</p><br>
-                    <p>Accordingly, if a Magento Product present in the M2E Pro Listing is removed from
-                    Magento Catalog,  the Item will be removed from the Listing and its sale
-                    will be stopped on Channel.</p><br>
+                    '<p>These Rules of the automatic product adding and removal act globally for all Magento Catalog.
+                    When a new Magento Product is added to Magento Catalog, it will be automatically added to the
+                    current M2E Pro Listing if the settings are enabled.</p><br>
+                    <p>Please note if a product is already presented in another M2E Pro Listing with the related
+                    Channel account and marketplace, the Item won’t be added to the Listing to prevent listing
+                    duplicates on the Channel.</p><br>
+                    <p>Accordingly, if a Magento Product presented in the M2E Pro Listing is removed from Magento
+                    Catalog, the Item will be removed from the Listing and its sale will be stopped on Channel.</p><br>
                     <p>More detailed information you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
                     $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/kAYtAQ')

@@ -734,7 +734,7 @@ The final product price on Amazon will be calculated according to the following 
 (Product Price + Price Change) + VAT Rate
 <br/>
 <br/>
-<strong>Note:<strong> Amazon considers the VAT rate value sent by M2E Pro as an additional price increase,
+<strong>Note:</strong> Amazon considers the VAT rate value sent by M2E Pro as an additional price increase,
 not as a proper VAT rate.
 HTML
                 )
@@ -875,7 +875,7 @@ The final product price on Amazon will be calculated according to the following 
 (Product Price + Price Change) + VAT Rate
 <br/>
 <br/>
-<strong>Note:<strong> Amazon considers the VAT rate value sent by M2E Pro as an additional price increase,
+<strong>Note:</strong> Amazon considers the VAT rate value sent by M2E Pro as an additional price increase,
 not as a proper VAT rate.
 HTML
                     )

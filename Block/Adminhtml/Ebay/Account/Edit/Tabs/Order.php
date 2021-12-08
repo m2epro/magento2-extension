@@ -461,16 +461,8 @@ HTML
                 'value'   => $formData['magento_orders_settings']['customer']['billing_address_mode'],
                 'note'    => $this->__('When to use shipping address as billing.'),
                 'tooltip' => $this->__(
-                    'The eBay does not supply the complete billing Buyer information,
-                     only the Buyer\'s name and email address. The only way to fill in billing address in the
-                     Customer\'s invoice is to use information from shipping address.<br/><br/>
-                     You should select the appropriate Option how to handle billing address for imported Customer:<br/>
-                     <br/>
-                     <strong>Always</strong> - the shipping address is always used as billing address. <br/>
-                     <strong>Buyer & Recipient have the same name</strong> - the shipping address is used as billing
-                     address, only when Buyer\'s name and Recipient\'s name are the same. Otherwise,
-                     billing address fields will be empty and next message will appear in the city field:
-                     "eBay does not supply the complete billing Buyer information". <br/>'
+                    'Choose if you want to use your customer’s shipping address as the billing one regularly
+                    or only if the buyer and recipient have the same names.'
                 )
             ]
         );

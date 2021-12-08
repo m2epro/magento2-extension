@@ -537,12 +537,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         /** @var \Ess\M2ePro\Model\Listing\Log $log */
         $log = $this->activeRecordFactory->getObject('Listing\Log');
         $log->setComponentMode($this->getComponentMode());
+        $actionId = $log->getResource()->getNextActionId();
         $log->addProductMessage(
             $this->getListingId(),
             $this->getProductId(),
             $this->getId(),
             $initiator,
-            null,
+            $actionId,
             $action,
             $text,
             $type

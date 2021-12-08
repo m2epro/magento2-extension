@@ -373,7 +373,7 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 
         if (count($parts) > 2) {
             $prefixOptions = $this->options->getNamePrefixOptions($this->getStore());
-            if (isset($prefixOptions[$parts[0]])) {
+            if (in_array($parts[0], $prefixOptions)) {
                 $currentInfo['prefix'] = array_shift($parts);
             }
         }
@@ -381,22 +381,20 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         $partsCount = count($parts);
         if ($partsCount > 2) {
             $suffixOptions = $this->options->getNameSuffixOptions($this->getStore());
-            if (isset($suffixOptions[$parts[$partsCount - 1]])) {
+            if (in_array($parts[$partsCount - 1], $suffixOptions)) {
                 $currentInfo['suffix'] = array_pop($parts);
             }
         }
 
-        if (count($parts) >= 2) {
-            $currentInfo['firstname'] = array_shift($parts);
-            $currentInfo['lastname'] = array_pop($parts);
-            if (!empty($parts)) {
-                $currentInfo['middlename'] = implode(' ', $parts);
-            }
-        } else {
-            throw new \Ess\M2ePro\Model\Exception(
-                "Full name must consist of at least firstname and lastname. Name `$fullName` is incorrect."
-            );
+        $partsCount = count($parts);
+        if ($partsCount > 2) {
+            $middleName = array_slice($parts, 1, $partsCount - 2);
+            $currentInfo['middlename'] = implode(' ', $middleName);
+            $parts = [$parts[0], $parts[$partsCount - 1]];
         }
+
+        $currentInfo['firstname'] = isset($parts[0]) ? $parts[0] : 'N/A';
+        $currentInfo['lastname'] = isset($parts[1]) ? $parts[1] : 'N/A';
 
         return $currentInfo;
     }

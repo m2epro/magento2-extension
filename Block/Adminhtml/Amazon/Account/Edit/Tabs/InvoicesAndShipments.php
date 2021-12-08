@@ -145,7 +145,8 @@ HTML
                     1 => $this->__('Enabled'),
                 ],
                 'tooltip' => $this->__(
-                    'Enable to automatically create Shipment when shipping is completed.'
+                    'Enable to automatically create shipment for the Magento order when the associated order
+                    on Channel is shipped.'
                 )
             ]
         );

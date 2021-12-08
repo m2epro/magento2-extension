@@ -123,9 +123,8 @@ HTML
                 ],
                 'value'   => $formData['other_listings_synchronization'],
                 'tooltip' => $this->__(
-                    'Choose whether to Import eBay Listings that have been Listed on eBay either directly
-                     or using a tool other than M2E Pro.
-                     Only active eBay Listings created within the last 2 years will be imported.'
+                    'Choose whether to import items that have been listed on eBay either directly or using a tool 
+                    other than M2E Pro. M2E Pro will import only active eBay items.'
                 )
             ]
         );

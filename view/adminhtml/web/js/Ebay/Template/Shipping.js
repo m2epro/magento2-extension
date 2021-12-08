@@ -245,7 +245,7 @@ define([
             // clear selected shipping methods
             // ---------------------------------------
             $$('#shipping_local_tbody .icon-btn').each(function (el) {
-                EbayTemplateShippingObj.removeRow.call(el, 'local');
+                EbayTemplateShippingObj.removeRow.call(el, 'local', el);
             });
             // ---------------------------------------
 
@@ -339,7 +339,7 @@ define([
             // clear selected shipping methods
             // ---------------------------------------
             $$('#shipping_international_tbody .icon-btn').each(function (el) {
-                EbayTemplateShippingObj.removeRow.call(el, 'international');
+                EbayTemplateShippingObj.removeRow.call(el, 'international', el);
             });
             // ---------------------------------------
 

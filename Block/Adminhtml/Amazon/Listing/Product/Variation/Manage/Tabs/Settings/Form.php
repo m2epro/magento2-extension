@@ -152,15 +152,13 @@ HTML;
                     'legend' => $this->__('Variation Theme'),
                     'collapsable' => true,
                     'tooltip' => $this->__(
-                        'Variation Theme is a combination of Attributes based on which the Parent-Child relation
-                         of Amazon Products is realized.<br/><br/>
-                         Variation Theme is required to create New Amazon Relation Products (both: Parent and Child).
-                         The list of available Variation Themes depends on the Category chosen in
-                         the Description Policy. <br/>
-                         Variation Themes are not available for the Categories which do not support
-                         Amazon Parent/Child Products.<br/>
-                         Variation Theme cannot be changed Parent Product receives an ASIN/ISBN. <br/><br/>
-                         <b>Note:</b> The list of Variation Themes is provided by Amazon and cannot be changed or added.
+                        'Variation Theme is a combination of Attributes by which your product will vary on Amazon.
+                        To create new Amazon Multi-Variation Products, a Variation Theme is required.<br><br>
+                        The list of available Variation Themes depends on the Category and Product Type selected in the
+                        Description Policy. The Variation Themes are strictly regulated by Amazon,
+                        so they cannot be modified or added.<br><br>
+                        <b>Note:</b> You cannot change the Variation Theme once the ASIN/ISBN is assigned
+                        to the Parent Product.
                          '
                     )
                 ]

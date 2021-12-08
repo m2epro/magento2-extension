@@ -50,6 +50,9 @@ class RunResetProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\
         $logger->setAction(\Ess\M2ePro\Model\Listing\Log::ACTION_RESET_BLOCKED_PRODUCT);
         $logger->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_USER);
 
+        /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
+        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
+
         $instructionsData = [];
         foreach ($listingsProducts->getItems() as $index => $listingProduct) {
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -59,8 +62,7 @@ class RunResetProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\
                     $listingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED)
             ) {
                 $result  = 'error';
-                /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
-                $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
+
                 $message->initFromPreparedData(
                     'Item cannot be reset. Most probably it is not blocked or requires a price adjusting.',
                     \Ess\M2ePro\Model\Response\Message::TYPE_ERROR
@@ -100,6 +102,13 @@ class RunResetProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\
                 'status_change_reasons'   => null,
                 'is_missed_on_channel'    => 0
             ]);
+
+            $message->initFromPreparedData(
+                'Item has been reset and is no longer blocked.',
+                \Ess\M2ePro\Model\Response\Message::TYPE_SUCCESS
+            );
+            $logger->logListingProductMessage($listingProduct, $message);
+
             $listingProduct->save();
 
             if ($listingProduct->getChildObject()->getVariationManager()->isRelationChildType()) {

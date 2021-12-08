@@ -81,7 +81,8 @@ HTML
                     1 => $this->__('Enabled'),
                 ],
                 'tooltip' => $this->__(
-                    'Enable to automatically create Shipment when shipping is completed.'
+                    'Enable to automatically create shipment for the Magento order when the associated order
+                    on Channel is shipped.'
                 )
             ]
         );
@@ -99,7 +100,7 @@ HTML
                 ],
                 'tooltip' => $this->__(
                     <<<HTML
-Set <b>Yes</b> if you want to exclude 
+Set <b>Yes</b> if you want to exclude
 <a href="%url%" target="_blank">eVTN</a> from your Magento orders.
 HTML
                     ,

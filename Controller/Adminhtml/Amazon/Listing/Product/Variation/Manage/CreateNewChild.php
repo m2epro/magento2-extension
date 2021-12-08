@@ -56,18 +56,54 @@ class CreateNewChild extends Main
             $generalId = $parentTypeModel->getChannelVariationGeneralId($channelOptions);
         }
 
-        $parentTypeModel->createChildListingProduct(
+        /** @var \Ess\M2ePro\Model\Listing\Product $childListingProduct */
+        $childListingProduct = $parentTypeModel->createChildListingProduct(
             $productOptions,
             $channelOptions,
             $generalId
         );
 
+        $addedProductOptions = $childListingProduct->getChildObject()->getVariationManager()
+            ->getTypeModel()->getProductOptions();
+
+        // Don't use $childListingProduct anymore, because it might be removed after calling the following method
         $parentTypeModel->getProcessor()->process();
 
-        $result = [
-            'type' => 'success',
-            'msg'  => $this->__('New Amazon Child Product was created.')
-        ];
+        $isProductOptionWasAdded = false;
+        foreach ($addedProductOptions as $addedProductOption) {
+            if ($productOptions == $addedProductOption) {
+                $isProductOptionWasAdded = true;
+            }
+        }
+
+        if (!$isProductOptionWasAdded) {
+            $parentListingProduct->logProductMessage(
+                'New Child Product cannot be created. There is no correspondence between the Magento Attribute
+                 value of a new Child Product and available Magento Attribute values of the Parent Product.',
+                \Ess\M2ePro\Helper\Data::INITIATOR_USER,
+                \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_NEW_CHILD_LISTING_PRODUCT,
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
+            );
+
+            $message = $this->__(
+                'New Child Product was not created.
+ Please view <a target="_blank" href="%url%">Listing Logs</a> for details.',
+                $this->getUrl(
+                    '*/amazon_log_listing_product/index',
+                    ['listing_product_id' => $parentListingProduct->getId()]
+                )
+            );
+
+            $result = [
+                'type' => 'error',
+                'msg'  => $message
+            ];
+        } else {
+            $result = [
+                'type' => 'success',
+                'msg'  => $this->__('New Amazon Child Product was created.')
+            ];
+        }
 
         if ($createNewAsin) {
             $this->setJsonContent($result);

@@ -186,9 +186,6 @@ define([
                         label: M2ePro.translator.translate('Back'),
                         attr: {id: popupMode+'cancel_button'},
                         class: 'back',
-                        callback: function() {
-                            ListingAutoActionObj.reset(true);
-                        },
                         closeModal: true
                     },
                     {

@@ -17,11 +17,22 @@ class CheckAuth extends Account
 {
     public function execute()
     {
-        $merchantId    = $this->getRequest()->getParam('merchant_id');
-        $token         = $this->getRequest()->getParam('token');
+        if (!$this->getHelper('Module')->isProductionEnvironment()) {
+            $this->setJsonContent(
+                [
+                    'result' => true,
+                    'reason' => null
+                ]
+            );
+
+            return $this->getResult();
+        }
+
+        $merchantId = $this->getRequest()->getParam('merchant_id');
+        $token = $this->getRequest()->getParam('token');
         $marketplaceId = $this->getRequest()->getParam('marketplace_id');
 
-        $result =  [
+        $result = [
             'result' => false,
             'reason' => null
         ];

@@ -79,4 +79,68 @@ abstract class AbstractMode extends \Ess\M2ePro\Model\AbstractModel
     }
 
     //########################################
+
+    /**
+     * Preventing duplicate products in listings in one channel account and a marketplace via auto-adding
+     *
+     * @param \Ess\M2ePro\Model\Listing provided $listing
+     * @return bool
+     */
+    protected function existsDuplicateListingProduct($listing)
+    {
+        $collection = $this->activeRecordFactory->getObject('Listing_Product')->getCollection();
+
+        $collection->getSelect()
+            ->join(
+                ['lst' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
+                'lst.id = main_table.listing_id',
+                ['marketplace_id' => 'marketplace_id', 'account_id' => 'account_id']
+            )
+            ->where(
+                'lst.account_id = ' . $listing->getAccountId() .
+                ' AND lst.marketplace_id = ' . $listing->getMarketplaceId()
+            );
+
+        $collection->addFieldToFilter('main_table.component_mode', $listing->getComponentMode());
+        $collection->addFieldToFilter('lst.account_id', $listing->getAccountId());
+        $collection->addFieldToFilter('lst.marketplace_id', $listing->getMarketplaceId());
+
+        foreach ($collection->getItems() as $listingProduct) {
+            if ($this->getProduct()->getId() == $listingProduct->getProductId()) {
+                $this->writeDuplicateProductLog($listing->getComponentMode(), $listing->getId(), $listingProduct->getId());
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    //########################################
+
+    /**
+     * @param string $componentMode
+     * @param int $listingId
+     * @param int $listingProductId
+     */
+    private function writeDuplicateProductLog($componentMode, $listingId, $listingProductId)
+    {
+        /** @var \Ess\M2ePro\Model\Listing\Log $logModel */
+        $logModel = $this->activeRecordFactory->getObject('Listing\Log');
+        $logModel->setComponentMode($componentMode);
+
+        $logModel->addProductMessage(
+            $listingId,
+            $this->getProduct()->getId(),
+            $listingProductId,
+            \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
+            $logModel->getResource()->getNextActionId(),
+            \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_PRODUCT_TO_LISTING,
+            'Product was not added since the item is already presented in another Listing related to ' .
+            'the Channel account and marketplace.',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
+        );
+    }
+
+    //########################################
 }

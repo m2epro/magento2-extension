@@ -24,12 +24,18 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstra
             self::HELP_BLOCK,
             [
                 'content' => $this->__(
-                    '<p>These Rules come into action when a Magento Product is added to the Website with
-                    regard to the Store View selected for the M2E Pro Listing. In other words, after a Magento Product
-                    is added to the selected Website, it can be automatically added to M2E Pro Listing
-                    if the settings are enabled.</p><br>
+                    '<p>These Rules of automatic product adding and removal come into action when a Magento Product is
+                    added to the Website with regard to the Store View selected for the M2E Pro Listing. In other
+                    words, after a Magento Product is added to the selected Website, it can be automatically added to
+                    M2E Pro Listing if the settings are enabled.</p><br>
+                    <p>Please note if a product is already presented in another M2E Pro Listing with the related
+                    Channel account and marketplace, the Item won’t be added to the Listing to prevent listing
+                    duplicates on the Channel.</p><br>
                     <p>Accordingly, if a Magento Product presented in the M2E Pro Listing is removed from the Website,
-                    the Item will be removed from the Chanel and it will be stopped on Channel.</p>'
+                    the Item will be removed from the Listing and its sale will be stopped on Channel.</p><br>
+                    <p>More detailed information you can find
+                    <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/QQBhAQ')
                 )
             ]
         );

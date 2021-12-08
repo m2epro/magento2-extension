@@ -45,6 +45,10 @@ class Category extends AbstractMode
                 }
             }
 
+            if ($this->existsDuplicateListingProduct($listing)) {
+                continue;
+            }
+
             $this->getListingObject($listing)->addProductByCategoryGroup(
                 $this->getProduct(),
                 $autoCategory->getGroup()
