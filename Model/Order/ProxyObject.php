@@ -373,7 +373,7 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 
         if (count($parts) > 2) {
             $prefixOptions = $this->options->getNamePrefixOptions($this->getStore());
-            if (in_array($parts[0], $prefixOptions)) {
+            if (is_array($prefixOptions) && in_array($parts[0], $prefixOptions)) {
                 $currentInfo['prefix'] = array_shift($parts);
             }
         }
@@ -381,7 +381,7 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         $partsCount = count($parts);
         if ($partsCount > 2) {
             $suffixOptions = $this->options->getNameSuffixOptions($this->getStore());
-            if (in_array($parts[$partsCount - 1], $suffixOptions)) {
+            if (is_array($suffixOptions) && in_array($parts[$partsCount - 1], $suffixOptions)) {
                 $currentInfo['suffix'] = array_pop($parts);
             }
         }

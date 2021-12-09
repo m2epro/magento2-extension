@@ -1,4 +1,8 @@
-* 1.18.0 (08/12/2021) 
+* 1.18.1 (09/12/2021) 
+
+Common: [Fixed] Unable to create Magento order. Warning: in_array() expects parameter 2 to be array, bool given [#3123]
+
+* 1.18.0 (8/12/2021)
 
 Common: [Fixed] Auto Add/Remove Rules for Categories level gets deleted after being edited [#3071]
 Common: [Fixed] Unable to create Magento order. Reason: Full name must consist of at least firstname and lastname [#3113]
