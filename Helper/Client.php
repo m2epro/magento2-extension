@@ -367,6 +367,10 @@ class Client extends AbstractHelper
 
         // @codingStandardsIgnoreStart
         for ($i=$minSize; $i<=$maxSize; $i*=2) {
+            if ($currentMemoryLimit >= $i) {
+                continue;
+            }
+
             if (ini_set('memory_limit', "{$i}M") === false) {
                 if ($i == $minSize) {
                     return false;
