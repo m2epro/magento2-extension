@@ -183,7 +183,7 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
         $collection = $this->parentFactory->getObject($this->getComponentMode(), 'Listing\Other')->getCollection();
         $collection->addFieldToFilter('account_id', (int)$this->getAccount()->getId());
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'main_table.status',
                 'second_table.sku',

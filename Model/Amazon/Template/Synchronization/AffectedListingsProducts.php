@@ -35,7 +35,7 @@ class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListin
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Collection $listingCollection */
         $listingCollection = $this->amazonFactory->getObject('Listing')->getCollection();
         $listingCollection->addFieldToFilter('template_synchronization_id', $this->model->getId());
-        $listingCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $listingCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $listingCollection->getSelect()->columns('id');
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */

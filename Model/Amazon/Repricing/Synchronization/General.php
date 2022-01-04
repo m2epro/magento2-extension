@@ -347,7 +347,7 @@ class General extends AbstractModel
         $listingProductCollection->addFieldToFilter('l.account_id', $this->getAccount()->getId());
         $listingProductCollection->addFieldToFilter('sku', ['in' => $keys]);
 
-        $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $listingProductCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $listingProductCollection->getSelect()->columns(
             [
                 'main_table.product_id',
@@ -514,7 +514,7 @@ class General extends AbstractModel
         $listingOtherCollection->addFieldToFilter('sku', ['in' => $keys]);
         $listingOtherCollection->addFieldToFilter('is_repricing', 1);
 
-        $listingOtherCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $listingOtherCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $listingOtherCollection->getSelect()->columns(
             [
                 'second_table.listing_other_id',

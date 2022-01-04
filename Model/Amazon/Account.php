@@ -929,6 +929,23 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return $this->getSetting('magento_orders_settings', ['fba', 'mode'], 1) == 1;
     }
 
+    public function isMagentoOrdersFbaStoreModeEnabled()
+    {
+        $setting = $this->getSetting('magento_orders_settings', ['fba', 'store_mode'], 0);
+
+        return $setting == 1;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMagentoOrdersFbaStoreId()
+    {
+        $setting = $this->getSetting('magento_orders_settings', ['fba', 'store_id'], 0);
+
+        return (int)$setting;
+    }
+
     public function isMagentoOrdersFbaStockEnabled()
     {
         return $this->getSetting('magento_orders_settings', ['fba', 'stock_mode'], 0) == 1;

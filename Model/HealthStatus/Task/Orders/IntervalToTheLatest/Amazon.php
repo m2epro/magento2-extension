@@ -114,7 +114,7 @@ HTML
         $collection->addFieldToFilter('purchase_create_date', ['gt' => $backToDate->format('Y-m-d H:i:s')]);
         $collection->setOrder('purchase_create_date', $collection::SORT_ORDER_DESC);
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns(['second_table.purchase_create_date']);
         $collection->getSelect()->limit(20000);
 
@@ -147,7 +147,7 @@ HTML
         $collection = $this->amazonFactory->getObject('Order')->getCollection();
         $collection->setOrder('purchase_create_date', $collection::SORT_ORDER_DESC);
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns(['second_table.purchase_create_date']);
         $collection->getSelect()->limit(1);
 

@@ -46,7 +46,7 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
     {
         /** @var $collection \Ess\M2ePro\Model\ResourceModel\Walmart\Order\Collection */
         $collection = $this->walmartFactory->getObject('Order\Item')->getCollection();
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->addFieldToFilter('order_id', (int)$orderId);
         $collection->getSelect()->columns([
             'items_total' => new \Zend_Db_Expr('SUM((`price`)*`qty_purchased`)')

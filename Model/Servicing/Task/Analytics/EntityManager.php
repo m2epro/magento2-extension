@@ -52,7 +52,7 @@ class EntityManager extends \Ess\M2ePro\Model\AbstractModel
         $lastIdCollection = $this->getCollection();
         $idFieldName = $lastIdCollection->getResource()->getIdFieldName();
 
-        $lastIdCollection->getSelect()->order($idFieldName .' '. \Zend_Db_Select::SQL_DESC);
+        $lastIdCollection->getSelect()->order($idFieldName .' '. \Magento\Framework\DB\Select::SQL_DESC);
         $lastIdCollection->getSelect()->limit(1);
 
         $this->setLastId($lastIdCollection->getFirstItem()->getId());
@@ -65,7 +65,7 @@ class EntityManager extends \Ess\M2ePro\Model\AbstractModel
         $collection = $this->getCollection();
         $idFieldName = $collection->getResource()->getIdFieldName();
 
-        $collection->getSelect()->order($idFieldName .' '. \Zend_Db_Select::SQL_ASC);
+        $collection->getSelect()->order($idFieldName .' '. \Magento\Framework\DB\Select::SQL_ASC);
         $collection->getSelect()->limit($this->getLimit());
         $collection->addFieldToFilter($idFieldName, ['gt' => (int)$this->getLastProcessedId()]);
 

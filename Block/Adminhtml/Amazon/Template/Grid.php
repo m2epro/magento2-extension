@@ -163,7 +163,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $collectionProductTaxCode = $this->activeRecordFactory->getObject('Amazon_Template_ProductTaxCode')
             ->getCollection();
 
-        $collectionProductTaxCode->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collectionProductTaxCode->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collectionProductTaxCode->getSelect()->columns(
             [
                 'id as template_id',

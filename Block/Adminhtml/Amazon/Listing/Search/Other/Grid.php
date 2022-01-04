@@ -56,7 +56,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
         $repricingStateAllNo = Product::VARIATION_PARENT_IS_REPRICING_STATE_ALL_NO;
         $repricingStateAllYes = Product::VARIATION_PARENT_IS_REPRICING_STATE_ALL_YES;
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns(
             [
                 'sku'                          => 'cpe.sku',

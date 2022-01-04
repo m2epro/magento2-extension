@@ -141,9 +141,9 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     public function getAllIds($limit = null, $offset = null)
     {
         $idsSelect = clone $this->getSelect();
-        $idsSelect->reset(\Zend_Db_Select::ORDER);
-        $idsSelect->reset(\Zend_Db_Select::LIMIT_COUNT);
-        $idsSelect->reset(\Zend_Db_Select::LIMIT_OFFSET);
+        $idsSelect->reset(\Magento\Framework\DB\Select::ORDER);
+        $idsSelect->reset(\Magento\Framework\DB\Select::LIMIT_COUNT);
+        $idsSelect->reset(\Magento\Framework\DB\Select::LIMIT_OFFSET);
 
         if (!$this->listingProductMode) {
             // some of filtered field using HAVING (QTY for ex.) so we can't reset selecting columns
@@ -185,7 +185,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
             if (!$this->listingProductMode) {
                 $tableAlias = self::MAIN_TABLE_ALIAS;
-                $countSelect->reset(\Zend_Db_Select::GROUP);
+                $countSelect->reset(\Magento\Framework\DB\Select::GROUP);
             }
 
             $countSelect->columns("{$tableAlias}.{$this->getIdFieldName()}");

@@ -1,5 +1,5 @@
 <?php
-
+// @codingStandardsIgnoreFile
 /*
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
@@ -107,7 +107,8 @@ class UpgradeData implements UpgradeDataInterface
         '1.16.1' => ['1.17.0'],
         '1.17.0' => ['1.17.1'],
         '1.17.1' => ['1.18.0'],
-        '1.18.0' => ['1.18.1']
+        '1.18.0' => ['1.18.1'],
+        '1.18.1' => ['1.19.0']
     ];
 
     //########################################

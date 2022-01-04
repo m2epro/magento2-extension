@@ -19,7 +19,7 @@ class CheckCategoryTemplateProducts extends \Ess\M2ePro\Controller\Adminhtml\Wal
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns([
             'id' => 'main_table.id'
         ]);

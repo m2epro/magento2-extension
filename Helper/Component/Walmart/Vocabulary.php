@@ -99,7 +99,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary
         $collection->addFieldToFilter('additional_data', [
             'regexp'=> '"variation_channel_options":.*"'.$channelAttribute.'":"'.$channelOption.'"}']);
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns([
             'second_table.variation_parent_id'
         ]);

@@ -609,7 +609,7 @@ JS
         $collection->addFieldToFilter('is_custom_template', 0);
         $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'value' => 'id',
                 'label' => 'title'
@@ -629,7 +629,7 @@ JS
         $collection->addFieldToFilter('is_custom_template', 0);
         $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'value' => 'id',
                 'label' => 'title'
@@ -649,7 +649,7 @@ JS
         $collection->addFieldToFilter('is_custom_template', 0);
         $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'value' => 'id',
                 'label' => 'title'
@@ -668,7 +668,7 @@ JS
         $collection->addFieldToFilter('is_custom_template', 0);
         $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'value' => 'id',
                 'label' => 'title'
@@ -687,7 +687,7 @@ JS
         $collection->addFieldToFilter('is_custom_template', 0);
         $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'value' => 'id',
                 'label' => 'title'
@@ -706,7 +706,7 @@ JS
         $collection->addFieldToFilter('is_custom_template', 0);
         $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'value' => 'id',
                 'label' => 'title'

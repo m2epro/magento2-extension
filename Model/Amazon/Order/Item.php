@@ -295,13 +295,24 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         // Item was listed by M2E
         // ---------------------------------------
         if ($this->getChannelItem() !== null) {
-            return $this->getAmazonAccount()->isMagentoOrdersListingsStoreCustom()
+            $storeId = $this->getAmazonAccount()->isMagentoOrdersListingsStoreCustom()
                 ? $this->getAmazonAccount()->getMagentoOrdersListingsStoreId()
                 : $this->getChannelItem()->getStoreId();
+        } else {
+            $storeId = $this->getAmazonAccount()->getMagentoOrdersListingsOtherStoreId();
         }
         // ---------------------------------------
 
-        return $this->getAmazonAccount()->getMagentoOrdersListingsOtherStoreId();
+        // If order fulfilled by Amazon it has priority
+        // ---------------------------------------
+        if ($this->getAmazonOrder()->isFulfilledByAmazon() &&
+            $this->getAmazonAccount()->isMagentoOrdersFbaStoreModeEnabled()) {
+            $storeId = $this->getAmazonAccount()->getMagentoOrdersFbaStoreId();
+        }
+
+        // ---------------------------------------
+
+        return $storeId;
     }
 
     //########################################
@@ -346,6 +357,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         if ($this->getChannelItem() !== null) {
             return $this->getChannelItem()->getProductId();
         }
+
         // ---------------------------------------
 
         // Unmanaged Item

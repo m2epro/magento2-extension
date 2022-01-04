@@ -83,7 +83,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $collection->addFieldToFilter('main_table.marketplace_id', $marketplaceId);
         }
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns(
             [
                 'id'                   => 'main_table.id',

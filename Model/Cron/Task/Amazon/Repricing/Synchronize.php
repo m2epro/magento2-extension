@@ -74,7 +74,7 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $listingProductCollection->addFieldToFilter('second_table.sku', ['notnull' => true]);
         $listingProductCollection->addFieldToFilter('second_table.online_regular_price', ['notnull' => true]);
 
-        $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $listingProductCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $listingProductCollection->getSelect()->columns(
             [
                 'id'   => 'main_table.id',
@@ -95,7 +95,7 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         )->getCollection();
         $listingOtherCollection->addFieldToFilter('account_id', $account->getId());
 
-        $listingOtherCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $listingOtherCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $listingOtherCollection->getSelect()->columns(
             [
                 'id'   => 'main_table.id',
@@ -180,7 +180,7 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         );
         $listingProductCollection->addFieldToFilter('alpr.is_online_disabled', 0);
 
-        $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $listingProductCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $listingProductCollection->getSelect()->columns(
             [
                 'id'   => 'main_table.id',
@@ -203,7 +203,7 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $listingOtherCollection->addFieldToFilter('is_repricing', 1);
         $listingOtherCollection->addFieldToFilter('is_repricing_disabled', 0);
 
-        $listingOtherCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $listingOtherCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $listingOtherCollection->getSelect()->columns(
             [
                 'id'   => 'main_table.id',

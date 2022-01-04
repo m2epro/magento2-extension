@@ -257,7 +257,7 @@ class EbayCategories extends AbstractFeature
                 ['melp' => $this->getFullTableName('ebay_listing_product')],
                 'melp.template_category_id=metc.id'
             )
-            ->reset(\Zend_Db_Select::COLUMNS)
+            ->reset(\Magento\Framework\DB\Select::COLUMNS)
             ->columns(
                 [
                     'template_id'    => 'metc.id',

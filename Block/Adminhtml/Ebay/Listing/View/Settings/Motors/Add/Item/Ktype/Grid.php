@@ -45,7 +45,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors
         $collection->getSelect()->reset()->from([
             'main_table' => $table
         ]);
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns([
             'ktype', 'make', 'model', 'variant', 'body_style', 'type', 'from_year', 'to_year', 'engine', 'is_custom'
         ]);

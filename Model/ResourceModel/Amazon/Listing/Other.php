@@ -63,7 +63,7 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
             $listingOtherCollection->addFieldToFilter('is_repricing_disabled', (int)$repricingDisabled);
         }
 
-        $listingOtherCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $listingOtherCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $listingOtherCollection->getSelect()->columns(
             ['sku'  => 'second_table.sku']
         );
@@ -107,7 +107,7 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
             }
 
             if (!empty($columns)) {
-                $listingOtherCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+                $listingOtherCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
                 $listingOtherCollection->getSelect()->columns($columns);
             }
 

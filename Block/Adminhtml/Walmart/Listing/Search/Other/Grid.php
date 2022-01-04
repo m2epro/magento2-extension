@@ -57,7 +57,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGr
             ['sku' => 'sku']
         );
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns(
             [
                 'sku'                          => 'cpe.sku',

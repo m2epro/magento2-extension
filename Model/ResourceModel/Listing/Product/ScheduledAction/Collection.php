@@ -82,7 +82,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         $this->addFieldToFilter('main_table.action_type', $actionType);
 
         $now = $this->getHelper('Data')->getCurrentGmtDate();
-        $this->getSelect()->reset(\Zend_Db_Select::COLUMNS)
+        $this->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)
             ->columns(
                 [
                     'id'                 => 'main_table.id',

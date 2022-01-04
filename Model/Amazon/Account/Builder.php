@@ -229,6 +229,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
         $keys = [
             'mode',
+            'store_mode',
+            'store_id',
             'stock_mode'
         ];
         foreach ($keys as $key) {
@@ -403,6 +405,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                 ],
                 'fba'                     => [
                     'mode'       => 1,
+                    'store_mode' => 0,
+                    'store_id'   => null,
                     'stock_mode' => 0
                 ]
             ],

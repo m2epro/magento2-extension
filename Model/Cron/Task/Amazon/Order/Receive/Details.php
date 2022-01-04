@@ -134,7 +134,7 @@ class Details extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $orderCollection->addFieldToFilter('is_afn_channel', 1);
         $orderCollection->addFieldToFilter('status', ['neq' => \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING]);
         $orderCollection->addFieldToFilter('main_table.create_date', ['gt' => $from->format('Y-m-d H:i:s')]);
-        $orderCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $orderCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $orderCollection->getSelect()->columns('second_table.amazon_order_id');
 
         $amazonOrdersIds = $orderCollection->getColumnValues('amazon_order_id');

@@ -27,7 +27,7 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
         $select = $this->getConnection()
                        ->select()
                        ->from(['lp' => $this->getMainTable()])
-                       ->reset(\Zend_Db_Select::COLUMNS)
+                       ->reset(\Magento\Framework\DB\Select::COLUMNS)
                        ->columns(['product_id'])
                        ->where('id IN (?)', $listingProductIds);
 

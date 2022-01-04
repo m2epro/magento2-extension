@@ -78,7 +78,7 @@ class Grid extends AbstractGrid
             '`mlpvo`.`listing_product_variation_id`=`main_table`.`id`'
         );
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns(
             [
                 'id'                 => 'main_table.id',

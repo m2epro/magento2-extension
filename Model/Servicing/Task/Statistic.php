@@ -594,7 +594,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         }
 
         $products->getSelect()->distinct(true);
-        $products->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $products->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $products->getSelect()->columns(['product_id']);
 
         $options = $this->parentFactory->getObject($component, 'Listing_Product_Variation_Option')->getCollection();
@@ -619,7 +619,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         }
 
         $options->getSelect()->distinct(true);
-        $options->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $options->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $options->getSelect()->columns(['product_id']);
 
         $unionStmt = $this->resource->getConnection()

@@ -113,7 +113,7 @@ HTML
             'listed_by_m2e',
             [
                 'legend'      => $this->__('Product Is Listed By M2E Pro'),
-                'collapsable' => false
+                'collapsable' => true
             ]
         );
 
@@ -173,7 +173,7 @@ HTML
             'magento_block_amazon_accounts_magento_orders_listings_other',
             [
                 'legend'      => $this->__('Product Is Listed By Any Other Software'),
-                'collapsable' => false
+                'collapsable' => true
             ]
         );
 
@@ -270,10 +270,89 @@ HTML
         );
 
         $fieldset = $form->addFieldset(
+            'magento_block_amazon_accounts_magento_orders_fba',
+            [
+                'legend'      => $this->__('FBA Orders Settings'),
+                'collapsable' => true,
+                'tooltip'     => $this->__(
+                    'In this Block you can manage Stock Inventory of Products fulfilled by Amazon  (FBA Orders).<br/>
+                <b>Yes</b> - after Magento Order Creation of FBA Order, Quantity of Product reduces in Magento.<br/>
+                <b>No</b> - Magento Order Creation of FBA Order does not affect Quantity of Magento Product.'
+                )
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_fba_mode',
+            'select',
+            [
+                'name'    => 'magento_orders_settings[fba][mode]',
+                'label'   => $this->__('Create Order in Magento'),
+                'values'  => [
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
+                ],
+                'value'   => $formData['magento_orders_settings']['fba']['mode'],
+                'tooltip' => $this->__(
+                    'Whether an Order has to be created in Magento if a sold Product is fulfilled by Amazon.'
+                )
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_fba_store_mode',
+            'select',
+            [
+                'container_id' => 'magento_orders_fba_store_mode_container',
+                'name'         => 'magento_orders_settings[fba][store_mode]',
+                'label'        => $this->__('Create in separate Store View'),
+                'values'       => [
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
+                ],
+                'value'        => $formData['magento_orders_settings']['fba']['store_mode']
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_fba_store_id',
+            self::STORE_SWITCHER,
+            [
+                'container_id'       => 'magento_orders_fba_store_id_container',
+                'name'               => 'magento_orders_settings[fba][store_id]',
+                'label'              => $this->__('Magento Store View'),
+                'value'              => !empty($ordersSettings['fba']['store_id'])
+                    ? $ordersSettings['fba']['store_id'] : '',
+                'required'           => true,
+                'has_empty_option'   => true,
+                'has_default_option' => false
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_fba_stock_mode',
+            'select',
+            [
+                'container_id' => 'magento_orders_fba_stock_mode_container',
+                'name'         => 'magento_orders_settings[fba][stock_mode]',
+                'label'        => $this->__('Manage Stock'),
+                'values'       => [
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
+                ],
+                'value'        => $formData['magento_orders_settings']['fba']['stock_mode'],
+                'tooltip'      => $this->__(
+                    'If <i>Yes</i>, after Magento Order Creation QTY of Magento Product reduces.'
+                )
+            ]
+        );
+
+        $fieldset = $form->addFieldset(
             'magento_block_amazon_accounts_magento_orders_number',
             [
                 'legend'      => $this->__('Magento Order Number'),
-                'collapsable' => true
+                'collapsable' => true,
+                'tooltip'     => $this->__('Sets Magento Order number basing on the Settings below')
             ]
         );
 
@@ -393,57 +472,6 @@ HTML
                     1 => $this->__('Yes'),
                 ],
                 'value'        => $formData['magento_orders_settings']['refund_and_cancellation']['refund_mode']
-            ]
-        );
-
-        $fieldset = $form->addFieldset(
-            'magento_block_amazon_accounts_magento_orders_fba',
-            [
-                'legend'      => $this->__('FBA Orders Settings'),
-                'collapsable' => true,
-                'tootlip'     => $this->__(
-                    'In this Block you can manage Stock Inventory of Products fulfilled by Amazon  (FBA Orders).<br/>
-                <ul class=list>
-
-                <li><b>Yes</b> - after Magento Order Creation of FBA Order, Quantity of Product reduces in Magento.</li>
-                <li><b>No</b> - Magento Order Creation of FBA Order does not affect Quantity of Magento Product.</li>
-                </ul>'
-                )
-            ]
-        );
-
-        $fieldset->addField(
-            'magento_orders_fba_mode',
-            'select',
-            [
-                'name'    => 'magento_orders_settings[fba][mode]',
-                'label'   => $this->__('Create Order in Magento'),
-                'values'  => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
-                ],
-                'value'   => $formData['magento_orders_settings']['fba']['mode'],
-                'tooltip' => $this->__(
-                    'Whether an Order has to be created in Magento if a sold Product is fulfilled by Amazon.'
-                )
-            ]
-        );
-
-        $fieldset->addField(
-            'magento_orders_fba_stock_mode',
-            'select',
-            [
-                'container_id' => 'magento_orders_fba_stock_mode_container',
-                'name'         => 'magento_orders_settings[fba][stock_mode]',
-                'label'        => $this->__('Manage Stock'),
-                'values'       => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
-                ],
-                'value'        => $formData['magento_orders_settings']['fba']['stock_mode'],
-                'tooltip'      => $this->__(
-                    'If <i>Yes</i>, after Magento Order Creation QTY of Magento Product reduces.'
-                )
             ]
         );
 

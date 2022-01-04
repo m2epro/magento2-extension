@@ -69,7 +69,7 @@ class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMod
             $listingProductCollection->addFieldToFilter('alpr.is_online_disabled', (int)$repricingDisabled);
         }
 
-        $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $listingProductCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $listingProductCollection->getSelect()->columns(
             ['sku'  => 'second_table.sku']
         );

@@ -44,7 +44,7 @@ class General extends Command
 
         /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\BrokenTables $inspection */
         $inspection = $this->inspectionManager
-            ->getInspection(\Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\BrokenTables::class);
+            ->getInspection('BrokenTables');
         $inspection->fix($tableNames);
     }
 
@@ -62,7 +62,7 @@ class General extends Command
 
         $tableName = array_pop($tableNames);
         $info = $this->inspectionManager
-            ->getInspection(\Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\BrokenTables::class)
+            ->getInspection('BrokenTables')
             ->getBrokenRecordsInfo($tableName);
 
         return '<pre>' .
@@ -85,7 +85,7 @@ class General extends Command
         }
 
         $this->inspectionManager
-            ->getInspection(\Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\RemovedStores::class)
+            ->getInspection('RemovedStores')
             ->fix([$replaceIdFrom => $replaceIdTo]);
 
         $this->_redirect($this->_redirect->getRefererUrl());
@@ -111,7 +111,7 @@ class General extends Command
         }
 
         $inspector = $this->inspectionManager
-            ->getInspection(\Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\ListingProductStructure::class);
+            ->getInspection('ListingProductStructure');
         $inspector->fix($dataForRepair);
 
         $this->_redirect($this->_redirect->getRefererUrl());
@@ -131,7 +131,7 @@ class General extends Command
         $dataForRepair = (array)$this->getHelper('Data')->jsonDecode($repairInfo);
 
         $inspector = $this->inspectionManager
-            ->getInspection(\Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\OrderItemStructure::class);
+            ->getInspection('OrderItemStructure');
         $inspector->fix($dataForRepair);
     }
 
@@ -149,7 +149,7 @@ class General extends Command
         $dataForRepair = (array)$this->getHelper('Data')->jsonDecode($ids);
 
         $inspector = $this->inspectionManager
-            ->getInspection(\Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\EbayItemIdStructure::class);
+            ->getInspection('EbayItemIdStructure');
         $inspector->fix($dataForRepair);
     }
 
@@ -167,7 +167,7 @@ class General extends Command
         $dataForRepair = (array)$this->getHelper('Data')->jsonDecode($ids);
 
         $inspector = $this->inspectionManager
-            ->getInspection(\Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\AmazonProductWithoutVariations::class);
+            ->getInspection('AmazonProductWithoutVariations');
         $inspector->fix($dataForRepair);
     }
 

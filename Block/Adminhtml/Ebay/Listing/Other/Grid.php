@@ -234,7 +234,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->cacheData = [];
 
         $collection = $this->ebayFactory->getObject('Listing\Other')->getCollection();
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns([
             'count' => new \Zend_Db_Expr('COUNT(id)'),
             'sold' => new \Zend_Db_Expr('SUM(second_table.online_qty_sold)'),

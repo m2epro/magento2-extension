@@ -157,7 +157,7 @@ class Ebay extends Command
         ];
 
         $inspector = $this->inspectionManager
-            ->getInspection(\Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\NonexistentTemplates::class);
+            ->getInspection('NonexistentTemplates');
         $inspector->fix($fixData);
 
         $this->_redirect($this->_redirect->getRefererUrl());

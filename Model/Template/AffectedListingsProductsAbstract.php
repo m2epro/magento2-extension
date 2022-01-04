@@ -55,7 +55,7 @@ abstract class AffectedListingsProductsAbstract extends \Ess\M2ePro\Model\Abstra
         $productCollection = $this->loadCollection($filters);
 
         if (is_array($columns) && !empty($columns)) {
-            $productCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+            $productCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
             $columns && $productCollection->getSelect()->columns($columns);
         }
 

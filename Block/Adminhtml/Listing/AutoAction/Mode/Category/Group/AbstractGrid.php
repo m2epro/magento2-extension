@@ -50,12 +50,12 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
     protected function _prepareCollection()
     {
         $categoriesCollection = $this->activeRecordFactory->getObject('Listing_Auto_Category')->getCollection();
-        $categoriesCollection->getSelect()->reset(\Zend_Db_Select::FROM);
+        $categoriesCollection->getSelect()->reset(\Magento\Framework\DB\Select::FROM);
         $categoriesCollection->getSelect()->from(
             ['mlac' => $this->activeRecordFactory->getObject('Listing_Auto_Category')
                 ->getResource()->getMainTable()]
         );
-        $categoriesCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $categoriesCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $categoriesCollection->getSelect()->columns(new \Zend_Db_Expr('GROUP_CONCAT(`category_id`)'));
         $categoriesCollection->getSelect()->where('mlac.group_id = main_table.id');
 

@@ -61,7 +61,7 @@ class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             $listingProductCollection->addFieldToFilter('l.account_id', $accountId);
             $listingProductCollection->addFieldToFilter('sku', ['in' => $skus]);
 
-            $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+            $listingProductCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
             $listingProductCollection->getSelect()->columns(
                 [
                     'second_table.sku',
@@ -84,7 +84,7 @@ class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             $listingOtherCollection->addFieldToFilter('account_id', $accountId);
             $listingOtherCollection->addFieldToFilter('sku', ['in' => $skus]);
 
-            $listingOtherCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+            $listingOtherCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
             $listingOtherCollection->getSelect()->columns(
                 [
                     'second_table.sku',

@@ -57,7 +57,7 @@ class Cancel extends AbstractModel
             $this->orderChange->delete();
         }
 
-        if ($this->responseData['result'] && $this->responseData['cancelId'] !== null) {
+        if ($this->responseData['result'] && $this->responseData['cancel_id'] !== null) {
             $this->order->getChildObject()->setData('cancellation_status', 1);
             $this->order->getChildObject()->save();
             $this->order->addSuccessLog('Order is canceled. Status is updated on eBay.');

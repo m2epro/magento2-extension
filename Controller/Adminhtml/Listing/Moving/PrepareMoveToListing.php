@@ -59,7 +59,7 @@ class PrepareMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
                 '`main_table`.`product_id` = `cpe`.`entity_id`'
             )
             ->group(['listing.account_id', 'listing.marketplace_id'])
-            ->reset(\Zend_Db_Select::COLUMNS)
+            ->reset(\Magento\Framework\DB\Select::COLUMNS)
             ->columns(['marketplace_id', 'account_id'], 'listing')
             ->query()
             ->fetch();

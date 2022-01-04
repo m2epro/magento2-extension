@@ -60,7 +60,7 @@ abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Sales\Model\Order\Shipment\Item $shipmentItem
     ) {
         $additionalData = $this->getHelper('Data')->unserialize($shipmentItem->getOrderItem()->getAdditionalData());
-        $data = $additionalData[Helper::CUSTOM_IDENTIFIER];
+        $data = isset($additionalData[Helper::CUSTOM_IDENTIFIER]) ? $additionalData[Helper::CUSTOM_IDENTIFIER] : [];
 
         $componentMode = ucfirst($this->getComponentMode());
         if (isset($data['pretended_to_be_simple']) && $data['pretended_to_be_simple'] === true) {

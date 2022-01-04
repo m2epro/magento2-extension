@@ -73,7 +73,7 @@ class Install extends Command
 
         /** @var  \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\TablesStructureValidity $inspector */
         $inspector = $this->inspectionManager
-            ->getInspection(\Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\TablesStructureValidity::class);
+            ->getInspection('TablesStructureValidity');
 
         foreach ($columnsInfo as $columnInfo) {
             $inspector->fix($columnInfo);

@@ -658,7 +658,7 @@ HTML;
 
         $orderItemsCollection = $this->amazonFactory->getObject('Order\Item')->getCollection();
 
-        $orderItemsCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $orderItemsCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $orderItemsCollection->getSelect()->columns('order_id');
         $orderItemsCollection->getSelect()->distinct(true);
 

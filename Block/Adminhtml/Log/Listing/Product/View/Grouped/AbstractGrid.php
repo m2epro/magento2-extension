@@ -52,9 +52,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Prod
             $this->addMaxAllowedLogsCountExceededNotification($lastAllowedLog->getCreateDate());
         } else {
             $logCollection->getSelect()
-                ->reset(\Zend_Db_Select::ORDER)
-                ->reset(\Zend_Db_Select::LIMIT_COUNT)
-                ->reset(\Zend_Db_Select::LIMIT_OFFSET);
+                ->reset(\Magento\Framework\DB\Select::ORDER)
+                ->reset(\Magento\Framework\DB\Select::LIMIT_COUNT)
+                ->reset(\Magento\Framework\DB\Select::LIMIT_OFFSET);
         }
 
         $groupedCollection = $this->wrapperCollectionFactory->create();
@@ -103,7 +103,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Prod
         $logCollection = $this->activeRecordFactory->getObject('Listing\Log')->getCollection();
 
         $logCollection->getSelect()
-            ->reset(\Zend_Db_Select::COLUMNS)
+            ->reset(\Magento\Framework\DB\Select::COLUMNS)
             ->columns([
                 'id',
                 self::LISTING_PRODUCT_ID_FIELD,

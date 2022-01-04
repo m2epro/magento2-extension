@@ -30,7 +30,7 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         /** @var $collection \Ess\M2ePro\Model\ResourceModel\Amazon\Order\Collection */
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Order\Item')
             ->getCollection();
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->addFieldToFilter('order_id', $orderId);
         $collection->getSelect()->where('(gift_message != \'\' AND gift_message IS NOT NULL) OR gift_price != 0');
 
@@ -44,7 +44,7 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         /** @var $collection \Ess\M2ePro\Model\ResourceModel\Amazon\Order\Collection */
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Order\Item')
             ->getCollection();
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->addFieldToFilter('order_id', (int)$orderId);
         $collection->getSelect()->columns([
             'items_total' => new \Zend_Db_Expr('SUM((`price` + `gift_price`)*`qty_purchased`)')

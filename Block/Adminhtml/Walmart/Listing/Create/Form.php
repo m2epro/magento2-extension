@@ -84,7 +84,7 @@ class Form extends AbstractForm
         $accountsCollection = $this->walmartFactory->getObject('Account')->getCollection()
             ->setOrder('title', 'ASC');
 
-        $accountsCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS)
+        $accountsCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)
             ->columns(
                 [
                     'value' => 'id',
@@ -592,7 +592,7 @@ JS
         $collection = $this->walmartFactory->getObject('Template\SellingFormat')->getCollection();
         $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'value' => 'id',
                 'label' => 'title'
@@ -609,7 +609,7 @@ JS
         $collection = $this->walmartFactory->getObject('Template\Description')->getCollection();
         $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'value' => 'id',
                 'label' => 'title'
@@ -626,7 +626,7 @@ JS
         $collection = $this->walmartFactory->getObject('Template\Synchronization')->getCollection();
         $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'value' => 'id',
                 'label' => 'title'

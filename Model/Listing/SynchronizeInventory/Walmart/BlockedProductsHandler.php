@@ -54,7 +54,7 @@ class BlockedProductsHandler extends AbstractBlockedHandler
         $collection->getSelect()->where('wiw.wpid IS NULL');
 
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'main_table.id',
                 'main_table.status',

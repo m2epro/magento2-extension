@@ -75,14 +75,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
     {
         /** @var \Ess\M2ePro\Model\Account $row */
 
-        $consumerId = $row->getChildObject()->getData('client_id');
-        empty($consumerId) && $consumerId = $row->getChildObject()->getData('consumer_id');
+        if ($row->getChildObject()->getData('marketplace_id') == \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_US) {
+            $titleLabel = $this->__('Client ID');
+            $titleValue = $row->getChildObject()->getData('client_id');
+        } else {
+            $titleLabel = $this->__('Consumer ID');
+            $titleValue = $row->getChildObject()->getData('consumer_id');
+        }
 
         return <<<HTML
 <div>
     {$value}<br/>
-    <span style="font-weight: bold">{$this->__('Consumer ID')}</span>:
-    <span style="color: #505050">{$consumerId}</span>
+    <span style="font-weight: bold">{$titleLabel}</span>:
+    <span style="color: #505050">{$titleValue}</span>
     <br/>
     <span style="font-weight: bold">{$this->__('Marketplace')}</span>:
     <span style="color: #505050">{$row->getData('marketplace_title')}</span>

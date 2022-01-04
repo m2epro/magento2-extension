@@ -208,6 +208,7 @@ define([
             $('magento_orders_number_prefix_b2b').observe('keyup', AmazonAccountObj.magentoOrdersNumberPrefixPrefixChange);
 
             $('magento_orders_fba_mode').observe('change', AmazonAccountObj.magentoOrdersFbaModeChange).simulate('change');
+            $('magento_orders_fba_store_mode').observe('change', AmazonAccountObj.magentoOrdersFbaStoreModeChange);
 
             $('magento_orders_customer_mode').observe('change', AmazonAccountObj.magentoOrdersCustomerModeChange).simulate('change');
             $('magento_orders_tax_mode').observe('change', AmazonAccountObj.magentoOrdersTaxModeChange).simulate('change');
@@ -463,11 +464,27 @@ define([
         },
 
         magentoOrdersFbaModeChange: function() {
+            var self = AmazonAccountObj;
+
             if ($('magento_orders_fba_mode').value == 0) {
-                $('magento_orders_fba_stock_mode_container').hide();
+                $('magento_orders_fba_store_mode').value = 0;
+                $('magento_orders_fba_store_mode_container').hide();
                 $('magento_orders_fba_stock_mode').value = 0;
+                $('magento_orders_fba_stock_mode_container').hide();
             } else {
+                $('magento_orders_fba_store_mode_container').show();
                 $('magento_orders_fba_stock_mode_container').show();
+            }
+
+            self.magentoOrdersFbaStoreModeChange();
+        },
+
+        magentoOrdersFbaStoreModeChange: function() {
+            if ($('magento_orders_fba_store_mode').value == 0) {
+                $('magento_orders_fba_store_id').value = '';
+                $('magento_orders_fba_store_id_container').hide();
+            } else {
+                $('magento_orders_fba_store_id_container').show();
             }
         },
 
@@ -590,6 +607,7 @@ define([
 
                 $('magento_block_amazon_accounts_magento_orders_fba-wrapper').hide();
                 $('magento_orders_fba_mode').value = 1;
+                $('magento_orders_fba_store_mode').value = 0;
                 $('magento_orders_fba_stock_mode').value = 1;
 
                 $('magento_block_amazon_accounts_magento_orders_refund_and_cancellation-wrapper').hide();

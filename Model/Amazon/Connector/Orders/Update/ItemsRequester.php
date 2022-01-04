@@ -78,7 +78,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
         $fulfillmentDate = new \DateTime($order['fulfillment_date'], new \DateTimeZone('UTC'));
 
         $request = [
-            'id'               => $order['change_id'],
+            'id'               => $order['order_id'],
             'order_id'         => $order['amazon_order_id'],
             'tracking_number'  => $order['tracking_number'],
             'carrier_name'     => $order['carrier_name'],

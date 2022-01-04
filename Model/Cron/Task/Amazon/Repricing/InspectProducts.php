@@ -97,7 +97,7 @@ class InspectProducts extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             ['gt' => $this->getLastUpdateDate($account)]
         );
 
-        $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $listingProductCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $listingProductCollection->getSelect()->columns('second_table.sku');
 
         return $listingProductCollection->getColumnValues('sku');

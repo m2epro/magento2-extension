@@ -21,7 +21,7 @@ class ModuleInPrimaryConfig extends AbstractFeature
         $primaryConfigModifier->delete('/modules/');
 
         $select = $this->getConnection()->select()->from($this->getFullTableName('primary_config'));
-        $select->reset(\Zend_Db_Select::COLUMNS);
+        $select->reset(\Magento\Framework\DB\Select::COLUMNS);
         $select->columns('group');
         $select->where('`group` like ?', '/M2ePro/%');
 

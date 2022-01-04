@@ -96,7 +96,6 @@ class Form extends \Ess\M2ePro\Helper\AbstractHelper
 
         $info = <<<DATA
 -------------------------------- PLATFORM INFO -----------------------------------
-Name: {$platformInfo['name']}
 Edition: {$platformInfo['edition']}
 Version: {$platformInfo['version']}
 
@@ -123,13 +122,6 @@ Database: {$mysqlInfo['database']}
 Tables Prefix: {$mysqlInfo['prefix']}
 Connection Timeout: {$mysqlInfo['connect_timeout']}
 Wait Timeout: {$mysqlInfo['wait_timeout']}
-
------------------------------- ADDITIONAL INFO -----------------------------------
-System Name: {$additionalInfo['system']}
-User Agent: {$additionalInfo['user_agent']}
-License Key: {$additionalInfo['license_key']}
-Installation Key: {$additionalInfo['installation_key']}
-Admin Panel: {$additionalInfo['admin']}
 DATA;
 
         return $info;
@@ -146,10 +138,8 @@ DATA;
 {$description}
 
 -------------------------------- GENERAL -----------------------------------------
-Date: {$currentDate}
 Component: {$component}
-Subject: {$subject}
-%severity%
+
 
 DATA;
 

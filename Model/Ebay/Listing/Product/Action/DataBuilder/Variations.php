@@ -128,6 +128,14 @@ class Variations extends AbstractModel
                 $this->variationsThatCanNotBeDeleted[] = $oneMoreVariation;
             }
 
+            if (isset($item['price']) && $variation->getChildObject()->getOnlinePrice() == $item['price']) {
+                $item['price_not_changed'] = true;
+            }
+
+            if (isset($item['qty']) && $variation->getChildObject()->getOnlineQty() == $item['qty']) {
+                $item['qty_not_changed'] = true;
+            }
+
             $data[] = $item;
             $variationMetaData[$variation->getId()] = [
                 // @codingStandardsIgnoreLine

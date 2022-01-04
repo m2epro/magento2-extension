@@ -73,7 +73,7 @@ class PrepareMoveToListing extends Listing
         $row = $listingOtherCollection
             ->getSelect()
             ->group(['main_table.account_id','main_table.marketplace_id'])
-            ->reset(\Zend_Db_Select::COLUMNS)
+            ->reset(\Magento\Framework\DB\Select::COLUMNS)
             ->columns(['marketplace_id', 'account_id'])
             ->query()
             ->fetch();

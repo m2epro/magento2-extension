@@ -34,7 +34,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     public function getSelectCountSql()
     {
         $sql = parent::getSelectCountSql();
-        $sql->reset(\Zend_Db_Select::GROUP);
+        $sql->reset(\Magento\Framework\DB\Select::GROUP);
         return $sql;
     }
 

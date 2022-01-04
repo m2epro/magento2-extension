@@ -1,4 +1,18 @@
-* 1.18.1 (09/12/2021) 
+* 1.19.0 (04/01/2022) 
+
+Common: [Fixed] Undefined index: m2epro_extension in Ess/M2ePro/Model/Order/Shipment/Handler.php on line 63 when trying to resend Shipping Information [#2973]
+Common: [Improved] Compatibility with PHP v5.6 and later [#3239]
+eBay: [Added] Mark "Name", "Mode" and "Value" fields as required when adding Item Specifics [#2634]
+eBay: [Fixed] An empty page is displayed after submitting the "Sell on Another Marketplace" action in the Listing [#2631]
+eBay: [Fixed] Excessive number of warnings during the automatic revise of Price and Quantity [#3114]
+eBay: [Fixed] Product variations are mapped incorrectly [#3051]
+eBay: [Removed] "Additional cost" field is required in Shipping Policy [#1245]
+Amazon: [Added] Creation of Magento orders for Amazon FBA orders in a separate Store View [#2343]
+Amazon: [Fixed] An empty page is displayed after submitting the "Sell on Another Marketplace" action in the Listing [#2631]
+Amazon: [Fixed] Incorrect order logs displayed in case of shipping and tracking issues on Amazon [#3135]
+Walmart: [Improved] The deprecated "Consumer ID" field is renamed to "Client ID" on the Accounts page for Walmart US [#1231
+
+* 1.18.1 (9/12/2021)
 
 Common: [Fixed] Unable to create Magento order. Warning: in_array() expects parameter 2 to be array, bool given [#3123]
 

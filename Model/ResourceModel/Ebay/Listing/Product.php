@@ -30,7 +30,7 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         $select = $this->getConnection()
             ->select()
             ->from(['elp' => $this->getMainTable()])
-            ->reset(\Zend_Db_Select::COLUMNS)
+            ->reset(\Magento\Framework\DB\Select::COLUMNS)
             ->columns([$columnName])
             ->where('listing_product_id IN (?)', $listingProductIds);
 

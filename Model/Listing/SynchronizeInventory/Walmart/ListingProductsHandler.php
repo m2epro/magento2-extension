@@ -228,7 +228,7 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
         $collection->getSelect()->where("`second_table`.`wpid` is not null and `second_table`.`wpid` != ''");
         $collection->getSelect()->where("`second_table`.`is_variation_parent` != ?", 1);
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'main_table.listing_id',
                 'main_table.product_id',

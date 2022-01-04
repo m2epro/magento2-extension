@@ -1379,7 +1379,6 @@ HTML;
                                 <span class="required">*</span>
                             </th>
                             <th class="data-grid-th" style="width: 14%;">{$this->__('Additional Cost')}
-                                <span class="required">*</span>
                             </th>
                             <th class="data-grid-th" style="width: 7%;">{$this->__('Currency')}</th>
                             <th class="data-grid-th" style="width: 7%; min-width: 80px;">{$this->__('Priority')}</th>
@@ -1450,7 +1449,7 @@ HTML;
                         {$this->__('Cost')} <span class="required">*</span>
                     </th>
                     <th class="data-grid-th" style="width: 14%;">
-                        {$this->__('Additional Cost')} <span class="required">*</span>
+                        {$this->__('Additional Cost')}
                     </th>
                     <th class="data-grid-th" style="width: 7%;">{$this->__('Currency')}</th>
                     <th class="data-grid-th" style="width: 7%;">{$this->__('Priority')}</th>

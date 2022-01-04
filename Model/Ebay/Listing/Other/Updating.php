@@ -243,7 +243,7 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
 
         foreach (array_chunk($receivedItemsIds, 500, true) as $partReceivedItemsIds) {
             $collection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
-            $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+            $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
 
             $collection->getSelect()->join(
                 ['l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],

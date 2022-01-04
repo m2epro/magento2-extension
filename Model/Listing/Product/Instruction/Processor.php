@@ -145,7 +145,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
         $collection->getSelect()->limit($this->maxListingsProductsCount);
         $collection->getSelect()->group('main_table.listing_product_id');
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns('main_table.listing_product_id');
 
         $ids = $collection->getColumnValues('listing_product_id');
@@ -170,7 +170,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             'main_table.listing_product_id = second_table.id'
         );
         $collection->getSelect()->where('second_table.id IS NULL');
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns('main_table.id');
 
         $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()->remove(

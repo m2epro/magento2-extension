@@ -145,7 +145,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
 
         $removeChildTableWildcard = false;
         $columns = [];
-        foreach ($this->_select->getPart(\Zend_Db_Select::COLUMNS) as $fieldData) {
+        foreach ($this->_select->getPart(\Magento\Framework\DB\Select::COLUMNS) as $fieldData) {
             list($tableAlias, $fieldName, $alias) = $fieldData;
             /**
              * By default addFieldToSelect() method set all fields under main_table
@@ -170,7 +170,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
             );
         }
 
-        $this->_select->setPart(\Zend_Db_Select::COLUMNS, $columns);
+        $this->_select->setPart(\Magento\Framework\DB\Select::COLUMNS, $columns);
         return $this;
     }
 

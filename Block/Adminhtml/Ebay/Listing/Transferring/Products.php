@@ -67,23 +67,22 @@ class Products extends AbstractBlock
         $this->js->add(
             <<<JS
     require([
+        'domReady!',
         'M2ePro/M2ePro',
         'M2ePro/Ebay/Listing/Transferring'
-    ],function() {
+    ], function() {
 
         M2ePro.translator.add({$translations});
         M2ePro.url.add({$urls});
 
-        Event.observe(window,'load',function() {
-            EbayListingTransferringObj = new EbayListingTransferring({$this->getListing()->getId()});
-            EbayListingTransferringObj.addProducts(
-                'transferring_progress_bar',
-                {$products},
-                function() {
-                    window.location = '{$successUrl}';
-                }
-            );
-        });
+        EbayListingTransferringObj = new EbayListingTransferring({$this->getListing()->getId()});
+        EbayListingTransferringObj.addProducts(
+            'transferring_progress_bar',
+            {$products},
+            function() {
+                window.location = '{$successUrl}';
+            }
+        );
     });
 JS
         );

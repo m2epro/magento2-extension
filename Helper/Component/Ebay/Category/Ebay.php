@@ -290,7 +290,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
                 ],
                 'edc.marketplace_id = etc.marketplace_id AND edc.category_id = etc.category_id'
             )
-            ->reset(\Zend_Db_Select::COLUMNS)
+            ->reset(\Magento\Framework\DB\Select::COLUMNS)
             ->columns(
                 [
                     'etc.category_id',

@@ -93,7 +93,7 @@ class Form extends AbstractForm
         $accountsCollection = $this->amazonFactory->getObject('Account')->getCollection()
             ->setOrder('title', 'ASC');
 
-        $accountsCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS)
+        $accountsCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)
             ->columns(
                 [
                     'value' => 'id',

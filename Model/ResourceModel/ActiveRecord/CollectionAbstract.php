@@ -103,7 +103,7 @@ abstract class CollectionAbstract extends \Magento\Framework\Model\ResourceModel
      */
     public function setColumns($columns = null)
     {
-        $this->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $this->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $columns && $this->getSelect()->columns($columns);
 
         return $this;

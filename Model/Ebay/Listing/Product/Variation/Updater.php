@@ -117,8 +117,8 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
                 foreach ($listingProductVariationOptions as $listingProductVariationOption) {
                     foreach ($magentoVariationOptions as $magentoVariationOption) {
-                        if ($listingProductVariationOption['attribute'] != $magentoVariationOption['attribute'] ||
-                            $listingProductVariationOption['option'] != $magentoVariationOption['option']) {
+                        if ($listingProductVariationOption['attribute'] !== $magentoVariationOption['attribute'] ||
+                            $listingProductVariationOption['option'] !== $magentoVariationOption['option']) {
                             continue;
                         }
 

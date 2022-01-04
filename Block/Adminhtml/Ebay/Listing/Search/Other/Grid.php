@@ -39,7 +39,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
         $listingOtherCollection = $this->ebayFactory->getObject('Listing\Other')->getCollection();
         $listingOtherCollection->getSelect()->distinct();
 
-        $listingOtherCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $listingOtherCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $listingOtherCollection->getSelect()->columns([
             'id'                    =>'main_table.id',
             'store_id'              => new \Zend_Db_Expr(0),

@@ -88,7 +88,7 @@ class Store extends \Ess\M2ePro\Helper\AbstractHelper
                 ],
                 'edc.account_id = etsc.account_id AND edc.category_id = etsc.category_id'
             )
-            ->reset(\Zend_Db_Select::COLUMNS)
+            ->reset(\Magento\Framework\DB\Select::COLUMNS)
             ->columns(
                 [
                     'category_id',

@@ -509,7 +509,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             ['value' => 'value']
         );
         $queryStmt = $collection->getSelect()
-            ->reset(\Zend_Db_Select::COLUMNS)
+            ->reset(\Magento\Framework\DB\Select::COLUMNS)
             ->columns(['value' => 'cpev.value'])
             ->where('cpev.store_id IN (?)', $storeIds)
             ->where('cpev.attribute_id = ?', (int)$attributeId)
@@ -1407,7 +1407,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             ['value' => 'value']
         );
         $queryStmt = $collection->getSelect()
-            ->reset(\Zend_Db_Select::COLUMNS)
+            ->reset(\Magento\Framework\DB\Select::COLUMNS)
             ->columns(['value' => 'cpev.value'])
             ->where('cpev.store_id IN (?)', $storeIds)
             ->where('cpev.attribute_id = ?', (int)$attributeId)

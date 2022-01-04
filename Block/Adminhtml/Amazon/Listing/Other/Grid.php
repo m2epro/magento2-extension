@@ -205,7 +205,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->cacheData = [];
 
         $collection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns([
             'count' => new \Zend_Db_Expr('COUNT(id)'),
             'account_id',

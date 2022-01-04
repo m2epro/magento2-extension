@@ -169,7 +169,7 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
         $listingProductsCollection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();
         $listingProductsCollection->addFieldToFilter('id', ['in' => $listingProductIds]);
-        $listingProductsCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $listingProductsCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $listingProductsCollection->getSelect()->columns(['product_id']);
 
         $productIds = $listingProductsCollection->getColumnValues('product_id');

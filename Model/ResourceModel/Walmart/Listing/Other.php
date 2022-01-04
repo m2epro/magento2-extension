@@ -70,7 +70,7 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         }
 
         if (!empty($columns)) {
-            $listingOtherCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+            $listingOtherCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
             $listingOtherCollection->getSelect()->columns($columns);
         }
 

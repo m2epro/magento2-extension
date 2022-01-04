@@ -57,7 +57,7 @@ class DetectDirectlyDeleted extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     {
         $collection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns('product_id');
         $collection->getSelect()->distinct(true);
 
@@ -91,7 +91,7 @@ class DetectDirectlyDeleted extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     {
         $collection = $this->activeRecordFactory->getObject('Listing\Other')->getCollection();
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns('product_id');
         $collection->getSelect()->distinct(true);
         $collection->getSelect()->where('product_id IS NOT NULL');
@@ -134,7 +134,7 @@ class DetectDirectlyDeleted extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             $collection = $model->getCollection();
 
-            $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+            $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
             $collection->getSelect()->columns('product_id');
             $collection->getSelect()->distinct(true);
             $collection->getSelect()->where('product_id IS NOT NULL');

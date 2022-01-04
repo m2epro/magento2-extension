@@ -90,15 +90,12 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
     //########################################
 
-    /**
-     * @return \Ess\M2ePro\Model\Amazon\Order\ProxyObject
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     public function getProxy()
     {
-        return $this->modelFactory->getObject('Amazon_Order_ProxyObject', [
-            'order' => $this
-        ]);
+        return $this->modelFactory->getObject(
+            'Amazon_Order_ProxyObject',
+            ['order' => $this]
+        );
     }
 
     //########################################
@@ -511,6 +508,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
                 $storeId = $firstChannelItem->getStoreId();
             }
             // ---------------------------------------
+        }
+
+        if ($this->isFulfilledByAmazon() && $this->getAmazonAccount()->isMagentoOrdersFbaStoreModeEnabled()) {
+            $storeId = $this->getAmazonAccount()->getMagentoOrdersFbaStoreId();
         }
 
         if ($storeId == 0) {

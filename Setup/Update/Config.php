@@ -192,6 +192,9 @@ class Config extends AbstractConfig
             ],
             'y21_m11' => [
                 'EbayAddVatMode',
+            ],
+            'y21_m12' => [
+                'AmazonOrdersFbaStore',
             ]
         ];
     }

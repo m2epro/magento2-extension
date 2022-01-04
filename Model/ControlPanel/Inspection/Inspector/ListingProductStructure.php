@@ -68,7 +68,7 @@ class ListingProductStructure extends AbstractInspection implements InspectorInt
         $collection->addFieldToFilter('mlpv.id', ['null' => true]);
         $collection->getSelect()->group('main_table.id');
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns([
             'main_table.id', 'main_table.component_mode'
         ]);
@@ -106,7 +106,7 @@ class ListingProductStructure extends AbstractInspection implements InspectorInt
         $collection->getSelect()->where('mlp.id IS NULL OR mlpvo.id IS NULL');
         $collection->getSelect()->group('main_table.id');
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns([
             'main_table.id', 'main_table.component_mode'
         ]);
@@ -134,7 +134,7 @@ class ListingProductStructure extends AbstractInspection implements InspectorInt
         $collection->addFieldToFilter('ml.id', ['null' => true]);
         $collection->getSelect()->group('main_table.id');
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns([
             'main_table.id', 'main_table.component_mode'
         ]);
@@ -162,7 +162,7 @@ class ListingProductStructure extends AbstractInspection implements InspectorInt
         $collection->addFieldToFilter('ma.id', ['null' => true]);
         $collection->getSelect()->group('main_table.id');
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns([
             'main_table.id', 'main_table.component_mode'
         ]);

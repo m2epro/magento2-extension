@@ -49,7 +49,7 @@ class BlockedProductsHandler extends AbstractBlockedHandler
             \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED
         );
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'main_table.id',
                 'main_table.status',

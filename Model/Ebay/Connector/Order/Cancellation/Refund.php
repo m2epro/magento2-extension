@@ -23,8 +23,8 @@ class Refund extends AbstractModel
     public function getRequestData()
     {
         return [
-            'cancelId'   => $this->params['cancelId'],
-            'refundDate' => $this->params['refundDate'],
+            'cancel_id'   => $this->params['cancel_id'],
+            'refund_date' => $this->params['refund_date'],
         ];
     }
 

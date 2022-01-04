@@ -489,7 +489,7 @@ HTML;
             $collection->addFieldToFilter('id', ['in' => $this->getProductsIds()]);
             $collection->addFieldToFilter('is_variation_parent', 1);
 
-            $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+            $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
             $collection->getSelect()->columns(
                 [
                     'main_table.id'

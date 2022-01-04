@@ -1326,7 +1326,7 @@ JS
         $collection = $this->amazonFactory->getObject('Template\SellingFormat')->getCollection();
         $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'value' => 'id',
                 'label' => 'title'
@@ -1343,7 +1343,7 @@ JS
         $collection = $this->amazonFactory->getObject('Template\Synchronization')->getCollection();
         $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'value' => 'id',
                 'label' => 'title'
@@ -1360,7 +1360,7 @@ JS
         $collection = $this->activeRecordFactory->getObject('Amazon_Template_Shipping')->getCollection();
         $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'value' => 'id',
                 'label' => 'title'

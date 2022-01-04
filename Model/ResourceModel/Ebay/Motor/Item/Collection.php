@@ -36,9 +36,9 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Collection\Wrapper
     public function getAllIds()
     {
         $idsSelect = clone $this->getSelect();
-        $idsSelect->reset(\Zend_Db_Select::LIMIT_COUNT);
-        $idsSelect->reset(\Zend_Db_Select::LIMIT_OFFSET);
-        $idsSelect->reset(\Zend_Db_Select::COLUMNS);
+        $idsSelect->reset(\Magento\Framework\DB\Select::LIMIT_COUNT);
+        $idsSelect->reset(\Magento\Framework\DB\Select::LIMIT_OFFSET);
+        $idsSelect->reset(\Magento\Framework\DB\Select::COLUMNS);
 
         $idsSelect->columns($this->_idFieldName, 'main_table');
         $idsSelect->limit(\Ess\M2ePro\Helper\Component\Ebay\Motors::MAX_ITEMS_COUNT_FOR_ATTRIBUTE);

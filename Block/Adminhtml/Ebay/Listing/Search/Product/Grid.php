@@ -377,7 +377,7 @@ HTML;
             ['listing_product_id']
         );
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns(
             [
                 'child_variation_ids' => new \Zend_Db_Expr('GROUP_CONCAT(lpv.id)'),

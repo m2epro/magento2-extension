@@ -266,7 +266,7 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
             ['is_online_disabled', 'is_online_inactive']
         );
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'main_table.listing_id',
                 'main_table.product_id',

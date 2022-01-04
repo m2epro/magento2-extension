@@ -503,7 +503,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if (is_array($columns) && !empty($columns)) {
-            $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+            $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
             $collection->getSelect()->columns($columns);
         }
 

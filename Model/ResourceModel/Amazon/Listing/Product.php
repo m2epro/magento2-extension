@@ -81,7 +81,7 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
             }
 
             if (!empty($columns)) {
-                $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+                $listingProductCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
                 $listingProductCollection->getSelect()->columns($columns);
             }
 

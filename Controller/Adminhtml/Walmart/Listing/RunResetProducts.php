@@ -26,7 +26,7 @@ class RunResetProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $childProducts */
         $childProducts = $this->walmartFactory->getObject('Listing\Product')->getCollection();
         $childProducts->addFieldToFilter('variation_parent_id', $listingsProductsIds);
-        $childProducts->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $childProducts->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $childProducts->getSelect()->columns(['second_table.listing_product_id']);
 
         $childProductsIds = $childProducts->getColumnValues('listing_product_id');

@@ -22,7 +22,7 @@ class GetRandomMagentoProductId extends Description
         $offset = rand(0, $listingProductCollection->getSize() - 1);
         $listingProductCollection
             ->getSelect()
-            ->reset(\Zend_Db_Select::COLUMNS)
+            ->reset(\Magento\Framework\DB\Select::COLUMNS)
             ->columns(['id', 'product_id'])
             ->joinLeft(
                 ['ml' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
@@ -51,7 +51,7 @@ class GetRandomMagentoProductId extends Description
         $offset = rand(0, $productCollection->getSize() - 1);
         $productCollection
             ->getSelect()
-            ->reset(\Zend_Db_Select::COLUMNS)
+            ->reset(\Magento\Framework\DB\Select::COLUMNS)
             ->columns('entity_id')
             ->limit(1, $offset);
 

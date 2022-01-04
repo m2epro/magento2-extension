@@ -43,7 +43,7 @@ class ModelGetAll extends General
         $marketplaceId != '' && $collection->addFieldToFilter('marketplace_id', $marketplaceId);
         $isCustomTemplate != null && $collection->addFieldToFilter('is_custom_template', $isCustomTemplate);
 
-        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)
             ->columns([$idField, $dataField]);
 
         $sortField = $this->getRequest()->getParam('sort_field', '');
