@@ -15,16 +15,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 {
     const MASS_ACTION_ID_EDIT_PARTS_COMPATIBILITY = 'editPartsCompatibilityMode';
 
+    protected $ebayListingResourceModel;
     protected $ebayFactory;
 
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Ebay\Listing $ebayListingResourceModel,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
+        $this->ebayListingResourceModel = $ebayListingResourceModel;
         $this->ebayFactory = $ebayFactory;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -43,10 +46,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 
     protected function _prepareCollection()
     {
-        // Update statistic table values
-        $this->activeRecordFactory->getObject('Listing')->getResource()->updateStatisticColumns();
-        $this->activeRecordFactory->getObject('Ebay\Listing')->getResource()->updateStatisticColumns();
-
         $aTable = $this->activeRecordFactory->getObject('Account')->getResource()->getMainTable();
         $mTable = $this->activeRecordFactory->getObject('Marketplace')->getResource()->getMainTable();
 
@@ -78,23 +77,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
     }
 
     //########################################
-
-    protected function setColumns()
-    {
-        $this->addColumn(
-            'items_sold_count',
-            [
-                'header'         => $this->__('Sold QTY'),
-                'align'          => 'right',
-                'type'           => 'number',
-                'index'          => 'items_sold_count',
-                'filter_index'   => 'second_table.items_sold_count',
-                'frame_callback' => [$this, 'callbackColumnSoldQTY']
-            ]
-        );
-
-        return $this;
-    }
 
     protected function getColumnActionsItems()
     {
@@ -209,6 +191,45 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
         );
 
         return $result;
+    }
+
+    //########################################
+
+    public function callbackColumnTotalProducts($value, $row, $column, $isExport)
+    {
+        $value = $this->ebayListingResourceModel->getStatisticTotalCount($row['id']);
+
+        if ($value == 0) {
+            $value = '<span style="color: red;">0</span>';
+        }
+
+        return $value;
+    }
+
+    //########################################
+
+    public function callbackColumnListedProducts($value, $row, $column, $isExport)
+    {
+        $value = $this->ebayListingResourceModel->getStatisticActiveCount($row['id']);
+
+        if ($value == 0) {
+            $value = '<span style="color: red;">0</span>';
+        }
+
+        return $value;
+    }
+
+    //########################################
+
+    public function callbackColumnInactiveProducts($value, $row, $column, $isExport)
+    {
+        $value = $this->ebayListingResourceModel->getStatisticInactiveCount($row['id']);
+
+        if ($value == 0) {
+            $value = '<span style="color: red;">0</span>';
+        }
+
+        return $value;
     }
 
     //########################################

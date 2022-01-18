@@ -1,4 +1,10 @@
-* 1.19.0 (04/01/2022) 
+* 1.19.1 (18/01/2022) 
+
+Common: [Fixed] Warning: "Failed to set memory limit" in some software environments [#3252]
+Common: [Improved] Optimization of listing management speed [#3057]
+eBay: [Fixed] Canceled orders are not imported to M2E Pro [#3134]
+
+* 1.19.0 (4/01/2022)
 
 Common: [Fixed] Undefined index: m2epro_extension in Ess/M2ePro/Model/Order/Shipment/Handler.php on line 63 when trying to resend Shipping Information [#2973]
 Common: [Improved] Compatibility with PHP v5.6 and later [#3239]

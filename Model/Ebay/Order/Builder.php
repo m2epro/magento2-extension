@@ -431,18 +431,6 @@ class Builder extends AbstractModel
     //########################################
 
     /**
-     * @return mixed
-     */
-    public function isRefund()
-    {
-        $paymentDetails = $this->getData('payment_details');
-
-        return $paymentDetails['is_refund'];
-    }
-
-    // ---------------------------------------
-
-    /**
      * @return bool
      */
     public function isSingle()
@@ -493,10 +481,6 @@ class Builder extends AbstractModel
      */
     protected function canCreateOrUpdateOrder()
     {
-        if ($this->isNew() && $this->isRefund()) {
-            return false;
-        }
-
         if ($this->order->getId()) {
             $newPurchaseUpdateDate = new \DateTime(
                 $this->getData('purchase_update_date'),
@@ -523,9 +507,7 @@ class Builder extends AbstractModel
             return true;
         }
 
-        if ($this->getData('order_status') == OrderHelper::EBAY_ORDER_STATUS_CANCELLED ||
-            $this->getData('order_status') == OrderHelper::EBAY_ORDER_STATUS_INACTIVE
-        ) {
+        if ($this->getData('order_status') == OrderHelper::EBAY_ORDER_STATUS_INACTIVE) {
             return false;
         }
 

@@ -13,16 +13,19 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing;
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 {
+    protected $amazonListingResourceModel;
     protected $amazonFactory;
 
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Amazon\Listing $amazonListingResourceModel,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
+        $this->amazonListingResourceModel = $amazonListingResourceModel;
         $this->amazonFactory = $amazonFactory;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -41,9 +44,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 
     protected function _prepareCollection()
     {
-        // Update statistic table values
-        $this->activeRecordFactory->getObject('Amazon\Listing')->getResource()->updateStatisticColumns();
-
         // Get collection of listings
         $collection = $this->amazonFactory->getObject('Listing')->getCollection();
 
@@ -222,10 +222,44 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 
     //########################################
 
-    public function callbackColumnSoldProducts($value, $row, $column, $isExport)
+    public function callbackColumnTotalProducts($value, $row, $column, $isExport)
     {
-        return $this->getColumnValue($value);
+        $value = $this->amazonListingResourceModel->getStatisticTotalCount($row['id']);
+
+        if ($value == 0) {
+            $value = '<span style="color: red;">0</span>';
+        }
+
+        return $value;
     }
+
+    //########################################
+
+    public function callbackColumnListedProducts($value, $row, $column, $isExport)
+    {
+        $value = $this->amazonListingResourceModel->getStatisticActiveCount($row['id']);
+
+        if ($value == 0) {
+            $value = '<span style="color: red;">0</span>';
+        }
+
+        return $value;
+    }
+
+    //########################################
+
+    public function callbackColumnInactiveProducts($value, $row, $column, $isExport)
+    {
+        $value = $this->amazonListingResourceModel->getStatisticInactiveCount($row['id']);
+
+        if ($value == 0) {
+            $value = '<span style="color: red;">0</span>';
+        }
+
+        return $value;
+    }
+
+    //########################################
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {

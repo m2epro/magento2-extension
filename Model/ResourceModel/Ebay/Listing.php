@@ -19,13 +19,13 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     protected $productFactory;
 
     protected $_isPkAutoIncrement = false;
+    protected $_statisticDataCount = null;
 
     //########################################
 
     public function _construct()
     {
         $this->_init('m2epro_ebay_listing', 'listing_id');
-        $this->_isPkAutoIncrement = false;
     }
 
     //########################################
@@ -42,84 +42,6 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         $this->catalogProductAction = $catalogProductAction;
         $this->productFactory = $productFactory;
         parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
-    }
-
-    //########################################
-
-    public function updateStatisticColumns()
-    {
-        $this->updateProductsSoldCount();
-        $this->updateItemsActiveCount();
-        $this->updateItemsSoldCount();
-    }
-
-    // ---------------------------------------
-
-    private function updateProductsSoldCount()
-    {
-        $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
-
-        $select = $this->getConnection()
-                       ->select()
-                       ->from($lpTable, new \Zend_Db_Expr('COUNT(*)'))
-                       ->where("`listing_id` = `{$this->getMainTable()}`.`listing_id`")
-                       ->where("`status` = ?", (int)\Ess\M2ePro\Model\Listing\Product::STATUS_SOLD);
-
-        $query = "UPDATE `{$this->getMainTable()}`
-                  SET `products_sold_count` =  (".$select->__toString().")";
-
-        $this->getConnection()->query($query);
-    }
-
-    private function updateItemsActiveCount()
-    {
-        $lTable = $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable();
-        $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
-        $elpTable = $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable();
-
-        $select = $this->getConnection()
-                       ->select()
-                       ->from(
-                           ['lp' => $lpTable],
-                           new \Zend_Db_Expr('SUM(`online_qty` - `online_qty_sold`)')
-                       )
-                       ->join(
-                           ['elp' => $elpTable],
-                           'lp.id = elp.listing_product_id',
-                           []
-                       )
-                       ->where("`listing_id` = `{$lTable}`.`id`")
-                       ->where("`status` = ?", (int)\Ess\M2ePro\Model\Listing\Product::STATUS_LISTED);
-
-        $query = "UPDATE `{$lTable}`
-                  SET `items_active_count` =  IFNULL((".$select->__toString()."),0)
-                  WHERE `component_mode` = '".\Ess\M2ePro\Helper\Component\Ebay::NICK."'";
-
-        $this->getConnection()->query($query);
-    }
-
-    private function updateItemsSoldCount()
-    {
-        $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
-        $elpTable = $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable();
-
-        $select = $this->getConnection()
-                       ->select()
-                       ->from(
-                           ['lp' => $lpTable],
-                           new \Zend_Db_Expr('SUM(`online_qty_sold`)')
-                       )
-                       ->join(
-                           ['elp' => $elpTable],
-                           'lp.id = elp.listing_product_id',
-                           []
-                       )
-                       ->where("`listing_id` = `{$this->getMainTable()}`.`listing_id`");
-
-        $query = "UPDATE `{$this->getMainTable()}`
-                  SET `items_sold_count` =  (".$select->__toString().")";
-
-        $this->getConnection()->query($query);
     }
 
     //########################################
@@ -242,6 +164,76 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         }
 
         return array_values($products);
+    }
+
+    //########################################
+
+    public function getStatisticTotalCount($listingId)
+    {
+        $statisticData = $this->getStatisticData();
+        if (!isset($statisticData[$listingId]['total'])) {
+            return 0;
+        }
+
+        return (int)$statisticData[$listingId]['total'];
+    }
+
+    //########################################
+
+    public function getStatisticActiveCount($listingId)
+    {
+        $statisticData = $this->getStatisticData();
+        if (!isset($statisticData[$listingId]['active'])) {
+            return 0;
+        }
+
+        return (int)$statisticData[$listingId]['active'];
+    }
+
+    //########################################
+
+    public function getStatisticInactiveCount($listingId)
+    {
+        $statisticData = $this->getStatisticData();
+        if (!isset($statisticData[$listingId]['inactive'])) {
+            return 0;
+        }
+
+        return (int)$statisticData[$listingId]['inactive'];
+    }
+
+    //########################################
+
+    protected function getStatisticData()
+    {
+        if ($this->_statisticDataCount) {
+            return $this->_statisticDataCount;
+        }
+
+        $structureHelper = $this->getHelper('Module_Database_Structure');
+
+        $m2eproListing = $structureHelper->getTableNameWithPrefix('m2epro_listing');
+        $m2eproEbayListing = $structureHelper->getTableNameWithPrefix('m2epro_ebay_listing');
+        $m2eproListingProduct = $structureHelper->getTableNameWithPrefix('m2epro_listing_product');
+
+        $sql = "SELECT
+                    l.id                                           AS listing_id,
+                    COUNT(lp.id)                                   AS total,
+                    COUNT(CASE WHEN lp.status = 2 THEN lp.id END)  AS active,
+                    COUNT(CASE WHEN lp.status != 2 THEN lp.id END) AS inactive
+                FROM `{$m2eproListing}` AS `l`
+                    INNER JOIN `{$m2eproEbayListing}` AS `el` ON l.id = el.listing_id
+                    LEFT JOIN `{$m2eproListingProduct}` AS `lp` ON l.id = lp.listing_id
+                GROUP BY listing_id;";
+
+        $result = $this->getConnection()->query($sql);
+
+        $data = [];
+        foreach($result as $value){
+            $data[$value['listing_id']] = $value;
+        }
+
+        return $this->_statisticDataCount = $data;
     }
 
     //########################################

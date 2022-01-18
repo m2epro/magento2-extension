@@ -112,6 +112,7 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
                 $order->addNoticeLog(
                     'Magento order creation rules are met. M2E Pro will attempt to create Magento order.'
                 );
+
                 $order->createMagentoOrder();
             } catch (\Exception $exception) {
                 return;

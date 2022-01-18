@@ -135,8 +135,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'frame_callback' => [$this, 'callbackColumnInactiveProducts']
         ]);
 
-        $this->setColumns();
-
         $this->addColumn('actions', [
             'header'    => $this->__('Actions'),
             'align'     => 'left',
@@ -153,11 +151,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return parent::_prepareColumns();
     }
 
-    protected function setColumns()
-    {
-        return null;
-    }
-
     //########################################
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
@@ -168,23 +161,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function callbackFilterTitle($collection, $column)
     {
         return null;
-    }
-
-    // ---------------------------------------
-
-    public function callbackColumnTotalProducts($value, $row, $column, $isExport)
-    {
-        return $this->getColumnValue($value);
-    }
-
-    public function callbackColumnListedProducts($value, $row, $column, $isExport)
-    {
-        return $this->getColumnValue($value);
-    }
-
-    public function callbackColumnInactiveProducts($value, $row, $column, $isExport)
-    {
-        return $this->getColumnValue($value);
     }
 
     //########################################

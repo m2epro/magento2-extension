@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Helper;
  */
 class Server extends \Ess\M2ePro\Helper\AbstractHelper
 {
-    const MAX_INTERVAL_OF_RETURNING_TO_DEFAULT_BASEURL = 86400;
+    const MAX_INTERVAL_OF_RETURNING_TO_DEFAULT_BASEURL = 600;
 
     protected $activeRecordFactory;
 

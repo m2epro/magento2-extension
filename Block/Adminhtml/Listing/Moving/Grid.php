@@ -56,11 +56,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $componentMode = $this->getHelper('Data\GlobalData')->getValue('componentMode');
         $ignoreListings = (array)$this->getHelper('Data\GlobalData')->getValue('ignoreListings');
 
-        // Update statistic table values
-        $this->activeRecordFactory->getObject('Listing')->getResource()->updateStatisticColumns();
-        $this->activeRecordFactory->getObject(ucfirst($componentMode).'\Listing')
-            ->getResource()->updateStatisticColumns();
-
         $collection = $this->parentFactory
             ->getObject($componentMode, 'Listing')
             ->getCollection();
@@ -177,7 +172,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnSourceTotalItems($value, $row, $column, $isExport)
     {
-        return $value.'&nbsp;';
+        $componentMode = $this->getHelper('Data\GlobalData')->getValue('componentMode');
+        $value = $this->activeRecordFactory->getObject(ucfirst($componentMode).'\Listing')->getResource()->getStatisticTotalCount($row['id']);
+
+        if ($value <= 0) {
+            $value = '<span style="color: red;">0</span>';
+        }
+
+        return $value;
     }
 
     public function callbackColumnActions($value, $row, $column, $isExport)
@@ -212,7 +214,7 @@ HTML;
                 'content' => <<<HTML
                 Item(s) can be moved to a Listing within the same {$componentTitle} Account and Marketplace.<br>
                 You can select an existing M2E Pro Listing or create a new one.<br><br>
-        
+
                 <strong>Note:</strong> Once the Items are moved, they will be updated
                  based on the new Listing settings.
 HTML
