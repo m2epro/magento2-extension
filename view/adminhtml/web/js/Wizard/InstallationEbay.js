@@ -16,7 +16,7 @@ define([
 
         registrationStep: function ()
         {
-            WizardObj.registrationStep(M2ePro.url.get('wizard_installationEbay/createLicense'));
+            WizardObj.registrationStep(M2ePro.url.get('wizard_registration/createLicense'));
         },
 
         accountStep: function ()

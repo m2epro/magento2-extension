@@ -59,6 +59,10 @@ class Active extends AbstractModel
 
     public function isAllowed()
     {
+        if (!parent::isAllowed()) {
+            return false;
+        }
+
         if (!$this->input->hasInstructionWithTypes($this->getStopInstructionTypes()) &&
             !$this->input->hasInstructionWithTypes($this->getReviseInstructionTypes())
         ) {

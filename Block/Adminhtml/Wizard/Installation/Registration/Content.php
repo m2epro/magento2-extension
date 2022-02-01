@@ -15,15 +15,21 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
  */
 abstract class Content extends AbstractForm
 {
+    /** @var \Magento\Backend\Model\Auth\Session */
     protected $authSession;
 
+    /** @var \Ess\M2ePro\Model\Registration\Manager */
+    private $manager;
+
     public function __construct(
+        \Ess\M2ePro\Model\Registration\Manager $manager,
         \Magento\Backend\Model\Auth\Session $authSession,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
+        $this->manager = $manager;
         $this->authSession = $authSession;
 
         parent::__construct($context, $registry, $formFactory, $data);
@@ -65,7 +71,19 @@ HTML
         // ---------------------------------------
 
         // ---------------------------------------
-        $earlierFormData = $this->getHelper('Module')->getRegistry()->getValueFromJson('/wizard/license_form_data/');
+        $earlierFormData = [];
+
+        if($this->manager->isExistInfo()){
+            $earlierFormDataObj = $this->manager->getInfo();
+
+            $earlierFormData['email'] = $earlierFormDataObj->getEmail();
+            $earlierFormData['first_name'] = $earlierFormDataObj->getFirstname();
+            $earlierFormData['last_name'] = $earlierFormDataObj->getLastname();
+            $earlierFormData['phone'] = $earlierFormDataObj->getPhone();
+            $earlierFormData['country'] = $earlierFormDataObj->getCountry();
+            $earlierFormData['city'] = $earlierFormDataObj->getCity();
+            $earlierFormData['postal_code'] = $earlierFormDataObj->getPostalCode();
+        }
 
         $userInfo = array_merge($userInfo, $earlierFormData);
 
@@ -189,7 +207,7 @@ HTML
         if (!$this->getData('isLicenseStepFinished')) {
             $this->css->add(
                 <<<CSS
-#licence_agreement .admin__field {
+.field-licence_agreement .admin__field {
     padding-top: 8px;
 }
 CSS
@@ -199,10 +217,8 @@ CSS
                 'licence_agreement',
                 'checkbox',
                 [
-                    'field_extra_attributes' => 'id="licence_agreement"',
                     'name' => 'licence_agreement',
                     'class' => 'admin__control-checkbox',
-                    'style' => 'padding-top: 8px;',
                     'label' => $this->__('Terms and Privacy'),
                     'checked' => false,
                     'value' => 1,
@@ -219,30 +235,6 @@ HTML
         $this->setForm($form);
 
         return parent::_prepareForm();
-    }
-
-    protected function getCountryLabelByCode($code, $type = 'input')
-    {
-        foreach ($this->getData('available_countries') as $country) {
-            if ($country['value'] == $code) {
-                return $country['label'];
-            }
-        }
-
-        if (!empty($code)) {
-            return $code;
-        }
-
-        if ($type == 'input') {
-            return '';
-        }
-
-        $notSelectedWord = $this->__('not selected');
-        return <<<HTML
-<span style="font-style: italic; color: grey;">
-    [{$notSelectedWord}]
-</span>
-HTML;
     }
 
     protected function getUserInfoValue($name, $type = 'input')

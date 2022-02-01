@@ -17,6 +17,10 @@ class NotListed extends AbstractModel
 
     public function isAllowed()
     {
+        if (!parent::isAllowed()) {
+            return false;
+        }
+
         $listingProduct = $this->input->getListingProduct();
 
         if (!$listingProduct->isListable() || !$listingProduct->isNotListed()) {

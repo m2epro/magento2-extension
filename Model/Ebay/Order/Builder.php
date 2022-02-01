@@ -491,7 +491,7 @@ class Builder extends AbstractModel
                 new \DateTimeZone('UTC')
             );
 
-            if ($newPurchaseUpdateDate <= $oldPurchaseUpdateDate) {
+            if ($newPurchaseUpdateDate < $oldPurchaseUpdateDate) {
                 return false;
             }
         }

@@ -57,11 +57,15 @@ class StopQueue extends ActiveRecord\AbstractModel
         try {
             $requestData = $this->getRequestData($listingProduct, $actionType);
         } catch (\Exception $exception) {
+            $sku = $listingProduct->isComponentModeEbay()
+                ? $listingProduct->getChildObject()->getOnlineSku()
+                : $listingProduct->getChildObject()->getSku();
+
             $this->getHelper('Module\Logger')->process(
                 sprintf(
                     'Product [Listing Product ID: %s, SKU %s] was not added to stop queue because of the error: %s',
                     $listingProduct->getId(),
-                    $listingProduct->getChildObject()->getSku(),
+                    $sku,
                     $exception->getMessage()
                 ),
                 'Product was not added to stop queue',

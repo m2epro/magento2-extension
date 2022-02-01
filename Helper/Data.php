@@ -85,9 +85,21 @@ class Data extends AbstractHelper
 
     // ---------------------------------------
 
+    public function createGmtDateTime($timeString)
+    {
+        return new \DateTime($timeString, new \DateTimeZone($this->getDefaultTimezone()));
+    }
+
+    public function createCurrentGmtDateTime()
+    {
+        return $this->createGmtDateTime('now');
+    }
+
+    // ---------------------------------------
+
     public function getCurrentGmtDate($returnTimestamp = false, $format = 'Y-m-d H:i:s')
     {
-        $dateObject = new \DateTime('now', new \DateTimeZone($this->getDefaultTimezone()));
+        $dateObject = $this->createCurrentGmtDateTime();
 
         if ($returnTimestamp) {
             return (int)$dateObject->getTimestamp();
@@ -130,7 +142,7 @@ class Data extends AbstractHelper
 
     public function gmtDateToTimezone($date, $returnTimestamp = false, $format = 'Y-m-d H:i:s')
     {
-        $dateObject = new \DateTime($date, new \DateTimeZone($this->getDefaultTimezone()));
+        $dateObject = $this->createGmtDateTime($date);
         $dateObject->setTimezone(new \DateTimeZone($this->getConfigTimezone()));
 
         if ($returnTimestamp) {

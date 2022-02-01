@@ -15,18 +15,19 @@ use Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment;
  */
 class Configuration extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    /**
-     * @var \Magento\Framework\Locale\CurrencyInterface
-     */
+    /** @var \Ess\M2ePro\Model\Registration\Manager */
+    private $manager;
+
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
     private $localeCurrency;
-    /**
-     * @var \Magento\Framework\App\Config\ReinitableConfigInterface
-     */
+
+    /** @var \Magento\Framework\App\Config\ReinitableConfigInterface */
     private $storeConfig;
 
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\Registration\Manager $manager,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\Config\ReinitableConfigInterface $storeConfig,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -34,6 +35,7 @@ class Configuration extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFor
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
+        $this->manager = $manager;
         $this->localeCurrency = $localeCurrency;
         $this->storeConfig = $storeConfig;
 
@@ -932,7 +934,21 @@ HTML
 
     protected function getUserData()
     {
-        return $this->getHelper('Module')->getRegistry()->getValueFromJson('/wizard/license_form_data/');
+        $userData = [];
+
+        if ($this->manager->isExistInfo()) {
+            $userDataObj = $this->manager->getInfo();
+
+            $userData['email'] = $userDataObj->getEmail();
+            $userData['firstname'] = $userDataObj->getFirstname();
+            $userData['lastname'] = $userDataObj->getLastname();
+            $userData['phone'] = $userDataObj->getPhone();
+            $userData['country'] = $userDataObj->getCountry();
+            $userData['city'] = $userDataObj->getCity();
+            $userData['postal_code'] = $userDataObj->getPostalCode();
+        }
+
+        return $userData;
     }
 
     protected function canUseProductAttributes()

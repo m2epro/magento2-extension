@@ -19,7 +19,7 @@ define([
 
         registrationStep: function ()
         {
-            WizardObj.registrationStep(M2ePro.url.get('wizard_installationWalmart/createLicense'));
+            WizardObj.registrationStep(M2ePro.url.get('wizard_registration/createLicense'));
         },
 
         accountStep: function ()

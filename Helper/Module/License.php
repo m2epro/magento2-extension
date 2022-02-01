@@ -13,7 +13,10 @@ namespace Ess\M2ePro\Helper\Module;
  */
 class License extends \Ess\M2ePro\Helper\AbstractHelper
 {
+    /** @var \Ess\M2ePro\Model\Factory */
     protected $modelFactory;
+
+    /** @var \Magento\Config\Model\Config\Source\Locale\Country */
     protected $country;
 
     //########################################
@@ -81,31 +84,19 @@ class License extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function obtainRecord(
-        $email = null,
-        $firstName = null,
-        $lastName = null,
-        $country = null,
-        $city = null,
-        $postalCode = null,
-        $phone = null
-    ) {
-        if ($this->getHelper('Server_Maintenance')->isNow()) {
-            return false;
-        }
-
+    public function obtainRecord(\Ess\M2ePro\Model\Registration\Info $info) {
         $requestParams = [
             'domain'    => $this->getHelper('Client')->getDomain(),
             'directory' => $this->getHelper('Client')->getBaseDirectory()
         ];
 
-        $email !== null && $requestParams['email'] = $email;
-        $firstName !== null && $requestParams['first_name'] = $firstName;
-        $lastName !== null && $requestParams['last_name'] = $lastName;
-        $phone !== null && $requestParams['phone'] = $phone;
-        $country !== null && $requestParams['country'] = $country;
-        $city !== null && $requestParams['city'] = $city;
-        $postalCode !== null && $requestParams['postal_code'] = $postalCode;
+        $requestParams['email'] = $info->getEmail();
+        $requestParams['first_name'] = $info->getFirstname();
+        $requestParams['last_name'] = $info->getLastname();
+        $requestParams['phone'] = $info->getPhone();
+        $requestParams['country'] = $info->getCountry();
+        $requestParams['city'] = $info->getCity();
+        $requestParams['postal_code'] = $info->getPostalCode();
 
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
         $connectorObj = $dispatcherObject->getVirtualConnector('license', 'add', 'record', $requestParams);
@@ -117,50 +108,6 @@ class License extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $this->getHelper('Module')->getConfig()->setGroupValue('/license/', 'key', (string)$response['key']);
-
-        $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
-            $this->modelFactory->getObject('Servicing_Task_License')->getPublicNick()
-        );
-
-        return true;
-    }
-
-    public function updateLicenseUserInfo(
-        $email = null,
-        $firstName = null,
-        $lastName = null,
-        $country = null,
-        $city = null,
-        $postalCode = null,
-        $phone = null
-    ) {
-        if ($this->getHelper('Server_Maintenance')->isNow()) {
-            return false;
-        }
-
-        $requestParams['key'] = $this->getKey();
-
-        $data = [
-            'email'       => $email,
-            'first_name'  => $firstName,
-            'last_name'   => $lastName,
-            'phone'       => $phone,
-            'country'     => $country,
-            'city'        => $city,
-            'postal_code' => $postalCode
-        ];
-
-        foreach ($data as $key => $value) {
-            if ($value === null) {
-                continue;
-            }
-
-            $requestParams[$key] = $value;
-        }
-
-        $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('license', 'update', 'record', $requestParams);
-        $dispatcherObject->process($connectorObj);
 
         return true;
     }

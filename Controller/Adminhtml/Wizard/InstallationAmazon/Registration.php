@@ -8,6 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 
+use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 
 /**
@@ -15,10 +16,24 @@ use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
  */
 class Registration extends InstallationAmazon
 {
+    /** @var \Ess\M2ePro\Model\Registration\Manager */
+    private $manager;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Registration\Manager $manager,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Magento\Framework\Code\NameBuilder $nameBuilder,
+        Context $context
+    ) {
+        $this->manager = $manager;
+
+        parent::__construct($amazonFactory, $nameBuilder, $context);
+    }
+
     public function execute()
     {
         $this->init();
 
-        return $this->registrationAction();
+        return $this->registrationAction($this->manager);
     }
 }

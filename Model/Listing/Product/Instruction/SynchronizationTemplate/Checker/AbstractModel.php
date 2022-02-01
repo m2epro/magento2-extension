@@ -40,7 +40,10 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    abstract public function isAllowed();
+    public function isAllowed()
+    {
+        return $this->input->getListingProduct()->getMagentoProduct()->exists();
+    }
 
     abstract public function process(array $params = []);
 

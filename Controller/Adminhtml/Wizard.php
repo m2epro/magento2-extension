@@ -13,9 +13,10 @@ namespace Ess\M2ePro\Controller\Adminhtml;
  */
 abstract class Wizard extends Main
 {
-    /** @var \Ess\M2ePro\Helper\Module\Wizard|null  */
+    /** @var \Ess\M2ePro\Helper\Module\Wizard|null */
     protected $wizardHelper;
 
+    /** @var \Magento\Framework\Code\NameBuilder */
     protected $nameBuilder;
 
     //########################################
@@ -98,11 +99,17 @@ abstract class Wizard extends Main
         $this->_forward($this->getCurrentStep());
     }
 
-    protected function registrationAction()
+    /**
+     * @param \Ess\M2ePro\Model\Registration\Manager $manager
+     *
+     * @return \Magento\Framework\Controller\Result\Raw|\Magento\Framework\View\Result\Page
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function registrationAction(\Ess\M2ePro\Model\Registration\Manager $manager)
     {
-        $licenseData = $this->getHelper('Module')->getRegistry()->getValueFromJson('/wizard/license_form_data/');
+        $key = $this->getHelper('Module\License')->getKey();
 
-        if (!empty($licenseData)) {
+        if ($manager->isExistInfo() && !empty($key)) {
             $this->setStep($this->getNextStep());
             return $this->renderSimpleStep();
         }

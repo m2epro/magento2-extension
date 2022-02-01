@@ -195,6 +195,9 @@ class Config extends AbstractConfig
             ],
             'y21_m12' => [
                 'AmazonOrdersFbaStore',
+            ],
+            'y22_m01' => [
+                'ChangeRegistryKey',
             ]
         ];
     }

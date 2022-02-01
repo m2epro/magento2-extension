@@ -13,7 +13,11 @@ namespace Ess\M2ePro\Model\Servicing\Task;
  */
 class Settings extends \Ess\M2ePro\Model\Servicing\Task
 {
+    /** @var \Ess\M2ePro\Model\Servicing\Task\Analytics\Registry $registry */
     protected $registry;
+
+    /** @var \Ess\M2ePro\Model\Servicing\Task\Statistic\Manager $statisticManager */
+    private $statisticManager;
 
     //########################################
 
@@ -25,9 +29,11 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\ResourceConnection $resource,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Servicing\Task\Statistic\Manager $statisticManager
     ) {
         $this->registry = $registry;
+        $this->statisticManager = $statisticManager;
 
         parent::__construct(
             $config,
@@ -80,6 +86,7 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
         $this->updateLastVersion($data);
         $this->updateSendLogs($data);
         $this->updateAnalytics($data);
+        $this->updateStatistic($data);
     }
 
     //########################################
@@ -212,6 +219,24 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
             $data['analytics']['planned_at'] !== $this->registry->getPlannedAt()) {
             $this->registry->markPlannedAt($data['analytics']['planned_at']);
         }
+    }
+
+    private function updateStatistic(array $data)
+    {
+        // A list of tasks to be enabled/disabled from the server
+        $tasks = [
+            \Ess\M2ePro\Model\Servicing\Task\Statistic\Manager::TASK_LISTING_PRODUCT_INSTRUCTION_TYPE => false
+        ];
+
+        if (isset($data['statistic']['tasks'])) {
+            foreach ($data['statistic']['tasks'] as $key => $value) {
+                if (isset($tasks[$key])) {
+                    $tasks[$key] = (bool)$value;
+                }
+            }
+        }
+
+        $this->statisticManager->setTasksStates($tasks);
     }
 
     //########################################

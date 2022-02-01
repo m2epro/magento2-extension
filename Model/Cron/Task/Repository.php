@@ -22,6 +22,10 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
 
     /** @var array */
     public static $registeredTasks = [
+        \Ess\M2ePro\Model\Cron\Task\System\Servicing\Statistic\InstructionType::NICK => [
+            'component' => self::COMPONENT_GENERAL,
+            'group'     => self::GROUP_SYSTEM,
+        ],
         \Ess\M2ePro\Model\Cron\Task\System\HealthStatus::NICK => [
             'component' => self::COMPONENT_GENERAL,
             'group'     => self::GROUP_SYSTEM,
@@ -93,10 +97,6 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
         //----------------------------------------
 
         \Ess\M2ePro\Model\Cron\Task\Ebay\UpdateAccountsPreferences::NICK => [
-            'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'group'     => self::GROUP_EBAY,
-        ],
-        \Ess\M2ePro\Model\Cron\Task\Ebay\Template\RemoveUnused::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'group'     => self::GROUP_EBAY,
         ],

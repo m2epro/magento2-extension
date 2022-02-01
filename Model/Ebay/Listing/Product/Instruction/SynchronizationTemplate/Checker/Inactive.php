@@ -59,6 +59,10 @@ class Inactive extends AbstractModel
 
     public function isAllowed()
     {
+        if (!parent::isAllowed()) {
+            return false;
+        }
+
         if (!$this->input->hasInstructionWithTypes($this->getRelistInstructionTypes()) &&
             !$this->input->hasInstructionWithTypes($this->getReviseInstructionTypes())
         ) {

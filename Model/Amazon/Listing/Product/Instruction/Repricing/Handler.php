@@ -47,6 +47,10 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel implements
 
         $listingProduct = $input->getListingProduct();
 
+        if (!$listingProduct->getMagentoProduct()->exists()) {
+            return;
+        }
+
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
         $amazonListingProduct = $listingProduct->getChildObject();
 

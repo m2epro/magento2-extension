@@ -10,9 +10,10 @@ namespace Ess\M2ePro\Model\Servicing\Task;
 
 use Ess\M2ePro\Helper\Component\Amazon as HelperAmazon;
 use Ess\M2ePro\Helper\Component\Ebay as HelperEbay;
-use \Ess\M2ePro\Helper\Component\Walmart as HelperWalmart;
+use Ess\M2ePro\Helper\Component\Walmart as HelperWalmart;
 use Magento\InventoryApi\Api\GetSourcesAssignedToStockOrderedByPriorityInterface;
 use Magento\InventorySalesApi\Model\GetAssignedSalesChannelsForStockInterface;
+use Ess\M2ePro\Model\Cron\Task\System\Servicing\Statistic\InstructionType;
 
 // @codingStandardsIgnoreFile
 
@@ -78,6 +79,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $this->moduleList = $moduleList;
         $this->moduleManager = $moduleManager;
         $this->objectManager = $objectManager;
+
         parent::__construct(
             $config,
             $storeManager,
@@ -455,6 +457,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
         $this->fillUpDataByMethod($data, 'appendExtensionListingsInfo');
         $this->fillUpDataByMethod($data, 'appendExtensionListingsProductsInfo');
+        $this->fillUpDataByMethod($data, 'appendExtensionListingProductInstructionInfo');
         $this->fillUpDataByMethod($data, 'appendExtensionListingsOtherInfo');
 
         $this->fillUpDataByMethod($data, 'appendExtensionPoliciesInfo');
@@ -853,6 +856,31 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
             $data['listings_products'][$row['component']]['marketplaces'][$markTitle] += (int)$row['products_count'];
             $data['listings_products'][$row['component']]['accounts'][$accountTitle] += (int)$row['products_count'];
         }
+    }
+
+    private function appendExtensionListingProductInstructionInfo(&$data)
+    {
+        $instructionTypeTiming = $this->getHelper('Module')->getRegistry()
+            ->getValueFromJson(InstructionType::REGISTRY_KEY_DATA);
+
+        $currentDateTime = $this->getHelper('Data')->createCurrentGmtDateTime();
+        $currentDate = $currentDateTime->format('Y-m-d');
+        $currentHour = $currentDateTime->format('H-00');
+
+        $lastHourTiming = [];
+
+        // Cut the last hour from the instruction type array to prevent overlapping time ranges next time
+        // Save the last hour to a new instruction type array
+        if (isset($instructionTypeTiming[$currentDate][$currentHour])) {
+            $lastHourTiming[$currentDate][$currentHour] = $instructionTypeTiming[$currentDate][$currentHour];
+
+            unset($instructionTypeTiming[$currentDate][$currentHour]);
+        }
+
+        $data['listing_product_instruction_type_statistic'] = $instructionTypeTiming;
+
+        $this->getHelper('Module')->getRegistry()
+            ->setValue(InstructionType::REGISTRY_KEY_DATA, $lastHourTiming);
     }
 
     private function appendExtensionListingsOtherInfo(&$data)

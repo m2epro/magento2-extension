@@ -15,6 +15,7 @@ use Ess\M2ePro\Controller\Adminhtml\Context;
  */
 abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
 
     //########################################

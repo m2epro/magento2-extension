@@ -55,6 +55,10 @@ abstract class Installation extends AbstractWizard
                 true
             )
         );
+        $this->jsUrl->addUrls([
+            'wizard_registration/createLicense' => $this->getUrl('*/wizard_registration/createLicense')
+        ]);
+
 
         $stepsBlock = $this->createBlock(
             $this->nameBuilder->buildClassName(

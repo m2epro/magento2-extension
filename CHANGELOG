@@ -1,4 +1,11 @@
-* 1.19.1 (18/01/2022) 
+* 1.19.2 (01/02/2022) 
+
+Common: [Fixed] Log 'Magento Product does not exist' keeps appearing for deleted Magento Products in Synchronization Logs & Events [#3080]
+Common: [Improved] Initial set-up wizard optimization [#3124]
+eBay [Fixed] Incorrect Ship By Date values are displayed in eBay Orders [#3304]
+eBay [Fixed] Order status is not changed to 'Shipped' in the M2E Pro Orders grid [#3279]
+
+* 1.19.1 (18/01/2022)
 
 Common: [Fixed] Warning: "Failed to set memory limit" in some software environments [#3252]
 Common: [Improved] Optimization of listing management speed [#3057]
