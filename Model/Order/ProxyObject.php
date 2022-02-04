@@ -362,7 +362,7 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function getNameParts($fullName)
     {
-        $fullName = trim($fullName);
+        $fullName = trim(preg_replace('/\s+/', ' ', $fullName));
         $parts = explode(' ', $fullName);
 
         $currentInfo = [
