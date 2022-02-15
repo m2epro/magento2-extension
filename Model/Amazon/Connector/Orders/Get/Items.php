@@ -174,6 +174,8 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
                 $order['currency'] = isset($orderData['currency']) ? trim($orderData['currency']) : '';
                 $order['paid_amount'] = isset($orderData['amount_paid']) ? (float)$orderData['amount_paid'] : 0;
                 $order['tax_details'] = isset($orderData['price']['taxes']) ? $orderData['price']['taxes'] : [];
+                $order['tax_registration_details'] = isset($orderData['tax_registration_details']) ?
+                    $orderData['tax_registration_details'] : [];
 
                 $order['discount_details'] = isset($orderData['price']['discounts'])
                     ? $orderData['price']['discounts'] : [];

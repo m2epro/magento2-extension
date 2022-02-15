@@ -11,26 +11,8 @@ namespace Ess\M2ePro\Observer\Shipment;
 /**
  * Class \Ess\M2ePro\Observer\Shipment\Track
  */
-class Track extends \Ess\M2ePro\Observer\AbstractModel
+class Track extends \Ess\M2ePro\Observer\Shipment\AbstractShipment
 {
-    protected $orderFactory;
-    protected $orderResource;
-
-    //########################################
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\ResourceModel\Order $orderResource,
-        \Ess\M2ePro\Model\OrderFactory $orderFactory
-    ) {
-        parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
-
-        $this->orderFactory = $orderFactory;
-        $this->orderResource = $orderResource;
-    }
-
     //########################################
 
     /**
@@ -47,7 +29,18 @@ class Track extends \Ess\M2ePro\Observer\AbstractModel
 
         $track = $this->getEvent()->getTrack();
 
-        $shipment = $track->getShipment();
+        $shipment = $this->getShipment($track);
+
+        if (!$shipment) {
+            $class = get_class($this);
+            $this->getHelper('Module\Logger')->process(
+                [],
+                "M2ePro observer $class cannot get shipment data from event or database",
+                false
+            );
+
+            return;
+        }
 
         $magentoOrderId = $shipment->getOrderId();
 

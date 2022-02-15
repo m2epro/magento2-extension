@@ -103,6 +103,24 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         return true;
     }
 
+    /**
+     * @return array
+     */
+    public function getAddressData()
+    {
+        parent::getAddressData(); // init $this->addressData
+
+        $amazonAccount = $this->order->getAmazonAccount();
+        $data = $amazonAccount->getData('magento_orders_settings');
+        $data = !empty($data) ? $this->getHelper('Data')->jsonDecode($data) : [];
+
+        if (!empty($data['tax']['import_tax_id_in_magento_order'])) {
+            $this->addressData['vat_id'] = $this->order->getTaxRegistrationId();
+        }
+
+        return $this->addressData;
+    }
+
     //########################################
 
     /**

@@ -16,10 +16,16 @@ use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature;
 
 class AddShipByDate extends AbstractFeature
 {
+    const SKIP_INTERVAL = 2592000; // 30 days
+
+    private $timeNow;
+
     //########################################
 
     public function execute()
     {
+        $this->timeNow = time();
+
         $dataHelper = $this->helperFactory->getObject('Data');
         $this->getTableModifier('walmart_order')
             ->addColumn('shipping_date_to', 'DATETIME', 'NULL', 'shipping_price', true);
@@ -41,8 +47,12 @@ class AddShipByDate extends AbstractFeature
         while ($row = $query->fetch()) {
             $data = $dataHelper->jsonDecode($row['shipping_dates']);
 
-            $shippingDateTo = isset($data['ship']['to']) ? $data['ship']['to'] : '';
-            $deliveryDateTo = isset($data['delivery']['to']) ? $data['delivery']['to'] : '';
+            $shippingDateTo = isset($data['ship']['to']) ? $data['ship']['to'] : null;
+            $deliveryDateTo = isset($data['delivery']['to']) ? $data['delivery']['to'] : null;
+
+            if ($this->canSkipUpdate($shippingDateTo, $deliveryDateTo)) {
+                continue;
+            }
 
             $this->getConnection()->update(
                 $this->getFullTableName('amazon_order'),
@@ -55,6 +65,28 @@ class AddShipByDate extends AbstractFeature
         }
 
         $this->getTableModifier('amazon_order')->dropColumn('shipping_dates');
+    }
+
+    private function canSkipUpdate($shippingDateTo, $deliveryDateTo)
+    {
+        if (!$shippingDateTo && !$deliveryDateTo) {
+            return true;
+        }
+
+        $shippingDateToTime = $shippingDateTo ? strtotime($shippingDateTo) : null;
+        $deliveryDateToTime = $deliveryDateTo ? strtotime($deliveryDateTo) : null;
+
+        $canSkipShippingDate = false;
+        if (!$shippingDateToTime || $this->timeNow - $shippingDateToTime > self::SKIP_INTERVAL) {
+            $canSkipShippingDate = true;
+        }
+
+        $canSkipDeliveryDate = false;
+        if (!$deliveryDateToTime || $this->timeNow - $deliveryDateToTime > self::SKIP_INTERVAL) {
+            $canSkipDeliveryDate = true;
+        }
+
+        return $canSkipShippingDate && $canSkipDeliveryDate;
     }
 
     //########################################

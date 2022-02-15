@@ -190,6 +190,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return $this->getData('ioss_number');
     }
 
+    public function getTaxRegistrationId()
+    {
+        return $this->getData('tax_registration_id');
+    }
+
     /**
      * @return float
      */

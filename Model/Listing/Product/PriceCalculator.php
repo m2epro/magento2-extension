@@ -552,8 +552,12 @@ abstract class PriceCalculator extends AbstractModel
     {
         $value = 0;
 
-        $attributeName = strtolower($option->getAttribute());
-        $optionName = strtolower($option->getOption());
+        $attributeName = $this->prepareAttributeTitles([
+            strtolower($option->getAttribute())
+        ])[0];
+        $optionName = $this->prepareOptionTitles([
+            strtolower($option->getOption())
+        ])[0];
 
         $simpleAttributes = $this->getMagentoProduct()->getProduct()->getOptions();
 

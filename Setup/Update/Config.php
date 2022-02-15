@@ -198,7 +198,11 @@ class Config extends AbstractConfig
             ],
             'y22_m01' => [
                 'ChangeRegistryKey',
-            ]
+            ],
+            'y22_m02' => [
+                'RemoveForumUrl',
+                'ImportTaxRegistrationId'
+            ],
         ];
     }
 

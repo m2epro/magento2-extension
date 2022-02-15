@@ -88,13 +88,13 @@
                   instance="Ess\M2ePro\Observer\Invoice\Save\After"
                   shared="false" />
     </event>
-    <event name="sales_shipment_item_save_after">
+    <event name="sales_shipment_item_save_commit_after">
         <observer name="m2epro_observer_shipment"
                   instance="Ess\M2ePro\Observer\Shipment\Item"
                   shared="false" />
     </event>
 
-    <event name="sales_order_shipment_track_save_after">
+    <event name="sales_order_shipment_track_save_commit_after">
         <observer name="m2epro_observer_shipment_track"
                   instance="Ess\M2ePro\Observer\Shipment\Track"
                   shared="false" />

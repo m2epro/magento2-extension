@@ -8,26 +8,8 @@
 
 namespace Ess\M2ePro\Observer\Shipment;
 
-class Item extends \Ess\M2ePro\Observer\AbstractModel
+class Item extends \Ess\M2ePro\Observer\Shipment\AbstractShipment
 {
-    protected $orderFactory;
-    protected $orderResource;
-
-    //########################################
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\ResourceModel\Order $orderResource,
-        \Ess\M2ePro\Model\OrderFactory $orderFactory
-    ) {
-        parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
-
-        $this->orderFactory = $orderFactory;
-        $this->orderResource = $orderResource;
-    }
-
     //########################################
 
     /**
@@ -41,7 +23,18 @@ class Item extends \Ess\M2ePro\Observer\AbstractModel
 
         /** @var $shipmentItem \Magento\Sales\Model\Order\Shipment\Item */
         $shipmentItem = $this->getEvent()->getShipmentItem();
-        $shipment = $shipmentItem->getShipment();
+        $shipment = $this->getShipment($shipmentItem);
+
+        if (!$shipment) {
+            $class = get_class($this);
+            $this->getHelper('Module\Logger')->process(
+                [],
+                "M2ePro observer $class cannot get shipment data from event or database",
+                false
+            );
+
+            return;
+        }
 
         /**
          * We can catch two the same events: save of \Magento\Sales\Model\Order\Shipment\Item and

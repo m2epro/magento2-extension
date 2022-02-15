@@ -43,9 +43,8 @@
                         <resource id="Ess_M2ePro::ebay_help_center_documentation" title="Documentation" sortOrder="1" />
                         <resource id="Ess_M2ePro::ebay_help_center_ideas_workshop" title="Ideas Workshop" sortOrder="2" />
                         <resource id="Ess_M2ePro::ebay_help_center_knowledge_base" title="Knowledge Base" sortOrder="3" />
-                        <resource id="Ess_M2ePro::ebay_help_center_community_forum" title="Community Forum" sortOrder="4" />
-                        <resource id="Ess_M2ePro::ebay_help_center_health_status" title="Health Status" sortOrder="5" />
-                        <resource id="Ess_M2ePro::ebay_help_center_contact_us" title="Contact Us" sortOrder="6" />
+                        <resource id="Ess_M2ePro::ebay_help_center_health_status" title="Health Status" sortOrder="4" />
+                        <resource id="Ess_M2ePro::ebay_help_center_contact_us" title="Contact Us" sortOrder="5" />
                     </resource>
 
                 </resource>
@@ -85,9 +84,8 @@
                         <resource id="Ess_M2ePro::amazon_help_center_documentation" title="Documentation" sortOrder="1" />
                         <resource id="Ess_M2ePro::amazon_help_center_ideas_workshop" title="Ideas Workshop" sortOrder="2" />
                         <resource id="Ess_M2ePro::amazon_help_center_knowledge_base" title="Knowledge Base" sortOrder="3" />
-                        <resource id="Ess_M2ePro::amazon_help_center_community_forum" title="Community Forum" sortOrder="4" />
-                        <resource id="Ess_M2ePro::amazon_help_center_health_status" title="Health Status" sortOrder="5" />
-                        <resource id="Ess_M2ePro::amazon_help_center_contact_us" title="Contact Us" sortOrder="6" />
+                        <resource id="Ess_M2ePro::amazon_help_center_health_status" title="Health Status" sortOrder="4" />
+                        <resource id="Ess_M2ePro::amazon_help_center_contact_us" title="Contact Us" sortOrder="5" />
                     </resource>
 
                 </resource>
@@ -127,9 +125,8 @@
                         <resource id="Ess_M2ePro::walmart_help_center_documentation" title="Documentation" sortOrder="1" />
                         <resource id="Ess_M2ePro::walmart_help_center_ideas_workshop" title="Ideas Workshop" sortOrder="2" />
                         <resource id="Ess_M2ePro::walmart_help_center_knowledge_base" title="Knowledge Base" sortOrder="3" />
-                        <resource id="Ess_M2ePro::walmart_help_center_community_forum" title="Community Forum" sortOrder="4" />
-                        <resource id="Ess_M2ePro::walmart_help_center_health_status" title="Health Status" sortOrder="5" />
-                        <resource id="Ess_M2ePro::walmart_help_center_contact_us" title="Contact Us" sortOrder="6" />
+                        <resource id="Ess_M2ePro::walmart_help_center_health_status" title="Health Status" sortOrder="4" />
+                        <resource id="Ess_M2ePro::walmart_help_center_contact_us" title="Contact Us" sortOrder="5" />
                     </resource>
 
                 </resource>

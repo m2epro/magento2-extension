@@ -352,7 +352,7 @@ $status = $this->getStatus();
                         <?php endif; ?>
 
                         <tr>
-                            <td class="label"><?php echo $block->__('Ship By Date'); ?>:</td>
+                            <td class="label"><?php echo $block->__('Ship By Date'); ?></td>
                             <td class="value">
                                 <strong>
                                     <?php if (empty($shippingDateTo)) { ?>
@@ -366,7 +366,7 @@ $status = $this->getStatus();
 
                         <?php if ($taxReference = $block->order->getChildObject()->getTaxReference()): ?>
                             <tr>
-                                <td class="label"><?php echo $block->__('IOSS/OSS Number');?>:</td>
+                                <td class="label"><?php echo $block->__('IOSS/OSS Number');?></td>
                                 <td class="value"><strong><?php echo $taxReference; ?></strong></td>
                             </tr>
                         <?php endif; ?>

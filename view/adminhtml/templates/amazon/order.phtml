@@ -169,7 +169,7 @@ if (empty($currency)) {
                         </tr>
 
                         <tr>
-                            <td class="label"><?php echo $block->__('Fulfilled By Amazon') ?>:</td>
+                            <td class="label"><?php echo $block->__('Fulfilled By Amazon') ?></td>
                             <td class="value">
                                 <strong>
                                     <?php if ($block->order->getChildObject()->isFulfilledByAmazon()) : ?>
@@ -310,7 +310,7 @@ if (empty($currency)) {
                         <tbody>
 
                         <tr>
-                            <td class="label"><?php echo $block->__('Ship By Date'); ?>:</td>
+                            <td class="label"><?php echo $block->__('Ship By Date'); ?></td>
                             <td class="value">
                                 <strong>
                                     <?php if (empty($shippingDateTo)) { ?>
@@ -324,8 +324,15 @@ if (empty($currency)) {
 
                     <?php if ($iossNumber = $block->order->getChildObject()->getIossNumber()): ?>
                         <tr>
-                            <td class="label"><?php echo $block->__('IOSS Number');?>:</td>
+                            <td class="label"><?php echo $block->__('IOSS Number');?></td>
                             <td class="value"><strong><?php echo $iossNumber; ?></strong></td>
+                        </tr>
+                    <?php endif; ?>
+
+                    <?php if ($taxRegistrationId = $block->order->getChildObject()->getTaxRegistrationId()): ?>
+                        <tr>
+                            <td class="label"><?php echo $block->__('Tax Registration Number');?></td>
+                            <td class="value"><strong><?php echo $taxRegistrationId; ?></strong></td>
                         </tr>
                     <?php endif; ?>
 

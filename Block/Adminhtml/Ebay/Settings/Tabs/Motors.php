@@ -379,7 +379,8 @@ HTML
                          In the M2E Pro Listing, use the <strong>Add Compatible Vehicles</strong> tool to find
                          necessary compatible Items.
                          <br/>
-                         Only Textarea Attributes are shown.'
+                         Only Text Area Attributes are shown. If you configure kTypes via Magento attributes, make sure
+                         its input type (under attribute properties) is set to Text Area.'
                     )
                 ]
             )

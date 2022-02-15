@@ -1,4 +1,13 @@
-* 1.19.2 (01/02/2022) 
+* 1.20.0 (15/02/2022) 
+
+Common: [Improved] Compatibility with external shipping tools [#3118]
+Common [Improved] Optimize M2E Pro upgrade from v.6.13.2 to v.6.14.0 (M1) and from v.1.13.2 to v.1.14.0 (M2) [#3367]
+eBay [Fixed] Incorrect price calculation for a Simple Product with Custom Options in particular cases [#3244]
+eBay: [Improved] Some UI texts changes [#3325]
+Amazon [Added] Import Tax Registration Numbers for Amazon Business orders [#3278]
+Amazon: [Improved] Some UI texts changes [#3325]
+
+* 1.19.2 (1/02/2022)
 
 Common: [Fixed] Log 'Magento Product does not exist' keeps appearing for deleted Magento Products in Synchronization Logs & Events [#3080]
 Common: [Improved] Initial set-up wizard optimization [#3124]

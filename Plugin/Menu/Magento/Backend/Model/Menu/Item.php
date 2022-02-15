@@ -132,18 +132,15 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
             'Ess_M2ePro::ebay_help_center_documentation'   => $this->support->getDocumentationArticleUrl('x/2AIkAQ'),
             'Ess_M2ePro::ebay_help_center_ideas_workshop'  => $this->support->getIdeasComponentUrl('ebay'),
             'Ess_M2ePro::ebay_help_center_knowledge_base'  => $this->support->getKnowledgebaseComponentUrl('ebay'),
-            'Ess_M2ePro::ebay_help_center_community_forum' => $this->support->getForumComponentUrl('ebay'),
 
             'Ess_M2ePro::amazon_help_center_documentation'   => $this->support->getDocumentationArticleUrl('x/3AIkAQ'),
             'Ess_M2ePro::amazon_help_center_ideas_workshop'  => $this->support->getIdeasComponentUrl('amazon'),
             'Ess_M2ePro::amazon_help_center_knowledge_base'  => $this->support->getKnowledgebaseComponentUrl('amazon'),
-            'Ess_M2ePro::amazon_help_center_community_forum' => $this->support->getForumComponentUrl('amazon'),
 
             'Ess_M2ePro::walmart_help_center_documentation'   => $this->support->getDocumentationArticleUrl('x/JQBhAQ'),
             'Ess_M2ePro::walmart_help_center_ideas_workshop'  => $this->support->getIdeasComponentUrl('walmart'),
             'Ess_M2ePro::walmart_help_center_knowledge_base'  =>
                 $this->support->getKnowledgebaseComponentUrl('walmart'),
-            'Ess_M2ePro::walmart_help_center_community_forum' => $this->support->getForumComponentUrl('walmart'),
         ];
     }
 

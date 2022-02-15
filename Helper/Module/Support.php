@@ -167,32 +167,6 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
         return $this->getIdeasUrl() . trim($articleLink, '/') . '/';
     }
 
-    //----------------------------------------
-
-    public function getForumUrl()
-    {
-        return $this->getHelper('Module')->getConfig()->getGroupValue('/support/', 'forum_url');
-    }
-
-    public function getForumComponentUrl($component)
-    {
-        switch ($component) {
-            case \Ess\M2ePro\Helper\Component\Ebay::NICK:
-                return $this->getForumUrl() . 'ebay/';
-            case \Ess\M2ePro\Helper\Component\Amazon::NICK:
-                return $this->getForumUrl() . 'amazon/';
-            case \Ess\M2ePro\Helper\Component\Walmart::NICK:
-                return $this->getForumUrl() . 'forum/21-walmart-integration/';
-            default:
-                throw new \Ess\M2ePro\Model\Exception\Logic('Invalid Channel.');
-        }
-    }
-
-    public function getForumArticleUrl($articleLink)
-    {
-        return $this->getForumUrl() . trim($articleLink, '/') . '/';
-    }
-
     //########################################
 
     public function getContactEmail()

@@ -38,9 +38,6 @@ class Form extends AbstractForm
                 - a base of notices where you
                 can find other Users’ suggestions as well as offer your idea about a new feature which
                 could be useful in M2E Pro;</p></li>
-                <li><p><a href="%url_4%" target="_blank" class="external-link">Community Forum</a>
-                - an open M2E Pro discussion forum
-                where our Users discuss and search for solutions together.</p></li>
                 </ul>
 
                 <p>Yet, if you still cannot find the answer to the issue you have faced, you can contact our
@@ -51,8 +48,7 @@ HTML
                 ,
                 $this->getHelper('Module\Support')->getDocumentationArticleUrl('help/m2'),
                 $this->getHelper('Module\Support')->getKnowledgebaseUrl(),
-                $this->getHelper('Module\Support')->getIdeasUrl(),
-                $this->getHelper('Module\Support')->getForumUrl()
+                $this->getHelper('Module\Support')->getIdeasUrl()
             )
         ]);
 

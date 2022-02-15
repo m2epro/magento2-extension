@@ -718,6 +718,26 @@ M2E Pro will skip tax only for orders with a total price of all products under 1
             ]
         );
 
+        $fieldset->addField(
+            'magento_orders_tax_import_tax_id_in_magento_order',
+            'select',
+            [
+                'name'    => 'magento_orders_settings[tax][import_tax_id_in_magento_order]',
+                'label'   => $this->__('Import Tax Registration Number to Magento Order'),
+                'values'  => [
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
+                ],
+                'value'   => $formData['magento_orders_settings']['tax']['import_tax_id_in_magento_order'],
+                'after_element_html' => $this->getTooltipHtml(
+                    $this->__(
+                        'Once enabled, find the Tax Registration Number displayed as VAT
+in the Shipping Address of your Magento Order.'
+                    )
+                )
+            ]
+        );
+
         $fieldset = $form->addFieldset(
             'magento_block_amazon_accounts_magento_orders_status_mapping',
             [
