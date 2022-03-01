@@ -245,12 +245,10 @@ HTML;
         $addMoreTxt = $this->getTranslator()->__('Add more');
 
         $customValueRows = '';
-
-        if (empty($specific['template_specific']['value_custom_value'])) {
-            $customValues = [''];
-        } else {
+        $customValues = [''];
+        if (!empty($specific['template_specific']['value_custom_value'])) {
             $customValues = $this->getHelperData()->jsonDecode($specific['template_specific']['value_custom_value']);
-        }
+        } 
 
         $display = 'display: none;';
         $disabled = true;
@@ -261,38 +259,39 @@ HTML;
         }
 
         $displayRemoveBtn = 'display: none;';
-        if ($specific['max_values'] > 1 && count($customValues) > 1 && count($customValues) < $specific['max_values']) {
-            $displayRemoveBtn = '';
-        }
-
-        $customIndex = 0;
-        foreach ($customValues as $value) {
-            /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Button $removeCustomValueBtn */
-            $removeCustomValueBtn = $this->layout->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                ->setData(
-                    [
-                        'label'   => $this->getTranslator()->__('Remove'),
-                        'onclick' => 'EbayTemplateCategorySpecificsObj.removeItemSpecificsCustomValue(this);',
-                        'class'   => 'action remove_item_specifics_custom_value_button',
-                        'style'   => 'margin-left: 3px;'
+        $displayAddBtn = 'display: none;';
+        if(is_array($customValues)):
+            if ($specific['max_values'] > 1 && count($customValues) > 1 && count($customValues) < $specific['max_values']) {
+                $displayRemoveBtn = '';
+            }
+            $customIndex = 0;
+            foreach ($customValues as $value) {
+                /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Button $removeCustomValueBtn */
+                $removeCustomValueBtn = $this->layout->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                    ->setData(
+                        [
+                            'label'   => $this->getTranslator()->__('Remove'),
+                            'onclick' => 'EbayTemplateCategorySpecificsObj.removeItemSpecificsCustomValue(this);',
+                            'class'   => 'action remove_item_specifics_custom_value_button',
+                            'style'   => 'margin-left: 3px;'
+                        ]
+                    );
+        
+                /** @var \Magento\Framework\Data\Form\Element\Text $element */
+                $element = $this->_factoryElement->create('text', [
+                    'data' => [
+                        'name'     => 'specific[dictionary_' . $index . '][value_custom_value][]',
+                        'style'    => 'width: 100%;',
+                        'class'    => 'M2ePro-required-when-visible item-specific',
+                        'value'    => $value,
+                        'disabled' => $disabled
                     ]
-                );
-
-            /** @var \Magento\Framework\Data\Form\Element\Text $element */
-            $element = $this->_factoryElement->create('text', [
-                'data' => [
-                    'name'     => 'specific[dictionary_' . $index . '][value_custom_value][]',
-                    'style'    => 'width: 100%;',
-                    'class'    => 'M2ePro-required-when-visible item-specific',
-                    'value'    => $value,
-                    'disabled' => $disabled
-                ]
-            ]);
-            $element->setNoSpan(true);
-            $element->setForm($this->getForm());
-            $element->setId('specific_dictionary_value_custom_value_' . $index . '_' . $customIndex);
-
-            $customValueRows .= <<<HTML
+                ]);
+                $element->setNoSpan(true);
+                $element->setForm($this->getForm());
+                $element->setId('specific_dictionary_value_custom_value_' . $index . '_' . $customIndex);
+        
+                $customValueRows .= <<<HTML
     <tr>
         <td style="border: none; width: 100%; vertical-align:top; text-align: left; padding: 0; ">
             {$element->getHtml()}
@@ -302,15 +301,17 @@ HTML;
         </td>
     </tr>
 HTML;
-
-            $customIndex++;
-        }
-
-        $displayAddBtn = 'display: none;';
-        if ($specific['max_values'] > 1 && count($customValues) < $specific['max_values']) {
-            $displayAddBtn = '';
-        }
-
+        
+                $customIndex++;
+            }
+    
+           
+            if ($specific['max_values'] > 1 && count($customValues) < $specific['max_values']) {
+                $displayAddBtn = '';
+            }
+        endif;
+    
+    
         return <<<HTML
     <div id="specific_dictionary_custom_value_table_{$index}" style="{$display}">
         <table style="border:none; border-collapse: separate; border-spacing: 0 2px; width: 100%">
@@ -327,6 +328,7 @@ HTML;
         </a>
     </div>
 HTML;
+    }
     }
 
     public function getValueCustomAttributeHtml($index, $specific)
