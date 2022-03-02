@@ -2,79 +2,38 @@
 
 namespace Ess\M2ePro\Model\ControlPanel\Inspection\Inspector;
 
-use Ess\M2ePro\Helper\Factory as HelperFactory;
 use Ess\M2ePro\Helper\Module;
-use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory as ParentFactory;
-use Ess\M2ePro\Model\ActiveRecord\Factory as ActiveRecordFactory;
-use Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection;
 use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Result\Factory;
-use Ess\M2ePro\Model\Factory as ModelFactory;
-use Magento\Backend\Model\UrlInterface;
-use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Component\ComponentRegistrar;
 use Magento\Framework\Component\ComponentRegistrarInterface;
-use Magento\Framework\Data\Form\FormKey;
 use Magento\Framework\Filesystem\Driver\File;
+use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
 
-class FilesPermissions extends AbstractInspection implements InspectorInterface
+class FilesPermissions implements InspectorInterface
 {
     /** @var array */
-    protected $_unWritable = [];
+    private $_unWritable = [];
 
     /** @var array */
-    protected $_checked = [];
+    private $_checked = [];
 
     /** @var ComponentRegistrarInterface */
-    protected $componentRegistrar;
+    private $componentRegistrar;
 
-    protected $fileDriver;
+    /** @var \Magento\Framework\Filesystem\Driver\File */
+    private $fileDriver;
+
+    /** @var IssueFactory  */
+    private $issueFactory;
 
     public function __construct(
-        Factory $resultFactory,
-        HelperFactory $helperFactory,
-        ModelFactory $modelFactory,
-        UrlInterface $urlBuilder,
-        ResourceConnection $resourceConnection,
-        FormKey $formKey,
-        ParentFactory $parentFactory,
-        ActiveRecordFactory $activeRecordFactory,
         ComponentRegistrarInterface $componentRegistrar,
         File $fileDriver,
-        array $_params = []
+        IssueFactory $issueFactory
     ) {
         $this->componentRegistrar = $componentRegistrar;
         $this->fileDriver         = $fileDriver;
-
-        parent::__construct(
-            $resultFactory,
-            $helperFactory,
-            $modelFactory,
-            $urlBuilder,
-            $resourceConnection,
-            $formKey,
-            $parentFactory,
-            $activeRecordFactory,
-            $_params
-        );
-    }
-
-    //########################################
-
-    public function getTitle()
-    {
-        return 'Files and Folders permissions';
-    }
-
-    public function getExecutionSpeed()
-    {
-        return Manager::EXECUTION_SPEED_SLOW;
-    }
-
-    public function getGroup()
-    {
-        return Manager::GROUP_STRUCTURE;
+        $this->issueFactory = $issueFactory;
     }
 
     //########################################
@@ -86,8 +45,7 @@ class FilesPermissions extends AbstractInspection implements InspectorInterface
         $issues = [];
 
         if (!empty($this->_unWritable)) {
-            $issues[] = $this->resultFactory->createError(
-                $this,
+            $issues[] = $this->issueFactory->create(
                 'Has unwriteable files \ directories',
                 array_keys($this->_unWritable)
             );
@@ -96,7 +54,7 @@ class FilesPermissions extends AbstractInspection implements InspectorInterface
         return $issues;
     }
 
-    protected function processModuleFiles()
+    private function processModuleFiles()
     {
 
         $fullPath = $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, Module::IDENTIFIER)
@@ -111,7 +69,7 @@ class FilesPermissions extends AbstractInspection implements InspectorInterface
         }
     }
 
-    protected function check(\SplFileInfo $object)
+    private function check(\SplFileInfo $object)
     {
         if (isset($this->_unWritable[$object->getRealPath()])) {
             return;

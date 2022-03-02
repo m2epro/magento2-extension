@@ -1,4 +1,10 @@
-* 1.20.0 (15/02/2022) 
+* 1.20.1 (02/03/2022) 
+
+Common: [Fixed] Magento Shipment is not updated automatically after M2E Pro upgrade to v1.20.0 [#3421]
+Amazon: [Fixed] Empty values are sent to the Channel during shipment update [#3338]
+Amazon: [Fixed] Grouped Product listed as Set is not stopped when a Child Product is out of stock [#3385]
+
+* 1.20.0 (15/02/2022)
 
 Common: [Improved] Compatibility with external shipping tools [#3118]
 Common [Improved] Optimize M2E Pro upgrade from v.6.13.2 to v.6.14.0 (M1) and from v.1.13.2 to v.1.14.0 (M2) [#3367]

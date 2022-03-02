@@ -22,6 +22,8 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
 
     private $affectedListingsProducts = [];
 
+    private $affectedListingsParentProducts = [];
+
     //########################################
 
     public function beforeProcess()
@@ -66,7 +68,12 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
             return;
         }
 
-        foreach ($this->getAffectedListingsProducts() as $listingProduct) {
+        $listingProducts = array_merge(
+            $this->getAffectedListingsProducts(),
+            $this->getAffectedListingsParentProducts()
+        );
+
+        foreach ($listingProducts as $listingProduct) {
 
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
@@ -91,7 +98,12 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
             return;
         }
 
-        foreach ($this->getAffectedListingsProducts() as $listingProduct) {
+        $listingProducts = array_merge(
+            $this->getAffectedListingsProducts(),
+            $this->getAffectedListingsParentProducts()
+        );
+
+        foreach ($listingProducts as $listingProduct) {
 
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
@@ -115,7 +127,12 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
     {
         $synchronizationInstructionsData = [];
 
-        foreach ($this->getAffectedListingsProducts() as $listingProduct) {
+        $listingProducts = array_merge(
+            $this->getAffectedListingsProducts(),
+            $this->getAffectedListingsParentProducts()
+        );
+
+        foreach ($listingProducts as $listingProduct) {
             /** @var \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel $changeProcessor */
             $changeProcessor = $this->modelFactory->getObject(
                 ucfirst($listingProduct->getComponentMode()) . '_Magento_Product_ChangeProcessor'
@@ -139,7 +156,7 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
 
     protected function areThereAffectedItems()
     {
-        return !empty($this->getAffectedListingsProducts());
+        return !empty($this->getAffectedListingsProducts()) || !empty($this->getAffectedListingsParentProducts());
     }
 
     // ---------------------------------------
@@ -157,6 +174,35 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
             ->getObject('Listing\Product')
             ->getResource()
             ->getItemsByProductId($this->getProductId());
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @deprecated Only for version under 2.4.0
+     */
+    private function getAffectedListingsParentProducts()
+    {
+        if (version_compare($this->getHelper('magento')->getVersion(), '2.2.0', '>=') &&
+            version_compare($this->getHelper('magento')->getVersion(), '2.4.2', '<')) {
+
+            if (!empty($this->affectedListingsParentProducts)) {
+                return $this->affectedListingsParentProducts;
+            }
+
+            $listingProduct = $this->activeRecordFactory->getObject('Listing\Product')->getResource();
+            $parentIds = $listingProduct->getParentEntityIdsByChild($this->getProductId());
+
+            $affectedListingsParentProducts = [];
+            foreach ($parentIds as $id) {
+                $listingsParentProducts = $listingProduct->getItemsByProductId($id);
+                $affectedListingsParentProducts = array_merge($affectedListingsParentProducts, $listingsParentProducts);
+            }
+
+            $this->affectedListingsParentProducts = $affectedListingsParentProducts;
+        }
+
+        return $this->affectedListingsParentProducts;
     }
 
     //########################################

@@ -2,80 +2,50 @@
 
 namespace Ess\M2ePro\Model\ControlPanel\Inspection\Inspector;
 
-use Ess\M2ePro\Helper\Factory as HelperFactory;
-use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory as ParentFactory;
-use Ess\M2ePro\Model\ActiveRecord\Factory as ActiveRecordFactory;
-use Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection;
 use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Result\Factory;
 use Ess\M2ePro\Model\Factory as ModelFactory;
-use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Component\ComponentRegistrar;
 use Ess\M2ePro\Helper\Module;
 use Magento\Framework\Component\ComponentRegistrarInterface;
-use Magento\Framework\Data\Form\FormKey;
 use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\Filesystem\File\ReadFactory;
 use Magento\Backend\Model\UrlInterface;
+use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
 
-class FilesValidity extends AbstractInspection implements InspectorInterface
+class FilesValidity implements InspectorInterface
 {
+    /** @var ModelFactory */
+    private $modelFactory;
+
+    /** @var UrlInterface */
+    private $urlBuilder;
+
     /** @var ComponentRegistrarInterface */
-    protected $componentRegistrar;
+    private $componentRegistrar;
 
     /** @var File */
-    protected $fileDriver;
+    private $fileDriver;
 
     /** @var ReadFactory */
-    protected $readFactory;
+    private $readFactory;
+
+    /** @var IssueFactory  */
+    private $issueFactory;
 
     public function __construct(
-        Factory $resultFactory,
-        HelperFactory $helperFactory,
         ModelFactory $modelFactory,
         UrlInterface $urlBuilder,
-        ResourceConnection $resourceConnection,
-        FormKey $formKey,
-        ParentFactory $parentFactory,
-        ActiveRecordFactory $activeRecordFactory,
         ReadFactory $readFactory,
         File $fileDriver,
         ComponentRegistrarInterface $componentRegistrar,
-        array $_params = []
+        IssueFactory $issueFactory
     ) {
+        $this->modelFactory       = $modelFactory;
+        $this->urlBuilder         = $urlBuilder;
         $this->readFactory        = $readFactory;
         $this->fileDriver         = $fileDriver;
         $this->componentRegistrar = $componentRegistrar;
-
-        parent::__construct(
-            $resultFactory,
-            $helperFactory,
-            $modelFactory,
-            $urlBuilder,
-            $resourceConnection,
-            $formKey,
-            $parentFactory,
-            $activeRecordFactory,
-            $_params
-        );
-    }
-
-    //########################################
-
-    public function getTitle()
-    {
-        return 'Files validity';
-    }
-
-    public function getGroup()
-    {
-        return Manager::GROUP_STRUCTURE;
-    }
-
-    public function getExecutionSpeed()
-    {
-        return Manager::EXECUTION_SPEED_FAST;
+        $this->issueFactory       = $issueFactory;
     }
 
     //########################################
@@ -87,13 +57,13 @@ class FilesValidity extends AbstractInspection implements InspectorInterface
         try {
             $diff = $this->getDiff();
         } catch (\Exception $exception) {
-            $issues[] = $this->resultFactory->createError($this, $exception->getMessage());
+            $issues[] = $this->issueFactory->create($exception->getMessage());
 
             return $issues;
         }
 
         if (empty($diff)) {
-            $issues[] = $this->resultFactory->createNotice($this, 'No info for this M2e Pro version');
+            $issues[] = $this->issueFactory->create('No info for this M2e Pro version');
 
             return $issues;
         }
@@ -128,8 +98,7 @@ class FilesValidity extends AbstractInspection implements InspectorInterface
         }
 
         if (!empty($problems)) {
-            $issues[] = $this->resultFactory->createError(
-                $this,
+            $issues[] = $this->issueFactory->create(
                 'Wrong files validity',
                 $this->renderMetadata($problems)
             );
@@ -138,7 +107,7 @@ class FilesValidity extends AbstractInspection implements InspectorInterface
         return $issues;
     }
 
-    protected function getDiff()
+    private function getDiff()
     {
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
         $connectorObj = $dispatcherObject->getVirtualConnector('files', 'get', 'info');
@@ -146,7 +115,7 @@ class FilesValidity extends AbstractInspection implements InspectorInterface
         return $connectorObj->getResponseData();
     }
 
-    protected function renderMetadata($data)
+    private function renderMetadata($data)
     {
         $html = <<<HTML
 <table>

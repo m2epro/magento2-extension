@@ -2,36 +2,26 @@
 
 namespace Ess\M2ePro\Model\ControlPanel\Inspection\Inspector;
 
-use Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection;
 use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
+use Ess\M2ePro\Helper\Factory as HelperFactory;
+use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
 
-class MagentoSettings extends AbstractInspection implements InspectorInterface
+class MagentoSettings implements InspectorInterface
 {
+    /** @var HelperFactory */
+    private $helperFactory;
+
+    /** @var IssueFactory */
+    private $issueFactory;
+
     //########################################
 
-    public function getTitle()
-    {
-        return 'Magento settings';
-    }
-
-    public function getExecutionSpeed()
-    {
-        return Manager::EXECUTION_SPEED_FAST;
-    }
-
-    public function getDescription()
-    {
-        return <<<HTML
-- Non-default Magento timezone set<br>
-- GD library is installed<br>
-- [APC|Memchached|Redis] Cache is enabled<br>
-HTML;
-    }
-
-    public function getGroup()
-    {
-        return Manager::GROUP_STRUCTURE;
+    public function __construct(
+        HelperFactory $helperFactory,
+        IssueFactory $issueFactory
+    ) {
+        $this->helperFactory = $helperFactory;
+        $this->issueFactory = $issueFactory;
     }
 
     //########################################
@@ -41,37 +31,32 @@ HTML;
         $issues = [];
 
         if (!extension_loaded('gd') || !function_exists('gd_info')) {
-            $issues[] = $this->resultFactory->createError(
-                $this,
+            $issues[] = $this->issueFactory->create(
                 'GD library is not installed.'
             );
         }
 
         if ($this->helperFactory->getObject('Data')->getDefaultTimeZone() !== 'UTC') {
-            $issues[] = $this->resultFactory->createError(
-                $this,
+            $issues[] = $this->issueFactory->create(
                 'Non-default Magento timezone set.',
                 $this->helperFactory->getObject('Data')->getDefaultTimeZone()
             );
         }
 
         if ($this->helperFactory->getObject('Client_Cache')->isApcAvailable()) {
-            $issues[] = $this->resultFactory->createNotice(
-                $this,
+            $issues[] = $this->issueFactory->create(
                 'APC Cache is enabled.'
             );
         }
 
         if ($this->helperFactory->getObject('Client_Cache')->isMemchachedAvailable()) {
-            $issues[] = $this->resultFactory->createNotice(
-                $this,
+            $issues[] = $this->issueFactory->create(
                 'Memchached Cache is enabled.'
             );
         }
 
         if ($this->helperFactory->getObject('Client_Cache')->isRedisAvailable()) {
-            $issues[] = $this->resultFactory->createNotice(
-                $this,
+            $issues[] = $this->issueFactory->create(
                 'Redis Cache is enabled.'
             );
         }

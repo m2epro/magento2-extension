@@ -2,30 +2,29 @@
 
 namespace Ess\M2ePro\Model\ControlPanel\Inspection\Inspector;
 
-use Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection;
 use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
+use Ess\M2ePro\Helper\Factory as HelperFactory;
+use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
 
-class ShowM2eProLoggers extends AbstractInspection implements InspectorInterface
+class ShowM2eProLoggers implements InspectorInterface
 {
     /** @var array */
-    protected $loggers = [];
+    private $loggers = [];
+
+    /** @var HelperFactory */
+    private $helperFactory;
+
+    /** @var IssueFactory */
+    private $issueFactory;
 
     //########################################
 
-    public function getTitle()
-    {
-        return 'Show M2ePro loggers';
-    }
-
-    public function getGroup()
-    {
-        return Manager::GROUP_STRUCTURE;
-    }
-
-    public function getExecutionSpeed()
-    {
-        return Manager::EXECUTION_SPEED_SLOW;
+    public function __construct(
+        HelperFactory $helperFactory,
+        IssueFactory $issueFactory
+    ) {
+        $this->helperFactory = $helperFactory;
+        $this->issueFactory = $issueFactory;
     }
 
     //########################################
@@ -36,8 +35,7 @@ class ShowM2eProLoggers extends AbstractInspection implements InspectorInterface
         $this->searchLoggers();
 
         if (!empty($this->loggers)) {
-            $issues[] = $this->resultFactory->createNotice(
-                $this,
+            $issues[] = $this->issueFactory->create(
                 'M2ePro loggers were found in magento files',
                 $this->loggers
             );
@@ -46,7 +44,7 @@ class ShowM2eProLoggers extends AbstractInspection implements InspectorInterface
         return $issues;
     }
 
-    protected function searchLoggers()
+    private function searchLoggers()
     {
         $recursiveIteratorIterator = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator(

@@ -4,36 +4,55 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Inspection;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Main;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
+use Ess\M2ePro\Model\ControlPanel\Inspection\Repository;
+use Ess\M2ePro\Model\ControlPanel\Inspection\Processor;
 
 class CheckInspection extends Main
 {
-    /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Manager Manager */
-    private $inspectionManager;
+    /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Processor */
+    private $processor;
+
+    /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Repository */
+    private $repository;
 
     //########################################
-    public function __construct(Manager $inspectionManager, Context $context)
+
+    public function __construct(
+        Repository $repository,
+        Processor $processor,
+        Context $context
+    )
     {
-        $this->inspectionManager = $inspectionManager;
+        $this->repository = $repository;
+        $this->processor = $processor;
 
         parent::__construct($context);
     }
 
     public function execute()
     {
-        $inspectionName = $this->getRequest()->getParam('name');
-        $results = $this->inspectionManager->runInspection($inspectionName);
+        $inspectionTitle = $this->getRequest()->getParam('title');
 
-        $isSuccess = false;
+        $definition = $this->repository->getDefinition($inspectionTitle);
+        $result = $this->processor->process($definition);
+
+        $isSuccess = true;
         $metadata = '';
         $message = $this->__('Success');
-        foreach ($results as $result) {
-            if ($result->isSuccess()) {
-                $isSuccess = true;
-                break;
+
+        if ($result->isSuccess()) {
+            $issues = $result->getIssues();
+
+            if (!empty($issues)) {
+                $isSuccess = false;
+                $lastIssue = end($issues);
+
+                $metadata = $lastIssue->getMetadata();
+                $message = $lastIssue->getMessage();
             }
-            $metadata = $result->getMetadata();
-            $message = $result->getMessage();
+        } else {
+            $message = $result->getErrorMessage();
+            $isSuccess = false;
         }
 
         $this->setJsonContent([

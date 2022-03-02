@@ -2,14 +2,18 @@
 
 namespace Ess\M2ePro\Model\ControlPanel\Inspection\Inspector;
 
-use Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection;
 use Ess\M2ePro\Model\ControlPanel\Inspection\FixerInterface;
-use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
 use Magento\Framework\DB\Ddl\Table as DdlTable;
-use \Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\DB\Adapter\AdapterInterface;
+use Ess\M2ePro\Helper\Factory as HelperFactory;
+use Ess\M2ePro\Model\Factory as ModelFactory;
+use Magento\Backend\Model\UrlInterface;
+use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\Data\Form\FormKey;
+use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
+use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
 
-class TablesStructureValidity extends AbstractInspection implements InspectorInterface, FixerInterface
+class TablesStructureValidity implements InspectorInterface, FixerInterface
 {
     const TABLE_MISSING   = 'table_missing';
     const TABLE_REDUNDANT = 'table_redundant';
@@ -23,21 +27,40 @@ class TablesStructureValidity extends AbstractInspection implements InspectorInt
     const DROP_COLUMN  = 'drop';
     const CREATE_TABLE = 'create_table';
 
+    /** @var HelperFactory  */
+    private $helperFactory;
+
+    /** @var ModelFactory */
+    private $modelFactory;
+
+    /** @var UrlInterface */
+    private $urlBuilder;
+
+    /** @var ResourceConnection */
+    private $resourceConnection;
+
+    /** @var FormKey */
+    private $formKey;
+
+    /** @var IssueFactory */
+    private $issueFactory;
+
     //########################################
 
-    public function getTitle()
-    {
-        return 'Tables structure validity';
-    }
-
-    public function getGroup()
-    {
-        return Manager::GROUP_STRUCTURE;
-    }
-
-    public function getExecutionSpeed()
-    {
-        return Manager::EXECUTION_SPEED_FAST;
+    public function __construct(
+        HelperFactory $helperFactory,
+        ModelFactory $modelFactory,
+        UrlInterface $urlBuilder,
+        ResourceConnection $resourceConnection,
+        FormKey $formKey,
+        IssueFactory $issueFactory
+    ) {
+        $this->helperFactory       = $helperFactory;
+        $this->modelFactory        = $modelFactory;
+        $this->urlBuilder          = $urlBuilder;
+        $this->resourceConnection  = $resourceConnection;
+        $this->formKey             = $formKey;
+        $this->issueFactory = $issueFactory;
     }
 
     //########################################
@@ -49,20 +72,19 @@ class TablesStructureValidity extends AbstractInspection implements InspectorInt
         try {
             $diff = $this->getDiff();
         } catch (\Exception $exception) {
-            $issues[] = $this->resultFactory->createError($this, $exception->getMessage());
+            $issues[] = $this->issueFactory->create($exception->getMessage());
 
             return $issues;
         }
 
         if (!isset($diff['diff'])) {
-            $issues[] = $this->resultFactory->createNotice($this, 'No info for this M2e Pro version');
+            $issues[] = $this->issueFactory->create('No info for this M2e Pro version');
 
             return $issues;
         }
 
         if (!empty($diff['diff'])) {
-            $issues[] = $this->resultFactory->createError(
-                $this,
+            $issues[] = $this->issueFactory->create(
                 'Wrong tables structure validity',
                 $this->renderMetadata($diff['diff'])
             );
@@ -73,7 +95,7 @@ class TablesStructureValidity extends AbstractInspection implements InspectorInt
 
     //########################################
 
-    protected function getDiff()
+    private function getDiff()
     {
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
         $connectorObj = $dispatcherObject->getConnector('tables', 'get', 'diff');
@@ -84,7 +106,7 @@ class TablesStructureValidity extends AbstractInspection implements InspectorInt
 
     //########################################
 
-    protected function renderMetadata($data)
+    private function renderMetadata($data)
     {
         $currentUrl = $this->urlBuilder->getUrl(
             'm2epro/controlPanel_tools_m2ePro/install',
@@ -174,7 +196,7 @@ HTML;
         }
     }
 
-    protected function fixColumnIndex($tableName, array $columnInfo)
+    private function fixColumnIndex($tableName, array $columnInfo)
     {
         if (!isset($columnInfo['name'], $columnInfo['key'])) {
             return;
@@ -195,7 +217,7 @@ HTML;
         $writeConnection->addIndex($tableName, $columnInfo['name'], $columnInfo['name'], $indexType);
     }
 
-    protected function fixColumnProperties($tableName, array $columnInfo)
+    private function fixColumnProperties($tableName, array $columnInfo)
     {
         if (!isset($columnInfo['name'])) {
             return;
@@ -235,7 +257,7 @@ HTML;
         }
     }
 
-    protected function dropColumn($tableName, array $columnInfo)
+    private function dropColumn($tableName, array $columnInfo)
     {
         if (!isset($columnInfo['name'])) {
             return;
@@ -247,7 +269,7 @@ HTML;
         $writeConnection->dropColumn($tableName, $columnInfo['name']);
     }
 
-    protected function convertColumnDefinitionToArray($definition)
+    private function convertColumnDefinitionToArray($definition)
     {
         $pattern = "#^(?P<type>[a-z]+(?:\(\d+,?\d?\))?)";
         $pattern .= '(?:';
@@ -341,7 +363,7 @@ HTML;
         return $definitionData;
     }
 
-    protected function convertArrayDefinitionToString($columnInfo)
+    private function convertArrayDefinitionToString($columnInfo)
     {
         $definition = "{$columnInfo['type']} ";
         $columnInfo['null'] == 'no' && $definition .= 'NOT NULL ';
@@ -354,7 +376,7 @@ HTML;
         return $definition;
     }
 
-    protected function createTable($tableName, $columnsInfo)
+    private function createTable($tableName, $columnsInfo)
     {
         $connection = $this->resourceConnection->getConnection();
 

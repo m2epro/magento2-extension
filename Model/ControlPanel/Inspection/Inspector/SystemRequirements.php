@@ -2,76 +2,24 @@
 
 namespace Ess\M2ePro\Model\ControlPanel\Inspection\Inspector;
 
-use Ess\M2ePro\Helper\Factory as HelperFactory;
-use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory as ParentFactory;
-use Ess\M2ePro\Model\ActiveRecord\Factory as ActiveRecordFactory;
-use Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection;
-use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Result\Factory;
-use Ess\M2ePro\Model\Factory as ModelFactory;
 use Ess\M2ePro\Model\Requirements\Manager as RequirementsManager;
-use Magento\Backend\Model\UrlInterface;
-use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\Data\Form\FormKey;
+use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
+use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
 
-class SystemRequirements extends AbstractInspection implements InspectorInterface
+class SystemRequirements implements InspectorInterface
 {
     /** @var RequirementsManager */
-    protected $requirementsManager;
+    private $requirementsManager;
+
+    /** @var IssueFactory */
+    private $issueFactory;
 
     public function __construct(
-        Factory $resultFactory,
-        HelperFactory $helperFactory,
-        ModelFactory $modelFactory,
-        UrlInterface $urlBuilder,
-        ResourceConnection $resourceConnection,
-        FormKey $formKey,
-        ParentFactory $parentFactory,
-        ActiveRecordFactory $activeRecordFactory,
         RequirementsManager $requirementsManager,
-        array $_params = []
+        IssueFactory $issueFactory
     ) {
         $this->requirementsManager = $requirementsManager;
-
-        parent::__construct(
-            $resultFactory,
-            $helperFactory,
-            $modelFactory,
-            $urlBuilder,
-            $resourceConnection,
-            $formKey,
-            $parentFactory,
-            $activeRecordFactory,
-            $_params
-        );
-    }
-
-    //########################################
-
-    public function getTitle()
-    {
-        return 'System Requirements';
-    }
-
-    public function getDescription()
-    {
-        $html = '';
-        foreach ($this->requirementsManager->getChecks() as $check) {
-            $html .= "- {$check->getRenderer()->getTitle()}: {$check->getRenderer()->getMin()}<br>";
-        }
-
-        return $html;
-    }
-
-    public function getExecutionSpeed()
-    {
-        return Manager::EXECUTION_SPEED_FAST;
-    }
-
-    public function getGroup()
-    {
-        return Manager::GROUP_STRUCTURE;
+        $this->issueFactory = $issueFactory;
     }
 
     //########################################
@@ -86,8 +34,7 @@ class SystemRequirements extends AbstractInspection implements InspectorInterfac
                 continue;
             }
 
-            $issues[] = $this->resultFactory->createError(
-                $this,
+            $issues[] = $this->issueFactory->create(
                 $check->getRenderer()->getTitle(),
                 <<<HTML
 <pre>

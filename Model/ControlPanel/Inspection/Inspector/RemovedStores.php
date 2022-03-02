@@ -3,74 +3,50 @@
 namespace Ess\M2ePro\Model\ControlPanel\Inspection\Inspector;
 
 use Ess\M2ePro\Helper\Factory as HelperFactory;
-use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory as ParentFactory;
-use Ess\M2ePro\Model\ActiveRecord\Factory as ActiveRecordFactory;
-use Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection;
 use Ess\M2ePro\Model\ControlPanel\Inspection\FixerInterface;
 use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Result\Factory;
-use Ess\M2ePro\Model\Factory as ModelFactory;
 use Magento\Backend\Model\UrlInterface;
 use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\Data\Form\FormKey;
 use Magento\Store\Model\StoreManager;
+use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
 
-class RemovedStores extends AbstractInspection implements InspectorInterface, FixerInterface
+class RemovedStores implements InspectorInterface, FixerInterface
 {
     /** @var array */
-    protected $removedStoresId = [];
+    private $removedStoresId = [];
 
     /** @var StoreManager */
-    protected $storeManager;
+    private $storeManager;
+
+    /** @var HelperFactory */
+    private $helperFactory;
+
+    /** @var UrlInterface */
+    private $urlBuilder;
+
+    /** @var ResourceConnection */
+    private $resourceConnection;
+
+    /** @var IssueFactory */
+    private $issueFactory;
 
     public function __construct(
-        Factory $resultFactory,
         HelperFactory $helperFactory,
-        ModelFactory $modelFactory,
         UrlInterface $urlBuilder,
         ResourceConnection $resourceConnection,
-        FormKey $formKey,
-        ParentFactory $parentFactory,
-        ActiveRecordFactory $activeRecordFactory,
         StoreManager $storeManager,
-        array $_params = []
+        IssueFactory $issueFactory
     ) {
-        $this->storeManager = $storeManager;
-
-        parent::__construct(
-            $resultFactory,
-            $helperFactory,
-            $modelFactory,
-            $urlBuilder,
-            $resourceConnection,
-            $formKey,
-            $parentFactory,
-            $activeRecordFactory,
-            $_params
-        );
+        $this->helperFactory      = $helperFactory;
+        $this->urlBuilder         = $urlBuilder;
+        $this->resourceConnection = $resourceConnection;
+        $this->storeManager       = $storeManager;
+        $this->issueFactory       = $issueFactory;
     }
 
     //########################################
 
-    public function getTitle()
-    {
-        return 'Removed stores';
-    }
-
-    public function getGroup()
-    {
-        return Manager::GROUP_STRUCTURE;
-    }
-
-    public function getExecutionSpeed()
-    {
-        return Manager::EXECUTION_SPEED_FAST;
-    }
-
-    //########################################
-
-    protected function getRemovedStores()
+    private function getRemovedStores()
     {
         $existsStoreIds = array_keys($this->storeManager->getStores(true));
         $storeRelatedColumns = $this->helperFactory->getObject('Module_Database_Structure')->getStoreRelatedColumns();
@@ -115,8 +91,7 @@ class RemovedStores extends AbstractInspection implements InspectorInterface, Fi
         $this->getRemovedStores();
 
         if (!empty($this->removedStoresId)) {
-            $issues[] = $this->resultFactory->createError(
-                $this,
+            $issues[] = $this->issueFactory->create(
                 'Some data have nonexistent magento stores',
                 $this->renderMetadata($this->removedStoresId)
             );
@@ -125,7 +100,7 @@ class RemovedStores extends AbstractInspection implements InspectorInterface, Fi
         return $issues;
     }
 
-    protected function renderMetadata($data)
+    private function renderMetadata($data)
     {
         $removedStoreIds = implode(', ', $data);
         $repairStoresAction = $this->urlBuilder
@@ -149,7 +124,7 @@ HTML;
         }
     }
 
-    protected function replaceId($replaceIdFrom, $replaceIdTo)
+    private function replaceId($replaceIdFrom, $replaceIdTo)
     {
         $storeRelatedColumns = $this->helperFactory->getObject('Module_Database_Structure')->getStoreRelatedColumns();
         foreach ($storeRelatedColumns as $tableName => $columnsInfo) {

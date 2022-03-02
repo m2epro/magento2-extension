@@ -11,23 +11,28 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module\Integration;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 use Ess\M2ePro\Helper\Component\Ebay as EbayHelper;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module\Integration\Ebay
  */
 class Ebay extends Command
 {
-    /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Manager Manager  */
-    private $inspectionManager;
+    /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Repository */
+    protected  $repository;
+
+    /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\HandlerFactory */
+    protected $handlerFactory;
 
     //########################################
 
     public function __construct(
-        Manager $inspectionManager,
-        Context $context
+        Context $context,
+        \Ess\M2ePro\Model\ControlPanel\Inspection\Repository $repository,
+        \Ess\M2ePro\Model\ControlPanel\Inspection\HandlerFactory $handlerFactory
     ) {
-        $this->inspectionManager = $inspectionManager;
+        $this->repository = $repository;
+        $this->handlerFactory = $handlerFactory;
+
         parent::__construct($context);
     }
 
@@ -156,8 +161,11 @@ class Ebay extends Command
             'template_id' => $this->getRequest()->getParam('template_id', false)
         ];
 
-        $inspector = $this->inspectionManager
-            ->getInspection('NonexistentTemplates');
+        $definition = $this->repository->getDefinition('NonexistentTemplates');
+
+        /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\NonexistentTemplates $inspector */
+        $inspector = $this->handlerFactory->create($definition);
+
         $inspector->fix($fixData);
 
         $this->_redirect($this->_redirect->getRefererUrl());

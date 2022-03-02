@@ -2,28 +2,27 @@
 
 namespace Ess\M2ePro\Model\ControlPanel\Inspection\Inspector;
 
-use Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection;
 use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
 use Ess\M2ePro\Model\Exception\Connection;
+use Ess\M2ePro\Helper\Factory as HelperFactory;
+use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
 
-class ServerConnection extends AbstractInspection implements InspectorInterface
+class ServerConnection implements InspectorInterface
 {
+    /** @var HelperFactory */
+    private $helperFactory;
+
+    /** @var IssueFactory */
+    private $issueFactory;
+
     //########################################
 
-    public function getTitle()
-    {
-        return 'Connection with server';
-    }
-
-    public function getGroup()
-    {
-        return Manager::GROUP_GENERAL;
-    }
-
-    public function getExecutionSpeed()
-    {
-        return Manager::EXECUTION_SPEED_FAST;
+    public function __construct(
+        HelperFactory $helperFactory,
+        IssueFactory $issueFactory
+    ) {
+        $this->helperFactory = $helperFactory;
+        $this->issueFactory = $issueFactory;
     }
 
     //########################################
@@ -44,8 +43,7 @@ class ServerConnection extends AbstractInspection implements InspectorInterface
 
             $decoded = $this->helperFactory->getObject('Data')->jsonDecode($response['body']);
             if (empty($decoded['response']['result'])) {
-                $issues[] = $this->resultFactory->createError(
-                    $this,
+                $issues[] = $this->issueFactory->create(
                     'Connection Failed',
                     $response['curl_info']
                 );
@@ -58,8 +56,7 @@ class ServerConnection extends AbstractInspection implements InspectorInterface
                 $curlInfo = $additionalData['curl_info'];
             }
 
-            $issues[] = $this->resultFactory->createError(
-                $this,
+            $issues[] = $this->issueFactory->create(
                 $exception->getMessage(),
                 $curlInfo
             );

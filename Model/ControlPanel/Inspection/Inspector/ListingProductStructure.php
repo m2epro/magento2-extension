@@ -2,31 +2,54 @@
 
 namespace Ess\M2ePro\Model\ControlPanel\Inspection\Inspector;
 
-use Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection;
 use Ess\M2ePro\Model\ControlPanel\Inspection\FixerInterface;
 use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
+use Ess\M2ePro\Helper\Factory as HelperFactory;
+use Magento\Backend\Model\UrlInterface;
+use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\Data\Form\FormKey;
+use Ess\M2ePro\Model\ActiveRecord\Factory as ActiveRecordFactory;
+use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
 
-class ListingProductStructure extends AbstractInspection implements InspectorInterface, FixerInterface
+class ListingProductStructure implements InspectorInterface, FixerInterface
 {
     /** @var array */
-    protected $brokenData = [];
+    private $brokenData = [];
+
+    /** @var HelperFactory  */
+    private $helperFactory;
+
+    /** @var UrlInterface */
+    private $urlBuilder;
+
+    /** @var ResourceConnection */
+    private $resourceConnection;
+
+    /** @var FormKey */
+    private $formKey;
+
+    /** @var ActiveRecordFactory */
+    private $activeRecordFactory;
+
+    /** @var IssueFactory  */
+    private $issueFactory;
 
     //########################################
 
-    public function getTitle()
-    {
-        return 'Listing product structure';
-    }
-
-    public function getGroup()
-    {
-        return Manager::GROUP_PRODUCTS;
-    }
-
-    public function getExecutionSpeed()
-    {
-        return Manager::EXECUTION_SPEED_FAST;
+    public function __construct(
+        HelperFactory $helperFactory,
+        UrlInterface $urlBuilder,
+        ResourceConnection $resourceConnection,
+        FormKey $formKey,
+        ActiveRecordFactory $activeRecordFactory,
+        IssueFactory $issueFactory
+    ) {
+        $this->helperFactory       = $helperFactory;
+        $this->urlBuilder          = $urlBuilder;
+        $this->resourceConnection  = $resourceConnection;
+        $this->formKey             = $formKey;
+        $this->activeRecordFactory = $activeRecordFactory;
+        $this->issueFactory        = $issueFactory;
     }
 
     //########################################
@@ -41,8 +64,7 @@ class ListingProductStructure extends AbstractInspection implements InspectorInt
         $this->getBrokenListingProduct();
 
         if (!empty($this->brokenData)) {
-            $issues[] = $this->resultFactory->createError(
-                $this,
+            $issues[] = $this->issueFactory->create(
                 'Has broken listing or listing product',
                 $this->renderMetadata($this->brokenData)
             );
@@ -53,7 +75,7 @@ class ListingProductStructure extends AbstractInspection implements InspectorInt
 
     //########################################
 
-    protected function getBrokenOption()
+    private function getBrokenOption()
     {
         $listingProductVariationTable = $this->activeRecordFactory->getObject('Listing_Product_Variation')
             ->getResource()->getMainTable();
@@ -82,7 +104,7 @@ class ListingProductStructure extends AbstractInspection implements InspectorInt
         }
     }
 
-    protected function getBrokenVariation()
+    private function getBrokenVariation()
     {
         $listingProductTable = $this->activeRecordFactory->getObject('Listing\Product')
             ->getResource()->getMainTable();
@@ -120,7 +142,7 @@ class ListingProductStructure extends AbstractInspection implements InspectorInt
         }
     }
 
-    protected function getBrokenListingProduct()
+    private function getBrokenListingProduct()
     {
         $listingTable = $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable();
 
@@ -148,7 +170,7 @@ class ListingProductStructure extends AbstractInspection implements InspectorInt
         }
     }
 
-    protected function getBrokenListing()
+    private function getBrokenListing()
     {
         $accountTable = $this->activeRecordFactory->getObject('Account')->getResource()->getMainTable();
 
@@ -178,7 +200,7 @@ class ListingProductStructure extends AbstractInspection implements InspectorInt
 
     //########################################
 
-    protected function renderMetadata($data)
+    private function renderMetadata($data)
     {
         $formKey = $this->formKey->getFormKey();
         $currentUrl = $this->urlBuilder

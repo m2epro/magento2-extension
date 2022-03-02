@@ -1,48 +1,61 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Model\ControlPanel\Inspection\Result;
 
 use Magento\Framework\ObjectManagerInterface;
-use \Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection as Inspection;
-use \Ess\M2ePro\Model\ControlPanel\Inspection\Result as Result;
 
 class Factory
 {
     /** @var ObjectManagerInterface  */
-    protected $objectManager;
+    private $objectManager;
 
     public function __construct(ObjectManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
     }
 
-    public function create($inspector, $state, $message, $metadata)
+    /**
+     * @param bool $status
+     * @param string|null $errorMessage
+     * @param \Ess\M2ePro\Model\ControlPanel\Inspection\Issue[]|null $issues
+     *
+     * @return \Ess\M2ePro\Model\ControlPanel\Inspection\Result
+     */
+    private function create($status, $errorMessage, $issues = [])
     {
         return $this->objectManager->create(
             \Ess\M2ePro\Model\ControlPanel\Inspection\Result::class,
-            ['args' => [$inspector, $state, $message, $metadata] ]
+            [
+                'status'       => $status,
+                'errorMessage' => $errorMessage,
+                'issues'       => $issues,
+            ]
         );
     }
 
-    //########################################
-
-    public function createSuccess(Inspection $inspector, $message = null, $metadata = null)
+    /**
+     * @param \Ess\M2ePro\Model\ControlPanel\Inspection\Issue[] $issues
+     *
+     * @return \Ess\M2ePro\Model\ControlPanel\Inspection\Result
+     */
+    public function createSuccess($issues)
     {
-        return $this->create($inspector, Result::STATE_SUCCESS, $message, $metadata);
+        return $this->create(true, null, $issues);
     }
 
-    public function createNotice(Inspection $inspector, $message, $metadata = null)
+    /**
+     * @param string $errorMessage
+     *
+     * @return \Ess\M2ePro\Model\ControlPanel\Inspection\Result
+     */
+    public function createFailed($errorMessage)
     {
-        return $this->create($inspector, Result::STATE_NOTICE, $message, $metadata);
-    }
-
-    public function createWarning(Inspection $inspector, $message, $metadata = null)
-    {
-        return $this->create($inspector, Result::STATE_WARNING, $message, $metadata);
-    }
-
-    public function createError(Inspection $inspector, $message, $metadata = null)
-    {
-        return $this->create($inspector, Result::STATE_ERROR, $message, $metadata);
+        return $this->create(false, $errorMessage);
     }
 }

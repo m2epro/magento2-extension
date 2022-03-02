@@ -3,32 +3,55 @@
 namespace Ess\M2ePro\Model\ControlPanel\Inspection\Inspector;
 
 use Ess\M2ePro\Helper\Component\Ebay;
-use Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection;
 use Ess\M2ePro\Model\ControlPanel\Inspection\FixerInterface;
 use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
 use Ess\M2ePro\Model\Listing\Product;
+use Ess\M2ePro\Helper\Data as HelperData;
+use Magento\Backend\Model\UrlInterface;
+use Magento\Framework\Data\Form\FormKey;
+use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory as ParentFactory;
+use Ess\M2ePro\Model\ActiveRecord\Factory as ActiveRecordFactory;
+use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
 
-class EbayItemIdStructure extends AbstractInspection implements InspectorInterface, FixerInterface
+class EbayItemIdStructure implements InspectorInterface, FixerInterface
 {
     /** @var array */
-    protected $brokenData = [];
+    private $brokenData = [];
+
+    /** @var HelperData  */
+    private $helperData;
+
+    /** @var UrlInterface */
+    private $urlBuilder;
+
+    /** @var FormKey */
+    private $formKey;
+
+    /** @var ParentFactory */
+    private $parentFactory;
+
+    /** @var ActiveRecordFactory */
+    private $activeRecordFactory;
+
+    /** @var IssueFactory  */
+    private $issueFactory;
 
     //########################################
 
-    public function getTitle()
-    {
-        return 'Ebay item id N\A';
-    }
-
-    public function getGroup()
-    {
-        return Manager::GROUP_PRODUCTS;
-    }
-
-    public function getExecutionSpeed()
-    {
-        return Manager::EXECUTION_SPEED_FAST;
+    public function __construct(
+        HelperData $helperData,
+        UrlInterface $urlBuilder,
+        FormKey $formKey,
+        ParentFactory $parentFactory,
+        ActiveRecordFactory $activeRecordFactory,
+        IssueFactory $issueFactory
+    ) {
+        $this->helperData          = $helperData;
+        $this->urlBuilder          = $urlBuilder;
+        $this->formKey             = $formKey;
+        $this->parentFactory       = $parentFactory;
+        $this->activeRecordFactory = $activeRecordFactory;
+        $this->issueFactory        = $issueFactory;
     }
 
     //########################################
@@ -64,8 +87,7 @@ class EbayItemIdStructure extends AbstractInspection implements InspectorInterfa
         }
 
         if (!empty($this->brokenData)) {
-            $issues[] = $this->resultFactory->createError(
-                $this,
+            $issues[] = $this->issueFactory->create(
                 'Ebay item id N\A',
                 $this->renderMetadata($this->brokenData)
             );
@@ -74,7 +96,7 @@ class EbayItemIdStructure extends AbstractInspection implements InspectorInterfa
         return $issues;
     }
 
-    protected function renderMetadata($data)
+    private function renderMetadata($data)
     {
         $formKey = $this->formKey->getFormKey();
         $currentUrl = $this->urlBuilder
@@ -89,7 +111,7 @@ class EbayItemIdStructure extends AbstractInspection implements InspectorInterfa
         <th style="width: 300px"></th>
     </tr>
 HTML;
-        $repairInfo = $this->helperFactory->getObject('Data')->jsonEncode($data['ids']);
+        $repairInfo = $this->helperData->jsonEncode($data['ids']);
         $input = "<input type='checkbox' style='display: none;' checked='checked'
             name='repair_info' value='" . $repairInfo . "'>";
         $html .= <<<HTML

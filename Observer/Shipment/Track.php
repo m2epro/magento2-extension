@@ -50,7 +50,6 @@ class Track extends \Ess\M2ePro\Observer\Shipment\AbstractShipment
          */
         $eventKey = 'skip_' . $shipment->getId() . '##' . spl_object_hash($track);
         if ($this->getHelper('Data_GlobalData')->getValue($eventKey)) {
-            $this->getHelper('Data_GlobalData')->unsetValue($eventKey);
             return;
         }
 

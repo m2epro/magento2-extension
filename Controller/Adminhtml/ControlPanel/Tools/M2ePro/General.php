@@ -10,21 +10,28 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools\M2ePro;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools\M2ePro\General
  */
 class General extends Command
 {
-    /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Manager Manager */
-    private $inspectionManager;
+    /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Repository */
+    protected  $repository;
+
+    /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\HandlerFactory */
+    protected $handlerFactory;
 
     //########################################
 
-    public function __construct(Manager $inspectionManager, Context $context)
+    public function __construct(
+        Context $context,
+        \Ess\M2ePro\Model\ControlPanel\Inspection\Repository $repository,
+        \Ess\M2ePro\Model\ControlPanel\Inspection\HandlerFactory $handlerFactory
+    )
     {
-        $this->inspectionManager = $inspectionManager;
+        $this->repository = $repository;
+        $this->handlerFactory = $handlerFactory;
 
         parent::__construct($context);
     }
@@ -42,10 +49,12 @@ class General extends Command
             return;
         }
 
-        /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\BrokenTables $inspection */
-        $inspection = $this->inspectionManager
-            ->getInspection('BrokenTables');
-        $inspection->fix($tableNames);
+        $definition = $this->repository->getDefinition('BrokenTables');
+
+        /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\BrokenTables $inspector */
+        $inspector = $this->handlerFactory->create($definition);
+
+        $inspector->fix($tableNames);
     }
 
     /**
@@ -61,9 +70,13 @@ class General extends Command
         }
 
         $tableName = array_pop($tableNames);
-        $info = $this->inspectionManager
-            ->getInspection('BrokenTables')
-            ->getBrokenRecordsInfo($tableName);
+
+        $definition = $this->repository->getDefinition('BrokenTables');
+
+        /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\BrokenTables $inspector */
+        $inspector = $this->handlerFactory->create($definition);
+
+        $info = $inspector->getBrokenRecordsInfo($tableName);
 
         return '<pre>' .
                "<span>Broken Records '{$tableName}'<span><br>" .
@@ -84,9 +97,12 @@ class General extends Command
             $this->_redirect($this->_redirect->getRefererUrl());
         }
 
-        $this->inspectionManager
-            ->getInspection('RemovedStores')
-            ->fix([$replaceIdFrom => $replaceIdTo]);
+        $definition = $this->repository->getDefinition('RemovedStores');
+
+        /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\RemovedStores $inspector */
+        $inspector = $this->handlerFactory->create($definition);
+
+        $inspector->fix([$replaceIdFrom => $replaceIdTo]);
 
         $this->_redirect($this->_redirect->getRefererUrl());
     }
@@ -110,8 +126,11 @@ class General extends Command
             $dataForRepair[$temp['table']] = $temp['ids'];
         }
 
-        $inspector = $this->inspectionManager
-            ->getInspection('ListingProductStructure');
+        $definition = $this->repository->getDefinition('ListingProductStructure');
+
+        /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\ListingProductStructure $inspector */
+        $inspector = $this->handlerFactory->create($definition);
+
         $inspector->fix($dataForRepair);
 
         $this->_redirect($this->_redirect->getRefererUrl());
@@ -130,8 +149,11 @@ class General extends Command
 
         $dataForRepair = (array)$this->getHelper('Data')->jsonDecode($repairInfo);
 
-        $inspector = $this->inspectionManager
-            ->getInspection('OrderItemStructure');
+        $definition = $this->repository->getDefinition('OrderItemStructure');
+
+        /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\OrderItemStructure $inspector */
+        $inspector = $this->handlerFactory->create($definition);
+
         $inspector->fix($dataForRepair);
     }
 
@@ -148,8 +170,11 @@ class General extends Command
 
         $dataForRepair = (array)$this->getHelper('Data')->jsonDecode($ids);
 
-        $inspector = $this->inspectionManager
-            ->getInspection('EbayItemIdStructure');
+        $definition = $this->repository->getDefinition('EbayItemIdStructure');
+
+        /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\EbayItemIdStructure $inspector */
+        $inspector = $this->handlerFactory->create($definition);
+
         $inspector->fix($dataForRepair);
     }
 
@@ -166,8 +191,11 @@ class General extends Command
 
         $dataForRepair = (array)$this->getHelper('Data')->jsonDecode($ids);
 
-        $inspector = $this->inspectionManager
-            ->getInspection('AmazonProductWithoutVariations');
+        $definition = $this->repository->getDefinition('AmazonProductWithoutVariations');
+
+        /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\AmazonProductWithoutVariations $inspector */
+        $inspector = $this->handlerFactory->create($definition);
+
         $inspector->fix($dataForRepair);
     }
 

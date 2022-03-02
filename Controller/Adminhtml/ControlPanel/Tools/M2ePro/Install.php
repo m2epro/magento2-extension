@@ -11,7 +11,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools\M2ePro;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 use Ess\M2ePro\Helper\Module;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
 use Magento\Framework\Component\ComponentRegistrar;
 
 /**
@@ -31,8 +30,12 @@ class Install extends Command
     /** @var ComponentRegistrar */
     protected $componentRegistrar;
 
-    /** @var Manager */
-    protected $inspectionManager;
+    /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Repository */
+    protected  $repository;
+
+    /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\HandlerFactory */
+    protected $handlerFactory;
+
     //########################################
 
     public function __construct(
@@ -41,7 +44,8 @@ class Install extends Command
         \Magento\Framework\Filesystem\File\ReadFactory $fileReaderFactory,
         ComponentRegistrar $componentRegistrar,
         Context $context,
-        Manager $inspectionManager
+        \Ess\M2ePro\Model\ControlPanel\Inspection\Repository $repository,
+        \Ess\M2ePro\Model\ControlPanel\Inspection\HandlerFactory $handlerFactory
     ) {
         $this->filesystemDriver  = $filesystemDriver;
         $this->fileSystem        = $filesystem;
@@ -49,7 +53,8 @@ class Install extends Command
 
         $this->componentRegistrar = $componentRegistrar;
 
-        $this->inspectionManager  = $inspectionManager;
+        $this->repository = $repository;
+        $this->handlerFactory = $handlerFactory;
 
         parent::__construct($context);
     }
@@ -71,9 +76,10 @@ class Install extends Command
             $columnsInfo[] = (array)$this->getHelper('Data')->jsonDecode($item);
         }
 
+        $definition = $this->repository->getDefinition('TablesStructureValidity');
+
         /** @var  \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\TablesStructureValidity $inspector */
-        $inspector = $this->inspectionManager
-            ->getInspection('TablesStructureValidity');
+        $inspector = $this->handlerFactory->create($definition);
 
         foreach ($columnsInfo as $columnInfo) {
             $inspector->fix($columnInfo);

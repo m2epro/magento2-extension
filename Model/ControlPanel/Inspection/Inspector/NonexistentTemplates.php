@@ -3,19 +3,23 @@
 namespace Ess\M2ePro\Model\ControlPanel\Inspection\Inspector;
 
 use Ess\M2ePro\Helper\Component\Ebay as EbayHelper;
-use Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection;
 use Ess\M2ePro\Model\ControlPanel\Inspection\FixerInterface;
 use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
+use Ess\M2ePro\Helper\Factory as HelperFactory;
+use Ess\M2ePro\Model\Factory as ModelFactory;
+use Magento\Backend\Model\UrlInterface;
+use Magento\Framework\App\ResourceConnection;
+use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory as ParentFactory;
+use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
 
-class NonexistentTemplates extends AbstractInspection implements InspectorInterface, FixerInterface
+class NonexistentTemplates implements InspectorInterface, FixerInterface
 {
     const FIX_ACTION_SET_NULL     = 'set_null';
     const FIX_ACTION_SET_PARENT   = 'set_parent';
     const FIX_ACTION_SET_TEMPLATE = 'set_template';
 
     /**@var array */
-    protected $_simpleTemplates = [
+    private $_simpleTemplates = [
         'template_category_id' => 'category',
         'template_category_secondary_id' => 'category',
         'template_store_category_id' => 'store_category',
@@ -23,7 +27,7 @@ class NonexistentTemplates extends AbstractInspection implements InspectorInterf
     ];
 
     /** @var array */
-    protected $_difficultTemplates = [
+    private $_difficultTemplates = [
         \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT,
         \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SYNCHRONIZATION,
         \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION,
@@ -32,21 +36,40 @@ class NonexistentTemplates extends AbstractInspection implements InspectorInterf
         \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY,
     ];
 
+    /** @var HelperFactory  */
+    private $helperFactory;
+
+    /** @var ModelFactory */
+    private $modelFactory;
+
+    /** @var UrlInterface */
+    private $urlBuilder;
+
+    /** @var ResourceConnection */
+    private $resourceConnection;
+
+    /** @var ParentFactory */
+    private $parentFactory;
+
+    /** @var IssueFactory */
+    private $issueFactory;
+
     //########################################
 
-    public function getTitle()
-    {
-        return 'Nonexistent template';
-    }
-
-    public function getGroup()
-    {
-        return Manager::GROUP_PRODUCTS;
-    }
-
-    public function getExecutionSpeed()
-    {
-        return Manager::EXECUTION_SPEED_FAST;
+    public function __construct(
+        HelperFactory $helperFactory,
+        ModelFactory $modelFactory,
+        UrlInterface $urlBuilder,
+        ResourceConnection $resourceConnection,
+        ParentFactory $parentFactory,
+        IssueFactory $issueFactory
+    ) {
+        $this->helperFactory      = $helperFactory;
+        $this->modelFactory       = $modelFactory;
+        $this->urlBuilder         = $urlBuilder;
+        $this->resourceConnection = $resourceConnection;
+        $this->parentFactory      = $parentFactory;
+        $this->issueFactory       = $issueFactory;
     }
 
     //########################################
@@ -67,8 +90,7 @@ class NonexistentTemplates extends AbstractInspection implements InspectorInterf
         }
 
         if (!empty($nonexistentTemplates)) {
-            $issues[] = $this->resultFactory->createError(
-                $this,
+            $issues[] = $this->issueFactory->create(
                 'Has nonexistent templates',
                 $this->renderMetadata($nonexistentTemplates)
             );
@@ -77,7 +99,7 @@ class NonexistentTemplates extends AbstractInspection implements InspectorInterf
         return $issues;
     }
 
-    protected function renderMetadata($data)
+    private function renderMetadata($data)
     {
         $tableContent = <<<HTML
 <tr>

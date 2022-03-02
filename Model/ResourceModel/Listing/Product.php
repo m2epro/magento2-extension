@@ -8,11 +8,32 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing;
 
+use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Framework\EntityManager\MetadataPool;
+use Magento\GroupedProduct\Model\ResourceModel\Product\Link;
+
 /**
  * Class \Ess\M2ePro\Model\ResourceModel\Listing\Product
  */
 class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {
+    protected $metadataPool;
+
+    //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        MetadataPool $metadataPool,
+        $connectionName = null
+    ) {
+        $this->metadataPool = $metadataPool;
+
+        parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
+    }
+
     //########################################
 
     public function _construct()
@@ -167,6 +188,30 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
         $this->getHelper('Data_Cache_Runtime')->setValue($cacheKey, $result);
 
         return array_values($result);
+    }
+
+    //########################################
+
+    public function getParentEntityIdsByChild($childId)
+    {
+        $select = $this->getConnection()
+             ->select()
+             ->from(['l' => $this->getHelper('Module_Database_Structure')
+                                 ->getTableNameWithPrefix('catalog_product_link')], [])
+             ->join(
+                 ['e' => $this->getHelper('Module_Database_Structure')
+                              ->getTableNameWithPrefix('catalog_product_entity')],
+                 'e.' .
+                 $this->metadataPool->getMetadata(ProductInterface::class)->getLinkField() . ' = l.product_id',
+                 ['e.entity_id']
+             )
+             ->where('l.linked_product_id = ?', $childId)
+             ->where(
+                 'link_type_id = ?',
+                 Link::LINK_TYPE_GROUPED
+             );
+
+        return $this->getConnection()->fetchCol($select);
     }
 
     //########################################

@@ -1,8 +1,17 @@
 define([
-    'Magento_Ui/js/modal/modal',
-    'M2ePro/Common'
-], function(modal) {
-    window.ControlPanelInspection = Class.create(Common, {
+    'jquery',
+    'M2ePro/Grid',
+    'Magento_Ui/js/modal/modal'
+], function(jquery, grid, modal) {
+    window.ControlPanelInspection = Class.create(Grid, {
+        prepareActions: function()
+        {
+            this.actions = {
+                checkAllAction: function() { this.checkAllAction(); }.bind(this),
+                checkAction: function() { this.checkAction(); }.bind(this)
+            }
+        },
+
         showMetaData: function(element) {
             var content = '<div style="padding: 10px 10px; max-height: 450px; overflow: auto;">' +
                 element.next().innerHTML +
@@ -26,8 +35,7 @@ define([
         },
 
         removeRow: function(element) {
-            var selected = [],
-                form = element.up('form'),
+            var form = element.up('form'),
                 url = form.getAttribute('action'),
                 data = Form.serialize(form);
 
@@ -42,15 +50,18 @@ define([
             });
         },
 
-        checkAction: function() {
-            var tr = event.target.closest("tr"),
-                id = tr.querySelector(".id").textContent,
+        checkAction: function(nick = null, details = null) {
+            if (!nick && !details) {
+                var tr = event.target.closest("tr");
+
+                nick = tr.querySelector(".id").textContent;
                 details = tr.querySelector(".details");
+            }
 
             new Ajax.Request(M2ePro.url.get('checkInspection'), {
                 method: 'post',
                 parameters: {
-                    name: id.trim()
+                    title: nick.trim()
                 },
                 asynchronous: true,
                 onSuccess: function(transport) {
@@ -75,6 +86,22 @@ define([
                     }
                 }
             });
+        },
+
+        checkAllAction: function () {
+            var selectedIds = this.getSelectedProductsArray(),
+                rows = document.querySelector("#controlPanelInspectionsGrid_table").querySelectorAll(".id"),
+                details;
+
+            for (var row of rows) {
+                for (var nick of selectedIds) {
+                    if (row.textContent.trim() === nick) {
+                        details = row.closest("tr").querySelector(".details");
+                        this.checkAction(nick, details);
+                        break;
+                    }
+                }
+            }
         }
     });
 });

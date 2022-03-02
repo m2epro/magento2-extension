@@ -2,27 +2,44 @@
 
 namespace Ess\M2ePro\Model\ControlPanel\Inspection\Inspector;
 
-use Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection;
 use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
+use Ess\M2ePro\Helper\Module\Database\Structure as DatabaseStructure;
+use \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher as ConnectorDispatcher;
+use Magento\Backend\Model\UrlInterface;
+use Ess\M2ePro\Model\ActiveRecord\Factory as ActiveRecordFactory;
+use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
 
-class ConfigsValidity extends AbstractInspection implements InspectorInterface
+class ConfigsValidity implements InspectorInterface
 {
+    /** @var DatabaseStructure */
+    private $databaseStructure;
+
+    /** @var ConnectorDispatcher */
+    private $connectorDispatcher;
+
+    /** @var UrlInterface */
+    private $urlBuilder;
+
+    /** @var ActiveRecordFactory */
+    private $activeRecordFactory;
+
+    /** @var IssueFactory  */
+    private $issueFactory;
+
     //########################################
 
-    public function getTitle()
-    {
-        return 'Configs validity';
-    }
-
-    public function getGroup()
-    {
-        return Manager::GROUP_STRUCTURE;
-    }
-
-    public function getExecutionSpeed()
-    {
-        return Manager::EXECUTION_SPEED_FAST;
+    public function __construct(
+        DatabaseStructure $databaseStructure,
+        ConnectorDispatcher $connectorDispatcher,
+        UrlInterface $urlBuilder,
+        ActiveRecordFactory $activeRecordFactory,
+        IssueFactory $issueFactory
+    ) {
+        $this->databaseStructure   = $databaseStructure;
+        $this->connectorDispatcher = $connectorDispatcher;
+        $this->urlBuilder          = $urlBuilder;
+        $this->activeRecordFactory = $activeRecordFactory;
+        $this->issueFactory        = $issueFactory;
     }
 
     //########################################
@@ -34,24 +51,22 @@ class ConfigsValidity extends AbstractInspection implements InspectorInterface
         try {
             $responseData = $this->getDiff();
         } catch (\Exception $exception) {
-            $issues[] = $this->resultFactory->createError($this, $exception->getMessage());
+            $issues[] = $this->issueFactory->create($exception->getMessage());
 
             return $issues;
         }
 
-        $configTableName = $this->helperFactory
-            ->getObject('Module_Database_Structure')
-            ->getTableNameWithoutPrefix($this->activeRecordFactory->getObject('Config')->getResource()->getMainTable());
+        $configTableName = $this->databaseStructure->getTableNameWithoutPrefix($this->activeRecordFactory
+            ->getObject('Config')->getResource()->getMainTable());
         if (!isset($responseData['configs_info']) || !isset($responseData['configs_info'][$configTableName])) {
-            $issues[] = $this->resultFactory->createNotice($this, 'No info for this M2e Pro version');
+            $issues[] = $this->issueFactory->create('No info for this M2e Pro version');
 
             return $issues;
         }
         $difference = $this->getSnapshot($responseData['configs_info']);
 
         if (!empty($difference)) {
-            $issues[] = $this->resultFactory->createError(
-                $this,
+            $issues[] = $this->issueFactory->create(
                 'Wrong configs structure validity',
                 $this->renderMetadata($difference)
             );
@@ -62,9 +77,9 @@ class ConfigsValidity extends AbstractInspection implements InspectorInterface
 
     //########################################
 
-    protected function getDiff()
+    private function getDiff()
     {
-        $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
+        $dispatcherObject = $this->connectorDispatcher;
         $connectorObj = $dispatcherObject->getVirtualConnector(
             'configs',
             'get',
@@ -75,13 +90,12 @@ class ConfigsValidity extends AbstractInspection implements InspectorInterface
         return $connectorObj->getResponseData();
     }
 
-    protected function getSnapshot($data)
+    private function getSnapshot($data)
     {
         $currentData = [];
 
         foreach ($data as $tableName => $configInfo) {
-            $currentData[$tableName] = $this->helperFactory->getObject('Module_Database_Structure')
-                ->getConfigSnapshot($tableName);
+            $currentData[$tableName] = $this->databaseStructure->getConfigSnapshot($tableName);
         }
 
         $differences = [];
@@ -104,7 +118,7 @@ class ConfigsValidity extends AbstractInspection implements InspectorInterface
 
     //########################################
 
-    protected function renderMetadata($data)
+    private function renderMetadata($data)
     {
         $html = <<<HTML
 <table style="width: 100%;">

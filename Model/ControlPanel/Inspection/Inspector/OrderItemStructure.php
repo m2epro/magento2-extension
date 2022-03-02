@@ -2,31 +2,48 @@
 
 namespace Ess\M2ePro\Model\ControlPanel\Inspection\Inspector;
 
-use Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection;
 use Ess\M2ePro\Model\ControlPanel\Inspection\FixerInterface;
 use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
+use Ess\M2ePro\Helper\Factory as HelperFactory;
+use Magento\Backend\Model\UrlInterface;
+use Magento\Framework\Data\Form\FormKey;
+use Ess\M2ePro\Model\ActiveRecord\Factory as ActiveRecordFactory;
+use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
 
-class OrderItemStructure extends AbstractInspection implements InspectorInterface, FixerInterface
+class OrderItemStructure implements InspectorInterface, FixerInterface
 {
+    /** @var HelperFactory  */
+    private $helperFactory;
+
+    /** @var UrlInterface */
+    private $urlBuilder;
+
+    /** @var FormKey */
+    private $formKey;
+
+    /** @var ActiveRecordFactory */
+    private $activeRecordFactory;
+
+    /** @var IssueFactory */
+    private $issueFactory;
+
     /** @var array */
-    protected $brokenData = [];
+    private $brokenData = [];
 
     //########################################
 
-    public function getTitle()
-    {
-        return 'Order item structure';
-    }
-
-    public function getGroup()
-    {
-        return Manager::GROUP_ORDERS;
-    }
-
-    public function getExecutionSpeed()
-    {
-        return Manager::EXECUTION_SPEED_FAST;
+    public function __construct(
+        HelperFactory $helperFactory,
+        UrlInterface $urlBuilder,
+        FormKey $formKey,
+        ActiveRecordFactory $activeRecordFactory,
+        IssueFactory $issueFactory
+    ) {
+        $this->helperFactory       = $helperFactory;
+        $this->urlBuilder          = $urlBuilder;
+        $this->formKey             = $formKey;
+        $this->activeRecordFactory = $activeRecordFactory;
+        $this->issueFactory        = $issueFactory;
     }
 
     //########################################
@@ -52,8 +69,7 @@ class OrderItemStructure extends AbstractInspection implements InspectorInterfac
         }
 
         if (!empty($this->brokenData)) {
-            $issues[] = $this->resultFactory->createError(
-                $this,
+            $issues[] = $this->issueFactory->create(
                 'Has broken order item',
                 $this->renderMetadata($this->brokenData)
             );
@@ -62,7 +78,7 @@ class OrderItemStructure extends AbstractInspection implements InspectorInterfac
         return $issues;
     }
 
-    protected function renderMetadata($data)
+    private function renderMetadata($data)
     {
         $formKey = $this->formKey->getFormKey();
         $currentUrl = $this->urlBuilder

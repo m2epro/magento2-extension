@@ -42,10 +42,11 @@ class Item extends \Ess\M2ePro\Observer\Shipment\AbstractShipment
          */
         $objectHash = spl_object_hash($shipment->getTracksCollection()->getLastItem());
         $eventKey = 'skip_' . $shipment->getId() .'##'. $objectHash;
-        if (!$this->getHelper('Data_GlobalData')->getValue($eventKey)) {
-            $this->getHelper('Data_GlobalData')->setValue($eventKey, true);
+        if ($this->getHelper('Data_GlobalData')->getValue($eventKey)) {
+            return;
         }
 
+        $this->getHelper('Data_GlobalData')->setValue($eventKey, true);
         $magentoOrderId = $shipment->getOrderId();
 
         try {

@@ -2,31 +2,48 @@
 
 namespace Ess\M2ePro\Model\ControlPanel\Inspection\Inspector;
 
-use Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection;
 use Ess\M2ePro\Model\ControlPanel\Inspection\FixerInterface;
 use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
+use Ess\M2ePro\Helper\Module\Database\Structure as DatabaseStructure;
+use Ess\M2ePro\Helper\Component as HelperComponent;
+use Magento\Backend\Model\UrlInterface;
+use Magento\Framework\App\ResourceConnection;
+use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
 
-class BrokenTables extends AbstractInspection implements InspectorInterface, FixerInterface
+class BrokenTables implements InspectorInterface, FixerInterface
 {
     /** @var array */
-    protected $brokenTables = [];
+    private $brokenTables = [];
+
+    /** @var DatabaseStructure */
+    private $databaseStructure;
+
+    /** @var HelperComponent */
+    private $helperComponent;
+
+    /** @var UrlInterface */
+    private $urlBuilder;
+
+    /** @var ResourceConnection */
+    private $resourceConnection;
+
+    /** @var IssueFactory */
+    private $issueFactory;
 
     //########################################
 
-    public function getTitle()
-    {
-        return 'Broken tables';
-    }
-
-    public function getGroup()
-    {
-        return Manager::GROUP_STRUCTURE;
-    }
-
-    public function getExecutionSpeed()
-    {
-        return Manager::EXECUTION_SPEED_FAST;
+    public function __construct(
+        DatabaseStructure $databaseStructure,
+        HelperComponent $helperComponent,
+        UrlInterface $urlBuilder,
+        ResourceConnection $resourceConnection,
+        IssueFactory $issueFactory
+    ) {
+        $this->databaseStructure = $databaseStructure;
+        $this->helperComponent = $helperComponent;
+        $this->urlBuilder = $urlBuilder;
+        $this->resourceConnection = $resourceConnection;
+        $this->issueFactory = $issueFactory;
     }
 
     //########################################
@@ -37,8 +54,7 @@ class BrokenTables extends AbstractInspection implements InspectorInterface, Fix
         $this->getBrokenTables();
 
         if (!empty($this->brokenTables)) {
-            $issues[] = $this->resultFactory->createError(
-                $this,
+            $issues[] = $this->issueFactory->create(
                 'Has broken data in table',
                 $this->renderMetadata($this->brokenTables)
             );
@@ -49,9 +65,9 @@ class BrokenTables extends AbstractInspection implements InspectorInterface, Fix
 
     //########################################
 
-    protected function getBrokenTables()
+    private function getBrokenTables()
     {
-        $horizontalTables = $this->helperFactory->getObject('Module_Database_Structure')->getHorizontalTables();
+        $horizontalTables = $this->databaseStructure->getHorizontalTables();
 
         foreach ($horizontalTables as $parentTable => $childrenTables) {
             if ($brokenItemsCount = $this->getBrokenRecordsInfo($parentTable, true)) {
@@ -69,7 +85,7 @@ class BrokenTables extends AbstractInspection implements InspectorInterface, Fix
     public function getBrokenRecordsInfo($table, $returnOnlyCount = false)
     {
         $connection = $this->resourceConnection->getConnection();
-        $allTables = $this->helperFactory->getObject('Module_Database_Structure')->getHorizontalTables();
+        $allTables = $this->databaseStructure->getHorizontalTables();
 
         $result = $returnOnlyCount ? 0 : [];
 
@@ -79,17 +95,11 @@ class BrokenTables extends AbstractInspection implements InspectorInterface, Fix
                     continue;
                 }
 
-                $parentTablePrefix = $this->helperFactory->getObject('Module_Database_Structure')
-                    ->getTableNameWithPrefix($parentTable);
-                $childTablePrefix  = $this->helperFactory->getObject('Module_Database_Structure')
-                    ->getTableNameWithPrefix($childTable);
+                $parentTablePrefix = $this->databaseStructure->getTableNameWithPrefix($parentTable);
+                $childTablePrefix  = $this->databaseStructure->getTableNameWithPrefix($childTable);
 
-                $parentIdColumn = $this->helperFactory
-                    ->getObject('Module_Database_Structure')
-                    ->getIdColumn($parentTable);
-                $childIdColumn  = $this->helperFactory
-                    ->getObject('Module_Database_Structure')
-                    ->getIdColumn($childTable);
+                $parentIdColumn = $this->databaseStructure->getIdColumn($parentTable);
+                $childIdColumn  = $this->databaseStructure->getIdColumn($childTable);
 
                 if ($table == $parentTable) {
                     $stmtQuery = $connection->select()
@@ -106,7 +116,7 @@ class BrokenTables extends AbstractInspection implements InspectorInterface, Fix
                         ->where(
                             '`parent`.`component_mode` = \''.$component.'\' OR
                                 (`parent`.`component_mode` NOT IN (?) OR `parent`.`component_mode` IS NULL)',
-                            $this->helperFactory->getObject('Component')->getComponents()
+                            $this->helperComponent->getComponents()
                         )
                         ->where('`child`.`'.$childIdColumn.'` IS NULL')
                         ->query();
@@ -148,7 +158,7 @@ class BrokenTables extends AbstractInspection implements InspectorInterface, Fix
 
     //########################################
 
-    protected function renderMetadata($data)
+    private function renderMetadata($data)
     {
         $currentUrl = $this->urlBuilder
             ->getUrl('m2epro/controlPanel_tools_m2ePro/general', ['action' => 'deleteBrokenData']);
@@ -203,10 +213,8 @@ HTML;
             }
             $brokenIds = array_slice($brokenIds, 0, 50000);
 
-            $tableWithPrefix = $this->helperFactory
-                ->getObject('Module_Database_Structure')->getTableNameWithPrefix($table);
-            $idColumnName = $this->helperFactory
-                ->getObject('Module_Database_Structure')->getIdColumn($table);
+            $tableWithPrefix = $this->databaseStructure->getTableNameWithPrefix($table);
+            $idColumnName = $this->databaseStructure->getIdColumn($table);
 
             foreach (array_chunk($brokenIds, 1000) as $brokenIdsPart) {
                 if (count($brokenIdsPart) <= 0) {

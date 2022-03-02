@@ -3,11 +3,10 @@
 namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid as WidgetAbstractGrid;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Manager;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Result;
 use Ess\M2ePro\Model\ResourceModel\Collection\Custom;
 use Magento\Framework\DataObject;
 use Magento\Framework\ObjectManagerInterface;
+use Ess\M2ePro\Model\ControlPanel\Inspection\Repository;
 
 class Grid extends WidgetAbstractGrid
 {
@@ -19,19 +18,24 @@ class Grid extends WidgetAbstractGrid
     /** @var ObjectManagerInterface */
     protected $objectManager;
 
+    /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Repository $repository */
+    private $repository;
+
     //########################################
 
     public function __construct(
+        Repository $repository,
         \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
-        ObjectManagerInterface $objectManager,
-        array $data = []
+        ObjectManagerInterface $objectManager
     ) {
         parent::__construct($context, $backendHelper);
 
         $this->customCollectionFactory = $customCollectionFactory;
         $this->objectManager = $objectManager;
+        $this->repository = $repository;
+
         $this->setId('controlPanelInspectionsGrid');
 
         $this->setSaveParametersInSession(true);
@@ -43,15 +47,13 @@ class Grid extends WidgetAbstractGrid
     protected function _prepareCollection()
     {
         $collection = $this->customCollectionFactory->create();
-        $manager = $this->objectManager->create(\Ess\M2ePro\Model\ControlPanel\Inspection\Manager::class);
 
-        foreach ($manager->getInspections() as $inspection) {
-            /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection $inspection */
+        foreach ($this->repository->getDefinitions() as $definition) {
             $row = [
-                'id'          => $manager->getId($inspection),
-                'title'       => $inspection->getTitle(),
-                'description' => $inspection->getDescription(),
-                'inspection'  => $inspection
+                'id'          => $definition->getNick(),
+                'title'       => $definition->getTitle(),
+                'description' => $definition->getDescription(),
+                'group'       => $definition->getGroup(),
             ];
             $collection->addItem(new DataObject($row));
         }
@@ -121,11 +123,44 @@ class Grid extends WidgetAbstractGrid
                 'index'            => 'id',
                 'column_css_class' => 'no-display id',
                 'header_css_class' => 'no-display',
-
             ]
         );
 
         return parent::_prepareColumns();
+    }
+
+    //########################################
+
+    protected function _prepareMassaction()
+    {
+        // Set massaction identifiers
+        // ---------------------------------------
+        $this->setMassactionIdField('id');
+        $this->getMassactionBlock()->setFormFieldName('ids');
+        // ---------------------------------------
+
+        $this->getMassactionBlock()->addItem(
+            'checkAll',
+            [
+                'label'    => $this->__('Run'),
+                'url'      => '',
+            ]
+        );
+
+        return parent::_prepareMassaction();
+    }
+
+    //########################################
+
+    protected function _addColumnFilterToCollection($column)
+    {
+        $field = $column->getFilterIndex() ? $column->getFilterIndex() : $column->getIndex();
+
+        if ($field === 'id') {
+            return $this;
+        }
+
+        return parent::_addColumnFilterToCollection($column);
     }
 
     //########################################
@@ -168,11 +203,8 @@ class Grid extends WidgetAbstractGrid
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
-        /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\AbstractInspection $inspection */
-        $inspection = $row->getData('inspection');
-
         $value = <<<HTML
-<span style="color: grey;">[{$inspection->getGroup()}]</span> {$value}
+<span style="color: grey;">[{$row->getData('group')}]</span> {$value}
 HTML;
 
         if (!$row->getData('description')) {
@@ -182,7 +214,7 @@ HTML;
         return <<<HTML
 <style>
     .admin__field-tooltip .admin__field-tooltip-content {
-    bottom: 5rem;
+        bottom: 5rem;
     }
 </style>
 {$value}
@@ -195,40 +227,33 @@ HTML;
 HTML;
     }
 
-    //########################################
-
-    protected function _toHtml()
+    protected function _beforeToHtml()
     {
+        parent::_beforeToHtml();
+
+        $urls = [
+            'checkInspection' => $this->getUrl('m2epro/controlPanel_inspection/checkInspection')
+        ];
+
+        $this->jsUrl->addUrls($urls);
+
+        // Set ids to be able to use option "Select All"
+        $ids = [];
+
+        foreach ($this->repository->getDefinitions() as $definition) {
+            $ids[] = $definition->getNick();
+        }
+
+        $allIdsStr = implode(",", $ids);
+
         $this->js->addOnReadyJs(
             <<<JS
-require([
-    'M2ePro/ControlPanel/Inspection'
-], function(){
-
-    window.ControlPanelInspectionObj = new ControlPanelInspection();
+require(['domReady', 'M2ePro/ControlPanel/Inspection'], function() {
+    window.ControlPanelInspectionObj = new ControlPanelInspection('{$this->getId()}');
+    window.ControlPanelInspectionObj.afterInitPage();
+    window.ControlPanelInspectionObj.getGridMassActionObj().setGridIds('{$allIdsStr}');
 });
 JS
         );
-        $urls = $this->getHelper('Data')->jsonEncode(
-            [
-                'checkInspection' =>
-                    $this->getUrl(
-                        'm2epro/controlPanel_inspection/checkInspection'
-                    )
-            ]
-        );
-
-        $this->js->add(
-            <<<JS
-    require([
-        'M2ePro/M2ePro',
-    ],function() {
-        M2ePro.url.add({$urls});
-        
-    });
-JS
-        );
-
-        return parent::_toHtml();
     }
 }

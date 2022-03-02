@@ -729,7 +729,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
      */
     public function updateShippingStatus(array $trackingDetails = [], array $items = [])
     {
-        if (!$this->canUpdateShippingStatus($trackingDetails)) {
+        if (!$this->canUpdateShippingStatus($trackingDetails) || empty($trackingDetails['carrier_code'])) {
             return false;
         }
 
@@ -737,12 +737,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             $trackingDetails['fulfillment_date'] = $this->getHelper('Data')->getCurrentGmtDate();
         }
 
-        if (!empty($trackingDetails['carrier_code'])) {
-            $trackingDetails['carrier_title'] = $this->getHelper('Component_Amazon')->getCarrierTitle(
-                $trackingDetails['carrier_code'],
-                isset($trackingDetails['carrier_title']) ? $trackingDetails['carrier_title'] : ''
-            );
-        }
+        $trackingDetails['carrier_title'] = $this->getHelper('Component_Amazon')->getCarrierTitle(
+            $trackingDetails['carrier_code'],
+            isset($trackingDetails['carrier_title']) ? $trackingDetails['carrier_title'] : ''
+        );
 
         if (!empty($trackingDetails['carrier_title'])) {
             if ($trackingDetails['carrier_title'] == \Ess\M2ePro\Model\Order\Shipment\Handler::CUSTOM_CARRIER_CODE &&
