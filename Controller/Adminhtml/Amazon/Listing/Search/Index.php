@@ -43,7 +43,7 @@ class Index extends Main
 
         $this->addContent($this->createBlock('Amazon_Listing_Search'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Search Products'));
-        $this->setPageHelpLink('x/-gEtAQ');
+        $this->setPageHelpLink('x/Jv8UB');
 
         return $this->getResult();
     }

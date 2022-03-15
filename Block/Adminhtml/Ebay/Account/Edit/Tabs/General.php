@@ -72,7 +72,7 @@ If your token has expired or is not activated, click <b>Get Token</b>.<br/><br/>
 More detailed information about ability to work with this Page you can find
 <a href="%url%" target="_blank" class="external-link">here</a>.
 HTML
-                , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/KgItAQ'));
+                , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Uv8UB'));
         }
 
         $form->addField(

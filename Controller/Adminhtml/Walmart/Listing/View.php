@@ -76,7 +76,7 @@ class View extends Main
 
         $this->getHelper('Data\GlobalData')->setValue('view_listing', $listing);
 
-        $this->setPageHelpLink('x/OwBhAQ');
+        $this->setPageHelpLink('x/Y-1IB');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('M2E Pro Listing "%listing_title%"', $listing->getTitle())

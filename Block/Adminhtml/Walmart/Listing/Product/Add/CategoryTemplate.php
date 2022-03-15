@@ -71,7 +71,7 @@ class CategoryTemplate extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
 
                 <p>The detailed information can be found
                  <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/RQBhAQ')
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/bf1IB')
             ),
         ]);
 

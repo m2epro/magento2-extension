@@ -48,7 +48,7 @@ class Edit extends Description
         }
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
-        $this->setPageHelpLink('x/EAItAQ');
+        $this->setPageHelpLink('x/OP8UB');
 
         return $this->getResultPage();
     }

@@ -68,7 +68,7 @@ The Product Prices will be updated via M2E Pro again.
 More details about the Repricing Tool can be found
 <a href="%url%" target="_blank" class="external-link">here</a>
 HTML
-                , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/5QA9AQ'))
+                , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Df4kB'))
             ]
         );
 
@@ -282,8 +282,8 @@ HTML
     <br /><br />
     More detailed information on how to work with this option can be found
     <a href="%url2%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/aAAkAQ'),
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/5QA9AQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/AAAZD'),
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Df4kB')
                 )
             ) .
             '</div>';
@@ -429,8 +429,8 @@ Text or Price field Attributes are available for the selection.
 <br /><br />
 More detailed information on how to work with this option can be found
 <a href="%url2%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/aAAkAQ'),
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/5QA9AQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/AAAZD'),
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Df4kB')
                 )
             ) .
             '</div>';
@@ -641,8 +641,8 @@ Text or Price field Attributes are available for the selection.
 <br /><br />
 More detailed information on how to work with this option can be found
 <a href="%url2%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/aAAkAQ'),
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/5QA9AQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/AAAZD'),
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Df4kB')
                 )
             ) .
             '</div>';
@@ -861,8 +861,8 @@ Text or Price field Attributes are available for the selection.
 <br /><br />
 More detailed information on how to work with this option can be found
 <a href="%url2%" target="_blank" class="external-link">here</a>.',
-                        $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/aAAkAQ'),
-                        $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/5QA9AQ')
+                        $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/AAAZD'),
+                        $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Df4kB')
                     )).'</div>'
             ]
         )->addCustomAttribute('allowed_attribute_types', 'boolean');

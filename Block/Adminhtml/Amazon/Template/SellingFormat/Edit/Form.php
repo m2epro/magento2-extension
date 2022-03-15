@@ -921,7 +921,7 @@ HTML
                     ‘Request a quantity discount’: QTY >= 5, price 4,75 £, where: QTY <= 5 is the number of
                     purchased Products to which the Discount will be applied, price 4,75 £ is the final Price
                     per Product with the Discount applied (7£ - 2,25).',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/twtPAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/8oZP')
                 )
                 . '</span>'
             );

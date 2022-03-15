@@ -2630,7 +2630,7 @@ one which should be applied to your Items.<br><br>
 <strong>Note</strong>, you need to repeat the procedure above for each eBay Account separately.
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/z4R8AQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/94FkB')
                 ),
                 'You are submitting different Shipping Rate Table modes for the domestic and international shipping. ' .
                 'It contradicts eBay requirements. Please edit the settings.' => $this->__(

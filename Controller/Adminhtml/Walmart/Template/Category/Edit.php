@@ -48,7 +48,7 @@ class Edit extends Category
         }
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
-        $this->setPageHelpLink('x/RQBhAQ');
+        $this->setPageHelpLink('x/bf1IB');
 
         return $this->getResultPage();
     }

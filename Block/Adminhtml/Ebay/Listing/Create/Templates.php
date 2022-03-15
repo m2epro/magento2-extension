@@ -93,7 +93,7 @@ Policies for the Listing.</p>
 <p>More details in <a href="%url%" target="_blank">our documentation</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/7QItAQ ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/FQAVB ')
                 ),
                 'style'   => 'margin-top: 30px'
             ]

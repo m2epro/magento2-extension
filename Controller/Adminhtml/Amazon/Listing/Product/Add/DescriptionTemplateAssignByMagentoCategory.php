@@ -36,7 +36,7 @@ class DescriptionTemplateAssignByMagentoCategory extends \Ess\M2ePro\Controller\
             return $this->getResult();
         }
 
-        $this->setPageHelpLink('x/SwctAQ');
+        $this->setPageHelpLink('x/cwQVB');
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('Set Description Policy for New ASIN/ISBN Creation')
         );

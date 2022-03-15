@@ -21,7 +21,7 @@ class Index extends Marketplace
     {
         $this->addContent($this->createBlock('Ebay\Marketplace'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Marketplaces'));
-        $this->setPageHelpLink('x/4AEtAQ');
+        $this->setPageHelpLink('x/CP8UB');
 
         return $this->getResult();
     }

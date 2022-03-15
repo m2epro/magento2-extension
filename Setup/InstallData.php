@@ -173,7 +173,7 @@ class InstallData implements InstallDataInterface
         $moduleConfig->insert('/logs/listings/', 'last_action_id', '0');
         $moduleConfig->insert('/logs/ebay_pickup_store/', 'last_action_id', '0');
         $moduleConfig->insert('/logs/grouped/', 'max_records_count', '100000');
-        $moduleConfig->insert('/support/', 'documentation_url', 'https://docs.m2epro.com/');
+        $moduleConfig->insert('/support/', 'documentation_url', 'https://m2e.atlassian.net/wiki/');
         $moduleConfig->insert('/support/', 'clients_portal_url', 'https://clients.m2epro.com/');
         $moduleConfig->insert('/support/', 'website_url', 'https://m2epro.com/');
         $moduleConfig->insert('/support/', 'support_url', 'https://support.m2epro.com/');

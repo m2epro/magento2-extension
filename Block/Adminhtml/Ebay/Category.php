@@ -47,7 +47,7 @@ Any changes you make on this page will affect M2E Pro Listings where these Categ
 Read the <a href="%url%" target="_blank">article</a> to learn how to manage eBay Categories.
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/S4R8AQ')
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/c4FkB')
             )
         ]);
 

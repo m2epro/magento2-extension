@@ -47,7 +47,7 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
 <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
             ,
-            $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/nAYtAQ')
+            $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/xAMVB')
         );
     }
 

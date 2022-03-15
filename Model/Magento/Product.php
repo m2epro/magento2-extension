@@ -79,6 +79,9 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Magento\Catalog\Model\Product */
     protected $_productModel = null;
 
+    /** @var \Magento\Catalog\Model\ResourceModel\Product  */
+    protected $resourceProduct;
+
     /** @var \Ess\M2ePro\Model\Magento\Product\Variation */
     protected $_variationInstance = null;
 
@@ -113,6 +116,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
+        \Magento\Catalog\Model\ResourceModel\Product $resourceProduct,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory
     ) {
@@ -130,6 +134,8 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $this->objectManager = $objectManager;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
+        $this->resourceProduct = $resourceProduct;
+
         parent::__construct($helperFactory, $modelFactory);
     }
 
@@ -503,7 +509,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $collection->joinTable(
             [
                 'cpev' => $this->getHelper('Module_Database_Structure')
-                    ->getTableNameWithPrefix('catalog_product_entity_varchar')
+                    ->getTableNameWithPrefix('catalog_product_entity_varchar'),
             ],
             'entity_id = entity_id',
             ['value' => 'value']
@@ -1642,6 +1648,25 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return str_replace(' ', '%20', $url);
+    }
+
+    //########################################
+
+    public function getGroupedWeight()
+    {
+        $groupedProductWeight = 0;
+
+        if ($this->isGroupedType()) {
+            foreach ($this->getTypeInstance()->getAssociatedProducts($this->getProduct()) as $childProduct) {
+                /** @var \Magento\Catalog\Model\Product $product */
+                $product = $this->productFactory->create();
+                $product->setStoreId($childProduct->getStoreId());
+                $this->resourceProduct->load($product, $childProduct->getId(), ['weight']);
+                $groupedProductWeight += $childProduct->getQty() * $product->getWeight();
+            }
+        }
+
+        return $groupedProductWeight;
     }
 
     //########################################

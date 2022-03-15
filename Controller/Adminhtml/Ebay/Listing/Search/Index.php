@@ -37,7 +37,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         $this->addContent($this->createBlock('Ebay_Listing_Search'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Search Products'));
-        $this->setPageHelpLink('x/6gEtAQ');
+        $this->setPageHelpLink('x/Ev8UB');
 
         return $this->getResult();
     }

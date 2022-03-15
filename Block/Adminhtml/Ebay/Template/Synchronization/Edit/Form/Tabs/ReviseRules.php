@@ -37,7 +37,7 @@ Policy Templates.</p><br>
 <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/PwItAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Z-8UB')
                 )
             ]
         );

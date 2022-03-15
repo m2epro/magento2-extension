@@ -47,7 +47,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
         $content = $this->createBlock('Walmart_Listing_Create');
         $this->addContent($content);
 
-        $this->setPageHelpLink('x/NQBhAQ');
+        $this->setPageHelpLink('x/Xf1IB');
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('New Listing Creation'));
 
         return $this->getResult();

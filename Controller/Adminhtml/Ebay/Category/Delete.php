@@ -47,7 +47,7 @@ class Delete extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
             '[%count%] Category cannot be removed until it’s unassigned from the existing products.
             Read the <a href="%url%" target="_blank">article</a> for more information.',
             $locked,
-            $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/S4R8AQ')
+            $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/c4FkB')
         );
         $locked && $this->getMessageManager()->addError($tempString);
 

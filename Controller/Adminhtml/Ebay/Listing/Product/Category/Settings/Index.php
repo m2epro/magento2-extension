@@ -173,7 +173,7 @@ class Index extends Settings
 
         $this->addContent($block);
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Set Your eBay Categories'));
-        $this->setPageHelpLink('x/lAItAQ');
+        $this->setPageHelpLink('x/c4FkB');
 
         return $this->getResult();
     }

@@ -86,7 +86,7 @@ select tax settings to apply to an Order, activate an automatic invoice and ship
 The detailed information can be found <a href="%url%" target="_blank">here</a>.
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/XgBhAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/hv1IB')
                 )
             ]
         );

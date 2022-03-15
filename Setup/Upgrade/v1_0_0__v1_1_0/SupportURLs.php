@@ -20,7 +20,7 @@ class SupportURLs extends AbstractFeature
         $this->getConfigModifier('module')->getEntity('/support/', 'main_website_url')->updateKey('website_url');
         $this->getConfigModifier('module')->getEntity('/support/', 'main_support_url')->updateKey('support_url');
         $this->getConfigModifier('module')->getEntity('/support/', 'documentation_url')->updateValue(
-            'https://docs.m2epro.com/'
+            'https://m2e.atlassian.net/wiki/'
         );
         $this->getConfigModifier('module')->getEntity('/support/', 'knowledge_base_url')->delete();
         $this->getConfigModifier('module')->getEntity('/support/', 'ideas')->delete();

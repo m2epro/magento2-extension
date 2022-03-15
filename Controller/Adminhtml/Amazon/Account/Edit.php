@@ -70,7 +70,7 @@ class Edit extends Account
 
         $this->addLeft($this->createBlock('Amazon_Account_Edit_Tabs'));
         $this->addContent($this->createBlock('Amazon_Account_Edit'));
-        $this->setPageHelpLink('x/9gEtAQ');
+        $this->setPageHelpLink('x/Hv8UB');
 
         return $this->getResultPage();
     }

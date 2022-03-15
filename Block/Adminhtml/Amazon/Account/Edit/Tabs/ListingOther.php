@@ -59,7 +59,7 @@ configure the automatic linking and moving settings.</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/NAItAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/XP8UB')
                 )
             ]
         );

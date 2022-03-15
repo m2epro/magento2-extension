@@ -137,7 +137,7 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
             'Ess_M2ePro::amazon_help_center_ideas_workshop'  => $this->support->getIdeasComponentUrl('amazon'),
             'Ess_M2ePro::amazon_help_center_knowledge_base'  => $this->support->getKnowledgebaseComponentUrl('amazon'),
 
-            'Ess_M2ePro::walmart_help_center_documentation'   => $this->support->getDocumentationArticleUrl('x/JQBhAQ'),
+            'Ess_M2ePro::walmart_help_center_documentation'   => $this->support->getDocumentationArticleUrl('x/Tf1IB'),
             'Ess_M2ePro::walmart_help_center_ideas_workshop'  => $this->support->getIdeasComponentUrl('walmart'),
             'Ess_M2ePro::walmart_help_center_knowledge_base'  =>
                 $this->support->getKnowledgebaseComponentUrl('walmart'),

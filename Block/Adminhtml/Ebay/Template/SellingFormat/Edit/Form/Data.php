@@ -781,7 +781,7 @@ HTML
                     <br/>
                     See our <a href='%url%' target='_blank'>article</a> to learn
                      how the final eBay item price is calculated.",
-                    $supportHelper->getDocumentationArticleUrl('x/UwItAQ#Selling-Price')
+                    $supportHelper->getDocumentationArticleUrl('x/e-8UB#Selling-Price')
                 ),
                 'css_class' => 'no-margin-top'
             ]

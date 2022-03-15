@@ -226,7 +226,7 @@ abstract class Main extends Base
                     as your Magento is set to the Production Mode and the static content data was not deployed.</p>
                     <p>Thus, to solve this issue you should follow the recommendations provided in this
                     <a href="%url%" target="_blank">article</a> and update the static content data.</p>',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/ZgM0AQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/jgAcB')
                 ),
                 self::GLOBAL_MESSAGES_GROUP
             );

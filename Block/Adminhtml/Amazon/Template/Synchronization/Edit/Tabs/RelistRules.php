@@ -44,7 +44,7 @@ class RelistRules extends AbstractForm
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/SQItAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/cf8UB')
                 )
             ]
         );

@@ -25,7 +25,7 @@ class Index extends Template
 
         $this->getResultPage()->getConfig()->getTitle()->prepend('Policies');
         $this->addContent($content);
-        $this->setPageHelpLink('x/QwBhAQ');
+        $this->setPageHelpLink('x/a-1IB');
 
         return $this->getResultPage();
     }

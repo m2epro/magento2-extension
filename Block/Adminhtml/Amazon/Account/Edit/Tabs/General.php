@@ -84,7 +84,7 @@ following steps to grant M2E Pro access to your Amazon data:</p>
 Configuration page, click <strong>Save</strong> to apply the changes.</p><br>
 <p>More detailed information on how to work with this page can be found <a href="%url%" target="_blank">here</a>.</p>
 HTML
-                , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/MgItAQ'))
+                , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Wv8UB'))
             ]
         );
 

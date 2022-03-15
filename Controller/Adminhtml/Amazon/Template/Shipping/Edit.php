@@ -45,7 +45,7 @@ class Edit extends Template
 
         $this->addContent($this->createBlock('Amazon_Template_Shipping_Edit'));
 
-        $this->setPageHelpLink('x/wwA9AQ');
+        $this->setPageHelpLink('x/6-0kB');
 
         return $this->getResultPage();
     }

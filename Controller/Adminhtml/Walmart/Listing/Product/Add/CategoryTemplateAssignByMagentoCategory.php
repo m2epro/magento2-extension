@@ -35,7 +35,7 @@ class CategoryTemplateAssignByMagentoCategory extends \Ess\M2ePro\Controller\Adm
             return $this->getResult();
         }
 
-        $this->setPageHelpLink('x/L4taAQ');
+        $this->setPageHelpLink('x/zeVaAg');
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('Set Category Policy')
         );

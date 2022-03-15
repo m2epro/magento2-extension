@@ -54,7 +54,7 @@ class Index extends Developers
         $this->addLeft($tabsBlock);
         $this->addContent($this->createBlock('Developers'));
 
-        $this->setPageHelpLink('x/sglPAQ');
+        $this->setPageHelpLink('x/2gY3B');
 
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Help Center'));
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Developers / Administrators Area'));

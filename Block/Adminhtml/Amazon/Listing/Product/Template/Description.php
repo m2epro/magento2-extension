@@ -41,7 +41,7 @@ class Description extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Tem
     Description Policy Button.<br/><br/>
     More detailed information about ability to work with this Page you can find
     <a href="%url%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/uYgVAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/zmYtAg')
                 )
             ]);
         } else {

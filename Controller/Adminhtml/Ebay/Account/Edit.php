@@ -53,7 +53,7 @@ class Edit extends Account
 
         $this->addLeft($this->createBlock('Ebay_Account_Edit_Tabs'));
         $this->addContent($this->createBlock('Ebay_Account_Edit'));
-        $this->setPageHelpLink('x/4gEtAQ');
+        $this->setPageHelpLink('x/Cv8UB');
 
         return $this->getResultPage();
     }

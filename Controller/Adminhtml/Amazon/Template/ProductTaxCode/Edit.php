@@ -45,7 +45,7 @@ class Edit extends Template
 
         $this->addContent($this->createBlock('Amazon_Template_ProductTaxCode_Edit'));
 
-        $this->setPageHelpLink('x/1BBPAQ');
+        $this->setPageHelpLink('x/-A03B');
 
         return $this->getResultPage();
     }

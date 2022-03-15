@@ -19,7 +19,7 @@ class Index extends Account
     {
         $this->addContent($this->createBlock('Walmart\Account'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Accounts'));
-        $this->setPageHelpLink('x/XgBhAQ');
+        $this->setPageHelpLink('x/hv1IB');
 
         return $this->getResultPage();
     }

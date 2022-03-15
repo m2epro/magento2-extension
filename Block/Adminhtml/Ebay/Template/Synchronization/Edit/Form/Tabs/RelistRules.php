@@ -44,7 +44,7 @@ class RelistRules extends AbstractTab
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/QQItAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/af8UB')
                 )
             ]
         );

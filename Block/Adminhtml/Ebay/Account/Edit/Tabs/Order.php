@@ -85,7 +85,7 @@ for your Magento Orders as well as specify the automatic creation of invoices an
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/LgItAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Vv8UB')
                 )
             ]
         );
@@ -558,7 +558,7 @@ HTML
                 'tooltip'      => $this->__(
                     'Enable to cancel or refund eBay orders and automatically update their statuses on the Channel.
                     Find more details <a href="%url%" target="_blank">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/aAL9AQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/kP-kB')
                 )
             ]
         );

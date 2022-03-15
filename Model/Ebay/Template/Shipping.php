@@ -587,7 +587,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
                 Make sure to <a href="%url%" target="_blank">download Rate Tables from eBay</a> 
                 in the M2E Pro Shipping Policy.',
                 $this->getHelper('Module\Support')->getDocumentationArticleUrl(
-                    "x/z4R8AQ#eBayGuaranteedDelivery-HowtodownloadeBayShippingRateTablestoM2EPro?"
+                    "x/94FkB#eBayGuaranteedDelivery-HowtodownloadeBayShippingRateTablestoM2EPro?"
                 )
             )
         );

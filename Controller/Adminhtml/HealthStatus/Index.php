@@ -53,7 +53,7 @@ class Index extends HealthStatus
         $this->addLeft($tabsBlock);
         $this->addContent($this->createBlock('HealthStatus'));
 
-        $this->setPageHelpLink('x/sglPAQ');
+        $this->setPageHelpLink('x/2gY3B');
 
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Help Center'));
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Health Status'));

@@ -19,7 +19,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
     {
         $this->addContent($this->createBlock('Ebay\Category'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Categories'));
-        $this->setPageHelpLink('x/S4R8AQ');
+        $this->setPageHelpLink('x/c4FkB');
 
         return $this->getResult();
     }

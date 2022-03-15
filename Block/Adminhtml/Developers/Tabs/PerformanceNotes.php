@@ -27,7 +27,7 @@ class PerformanceNotes extends AbstractBlock
 Find useful tips on how to optimize your Module work in <a target="_blank" href="%url">this article</a>.
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/z4QVAQ')
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/CgAW')
             )
         ]]);
         return $helpBlock->toHtml() . parent::_toHtml();

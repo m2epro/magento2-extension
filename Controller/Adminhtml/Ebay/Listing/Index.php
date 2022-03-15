@@ -24,7 +24,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         $this->addContent($this->createBlock('Ebay\Listing'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('M2E Pro Listings'));
-        $this->setPageHelpLink('x/7gEtAQ');
+        $this->setPageHelpLink('x/Fv8UB');
 
         return $this->getResult();
     }

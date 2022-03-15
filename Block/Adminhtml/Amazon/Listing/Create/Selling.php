@@ -87,7 +87,7 @@ class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 Automatic Synchronization of Magento Product and Amazon Item.<br/><br/>
                 More detailed information you can find
                 <a href="%url%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/XwItAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/h-8UB')
                 )
             ]
         );

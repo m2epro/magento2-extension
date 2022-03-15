@@ -51,8 +51,8 @@ performance of your Magento site and synchronization with Channels.</li>
 </ul>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/oYFwAQ'),
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/moFwAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/3Pxw'),
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/1fxw')
                 )
             ]
         );

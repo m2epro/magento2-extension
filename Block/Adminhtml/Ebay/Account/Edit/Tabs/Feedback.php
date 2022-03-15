@@ -43,7 +43,7 @@ class Feedback extends AbstractForm
      <br /><br />
      More detailed information about ability to work with this Page you can find
      <a href="%url%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/fQA0AQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/pf0bB')
                 )
             ]
         );

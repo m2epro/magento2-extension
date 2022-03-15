@@ -46,7 +46,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Settings
         $this->addLeft($tabsBlock);
         $this->addContent($this->createBlock('Walmart\Settings'));
 
-        $this->setPageHelpLink('x/ZQBhAQ');
+        $this->setPageHelpLink('x/jf1IB');
 
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Settings'));
 

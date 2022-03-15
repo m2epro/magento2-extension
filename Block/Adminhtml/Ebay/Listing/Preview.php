@@ -622,8 +622,16 @@ JS
                 $this->__('New With Defects'),
             \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_CERTIFIED_REFURBISHED =>
                 $this->__('Manufacturer Refurbished'),
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_EXCELLENT_REFURBISHED =>
+                $this->__('Excellent (Refurbished)'),
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_VERY_GOOD_REFURBISHED =>
+                $this->__('Very Good (Refurbished)'),
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_GOOD_REFURBISHED =>
+                $this->__('Good (Refurbished)'),
             \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_SELLER_REFURBISHED    =>
                 $this->__('Seller Refurbished, Re-manufactured'),
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_LIKE_NEW    =>
+                $this->__('Like New'),
             \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_USED                  =>
                 $this->__('Used'),
             \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_VERY_GOOD             =>

@@ -48,7 +48,7 @@ TEXT;
         $helpBlock = $this->createBlock('HelpBlock')->setData([
             'content' => $this->__(
                 $message,
-                $supportHelper->getDocumentationArticleUrl('x/FZRaAQ#Logs&Events-M2EProListinglogs')
+                $supportHelper->getDocumentationArticleUrl('x/PZFCB#Logs&Events-M2EProListinglogs')
             )
         ]);
 

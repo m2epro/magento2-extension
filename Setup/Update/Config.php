@@ -201,7 +201,8 @@ class Config extends AbstractConfig
             ],
             'y22_m02' => [
                 'RemoveForumUrl',
-                'ImportTaxRegistrationId'
+                'ImportTaxRegistrationId',
+                'ChangeDocumentationUrl',
             ],
         ];
     }

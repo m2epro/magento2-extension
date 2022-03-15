@@ -87,7 +87,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         }
 
         $this->addContent($this->createBlock('Amazon_Listing_Product_Add_SourceMode'));
-        $this->setPageHelpLink('x/jgYtAQ');
+        $this->setPageHelpLink('x/tgMVB');
     }
 
     //########################################
@@ -130,7 +130,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink('x/4wYtAQ');
+        $this->setPageHelpLink('x/CwQVB');
 
         $this->addContent($this->createBlock('Amazon_Listing_Product_Add_SourceMode_Product'));
     }
@@ -185,7 +185,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink('x/6gYtAQ');
+        $this->setPageHelpLink('x/EgQVB');
 
         $gridContainer = $this->createBlock('Amazon_Listing_Product_Add_SourceMode_Category');
         $this->addContent($gridContainer);
@@ -237,13 +237,13 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink('x/NQctAQ');
+        $this->setPageHelpLink('x/XQQVB');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('Search Existing Amazon Products (ASIN/ISBN)')
         );
 
-        $this->setPageHelpLink('x/NQctAQ');
+        $this->setPageHelpLink('x/XQQVB');
 
         $this->addContent($this->createBlock('Amazon_Listing_Product_Add_SearchAsin'));
     }
@@ -259,7 +259,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink('x/SwctAQ');
+        $this->setPageHelpLink('x/cwQVB');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('New ASIN/ISBN Creation'));
 

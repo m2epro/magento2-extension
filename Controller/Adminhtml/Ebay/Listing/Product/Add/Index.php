@@ -99,7 +99,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
             return $this->getResult();
         }
 
-        $this->setPageHelpLink('x/jgItAQ');
+        $this->setPageHelpLink('x/tv8UB');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Select Magento Products'));
         $this->addContent($this->createBlock('Ebay_Listing_Product_Add'));
@@ -147,7 +147,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
             return $this->getResult();
         }
 
-        $this->setPageHelpLink('x/6gYtAQ');
+        $this->setPageHelpLink('x/EgQVB');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Select Magento Products'));
 

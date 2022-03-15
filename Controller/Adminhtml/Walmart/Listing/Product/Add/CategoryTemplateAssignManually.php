@@ -35,7 +35,7 @@ class CategoryTemplateAssignManually extends \Ess\M2ePro\Controller\Adminhtml\Wa
             return $this->getResult();
         }
 
-        $this->setPageHelpLink('x/L4taAQ');
+        $this->setPageHelpLink('x/zeVaAg');
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('Set Category Policy')
         );

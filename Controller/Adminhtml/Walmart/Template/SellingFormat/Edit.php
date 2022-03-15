@@ -47,7 +47,7 @@ class Edit extends Template
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Selling Policies'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
-        $this->setPageHelpLink('x/SgBhAQ');
+        $this->setPageHelpLink('x/cv1IB');
         $this->addContent($this->createBlock('Walmart_Template_SellingFormat_Edit'));
 
         return $this->getResultPage();

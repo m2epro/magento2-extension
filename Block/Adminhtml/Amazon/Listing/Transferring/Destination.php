@@ -85,7 +85,7 @@ To do it, you have to choose From and To Accounts, Marketplaces, Store Views and
 Click <a href="%url%" target="_blank">here</a> to learn more detailed information.
 HTML
                 ,
-                $this->getHelper('Module_Support')->getDocumentationArticleUrl('x/i4KCAQ')
+                $this->getHelper('Module_Support')->getDocumentationArticleUrl('x/sH2bB')
             ),
             'style' => 'margin-top: 15px;',
             'title' => $this->__('Sell on Another Marketplace')

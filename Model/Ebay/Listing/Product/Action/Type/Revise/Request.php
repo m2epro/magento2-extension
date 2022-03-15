@@ -57,7 +57,6 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
         $data = $this->insertHasSaleFlagToVariations($data);
         $data = $this->removeNodesIfItemHasTheSaleOrBid($data);
-        $data = $this->removeDurationIfItCanNotBeChanged($data);
 
         $data = $this->removePriceFromVariationsIfNotAllowed($data);
 
@@ -169,7 +168,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
             unset($data['subtitle']);
         }
 
-        if (isset($data['duration']) && ($deleteByAuctionFlag || $deleteByFixedFlag)) {
+        if (isset($data['duration']) && $deleteByAuctionFlag) {
             $warningMessageReasons[] = $this->getHelper('Module\Translation')->__('Duration');
             unset($data['duration']);
         }
@@ -187,33 +186,6 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
                     implode(', ', $warningMessageReasons)
                 )
             );
-        }
-
-        return $data;
-    }
-
-    protected function removeDurationIfItCanNotBeChanged(array $data)
-    {
-        if (isset($data['duration']) && isset($data['bestoffer_mode']) && $data['bestoffer_mode']) {
-            $this->addWarningMessage(
-                $this->getHelper('Module\Translation')->__(
-                    'Duration field(s) was ignored because '.
-                    'eBay doesn\'t allow Revise the Item if Best Offer is enabled.'
-                )
-            );
-            unset($data['duration']);
-        }
-
-        if (isset($data['duration']) && $data['duration'] == \Ess\M2ePro\Helper\Component\Ebay::LISTING_DURATION_GTC &&
-            $this->getEbayListingProduct()->getOnlineDuration() &&
-            !$this->getEbayListingProduct()->isOnlineDurationGtc()) {
-            $this->addWarningMessage(
-                $this->getHelper('Module\Translation')->__(
-                    'Duration value was not sent to eBay, because you are trying to change the Duration of your
-                    Listing to \'Goot Till Cancelled\' which is not allowed by eBay.'
-                )
-            );
-            unset($data['duration']);
         }
 
         return $data;

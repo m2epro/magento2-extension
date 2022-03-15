@@ -65,7 +65,7 @@ class Prepared extends AbstractModel
                     'Your current Module version <b>%v%</b> for Magento v1.x does not support Data Migration.
                     Please read our <a href="%url%" target="_blank">Migration Guide</a> for more details.',
                     $sourceParams['/migrationtomagento2/source/m2epro/']['version'],
-                    $this->helperFactory->getObject('Module\Support')->getDocumentationArticleUrl('x/EgA9AQ')
+                    $this->helperFactory->getObject('Module\Support')->getDocumentationArticleUrl('x/Ov0kB')
                 ])
             );
         }

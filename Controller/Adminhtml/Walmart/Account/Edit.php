@@ -72,7 +72,7 @@ class Edit extends Account
 
         $this->addLeft($this->createBlock('Walmart_Account_Edit_Tabs'));
         $this->addContent($this->createBlock('Walmart_Account_Edit'));
-        $this->setPageHelpLink('x/XgBhAQ');
+        $this->setPageHelpLink('x/hv1IB');
 
         return $this->getResultPage();
     }

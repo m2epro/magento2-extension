@@ -170,7 +170,12 @@ class GroupedProduct extends AbstractFeature
             ->query();
 
         while ($row = $magentoOrderItemStmt->fetch()) {
-            $additionalData = (array)json_decode($row['additional_data'], true);
+
+            if (empty($row['additional_data'])) {
+                continue;
+            }
+
+            $additionalData = $this->helperFactory->getObject('Data')->unserialize($row['additional_data']);
             $orderItemId = $additionalData['m2epro_extension']['items'][0]['order_item_id'];
 
             foreach ($data as $order) {
@@ -179,7 +184,7 @@ class GroupedProduct extends AbstractFeature
 
                     $this->getConnection()->update(
                         $this->installer->getTable('sales_order_item'),
-                        ['additional_data' => json_encode($additionalData)],
+                        ['additional_data' => $this->helperFactory->getObject('Data')->serialize($additionalData)],
                         [
                             'item_id = ?'  => $row['item_id'],
                             'order_id = ?' => $row['order_id']

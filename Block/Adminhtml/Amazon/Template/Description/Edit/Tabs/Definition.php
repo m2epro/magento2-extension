@@ -77,7 +77,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
                     More detailed information about ability to work with this Page you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/OAYtAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/YAMVB')
                 )
             ]
         );

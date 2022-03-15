@@ -18,7 +18,7 @@ class Mode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\AbstractMode
     public function getHelpPageUrl()
     {
         return $this->getHelper('Module\Support')
-            ->getDocumentationArticleUrl('x/QQBhAQ');
+            ->getDocumentationArticleUrl('x/af1IB');
     }
 
     //########################################

@@ -43,7 +43,7 @@ class Edit extends Template
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Description Policies'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
-        $this->setPageHelpLink('x/RwBhAQ');
+        $this->setPageHelpLink('x/b-1IB');
         $this->addContent($this->createBlock('Walmart_Template_Description_Edit'));
 
         return $this->getResultPage();

@@ -19,7 +19,7 @@ class Index extends Order
     {
         $this->init();
         $this->addContent($this->createBlock('Walmart\Order'));
-        $this->setPageHelpLink('x/VwBhAQ');
+        $this->setPageHelpLink('x/f-1IB');
 
         return $this->getResult();
     }

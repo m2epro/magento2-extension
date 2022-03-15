@@ -792,7 +792,7 @@ HTML
                         20th November and stop selling on 30th November. <br><br>
 
                         Read more details <a href="%url%" target="_blank">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/SgBhAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/cv1IB')
                 )
             ]
         );

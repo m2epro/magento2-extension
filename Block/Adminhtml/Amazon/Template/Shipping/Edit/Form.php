@@ -145,7 +145,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         So you should provide a Channel Template Name which you would like to be used.<br />
         More detailed information about ability to work with this Page
         you can find <a target="_blank" href="%url%">here</a>',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/wwA9AQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/6-0kB')
                 )
             ]
         );

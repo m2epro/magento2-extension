@@ -38,7 +38,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Order
             $this->getResult()->getConfig()->getTitle()->prepend($this->__('Orders Logs & Events'));
         }
 
-        $this->setPageHelpLink('x/WgBhAQ');
+        $this->setPageHelpLink('x/gv1IB');
         $this->addContent($this->createBlock('Walmart_Log_Order'));
         return $this->getResult();
     }

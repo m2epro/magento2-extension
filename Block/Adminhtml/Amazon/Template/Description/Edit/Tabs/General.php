@@ -72,7 +72,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     you should enable New ASIN/ISBN Creation feature.<br/><br/>
                     More detailed information about ability to work with this Page you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/EAItAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/OP8UB')
                 )
             ]
         );

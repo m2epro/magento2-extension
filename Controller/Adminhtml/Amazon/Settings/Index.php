@@ -46,7 +46,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Settings
         $this->addLeft($tabsBlock);
         $this->addContent($this->createBlock('Amazon\Settings'));
 
-        $this->setPageHelpLink('x/kRBPAQ');
+        $this->setPageHelpLink('x/uQ03B');
 
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Settings'));
 

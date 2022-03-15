@@ -33,7 +33,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
 
         $this->addContent($this->createBlock('Walmart\Listing'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('M2E Pro Listings'));
-        $this->setPageHelpLink('x/MgBhAQ ');
+        $this->setPageHelpLink('x/Wv1IB ');
 
         return $this->getResult();
     }

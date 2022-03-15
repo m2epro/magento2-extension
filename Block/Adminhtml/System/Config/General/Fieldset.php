@@ -94,7 +94,7 @@ HTML
 HTML
             );
         } elseif (strpos($htmlId, 'advanced') !== false) {
-            $url = $this->helperFactory->getObject('Module\Support')->getDocumentationArticleUrl("x/EgA9AQ");
+            $url = $this->helperFactory->getObject('Module\Support')->getDocumentationArticleUrl("x/Ov0kB");
             $content = __(<<<HTML
             <p>This page contains additional functionality for M2E Pro Module’s management such as ability to
             enable/disable the Module and Automatic Synchronization in it,

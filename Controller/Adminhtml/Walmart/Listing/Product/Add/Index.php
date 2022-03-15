@@ -225,7 +225,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink('x/RQBhAQ');
+        $this->setPageHelpLink('x/bf1IB');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Set Category Policy'));
 

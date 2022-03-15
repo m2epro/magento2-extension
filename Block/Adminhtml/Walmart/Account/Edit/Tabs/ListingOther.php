@@ -70,7 +70,7 @@ class ListingOther extends AbstractForm
         The detailed information can be found <a href="%url%" target="_blank">here</a>.
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/UgBhAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/ev1IB')
                 )
             ]
         );

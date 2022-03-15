@@ -18,7 +18,7 @@ class Index extends Account
     public function execute()
     {
         $this->addContent($this->createBlock('Ebay\Account'));
-        $this->setPageHelpLink('x/4gEtAQ');
+        $this->setPageHelpLink('x/Cv8UB');
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Accounts'));
 
         return $this->getResultPage();

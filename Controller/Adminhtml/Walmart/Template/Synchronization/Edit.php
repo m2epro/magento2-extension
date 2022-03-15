@@ -45,7 +45,7 @@ class Edit extends Template
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Synchronization Policies'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
-        $this->setPageHelpLink('x/UABhAQ');
+        $this->setPageHelpLink('x/eP1IB');
         $this->addContent($this->createBlock('Walmart_Template_Synchronization_Edit'));
 
         return $this->getResultPage();

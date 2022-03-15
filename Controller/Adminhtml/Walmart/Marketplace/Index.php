@@ -21,7 +21,7 @@ class Index extends Marketplace
     {
         $this->addContent($this->createBlock('Walmart\Marketplace'));
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Marketplaces'));
-        $this->setPageHelpLink('x/JQBhAQ');
+        $this->setPageHelpLink('x/Tf1IB');
 
         return $this->getResult();
     }

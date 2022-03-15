@@ -45,7 +45,7 @@ class Content extends AbstractForm
 </div>
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/XgBhAQ')
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/hv1IB')
             )
         );
 

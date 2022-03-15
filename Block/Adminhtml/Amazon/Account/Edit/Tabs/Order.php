@@ -104,7 +104,7 @@ shipment notifications.</p><br/>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/NgItAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Xv8UB')
                 )
             ]
         );

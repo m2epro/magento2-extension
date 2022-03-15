@@ -60,7 +60,7 @@ Listing settings.</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/6wItAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/EwAVB')
                 ),
                 'style'   => 'margin-top: 30px'
             ]

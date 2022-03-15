@@ -19,7 +19,7 @@ class Index extends Order
     {
         $this->init();
         $this->addContent($this->createBlock('Amazon\Order'));
-        $this->setPageHelpLink('x/rgEtAQ');
+        $this->setPageHelpLink('x/1v4UB');
 
         return $this->getResult();
     }

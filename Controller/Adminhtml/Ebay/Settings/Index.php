@@ -46,7 +46,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
         $this->addLeft($tabsBlock);
         $this->addContent($this->createBlock('Ebay\Settings'));
 
-        $this->setPageHelpLink('x/tAlPAQ');
+        $this->setPageHelpLink('x/3AY3B');
 
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Settings'));
 

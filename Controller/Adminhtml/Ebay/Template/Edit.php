@@ -57,27 +57,27 @@ class Edit extends Template
 
         switch ($nick) {
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY:
-                $this->setPageHelpLink('x/TgMtAQ');
+                $this->setPageHelpLink('x/dgAVB');
                 break;
 
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT:
-                $this->setPageHelpLink('x/LwMtAQ');
+                $this->setPageHelpLink('x/VwAVB');
                 break;
 
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING:
-                $this->setPageHelpLink('x/OgMtAQ');
+                $this->setPageHelpLink('x/YgAVB');
                 break;
 
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION:
-                $this->setPageHelpLink('x/VQItAQ');
+                $this->setPageHelpLink('x/ff8UB');
                 break;
 
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT:
-                $this->setPageHelpLink('x/UwItAQ');
+                $this->setPageHelpLink('x/e-8UB');
                 break;
 
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SYNCHRONIZATION:
-                $this->setPageHelpLink('x/OwItAQ');
+                $this->setPageHelpLink('x/Y-8UB');
                 break;
         }
 

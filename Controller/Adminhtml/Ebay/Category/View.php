@@ -27,7 +27,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         $this->setRuleData('ebay_rule_category');
         $this->addContent($this->createBlock('Ebay_Category_View'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Edit Category'));
-        $this->setPageHelpLink('x/S4R8AQ');
+        $this->setPageHelpLink('x/c4FkB');
 
         return $this->getResult();
     }

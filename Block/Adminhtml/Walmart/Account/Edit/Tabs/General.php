@@ -71,7 +71,7 @@ class General extends AbstractForm
 </div>
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/XgBhAQ')
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/hv1IB')
             );
         } else {
             $content = $this->__(
@@ -84,7 +84,7 @@ HTML
 </div>
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/XgBhAQ')
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/hv1IB')
             );
         }
 

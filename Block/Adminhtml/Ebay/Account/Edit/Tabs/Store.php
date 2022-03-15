@@ -48,7 +48,7 @@ class Store extends AbstractForm
 Category settings via M2E Pro.</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
-                    , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/MAItAQ'))
+                    , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/WP8UB'))
             ]
         );
 

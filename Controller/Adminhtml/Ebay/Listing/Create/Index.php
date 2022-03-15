@@ -60,7 +60,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('New Listing Creation'));
-        $this->setPageHelpLink('x/WwItAQ');
+        $this->setPageHelpLink('x/g-8UB');
 
         return $this->getResult();
     }

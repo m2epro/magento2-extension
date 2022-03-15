@@ -45,7 +45,7 @@ class SourceMode extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\A
 
         $this->addContent($this->createBlock('Ebay_Listing_Product_Add_SourceMode'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Add Magento Products'));
-        $this->setPageHelpLink('x/dwItAQ');
+        $this->setPageHelpLink('x/n-8UB');
 
         return $this->getResult();
     }

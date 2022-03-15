@@ -117,8 +117,24 @@ class Data extends AbstractForm
                 'attrs' => ['attribute_code' => Description::CONDITION_EBAY_CERTIFIED_REFURBISHED]
             ],
             [
+                'label' => $this->__('Excellent (Refurbished)'),
+                'attrs' => ['attribute_code' => Description::CONDITION_EBAY_EXCELLENT_REFURBISHED]
+            ],
+            [
+                'label' => $this->__('Very Good (Refurbished)'),
+                'attrs' => ['attribute_code' => Description::CONDITION_EBAY_VERY_GOOD_REFURBISHED]
+            ],
+            [
+                'label' => $this->__('Good (Refurbished)'),
+                'attrs' => ['attribute_code' => Description::CONDITION_EBAY_GOOD_REFURBISHED]
+            ],
+            [
                 'label' => $this->__('Seller Refurbished, Re-manufactured'),
                 'attrs' => ['attribute_code' => Description::CONDITION_EBAY_SELLER_REFURBISHED]
+            ],
+            [
+                'label' => $this->__('Like New'),
+                'attrs' => ['attribute_code' => Description::CONDITION_EBAY_LIKE_NEW]
             ],
             [
                 'label' => $this->__('Used, Pre-owned, Like new'),

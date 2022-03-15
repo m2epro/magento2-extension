@@ -81,7 +81,7 @@ Settings. We recommend you to edit '<strong>Carrier Will Pick Up</strong>' and '
 Conditions.
 HTML
                         ,
-                        $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/OAYtAQ')
+                        $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/YAMVB')
                     ),
                     'no_hide'     => true,
                     'no_collapse' => true

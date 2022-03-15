@@ -42,7 +42,7 @@ class Field extends \Ess\M2ePro\Block\Adminhtml\System\Config\Integration
 
         $config = $this->moduleHelper->getConfig();
 
-        $url = $this->moduleSupport->getDocumentationArticleUrl('/x/EgA9AQ');
+        $url = $this->moduleSupport->getDocumentationArticleUrl('/x/Ov0kB');
         $confirmContent = <<<HTML
     <p>You are going to run the migration of M2E Pro data from Magento v1.x to
     Magento v2.x. Before you proceed, please read the <a href="{$url}" target="_blank">Migration Guide.</a>.</p>

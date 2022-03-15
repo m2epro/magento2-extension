@@ -19,7 +19,7 @@ class Index extends Order
     {
         $this->init();
         $this->addContent($this->createBlock('Ebay\Order'));
-        $this->setPageHelpLink('x/ngEtAQ');
+        $this->setPageHelpLink('x/xv4UB');
 
         return $this->getResultPage();
     }

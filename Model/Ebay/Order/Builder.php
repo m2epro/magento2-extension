@@ -266,7 +266,13 @@ class Builder extends AbstractModel
             ->addFieldToFilter('account_id', $this->account->getId())
             ->setOrder('id', \Magento\Framework\Data\Collection::SORT_ORDER_DESC);
 
-        $whereExpression = sprintf('ebay_order_id IN (%s) ', implode(',', $orderIds));
+        $whereExpression = sprintf(
+            "ebay_order_id IN (%s)",
+            implode(',', array_map(function ($orderId) {
+                return "'$orderId'";
+            }, $orderIds))
+        );
+
         if ($this->getData('selling_manager_id')) {
             $whereExpression .= sprintf(' OR selling_manager_id = %s', $this->getData('selling_manager_id'));
         }
