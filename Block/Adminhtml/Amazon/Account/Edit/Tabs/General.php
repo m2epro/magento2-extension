@@ -236,6 +236,15 @@ HTML
             $field->setFieldExtraAttributes('style="display: none"');
         }
 
+        $button = $this->createBlock('Magento\Button')->addData(
+            [
+                'label'   => $this->__('Check Token Validity'),
+                'onclick' => 'AmazonAccountObj.checkClick()',
+                'class'   => 'check M2ePro_check_button primary',
+                'style'   => 'margin-left: 70px;' . (!$isEdit ? 'display: none;' : ''),
+                'id'      => 'check_token_validity'
+            ]
+        );
         $field = $fieldset->addField(
             'token',
             'text',
@@ -247,7 +256,9 @@ HTML
                 'required' => true,
                 'value' => $isAuthMode ? $mwsToken : ($isEdit ? $formData['token'] : ''),
                 'display' => $isEdit,
-                'tooltip' => $this->__('An obtained Amazon Authorization Token.')
+                'after_element_html' => $this->getTooltipHtml(
+                        $this->__('An obtained Amazon Authorization Token.')
+                    ) . $button->toHtml()
             ]
         );
         if (!$isEdit) {
@@ -263,6 +274,10 @@ HTML
         $this->jsUrl->addUrls([
             'formSubmit' => $this->getUrl(
                 '*/amazon_account/save',
+                ['_current' => true, 'id' => $this->getRequest()->getParam('id')]
+            ),
+            'checkAction' => $this->getUrl(
+                '*/amazon_account/check',
                 ['_current' => true, 'id' => $this->getRequest()->getParam('id')]
             ),
             'deleteAction' => $this->getUrl(

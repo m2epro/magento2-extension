@@ -141,32 +141,6 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
         return $this->getKnowledgebaseUrl() . trim($articleLink, '/') . '/';
     }
 
-    //----------------------------------------
-
-    public function getIdeasUrl()
-    {
-        return $this->getSupportUrl('ideas');
-    }
-
-    public function getIdeasComponentUrl($component)
-    {
-        switch ($component) {
-            case \Ess\M2ePro\Helper\Component\Ebay::NICK:
-                return $this->getIdeasUrl() . 'ebay/';
-            case \Ess\M2ePro\Helper\Component\Amazon::NICK:
-                return $this->getIdeasUrl() . 'amazon/';
-            case \Ess\M2ePro\Helper\Component\Walmart::NICK:
-                return $this->getIdeasUrl() . 'category/1563595-walmart-integration/';
-            default:
-                throw new \Ess\M2ePro\Model\Exception\Logic('Invalid Channel.');
-        }
-    }
-
-    public function getIdeasArticleUrl($articleLink)
-    {
-        return $this->getIdeasUrl() . trim($articleLink, '/') . '/';
-    }
-
     //########################################
 
     public function getContactEmail()

@@ -42,14 +42,32 @@ class Track extends \Ess\M2ePro\Observer\Shipment\AbstractShipment
             return;
         }
 
+        /**
+         * Due to task m2e-team/m2e-pro/backlog#3421 this event observer can be called two times.
+         * If first time was successful, second time will be skipped.
+         * "Successful" means "$shipment variable is not null".
+         * There is code that looks same below, but event keys and logic are different.
+         */
+        $eventKey = 'skip_shipment_track_' . $track->getId();
+        if ($this->getHelper('Data_GlobalData')->getValue($eventKey)) {
+            return;
+        }
+
+        $this->getHelper('Data_GlobalData')->setValue($eventKey, true);
+
         $magentoOrderId = $shipment->getOrderId();
 
         /**
          * We can catch two the same events: save of \Magento\Sales\Model\Order\Shipment\Item and
          * \Magento\Sales\Model\Order\Shipment\Track. So we must skip a duplicated one.
+         * Possible situations:
+         * 1. Shipment without tracks was created for Magento order. Only 'Item' observer will be called.
+         * 2. Shipment with track(s) was created for Magento order. Both 'Item' and 'Track' observers will be called.
+         * 3. New track(s) was added for existing shipment. Only 'Track' observer will be called.
          */
         $eventKey = 'skip_' . $shipment->getId() . '##' . spl_object_hash($track);
         if ($this->getHelper('Data_GlobalData')->getValue($eventKey)) {
+            $this->getHelper('Data_GlobalData')->unsetValue($eventKey);
             return;
         }
 

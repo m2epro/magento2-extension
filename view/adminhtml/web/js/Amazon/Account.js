@@ -256,6 +256,12 @@ define([
             });
         },
 
+        checkClick: function() {
+            this.submitForm(M2ePro.url.get('checkAction'));
+
+            return false;
+        },
+
         // ---------------------------------------
 
         getToken: function(marketplaceId) {

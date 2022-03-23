@@ -34,10 +34,6 @@ class Form extends AbstractForm
                 - a collection of articles
                 describing the causes of the common errors as well as the solutions to the frequently
                 asked questions;</p></li>
-                <li><p><a href="%url_3%" target="_blank" class="external-link">Ideas Workshop</a>
-                - a base of notices where you
-                can find other Users’ suggestions as well as offer your idea about a new feature which
-                could be useful in M2E Pro;</p></li>
                 </ul>
 
                 <p>Yet, if you still cannot find the answer to the issue you have faced, you can contact our
@@ -46,9 +42,8 @@ class Form extends AbstractForm
                 terms and conditions will be sent to your request.</p>
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('help/m2'),
-                $this->getHelper('Module\Support')->getKnowledgebaseUrl(),
-                $this->getHelper('Module\Support')->getIdeasUrl()
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('spaces/m2/overview'),
+                $this->getHelper('Module\Support')->getKnowledgebaseUrl()
             )
         ]);
 
