@@ -465,7 +465,7 @@ HTML
                     1 => $this->__('Yes'),
                 ],
                 'required' => true,
-                'value' => $this->formData['price_vat_percent'],
+                'value' => (int)($this->formData['price_vat_percent'] > 0),
                 'tooltip' => $this->__(
                     <<<HTML
 Enable this option to add a specified VAT percent value to the Price when a Product is listed on Walmart.

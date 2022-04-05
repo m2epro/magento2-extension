@@ -622,7 +622,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
     protected function appendPartsValues($data)
     {
         $requestMetadata = $this->getRequestMetaData();
-        if (!isset($requestMetadata['parts_data_hash'])) {
+        if (!array_key_exists('parts_data_hash', $requestMetadata)) {
             return $data;
         }
 

@@ -678,8 +678,8 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             $haveOption = false;
 
             foreach ($changeVariation['specifics'] as $changeVariationOption => $changeVariationValue) {
-                if ($variationSnapshotOptionName == trim($changeVariationOption) &&
-                    $variationSnapshotOptionValue == trim($changeVariationValue)) {
+                if ($variationSnapshotOptionName === trim($changeVariationOption) &&
+                    $variationSnapshotOptionValue === trim($changeVariationValue)) {
                     $haveOption = true;
                     break;
                 }

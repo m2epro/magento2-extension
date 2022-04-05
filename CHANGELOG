@@ -1,8 +1,16 @@
-* 1.21.0 (23/03/2022) 
+* 1.21.1 (05/04/2022) 
+
+Common [Fixed] Unable to set a decimal value in the "VAT Rate" field in the Selling Policy [#3100]
+eBay [Fixed] Incorrect mapping of floating-point variations when creating a Magento Order [#3108]
+eBay [Fixed] Repetitive automatic Revise of eBay Parts Compatibility [#3427]
+eBay [Fixed] Item ID is displayed as N/A for some products [#2990]
+Walmart [Fixed] The Add VAT Percentage option gets disabled when setting a decimal value in the VAT Rate field [#3101]
+
+* 1.21.0 (23/03/2022)
 
 Common: [Fixed] A fully shipped combined order is marked as Partially Shipped on the Channel [#3437]
 Common: [Fixed] "Page not found" is displayed after clicking on some Help Center links [#3440]
-Amazon: [Added] AWS auth token verification [#3042]
+Amazon: [Added] MWS auth token verification [#3042]
 
 * 1.20.2 (15/03/2022)
 

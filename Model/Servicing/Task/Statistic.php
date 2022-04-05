@@ -194,10 +194,9 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
         $data['mysql']['version']         = $this->getHelper('Client')->getMysqlVersion();
         $data['mysql']['api']             = $this->getHelper('Client')->getMysqlApiName();
-        $data['mysql']['database_name']   = $this->getHelper('Magento')->getDatabaseName();
-        $data['mysql']['table_prefix']    = $this->getHelper('Magento')->getDatabaseTablesPrefix();
-        $data['mysql']['connect_timeout'] = $mySqlSettings['connect_timeout'];
-        $data['mysql']['wait_timeout']    = $mySqlSettings['wait_timeout'];
+        $data['mysql']['table_prefix']    = (bool)$this->getHelper('Magento')->getDatabaseTablesPrefix();
+        $data['mysql']['connect_timeout'] = (int)$mySqlSettings['connect_timeout'];
+        $data['mysql']['wait_timeout']    = (int)$mySqlSettings['wait_timeout'];
     }
 
     //########################################
@@ -208,7 +207,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
         $this->fillUpDataByMethod($data, 'appendMagentoSystemInfo');
 
-        $this->fillUpDataByMethod($data, 'appendMagentoModulesInfo');
         $this->fillUpDataByMethod($data, 'appendMagentoStoresInfo');
         $this->fillUpDataByMethod($data, 'appendMagentoStocksInfo');
 
@@ -228,19 +226,8 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $data['info']['location'] = $this->getHelper('Magento')->getLocation();
 
         $data['settings']['compilation']   = defined('COMPILER_INCLUDE_PATH');
-        //$data['settings']['cache_backend'] = $this->getHelper('Client\Cache')->getBackend();
         $data['settings']['secret_key']    = $this->getHelper('Magento')->isSecretKeyToUrl();
-    }
-
-    private function appendMagentoModulesInfo(&$data)
-    {
-        foreach ($this->moduleList->getAll() as $module => $moduleData) {
-            $data['modules'][$module] = [
-                'name'    => $module,
-                'version' => isset($moduleData['setup_version']) ? $moduleData['setup_version'] : null,
-                'status'  => (int) $this->moduleManager->isEnabled($module)
-            ];
-        }
+        $data['settings']['timezone']    = $this->getHelper('Data')->getConfigTimezone();
     }
 
     private function appendMagentoStoresInfo(&$data)
@@ -528,13 +515,13 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         ];
         foreach ($logsTypes as $logType) {
             $settings['logs_clearing'][$logType] = [
-                'mode' => $config->getGroupValue('/logs/clearing/'.$logType.'/', 'mode'),
-                'days' => $config->getGroupValue('/logs/clearing/'.$logType.'/', 'days')
+                'mode' => (bool)$config->getGroupValue('/logs/clearing/'.$logType.'/', 'mode'),
+                'days' => (int)$config->getGroupValue('/logs/clearing/'.$logType.'/', 'days')
             ];
         }
 
         foreach ($this->getHelper('Component')->getComponents() as $component) {
-            $settings['channels'][$component]['enabled'] = $config->getGroupValue('/component/'.$component.'/', 'mode');
+            $settings['channels'][$component]['enabled'] = (bool)$config->getGroupValue('/component/'.$component.'/', 'mode');
         }
 
         $settings['config'] = $config->getAllConfigData();
@@ -815,7 +802,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
                 }
 
                 $data['listings_products'][$componentName]['products']['type'][$productType] = [
-                    'amount' => $this->resource->getConnection()->fetchOne($select)
+                    'amount' => (int)$this->resource->getConnection()->fetchOne($select)
                 ];
             }
         }

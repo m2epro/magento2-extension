@@ -204,6 +204,9 @@ class Config extends AbstractConfig
                 'ImportTaxRegistrationId',
                 'ChangeDocumentationUrl',
             ],
+            'y22_m03' => [
+                'SetPrecisionInVatRateColumns',
+            ],
         ];
     }
 

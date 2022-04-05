@@ -5775,8 +5775,8 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'vat_percent',
-                Table::TYPE_FLOAT,
-                null,
+                Table::TYPE_DECIMAL,
+                [10, 2],
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -9466,8 +9466,8 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'regular_price_vat_percent',
-                Table::TYPE_FLOAT,
-                null,
+                Table::TYPE_DECIMAL,
+                [10, 2],
                 ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
@@ -9496,8 +9496,8 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'business_price_vat_percent',
-                Table::TYPE_FLOAT,
-                null,
+                Table::TYPE_DECIMAL,
+                [10, 2],
                 ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
@@ -11536,8 +11536,8 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'price_vat_percent',
-                Table::TYPE_FLOAT,
-                null,
+                Table::TYPE_DECIMAL,
+                [10, 2],
                 ['unsigned' => true, 'nullable' => true]
             )
             ->addColumn(

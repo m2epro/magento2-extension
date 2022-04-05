@@ -266,7 +266,7 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
             $valueLabels = $this->getHelper('Data')->toLowerCaseRecursive($optionValue['labels']);
 
             foreach ((array)$this->channelLabels['labels'] as $channelOptionLabel) {
-                if (in_array($channelOptionLabel, $valueLabels)) {
+                if (in_array($channelOptionLabel, $valueLabels, true)) {
                     $this->magentoValue = $optionValue;
                     return;
                 }
