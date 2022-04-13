@@ -188,9 +188,9 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $info = $this->getFatalInfo($error, 'Fatal Error');
         $info .= $traceInfo;
-        $info .= $this->getCurrentUserActionInfo();
         $info .= $this->getAdditionalActionInfo();
-        $info .= $this->getHelper('Module_Support_Form')->getSummaryInfo();
+        $info .= $this->getHelper('Module\Log')->platformInfo();
+        $info .= $this->getHelper('Module\Log')->moduleInfo();
 
         return $info;
     }
@@ -201,9 +201,9 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
 
         $info = $this->getExceptionInfo($throwable, get_class($throwable));
         $info .= $this->getExceptionStackTraceInfo($throwable);
-        $info .= $this->getCurrentUserActionInfo();
         $info .= $this->getAdditionalActionInfo();
-        $info .= $this->getHelper('Module_Support_Form')->getSummaryInfo();
+        $info .= $this->getHelper('Module\Log')->platformInfo();
+        $info .= $this->getHelper('Module\Log')->moduleInfo();
 
         return $info;
     }
@@ -349,25 +349,6 @@ TRACE;
     }
 
     // ---------------------------------------
-
-    private function getCurrentUserActionInfo()
-    {
-        // @codingStandardsIgnoreStart
-        $server = print_r($this->phpEnvironmentRequest->getServer()->toArray(), true);
-        $get    = print_r($this->phpEnvironmentRequest->getQuery()->toArray(), true);
-        $post   = print_r($this->phpEnvironmentRequest->getPost()->toArray(), true);
-        // @codingStandardsIgnoreEnd
-
-        $actionInfo = <<<ACTION
--------------------------------- ACTION INFO -------------------------------------
-SERVER: {$server}
-GET: {$get}
-POST: {$post}
-
-ACTION;
-
-        return $actionInfo;
-    }
 
     private function getAdditionalActionInfo()
     {

@@ -691,34 +691,44 @@ SQL;
         }
 
         $condition = '';
+        $min_online_price = 'IF(
+               `indexer`.`min_price` IS NULL,
+               `wlp`.`online_price`,
+               `indexer`.`min_price`
+           )';
+        $max_online_price = 'IF(
+                `indexer`.`max_price` IS NULL,
+                `wlp`.`online_price`,
+                `indexer`.`max_price`
+            )';
 
         if (isset($value['from']) || isset($value['to'])) {
             if (isset($value['from']) && $value['from'] != '') {
-                $condition = 'min_online_price >= \''.(float)$value['from'].'\'';
+                $condition = $min_online_price.' >= \''.(float)$value['from'].'\'';
             }
             if (isset($value['to']) && $value['to'] != '') {
                 if (isset($value['from']) && $value['from'] != '') {
                     $condition .= ' AND ';
                 }
-                $condition .= 'min_online_price <= \''.(float)$value['to'].'\'';
+                $condition .= $min_online_price.' <= \''.(float)$value['to'].'\'';
             }
 
             $condition = '(' . $condition . ') OR (';
 
             if (isset($value['from']) && $value['from'] != '') {
-                $condition .= 'max_online_price >= \''.(float)$value['from'].'\'';
+                $condition .= $max_online_price.' >= \''.(float)$value['from'].'\'';
             }
             if (isset($value['to']) && $value['to'] != '') {
                 if (isset($value['from']) && $value['from'] != '') {
                     $condition .= ' AND ';
                 }
-                $condition .= 'max_online_price <= \''.(float)$value['to'].'\'';
+                $condition .= $max_online_price.' <= \''.(float)$value['to'].'\'';
             }
 
             $condition .= ')';
         }
 
-        $collection->getSelect()->having($condition);
+        $collection->getSelect()->where($condition);
     }
 
     protected function callbackFilterStatus($collection, $column)

@@ -964,28 +964,68 @@ HTML;
         }
 
         $condition = '';
+        $min_online_price = 'IF(
+               (`indexer`.`min_regular_price` IS NULL AND `indexer`.`min_business_price` IS NULL),
+               IF(
+                       `alp`.`online_regular_price` IS NULL,
+                       `alp`.`online_business_price`,
+                       IF(
+                                   `alp`.`online_regular_sale_price_start_date` IS NOT NULL AND
+                                   `alp`.`online_regular_sale_price_end_date` IS NOT NULL AND
+                                   `alp`.`online_regular_sale_price_start_date` <= CURRENT_DATE() AND
+                                   `alp`.`online_regular_sale_price_end_date` >= CURRENT_DATE(),
+                                   `alp`.`online_regular_sale_price`,
+                                   `alp`.`online_regular_price`
+                           )
+                   ),
+               IF(
+                       `indexer`.`min_regular_price` IS NULL,
+                       `indexer`.`min_business_price`,
+                       `indexer`.`min_regular_price`
+                   )
+           )';
+        $max_online_price = 'IF(
+                   `indexer`.`max_regular_price` IS NULL AND `indexer`.`max_business_price` IS NULL,
+                   IF(
+                           `alp`.`online_regular_price` IS NULL,
+                           `alp`.`online_business_price`,
+                           IF(
+                                       `alp`.`online_regular_sale_price_start_date` IS NOT NULL AND
+                                       `alp`.`online_regular_sale_price_end_date` IS NOT NULL AND
+                                       `alp`.`online_regular_sale_price_start_date` <= CURRENT_DATE() AND
+                                       `alp`.`online_regular_sale_price_end_date` >= CURRENT_DATE(),
+                                       `alp`.`online_regular_sale_price`,
+                                       `alp`.`online_regular_price`
+                               )
+                       ),
+                   IF(
+                           `indexer`.`max_regular_price` IS NULL,
+                           `indexer`.`max_business_price`,
+                           `indexer`.`max_regular_price`
+                       )
+           )';
 
         if (isset($value['from']) || isset($value['to'])) {
             if (isset($value['from']) && $value['from'] != '') {
-                $condition = 'min_online_price >= \''.(float)$value['from'].'\'';
+                $condition = $min_online_price.' >= \''.(float)$value['from'].'\'';
             }
             if (isset($value['to']) && $value['to'] != '') {
                 if (isset($value['from']) && $value['from'] != '') {
                     $condition .= ' AND ';
                 }
-                $condition .= 'min_online_price <= \''.(float)$value['to'].'\'';
+                $condition .= $min_online_price.' <= \''.(float)$value['to'].'\'';
             }
 
             $condition = '(' . $condition . ') OR (';
 
             if (isset($value['from']) && $value['from'] != '') {
-                $condition .= 'max_online_price >= \''.(float)$value['from'].'\'';
+                $condition .= $max_online_price.' >= \''.(float)$value['from'].'\'';
             }
             if (isset($value['to']) && $value['to'] != '') {
                 if (isset($value['from']) && $value['from'] != '') {
                     $condition .= ' AND ';
                 }
-                $condition .= 'max_online_price <= \''.(float)$value['to'].'\'';
+                $condition .= $max_online_price.' <= \''.(float)$value['to'].'\'';
             }
 
             $condition .= ')';
@@ -1005,7 +1045,7 @@ HTML;
             }
         }
 
-        $collection->getSelect()->having($condition);
+        $collection->getSelect()->where($condition);
     }
 
     protected function callbackFilterStatus($collection, $column)

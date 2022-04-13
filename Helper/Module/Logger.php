@@ -39,7 +39,6 @@ class Logger extends \Ess\M2ePro\Helper\AbstractHelper
         try {
             $info  = $this->getLogMessage($logData, $class);
             $info .= $this->getStackTraceInfo();
-            $info .= $this->getCurrentUserActionInfo();
 
             $this->systemLog($class, null, $info);
 
@@ -50,7 +49,8 @@ class Logger extends \Ess\M2ePro\Helper\AbstractHelper
                 return;
             }
 
-            $info .= $this->getHelper('Module_Support_Form')->getSummaryInfo();
+            $info .= $this->getHelper('Module\Log')->platformInfo();
+            $info .= $this->getHelper('Module\Log')->moduleInfo();
 
             $this->send($info, $class);
 

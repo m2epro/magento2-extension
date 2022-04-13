@@ -194,5 +194,33 @@ class Log extends \Ess\M2ePro\Helper\AbstractHelper
         return $typesStatusesMap[$resultType];
     }
 
+    public function platformInfo()
+    {
+        $platformInfo = [];
+        $platformInfo['edition'] = $this->getHelper('Magento')->getEditionName();
+        $platformInfo['version'] = $this->getHelper('Magento')->getVersion();
+
+        return <<<DATA
+-------------------------------- PLATFORM INFO -----------------------------------
+Edition: {$platformInfo['edition']}
+Version: {$platformInfo['version']}
+
+DATA;
+    }
+
+    public function moduleInfo()
+    {
+        $moduleInfo = [];
+        $moduleInfo['name'] = $this->getHelper('Module')->getName();
+        $moduleInfo['version'] = $this->getHelper('Module')->getPublicVersion();
+
+        return <<<DATA
+-------------------------------- MODULE INFO -------------------------------------
+Name: {$moduleInfo['name']}
+Version: {$moduleInfo['version']}
+
+DATA;
+    }
+
     //########################################
 }

@@ -122,8 +122,8 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         if ($hideParam || isset($this->listing['id'])) {
             $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
             $dbExcludeSelect = $collection->getConnection()
-                ->select()
-                ->from($lpTable, new \Zend_Db_Expr('DISTINCT `product_id`'));
+                                          ->select()
+                                          ->from($lpTable, new \Zend_Db_Expr('DISTINCT `product_id`'));
 
             if ($hideParam) {
                 $lTable = $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable();
@@ -141,8 +141,8 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             }
 
             $collection->getSelect()
-                ->joinLeft(['sq' => $dbExcludeSelect], 'sq.product_id = e.entity_id', [])
-                ->where('sq.product_id IS NULL');
+                       ->joinLeft(['sq' => $dbExcludeSelect], 'sq.product_id = e.entity_id', [])
+                       ->where('sq.product_id IS NULL');
         }
         // ---------------------------------------
 

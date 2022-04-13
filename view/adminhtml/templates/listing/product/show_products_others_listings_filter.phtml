@@ -7,7 +7,7 @@
 
 // @codingStandardsIgnoreFile
 
-/** @var \Ess\M2ePro\Block\Adminhtml\Listing\Product\HideOthersListingsProductsFilter $block */
+/** @var \Ess\M2ePro\Block\Adminhtml\Listing\Product\ShowOthersListingsProductsFilter $block */
 
 ?>
 
@@ -30,10 +30,6 @@
         display: inline-block;
     }
 
-    .tips_show_products_others_listings_filter > .m2epro-field-tooltip {
-        margin-top: 0;
-    }
-
 </style>
 
 <div class="switcher m2epro-box-style">
@@ -46,12 +42,7 @@
         endif; ?>
         onclick="setLocation('<?php echo $block->getFilterUrl(); ?>');"
     >
-    <label for="switcher_not_created_filter" class="admin__field-label">
+    <label for="switcher_show_products_others_listings_filter" class="admin__field-label">
         <span><?php echo $block->__('Show Products presented in other M2E Pro Listings'); ?></span>
     </label>
-
-    <div class="tips_show_products_others_listings_filter"><?php echo $block->getTooltipHtml($block->__(
-        'Display Products presented in the existing M2E Pro Listings including the current one.'
-    ), true); ?>
-    </div>
 </div>

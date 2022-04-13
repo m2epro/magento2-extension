@@ -179,20 +179,15 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     {
         if ($this->_totalRecords === null) {
             $this->_renderFilters();
-            $countSelect = $this->_getClearSelect();
-
-            $tableAlias = 'lp';
 
             if (!$this->listingProductMode) {
-                $tableAlias = self::MAIN_TABLE_ALIAS;
-                $countSelect->reset(\Magento\Framework\DB\Select::GROUP);
+                $selectCountSql = $this->getSelectCountSql();
+                $selectCountSql->reset(\Magento\Framework\DB\Select::DISTINCT);
+                $query = $selectCountSql->__toString();
+            } else {
+                $countSelect = $this->_getClearSelect();
+                $query = $countSelect->columns("COUNT(DISTINCT lp.{$this->getIdFieldName()})")->__toString();
             }
-
-            $countSelect->columns("{$tableAlias}.{$this->getIdFieldName()}");
-
-            $query = <<<SQL
-SELECT COUNT(DISTINCT temp_table.{$this->getIdFieldName()}) FROM ({$countSelect->__toString()}) temp_table
-SQL;
 
             $this->_totalRecords = $this->getConnection()->fetchOne($query, $this->_bindParams);
         }

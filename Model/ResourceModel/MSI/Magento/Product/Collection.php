@@ -117,59 +117,69 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
             null,
             'left'
         );
-        $this->joinTable(
-            ['reservation' => $this->helperFactory->getObject('Module_Database_Structure')
-                                        ->getTableNameWithPrefix('inventory_reservation')],
-            'sku=sku',
-            [
-                'reservations' => new \Zend_Db_Expr('SUM(reservation.quantity)')
-            ],
-            [ReservationInterface::STOCK_ID => $stockId],
-            'left'
-        );
 
         $this->getSelect()->columns([
-            'qty' => $this->getConnection()->getCheckSql(
-                'it.sku IS NOT NULL',
-                'IFNULL(it.quantity, 0) + SUM(IFNULL(reservation.quantity, 0))',
-                'IFNULL(it_def.quantity, 0) + SUM(IFNULL(reservation.quantity, 0))'
-            ),
-            'is_in_stock' => $this->getConnection()->getCheckSql(
-                'it.sku IS NOT NULL',
-                'it.is_salable',
-                'IFNULL(it_def.is_salable, 0)'
-            )
+            'qty'         => $this->getCheckSqlForQty(),
+            'is_in_stock' => $this->getCheckSqlForStock()
         ]);
-        $this->getSelect()->group($this->getIdFieldName());
+    }
+
+    //########################################
+
+    public function getCheckSqlForQty()
+    {
+        return $this->getConnection()->getCheckSql(
+            'it.sku IS NOT NULL',
+            'IFNULL(it.quantity, 0)',
+            'IFNULL(it_def.quantity, 0)'
+        );
+    }
+
+    //########################################
+
+    public function getCheckSqlForStock()
+    {
+        return $this->getConnection()->getCheckSql(
+            'it.sku IS NOT NULL',
+            'it.is_salable',
+            'IFNULL(it_def.is_salable, 0)'
+        );
     }
 
     //########################################
 
     public function addAttributeToFilter($attribute, $condition = null, $joinType = 'inner')
     {
-        if (in_array($attribute, $this->getHavingConditionColumns(), true)) {
-            $this->getSelect()->having($this->_getConditionSql($attribute, $condition));
+        if ($attribute == 'is_in_stock') {
+            $this->getSelect()->where($this->getCheckSqlForStock().' = ?', $condition);
+
+            return $this;
+        }
+
+        if ($attribute == 'qty') {
+            if (isset($condition['from'])) {
+                $this->getSelect()->where($this->getCheckSqlForQty().' >= ?', $condition['from']);
+            }
+
+            if (isset($condition['to'])) {
+                $this->getSelect()->where($this->getCheckSqlForQty().' <= ?', $condition['to']);
+            }
+
             return $this;
         }
 
         return parent::addAttributeToFilter($attribute, $condition, $joinType);
     }
 
+    //########################################
+
     public function addAttributeToSort($attribute, $dir = self::SORT_ORDER_ASC)
     {
-        if (in_array($attribute, $this->getHavingConditionColumns(), true)) {
-            $this->getSelect()->order($attribute . ' ' . $dir);
-            return $this;
+        if ($attribute == 'qty') {
+            return $this->getSelect()->order($this->getCheckSqlForQty(). ' ' . $dir);
         }
 
         return parent::addAttributeToSort($attribute, $dir);
-    }
-
-    // ---------------------------------------
-
-    protected function getHavingConditionColumns()
-    {
-        return ['qty', 'is_in_stock'];
     }
 
     //########################################

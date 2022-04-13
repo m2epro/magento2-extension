@@ -141,7 +141,7 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
                     'check',
                     'state',
                     [
-                        'base_url' => $change['baseurl'].'index.php',
+                        'base_url' => $this->cleaningBaseUrl($change['baseurl']) . '/index.php',
                         'hostname' => $change['hostname'],
                     ]
                 );
@@ -160,6 +160,13 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
             $config->setGroupValue('/server/location/'.$index.'/', 'hostname', $change['hostname']);
             $config->setGroupValue('/server/location/'.$index.'/', 'baseurl', $change['baseurl']);
         }
+    }
+
+    private function cleaningBaseUrl($baseUrl)
+    {
+        $baseUrl = str_replace('index.php', '', $baseUrl);
+
+        return rtrim($baseUrl, '/');
     }
 
     private function updateDefaultServerBaseUrlIndex(array $data)

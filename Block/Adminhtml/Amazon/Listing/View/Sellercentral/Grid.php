@@ -738,59 +738,64 @@ HTML;
         }
 
         $condition = '';
+        $online_regular_sale_price = 'IF(`alp`.`online_regular_sale_price_start_date` IS NOT NULL AND
+          `alp`.`online_regular_sale_price_end_date` IS NOT NULL AND
+          `alp`.`online_regular_sale_price_end_date` >= CURRENT_DATE(), `alp`.`online_regular_sale_price`,
+          NULL)';
+        $online_regular_price = '`alp`.`online_regular_price`';
 
         if (isset($value['from']) || isset($value['to'])) {
             if (isset($value['from']) && $value['from'] != '') {
-                $condition = 'online_regular_price >= \''.(float)$value['from'].'\'';
+                $condition = $online_regular_price.' >= \''.(float)$value['from'].'\'';
             }
             if (isset($value['to']) && $value['to'] != '') {
                 if (isset($value['from']) && $value['from'] != '') {
                     $condition .= ' AND ';
                 }
-                $condition .= 'online_regular_price <= \''.(float)$value['to'].'\'';
+                $condition .= $online_regular_price.' <= \''.(float)$value['to'].'\'';
             }
 
             $condition = '(' . $condition . ' AND
             (
-                online_regular_price IS NOT NULL AND
-                ((online_regular_sale_price_start_date IS NULL AND
-                online_regular_sale_price_end_date IS NULL) OR
-                online_regular_sale_price IS NULL OR
-                online_regular_sale_price_start_date > CURRENT_DATE() OR
-                online_regular_sale_price_end_date < CURRENT_DATE())
+                '.$online_regular_price.' IS NOT NULL AND
+                ((alp.online_regular_sale_price_start_date IS NULL AND
+                alp.online_regular_sale_price_end_date IS NULL) OR
+                '.$online_regular_sale_price.' IS NULL OR
+                alp.online_regular_sale_price_start_date > CURRENT_DATE() OR
+                alp.online_regular_sale_price_end_date < CURRENT_DATE())
             )) OR (';
 
             if (isset($value['from']) && $value['from'] != '') {
-                $condition .= 'online_regular_sale_price >= \''.(float)$value['from'].'\'';
+                $condition .= $online_regular_sale_price.' >= \''.(float)$value['from'].'\'';
             }
             if (isset($value['to']) && $value['to'] != '') {
                 if (isset($value['from']) && $value['from'] != '') {
                     $condition .= ' AND ';
                 }
-                $condition .= 'online_regular_sale_price <= \''.(float)$value['to'].'\'';
+                $condition .= $online_regular_sale_price.' <= \''.(float)$value['to'].'\'';
             }
 
             $condition .= ' AND
             (
-                online_regular_price IS NOT NULL AND
-                (online_regular_sale_price_start_date IS NOT NULL AND
-                online_regular_sale_price_end_date IS NOT NULL AND
-                online_regular_sale_price IS NOT NULL AND
-                online_regular_sale_price_start_date < CURRENT_DATE() AND
-                online_regular_sale_price_end_date > CURRENT_DATE())
+                '.$online_regular_price.' IS NOT NULL AND
+                (alp.online_regular_sale_price_start_date IS NOT NULL AND
+                alp.online_regular_sale_price_end_date IS NOT NULL AND
+                '.$online_regular_sale_price.' IS NOT NULL AND
+                alp.online_regular_sale_price_start_date < CURRENT_DATE() AND
+                alp.online_regular_sale_price_end_date > CURRENT_DATE())
             )) OR (';
 
             if (isset($value['from']) && $value['from'] != '') {
-                $condition .= 'online_business_price >= \''.(float)$value['from'].'\'';
+                $condition .= 'alp.online_business_price >= \''.(float)$value['from'].'\'';
             }
             if (isset($value['to']) && $value['to'] != '') {
                 if (isset($value['from']) && $value['from'] != '') {
                     $condition .= ' AND ';
                 }
-                $condition .= 'online_business_price <= \''.(float)$value['to'].'\'';
+                $condition .= 'alp.online_business_price <= \''.(float)$value['to'].'\'';
             }
 
-            $condition .= ' AND (online_regular_price IS NULL))';
+            $condition .= ' AND ('.$online_regular_price.' IS NULL))';
         }
 
         if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
@@ -807,8 +812,9 @@ HTML;
             }
         }
 
-        $collection->getSelect()->having($condition);
+        $collection->getSelect()->where($condition);
     }
+
 
     //########################################
 

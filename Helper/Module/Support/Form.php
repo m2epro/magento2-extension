@@ -67,7 +67,6 @@ class Form extends \Ess\M2ePro\Helper\AbstractHelper
         $locationInfo['directory'] = $this->getHelper('Client')->getBaseDirectory();
 
         $platformInfo = [];
-        $platformInfo['name'] = $this->getHelper('Magento')->getName();
         $platformInfo['edition'] = $this->getHelper('Magento')->getEditionName();
         $platformInfo['version'] = $this->getHelper('Magento')->getVersion();
 
@@ -86,13 +85,6 @@ class Form extends \Ess\M2ePro\Helper\AbstractHelper
         $mysqlInfo['prefix'] = $prefix != '' ? $prefix : 'Disabled';
         $mysqlInfo['version'] = $this->getHelper('Client')->getMysqlVersion();
         $mysqlInfo['database'] = $this->getHelper('Magento')->getDatabaseName();
-
-        $additionalInfo = [];
-        $additionalInfo['system'] = $this->getHelper('Client')->getSystem();
-        $additionalInfo['user_agent'] = $this->phpEnvironmentRequest->getServer('HTTP_USER_AGENT');
-        $additionalInfo['admin'] = $this->urlBuilder->getUrl('adminhtml');
-        $additionalInfo['license_key'] = $this->getHelper('Module\License')->getKey();
-        $additionalInfo['installation_key'] = $this->getHelper('Module')->getInstallationKey();
 
         $info = <<<DATA
 -------------------------------- PLATFORM INFO -----------------------------------
@@ -131,8 +123,6 @@ DATA;
 
     private function createBody($subject, $component, $description, $severity)
     {
-        $currentDate = $this->getHelper('Data')->getCurrentGmtDate();
-
         $body = <<<DATA
 
 {$description}
