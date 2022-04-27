@@ -1,15 +1,20 @@
-* 1.21.2 (13/04/2022) 
+* 1.21.3 (27/04/2022) 
+
+Common: [Fixed] Issues with listing and mapping orders for Configurable Products with zero (0, 00, 000) size variations [#3350]
+eBay: [Fixed] "Invalid block type: Ess\M2ePro\Block\Adminhtml\Wizard\InstallationEbay\Notification" when downloading Rate Tables in the Shipping Policy [#3030]
+
+1.21.2 (13/04/2022)
 
 Common: [Improved] Some UI text updates [#3486]
 Common: [Improved] Optimize product grid loading when adding Magento products to the listing [#3374]
 
 * 1.21.1 (5/04/2022)
 
-Common [Fixed] Unable to set a decimal value in the "VAT Rate" field in the Selling Policy [#3100]
-eBay [Fixed] Incorrect mapping of floating-point variations when creating a Magento Order [#3108]
-eBay [Fixed] Repetitive automatic Revise of eBay Parts Compatibility [#3427]
-eBay [Fixed] Item ID is displayed as N/A for some products [#2990]
-Walmart [Fixed] The Add VAT Percentage option gets disabled when setting a decimal value in the VAT Rate field [#3101]
+Common: [Fixed] Unable to set a decimal value in the "VAT Rate" field in the Selling Policy [#3100]
+eBay: [Fixed] Incorrect mapping of floating-point variations when creating a Magento Order [#3108]
+eBay: [Fixed] Repetitive automatic Revise of eBay Parts Compatibility [#3427]
+eBay: [Fixed] Item ID is displayed as N/A for some products [#2990]
+Walmart: [Fixed] The Add VAT Percentage option gets disabled when setting a decimal value in the VAT Rate field [#3101]
 
 * 1.21.0 (23/03/2022)
 

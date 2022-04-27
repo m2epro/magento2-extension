@@ -170,7 +170,6 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             'license',
             'messages',
             'settings',
-            'exceptions',
             'marketplaces',
             'cron',
             'statistic',
@@ -186,7 +185,6 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     public function getSlowTasks()
     {
         return [
-            'exceptions',
             'statistic',
             'analytics'
         ];

@@ -71,7 +71,7 @@ class Account extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
         try {
             $result = $this->getHelper('Component_Amazon_Repricing')->sendRequest($command, $requestData);
         } catch (\Exception $e) {
-            $this->getHelper('Module\Exception')->process($e, false);
+            $this->getHelper('Module\Exception')->process($e);
             $this->getSynchronizationLog()->addMessageFromException($e);
 
             return false;

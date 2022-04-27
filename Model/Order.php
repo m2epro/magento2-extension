@@ -796,7 +796,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
                 '!order_id' => $this->getMagentoOrder()->getRealOrderId()
             ]);
         } catch (\Exception $e) {
-            $this->helperFactory->getObject('Module\Exception')->process($e, false);
+            $this->helperFactory->getObject('Module\Exception')->process($e);
             $this->addErrorLog('Magento Order #%order_id% was not canceled. Reason: %msg%', [
                 '!order_id' => $this->getMagentoOrder()->getRealOrderId(),
                 'msg' => $e->getMessage()
@@ -814,7 +814,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         try {
             $invoice = $this->getChildObject()->createInvoice();
         } catch (\Exception $e) {
-            $this->helperFactory->getObject('Module\Exception')->process($e, false);
+            $this->helperFactory->getObject('Module\Exception')->process($e);
             $this->addErrorLog('Invoice was not created. Reason: %msg%', ['msg' => $e->getMessage()]);
         }
 
@@ -847,7 +847,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         try {
             $shipments = $this->getChildObject()->createShipments();
         } catch (\Exception $e) {
-            $this->helperFactory->getObject('Module\Exception')->process($e, false);
+            $this->helperFactory->getObject('Module\Exception')->process($e);
             $this->addErrorLog('Shipment was not created. Reason: %msg%', ['msg' => $e->getMessage()]);
         }
 

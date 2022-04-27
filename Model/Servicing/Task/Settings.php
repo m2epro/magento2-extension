@@ -84,7 +84,6 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
         $this->updateServersBaseUrls($data);
         $this->updateDefaultServerBaseUrlIndex($data);
         $this->updateLastVersion($data);
-        $this->updateSendLogs($data);
         $this->updateAnalytics($data);
         $this->updateStatistic($data);
     }
@@ -200,19 +199,6 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
         $this->getHelper('Module')->getRegistry()->setValue(
             '/installation/build_last_version/',
             $data['last_version']['magento_2']['build']
-        );
-    }
-
-    private function updateSendLogs(array $data)
-    {
-        if (!isset($data['send_logs'])) {
-            return;
-        }
-
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/server/logging/',
-            'send',
-            (int)$data['send_logs']
         );
     }
 

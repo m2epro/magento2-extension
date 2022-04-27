@@ -148,7 +148,7 @@ class CreateNewChild extends Main
                 $result['vocabulary_attribute_options'] = $optionsForAddingToVocabulary;
             }
 
-            $this->setJsonContent($result);
+            $this->setAjaxContent(json_encode($result, JSON_FORCE_OBJECT), false);
 
             return $this->getResult();
         }

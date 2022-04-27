@@ -348,7 +348,7 @@ CSS
                 if (!isset($attributesOptions[$attr])) {
                     $attributesOptions[$attr] = [];
                 }
-                if (!in_array($option, $attributesOptions[$attr])) {
+                if (!in_array($option, $attributesOptions[$attr], true)) {
                     $attributesOptions[$attr][] = $option;
                 }
             }

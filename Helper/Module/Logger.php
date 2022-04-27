@@ -34,27 +34,13 @@ class Logger extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function process($logData, $class = 'undefined', $sendToServer = true)
+    public function process($logData, $class = 'undefined')
     {
         try {
             $info  = $this->getLogMessage($logData, $class);
             $info .= $this->getStackTraceInfo();
 
             $this->systemLog($class, null, $info);
-
-            $sendConfig = (bool)(int)$this->getHelper('Module')->getConfig()
-                ->getGroupValue('/server/logging/', 'send');
-
-            if (!$sendToServer || !$sendConfig) {
-                return;
-            }
-
-            $info .= $this->getHelper('Module\Log')->platformInfo();
-            $info .= $this->getHelper('Module\Log')->moduleInfo();
-
-            $this->send($info, $class);
-
-        // @codingStandardsIgnoreLine
         } catch (\Exception $exceptionTemp) {
         }
     }
@@ -100,44 +86,6 @@ class Logger extends \Ess\M2ePro\Helper\AbstractHelper
 TRACE;
 
         return $stackTraceInfo;
-    }
-
-    //########################################
-
-    private function getCurrentUserActionInfo()
-    {
-        // @codingStandardsIgnoreStart
-        $server = print_r($this->phpEnvironmentRequest->getServer()->toArray(), true);
-        $get = print_r($this->phpEnvironmentRequest->getQuery()->toArray(), true);
-        $post = print_r($this->phpEnvironmentRequest->getPost()->toArray(), true);
-        // @codingStandardsIgnoreEnd
-
-        $actionInfo = <<<ACTION
--------------------------------- ACTION INFO -------------------------------------
-SERVER: {$server}
-GET: {$get}
-POST: {$post}
-
-ACTION;
-
-        return $actionInfo;
-    }
-
-    //########################################
-
-    private function send($logData, $type)
-    {
-        $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector(
-            'logger',
-            'add',
-            'entity',
-            [
-                'info' => $logData,
-                'type' => $type
-            ]
-        );
-        $dispatcherObject->process($connectorObj);
     }
 
     //########################################

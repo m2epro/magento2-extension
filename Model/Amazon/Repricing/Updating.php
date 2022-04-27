@@ -85,7 +85,7 @@ class Updating extends AbstractModel
                 ]
             );
         } catch (\Exception $e) {
-            $this->getHelper('Module\Exception')->process($e, false);
+            $this->getHelper('Module\Exception')->process($e);
             $this->getSynchronizationLog()->addMessageFromException($e);
 
             return false;

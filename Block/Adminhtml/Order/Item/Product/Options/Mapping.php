@@ -110,7 +110,7 @@ class Mapping extends AbstractContainer
         } else {
             foreach ($magentoVariations as $magentoVariation) {
                 $magentoOptionLabel = array_shift($magentoVariation['labels']);
-                if (!$magentoOptionLabel) {
+                if ($magentoOptionLabel === '' || $magentoOptionLabel === null) {
                     $magentoOptionLabel = $this->__('N/A');
                 }
 
@@ -122,8 +122,8 @@ class Mapping extends AbstractContainer
 
                 foreach ($magentoVariation['values'] as $magentoOptionValue) {
                     $magentoValueLabel = array_shift($magentoOptionValue['labels']);
-                    if (!$magentoValueLabel) {
-                        $magentoValueLabel = $this->__('N/A');
+                    if ($magentoOptionLabel === '' || $magentoOptionLabel === null) {
+                        $magentoOptionLabel = $this->__('N/A');
                     }
 
                     $magentoOption['values'][] = [

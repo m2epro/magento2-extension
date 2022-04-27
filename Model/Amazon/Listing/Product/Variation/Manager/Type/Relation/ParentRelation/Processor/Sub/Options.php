@@ -64,6 +64,11 @@ class Options extends AbstractModel
             }
 
             if ($typeModel->isVariationChannelMatched()) {
+                if (empty($channelVariations[$amazonListingProduct->getGeneralId()])) {
+                    $typeModel->unsetChannelVariation();
+                    continue;
+                }
+
                 $currentChannelOptions = $channelVariations[$amazonListingProduct->getGeneralId()];
                 $childChannelOptions   = $typeModel->getChannelOptions();
 

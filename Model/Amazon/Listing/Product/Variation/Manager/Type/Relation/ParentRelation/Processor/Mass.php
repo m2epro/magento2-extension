@@ -72,7 +72,7 @@ class Mass extends \Ess\M2ePro\Model\AbstractModel
             try {
                 $processor->process();
             } catch (\Exception $exception) {
-                $this->getHelper('Module\Exception')->process($exception, false);
+                $this->getHelper('Module\Exception')->process($exception);
                 continue;
             }
 

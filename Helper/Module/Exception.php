@@ -13,9 +13,6 @@ namespace Ess\M2ePro\Helper\Module;
  */
 class Exception extends \Ess\M2ePro\Helper\AbstractHelper
 {
-    const FILTER_TYPE_TYPE    = 1;
-    const FILTER_TYPE_INFO    = 2;
-    const FILTER_TYPE_MESSAGE = 3;
 
     private $activeRecordFactory;
     private $modelFactory;
@@ -46,7 +43,7 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function process($throwable, $sendToServer = true)
+    public function process($throwable)
     {
         /**@var \Exception $throwable */
 
@@ -65,27 +62,6 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
                 $throwable->getMessage(),
                 $info
             );
-
-            $sendConfig = (bool)(int)$this->getHelper('Module')->getConfig()
-                ->getGroupValue('/server/exceptions/', 'send');
-
-            if (!$sendToServer ||
-                ($throwable instanceof \Ess\M2ePro\Model\Exception && !$throwable->isSendToServer()) ||
-                !$sendConfig || $this->isExceptionFiltered($info, $throwable->getMessage(), $class)
-            ) {
-                return;
-            }
-
-            $temp = $this->getHelper('Data\GlobalData')->getValue('send_exception_to_server');
-            if (!empty($temp)) {
-                return;
-            }
-
-            $this->getHelper('Data\GlobalData')->setValue('send_exception_to_server', true);
-
-            $this->send($info, $throwable->getMessage(), $class);
-
-            $this->getHelper('Data\GlobalData')->unsetValue('send_exception_to_server');
 
             // @codingStandardsIgnoreLine
         } catch (\Exception $exceptionTemp) {
@@ -116,24 +92,6 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
                 $error['message'],
                 $info
             );
-
-            $sendToServer = (bool)(int)$this->getHelper('Module')->getConfig()
-                ->getGroupValue('/server/fatal_error/', 'send');
-
-            if (!$sendToServer || $this->isExceptionFiltered($info, $error['message'], $class)) {
-                return;
-            }
-
-            $temp = $this->getHelper('Data\GlobalData')->getValue('send_exception_to_server');
-            if (!empty($temp)) {
-                return;
-            }
-
-            $this->getHelper('Data\GlobalData')->setValue('send_exception_to_server', true);
-
-            $this->send($info, $error['message'], $class);
-
-            $this->getHelper('Data\GlobalData')->unsetValue('send_exception_to_server');
 
             // @codingStandardsIgnoreLine
         } catch (\Exception $exceptionTemp) {
@@ -361,53 +319,6 @@ Current Store: {$currentStoreId}
 ACTION;
 
         return $actionInfo;
-    }
-
-    //########################################
-
-    private function send($info, $message, $type)
-    {
-        $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj     = $dispatcherObject->getVirtualConnector(
-            'exception',
-            'add',
-            'entity',
-            [
-                'info'    => $info,
-                'message' => $message,
-                'type'    => $type
-            ]
-        );
-
-        $dispatcherObject->process($connectorObj);
-    }
-
-    private function isExceptionFiltered($info, $message, $type)
-    {
-        if (!(bool)(int)$this->getHelper('Module')->getConfig()->getGroupValue('/server/exceptions/', 'filters')) {
-            return false;
-        }
-
-        $exceptionFilters = $this->getHelper('Module')->getRegistry()->getValueFromJson('/exceptions_filters/');
-
-        foreach ($exceptionFilters as $exceptionFilter) {
-            try {
-                $searchSubject = '';
-                $exceptionFilter['type'] == self::FILTER_TYPE_TYPE && $searchSubject = $type;
-                $exceptionFilter['type'] == self::FILTER_TYPE_MESSAGE && $searchSubject = $message;
-                $exceptionFilter['type'] == self::FILTER_TYPE_INFO && $searchSubject = $info;
-
-                $tempResult = preg_match($exceptionFilter['preg_match'], $searchSubject);
-            } catch (\Exception $exception) {
-                return false;
-            }
-
-            if ($tempResult) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     //########################################

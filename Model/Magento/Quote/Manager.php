@@ -89,7 +89,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
                 );
 
             if ($order !== null && $order->getId()) {
-                $this->helperFactory->getObject('Module\Exception')->process($e, false);
+                $this->helperFactory->getObject('Module\Exception')->process($e);
                 throw new \Ess\M2ePro\Model\Magento\Quote\FailDuringEventProcessing(
                     $order,
                     $e->getMessage()

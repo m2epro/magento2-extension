@@ -101,7 +101,7 @@ HTML;
             $i++;
         }
 
-        $productVariationsTree = $this->getHelper('Data')->jsonEncode($this->getProductVariationsTree());
+        $productVariationsTree = json_encode($this->getProductVariationsTree(), JSON_FORCE_OBJECT);
 
         $html .= <<<HTML
     <tr id="new_child_product_product_options_error_row">
@@ -194,7 +194,7 @@ HTML;
             $i++;
         }
 
-        $channelVariationsTree = $this->getHelper('Data')->jsonEncode($this->getChannelVariationsTree());
+        $channelVariationsTree = json_encode($this->getChannelVariationsTree(), JSON_FORCE_OBJECT);
 
         $html .= <<<HTML
         <tr id="new_child_product_channel_options_error_row">
@@ -422,7 +422,7 @@ CSS
                 if (!isset($attributesOptions[$attr])) {
                     $attributesOptions[$attr] = [];
                 }
-                if (!in_array($option, $attributesOptions[$attr])) {
+                if (!in_array($option, $attributesOptions[$attr], true)) {
                     $attributesOptions[$attr][] = $option;
                 }
             }

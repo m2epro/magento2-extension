@@ -220,7 +220,9 @@ HTML;
 
             foreach ($productOptions as $attribute => $option) {
                 $attribute = $this->getHelper('Data')->escapeHtml($attribute);
-                !$option && $option = '--';
+                if ($option === '' || $option === null) {
+                    $option = '--';
+                }
                 $option = $this->getHelper('Data')->escapeHtml($option);
 
                 $optionsStr .= <<<HTML

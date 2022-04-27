@@ -29,8 +29,7 @@ class Item extends \Ess\M2ePro\Observer\Shipment\AbstractShipment
             $class = get_class($this);
             $this->getHelper('Module\Logger')->process(
                 [],
-                "M2ePro observer $class cannot get shipment data from event or database",
-                false
+                "M2ePro observer $class cannot get shipment data from event or database"
             );
 
             return;

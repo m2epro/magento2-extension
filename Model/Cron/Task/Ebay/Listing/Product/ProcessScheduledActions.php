@@ -73,7 +73,7 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 $listingProduct = $scheduledAction->getListingProduct();
                 $additionalData = $scheduledAction->getAdditionalData();
             } catch (\Ess\M2ePro\Model\Exception\Logic $e) {
-                $this->getHelper('Module\Exception')->process($e, false);
+                $this->getHelper('Module\Exception')->process($e);
                 $scheduledAction->delete();
 
                 continue;

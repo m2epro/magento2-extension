@@ -488,7 +488,9 @@ JS
         if (!empty($productOptions)) {
             $value .= '<div style="font-size: 11px; color: grey; margin-left: 7px"><br/>';
             foreach ($productOptions as $attribute => $option) {
-                !$option && $option = '--';
+                if ($option === '' || $option === null) {
+                    $option = '--';
+                }
                 $value .= '<strong>' . $this->getHelper('Data')->escapeHtml($attribute) .
                     '</strong>:&nbsp;' . $this->getHelper('Data')->escapeHtml($option) . '<br/>';
             }

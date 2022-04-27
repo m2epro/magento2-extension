@@ -97,7 +97,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             );
 
             $exception = new \Ess\M2ePro\Model\Exception($message->getText());
-            $this->getHelper('Module\Exception')->process($exception, false);
+            $this->getHelper('Module\Exception')->process($exception);
         }
     }
 

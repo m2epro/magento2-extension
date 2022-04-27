@@ -452,7 +452,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                     $style = 'border-bottom: 2px dotted grey';
                 }
 
-                !$option && $option = '--';
+                if ($option === '' || $option === null) {
+                    $option = '--';
+                }
                 $value .= '<span style="' . $style . '"><b>' . $this->getHelper('Data')->escapeHtml($attribute) .
                     '</b>:&nbsp;' . $this->getHelper('Data')->escapeHtml($option) . '</span><br/>';
             }
@@ -467,7 +469,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                     $style = 'border-bottom: 2px dotted grey';
                 }
 
-                !$option && $option = '--';
+                if ($option === '' || $option === null) {
+                    $option = '--';
+                }
                 $value .= '<span style="' . $style . '"><b>' . $this->getHelper('Data')->escapeHtml($attribute) .
                     '</b>:&nbsp;' . $this->getHelper('Data')->escapeHtml($option) . '</span><br/>';
             }
@@ -484,7 +488,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $value .= '<div style="font-size: 11px; color: grey; margin-left: 7px"><br/>';
         foreach ($productOptions as $attribute => $option) {
-            !$option && $option = '--';
+            if ($option === '' || $option === null) {
+                $option = '--';
+            }
             $value .= '<b>' . $this->getHelper('Data')->escapeHtml($attribute) .
                 '</b>:&nbsp;' . $this->getHelper('Data')->escapeHtml($option) . '<br/>';
         }

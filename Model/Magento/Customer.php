@@ -182,7 +182,7 @@ class Customer extends AbstractModel
                 $this->getDefaultAttributeGroupId($defaultAttributeSetId)
             );
         } catch (\Exception $exception) {
-            $this->helperFactory->getObject('Module\Exception')->process($exception, false);
+            $this->helperFactory->getObject('Module\Exception')->process($exception);
         }
     }
 

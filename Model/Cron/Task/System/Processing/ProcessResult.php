@@ -57,8 +57,7 @@ class ProcessResult extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         if (!empty($logData)) {
             $this->getHelper('Module\Logger')->process(
                 $logData,
-                'Processing Locks Records were broken and removed',
-                false
+                'Processing Locks Records were broken and removed'
             );
         }
     }

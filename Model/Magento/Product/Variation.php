@@ -82,7 +82,7 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
                 $tempOption[$variationOption['attribute']] = $variationOption['option'];
             }
 
-            if ($options == $tempOption) {
+            if (!array_diff_assoc($options,$tempOption)) {
                 return $variation;
             }
         }
@@ -267,7 +267,7 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
                     ->setProduct($childProduct)
                     ->getAttributeValue($attributeCode);
 
-                if (empty($attributeValue)) {
+                if ($attributeValue === '' || $attributeValue === null) {
                     break;
                 }
 

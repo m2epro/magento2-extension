@@ -60,7 +60,7 @@ class RemoveHandler extends \Ess\M2ePro\Model\Listing\Product\RemoveHandler
         try {
             $parentTypeModel->getProcessor()->process();
         } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception, false);
+            $this->getHelper('Module\Exception')->process($exception);
         }
     }
 

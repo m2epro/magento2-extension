@@ -147,10 +147,6 @@ class InstallData implements InstallDataInterface
         $moduleConfig->insert('/server/location/1/', 'baseurl', 'https://s1.m2epro.com/');
         $moduleConfig->insert('/server/location/', 'default_index', 1);
         $moduleConfig->insert('/server/location/', 'current_index', 1);
-        $moduleConfig->insert('/server/exceptions/', 'send', '1');
-        $moduleConfig->insert('/server/exceptions/', 'filters', '0');
-        $moduleConfig->insert('/server/fatal_error/', 'send', '1');
-        $moduleConfig->insert('/server/logging/', 'send', 1);
         $moduleConfig->insert('/cron/', 'mode', '1');
         $moduleConfig->insert('/cron/', 'runner', 'magento');
         $moduleConfig->insert('/cron/', 'last_access', null);

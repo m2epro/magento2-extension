@@ -68,8 +68,7 @@ class StopQueue extends ActiveRecord\AbstractModel
                     $sku,
                     $exception->getMessage()
                 ),
-                'Product was not added to stop queue',
-                false
+                'Product was not added to stop queue'
             );
 
             $this->getHelper('Module\Exception')->process($exception);

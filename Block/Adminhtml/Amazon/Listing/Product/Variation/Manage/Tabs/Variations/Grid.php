@@ -340,17 +340,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             }
             foreach ($productOptions as $attribute => $option) {
                 $style = '';
-                if (in_array($attribute, $virtualProductAttributes)) {
+                if (in_array($attribute, $virtualProductAttributes, true)) {
                     $style = 'border-bottom: 2px dotted grey';
                 }
 
-                !$option && $option = '--';
+                if ($option === '' || $option === null) {
+                    $option = '--';
+                }
                 $optionHtml = '<span class="attribute-row" style="' . $style . '"><span class="attribute"><strong>' .
                     $this->getHelper('Data')->escapeHtml($attribute) .
                     '</strong></span>:&nbsp;<span class="value">' . $this->getHelper('Data')->escapeHtml($option) .
                     '</span></span>';
 
-                if ($uniqueProductsIds && $option !== '--' && !in_array($attribute, $virtualProductAttributes)) {
+                if ($uniqueProductsIds && $option !== '--' && !in_array($attribute, $virtualProductAttributes, true)) {
                     $url = $this->getUrl('catalog/product/edit', ['id' => $productsIds[$attribute]]);
                     $html .= '<a href="' . $url . '" target="_blank">' . $optionHtml . '</a><br/>';
                 } else {
@@ -454,11 +456,13 @@ HTML;
 
         foreach ($options as $attribute => $option) {
             $style = '';
-            if (in_array($attribute, $virtualChannelAttributes)) {
+            if (in_array($attribute, $virtualChannelAttributes, true)) {
                 $style = 'border-bottom: 2px dotted grey';
             }
 
-            !$option && $option = '--';
+            if ($option === '' || $option === null) {
+                $option = '--';
+            }
 
             $attrName = $this->getHelper('Data')->escapeHtml($attribute);
             $optionName = $this->getHelper('Data')->escapeHtml($option);
@@ -1177,7 +1181,7 @@ HTML;
                 if (!isset($attributesOptions[$attr])) {
                     $attributesOptions[$attr] = [];
                 }
-                if (!in_array($option, $attributesOptions[$attr])) {
+                if (!in_array($option, $attributesOptions[$attr], true)) {
                     $attributesOptions[$attr][] = $option;
                 }
             }

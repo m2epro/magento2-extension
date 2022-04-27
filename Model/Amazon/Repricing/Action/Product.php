@@ -79,7 +79,7 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
                 ]
             );
         } catch (\Exception $e) {
-            $this->getHelper('Module\Exception')->process($e, false);
+            $this->getHelper('Module\Exception')->process($e);
             $this->getSynchronizationLog()->addMessageFromException($e);
 
             return false;

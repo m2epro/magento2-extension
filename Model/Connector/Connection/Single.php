@@ -50,7 +50,7 @@ class Single extends \Ess\M2ePro\Model\Connector\Connection\AbstractModel
         } catch (\Ess\M2ePro\Model\Exception\Connection\InvalidResponse $exception) {
             $this->isTryToSwitchEndpointOnError() && $this->helperFactory->getObject('Server')->switchEndpoint();
 
-            $this->getHelper('Module\Logger')->process($result, 'Invalid Response Format', false);
+            $this->getHelper('Module\Logger')->process($result, 'Invalid Response Format');
             throw new \Ess\M2ePro\Model\Exception\Connection($this->getConnectionErrorMessage(), $result);
         }
 

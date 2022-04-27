@@ -555,7 +555,8 @@ define([
                     confirm: function () {
                         var win = window.open(M2ePro.url.get('ebay_account/edit', {
                             id: options.accountId,
-                            sell_api: 1
+                            sell_api: 1,
+                            wizard: 1
                         }));
 
                         setTimeout(function run() {

@@ -98,7 +98,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             // ---------------------------------------
         } catch (\Exception $e) {
             if ($this->quote === null) {
-                $this->getHelper('Module_Exception')->process($e, false);
+                $this->getHelper('Module_Exception')->process($e);
 
                 throw $e;
             }

@@ -240,7 +240,7 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
         try {
             $parentTypeModel->getProcessor()->process();
         } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception, false);
+            $this->getHelper('Module\Exception')->process($exception);
             return false;
         }
 
@@ -288,7 +288,7 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
         try {
             $typeModel->getProcessor()->process();
         } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception, false);
+            $this->getHelper('Module\Exception')->process($exception);
             return false;
         }
 

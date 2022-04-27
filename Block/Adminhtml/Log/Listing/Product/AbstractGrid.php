@@ -249,7 +249,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
 
         $value .= '<div style="font-size: 11px; color: grey;">';
         foreach ($additionalData['variation_options'] as $attribute => $option) {
-            !$option && $option = '--';
+            if ($option === '' || $option === null) {
+                $option = '--';
+            }
             $value .= '<strong>' .
                 $this->getHelper('Data')->escapeHtml($attribute) .
                 '</strong>:&nbsp;' .
@@ -269,7 +271,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
 
         $result = '<div style="font-size: 11px; color: grey;">';
         foreach ($additionalData['variation_options'] as $attribute => $option) {
-            !$option && $option = '--';
+            if ($option === '' || $option === null) {
+                $option = '--';
+            }
             $result .= '<strong>' .
                 $this->getHelper('Data')->escapeHtml($attribute) .
                 '</strong>:&nbsp;' .

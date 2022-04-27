@@ -207,6 +207,9 @@ class Config extends AbstractConfig
             'y22_m03' => [
                 'SetPrecisionInVatRateColumns',
             ],
+            'y22_m04' => [
+                'RemoveUnnecessaryConfig',
+            ],
         ];
     }
 

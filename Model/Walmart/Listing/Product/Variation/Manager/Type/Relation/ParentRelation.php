@@ -571,7 +571,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
         foreach ($currentOptions as $id => $currentOption) {
             $isExist = false;
             foreach ($usedOptions as $option) {
-                if ($option != $currentOption) {
+                if ($option !== $currentOption) {
                     continue;
                 }
 

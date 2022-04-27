@@ -58,8 +58,7 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
                     'curl_error_message' => $response['curl_error_message'],
                     'curl_info' => $response['curl_info']
                 ],
-                'Curl Empty Response',
-                false
+                'Curl Empty Response'
             );
 
             if ($this->canRepeatRequest(
@@ -188,8 +187,7 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
                         'curl_error_message' => $response['curl_error_message'],
                         'curl_info'          => $response['curl_info']
                     ],
-                    'Curl Empty Response',
-                    false
+                    'Curl Empty Response'
                 );
                 break;
             }
@@ -240,7 +238,7 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
         $curlObject = curl_init();
 
         $preparedHeaders = [];
-        $serverHostName && $preparedHeaders['Host'] = $serverHostName;
+        $serverHostName && $preparedHeaders[] = 'Host:' . $serverHostName;
 
         if (!empty($package['headers'])) {
             foreach ($package['headers'] as $headerName => $headerValue) {

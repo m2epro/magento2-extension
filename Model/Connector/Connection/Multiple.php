@@ -76,11 +76,11 @@ class Multiple extends \Ess\M2ePro\Model\Connector\Connection\AbstractModel
             } catch (\Ess\M2ePro\Model\Exception\Connection\InvalidResponse $exception) {
                 $responseError = true;
                 $this->responses[$key] = $this->createFailedResponse($this->getConnectionErrorMessage());
-                $this->getHelper('Module\Logger')->process($response, 'Invalid Response Format', false);
+                $this->getHelper('Module\Logger')->process($response, 'Invalid Response Format');
             } catch (\Exception $exception) {
                 $responseError = true;
                 $this->responses[$key] = $this->createFailedResponse($this->getConnectionErrorMessage());
-                $this->getHelper('Module\Exception')->process($exception, false);
+                $this->getHelper('Module\Exception')->process($exception);
             }
         }
 
