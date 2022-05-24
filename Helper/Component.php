@@ -8,35 +8,47 @@
 
 namespace Ess\M2ePro\Helper;
 
-/**
- * Class \Ess\M2ePro\Helper\Component
- */
 class Component extends AbstractHelper
 {
+    /** @var \Ess\M2ePro\Helper\Component\Ebay */
+    protected $ebayHelper;
+
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    protected $amazonHelper;
+
+    /** @var \Ess\M2ePro\Helper\Component\Walmart */
+    protected $walmartHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay $ebayHelper,
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
+        \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\App\Helper\Context $context
+    )
+    {
+        parent::__construct($helperFactory, $context);
+
+        $this->ebayHelper = $ebayHelper;
+        $this->amazonHelper = $amazonHelper;
+        $this->walmartHelper = $walmartHelper;
+    }
+
     //########################################
 
-    /**
-     * @return Component\Ebay
-     */
     public function getEbayComponentHelper()
     {
-        return $this->getHelper('Component\Ebay');
+        return $this->ebayHelper;
     }
 
-    /**
-     * @return Component\Amazon
-     */
     public function getAmazonComponentHelper()
     {
-        return $this->getHelper('Component\Amazon');
+        return $this->amazonHelper;
     }
 
-    /**
-     * @return Component\Walmart
-     */
     public function getWalmartComponentHelper()
     {
-        return $this->getHelper('Component\Walmart');
+        return $this->walmartHelper;
     }
 
     //########################################
@@ -55,9 +67,9 @@ class Component extends AbstractHelper
     public function getComponentsTitles()
     {
         return [
-            Component\Ebay::NICK    => $this->getHelper('Component\Ebay')->getTitle(),
-            Component\Amazon::NICK  => $this->getHelper('Component\Amazon')->getTitle(),
-            Component\Walmart::NICK => $this->getHelper('Component\Walmart')->getTitle(),
+            Component\Ebay::NICK    => $this->ebayHelper->getTitle(),
+            Component\Amazon::NICK  => $this->amazonHelper->getTitle(),
+            Component\Walmart::NICK => $this->walmartHelper->getTitle(),
         ];
     }
 
@@ -67,13 +79,13 @@ class Component extends AbstractHelper
     {
         $components = [];
 
-        if ($this->getHelper('Component\Ebay')->isEnabled()) {
+        if ($this->ebayHelper->isEnabled()) {
             $components[] = Component\Ebay::NICK;
         }
-        if ($this->getHelper('Component\Amazon')->isEnabled()) {
+        if ($this->amazonHelper->isEnabled()) {
             $components[] = Component\Amazon::NICK;
         }
-        if ($this->getHelper('Component\Walmart')->isEnabled()) {
+        if ($this->walmartHelper->isEnabled()) {
             $components[] = Component\Walmart::NICK;
         }
 
@@ -109,14 +121,14 @@ class Component extends AbstractHelper
     {
         $components = [];
 
-        if ($this->getHelper('Component\Ebay')->isEnabled()) {
-            $components[Component\Ebay::NICK] = $this->getHelper('Component\Ebay')->getTitle();
+        if ($this->ebayHelper->isEnabled()) {
+            $components[Component\Ebay::NICK] = $this->ebayHelper->getTitle();
         }
-        if ($this->getHelper('Component\Amazon')->isEnabled()) {
-            $components[Component\Amazon::NICK] = $this->getHelper('Component\Amazon')->getTitle();
+        if ($this->amazonHelper->isEnabled()) {
+            $components[Component\Amazon::NICK] = $this->amazonHelper->getTitle();
         }
-        if ($this->getHelper('Component\Walmart')->isEnabled()) {
-            $components[Component\Walmart::NICK] = $this->getHelper('Component\Walmart')->getTitle();
+        if ($this->walmartHelper->isEnabled()) {
+            $components[Component\Walmart::NICK] = $this->walmartHelper->getTitle();
         }
 
         return $components;
@@ -128,13 +140,13 @@ class Component extends AbstractHelper
     {
         $components = [];
 
-        if (!$this->getHelper('Component\Ebay')->isEnabled()) {
+        if (!$this->ebayHelper->isEnabled()) {
             $components[] = Component\Ebay::NICK;
         }
-        if (!$this->getHelper('Component\Amazon')->isEnabled()) {
+        if (!$this->amazonHelper->isEnabled()) {
             $components[] = Component\Amazon::NICK;
         }
-        if (!$this->getHelper('Component\Walmart')->isEnabled()) {
+        if (!$this->walmartHelper->isEnabled()) {
             $components[] = Component\Walmart::NICK;
         }
 
@@ -147,14 +159,14 @@ class Component extends AbstractHelper
     {
         $components = [];
 
-        if (!$this->getHelper('Component\Ebay')->isEnabled()) {
-            $components[Component\Ebay::NICK] = $this->getHelper('Component\Ebay')->getTitle();
+        if (!$this->ebayHelper->isEnabled()) {
+            $components[Component\Ebay::NICK] = $this->ebayHelper->getTitle();
         }
-        if (!$this->getHelper('Component\Amazon')->isEnabled()) {
-            $components[Component\Amazon::NICK] = $this->getHelper('Component\Amazon')->getTitle();
+        if (!$this->amazonHelper->isEnabled()) {
+            $components[Component\Amazon::NICK] = $this->amazonHelper->getTitle();
         }
-        if (!$this->getHelper('Component\Walmart')->isEnabled()) {
-            $components[Component\Walmart::NICK] = $this->getHelper('Component\Walmart')->getTitle();
+        if (!$this->walmartHelper->isEnabled()) {
+            $components[Component\Walmart::NICK] = $this->walmartHelper->getTitle();
         }
 
         return $components;

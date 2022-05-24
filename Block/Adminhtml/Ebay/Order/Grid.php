@@ -10,33 +10,31 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Order;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Order\Grid
- */
 class Grid extends AbstractGrid
 {
-    /** @var $itemsCollection \Ess\M2ePro\Model\ResourceModel\Order\Item\Collection */
-    private $itemsCollection = null;
-
-    /** @var $notesCollection \Ess\M2ePro\Model\ResourceModel\Order\Note\Collection */
+    /** @var \Ess\M2ePro\Model\ResourceModel\Order\Note\Collection */
     protected $notesCollection = null;
-
     protected $resourceConnection;
     protected $ebayFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Model\ResourceModel\Order\Item\Collection */
+    private $itemsCollection = null;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
+    private $componentEbayPickupStore;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
+        parent::__construct($context, $backendHelper, $data);
+
         $this->resourceConnection = $resourceConnection;
         $this->ebayFactory = $ebayFactory;
-
-        parent::__construct($context, $backendHelper, $data);
+        $this->componentEbayPickupStore = $componentEbayPickupStore;
     }
 
     public function _construct()
@@ -274,7 +272,7 @@ class Grid extends AbstractGrid
             'general' => $this->__('General'),
         ];
 
-        if ($this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
+        if ($this->componentEbayPickupStore->isFeatureEnabled()) {
             $groups['in_store_pickup'] = $this->__('In-Store Pickup');
         }
 
@@ -343,7 +341,7 @@ class Grid extends AbstractGrid
         );
         // ---------------------------------------
 
-        if (!$this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
+        if (!$this->componentEbayPickupStore->isFeatureEnabled()) {
             return parent::_prepareMassaction();
         }
 
@@ -385,12 +383,11 @@ class Grid extends AbstractGrid
     public function callbackColumnMagentoOrder($value, $row, $column, $isExport)
     {
         $magentoOrderId = $row['magento_order_id'];
-        $magentoOrderNumber = $this->getHelper('Data')->escapeHtml($row['magento_order_num']);
-
         $returnString = $this->__('N/A');
 
         if ($magentoOrderId !== null) {
             if ($row['magento_order_num']) {
+                $magentoOrderNumber = $this->getHelper('Data')->escapeHtml($row['magento_order_num'] ?? '');
                 $orderUrl = $this->getUrl('sales/order/view', ['order_id' => $magentoOrderId]);
                 $returnString = '<a href="' . $orderUrl . '" target="_blank">' . $magentoOrderNumber . '</a>';
             } else {
@@ -462,7 +459,7 @@ HTML;
 HTML;
         }
 
-        if (!$this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
+        if (!$this->componentEbayPickupStore->isFeatureEnabled()) {
             return $returnString;
         }
 

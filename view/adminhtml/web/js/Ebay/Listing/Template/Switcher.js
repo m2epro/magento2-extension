@@ -264,7 +264,7 @@ define([
                     });
 
                     if ($('ebayListingTemplateEditTabs')) {
-                        params['tab'] = jQuery('#ebayListingTemplateEditTabs').data().tabs.active.find('a')[0].id.split('_').pop();
+                        params['tab'] = jQuery('#ebayListingTemplateEditTabs').data().mageTabs.active.find('a')[0].id.split('_').pop();
                     }
 
                     if (EbayListingTemplateSwitcherObj.isNeededSaveWatermarkImage(response)) {

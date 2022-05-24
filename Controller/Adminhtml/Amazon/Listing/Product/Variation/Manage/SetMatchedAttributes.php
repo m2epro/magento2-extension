@@ -10,11 +10,20 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manag
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manage\SetMatchedAttributes
- */
 class SetMatchedAttributes extends Main
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary */
+    protected $vocabularyHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+        $this->vocabularyHelper = $vocabularyHelper;
+    }
+
     public function execute()
     {
         $productId = $this->getRequest()->getParam('product_id');
@@ -67,10 +76,7 @@ class SetMatchedAttributes extends Main
             return $this->getResult();
         }
 
-        /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper */
-        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
-
-        if ($vocabularyHelper->isAttributeAutoActionDisabled()) {
+        if ($this->vocabularyHelper->isAttributeAutoActionDisabled()) {
             $this->setJsonContent($result);
 
             return $this->getResult();
@@ -83,18 +89,18 @@ class SetMatchedAttributes extends Main
                 continue;
             }
 
-            if ($vocabularyHelper->isAttributeExistsInLocalStorage($productAttribute, $channelAttribute)) {
+            if ($this->vocabularyHelper->isAttributeExistsInLocalStorage($productAttribute, $channelAttribute)) {
                 continue;
             }
 
-            if ($vocabularyHelper->isAttributeExistsInServerStorage($productAttribute, $channelAttribute)) {
+            if ($this->vocabularyHelper->isAttributeExistsInServerStorage($productAttribute, $channelAttribute)) {
                 continue;
             }
 
             $attributesForAddingToVocabulary[$productAttribute] = $channelAttribute;
         }
 
-        if ($vocabularyHelper->isAttributeAutoActionNotSet()) {
+        if ($this->vocabularyHelper->isAttributeAutoActionNotSet()) {
             if (!empty($attributesForAddingToVocabulary)) {
                 $result['vocabulary_attributes'] = $attributesForAddingToVocabulary;
             }
@@ -105,7 +111,7 @@ class SetMatchedAttributes extends Main
         }
 
         foreach ($attributesForAddingToVocabulary as $productAttribute => $channelAttribute) {
-            $vocabularyHelper->addAttribute($productAttribute, $channelAttribute);
+            $this->vocabularyHelper->addAttribute($productAttribute, $channelAttribute);
         }
 
         $this->setJsonContent($result);

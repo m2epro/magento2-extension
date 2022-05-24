@@ -8,27 +8,27 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction\Validator
- */
 class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Validator
 {
     protected $isVerifyCall = false;
-
     protected $activeRecordFactory;
     protected $ebayFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Configuration */
+    private $componentEbayConfiguration;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
-        $this->ebayFactory = $ebayFactory;
         parent::__construct($helperFactory, $modelFactory);
+
+        $this->activeRecordFactory        = $activeRecordFactory;
+        $this->ebayFactory                = $ebayFactory;
+        $this->componentEbayConfiguration = $componentEbayConfiguration;
     }
 
     //########################################
@@ -91,7 +91,7 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
             return true;
         }
 
-        if (!$this->getHelper('Component_Ebay_Configuration')->isEnablePreventItemDuplicatesMode()) {
+        if (!$this->componentEbayConfiguration->isEnablePreventItemDuplicatesMode()) {
             return true;
         }
 

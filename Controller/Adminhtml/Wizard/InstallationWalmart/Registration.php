@@ -11,9 +11,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart\Registration
- */
 class Registration extends InstallationWalmart
 {
     /** @var \Ess\M2ePro\Model\Registration\Manager */
@@ -22,12 +19,12 @@ class Registration extends InstallationWalmart
     public function __construct(
         \Ess\M2ePro\Model\Registration\Manager $manager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Helper\View\Walmart $walmartViewHelper,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
         Context $context
     ) {
+        parent::__construct($walmartFactory, $walmartViewHelper, $nameBuilder, $context);
         $this->manager = $manager;
-
-        parent::__construct($walmartFactory, $nameBuilder, $context);
     }
 
     public function execute()

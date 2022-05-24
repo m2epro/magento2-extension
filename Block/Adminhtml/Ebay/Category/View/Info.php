@@ -8,12 +8,21 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Category\View;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Info
- */
 class Info extends \Ess\M2ePro\Block\Adminhtml\Widget\Info
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Magento\Framework\Math\Random $random,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        array $data = []
+    ) {
+        parent::__construct($random, $context, $data);
+
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+    }
 
     protected function _prepareLayout()
     {
@@ -23,7 +32,7 @@ class Info extends \Ess\M2ePro\Block\Adminhtml\Widget\Info
             $this->getData('template_id')
         );
 
-        $category = $this->getHelper('Component_Ebay_Category_Ebay')->getPath(
+        $category = $this->componentEbayCategoryEbay->getPath(
             $template->getData('category_id'),
             $template->getData('marketplace_id')
         );

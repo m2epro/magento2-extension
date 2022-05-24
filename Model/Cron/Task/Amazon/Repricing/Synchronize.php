@@ -267,10 +267,11 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
      */
     protected function isPossibleToSynchronizeGeneral($account)
     {
-        $currentTimeStamp = $this->getHelper('Data')->getCurrentGmtDate(true);
+        $currentTimeStamp = $this->helperData->getCurrentGmtDate(true);
 
         $startDate = $this->getAccountData($account, self::REGISTRY_GENERAL_START_DATE);
-        $startDate = !empty($startDate) ? strtotime($startDate) : 0;
+        $startDate = !empty($startDate) ?
+            (int)$this->helperData->createGmtDateTime($startDate)->format('U') : 0;
 
         $lastListingProductId = $this->getAccountData($account, self::REGISTRY_GENERAL_LAST_LISTING_PRODUCT_ID);
         $lastListingOtherId = $this->getAccountData($account, self::REGISTRY_GENERAL_LAST_LISTING_OTHER_ID);
@@ -283,7 +284,7 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $this->setAccountData(
                 $account,
                 self::REGISTRY_GENERAL_START_DATE,
-                $this->getHelper('Data')->getCurrentGmtDate()
+                $this->helperData->getCurrentGmtDate()
             );
 
             $this->setAccountData($account, self::REGISTRY_GENERAL_LAST_LISTING_PRODUCT_ID, 0);
@@ -302,10 +303,11 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
      */
     protected function isPossibleToSynchronizeActualPrice($account)
     {
-        $currentTimeStamp = $this->getHelper('Data')->getCurrentGmtDate(true);
+        $currentTimeStamp = $this->helperData->getCurrentGmtDate(true);
 
         $startDate = $this->getAccountData($account, self::REGISTRY_ACTUAL_PRICE_START_DATE);
-        $startDate = !empty($startDate) ? strtotime($startDate) : 0;
+        $startDate = !empty($startDate) ?
+            (int)$this->helperData->createGmtDateTime($startDate)->format('U') : 0;
 
         $lastListingProductId = $this->getAccountData($account, self::REGISTRY_ACTUAL_PRICE_LAST_LISTING_PRODUCT_ID);
         $lastListingOtherId = $this->getAccountData($account, self::REGISTRY_ACTUAL_PRICE_LAST_LISTING_OTHER_ID);
@@ -318,7 +320,7 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $this->setAccountData(
                 $account,
                 self::REGISTRY_ACTUAL_PRICE_START_DATE,
-                $this->getHelper('Data')->getCurrentGmtDate()
+                $this->helperData->getCurrentGmtDate()
             );
 
             $this->setAccountData($account, self::REGISTRY_ACTUAL_PRICE_LAST_LISTING_PRODUCT_ID, 0);

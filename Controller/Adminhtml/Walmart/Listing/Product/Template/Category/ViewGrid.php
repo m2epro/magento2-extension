@@ -18,7 +18,7 @@ class ViewGrid extends Main
     public function execute()
     {
         $listingProductsIds    = $this->getRequest()->getParam('products_ids');
-        $magentoCategoryIds    = $this->getRequest()->getParam('magento_categories_ids');
+        $magentoCategoryIds    = $this->getRequest()->getParam('magento_categories_ids', []);
         $mapToTemplateJsFn = $this->getRequest()->getParam('map_to_template_js_fn', false);
         $createNewTemplateJsFn = $this->getRequest()->getParam('create_new_template_js_fn', false);
 

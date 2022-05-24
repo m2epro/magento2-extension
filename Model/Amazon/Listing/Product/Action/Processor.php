@@ -38,6 +38,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     protected $amazonFactory;
     protected $activeRecordFactory;
     protected $resourceConnection;
+    protected $helperData;
     protected $feedsPacks;
 
     //########################################
@@ -46,6 +47,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
@@ -53,6 +55,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $this->amazonFactory = $amazonFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->resourceConnection = $resourceConnection;
+        $this->helperData = $helperData;
         parent::__construct($helperFactory, $modelFactory, $data);
     }
 
@@ -265,7 +268,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                         $listingProductConfigurator = $this->modelFactory
                             ->getObject('Amazon_Listing_Product_Action_Configurator');
 
-                        $additionalData = (array)$this->getHelper('Data')
+                        $additionalData = (array)$this->helperData
                             ->jsonDecode($listingProductData['additional_data']);
 
                         if (!empty($additionalData['configurator'])) {
@@ -373,7 +376,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     protected function getActualGroupHash($accountId, array $groupHashesMetadata, array $listingProductData)
     {
         if (empty($groupHashesMetadata[$accountId])) {
-            return $this->getHelper('Data')->generateUniqueHash();
+            return $this->helperData->generateUniqueHash();
         }
 
         end($groupHashesMetadata[$accountId]);
@@ -385,7 +388,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 return $lastGroupHash;
             }
 
-            return $this->getHelper('Data')->generateUniqueHash();
+            return $this->helperData->generateUniqueHash();
         }
 
         if ($listingProductData['action_type'] != \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE) {
@@ -404,7 +407,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             }
         }
 
-        return $this->getHelper('Data')->generateUniqueHash();
+        return $this->helperData->generateUniqueHash();
     }
 
     /**
@@ -441,7 +444,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
             $params = [];
             if (!empty($listingProductData['additional_data'])) {
-                $additionalData = (array)$this->getHelper('Data')->jsonDecode($listingProductData['additional_data']);
+                $additionalData = (array)$this->helperData->jsonDecode($listingProductData['additional_data']);
                 !empty($additionalData['params']) && $params = $additionalData['params'];
             }
 
@@ -699,8 +702,10 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             [
                 'component'       => \Ess\M2ePro\Helper\Component\Amazon::NICK,
                 'server_hash'     => $responseData['processing_id'],
-                'expiration_date' => $this->getHelper('Data')->getDate(
-                    $this->getHelper('Data')->getCurrentGmtDate(true)+self::PENDING_REQUEST_MAX_LIFE_TIME
+                'expiration_date' => gmdate(
+                    'Y-m-d H:i:s',
+                    $this->helperData->getCurrentGmtDate(true)
+                        + self::PENDING_REQUEST_MAX_LIFE_TIME
                 )
             ]
         );

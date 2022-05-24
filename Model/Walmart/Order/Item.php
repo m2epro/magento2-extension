@@ -366,11 +366,11 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
             ->addFieldToFilter('sku', $this->getSku())
             ->getFirstItem();
 
-        if ((int)$otherListing->getOnlineQty() > $this->getQty()) {
+        if ((int)$otherListing->getOnlineQty() > $this->getQtyPurchased()) {
             return $otherListing->getOnlineQty();
         }
 
-        return $this->getQty();
+        return $this->getQtyPurchased();
     }
 
     //########################################

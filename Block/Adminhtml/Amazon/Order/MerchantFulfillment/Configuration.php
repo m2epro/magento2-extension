@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment;
 
 use Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment;
 
-/**
- * Class Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment\Configuration
- */
 class Configuration extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var \Ess\M2ePro\Model\Registration\Manager */
@@ -24,9 +21,11 @@ class Configuration extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFor
     /** @var \Magento\Framework\App\Config\ReinitableConfigInterface */
     private $storeConfig;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment */
+    private $merchantFulfillment;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment $merchantFulfillment,
         \Ess\M2ePro\Model\Registration\Manager $manager,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\Config\ReinitableConfigInterface $storeConfig,
@@ -35,14 +34,13 @@ class Configuration extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFor
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
+        parent::__construct($context, $registry, $formFactory, $data);
+
+        $this->merchantFulfillment = $merchantFulfillment;
         $this->manager = $manager;
         $this->localeCurrency = $localeCurrency;
         $this->storeConfig = $storeConfig;
-
-        parent::__construct($context, $registry, $formFactory, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -232,8 +230,7 @@ HTML
             unset($sourcesArray[MerchantFulfillment::DIMENSION_SOURCE_CUSTOM_ATTRIBUTE]);
         }
 
-        $predefinedPackageDimensions = $this->getHelper('Component_Amazon_MerchantFulfillment')
-            ->getPredefinedPackageDimensions();
+        $predefinedPackageDimensions = $this->merchantFulfillment->getPredefinedPackageDimensions();
 
         foreach ($predefinedPackageDimensions as $groupTitle => $predefinedPackageGroup) {
             $groupValues = [];

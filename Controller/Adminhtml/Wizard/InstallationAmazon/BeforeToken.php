@@ -10,11 +10,22 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon\BeforeToken
- */
 class BeforeToken extends InstallationAmazon
 {
+    /** @var \Ess\M2ePro\Helper\View\Configuration */
+    protected $configurationHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\View\Configuration $configurationHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Helper\View\Amazon $amazonViewHelper,
+        \Magento\Framework\Code\NameBuilder $nameBuilder,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $amazonViewHelper, $nameBuilder, $context);
+        $this->configurationHelper = $configurationHelper;
+    }
+
     public function execute()
     {
         // Get and save form data
@@ -52,7 +63,7 @@ class BeforeToken extends InstallationAmazon
                 $error = $this->__(
                     $error,
                     $exception->getMessage(),
-                    $this->getHelper('View\Configuration')->getLicenseUrl(['wizard' => 1])
+                    $this->configurationHelper->getLicenseUrl(['wizard' => 1])
                 );
             } else {
                 $error = $this->__($error, $exception->getMessage());

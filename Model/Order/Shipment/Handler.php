@@ -157,7 +157,7 @@ abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Magento\Sales\Model\Order\Shipment\Track $track */
         $track = $tracks instanceof TrackCollection ? $tracks->getLastItem() : end($tracks);
         $number = trim((string)$track->getData('track_number'));
-        if (empty($number)) {
+        if (empty($number) && $order->getComponentMode() != \Ess\M2ePro\Helper\Component\Amazon::NICK) {
             return [];
         }
 

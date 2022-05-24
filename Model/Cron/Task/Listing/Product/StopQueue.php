@@ -37,6 +37,7 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     public function __construct(
         \Ess\M2ePro\Model\Walmart\ThrottlingManager $walmartThrottlingManager,
         \Ess\M2ePro\Model\Amazon\ThrottlingManager $amazonThrottlingManager,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
@@ -48,6 +49,7 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->amazonThrottlingManager = $amazonThrottlingManager;
         $this->walmartThrottlingManager = $walmartThrottlingManager;
         parent::__construct(
+            $helperData,
             $eventManager,
             $parentFactory,
             $modelFactory,
@@ -359,7 +361,7 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $this->resource->getConnection()->update(
             $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_stop_queue'),
-            ['is_processed' => 1, 'update_date' => $this->getHelper('Data')->getCurrentGmtDate()],
+            ['is_processed' => 1, 'update_date' => $this->helperData->getCurrentGmtDate()],
             ['id IN (?)' => $itemsIds]
         );
     }

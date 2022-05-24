@@ -10,12 +10,18 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Inspection;
 
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Inspection\ChangeMaintenanceMode
- */
 class ChangeMaintenanceMode extends Main
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View\ControlPanel */
+    protected $controlPanelHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\View\ControlPanel $controlPanelHelper,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+        $this->controlPanelHelper = $controlPanelHelper;
+    }
 
     public function execute()
     {
@@ -26,8 +32,6 @@ class ChangeMaintenanceMode extends Main
         }
 
         $this->messageManager->addSuccess($this->__('Changed.'));
-        return $this->_redirect($this->getHelper('View_ControlPanel')->getPageUrl());
+        return $this->_redirect($this->controlPanelHelper->getPageUrl());
     }
-
-    //########################################
 }

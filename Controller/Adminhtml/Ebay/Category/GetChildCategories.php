@@ -8,13 +8,20 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Category\GetChildCategories
- */
 class GetChildCategories extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
+    private $componentEbayCategory;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($ebayFactory, $context);
+
+        $this->componentEbayCategory = $componentEbayCategory;
+    }
 
     public function execute()
     {
@@ -23,8 +30,8 @@ class GetChildCategories extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         $parentCategoryId  = $this->getRequest()->getParam('parent_category_id');
         $categoryType = $this->getRequest()->getParam('category_type');
 
-        $ebayCategoryTypes = $this->getHelper('Component_Ebay_Category')->getEbayCategoryTypes();
-        $storeCategoryTypes = $this->getHelper('Component_Ebay_Category')->getStoreCategoryTypes();
+        $ebayCategoryTypes = $this->componentEbayCategory->getEbayCategoryTypes();
+        $storeCategoryTypes = $this->componentEbayCategory->getStoreCategoryTypes();
 
         $data = [];
 

@@ -29,9 +29,11 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
     protected $filter;
     protected $layout;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Magento\Store\Model\App\Emulation $appEmulation,
         \Magento\Email\Model\Template\Filter $filter,
         \Magento\Framework\View\LayoutInterface $layout,
@@ -42,6 +44,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
         $this->filter = $filter;
         $this->layout = $layout;
         parent::__construct($helperFactory, $context);
+        $this->moduleConfiguration = $moduleConfiguration;
     }
 
     //########################################
@@ -281,7 +284,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         // Convert single linebreaks to <br/>
-        $br = $this->getHelper('Module_Configuration')->getRendererDescriptionConvertLinebreaksMode();
+        $br = $this->moduleConfiguration->getRendererDescriptionConvertLinebreaksMode();
         if ($br === null || (bool)(int)$br === true) {
             $str = preg_replace('~(?<!\n)\n(?!\n)~', "<br/>\n", $str);
         }

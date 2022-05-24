@@ -22,14 +22,19 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
+        $this->helperData = $helperData;
         parent::__construct($helperFactory, $modelFactory);
     }
 
@@ -65,8 +70,8 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
-        $timestamp = $this->getHelper('Data')->getCurrentGmtDate(true);
-        $minTime = $this->getHelper('Data')->getDate($timestamp+60*60*24*365*10);
+        $timestamp = $this->helperData->getCurrentGmtDate(true);
+        $minTime = gmdate('Y-m-d H:i:s', $timestamp+60*60*24*365*10);
 
         $this->clearLogByMinTime($log, $minTime);
 
@@ -112,7 +117,7 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
 
     private function getMinTimeByDays($days)
     {
-        $timestamp = $this->getHelper('Data')->getCurrentGmtDate(true);
+        $timestamp = $this->helperData->getCurrentGmtDate(true);
         $dateTimeArray = getdate($timestamp);
 
         $hours = $dateTimeArray['hours'];
@@ -124,7 +129,7 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
 
         $timeStamp = mktime($hours, $minutes, $seconds, $month, $day - $days, $year);
 
-        return $this->getHelper('Data')->getDate($timeStamp);
+        return gmdate('Y-m-d H:i:s', $timeStamp);
     }
 
     private function clearLogByMinTime($log, $minTime)

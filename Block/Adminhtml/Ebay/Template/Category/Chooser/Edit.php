@@ -10,16 +10,23 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser;
 
 use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Edit
- */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
     protected $_categoryType = null;
     protected $_selectedCategory = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
+    private $componentEbayCategory;
 
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+
+        $this->componentEbayCategory = $componentEbayCategory;
+    }
     public function _construct()
     {
         parent::_construct();
@@ -71,7 +78,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
     public function getCategoryTitle()
     {
-        $titles = $this->getHelper('Component_Ebay_Category')->getCategoryTitles();
+        $titles = $this->componentEbayCategory->getCategoryTitles();
 
         return isset($titles[$this->_categoryType]) ? $titles[$this->_categoryType] : '';
     }

@@ -32,7 +32,7 @@ class CronJobDetails extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFo
                 'no_hide' => true,
                 'content' => $this->__(
                     <<<HTML
-On this page, you can review which Cron Job type 
+On this page, you can review which Cron Job type
 (<a target="_blank" href="%url1%">M2E Pro Cron Service</a> or <a target="_blank" href="%url2%">Magento Cron</a>)
  is used in your system to run automatic synchronization and its last run date.
 HTML
@@ -84,8 +84,8 @@ HTML
             [
                 'label' => $this->__('Last Run'),
                 'text' => "<span>{$cronLastRunTime}</span>" .
-                           $this->cronIsNotWorking  ?: ' (' .$this->__('not working'). ')',
-                'style' => !$this->cronIsNotWorking ? '' : 'color: red'
+                           ($this->cronIsNotWorking ? ' (' .$this->__('not working'). ')' : ''),
+                'style' => $this->cronIsNotWorking ? 'color: red' : ''
             ]
         );
 

@@ -8,20 +8,43 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Ebay\PickupStore;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Ebay\PickupStore\ScheduleForUpdate
- */
 class ScheduleForUpdate extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'ebay/pickup_store/schedule_for_update';
 
     const MAX_AFFECTED_ITEMS_COUNT = 10000;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
+    private $componentEbayPickupStore;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Magento\Framework\Event\Manager $eventManager,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo,
+        \Magento\Framework\App\ResourceConnection $resource
+    ) {
+        parent::__construct(
+            $helperData,
+            $eventManager,
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $taskRepo,
+            $resource
+        );
+
+        $this->componentEbayPickupStore = $componentEbayPickupStore;
+    }
 
     public function performActions()
     {
-        $accounts = $this->getHelper('Component_Ebay_PickupStore')->getEnabledAccounts();
+        $accounts = $this->componentEbayPickupStore->getEnabledAccounts();
 
         if (empty($accounts)) {
             return;

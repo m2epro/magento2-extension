@@ -8,12 +8,20 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\ItemSpecific;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\ItemSpecific\Edit
- */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+
+        parent::__construct($context, $data);
+    }
 
     protected function _construct()
     {
@@ -71,7 +79,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         );
 
         $isExists = true;
-        $template->isCategoryModeEbay() && $isExists = $this->getHelper('Component_Ebay_Category_Ebay')->exists(
+        $template->isCategoryModeEbay() && $isExists = $this->componentEbayCategoryEbay->exists(
             $template->getCategoryId(),
             $template->getMarketplaceId()
         );

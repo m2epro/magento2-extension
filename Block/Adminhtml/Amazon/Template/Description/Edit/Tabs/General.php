@@ -359,8 +359,7 @@ or there is possibility of
         <a class="admin__field-tooltip-action" href="javascript://"></a>
         <div class="admin__field-tooltip-content">
             {$this->__(
-            'It is impossible to use the Category, you have chosen before. <br/> You should select new Category which
-mostly suits to that you used earlier. Also you need to set Specifics Values on Specifics Tab.'
+            'This category is no longer available. Replace it with the category that suits your product the best and set Specifics.'
         )}
         </div>
     </div>

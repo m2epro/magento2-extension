@@ -13,6 +13,31 @@ namespace Ess\M2ePro\Model\Servicing\Task;
  */
 class Cron extends \Ess\M2ePro\Model\Servicing\Task
 {
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Magento\Eav\Model\Config $config,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\App\ResourceConnection $resource,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
+    ) {
+        $this->helperData = $helperData;
+        parent::__construct(
+            $config,
+            $storeManager,
+            $modelFactory,
+            $helperFactory,
+            $resource,
+            $activeRecordFactory,
+            $parentFactory
+        );
+    }
+
     //########################################
 
     /**
@@ -45,15 +70,19 @@ class Cron extends \Ess\M2ePro\Model\Servicing\Task
         }
 
         if ($helper->isRunnerMagento()) {
-            $currentTimeStamp = $this->getHelper('Data')->getCurrentGmtDate(true);
+            $currentTimeStamp = $this->helperData->getCurrentGmtDate(true);
             $lastTypeChange = $helper->getLastRunnerChange();
             $lastRun = $this->getHelper('Module')->getRegistry()->getValue('/servicing/cron/last_run/');
 
-            if (($lastTypeChange === null || $currentTimeStamp > strtotime($lastTypeChange) + 86400) &&
-                ($lastRun === null || $currentTimeStamp > strtotime($lastRun) + 86400)) {
+            if (($lastTypeChange === null ||
+                    $currentTimeStamp > (int)$this->helperData->createGmtDateTime($lastTypeChange)->format('U') + 86400
+                ) &&
+                ($lastRun === null ||
+                    $currentTimeStamp > (int)$this->helperData->createGmtDateTime($lastRun)->format('U') + 86400)
+            ) {
                 $this->getHelper('Module')->getRegistry()->setValue(
                     '/servicing/cron/last_run/',
-                    $this->getHelper('Data')->getCurrentGmtDate()
+                    $this->helperData->getCurrentGmtDate()
                 );
 
                 return true;

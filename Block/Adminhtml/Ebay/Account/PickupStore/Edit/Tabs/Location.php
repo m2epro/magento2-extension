@@ -10,24 +10,25 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs\Location
- */
 class Location extends AbstractForm
 {
     protected $ebayFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
+    private $componentEbayPickupStore;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
-        $this->ebayFactory = $ebayFactory;
         parent::__construct($context, $registry, $formFactory, $data);
+
+        $this->ebayFactory = $ebayFactory;
+        $this->componentEbayPickupStore = $componentEbayPickupStore;
     }
 
     //########################################
@@ -97,7 +98,7 @@ class Location extends AbstractForm
 
             /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
 
-            $tmpCountry = $this->getHelper('Component_Ebay_PickupStore')
+            $tmpCountry = $this->componentEbayPickupStore
                 ->convertMarketplaceToCountry($marketplace->getChildObject()->getData());
 
             if (!$tmpCountry) {
@@ -129,7 +130,7 @@ class Location extends AbstractForm
                 'class'    => 'M2ePro-pickup-store-dropdown',
                 'tooltip'  => $this->__(
                     'Select the Country where your Store is located. <strong>Please note</strong>,
-                     currently 5 countries are available for selection — Australia, Germany, Canada, 
+                     currently 5 countries are available for selection — Australia, Germany, Canada,
                      United States and United Kingdom.'
                 )
             ]

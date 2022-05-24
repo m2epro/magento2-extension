@@ -23,6 +23,7 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product\Variation
             'is_ignore_virtual_attributes' => $this->getMagentoProduct()->isIgnoreVariationVirtualAttributes(),
             'is_ignore_filter_attributes'  => $this->getMagentoProduct()->isIgnoreVariationFilterAttributes(),
         ];
+
         return $this->getMethodData(__FUNCTION__, $params);
     }
 
@@ -59,11 +60,7 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product\Variation
             return $cacheResult;
         }
 
-        if ($params !== null) {
-            $data = call_user_func_array(['parent', $methodName], $params);
-        } else {
-            $data = call_user_func(['parent', $methodName]);
-        }
+        $data = call_user_func(['parent', $methodName]);
 
         if (!$this->getMagentoProduct()->isCacheEnabled()) {
             return $data;

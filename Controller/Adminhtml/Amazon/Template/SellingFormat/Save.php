@@ -10,22 +10,24 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat\Save
- */
 class Save extends Template
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Configuration */
+    protected $configuration;
+
+    /** @var \Magento\Framework\Stdlib\DateTime */
     protected $dateTime;
 
-    //########################################
-
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Configuration $configuration,
         \Magento\Framework\Stdlib\DateTime $dateTime,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        $this->dateTime = $dateTime;
         parent::__construct($amazonFactory, $context);
+
+        $this->configuration = $configuration;
+        $this->dateTime = $dateTime;
     }
 
     //########################################
@@ -57,7 +59,7 @@ class Save extends Template
 
         $this->modelFactory->getObject('Amazon_Template_SellingFormat_Builder')->build($model, $post->toArray());
 
-        if ($this->getHelper('Component_Amazon_Configuration')->isEnabledBusinessMode()) {
+        if ($this->configuration->isEnabledBusinessMode()) {
             $this->saveDiscounts($model->getId(), $post);
         }
 
@@ -153,7 +155,7 @@ class Save extends Template
         }
 
         usort($discounts, function ($a, $b) {
-            return $a["qty"] > $b["qty"];
+            return $a["qty"] <=> $b["qty"];
         });
 
         $this->resourceConnection->getConnection()->insertMultiple(

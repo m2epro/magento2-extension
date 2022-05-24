@@ -17,14 +17,19 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
 
     protected $activeRecordFactory;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
+        $this->helperData = $helperData;
         parent::__construct($helperFactory, $context);
     }
 
@@ -33,7 +38,7 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
     public function getEndpoint()
     {
         if ($this->getCurrentIndex() != $this->getDefaultIndex()) {
-            $currentTimeStamp = $this->getHelper('Data')->getCurrentGmtDate(true);
+            $currentTimeStamp = $this->helperData->getCurrentGmtDate(true);
 
             $interval = self::MAX_INTERVAL_OF_RETURNING_TO_DEFAULT_BASEURL;
 
@@ -41,7 +46,10 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
                 '/server/location/datetime_of_last_switching'
             );
 
-            if ($switchingDateTime === null || strtotime($switchingDateTime) + $interval <= $currentTimeStamp) {
+            if ($switchingDateTime === null ||
+                (int)$this->helperData->createGmtDateTime($switchingDateTime)->format('U') + $interval
+                    <= $currentTimeStamp
+            ) {
                 $this->setCurrentIndex($this->getDefaultIndex());
             }
         }
@@ -66,7 +74,7 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
 
         $this->getHelper('Module')->getRegistry()->setValue(
             '/server/location/datetime_of_last_switching',
-            $this->getHelper('Data')->getCurrentGmtDate()
+            $this->helperData->getCurrentGmtDate()
         );
 
         return true;

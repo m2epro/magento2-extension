@@ -39,7 +39,9 @@ class EbayEndDate extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Abstract
         }
 
         $endDate = $this->localeDate->formatDate($endDate, \IntlDateFormatter::MEDIUM, true);
-        return strtotime($endDate);
+        return (int)$this->helperData
+            ->createGmtDateTime($endDate)
+            ->format('U');
     }
 
     /**

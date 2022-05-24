@@ -67,7 +67,7 @@ class CurrentPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Nu
             return '<span style="color: #f00;">0</span>';
         }
 
-        $currency = $row->getCurrency();
+        $currency = $row->getCurrency() ?? $row->getChildObject()->getCurrency();
 
         if (strpos($currency, ',') !== false) {
             $currency = $this->ebayFactory

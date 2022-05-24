@@ -10,12 +10,19 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group
- */
 class Group extends AbstractBlock
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View\ControlPanel\Command */
+    protected $controlPanelCommandHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\View\ControlPanel\Command $controlPanelCommandHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+        $this->controlPanelCommandHelper = $controlPanelCommandHelper;
+    }
 
     public function _construct()
     {
@@ -30,7 +37,7 @@ class Group extends AbstractBlock
     {
         $this->enabledComponents = $this->getHelper('Component')->getEnabledComponents();
 
-        $this->commands = $this->getHelper('View_ControlPanel_Command')
+        $this->commands = $this->controlPanelCommandHelper
                             ->parseGeneralCommandsData($this->getControllerName());
 
         return parent::_beforeToHtml();

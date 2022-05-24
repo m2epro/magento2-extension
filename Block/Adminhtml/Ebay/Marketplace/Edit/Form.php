@@ -10,12 +10,22 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Marketplace\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Marketplace\Edit\Form
- */
 class Form extends AbstractForm
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
+    private $componentEbayPickupStore;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $formFactory, $data);
+
+        $this->componentEbayPickupStore = $componentEbayPickupStore;
+    }
 
     public function _construct()
     {
@@ -172,7 +182,7 @@ HTML;
 
                 $isLockedByPickupStore = false;
 
-                if ($this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
+                if ($this->componentEbayPickupStore->isFeatureEnabled()) {
                     $isLockedByPickupStore = (bool)$this->activeRecordFactory->getObject('Ebay_Account_PickupStore')
                         ->getCollection()
                         ->addFieldToFilter('marketplace_id', $tempMarketplace->getId())

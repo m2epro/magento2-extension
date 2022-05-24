@@ -10,12 +10,26 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs;
 
 use \Ess\M2ePro\Helper\Component\Ebay\Configuration as ConfigurationHelper;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Main
- */
 class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Configuration */
+    private $componentEbayConfiguration;
+    /** @var \Ess\M2ePro\Helper\View\Ebay */
+    protected $ebayViewHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration,
+        \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $formFactory, $data);
+
+        $this->componentEbayConfiguration = $componentEbayConfiguration;
+        $this->ebayViewHelper = $ebayViewHelper;
+    }
 
     protected function _prepareForm()
     {
@@ -45,7 +59,7 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
                     ConfigurationHelper::UPLOAD_IMAGES_MODE_SELF => $this->__('Self-Hosted'),
                     ConfigurationHelper::UPLOAD_IMAGES_MODE_EPS => $this->__('EPS-Hosted')
                 ],
-                'value' => $this->getHelper('Component_Ebay_Configuration')->getUploadImagesMode(),
+                'value' => $this->componentEbayConfiguration->getUploadImagesMode(),
                 'tooltip' => $this->__('
                     Select the Mode which you would like to use for uploading Images on eBay:<br/><br/>
                     <strong>Automatic</strong> — if you try to upload more then 1 Image for an Item or
@@ -76,7 +90,7 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
-                'value' => $this->getHelper('Component_Ebay_Configuration')->getPreventItemDuplicatesMode(),
+                'value' => $this->componentEbayConfiguration->getPreventItemDuplicatesMode(),
                 'tooltip' => $this->__(
                     'M2E Pro will not list Magento Product on the Channel if it is already listed
                     within the same eBay Account and Marketplace.'
@@ -84,7 +98,7 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
             ]
         );
 
-        if ($this->getHelper('View_Ebay')->isFeedbacksShouldBeShown()) {
+        if ($this->ebayViewHelper->isFeedbacksShouldBeShown()) {
             $fieldset->addField(
                 'feedback_notification_mode',
                 'select',
@@ -95,7 +109,7 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
                         0 => $this->__('No'),
                         1 => $this->__('Yes')
                     ],
-                    'value' => $this->getHelper('Component_Ebay_Configuration')->getFeedbackNotificationMode(),
+                    'value' => $this->componentEbayConfiguration->getFeedbackNotificationMode(),
                     'tooltip' => $this->__('Show a notification in Magento when you receive negative Feedback on eBay.')
                 ]
             );

@@ -8,12 +8,19 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Settings\LogsClearing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Settings\LogsClearing\Save
- */
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
+    private $componentEbayPickupStore;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+
+        $this->componentEbayPickupStore = $componentEbayPickupStore;
+    }
 
     public function execute()
     {
@@ -38,7 +45,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
                 90
             );
 
-            if ($this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
+            if ($this->componentEbayPickupStore->isFeatureEnabled()) {
                 $this->modelFactory->getObject('Log\Clearing')->saveSettings(
                     \Ess\M2ePro\Model\Log\Clearing::LOG_EBAY_PICKUP_STORE,
                     $post['ebay_pickup_store_log_mode'],

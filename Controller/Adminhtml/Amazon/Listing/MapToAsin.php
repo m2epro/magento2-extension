@@ -9,13 +9,23 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
+use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\MapToAsin
- */
 class MapToAsin extends Main
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary */
+    protected $vocabularyHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+        $this->vocabularyHelper = $vocabularyHelper;
+    }
+
     public function execute()
     {
         $productId   = $this->getRequest()->getParam('product_id');
@@ -162,9 +172,7 @@ class MapToAsin extends Main
                 return $this->getResult();
             }
 
-            $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
-
-            if ($vocabularyHelper->isAttributeAutoActionDisabled()) {
+            if ($this->vocabularyHelper->isAttributeAutoActionDisabled()) {
                 $this->setAjaxContent('0', false);
 
                 return $this->getResult();
@@ -177,18 +185,18 @@ class MapToAsin extends Main
                     continue;
                 }
 
-                if ($vocabularyHelper->isAttributeExistsInLocalStorage($productAttribute, $channelAttribute)) {
+                if ($this->vocabularyHelper->isAttributeExistsInLocalStorage($productAttribute, $channelAttribute)) {
                     continue;
                 }
 
-                if ($vocabularyHelper->isAttributeExistsInServerStorage($productAttribute, $channelAttribute)) {
+                if ($this->vocabularyHelper->isAttributeExistsInServerStorage($productAttribute, $channelAttribute)) {
                     continue;
                 }
 
                 $attributesForAddingToVocabulary[$productAttribute] = $channelAttribute;
             }
 
-            if ($vocabularyHelper->isAttributeAutoActionNotSet()) {
+            if ($this->vocabularyHelper->isAttributeAutoActionNotSet()) {
                 $result = ['result' => '0'];
 
                 if (!empty($attributesForAddingToVocabulary)) {
@@ -201,7 +209,7 @@ class MapToAsin extends Main
             }
 
             foreach ($attributesForAddingToVocabulary as $productAttribute => $channelAttribute) {
-                $vocabularyHelper->addAttribute($productAttribute, $channelAttribute);
+                $this->vocabularyHelper->addAttribute($productAttribute, $channelAttribute);
             }
 
             $this->setAjaxContent('0', false);
@@ -244,9 +252,7 @@ class MapToAsin extends Main
         $productOptions = $variationManager->getTypeModel()->getProductOptions();
         $channelOptions = $channelVariations[$generalId];
 
-        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
-
-        if ($vocabularyHelper->isOptionAutoActionDisabled()) {
+        if ($this->vocabularyHelper->isOptionAutoActionDisabled()) {
             $this->setAjaxContent('0', false);
 
             return $this->getResult();
@@ -262,18 +268,28 @@ class MapToAsin extends Main
                 continue;
             }
 
-            if ($vocabularyHelper->isOptionExistsInLocalStorage($productOption, $channelOption, $channelAttribute)) {
+            if ($this->vocabularyHelper->isOptionExistsInLocalStorage(
+                    $productOption,
+                    $channelOption,
+                    $channelAttribute
+                )
+            ) {
                 continue;
             }
 
-            if ($vocabularyHelper->isOptionExistsInServerStorage($productOption, $channelOption, $channelAttribute)) {
+            if ($this->vocabularyHelper->isOptionExistsInServerStorage(
+                    $productOption,
+                    $channelOption,
+                    $channelAttribute
+                )
+            ) {
                 continue;
             }
 
             $optionsForAddingToVocabulary[$channelAttribute] = [$productOption => $channelOption];
         }
 
-        if ($vocabularyHelper->isOptionAutoActionNotSet()) {
+        if ($this->vocabularyHelper->isOptionAutoActionNotSet()) {
             $result = ['result' => '0'];
 
             if (!empty($optionsForAddingToVocabulary)) {
@@ -287,7 +303,7 @@ class MapToAsin extends Main
 
         foreach ($optionsForAddingToVocabulary as $channelAttribute => $options) {
             foreach ($options as $productOption => $channelOption) {
-                $vocabularyHelper->addOption($productOption, $channelOption, $channelAttribute);
+                $this->vocabularyHelper->addOption($productOption, $channelOption, $channelAttribute);
             }
         }
 

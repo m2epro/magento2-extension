@@ -16,15 +16,19 @@ class Index extends \Ess\M2ePro\Model\AbstractModel
     protected $indexerFactory;
     protected $indexers = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Magento\Framework\Indexer\IndexerInterfaceFactory $indexerFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
-        $this->indexerFactory = $indexerFactory;
         parent::__construct($helperFactory, $modelFactory);
+
+        $this->indexerFactory      = $indexerFactory;
+        $this->moduleConfiguration = $moduleConfiguration;
     }
 
     //########################################
@@ -118,7 +122,7 @@ class Index extends \Ess\M2ePro\Model\AbstractModel
      */
     public function isIndexManagementEnabled()
     {
-        return (bool)$this->getHelper('Module_Configuration')->getProductIndexMode();
+        return (bool)$this->moduleConfiguration->getProductIndexMode();
     }
 
     public function isDisabledIndex($code)

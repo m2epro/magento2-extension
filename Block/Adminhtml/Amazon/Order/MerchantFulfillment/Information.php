@@ -10,31 +10,27 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment;
 
 use Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment;
 
-/**
- * Class Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment\Information
- */
 class Information extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    /**
-     * @var \Magento\Framework\Locale\CurrencyInterface
-     */
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment */
+    private $merchantFulfillment;
+
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
     private $localeCurrency;
 
-    //########################################
-
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment $merchantFulfillment,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
-        $this->localeCurrency = $localeCurrency;
-
         parent::__construct($context, $registry, $formFactory, $data);
-    }
 
-    //########################################
+        $this->merchantFulfillment = $merchantFulfillment;
+        $this->localeCurrency = $localeCurrency;
+    }
 
     public function _construct()
     {
@@ -228,8 +224,7 @@ HTML
             $dimensionValue = '';
 
             if ($fulfillmentData['package']['predefined_dimensions']) {
-                $predefinedPackageDimensions = $this->getHelper('Component_Amazon_MerchantFulfillment')
-                    ->getPredefinedPackageDimensions();
+                $predefinedPackageDimensions = $this->merchantFulfillment->getPredefinedPackageDimensions();
                 foreach ($predefinedPackageDimensions as $predefinedPackageDimensionGroup) {
                     foreach ($predefinedPackageDimensionGroup as $predefinedPackageDimensionCode =>
                              $predefinedPackageDimensionTitle) {
@@ -242,7 +237,7 @@ HTML
                 $dimensionValue = <<<HTML
 {$fulfillmentData['package']['dimensions']['length']} x
 {$fulfillmentData['package']['dimensions']['width']} x
-{$fulfillmentData['package']['dimensions']['height']} 
+{$fulfillmentData['package']['dimensions']['height']}
 HTML;
                 if ($fulfillmentData['package']['dimensions']['unit_of_measure'] ==
                     MerchantFulfillment::DIMENSION_MEASURE_INCHES) {

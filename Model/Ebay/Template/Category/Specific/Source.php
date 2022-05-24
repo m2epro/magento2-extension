@@ -8,35 +8,30 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Category\Specific;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Template\Category\Specific\Source
- */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
-    /**
-     * @var \Ess\M2ePro\Model\Magento\Product
-     */
-    private $magentoProduct = null;
-
-    /**
-     * @var  \Ess\M2ePro\Model\Ebay\Template\Category\Specific
-     */
-    private $categorySpecificTemplateModel = null;
-
     protected $storeManager;
     protected $config;
 
-    //########################################
+    /** @var \Ess\M2ePro\Model\Magento\Product */
+    private $magentoProduct = null;
+    /** @var  \Ess\M2ePro\Model\Ebay\Template\Category\Specific */
+    private $categorySpecificTemplateModel = null;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\App\Config\ScopeConfigInterface $config,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
-        $this->storeManager = $storeManager;
-        $this->config = $config;
         parent::__construct($helperFactory, $modelFactory);
+
+        $this->storeManager              = $storeManager;
+        $this->config                    = $config;
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
     }
 
     //########################################
@@ -138,8 +133,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
             return $valueData;
         }
 
-        $specifics = $this->getHelper('Component_Ebay_Category_Ebay')
-            ->getSpecifics($categoryId, $marketplaceId);
+        $specifics = $this->componentEbayCategoryEbay->getSpecifics($categoryId, $marketplaceId);
 
         if (empty($specifics)) {
             $valueData[] = $valueTemp;

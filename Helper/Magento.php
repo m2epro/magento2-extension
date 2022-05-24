@@ -189,12 +189,9 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function isCronWorking()
     {
-        $minDateTime = new \DateTime(
-            $this->getHelper('Data')->getCurrentGmtDate(),
-            new \DateTimeZone('UTC')
-        );
+        $minDateTime = $this->getHelper('Data')->createCurrentGmtDateTime();
         $minDateTime->modify('-1 day');
-        $minDateTime = $this->getHelper('Data')->getDate($minDateTime->format('U'));
+        $minDateTime = $minDateTime->format('Y-m-d H:i:s');
 
         $collection = $this->cronScheduleFactory->create()->getCollection();
         $collection->addFieldToFilter('executed_at', ['gt' => $minDateTime]);
@@ -297,7 +294,7 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
             return false;
         }
 
-        return $deployedTimeStamp ? $this->getHelper('Data')->getDate($deployedTimeStamp) : false;
+        return $deployedTimeStamp ? gmdate('Y-m-d H:i:s', $deployedTimeStamp) : false;
     }
 
     //########################################

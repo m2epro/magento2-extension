@@ -10,11 +10,22 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\MapToNewAsin
- */
 class MapToNewAsin extends Main
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation */
+    protected $variationHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+        $this->variationHelper = $variationHelper;
+    }
+
+    //########################################
+
     public function execute()
     {
         $productsIds = $this->getRequestIds('products_id');
@@ -39,10 +50,7 @@ class MapToNewAsin extends Main
         $errors = [];
         $errorMsgProductsCount = 0;
 
-        /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper */
-        $variationHelper = $this->getHelper('Component_Amazon_Variation');
-
-        $filteredByGeneralId = $variationHelper->filterProductsByGeneralId($productsIds);
+        $filteredByGeneralId = $this->variationHelper->filterProductsByGeneralId($productsIds);
 
         if (count($productsIds) != count($filteredByGeneralId)) {
             $tempCount = count($productsIds) - count($filteredByGeneralId);
@@ -50,7 +58,7 @@ class MapToNewAsin extends Main
             $errorMsgProductsCount += $tempCount;
         }
 
-        $filteredByGeneralIdOwner = $variationHelper->filterProductsByGeneralIdOwner($filteredByGeneralId);
+        $filteredByGeneralIdOwner = $this->variationHelper->filterProductsByGeneralIdOwner($filteredByGeneralId);
 
         if (count($filteredByGeneralId) != count($filteredByGeneralIdOwner)) {
             $tempCount = count($filteredByGeneralId) - count($filteredByGeneralIdOwner);
@@ -61,7 +69,7 @@ class MapToNewAsin extends Main
             $errorMsgProductsCount += $tempCount;
         }
 
-        $filteredByStatus = $variationHelper->filterProductsByStatus($filteredByGeneralIdOwner);
+        $filteredByStatus = $this->variationHelper->filterProductsByStatus($filteredByGeneralIdOwner);
 
         if (count($filteredByGeneralIdOwner) != count($filteredByStatus)) {
             $tempCount = count($filteredByGeneralIdOwner) - count($filteredByStatus);
@@ -72,7 +80,7 @@ class MapToNewAsin extends Main
             $errorMsgProductsCount += $tempCount;
         }
 
-        $filteredLockedProducts = $variationHelper->filterLockedProducts($filteredByStatus);
+        $filteredLockedProducts = $this->variationHelper->filterLockedProducts($filteredByStatus);
 
         if (count($filteredByStatus) != count($filteredLockedProducts)) {
             $tempCount = count($filteredByStatus) - count($filteredLockedProducts);
@@ -83,7 +91,7 @@ class MapToNewAsin extends Main
             $errorMsgProductsCount += $tempCount;
         }
 
-        $filteredProductsIdsByType = $variationHelper->filterProductsByMagentoProductType($filteredLockedProducts);
+        $filteredProductsIdsByType = $this->variationHelper->filterProductsByMagentoProductType($filteredLockedProducts);
 
         if (count($filteredLockedProducts) != count($filteredProductsIdsByType)) {
             $tempCount = count($filteredLockedProducts) - count($filteredProductsIdsByType);
@@ -95,7 +103,7 @@ class MapToNewAsin extends Main
             $errorMsgProductsCount += $tempCount;
         }
 
-        $filteredProductsIdsByTpl = $variationHelper->filterProductsByDescriptionTemplate($filteredProductsIdsByType);
+        $filteredProductsIdsByTpl = $this->variationHelper->filterProductsByDescriptionTemplate($filteredProductsIdsByType);
 
         if (count($filteredProductsIdsByType) != count($filteredProductsIdsByTpl)) {
             $badDescriptionProductsIds = array_diff($filteredProductsIdsByType, $filteredProductsIdsByTpl);
@@ -109,7 +117,7 @@ class MapToNewAsin extends Main
             $errorMsgProductsCount += $tempCount;
         }
 
-        $filteredProductsIdsByParent = $variationHelper->filterParentProductsByVariationTheme(
+        $filteredProductsIdsByParent = $this->variationHelper->filterParentProductsByVariationTheme(
             $filteredProductsIdsByTpl
         );
 
@@ -152,7 +160,7 @@ class MapToNewAsin extends Main
         }
 
         if (!empty($badDescriptionProductsIds)) {
-            $badDescriptionProductsIds = $variationHelper
+            $badDescriptionProductsIds = $this->variationHelper
                 ->filterProductsByMagentoProductType($badDescriptionProductsIds);
 
             $descriptionTemplatesBlock = $this->createBlock('Amazon_Listing_Product_Template_Description');

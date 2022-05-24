@@ -428,7 +428,7 @@ CSS
 
     private function prepareVariations($currentAttribute, $magentoVariations, $variationsSets, $filters = [])
     {
-        $return = false;
+        $return = [];
 
         $temp = array_flip(array_keys($variationsSets));
 
@@ -456,14 +456,14 @@ CSS
                 $return[$currentAttribute][$option] = $result;
             }
 
-            if ($return !== false) {
+            if (!empty($return)) {
                 ksort($return[$currentAttribute]);
             }
 
             return $return;
         }
 
-        $return = false;
+        $return = [];
         foreach ($magentoVariations as $key => $magentoVariation) {
             foreach ($magentoVariation as $attribute => $option) {
                 if ($attribute == $currentAttribute) {
@@ -495,11 +495,11 @@ CSS
             }
         }
 
-        if (count($magentoVariations) < 1) {
-            return false;
+        if (empty($magentoVariations)) {
+            return [];
         }
 
-        if ($return !== false) {
+        if (!empty($return)) {
             ksort($return[$currentAttribute]);
         }
 

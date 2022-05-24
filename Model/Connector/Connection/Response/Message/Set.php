@@ -10,6 +10,7 @@ namespace Ess\M2ePro\Model\Connector\Connection\Response\Message;
 
 /**
  * @method \Ess\M2ePro\Model\Connector\Connection\Response\Message[] getErrorEntities
+ * @method \Ess\M2ePro\Model\Connector\Connection\Response\Message[] getEntities
  */
 class Set extends \Ess\M2ePro\Model\Response\Message\Set
 {

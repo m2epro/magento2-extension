@@ -39,6 +39,9 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
     //########################################
 
     public function __construct(
@@ -46,6 +49,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory  $modelFactory,
         array $data = []
@@ -56,6 +60,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $this->walmartFactory = $walmartFactory;
         $this->resourceConnection = $resourceConnection;
         $this->localeCurrency = $localeCurrency;
+        $this->helperData = $helperData;
     }
 
     //########################################
@@ -220,7 +225,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             $actionCollection
                 ->setInProgressFilter()
                 ->addFieldToFilter('type', ActionProcessing::TYPE_ADD)
-                ->getSelect()->joinInner(
+                ->getSelect()->distinct()->joinInner(
                     ['apl' => $this->activeRecordFactory
                         ->getObject('Walmart_Listing_Product_Action_ProcessingList')->getResource()->getMainTable()],
                     'apl.listing_product_id = main_table.listing_product_id',
@@ -407,9 +412,9 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
                 $processingList->addData(
                     [
-                        'relist_request_data'      => $this->getHelper('Data')->jsonEncode($requestData),
+                        'relist_request_data'      => $this->helperData->jsonEncode($requestData),
                         'relist_configurator_data' =>
-                            $this->getHelper('Data')->jsonEncode($configurator->getSerializedData())
+                            $this->helperData->jsonEncode($configurator->getSerializedData())
                     ]
                 );
                 $processingList->save();
@@ -449,8 +454,10 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 [
                     'component'       => \Ess\M2ePro\Helper\Component\Walmart::NICK,
                     'server_hash'     => $responseData['processing_id'],
-                    'expiration_date' => $this->getHelper('Data')->getDate(
-                        $this->getHelper('Data')->getCurrentGmtDate(true) + self::PENDING_REQUEST_MAX_LIFE_TIME
+                    'expiration_date' => gmdate(
+                        'Y-m-d H:i:s',
+                        $this->helperData->getCurrentGmtDate(true)
+                            + self::PENDING_REQUEST_MAX_LIFE_TIME
                     )
                 ]
             );
@@ -685,7 +692,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         if ($walmartListingProduct->getVariationManager()->isRelationParentType()) {
             return 'Parent Product was Listed';
         }
-        
+
         $currency = $this->localeCurrency->getCurrency(
             $listingProduct->getMarketplace()->getChildObject()->getCurrency()
         );
@@ -771,7 +778,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
                     $messages = $skuResolver->getMessages();
                     if (!empty($messages)) {
-                        $additionalData = $this->getHelper('Data')->jsonDecode($listingProductData['additional_data']);
+                        $additionalData = $this->helperData->jsonDecode($listingProductData['additional_data']);
                         $logger = $this->createLogger($additionalData['params']['status_changer']);
 
                         foreach ($skuResolver->getMessages() as $message) {
@@ -867,7 +874,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $listingsProductsCollection = $this->walmartFactory->getObject('Listing_Product')->getCollection();
         $listingsProductsCollection->addFieldToFilter('id', array_keys($listingsProductsData));
 
-        $groupHash = $this->getHelper('Data')->generateUniqueHash();
+        $groupHash = $this->helperData->generateUniqueHash();
 
         foreach ($listingsProductsData as $listingProductId => $listingProductData) {
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -885,7 +892,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             $params = ['sku' => $listingProductData['sku']];
 
             if (!empty($listingProductData['additional_data'])) {
-                $additionalData = $this->getHelper('Data')->jsonDecode($listingProductData['additional_data']);
+                $additionalData = $this->helperData->jsonDecode($listingProductData['additional_data']);
                 // @codingStandardsIgnoreLine
                 !empty($additionalData['params']) && $params = array_merge($params, $additionalData['params']);
             }
@@ -1084,8 +1091,10 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             [
                 'component'       => \Ess\M2ePro\Helper\Component\Walmart::NICK,
                 'server_hash'     => $responseData['processing_id'],
-                'expiration_date' => $this->getHelper('Data')->getDate(
-                    $this->getHelper('Data')->getCurrentGmtDate(true) + self::PENDING_REQUEST_MAX_LIFE_TIME
+                'expiration_date' => gmdate(
+                    'Y-m-d H:i:s',
+                    $this->helperData->getCurrentGmtDate(true)
+                        + self::PENDING_REQUEST_MAX_LIFE_TIME
                 )
             ]
         );

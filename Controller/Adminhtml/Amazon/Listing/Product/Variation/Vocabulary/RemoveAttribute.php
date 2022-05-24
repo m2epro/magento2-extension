@@ -10,11 +10,21 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Vocab
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Vocabulary\RemoveAttribute
- */
 class RemoveAttribute extends Main
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary */
+    protected $vocabularyHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+
+        $this->vocabularyHelper = $vocabularyHelper;
+    }
+
     public function execute()
     {
         $magentoAttr = $this->getRequest()->getParam('magento_attr');
@@ -25,8 +35,7 @@ class RemoveAttribute extends Main
             return $this->getResult();
         }
 
-        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
-        $vocabularyHelper->removeAttributeFromLocalStorage($magentoAttr, $channelAttr);
+        $this->vocabularyHelper->removeAttributeFromLocalStorage($magentoAttr, $channelAttr);
 
         $this->setJsonContent([
             'success' => true

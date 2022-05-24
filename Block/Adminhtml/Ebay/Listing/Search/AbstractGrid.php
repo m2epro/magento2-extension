@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search;
 
 use Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty as OnlineQty;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
- */
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $magentoProductCollectionFactory;
@@ -20,25 +17,26 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
     protected $ebayFactory;
     protected $resourceConnection;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View\Ebay */
+    protected $ebayViewHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
+        parent::__construct($context, $backendHelper, $data);
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->localeCurrency = $localeCurrency;
         $this->ebayFactory = $ebayFactory;
         $this->resourceConnection = $resourceConnection;
-        parent::__construct($context, $backendHelper, $data);
+        $this->ebayViewHelper = $ebayViewHelper;
     }
-
-    //########################################
 
     abstract protected function callbackColumnActions($value, $row, $column, $isExport);
 
@@ -151,7 +149,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_M2E_PRO
         );
 
-        if ($this->getHelper('View\Ebay')->isDuplicatesFilterShouldBeShown()
+        if ($this->ebayViewHelper->isDuplicatesFilterShouldBeShown()
             && $listingType == \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_M2E_PRO
         ) {
             $statusColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\Status';

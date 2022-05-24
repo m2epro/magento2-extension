@@ -12,9 +12,6 @@ use Ess\M2ePro\Model\Account;
 use Ess\M2ePro\Model\Amazon\Account as AmazonAccount;
 use Ess\M2ePro\Model\Exception\Connection;
 
-/**
- * Class \Ess\M2ePro\Helper\Component\Amazon\Repricing
- */
 class Repricing extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const COMMAND_ACCOUNT_LINK             = 'account/link';
@@ -31,11 +28,39 @@ class Repricing extends \Ess\M2ePro\Helper\AbstractHelper
 
     const REQUEST_TIMEOUT = 300;
 
+    /** @var \Ess\M2ePro\Helper\Module */
+    protected $helperModule;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    protected $moduleTranslation;
+
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    protected $moduleSupport;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module $helperModule,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Helper\Module\Translation $moduleTranslation,
+        \Ess\M2ePro\Helper\Module\Support $moduleSupport,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\App\Helper\Context $context
+    ) {
+        parent::__construct($helperFactory, $context);
+
+        $this->helperModule = $helperModule;
+        $this->helperData = $helperData;
+        $this->moduleTranslation = $moduleTranslation;
+        $this->moduleSupport = $moduleSupport;
+    }
+
     //########################################
 
     public function isEnabled()
     {
-        return (bool)$this->getHelper('Module')->getConfig()->getGroupValue('/amazon/repricing/', 'mode');
+        return (bool)$this->helperModule->getConfig()->getGroupValue('/amazon/repricing/', 'mode');
     }
 
     //########################################
@@ -71,9 +96,9 @@ class Repricing extends \Ess\M2ePro\Helper\AbstractHelper
 
         if ($response === false) {
             throw new Connection(
-                $this->helperFactory->getObject('Module_Translation')->__(
+                $this->moduleTranslation->__(
                     'M2E Pro Server connection failed. Find the solution <a target="_blank" href="%url%">here</a>',
-                    $this->helperFactory->getObject('Module_Support')->getKnowledgebaseArticleUrl('664870')
+                    $this->moduleSupport->getKnowledgebaseArticleUrl('664870')
                 ),
                 [
                     'curl_error_number' => $errorNumber,
@@ -82,7 +107,7 @@ class Repricing extends \Ess\M2ePro\Helper\AbstractHelper
             );
         }
 
-        $responseDecoded = $this->getHelper('Data')->jsonDecode($response);
+        $responseDecoded = $this->helperData->jsonDecode($response);
         if (!$responseDecoded || !is_array($responseDecoded)) {
             throw new \Ess\M2ePro\Model\Exception\Connection(
                 'The Action was not completed because server responded with an incorrect response.',
@@ -102,7 +127,7 @@ class Repricing extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getBaseUrl()
     {
-        $baseUrl = $this->getHelper('Module')->getConfig()->getGroupValue('/amazon/repricing/', 'base_url');
+        $baseUrl = $this->helperModule->getConfig()->getGroupValue('/amazon/repricing/', 'base_url');
         return rtrim($baseUrl, '/') . '/';
     }
 

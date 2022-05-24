@@ -49,19 +49,45 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     const BUSINESS_DISCOUNTS_MAX_RULES_COUNT_ALLOWED = 5;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Configuration */
+    protected $configuration;
 
-    /**
-     * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager
-     */
+    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager */
     protected $variationManager = null;
 
-    /**
-     * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing
-     */
+    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing */
     protected $repricingModel = null;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Configuration $configuration,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        $this->configuration = $configuration;
+        $this->helperData = $helperData;
+        parent::__construct(
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
+    }
 
     public function _construct()
     {
@@ -786,7 +812,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     public function isAllowedForBusinessCustomers()
     {
-        if (!$this->getHelper('Component_Amazon_Configuration')->isEnabledBusinessMode()) {
+        if (!$this->configuration->isEnabledBusinessMode()) {
             return false;
         }
 
@@ -975,10 +1001,16 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             return false;
         }
 
-        $startDateTimestamp = strtotime($startDate);
-        $endDateTimestamp = strtotime($endDate);
+        $startDateTimestamp = (int)$this->helperData
+            ->createGmtDateTime($startDate)
+            ->format('U');
+        $endDateTimestamp = (int)$this->helperData
+            ->createGmtDateTime($endDate)
+            ->format('U');
 
-        $currentTimestamp = strtotime($this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d 00:00:00'));
+        $currentTimestamp = (int)$this->helperData
+            ->createGmtDateTime($this->helperData->getCurrentGmtDate(false, 'Y-m-d 00:00:00'))
+            ->format('U');
 
         if ($currentTimestamp > $endDateTimestamp ||
             $startDateTimestamp >= $endDateTimestamp
@@ -1024,7 +1056,9 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             return false;
         }
 
-        return $this->getHelper('Data')->getDate($date, false, 'Y-m-d 00:00:00');
+        return $this->helperData
+            ->createGmtDateTime($date)
+            ->format('Y-m-d 00:00:00');
     }
 
     private function getRegularSalePriceEndDate()
@@ -1045,7 +1079,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
             $tempDate = new \DateTime($date, new \DateTimeZone('UTC'));
             $tempDate->modify('-1 day');
-            $date = $this->getHelper('Data')->getDate($tempDate->format('U'));
+            $date = $tempDate->format('Y-m-d H:i:s');
         } else {
             $src = $this->getAmazonSellingFormatTemplate()->getRegularSalePriceEndDateSource();
 
@@ -1060,7 +1094,9 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             return false;
         }
 
-        return $this->getHelper('Data')->getDate($date, false, 'Y-m-d 00:00:00');
+        return $this->helperData
+            ->createGmtDateTime($date)
+            ->format('Y-m-d 00:00:00');
     }
 
     // ---------------------------------------

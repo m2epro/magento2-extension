@@ -26,16 +26,19 @@ class Response extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function initFromRawResponse($response)
+    public function initFromRawResponse($data)
     {
-        $response = $this->getHelper('Data')->jsonDecode($response);
+        $response = json_decode($data, true);
 
         if (!is_array($response) ||
             !isset($response['data']) || !is_array($response['data']) ||
             !isset($response['response']['result']['messages']) ||
             !is_array($response['response']['result']['messages']) ||
             !isset($response['response']['result']['type'])) {
-            throw new \Ess\M2ePro\Model\Exception\Connection\InvalidResponse('Invalid Response Format.');
+            throw new \Ess\M2ePro\Model\Exception\Connection\InvalidResponse(
+                'Invalid Response Format.',
+                ['response' => $data]
+            );
         }
 
         $this->data = $response['data'];

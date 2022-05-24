@@ -21,6 +21,7 @@ class DetectDirectlyDeleted extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
@@ -32,6 +33,7 @@ class DetectDirectlyDeleted extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         parent::__construct(
+            $helperData,
             $eventManager,
             $parentFactory,
             $modelFactory,

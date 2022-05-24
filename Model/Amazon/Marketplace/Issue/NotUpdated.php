@@ -11,9 +11,6 @@ namespace Ess\M2ePro\Model\Amazon\Marketplace\Issue;
 use \Ess\M2ePro\Model\Issue\DataObject as Issue;
 use \Magento\Framework\Message\MessageInterface as Message;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Marketplace\Issue\NotUpdated
- */
 class NotUpdated extends \Ess\M2ePro\Model\Issue\Locator\AbstractModel
 {
     const CACHE_KEY = __CLASS__;
@@ -22,24 +19,24 @@ class NotUpdated extends \Ess\M2ePro\Model\Issue\Locator\AbstractModel
     protected $urlBuilder;
     protected $resourceConnection;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View\Amazon */
+    protected $amazonViewHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Backend\Model\UrlInterface $urlBuilder,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\View\Amazon $amazonViewHelper,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
         $this->amazonFactory      = $amazonFactory;
         $this->urlBuilder         = $urlBuilder;
         $this->resourceConnection = $resourceConnection;
-
-        parent::__construct($helperFactory, $modelFactory, $data);
+        $this->amazonViewHelper   = $amazonViewHelper;
     }
-
-    //########################################
 
     public function getIssues()
     {
@@ -95,7 +92,7 @@ class NotUpdated extends \Ess\M2ePro\Model\Issue\Locator\AbstractModel
         $textToTranslate = <<<TEXT
 %marketplace_title% data was changed on Amazon. You need to resynchronize the marketplace(s) to correctly
 associate your products with Amazon catalog.<br>
-Please go to Amazon Integration > Configuration > 
+Please go to Amazon Integration > Configuration >
 <a href="%url%" target="_blank">Marketplaces</a> and press <b>Update All Now</b>.
 TEXT;
 
@@ -121,13 +118,9 @@ TEXT;
         ];
     }
 
-    //########################################
-
     public function isNeedProcess()
     {
-        return $this->getHelper('View\Amazon')->isInstallationWizardFinished() &&
+        return $this->amazonViewHelper->isInstallationWizardFinished() &&
             $this->getHelper('Component\Amazon')->isEnabled();
     }
-
-    //########################################
 }

@@ -17,6 +17,20 @@ class BusinessHours extends AbstractForm
 {
     //########################################
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        $this->helperData = $helperData;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     public function _construct()
     {
         parent::_construct();
@@ -127,7 +141,7 @@ class BusinessHours extends AbstractForm
         $data = [];
 
         if (!empty($hoursData)) {
-            $data = $this->getHelper('Data')->jsonDecode($hoursData);
+            $data = $this->helperData->jsonDecode($hoursData);
 
             if (!isset($data[$key])) {
                 return $data;
@@ -135,11 +149,14 @@ class BusinessHours extends AbstractForm
 
             $parsedSettings = [];
             foreach ($data[$key] as $day => $daySettings) {
-                $fromHours = date('G', strtotime($daySettings['open']));
-                $fromMinutes = date('i', strtotime($daySettings['open']));
+                $openDateTime = $this->helperData->createGmtDateTime($daySettings['open']);
+                $closeDateTime = $this->helperData->createGmtDateTime($daySettings['close']);
 
-                $toHours = date('G', strtotime($daySettings['close']));
-                $toMinutes = date('i', strtotime($daySettings['close']));
+                $fromHours = $openDateTime->format('G');
+                $fromMinutes = $openDateTime->format('i');
+
+                $toHours = $closeDateTime->format('G');
+                $toMinutes = $closeDateTime->format('i');
 
                 $parsedSettings[$day] = [
                     'from_hours'   => $fromHours == 0 ? 24 : $fromHours,

@@ -24,14 +24,19 @@ class Cron extends \Ess\M2ePro\Helper\AbstractHelper
     protected $modelFactory;
     protected $activeRecordFactory;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
+        $this->helperData = $helperData;
         $this->modelFactory = $modelFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $context);
@@ -55,7 +60,7 @@ class Cron extends \Ess\M2ePro\Helper\AbstractHelper
     {
         if ($this->getRunner() != $value) {
             $this->log("Cron runner was changed from [" . $this->getRunner() . "] to [" . $value . "] - ".
-                        $this->getHelper('Data')->getCurrentGmtDate(), 'cron_runner_change');
+                $this->helperData->getCurrentGmtDate(), 'cron_runner_change');
         }
 
         return $this->setConfigValue('runner', $value);
@@ -106,7 +111,10 @@ class Cron extends \Ess\M2ePro\Helper\AbstractHelper
             return false;
         }
 
-        return $this->getHelper('Data')->getCurrentGmtDate(true) > strtotime($lastRunnerChange) + $interval;
+        $lastRunnerChangeTimestamp = (int)$this->helperData
+            ->createGmtDateTime($lastRunnerChange)
+            ->format('U');
+        return $this->helperData->getCurrentGmtDate(true) > $lastRunnerChangeTimestamp + $interval;
     }
 
     //########################################
@@ -132,7 +140,10 @@ class Cron extends \Ess\M2ePro\Helper\AbstractHelper
             return false;
         }
 
-        return $this->getHelper('Data')->getCurrentGmtDate(true) > strtotime($lastAccess) + $interval;
+        $lastAccessTimestamp = (int)$this->helperData
+            ->createGmtDateTime($lastAccess)
+            ->format('U');
+        return $this->helperData->getCurrentGmtDate(true) > $lastAccessTimestamp + $interval;
     }
 
     //########################################
@@ -158,7 +169,10 @@ class Cron extends \Ess\M2ePro\Helper\AbstractHelper
             return false;
         }
 
-        return $this->getHelper('Data')->getCurrentGmtDate(true) > strtotime($lastRun) + $interval;
+        $lastRunTimestamp = (int)$this->helperData
+            ->createGmtDateTime($lastRun)
+            ->format('U');
+        return $this->helperData->getCurrentGmtDate(true) > $lastRunTimestamp + $interval;
     }
 
     //########################################

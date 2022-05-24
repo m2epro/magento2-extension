@@ -174,11 +174,22 @@ function(jQuery) {
             new Ajax.Request(url, {
                 method: 'post',
                 parameters: Form.serialize($('edit_form')),
-                onSuccess: function(transport) {
+                onSuccess: function (transport) {
                     var templates = transport.responseText.evalJSON();
 
                     if (templates.length && templates[0].nick == templateNick) {
-                        window.close();
+                        if(templateNick == 'description' &&
+                            $('watermark_image').value != ''
+                        ) {
+                            EbayTemplateDescriptionObj.saveWatermarkImage(
+                                function () {
+                                    window.close()
+                                },
+                                false
+                            );
+                        } else {
+                            window.close();
+                        }
                     } else {
                         console.error('Policy Saving Error');
                     }

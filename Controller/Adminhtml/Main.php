@@ -495,7 +495,8 @@ abstract class Main extends Base
             '/global/notification/static_content/skip_for_version/'
         );
 
-        if (version_compare($skipMessageForVersion, $this->getHelper('Module')->getPublicVersion(), '==')) {
+        if ($skipMessageForVersion !== null &&
+            version_compare($skipMessageForVersion, $this->getHelper('Module')->getPublicVersion(), '==')) {
             return false;
         }
 

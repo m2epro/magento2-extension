@@ -8,15 +8,25 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Vocabulary
- */
 class Vocabulary extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     protected $_template = 'amazon/listing/product/variation/manage/tabs/vocabulary.phtml';
 
-    /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-    protected $listingProduct;
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary */
+    protected $vocabularyHelper;
+
+    /** @var \Ess\M2ePro\Model\Listing\Product */
+    protected $listingProduct = null;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        array $data = []
+    )
+    {
+        parent::__construct($context, $data);
+        $this->vocabularyHelper = $vocabularyHelper;
+    }
 
     //########################################
 
@@ -51,8 +61,7 @@ class Vocabulary extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             ->getVariationInstance()
             ->getVariationsTypeStandard();
 
-        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
-        $vocabularyData = $vocabularyHelper->getLocalData();
+        $vocabularyData = $this->vocabularyHelper->getLocalData();
 
         if (empty($matchedAttributes)) {
             return [

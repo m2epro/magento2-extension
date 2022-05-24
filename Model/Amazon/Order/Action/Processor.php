@@ -19,6 +19,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     protected $amazonThrottlingManager;
     protected $amazonFactory;
     protected $activeRecordFactory;
+    protected $helperData;
 
     private $actionType = null;
 
@@ -28,6 +29,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Amazon\ThrottlingManager $amazonThrottlingManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $params = [],
@@ -36,6 +38,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $this->amazonThrottlingManager = $amazonThrottlingManager;
         $this->amazonFactory = $amazonFactory;
         $this->activeRecordFactory = $activeRecordFactory;
+        $this->helperData = $helperData;
         parent::__construct($helperFactory, $modelFactory, $data);
 
         if (empty($params['action_type'])) {
@@ -161,8 +164,10 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             [
                 'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
                 'server_hash' => $responseData['processing_id'],
-                'expiration_date' => $this->getHelper('Data')->getDate(
-                    $this->getHelper('Data')->getCurrentGmtDate(true) + self::PENDING_REQUEST_MAX_LIFE_TIME
+                'expiration_date' => gmdate(
+                    'Y-m-d H:i:s',
+                    $this->helperData->getCurrentGmtDate(true)
+                        + self::PENDING_REQUEST_MAX_LIFE_TIME
                 )
             ]
         );

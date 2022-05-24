@@ -19,15 +19,26 @@ class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Requ
     const PARENTAGE_PARENT = 'parent';
     const PARENTAGE_CHILD = 'child';
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->moduleConfiguration = $moduleConfiguration;
+    }
 
     protected function beforeBuildDataEvent()
     {
         $additionalData = $this->getListingProduct()->getAdditionalData();
 
         if ($this->getListingProduct()->getMagentoProduct()->isGroupedType()) {
-            $additionalData['grouped_product_mode'] = $this->getHelper('Module_Configuration')
-                ->getGroupedProductMode();
+            $additionalData['grouped_product_mode'] = $this->moduleConfiguration->getGroupedProductMode();
         }
 
         unset($additionalData['synch_template_list_rules_note']);

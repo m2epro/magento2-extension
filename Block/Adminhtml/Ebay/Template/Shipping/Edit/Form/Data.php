@@ -1269,8 +1269,7 @@ HTML;
                     ? $this->formData['weight_mode'] : '',
                 'class'                    => 'select',
                 'field_extra_attributes'   => 'id="weight_tr"',
-                'tooltip'                  => $this->__('The Weight Attribute must have the weight of the Item.'),
-                'note'                     => $this->__('lbs. oz.'),
+                'note'                     => ($this->canDisplayEnglishMeasurementSystemOption() ? $this->__('lbs. oz.') : $this->__('kg. g.')),
                 'create_magento_attribute' => true
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
@@ -1299,7 +1298,7 @@ HTML;
                 'class'              => 'M2ePro-required-when-visible M2ePro-validation-float input-text',
                 'style'              => 'width: 30%',
                 'required'           => true,
-                'note'               => $this->__('lbs. oz.'),
+                'note'               => ($this->canDisplayEnglishMeasurementSystemOption() ? $this->__('lbs. oz.') : $this->__('kg. g.')),
                 'after_element_html' => '<span style="color: black;"> &times; </span>' . $weightMinorBlock->toHtml()
             ]
         );
@@ -2095,7 +2094,7 @@ HTML;
         $countryId = $store->getConfig('shipping/origin/country_id');
         $postalCode = $store->getConfig('shipping/origin/postcode');
 
-        $address = [trim($city)];
+        $address = ($city !== null) ? [trim($city)] : [];
 
         if ($regionId) {
             $region = $this->regionFactory->create()->load($regionId);

@@ -15,25 +15,27 @@ use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 /**
  * @method setCategoriesData()
  * @method getCategoriesData()
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Manually\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing = null;
-
     protected $magentoProductCollectionFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
+    private $componentEbayCategory;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         parent::__construct($context, $backendHelper, $data);
+
+        $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
+        $this->componentEbayCategory           = $componentEbayCategory;
     }
 
     //########################################
@@ -139,13 +141,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'escape'    => false
         ]);
 
-        $category = $this->getHelper('Component_Ebay_Category')
+        $category = $this->componentEbayCategory
             ->getCategoryTitle(\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN);
 
         $this->addColumn('category', [
             'header'    => $this->__('eBay Categories'),
             'align'     => 'left',
             'width'     => '*',
+            'index'     => 'category',
             'type'      => 'options',
             'filter'    => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\CategoryMode',
             'category_type' => eBayCategory::TYPE_EBAY_MAIN,

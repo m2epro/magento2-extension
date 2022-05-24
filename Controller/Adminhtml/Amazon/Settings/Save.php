@@ -10,11 +10,20 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Settings;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Settings;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Settings\Save
- */
 class Save extends Settings
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Configuration */
+    protected $configuration;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Configuration $configuration,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+        $this->configuration = $configuration;
+    }
+
     //########################################
 
     public function execute()
@@ -25,7 +34,7 @@ class Save extends Settings
             return $this->getResult();
         }
 
-        $this->getHelper('Component_Amazon_Configuration')->setConfigValues($this->getRequest()->getParams());
+        $this->configuration->setConfigValues($this->getRequest()->getParams());
         $this->setJsonContent(['success' => true]);
         return $this->getResult();
     }

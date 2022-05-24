@@ -10,26 +10,23 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Wizard
- */
 abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
 {
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View\Ebay */
+    protected $ebayViewHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
         Context $context
     ) {
-        $this->ebayFactory = $ebayFactory;
         parent::__construct($nameBuilder, $context);
+        $this->ebayFactory = $ebayFactory;
+        $this->ebayViewHelper = $ebayViewHelper;
     }
-
-    //########################################
 
     protected function _isAllowed()
     {
@@ -61,8 +58,6 @@ abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
 
     protected function getMenuRootNodeLabel()
     {
-        return $this->getHelper('View\Ebay')->getMenuRootNodeLabel();
+        return $this->ebayViewHelper->getMenuRootNodeLabel();
     }
-
-    //########################################
 }

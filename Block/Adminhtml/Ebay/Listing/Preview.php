@@ -11,34 +11,37 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 use Ess\M2ePro\Model\Ebay\Template\Description\Source as DescriptionSource;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Preview
- */
 class Preview extends AbstractBlock
 {
     const NEXT     = 0;
     const PREVIOUS = 1;
     const CURRENT  = 3;
 
-    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-    private $ebayListingProduct;
-
-    private $variations = null;
-    private $images = null;
-
     protected $ebayFactory;
     protected $currency;
 
-    //########################################
+    private $variations = null;
+    private $images = null;
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+    private $ebayListingProduct;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Store */
+    private $componentEbayCategoryStore;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Magento\Framework\Locale\Currency $currency,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
     ) {
-        $this->ebayFactory = $ebayFactory;
-        $this->currency = $currency;
+        $this->ebayFactory                = $ebayFactory;
+        $this->currency                   = $currency;
+        $this->componentEbayCategoryStore = $componentEbayCategoryStore;
+        $this->componentEbayCategoryEbay  = $componentEbayCategoryEbay;
+
         parent::__construct($context, $data);
     }
 
@@ -510,7 +513,7 @@ JS
         }
 
         $categoryId = $this->ebayListingProduct->getCategoryTemplateSource()->getCategoryId();
-        $categoryTitle = $this->getHelper('Component_Ebay_Category_Ebay')->getPath($categoryId, $marketplaceId);
+        $categoryTitle = $this->componentEbayCategoryEbay->getPath($categoryId, $marketplaceId);
 
         if (!$categoryTitle) {
             return $categoryTitle;
@@ -530,7 +533,7 @@ JS
 
         $source = $this->ebayListingProduct->getCategorySecondaryTemplateSource();
         if ($source !== null) {
-            $title = $this->getHelper('Component_Ebay_Category_Ebay')->getPath(
+            $title = $this->componentEbayCategoryEbay->getPath(
                 $source->getCategoryId(),
                 $marketplaceId
             );
@@ -541,7 +544,7 @@ JS
 
         $source = $this->ebayListingProduct->getStoreCategoryTemplateSource();
         if ($source !== null) {
-            $title = $this->getHelper('Component_Ebay_Category_Store')->getPath(
+            $title = $this->componentEbayCategoryStore->getPath(
                 $source->getCategoryId(),
                 $accountId
             );
@@ -552,7 +555,7 @@ JS
 
         $source = $this->ebayListingProduct->getStoreCategorySecondaryTemplateSource();
         if ($source !== null) {
-            $title = $this->getHelper('Component_Ebay_Category_Store')->getPath(
+            $title = $this->componentEbayCategoryStore->getPath(
                 $source->getCategoryId(),
                 $accountId
             );

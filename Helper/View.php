@@ -8,9 +8,10 @@
 
 namespace Ess\M2ePro\Helper;
 
-/**
- * Class \Ess\M2ePro\Helper\View
- */
+use Ess\M2ePro\Helper\View\Ebay\Controller as EbayControllerHelper;
+use Ess\M2ePro\Helper\View\Amazon\Controller as AmazonControllerHelper;
+use Ess\M2ePro\Helper\View\Walmart\Controller as WalmartControllerHelper;
+
 class View extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const GENERAL_BLOCK_PATH = 'General';
@@ -25,26 +26,47 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
     protected $urlBuilder;
     protected $modelFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View\Ebay */
+    protected $ebayViewHelper;
+    /** @var \Ess\M2ePro\Helper\View\Amazon */
+    protected $amazonViewHelper;
+    /** @var \Ess\M2ePro\Helper\View\Walmart */
+    protected $walmartViewHelper;
+    /** @var \Ess\M2ePro\Helper\View\Ebay\Controller */
+    protected $ebayControllerHelper;
+    /** @var \Ess\M2ePro\Helper\View\Amazon\Controller */
+    protected $amazonControllerHelper;
+    /** @var \Ess\M2ePro\Helper\View\Walmart\Controller */
+    protected $walmartControllerHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Backend\Model\UrlInterface $urlBuilder,
         \Ess\M2ePro\Model\ActiveRecord\Factory $modelFactory,
+        \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
+        \Ess\M2ePro\Helper\View\Amazon $amazonViewHelper,
+        \Ess\M2ePro\Helper\View\Walmart $walmartViewHelper,
+        \Ess\M2ePro\Helper\View\Ebay\Controller $ebayControllerHelper,
+        \Ess\M2ePro\Helper\View\Amazon\Controller $amazonControllerHelper,
+        \Ess\M2ePro\Helper\View\Walmart\Controller $walmartControllerHelper,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
+        parent::__construct($helperFactory, $context);
         $this->activeRecordFactory = $activeRecordFactory;
         $this->urlBuilder = $urlBuilder;
         $this->modelFactory = $modelFactory;
-        parent::__construct($helperFactory, $context);
+        $this->ebayViewHelper = $ebayViewHelper;
+        $this->amazonViewHelper = $amazonViewHelper;
+        $this->walmartViewHelper = $walmartViewHelper;
+        $this->ebayControllerHelper = $ebayControllerHelper;
+        $this->amazonControllerHelper = $amazonControllerHelper;
+        $this->walmartControllerHelper = $walmartControllerHelper;
     }
-
-    //########################################
 
     /**
      * @param string $viewNick
-     * @return \Ess\M2ePro\Helper\View\Amazon|\Ess\M2ePro\Helper\View\Ebay
+     * @return \Ess\M2ePro\Helper\View\Amazon|\Ess\M2ePro\Helper\View\Ebay|\Ess\M2ePro\Helper\View\Walmart
      */
     public function getViewHelper($viewNick = null)
     {
@@ -54,19 +76,19 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
 
         switch ($viewNick) {
             case \Ess\M2ePro\Helper\View\Ebay::NICK:
-                return $this->getHelper('View\Ebay');
+                return $this->ebayViewHelper;
             case \Ess\M2ePro\Helper\View\Amazon::NICK:
-                return $this->getHelper('View\Amazon');
+                return $this->amazonViewHelper;
             case \Ess\M2ePro\Helper\View\Walmart::NICK:
-                return $this->getHelper('View\Walmart');
+                return $this->walmartViewHelper;
         }
 
-        return $this->getHelper('View\Amazon');
+        return $this->amazonViewHelper;
     }
 
     /**
      * @param string $viewNick
-     * @return \Ess\M2ePro\Helper\View\Ebay\Controller|\Ess\M2ePro\Helper\View\Amazon\Controller
+     * @return EbayControllerHelper|AmazonControllerHelper|WalmartControllerHelper
      */
     public function getControllerHelper($viewNick = null)
     {
@@ -76,17 +98,15 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
 
         switch ($viewNick) {
             case \Ess\M2ePro\Helper\View\Ebay::NICK:
-                return $this->getHelper('View_Ebay_Controller');
+                return $this->ebayControllerHelper;
             case \Ess\M2ePro\Helper\View\Amazon::NICK:
-                return $this->getHelper('View_Amazon_Controller');
+                return $this->amazonControllerHelper;
             case \Ess\M2ePro\Helper\View\Walmart::NICK:
-                return $this->getHelper('View_Walmart_Controller');
+                return $this->walmartControllerHelper;
         }
 
-        return $this->getHelper('View_Amazon_Controller');
+        return $this->amazonControllerHelper;
     }
-
-    //########################################
 
     public function getCurrentView()
     {
@@ -146,8 +166,6 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
         return $this->getCurrentView() == \Ess\M2ePro\Helper\View\Configuration::NICK;
     }
 
-    //########################################
-
     public function getUrl($row, $controller, $action, array $params = [])
     {
         $component = strtolower($row->getData('component_mode'));
@@ -162,6 +180,4 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
             ENT_NOQUOTES
         );
     }
-
-    //########################################
 }

@@ -73,8 +73,8 @@ class RemoveUnused extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             ]
         );
 
-        $minCreateDate = $this->getHelper('Data')->getCurrentGmtDate(true) - self::SAFE_CREATE_DATE_INTERVAL;
-        $minCreateDate = $this->getHelper('Data')->getDate($minCreateDate);
+        $minCreateDate = $this->helperData->getCurrentGmtDate(true) - self::SAFE_CREATE_DATE_INTERVAL;
+        $minCreateDate = gmdate('Y-m-d H:i:s', $minCreateDate);
 
         $collection = $templateManager->getTemplateCollection();
         $collection->getSelect()->where('`id` NOT IN (' . $unionSelect->__toString() . ')');
@@ -176,8 +176,8 @@ class RemoveUnused extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             ]
         );
 
-        $minCreateDate = $this->getHelper('Data')->getCurrentGmtDate(true) - self::SAFE_CREATE_DATE_INTERVAL;
-        $minCreateDate = $this->getHelper('Data')->getDate($minCreateDate);
+        $minCreateDate = $this->helperData->getCurrentGmtDate(true) - self::SAFE_CREATE_DATE_INTERVAL;
+        $minCreateDate = gmdate('Y-m-d H:i:s', $minCreateDate);
 
         $collection = $this->activeRecordFactory->getObject('Ebay_Template_Category')->getCollection();
         $collection->getSelect()->where('id NOT IN (' . $unionSelect->__toString() . ')');
@@ -302,8 +302,8 @@ class RemoveUnused extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             ]
         );
 
-        $minCreateDate = $this->getHelper('Data')->getCurrentGmtDate(true) - self::SAFE_CREATE_DATE_INTERVAL;
-        $minCreateDate = $this->getHelper('Data')->getDate($minCreateDate);
+        $minCreateDate = $this->helperData->getCurrentGmtDate(true) - self::SAFE_CREATE_DATE_INTERVAL;
+        $minCreateDate = gmdate('Y-m-d H:i:s', $minCreateDate);
 
         $collection = $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory')->getCollection();
         $collection->getSelect()->where('`id` NOT IN (' . $unionSelect->__toString() . ')');

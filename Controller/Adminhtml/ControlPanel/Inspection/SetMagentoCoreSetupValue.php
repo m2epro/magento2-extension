@@ -10,32 +10,29 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Inspection;
 
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Inspection\SetMagentoCoreSetupValue
- */
 class SetMagentoCoreSetupValue extends Main
 {
     /** @var \Magento\Framework\Module\ModuleResource $moduleResource */
     protected $moduleResource;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View\ControlPanel */
+    protected $controlPanelHelper;
 
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $dbContext,
+        \Ess\M2ePro\Helper\View\ControlPanel $controlPanelHelper,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        $this->moduleResource = new \Magento\Framework\Module\ModuleResource($dbContext);
         parent::__construct($context);
+        $this->moduleResource = new \Magento\Framework\Module\ModuleResource($dbContext);
+        $this->controlPanelHelper = $controlPanelHelper;
     }
-
-    //########################################
 
     public function execute()
     {
         $version = $this->getRequest()->getParam('version');
         if (!$version) {
             $this->messageManager->addWarning('Version is not provided.');
-            return $this->_redirect($this->getHelper('View_ControlPanel')->getPageUrl());
+            return $this->_redirect($this->controlPanelHelper->getPageUrl());
         }
 
         $version = str_replace(',', '.', $version);
@@ -46,15 +43,13 @@ class SetMagentoCoreSetupValue extends Main
                     \Ess\M2ePro\Setup\UpgradeData::MIN_SUPPORTED_VERSION_FOR_UPGRADE
                 )
             );
-            return $this->_redirect($this->getHelper('View_ControlPanel')->getPageUrl());
+            return $this->_redirect($this->controlPanelHelper->getPageUrl());
         }
 
         $this->moduleResource->setDbVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER, $version);
         $this->moduleResource->setDataVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER, $version);
 
         $this->messageManager->addSuccess($this->__('Extension upgrade was completed.'));
-        return $this->_redirect($this->getHelper('View_ControlPanel')->getPageUrl());
+        return $this->_redirect($this->controlPanelHelper->getPageUrl());
     }
-
-    //########################################
 }

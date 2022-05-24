@@ -12,9 +12,6 @@ use \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 use Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
 use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings\StepTwoModeValidate
- */
 class StepTwoModeValidate extends Settings
 {
     //########################################
@@ -50,7 +47,7 @@ class StepTwoModeValidate extends Settings
                 continue;
             }
 
-            $hasRequiredSpecifics = $this->getHelper('Component_Ebay_Category_Ebay')->hasRequiredSpecifics(
+            $hasRequiredSpecifics = $this->componentEbayCategoryEbay->hasRequiredSpecifics(
                 $categoryData[eBayCategory::TYPE_EBAY_MAIN]['value'],
                 $listing->getMarketplaceId()
             );

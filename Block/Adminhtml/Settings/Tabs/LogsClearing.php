@@ -10,15 +10,25 @@ namespace Ess\M2ePro\Block\Adminhtml\Settings\Tabs;
 
 use \Ess\M2ePro\Model\Log\Clearing as LogClearing;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\LogsClearing
- */
 class LogsClearing extends AbstractTab
 {
     protected $modes;
     protected $days;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
+    private $componentEbayPickupStore;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $formFactory, $data);
+
+        $this->componentEbayPickupStore = $componentEbayPickupStore;
+    }
 
     protected function _prepareForm()
     {
@@ -210,7 +220,7 @@ HTML
             ]
         );
 
-        if ($this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
+        if ($this->componentEbayPickupStore->isFeatureEnabled()) {
             $fieldSet = $form->addFieldset(
                 'magento_block_configuration_logs_clearing_instore_pickup',
                 [
@@ -285,7 +295,7 @@ HTML
             LogClearing::LOG_ORDERS
         ];
 
-        if ($this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
+        if ($this->componentEbayPickupStore->isFeatureEnabled()) {
             $tasks[] = LogClearing::LOG_EBAY_PICKUP_STORE;
         }
 
@@ -346,7 +356,7 @@ HTML
         ];
 
         $pickupStoreJs = '';
-        if ($this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
+        if ($this->componentEbayPickupStore->isFeatureEnabled()) {
             $pickupStoreJs = "LogClearingObj.changeModeLog('{$logData[3]}');";
         }
 

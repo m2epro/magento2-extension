@@ -10,11 +10,21 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description\SaveRecentCategory
- */
 class SaveRecentCategory extends Description
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Category */
+    protected $categoryHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Category $categoryHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+
+        $this->categoryHelper = $categoryHelper;
+    }
+
     //########################################
 
     public function execute()
@@ -28,7 +38,7 @@ class SaveRecentCategory extends Description
             return $this->getResult();
         }
 
-        $this->getHelper('Component_Amazon_Category')->addRecent(
+        $this->categoryHelper->addRecent(
             $marketplaceId,
             $browseNodeId,
             $categoryPath

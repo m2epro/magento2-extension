@@ -23,17 +23,21 @@ class ProductId extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Numbe
     /** @var \Ess\M2ePro\Helper\Factory  */
     protected $helperFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Backend\Block\Context $context,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
         parent::__construct($context, $data);
-        $this->modelFactory = $modelFactory;
-        $this->helperFactory = $helperFactory;
+
+        $this->modelFactory        = $modelFactory;
+        $this->helperFactory       = $helperFactory;
+        $this->moduleConfiguration = $moduleConfiguration;
     }
 
     //########################################
@@ -57,7 +61,7 @@ class ProductId extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Numbe
         $url = $this->getUrl('catalog/product/edit', ['id' => $productId, 'store' => $storeId]);
         $withoutImageHtml = '<a href="' . $url . '" target="_blank">' . $productId . '</a>';
 
-        if (!$this->getHelper('Module_Configuration')->getViewShowProductsThumbnailsMode()) {
+        if (!$this->moduleConfiguration->getViewShowProductsThumbnailsMode()) {
             return $withoutImageHtml;
         }
 

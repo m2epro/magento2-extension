@@ -37,12 +37,16 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     protected $activeRecordFactory;
     protected $resourceConnection;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
@@ -50,6 +54,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $this->walmartFactory = $walmartFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->resourceConnection = $resourceConnection;
+        $this->helperData = $helperData;
         parent::__construct($helperFactory, $modelFactory, $data);
     }
 
@@ -255,7 +260,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                         $listingProductConfigurator = $this->modelFactory
                             ->getObject('Walmart_Listing_Product_Action_Configurator');
 
-                        $additionalData = $this->getHelper('Data')->jsonDecode($listingProductData['additional_data']);
+                        $additionalData = $this->helperData->jsonDecode($listingProductData['additional_data']);
                         if (!empty($additionalData['configurator'])) {
                             $listingProductConfigurator->setUnserializedData($additionalData['configurator']);
                         }
@@ -358,7 +363,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     protected function getActualGroupHash($accountId, array $groupHashesMetadata, array $listingProductData)
     {
         if (empty($groupHashesMetadata[$accountId])) {
-            return $this->getHelper('Data')->generateUniqueHash();
+            return $this->helperData->generateUniqueHash();
         }
 
         end($groupHashesMetadata[$accountId]);
@@ -380,7 +385,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             }
         }
 
-        return $this->getHelper('Data')->generateUniqueHash();
+        return $this->helperData->generateUniqueHash();
     }
 
     /**
@@ -412,7 +417,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
             $params = [];
             if (!empty($listingProductData['additional_data'])) {
-                $additionalData = $this->getHelper('Data')->jsonDecode($listingProductData['additional_data']);
+                $additionalData = $this->helperData->jsonDecode($listingProductData['additional_data']);
                 !empty($additionalData['params']) && $params = $additionalData['params'];
             }
 
@@ -681,8 +686,10 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             [
                 'component'       => \Ess\M2ePro\Helper\Component\Walmart::NICK,
                 'server_hash'     => $responseData['processing_id'],
-                'expiration_date' => $this->getHelper('Data')->getDate(
-                    $this->getHelper('Data')->getCurrentGmtDate(true) + self::PENDING_REQUEST_MAX_LIFE_TIME
+                'expiration_date' => gmdate(
+                    'Y-m-d H:i:s',
+                    $this->helperData->getCurrentGmtDate(true)
+                        + self::PENDING_REQUEST_MAX_LIFE_TIME
                 )
             ]
         );

@@ -8,14 +8,9 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
- */
 abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $dataTypes = [
         'general',
         'qty',
@@ -32,26 +27,26 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         'returnPolicy',
         'other'
     ];
-
-    /**
-     * @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\AbstractModel[]
-     */
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\AbstractModel[] */
     protected $dataBuilders = [];
-
     protected $activeRecordFactory;
     protected $ebayFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Configuration */
+    private $componentEbayConfiguration;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
-        $this->ebayFactory = $ebayFactory;
         parent::__construct($helperFactory, $modelFactory);
+
+        $this->activeRecordFactory        = $activeRecordFactory;
+        $this->ebayFactory                = $ebayFactory;
+        $this->componentEbayConfiguration = $componentEbayConfiguration;
     }
 
     //########################################
@@ -119,7 +114,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
     protected function prepareFinalData(array $data)
     {
         $data['is_eps_ebay_images_mode'] = $this->getIsEpsImagesMode();
-        $data['upload_images_mode'] = $this->getHelper('Component_Ebay_Configuration')->getUploadImagesMode();
+        $data['upload_images_mode'] = $this->componentEbayConfiguration->getUploadImagesMode();
 
         $data = $this->replaceVariationSpecificsNames($data);
         $data = $this->resolveVariationAndItemSpecificsConflict($data);

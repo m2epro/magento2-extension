@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\General
- */
 class General extends AbstractModel
 {
     const LISTING_TYPE_AUCTION  = 'Chinese';
@@ -19,7 +16,19 @@ class General extends AbstractModel
     const PRODUCT_DETAILS_DOES_NOT_APPLY = 'Does Not Apply';
     const PRODUCT_DETAILS_UNBRANDED = 'Unbranded';
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+    }
 
     public function getBuilderData()
     {
@@ -125,8 +134,7 @@ class General extends AbstractModel
 
         $categoryId = $this->getEbayListingProduct()->getCategoryTemplateSource()->getCategoryId();
         $marketplaceId = $this->getMarketplace()->getId();
-        $categoryFeatures = $this->getHelper('Component_Ebay_Category_Ebay')
-            ->getFeatures($categoryId, $marketplaceId);
+        $categoryFeatures = $this->componentEbayCategoryEbay->getFeatures($categoryId, $marketplaceId);
 
         if (empty($categoryFeatures)) {
             return $data;

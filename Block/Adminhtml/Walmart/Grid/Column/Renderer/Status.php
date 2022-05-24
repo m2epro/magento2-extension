@@ -11,9 +11,6 @@ namespace  Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Model\Listing\Log;
 
-/**
- * Class  \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Status
- */
 class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
 {
     use Traits\BlockTrait;
@@ -33,11 +30,12 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory  */
     protected $walmartFactory;
 
+    /** @var \Ess\M2ePro\Helper\View */
+    protected $viewHelper;
+
     protected $lockedDataCache = [];
 
     protected $parentAndChildReviseScheduledCache = [];
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -45,6 +43,7 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\View $viewHelper,
         \Magento\Backend\Block\Context $context,
         array $data = []
     ) {
@@ -55,9 +54,8 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
         $this->activeRecordFactory = $activeRecordFactory;
         $this->modelFactory = $modelFactory;
         $this->resourceConnection = $resourceConnection;
+        $this->viewHelper = $viewHelper;
     }
-
-    //########################################
 
     public function render(\Magento\Framework\DataObject $row)
     {
@@ -80,7 +78,7 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
         $html = $viewLogIcon->render($row);
 
         if (!empty($additionalData['synch_template_list_rules_note'])) {
-            $synchNote = $this->getHelper('View')->getModifiedLogMessage(
+            $synchNote = $this->viewHelper->getModifiedLogMessage(
                 $additionalData['synch_template_list_rules_note']
             );
 

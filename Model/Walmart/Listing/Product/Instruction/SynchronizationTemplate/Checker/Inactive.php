@@ -21,6 +21,7 @@ class Inactive extends AbstractModel
     protected function getRelistInstructionTypes()
     {
         return [
+            ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_DATA_POTENTIALLY_CHANGED,
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_RELIST_MODE_ENABLED,
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_RELIST_MODE_DISABLED,
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_RELIST_SETTINGS_CHANGED,

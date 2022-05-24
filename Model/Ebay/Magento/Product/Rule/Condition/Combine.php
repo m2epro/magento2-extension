@@ -16,13 +16,14 @@ class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\Rule\Model\Condition\Context $context,
         array $data = []
     ) {
 
-        parent::__construct($helperFactory, $modelFactory, $context, $data);
+        parent::__construct($helperData, $helperFactory, $modelFactory, $context, $data);
         $this->setType('Ebay_Magento_Product_Rule_Condition_Combine');
     }
 

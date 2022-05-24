@@ -8,15 +8,23 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Listing\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $_groupedActions = [];
     protected $_actions        = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View */
+    protected $viewHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\View $viewHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $backendHelper, $data);
+        $this->viewHelper = $viewHelper;
+    }
 
     public function _construct()
     {
@@ -47,7 +55,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setMassactionIdField('main_table.id');
         $this->getMassactionBlock()->setFormFieldName('ids');
         // ---------------------------------------
-        $currentView = $this->getHelper('View')->getCurrentView();
+        $currentView = $this->viewHelper->getCurrentView();
 
         // Set clear log action
         // ---------------------------------------
@@ -112,8 +120,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'align'     => 'right',
             'type'      => 'number',
             'index'     => 'products_total_count',
-            'filter_index' => 'main_table.products_total_count',
-            'frame_callback' => [$this, 'callbackColumnTotalProducts']
+            'filter_index' => 't.products_total_count',
+            'frame_callback' => [$this, 'callbackColumnProductsCount']
         ]);
 
         $this->addColumn('products_active_count', [
@@ -121,8 +129,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'align'     => 'right',
             'type'      => 'number',
             'index'     => 'products_active_count',
-            'filter_index' => 'main_table.products_active_count',
-            'frame_callback' => [$this, 'callbackColumnListedProducts']
+            'filter_index' => 't.products_active_count',
+            'frame_callback' => [$this, 'callbackColumnProductsCount']
         ]);
 
         $this->addColumn('products_inactive_count', [
@@ -131,9 +139,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'width'     => 100,
             'type'      => 'number',
             'index'     => 'products_inactive_count',
-            'filter_index' => 'main_table.products_inactive_count',
-            'frame_callback' => [$this, 'callbackColumnInactiveProducts']
+            'filter_index' => 't.products_inactive_count',
+            'frame_callback' => [$this, 'callbackColumnProductsCount']
         ]);
+
+        $this->setColumns();
 
         $this->addColumn('actions', [
             'header'    => $this->__('Actions'),
@@ -151,6 +161,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return parent::_prepareColumns();
     }
 
+    protected function setColumns()
+    {
+        return null;
+    }
+
     //########################################
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
@@ -165,7 +180,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     //########################################
 
-    protected function getColumnValue($value)
+    public function callbackColumnProductsCount($value, $row, $column, $isExport)
     {
         if ($value === null || $value === '') {
             $value = $this->__('N/A');

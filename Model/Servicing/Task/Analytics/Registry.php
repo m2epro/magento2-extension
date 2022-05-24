@@ -15,6 +15,19 @@ class Registry extends \Ess\M2ePro\Model\AbstractModel
 {
     const STORAGE_KEY = 'servicing/analytics';
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        $this->helperData = $helperData;
+        parent::__construct($helperFactory, $modelFactory, $data);
+    }
+
     //########################################
 
     public function isPlannedNow()
@@ -23,7 +36,10 @@ class Registry extends \Ess\M2ePro\Model\AbstractModel
         $startedAt  = $this->getStartedAt();
         $finishedAt = $this->getFinishedAt();
 
-        if (empty($plannedAt) || strtotime($plannedAt) > $this->getHelper('Data')->getCurrentGmtDate(true)) {
+        $currentTimestamp = $this->helperData->getCurrentGmtDate(true);
+        if (empty($plannedAt) ||
+            (int)$this->helperData->createGmtDateTime($plannedAt)->format('U') > $currentTimestamp
+        ) {
             return false;
         }
 
@@ -68,7 +84,7 @@ class Registry extends \Ess\M2ePro\Model\AbstractModel
     {
         $regData = $this->getStoredData();
 
-        $regData['started_at'] = $this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d H:i:s');
+        $regData['started_at'] = $this->helperData->getCurrentGmtDate(false, 'Y-m-d H:i:s');
         $regData['progress'] = [];
 
         $this->setStoredData($regData);
@@ -77,7 +93,7 @@ class Registry extends \Ess\M2ePro\Model\AbstractModel
     public function markFinished()
     {
         $regData = $this->getStoredData();
-        $regData['finished_at'] = $this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d H:i:s');
+        $regData['finished_at'] = $this->helperData->getCurrentGmtDate(false, 'Y-m-d H:i:s');
 
         $this->setStoredData($regData);
     }

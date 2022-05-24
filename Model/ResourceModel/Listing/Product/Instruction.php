@@ -22,6 +22,13 @@ class Instruction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
 
     //########################################
 
+    /**
+     * @param array $instructionsData
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
     public function add(array $instructionsData)
     {
         if (empty($instructionsData)) {
@@ -35,8 +42,28 @@ class Instruction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
         }
 
         $listingsProductsCollection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();
-        $listingsProductsCollection->addFieldToFilter('id', ['in' => array_unique($listingsProductsIds)]);
+        $instructionSelectExpression = new \Zend_Db_Expr(
+            "IFNULL(CONCAT('[\"', GROUP_CONCAT(DISTINCT lpi.type SEPARATOR '\",\"'), '\"]'), '[]')"
+        );
 
+        $listingsProductsCollection
+            ->getSelect()
+            ->reset(\Magento\Framework\DB\Select::COLUMNS)
+            ->columns([
+                'id' => 'main_table.id',
+                'component_mode' => 'main_table.component_mode',
+            ])
+            ->joinLeft(
+                ['lpi' => $this->getHelper('Module_Database_Structure')
+                        ->getTableNameWithPrefix('m2epro_listing_product_instruction')],
+                'lpi.listing_product_id = main_table.id AND lpi.component = main_table.component_mode',
+                ['instruction_json_types' => $instructionSelectExpression]
+            )
+            ->where('main_table.id IN (?)', array_unique($listingsProductsIds))
+            ->group(['main_table.id', 'main_table.component_mode'])
+            ->order('main_table.id');
+
+        $dataHelper = $this->getHelper('Data');
         foreach ($instructionsData as $index => &$instructionData) {
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $listingsProductsCollection->getItemById($instructionData['listing_product_id']);
@@ -45,13 +72,32 @@ class Instruction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
                 continue;
             }
 
-            $instructionData['component']   = $listingProduct->getComponentMode();
-            $instructionData['create_date'] = $this->helperFactory->getObject('Data')->getCurrentGmtDate();
+            $encodedInstructionTypes = $listingProduct->getData('instruction_json_types');
+            $instructionTypes = $dataHelper->jsonDecode($encodedInstructionTypes);
+
+            if (in_array($instructionData['type'], $instructionTypes, true)) {
+                unset($instructionsData[$index]);
+                continue;
+            }
+
+            $instructionData['component'] = $listingProduct->getComponentMode();
+            $instructionData['create_date'] = $dataHelper->getCurrentGmtDate();
+        }
+
+        if (empty($instructionsData)) {
+            return;
         }
 
         $this->getConnection()->insertMultiple($this->getMainTable(), $instructionsData);
     }
 
+    /**
+     * @param array $instructionsIds
+     *
+     * @return void
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function remove(array $instructionsIds)
     {
         if (empty($instructionsIds)) {
@@ -62,7 +108,7 @@ class Instruction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
             $this->getMainTable(),
             [
                 'id IN (?)' => $instructionsIds,
-                'skip_until IS NULL OR ? > skip_until' => $this->helperFactory->getObject('Data')->getCurrentGmtDate()
+                'skip_until IS NULL OR ? > skip_until' => $this->helperFactory->getObject('Data')->getCurrentGmtDate(),
             ]
         );
     }

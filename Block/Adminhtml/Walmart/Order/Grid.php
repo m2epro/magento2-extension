@@ -320,12 +320,11 @@ HTML;
     public function callbackColumnMagentoOrder($value, $row, $column, $isExport)
     {
         $magentoOrderId = $row['magento_order_id'];
-        $magentoOrderNumber = $this->getHelper('Data')->escapeHtml($row['magento_order_num']);
-
         $returnString = $this->__('N/A');
 
         if ($magentoOrderId !== null) {
             if ($row['magento_order_num']) {
+                $magentoOrderNumber = $this->getHelper('Data')->escapeHtml($row['magento_order_num'] ?? '');
                 $orderUrl = $this->getUrl('sales/order/view', ['order_id' => $magentoOrderId]);
                 $returnString = '<a href="' . $orderUrl . '" target="_blank">' . $magentoOrderNumber . '</a>';
             } else {

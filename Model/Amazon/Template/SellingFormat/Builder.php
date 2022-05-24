@@ -16,6 +16,19 @@ use Ess\M2ePro\Model\Amazon\Template\SellingFormat as AmazonSellingFormat;
  */
 class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 {
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        $this->helperData = $helperData;
+        parent::__construct($helperFactory, $modelFactory, $data);
+    }
+
     //########################################
 
     protected function prepareData()
@@ -31,42 +44,40 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         }
 
         if ($data['regular_sale_price_start_date_value'] === '') {
-            $data['regular_sale_price_start_date_value'] = $this->getHelper('Data')->getCurrentGmtDate(
+            $data['regular_sale_price_start_date_value'] = $this->helperData->getCurrentGmtDate(
                 false,
                 'Y-m-d 00:00:00'
             );
         } else {
             // UTC Date are shown on interface
-            $timestamp = $this->getHelper('Data')->parseTimestampFromLocalizedFormat(
+            $timestamp = $this->helperData->parseTimestampFromLocalizedFormat(
                 $data['regular_sale_price_start_date_value'],
                 \IntlDateFormatter::SHORT,
                 \IntlDateFormatter::NONE,
-                $this->getHelper('Data')->getDefaultTimezone()
+                $this->helperData->getDefaultTimezone()
             );
-            $data['regular_sale_price_start_date_value'] = $this->getHelper('Data')->getDate(
-                $timestamp,
-                false,
-                'Y-m-d 00:00:00'
+            $data['regular_sale_price_start_date_value'] = gmdate(
+                'Y-m-d 00:00:00',
+                $timestamp
             );
         }
 
         if ($data['regular_sale_price_end_date_value'] === '') {
-            $data['regular_sale_price_end_date_value'] = $this->getHelper('Data')->getCurrentGmtDate(
+            $data['regular_sale_price_end_date_value'] = $this->helperData->getCurrentGmtDate(
                 false,
                 'Y-m-d 00:00:00'
             );
         } else {
             // UTC Date are shown on interface
-            $timestamp = $this->getHelper('Data')->parseTimestampFromLocalizedFormat(
+            $timestamp = $this->helperData->parseTimestampFromLocalizedFormat(
                 $data['regular_sale_price_end_date_value'],
                 \IntlDateFormatter::SHORT,
                 \IntlDateFormatter::NONE,
-                $this->getHelper('Data')->getDefaultTimezone()
+                $this->helperData->getDefaultTimezone()
             );
-            $data['regular_sale_price_end_date_value'] = $this->getHelper('Data')->getDate(
-                $timestamp,
-                false,
-                'Y-m-d 00:00:00'
+            $data['regular_sale_price_end_date_value'] = gmdate(
+                'Y-m-d 00:00:00',
+                $timestamp
             );
         }
 
@@ -121,8 +132,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'regular_sale_price_start_date_custom_attribute' => '',
             'regular_sale_price_end_date_custom_attribute' => '',
 
-            'regular_sale_price_start_date_value' => $this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d'),
-            'regular_sale_price_end_date_value' => $this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d'),
+            'regular_sale_price_start_date_value' => $this->helperData->getCurrentGmtDate(false, 'Y-m-d'),
+            'regular_sale_price_end_date_value' => $this->helperData->getCurrentGmtDate(false, 'Y-m-d'),
 
             'regular_price_vat_percent' => 0,
 

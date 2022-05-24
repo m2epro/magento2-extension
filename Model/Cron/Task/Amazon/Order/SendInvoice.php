@@ -41,6 +41,7 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Model\Amazon\Order\Invoice\Pdf\CreditNoteFactory $creditNotePdfFactory,
         \Magento\Sales\Model\Order\Pdf\Invoice $pdfInvoice,
         \Magento\Sales\Model\Order\Pdf\Creditmemo $pdfCreditmemo,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
@@ -56,6 +57,7 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->pdfCreditmemo = $pdfCreditmemo;
 
         parent::__construct(
+            $helperData,
             $eventManager,
             $parentFactory,
             $modelFactory,

@@ -152,7 +152,13 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $fromDate = $this->prepareFromDate($updateSinceTime);
         $toDate   = $this->prepareToDate();
 
-        if (strtotime($fromDate) >= strtotime($toDate)) {
+        $fromDateTimestamp = (int)$this->helperData
+            ->createGmtDateTime($fromDate)
+            ->format('U');
+        $toDateTimestamp = (int)$this->helperData
+            ->createGmtDateTime($toDate)
+            ->format('U');
+        if ($fromDateTimestamp >= $toDateTimestamp) {
             $fromDate = new \DateTime($toDate, new \DateTimeZone('UTC'));
             $fromDate->modify('- 5 minutes');
 

@@ -10,26 +10,23 @@ namespace Ess\M2ePro\Block\Adminhtml\Listing\Moving;
 
 use Ess\M2ePro\Helper\Component\Walmart;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Listing\Moving\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $storeFactory;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View */
+    protected $viewHelper;
 
     public function __construct(
         \Magento\Store\Model\StoreFactory $storeFactory,
+        \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->storeFactory = $storeFactory;
         parent::__construct($context, $backendHelper, $data);
+        $this->storeFactory = $storeFactory;
+        $this->viewHelper = $viewHelper;
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -136,7 +133,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
         $title = $this->getHelper('Data')->escapeHtml($value);
-        $url = $this->getHelper('View')->getUrl(
+        $url = $this->viewHelper->getUrl(
             $row,
             'listing',
             'view',
@@ -172,14 +169,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnSourceTotalItems($value, $row, $column, $isExport)
     {
-        $componentMode = $this->getHelper('Data\GlobalData')->getValue('componentMode');
-        $value = $this->activeRecordFactory->getObject(ucfirst($componentMode).'\Listing')->getResource()->getStatisticTotalCount($row['id']);
-
-        if ($value <= 0) {
-            $value = '<span style="color: red;">0</span>';
-        }
-
-        return $value;
+        return $value.'&nbsp;';
     }
 
     public function callbackColumnActions($value, $row, $column, $isExport)

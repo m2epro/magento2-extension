@@ -23,16 +23,21 @@ abstract class Runner extends \Ess\M2ePro\Model\AbstractModel
     protected $parentFactory = null;
     protected $activeRecordFactory = null;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
     //####################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
         $this->parentFactory = $parentFactory;
         $this->activeRecordFactory = $activeRecordFactory;
+        $this->helperData = $helperData;
         parent::__construct($helperFactory, $modelFactory);
     }
 
@@ -120,8 +125,9 @@ abstract class Runner extends \Ess\M2ePro\Model\AbstractModel
 
         $processingObject->setData(
             'expiration_date',
-            $this->helperFactory->getObject('Data')->getDate(
-                $this->helperFactory->getObject('Data')->getCurrentGmtDate(true) + static::MAX_LIFETIME
+            gmdate(
+                'Y-m-d H:i:s',
+                $this->helperData->getCurrentGmtDate(true) + static::MAX_LIFETIME
             )
         );
 

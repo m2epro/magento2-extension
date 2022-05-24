@@ -6,45 +6,35 @@
  * @license    Commercial use is forbidden
  */
 
-namespace Ess\M2ePro\Setup;
+namespace Ess\M2ePro\Model\Setup;
 
 use Ess\M2ePro\Model\Exception;
-use Ess\M2ePro\Model\Setup;
-use Ess\M2ePro\Model\Setup\Upgrade\Manager;
-use Magento\Framework\Setup\UpgradeDataInterface;
-use Magento\Framework\Setup\ModuleContextInterface;
-use Magento\Framework\Setup\ModuleDataSetupInterface;
+use Magento\Framework\Setup\SetupInterface;
 
 /**
- * Class \Ess\M2ePro\Setup\UpgradeData
+ * Upgrader M2E extension
  */
-class UpgradeData implements UpgradeDataInterface
+class Upgrader
 {
     /**
      * Means that version, upgrade files are included to the build
      */
     const MIN_SUPPORTED_VERSION_FOR_UPGRADE = '1.0.0';
 
-    /** @var \Magento\Framework\Module\ModuleResource $moduleResource */
-    private $moduleResource;
-
-    /** @var \Magento\Framework\Module\ModuleListInterface $moduleList */
-    private $moduleList;
-
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory */
-    private $activeRecordFactory;
-
-    /** @var \Ess\M2ePro\Helper\Factory $helperFactory */
-    private $helperFactory;
-
-    /** @var \Ess\M2ePro\Model\Factory $modelFactory */
-    private $modelFactory;
-
-    /** @var ModuleDataSetupInterface $installer */
-    private $installer;
-
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
+
+    /** @var \Ess\M2ePro\Helper\Module\Maintenance */
+    private $maintenance;
+
+    /** @var \Ess\M2ePro\Model\ResourceModel\Setup */
+    private $setupResource;
+
+    /** @var \Magento\Framework\ObjectManagerInterface */
+    private $objectManager;
+
+    /** @var \Magento\Framework\Module\ModuleListInterface */
+    private $moduleList;
 
     /**
      * @format
@@ -117,24 +107,31 @@ class UpgradeData implements UpgradeDataInterface
         '1.20.2' => ['1.21.0'],
         '1.21.0' => ['1.21.1'],
         '1.21.1' => ['1.21.2'],
-        '1.21.2' => ['1.21.3']
+        '1.21.2' => ['1.21.3'],
+        '1.21.3' => ['1.22.0.1'],
+        '1.22.0.1' => ['1.22.1']
     ];
 
     //########################################
 
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Maintenance        $maintenance
+     * @param \Ess\M2ePro\Setup\LoggerFactory              $loggerFactory
+     * @param \Ess\M2ePro\Model\ResourceModel\Setup        $setupResource
+     * @param \Magento\Framework\ObjectManagerInterface    $objectManager
+     */
     public function __construct(
-        \Magento\Framework\Model\ResourceModel\Db\Context $context,
-        \Magento\Framework\Module\ModuleListInterface $moduleList,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Setup\LoggerFactory $loggerFactory
+        \Magento\Framework\ObjectManagerInterface $objectManager,
+        \Ess\M2ePro\Helper\Module\Maintenance $maintenance,
+        \Ess\M2ePro\Setup\LoggerFactory $loggerFactory,
+        \Ess\M2ePro\Model\ResourceModel\Setup $setupResource,
+        \Magento\Framework\Module\ModuleListInterface $moduleList
     ) {
-        $this->moduleResource = new \Magento\Framework\Module\ModuleResource($context);
+        $this->maintenance = $maintenance;
+        $this->objectManager = $objectManager;
+        $this->setupResource = $setupResource;
         $this->moduleList = $moduleList;
-        $this->activeRecordFactory = $activeRecordFactory;
-        $this->helperFactory = $helperFactory;
-        $this->modelFactory = $modelFactory;
+
 
         $this->logger = $loggerFactory->create();
     }
@@ -146,38 +143,24 @@ class UpgradeData implements UpgradeDataInterface
      * We do not use these versions in setup & upgrade logic (only set correct values to it, using m2epro_setup table).
      * So version, that presented in $context parameter, is not used.
      *
-     * @param ModuleDataSetupInterface $setup
-     * @param ModuleContextInterface $context
+     * @param SetupInterface $setup
      */
-    public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
+    public function upgrade(SetupInterface $setup)
     {
-        $this->installer = $setup;
-
-        if ($this->helperFactory->getObject('Data\GlobalData')->getValue('is_setup_failed')) {
-            return;
-        }
-
-        if ($this->helperFactory->getObject('Data\GlobalData')->getValue('is_install_process')) {
-            return;
-        }
-
-        if (!$this->isInstalled()) {
-            return;
-        }
-
-        $this->installer->startSetup();
-        $this->helperFactory->getObject('Module\Maintenance')->enable();
+        $setup->startSetup();
+        $this->maintenance->enable();
 
         try {
             $versionsToExecute = $this->getVersionsToExecute();
             foreach ($versionsToExecute as $versionFrom => $versionTo) {
-
-                /** @var Manager $upgradeManager */
-                $upgradeManager = $this->modelFactory->getObject('Setup_Upgrade_Manager', [
-                    'versionFrom' => $versionFrom,
-                    'versionTo'   => $versionTo,
-                    'installer'   => $this->installer,
-                ]);
+                $upgradeManager = $this->objectManager->create(
+                    \Ess\M2ePro\Model\Setup\Upgrade\Manager::class,
+                    [
+                        'versionFrom' => $versionFrom,
+                        'versionTo'   => $versionTo,
+                        'installer'   => $setup,
+                    ]
+                );
 
                 $setupObject  = $upgradeManager->getCurrentSetupObject();
                 $backupObject = $upgradeManager->getBackupObject();
@@ -190,55 +173,36 @@ class UpgradeData implements UpgradeDataInterface
 
                 $upgradeManager->process();
 
-                $setupObject->setData('is_completed', 1)->save();
+                $setupObject->setData('is_completed', 1);
+                $setupObject->save();
                 $backupObject->remove();
-
-                $this->setMagentoResourceVersion($versionTo);
             }
-
-            $this->setMagentoResourceVersion($this->getConfigVersion());
         } catch (\Exception $exception) {
-            $this->logger->error($exception, ['source' => 'UpgradeData']);
-            $this->helperFactory->getObject('Data\GlobalData')->setValue('is_setup_failed', true);
+            $this->logger->error($exception, ['source' => 'Upgrade']);
 
             if (isset($setupObject)) {
                 $setupObject->setData('profiler_data', $exception->__toString());
                 $setupObject->save();
             }
 
-            $this->installer->endSetup();
+            $setup->endSetup();
             return;
         }
 
-        $this->helperFactory->getObject('Module\Maintenance')->disable();
-        $this->installer->endSetup();
+        $this->maintenance->disable();
+        $setup->endSetup();
     }
 
-    //########################################
-
-    private function isInstalled()
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function getVersionsToExecute(): array
     {
-        if (!$this->getConnection()->isTableExists($this->getFullTableName('setup'))) {
-            return false;
-        }
+        $versionFrom = $this->getLastInstalledVersion();
 
-        $setupRow = $this->getConnection()->select()
-            ->from($this->getFullTableName('setup'))
-            ->where('version_from IS NULL')
-            ->where('is_completed = ?', 1)
-            ->query()
-            ->fetch();
-
-        return $setupRow !== false;
-    }
-
-    private function getVersionsToExecute()
-    {
-        $versionFrom = $this->getMagentoResourceVersion();
-
-        /** @var Setup[] $notCompletedUpgrades */
-        $notCompletedUpgrades = $this->activeRecordFactory->getObject('Setup')->getResource()
-            ->getNotCompletedUpgrades();
+        $notCompletedUpgrades = $this->setupResource->getNotCompletedUpgrades();
 
         if (!empty($notCompletedUpgrades)) {
             /**
@@ -256,7 +220,7 @@ class UpgradeData implements UpgradeDataInterface
         }
 
         $versions = [];
-        while ($versionFrom != $this->getConfigVersion()) {
+        while ($versionFrom !== $this->getConfigVersion()) {
             $versionTo = !empty(self::$availableVersionUpgrades[$versionFrom])
                 ? end(self::$availableVersionUpgrades[$versionFrom])
                 : null;
@@ -272,38 +236,25 @@ class UpgradeData implements UpgradeDataInterface
         return $versions;
     }
 
-    //########################################
-
-    private function getConfigVersion()
+    /**
+     * @return string
+     */
+    private function getConfigVersion(): string
     {
         return $this->moduleList->getOne(\Ess\M2ePro\Helper\Module::IDENTIFIER)['setup_version'];
     }
 
-    private function setMagentoResourceVersion($version)
-    {
-        $this->moduleResource->setDbVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER, $version);
-        $this->moduleResource->setDataVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER, $version);
-    }
-
-    private function getMagentoResourceVersion()
-    {
-        return $this->moduleResource->getDataVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER);
-    }
-
-    //########################################
-
     /**
-     * @return \Magento\Framework\DB\Adapter\Pdo\Mysql
+     * @return string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    private function getConnection()
+    private function getLastInstalledVersion(): string
     {
-        return $this->installer->getConnection();
-    }
+        $maxCompletedItem = $this->setupResource->getMaxCompletedItem();
+        if ($maxCompletedItem->getId() === null) {
+            return self::MIN_SUPPORTED_VERSION_FOR_UPGRADE;
+        }
 
-    private function getFullTableName($tableName)
-    {
-        return $this->helperFactory->getObject('Module_Database_Tables')->getFullName($tableName);
+        return $maxCompletedItem->getVersionTo();
     }
-
-    //########################################
 }

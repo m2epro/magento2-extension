@@ -10,25 +10,22 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table
- */
 class Table extends AbstractContainer
 {
     private $cookieManager;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View\ControlPanel */
+    protected $controlPanelHelper;
 
     public function __construct(
         \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
+        \Ess\M2ePro\Helper\View\ControlPanel $controlPanelHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         array $data = []
     ) {
         $this->cookieManager = $cookieManager;
+        $this->controlPanelHelper = $controlPanelHelper;
         parent::__construct($context, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -66,7 +63,7 @@ class Table extends AbstractContainer
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getHelper('View\ControlPanel')->getPageDatabaseTabUrl();
+        $url = $this->controlPanelHelper->getPageDatabaseTabUrl();
         $this->addButton('back', [
             'label'     => $this->__('Back'),
             'onclick'   => "window.open('{$url}','_blank')",

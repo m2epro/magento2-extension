@@ -46,9 +46,14 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
     protected $objectManager;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Magento\Sales\Model\ResourceModel\Order\Payment\Transaction\CollectionFactory $transactionCollectionFactory,
         \Magento\Sales\Model\ResourceModel\Order\Creditmemo\CollectionFactory $creditmemoCollectionFactory,
         \Magento\Sales\Model\ResourceModel\Order\Shipment\CollectionFactory $shipmentCollectionFactory,
@@ -66,20 +71,9 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         \Magento\Framework\App\ResourceConnection $resource,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
-        \Magento\Framework\ObjectManagerInterface $objectManager
+        \Magento\Framework\ObjectManagerInterface $objectManager,
+        \Ess\M2ePro\Helper\Data $helperData
     ) {
-        $this->transactionCollectionFactory = $transactionCollectionFactory;
-        $this->creditmemoCollectionFactory = $creditmemoCollectionFactory;
-        $this->shipmentCollectionFactory = $shipmentCollectionFactory;
-        $this->invoiceCollectionFactory = $invoiceCollectionFactory;
-        $this->categoryFactory = $categoryFactory;
-        $this->attributeSetFactory = $attributeSetFactory;
-        $this->productFactory = $productFactory;
-        $this->attributeCollection = $attributeCollection;
-        $this->moduleList = $moduleList;
-        $this->moduleManager = $moduleManager;
-        $this->objectManager = $objectManager;
-
         parent::__construct(
             $config,
             $storeManager,
@@ -89,6 +83,20 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
             $activeRecordFactory,
             $parentFactory
         );
+
+        $this->transactionCollectionFactory = $transactionCollectionFactory;
+        $this->creditmemoCollectionFactory  = $creditmemoCollectionFactory;
+        $this->shipmentCollectionFactory    = $shipmentCollectionFactory;
+        $this->invoiceCollectionFactory     = $invoiceCollectionFactory;
+        $this->categoryFactory              = $categoryFactory;
+        $this->attributeSetFactory          = $attributeSetFactory;
+        $this->productFactory               = $productFactory;
+        $this->attributeCollection          = $attributeCollection;
+        $this->moduleList                   = $moduleList;
+        $this->moduleManager                = $moduleManager;
+        $this->objectManager                = $objectManager;
+        $this->moduleConfiguration          = $moduleConfiguration;
+        $this->helperData                   = $helperData;
     }
 
     //########################################
@@ -112,10 +120,12 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
         if ($this->getInitiator() === \Ess\M2ePro\Helper\Data::INITIATOR_DEVELOPER ||
             $lastRun === null ||
-            $this->getHelper('Data')->getCurrentGmtDate(true) > strtotime($lastRun) + self::RUN_INTERVAL) {
+            $this->helperData->getCurrentGmtDate(true) >
+                (int)$this->helperData->createGmtDateTime($lastRun)->format('U') + self::RUN_INTERVAL
+        ) {
             $this->getHelper('Module')->getRegistry()->setValue(
                 '/servicing/statistic/last_run/',
-                $this->getHelper('Data')->getCurrentGmtDate()
+                $this->helperData->getCurrentGmtDate()
             );
 
             return true;
@@ -227,7 +237,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
         $data['settings']['compilation']   = defined('COMPILER_INCLUDE_PATH');
         $data['settings']['secret_key']    = $this->getHelper('Magento')->isSecretKeyToUrl();
-        $data['settings']['timezone']    = $this->getHelper('Data')->getConfigTimezone();
+        $data['settings']['timezone']    = $this->helperData->getConfigTimezone();
     }
 
     private function appendMagentoStoresInfo(&$data)
@@ -493,17 +503,15 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
     private function appendExtensionSettingsInfo(&$data)
     {
-        /** @var \Ess\M2ePro\Helper\Module\Configuration $configHelper */
-        $configHelper = $this->getHelper('Module_Configuration');
         $config = $this->getHelper('Module')->getConfig();
         $settings = [];
 
-        $settings['products_show_thumbnails']    = $configHelper->getViewShowProductsThumbnailsMode();
-        $settings['block_notices_show']          = $configHelper->getViewShowBlockNoticesMode();
-        $settings['manage_stock_backorders']     = $configHelper->getProductForceQtyMode();
-        $settings['manage_stock_backorders_qty'] = $configHelper->getProductForceQtyValue();
-        $settings['price_convert_mode']          = $configHelper->getMagentoAttributePriceTypeConvertingMode();
-        $settings['inspector_mode']              = $configHelper->getListingProductInspectorMode();
+        $settings['products_show_thumbnails']    = $this->moduleConfiguration->getViewShowProductsThumbnailsMode();
+        $settings['block_notices_show']          = $this->moduleConfiguration->getViewShowBlockNoticesMode();
+        $settings['manage_stock_backorders']     = $this->moduleConfiguration->getProductForceQtyMode();
+        $settings['manage_stock_backorders_qty'] = $this->moduleConfiguration->getProductForceQtyValue();
+        $settings['price_convert_mode']          = $this->moduleConfiguration->getMagentoAttributePriceTypeConvertingMode();
+        $settings['inspector_mode']              = $this->moduleConfiguration->getListingProductInspectorMode();
 
         $settings['logs_clearing'] = [];
         $settings['channels']      = [];
@@ -746,18 +754,17 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     {
         $structureHelper = $this->getHelper('Module_Database_Structure');
 
-        $queryStmt = $this->resource->getConnection()
-            ->select()
-            ->from(
-                $structureHelper->getTableNameWithPrefix('m2epro_listing'),
-                [
-                    'component'      => 'component_mode',
-                    'marketplace_id' => 'marketplace_id',
-                    'account_id'     => 'account_id',
-                    'products_count' => 'products_total_count'
-                ]
-            )
-            ->query();
+        $m2eproListing = $structureHelper->getTableNameWithPrefix('m2epro_listing');
+        $m2eproListingProduct = $structureHelper->getTableNameWithPrefix('m2epro_listing_product');
+
+        $sql = "SELECT
+                    l.component_mode                                                         AS component,
+                    l.marketplace_id                                                         AS marketplace_id,
+                    l.account_id                                                             AS account_id,
+                    (SELECT COUNT(*) FROM `{$m2eproListingProduct}` WHERE listing_id = l.id) AS products_count
+                FROM `{$m2eproListing}` AS `l`;";
+
+        $queryStmt = $this->resource->getConnection()->query($sql);
 
         $productTypes = [
             \Ess\M2ePro\Model\Magento\Product::TYPE_SIMPLE_ORIGIN,
@@ -850,7 +857,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $instructionTypeTiming = $this->getHelper('Module')->getRegistry()
             ->getValueFromJson(InstructionType::REGISTRY_KEY_DATA);
 
-        $currentDateTime = $this->getHelper('Data')->createCurrentGmtDateTime();
+        $currentDateTime = $this->helperData->createCurrentGmtDateTime();
         $currentDate = $currentDateTime->format('Y-m-d');
         $currentHour = $currentDateTime->format('H-00');
 
@@ -1059,13 +1066,14 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
                ->query();
 
         $statuses = [
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING             => 'pending',
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_UNSHIPPED           => 'unshipped',
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED_PARTIALLY   => 'shipped_partially',
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED             => 'shipped',
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_UNFULFILLABLE       => 'unfulfillable',
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED            => 'canceled',
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_INVOICE_UNCONFIRMED => 'invoice_uncorfirmed'
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING                => 'pending',
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_UNSHIPPED              => 'unshipped',
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED_PARTIALLY      => 'shipped_partially',
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED                => 'shipped',
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_UNFULFILLABLE          => 'unfulfillable',
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED               => 'canceled',
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_INVOICE_UNCONFIRMED    => 'invoice_uncorfirmed',
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELLATION_REQUESTED => 'unshipped_cancellation_requested'
         ];
 
         while ($row = $queryStmt->fetch()) {

@@ -20,9 +20,6 @@ class InstructionType extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     const DEFAULT_TIME_LIMIT = 300;
 
-    /** @var \Ess\M2ePro\Helper\Data $helperData */
-    private $helperData;
-
     /** @var \Ess\M2ePro\Model\Registry\Manager $registryManager */
     private $registryManager;
 
@@ -34,8 +31,6 @@ class InstructionType extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     /** @var \DateTime */
     private $currentDateTime;
-
-    //########################################
 
     public function __construct(
         \Magento\Framework\Event\Manager $eventManager,
@@ -49,15 +44,9 @@ class InstructionType extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Model\Servicing\Task\Statistic\Manager $statisticManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $listingProductInstruction
-    )
-    {
-        $this->helperData = $helperData;
-        $this->registryManager = $registryManager;
-        $this->statisticManager = $statisticManager;
-        $this->listingProductInstruction = $listingProductInstruction;
-        $this->currentDateTime = $this->helperData->createCurrentGmtDateTime();
-
+    ) {
         parent::__construct(
+            $helperData,
             $eventManager,
             $parentFactory,
             $modelFactory,
@@ -66,9 +55,11 @@ class InstructionType extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $taskRepo,
             $resource
         );
+        $this->registryManager = $registryManager;
+        $this->statisticManager = $statisticManager;
+        $this->listingProductInstruction = $listingProductInstruction;
+        $this->currentDateTime = $this->helperData->createCurrentGmtDateTime();
     }
-
-    //########################################
 
     protected function performActions()
     {

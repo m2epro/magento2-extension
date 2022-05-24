@@ -10,12 +10,21 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Grid
- */
 class Grid extends AbstractGrid
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
+    private $componentEbayPickupStore;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $backendHelper, $data);
+
+        $this->componentEbayPickupStore = $componentEbayPickupStore;
+    }
 
     public function _construct()
     {
@@ -183,7 +192,7 @@ class Grid extends AbstractGrid
                                      ->addFieldToFilter('is_in_store_pickup', 1)
                                      ->setOrder('sorder', 'ASC');
 
-        $pickupStoreHelper = $this->getHelper('Component_Ebay_PickupStore');
+        $pickupStoreHelper = $this->componentEbayPickupStore;
         $options = [];
         foreach ($marketplaceCollection->getItems() as $marketplace) {
             $countryData = $pickupStoreHelper->convertMarketplaceToCountry(

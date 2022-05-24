@@ -38,9 +38,11 @@ class WalmartEndDate extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Abstr
             return null;
         }
 
-        $date = new \DateTime($date);
+        $date = $this->helperData->createGmtDateTime($date);
 
-        return strtotime($date->format('Y-m-d'));
+        return (int)$this->helperData
+            ->createGmtDateTime($date->format('Y-m-d'))
+            ->format('U');
     }
 
     /**

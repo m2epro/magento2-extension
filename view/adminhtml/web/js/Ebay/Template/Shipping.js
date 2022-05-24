@@ -876,7 +876,7 @@ define([
 
         weightChange: function ()
         {
-            var measurementNoteElement = this.up().next('.note');
+            var measurementNoteElement = this.next('.note');
 
             $('weight_cv').hide();
             measurementNoteElement.hide();

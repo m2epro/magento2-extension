@@ -8,14 +8,25 @@
 
 namespace Ess\M2ePro\Block\Adminhtml;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\General
- */
 class General extends Magento\AbstractBlock
 {
     protected $_template = 'general.phtml';
+    /** @var \Magento\Framework\ObjectManagerInterface */
+    private $objectManager;
+    /** @var \Ess\M2ePro\Helper\View */
+    public $viewHelper;
 
-    //########################################
+    public function __construct(
+        \Magento\Framework\ObjectManagerInterface $objectManager,
+        \Ess\M2ePro\Helper\View $viewHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+
+        $this->objectManager = $objectManager;
+        $this->viewHelper = $viewHelper;
+    }
 
     protected function _prepareLayout()
     {
@@ -37,7 +48,7 @@ class General extends Magento\AbstractBlock
         $this->css->addFile('style.css');
         $this->css->addFile('grid.css');
 
-        $currentView = $this->getHelper('View')->getCurrentView();
+        $currentView = $this->viewHelper->getCurrentView();
         if (!empty($currentView)) {
             $this->css->addFile($currentView . '/style.css');
         }
@@ -60,7 +71,7 @@ class General extends Magento\AbstractBlock
          * m2epro_config table may be missing if migration is going on
          */
         $this->block_notices_show = $this->helperFactory->getObject('Module')->areImportantTablesExist()
-            ? $this->getHelper('Module_Configuration')->getViewShowBlockNoticesMode()
+            ? $this->objectManager->get(\Ess\M2ePro\Helper\Module\Configuration::class)->getViewShowBlockNoticesMode()
             : 0;
 
         $synchWarningMessage = 'Marketplace synchronization was completed with warnings. '

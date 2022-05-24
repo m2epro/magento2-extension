@@ -136,13 +136,13 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
         }
 
         usort($descriptionTemplates, function ($a, $b) {
-            return $a["is_new_asin_accepted"] < $b["is_new_asin_accepted"];
+            return $b["is_new_asin_accepted"] <=> $a["is_new_asin_accepted"];
         });
 
         $options = [['label' => '','value' => '', 'attrs' => ['class' => 'empty']]];
         foreach ($descriptionTemplates as $template) {
             $tmp = [
-                'label' => $this->escapeHtml($template['title']),
+                'label' => $this->_escaper->escapeHtml($template['title']),
                 'value' => $template['id']
             ];
 

@@ -8,24 +8,35 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Attribute
- */
 class Attribute extends \Ess\M2ePro\Model\AbstractModel
 {
-    /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary */
+    protected $vocabularyHelper;
+
+    /** @var \Ess\M2ePro\Model\Magento\Product */
     private $magentoProduct = null;
+
+    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Attribute\Resolver */
+    private $resolver = null;
 
     private $sourceAttributes = [];
 
     private $destinationAttributes = [];
 
-    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Attribute\Resolver $resolver */
-    private $resolver = null;
-
     private $matchedAttributes = null;
 
     private $canUseDictionary = true;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->vocabularyHelper = $vocabularyHelper;
+    }
 
     //########################################
 
@@ -327,11 +338,9 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
 
     private function getDestinationAttributesLocalVocabularyData()
     {
-        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
-
         $resultData = [];
         foreach ($this->getDestinationAttributes() as $attribute) {
-            $resultData[$attribute] = $vocabularyHelper->getLocalAttributeNames($attribute);
+            $resultData[$attribute] = $this->vocabularyHelper->getLocalAttributeNames($attribute);
         }
 
         return $resultData;
@@ -339,11 +348,9 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
 
     private function getDestinationAttributesServerVocabularyData()
     {
-        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
-
         $resultData = [];
         foreach ($this->getDestinationAttributes() as $attribute) {
-            $resultData[$attribute] = $vocabularyHelper->getServerAttributeNames($attribute);
+            $resultData[$attribute] = $this->vocabularyHelper->getServerAttributeNames($attribute);
         }
 
         return $resultData;

@@ -131,7 +131,7 @@ define([
                     var title = this.getPopUpTitle(templateNick, this.getSelectedProductsTitles());
 
                     if (typeof this.popUp != 'undefined') {
-                        var $title = this.popUp.data('modal').modal.find('.modal-title');
+                        var $title = this.popUp.data('mageModal').modal.find('.modal-title');
                         $title.text(title);
                     }
 

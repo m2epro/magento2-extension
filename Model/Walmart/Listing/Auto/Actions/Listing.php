@@ -205,8 +205,7 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         $walmartListingProduct->save();
 
         if ($walmartListingProduct->getVariationManager()->isRelationParentType()) {
-            $processor = $walmartListingProduct->getVariationManager()->getTypeModel()->getProcessor();
-            $processor->process();
+            $walmartListingProduct->addVariationAttributes();
         }
     }
 

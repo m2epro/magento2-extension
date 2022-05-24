@@ -10,14 +10,22 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\Order;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\Order\ExcludedStates
- */
 class ExcludedStates extends AbstractBlock
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    protected $amazonHelper;
 
     protected $_template = 'amazon/account/order/excludedStates.phtml';
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+
+        $this->amazonHelper = $amazonHelper;
+    }
 
     //########################################
 
@@ -28,7 +36,7 @@ class ExcludedStates extends AbstractBlock
 
     public function getStatesList()
     {
-        return array_chunk($this->getHelper('Component_Amazon')->getStatesList(), 8, true);
+        return array_chunk($this->amazonHelper->getStatesList(), 8, true);
     }
 
     //########################################

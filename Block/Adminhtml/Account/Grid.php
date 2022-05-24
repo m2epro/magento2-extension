@@ -10,12 +10,20 @@ namespace Ess\M2ePro\Block\Adminhtml\Account;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Account\Grid
- */
 class Grid extends AbstractGrid
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View */
+    protected $viewHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\View $viewHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        array $data = []
+    ) {
+        $this->viewHelper = $viewHelper;
+        parent::__construct($context, $backendHelper, $data);
+    }
 
     public function _construct()
     {
@@ -25,7 +33,7 @@ class Grid extends AbstractGrid
 
         // Initialize view
         // ---------------------------------------
-        $view = $this->getHelper('View')->getCurrentView();
+        $view = $this->viewHelper->getCurrentView();
         // ---------------------------------------
 
         // Initialization block
@@ -107,7 +115,7 @@ class Grid extends AbstractGrid
 
     public function getRowUrl($row)
     {
-        return $this->getHelper('View')
+        return $this->viewHelper
             ->getUrl($row, 'account', 'edit', ['id' => $row->getData('id')]);
     }
 

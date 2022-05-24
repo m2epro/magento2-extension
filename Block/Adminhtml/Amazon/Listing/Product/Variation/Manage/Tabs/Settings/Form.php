@@ -8,12 +8,8 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Settings;
 
-use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation;
 use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Settings\Form
- */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     const MESSAGE_TYPE_ERROR = 'error';
@@ -25,6 +21,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected $childListingProducts = null;
     protected $currentProductVariations = null;
 
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation */
+    protected $variationHelper;
+
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct;
 
@@ -32,6 +31,17 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected $matcherAttributes;
 
     protected $messages = [];
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $formFactory, $data);
+        $this->variationHelper = $variationHelper;
+    }
 
     //########################################
 
@@ -926,8 +936,7 @@ HTML;
 
         $channelThemes = $detailsModel->getVariationThemes($descriptionTemplate->getProductDataNick());
 
-        $variationHelper = $this->getHelper('Component_Amazon_Variation');
-        $themesUsageData = $variationHelper->getThemesUsageData();
+        $themesUsageData = $this->variationHelper->getThemesUsageData();
         $usedThemes = [];
 
         if (!empty($themesUsageData[$marketPlaceId])) {

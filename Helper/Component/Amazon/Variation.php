@@ -8,33 +8,56 @@
 
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
-/**
- * Class \Ess\M2ePro\Helper\Component\Amazon\Variation
- */
 class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const DATA_REGISTRY_KEY  = 'amazon_variation_themes_usage';
 
+    /** @var \Ess\M2ePro\Model\Factory */
     protected $modelFactory;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonParentFactory;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    protected $databaseStructure;
+
+    /** @var \Ess\M2ePro\Helper\Magento\Product */
+    protected $helperMagentoProduct;
+
+    /** @var \Ess\M2ePro\Helper\Module */
+    protected $helperModule;
+
+    /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
+    protected $cachePermanent;
 
     public function __construct(
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonParentFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseStructure,
+        \Ess\M2ePro\Helper\Magento\Product $helperMagentoProduct,
+        \Ess\M2ePro\Helper\Module $helperModule,
+        \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
+        parent::__construct($helperFactory, $context);
+
         $this->modelFactory = $modelFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->amazonParentFactory = $amazonParentFactory;
         $this->resourceConnection = $resourceConnection;
-        parent::__construct($helperFactory, $context);
+        $this->databaseStructure = $databaseStructure;
+        $this->helperMagentoProduct = $helperMagentoProduct;
+        $this->helperModule = $helperModule;
+        $this->cachePermanent = $cachePermanent;
     }
 
     //########################################
@@ -55,7 +78,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
     public function filterProductsByGeneralId($productsIds)
     {
         $connRead = $this->resourceConnection->getConnection();
-        $table = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_amazon_listing_product');
+        $table = $this->databaseStructure->getTableNameWithPrefix('m2epro_amazon_listing_product');
 
         $select = $connRead->select();
         $select->from(['alp' => $table], ['listing_product_id'])
@@ -68,7 +91,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
     public function filterProductsByGeneralIdOwner($productsIds)
     {
         $connRead = $this->resourceConnection->getConnection();
-        $table = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_amazon_listing_product');
+        $table = $this->databaseStructure->getTableNameWithPrefix('m2epro_amazon_listing_product');
 
         $select = $connRead->select();
         $select->from(['alp' => $table], ['listing_product_id'])
@@ -81,7 +104,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
     public function filterProductsByStatus($productsIds)
     {
         $connRead = $this->resourceConnection->getConnection();
-        $table = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_listing_product');
+        $table = $this->databaseStructure->getTableNameWithPrefix('m2epro_listing_product');
 
         $select = $connRead->select();
         $select->from(['lp' => $table], ['id'])
@@ -117,12 +140,9 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
     public function filterProductsByMagentoProductType($listingProductsIds)
     {
         $connRead = $this->resourceConnection->getConnection();
-        $tableListingProduct = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_listing_product');
-        $tableProductEntity = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('catalog_product_entity');
-        $tableProductOption = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('catalog_product_option');
+        $tableListingProduct = $this->databaseStructure->getTableNameWithPrefix('m2epro_listing_product');
+        $tableProductEntity = $this->databaseStructure->getTableNameWithPrefix('catalog_product_entity');
+        $tableProductOption = $this->databaseStructure->getTableNameWithPrefix('catalog_product_option');
 
         $productsIdsChunks = array_chunk($listingProductsIds, 1000);
         $listingProductsIds = [];
@@ -155,15 +175,15 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
             $productToListingProductIds = array_flip($listingProductToProductIds);
 
             foreach ($productsData as $product) {
-                if ($this->getHelper('Magento\Product')->isBundleType($product['type_id'])) {
+                if ($this->helperMagentoProduct->isBundleType($product['type_id'])) {
                     unset($productToListingProductIds[$product['entity_id']]);
                 }
 
-                if ($this->getHelper('Magento\Product')->isDownloadableType($product['type_id'])) {
+                if ($this->helperMagentoProduct->isDownloadableType($product['type_id'])) {
                     unset($productToListingProductIds[$product['entity_id']]);
                 }
 
-                if ($this->getHelper('Magento\Product')->isSimpleType($product['type_id']) &&
+                if ($this->helperMagentoProduct->isSimpleType($product['type_id']) &&
                     !empty($product['option_id']) && $product['option_is_require'] == 1 &&
                     in_array($product['option_type'], ['drop_down', 'radio', 'multiple', 'checkbox'])) {
                     unset($productToListingProductIds[$product['entity_id']]);
@@ -195,9 +215,8 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
         $productsIds = [];
 
         $connRead = $this->resourceConnection->getConnection();
-        $tableAmazonListingProduct = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_amazon_listing_product');
-        $tableAmazonTemplateDescription = $this->getHelper('Module_Database_Structure')
+        $tableAmazonListingProduct = $this->databaseStructure->getTableNameWithPrefix('m2epro_amazon_listing_product');
+        $tableAmazonTemplateDescription = $this->databaseStructure
             ->getTableNameWithPrefix('m2epro_amazon_template_description');
 
         foreach ($productsIdsChunks as $productsIdsChunk) {
@@ -258,7 +277,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
             return $cacheData;
         }
 
-        $data = $this->getHelper('Module')->getRegistry()->getValueFromJson(self::DATA_REGISTRY_KEY);
+        $data = $this->helperModule->getRegistry()->getValueFromJson(self::DATA_REGISTRY_KEY);
 
         $this->setThemeUsageDataCache($data);
 
@@ -267,7 +286,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function increaseThemeUsageCount($theme, $marketplaceId)
     {
-        $data = $this->getHelper('Module')->getRegistry()->getValueFromJson(self::DATA_REGISTRY_KEY);
+        $data = $this->helperModule->getRegistry()->getValueFromJson(self::DATA_REGISTRY_KEY);
 
         if (empty($data[$marketplaceId][$theme])) {
             $data[$marketplaceId][$theme] = 0;
@@ -276,7 +295,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
         arsort($data[$marketplaceId]);
 
-        $this->getHelper('Module')->getRegistry()->setValue(self::DATA_REGISTRY_KEY, $data);
+        $this->helperModule->getRegistry()->setValue(self::DATA_REGISTRY_KEY, $data);
 
         $this->removeThemeUsageDataCache();
     }
@@ -286,19 +305,19 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
     private function getThemeUsageDataCache()
     {
         $cacheKey = __CLASS__.self::DATA_REGISTRY_KEY;
-        return $this->getHelper('Data_Cache_Permanent')->getValue($cacheKey);
+        return $this->cachePermanent->getValue($cacheKey);
     }
 
     private function setThemeUsageDataCache(array $data)
     {
         $cacheKey = __CLASS__.self::DATA_REGISTRY_KEY;
-        $this->getHelper('Data_Cache_Permanent')->setValue($cacheKey, $data);
+        $this->cachePermanent->setValue($cacheKey, $data);
     }
 
     private function removeThemeUsageDataCache()
     {
         $cacheKey = __CLASS__.self::DATA_REGISTRY_KEY;
-        $this->getHelper('Data_Cache_Permanent')->removeValue($cacheKey);
+        $this->cachePermanent->removeValue($cacheKey);
     }
 
     //########################################

@@ -14,14 +14,29 @@ use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode as Ca
 use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
 use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings
- */
 abstract class Settings extends Listing
 {
     protected $sessionKey = 'ebay_listing_product_category_settings';
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
+    protected $componentEbayCategory;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    protected $componentEbayCategoryEbay;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Store */
+    protected $componentEbayCategoryStore;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($ebayFactory, $context);
+
+        $this->componentEbayCategoryStore = $componentEbayCategoryStore;
+        $this->componentEbayCategory      = $componentEbayCategory;
+        $this->componentEbayCategoryEbay  = $componentEbayCategoryEbay;
+    }
 
     protected function getSelectedListingProductsIdsByCategoriesIds($categoriesIds)
     {
@@ -92,7 +107,7 @@ abstract class Settings extends Listing
                     continue;
                 }
 
-                if ($this->getHelper('Component_Ebay_Category')->isEbayCategoryType($categoryType)) {
+                if ($this->componentEbayCategory->isEbayCategoryType($categoryType)) {
                     $template = $this->activeRecordFactory->getObject('Ebay_Template_Category');
                     $builder = $this->modelFactory->getObject('Ebay_Template_Category_Builder');
                 } else {
@@ -138,7 +153,7 @@ abstract class Settings extends Listing
             return true;
         }
 
-        return !$this->getHelper('Component_Ebay_Category_Ebay')->hasRequiredSpecifics(
+        return !$this->componentEbayCategoryEbay->hasRequiredSpecifics(
             $categoryData[eBayCategory::TYPE_EBAY_MAIN]['value'],
             $listing->getMarketplaceId()
         );
@@ -150,7 +165,7 @@ abstract class Settings extends Listing
     {
         $unique = [];
 
-        $categoryHelper = $this->getHelper('Component_Ebay_Category');
+        $categoryHelper = $this->componentEbayCategory;
         $listing = $this->getListingFromRequest();
 
         foreach ($sessionData as $listingProductId => $templatesData) {
@@ -166,7 +181,7 @@ abstract class Settings extends Listing
                     continue;
                 }
 
-                list($mainHash, $hash) = $this->getCategoryHashes($categoryData);
+                [$mainHash, $hash] = $this->getCategoryHashes($categoryData);
 
                 if (!isset($unique[$hash][$categoryType])) {
                     $unique[$hash][$categoryType] = $categoryData;
@@ -248,12 +263,12 @@ abstract class Settings extends Listing
             $onlineData = $listingProduct->getChildObject()->getOnlineCategoriesData();
             foreach ($onlineDataByType as $onlineKey => $categoryType) {
                 if (!empty($onlineData[$onlineKey])) {
-                    $categoryPath = $this->getHelper('Component_Ebay_Category')->isEbayCategoryType($categoryType)
-                        ? $this->getHelper('Component_Ebay_Category_Ebay')->getPath(
+                    $categoryPath = $this->componentEbayCategory->isEbayCategoryType($categoryType)
+                        ? $this->componentEbayCategoryEbay->getPath(
                             $onlineData[$onlineKey],
                             $listingProduct->getMarketplace()->getId()
                         )
-                        : $this->getHelper('Component_Ebay_Category_Store')->getPath(
+                        : $this->componentEbayCategoryStore->getPath(
                             $onlineData[$onlineKey],
                             $listingProduct->getAccount()->getId()
                         );

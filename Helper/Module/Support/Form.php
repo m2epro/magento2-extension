@@ -8,141 +8,145 @@
 
 namespace Ess\M2ePro\Helper\Module\Support;
 
-/**
- * Class \Ess\M2ePro\Helper\Module\Support\Form
- */
-class Form extends \Ess\M2ePro\Helper\AbstractHelper
+class Form
 {
-    protected $urlBuilder;
-    protected $phpEnvironmentRequest;
+    /** @var \Magento\Framework\HTTP\PhpEnvironment\Request */
+    private $phpEnvironmentRequest;
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Component */
+    private $componentHelper;
+    /** @var \Ess\M2ePro\Helper\Client */
+    private $clientHelper;
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
+    /** @var \Ess\M2ePro\Helper\Module */
+    private $moduleHelper;
 
-    //########################################
-
+    /**
+     * @param \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Helper\Component $componentHelper
+     * @param \Ess\M2ePro\Helper\Client $clientHelper
+     * @param \Ess\M2ePro\Helper\Magento $magentoHelper
+     * @param \Ess\M2ePro\Helper\Module $moduleHelper
+     */
     public function __construct(
-        \Magento\Backend\Model\UrlInterface $urlBuilder,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context,
-        \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest
+        \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Component $componentHelper,
+        \Ess\M2ePro\Helper\Client $clientHelper,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
+        \Ess\M2ePro\Helper\Module $moduleHelper
     ) {
-        $this->urlBuilder = $urlBuilder;
         $this->phpEnvironmentRequest = $phpEnvironmentRequest;
-        parent::__construct($helperFactory, $context);
+        $this->supportHelper = $supportHelper;
+        $this->componentHelper = $componentHelper;
+        $this->clientHelper = $clientHelper;
+        $this->magentoHelper = $magentoHelper;
+        $this->moduleHelper = $moduleHelper;
     }
 
-    //########################################
-
-    public function send($component, $fromEmail, $fromName, $subject, $description, $severity)
-    {
+    /**
+     * @param string $component
+     * @param string $fromEmail
+     * @param string $fromName
+     * @param string $subject
+     * @param string $description
+     *
+     * @return void
+     * @throws \Zend_Mail_Exception
+     */
+    public function send(
+        string $component,
+        string $fromEmail,
+        string $fromName,
+        string $subject,
+        string $description
+    ): void {
         $attachments = [];
         $uploadedFiles = $this->phpEnvironmentRequest->getFiles()->toArray();
 
         if (!empty($uploadedFiles['files'])) {
-            foreach ($uploadedFiles['files'] as $key => $uploadFileInfo) {
-                if ('' == $uploadFileInfo['name']) {
+            foreach ($uploadedFiles['files'] as $uploadFileInfo) {
+                if ('' === $uploadFileInfo['name']) {
                     continue;
                 }
 
                 $attachment = new \Zend_Mime_Part(file_get_contents($uploadFileInfo['tmp_name']));
-                $attachment->type        = $uploadFileInfo['type'];
+                $attachment->type = $uploadFileInfo['type'];
                 $attachment->disposition = \Zend_Mime::DISPOSITION_ATTACHMENT;
-                $attachment->encoding    = \Zend_Mime::ENCODING_BASE64;
-                $attachment->filename    = $uploadFileInfo['name'];
+                $attachment->encoding = \Zend_Mime::ENCODING_BASE64;
+                $attachment->filename = $uploadFileInfo['name'];
 
                 $attachments[] = $attachment;
             }
         }
 
-        $toEmail = $this->getHelper('Module\Support')->getContactEmail();
-        $componentTitle = $this->getHelper('Component')->getComponentTitle($component);
-        $body = $this->createBody($subject, $componentTitle, $description, $severity);
+        $toEmail = $this->supportHelper->getContactEmail();
+        $body = $this->createBody($component, $description);
 
         $this->sendMailNow($toEmail, $fromEmail, $fromName, $subject, $body, $attachments);
     }
 
-    public function getSummaryInfo()
-    {
-        $locationInfo = [];
-        $locationInfo['domain'] = $this->getHelper('Client')->getDomain();
-        $locationInfo['ip'] = $this->getHelper('Client')->getIp();
-        $locationInfo['directory'] = $this->getHelper('Client')->getBaseDirectory();
+    // ----------------------------------------
 
-        $platformInfo = [];
-        $platformInfo['edition'] = $this->getHelper('Magento')->getEditionName();
-        $platformInfo['version'] = $this->getHelper('Magento')->getVersion();
-
-        $moduleInfo = [];
-        $moduleInfo['name'] = $this->getHelper('Module')->getName();
-        $moduleInfo['version'] = $this->getHelper('Module')->getPublicVersion();
-
-        $phpInfo = $this->getHelper('Client')->getPhpSettings();
-        $phpInfo['api'] = $this->getHelper('Client')->getPhpApiName();
-        $phpInfo['version'] = $this->getHelper('Client')->getPhpVersion();
-        $phpInfo['ini_file_location'] = $this->getHelper('Client')->getPhpIniFileLoaded();
-
-        $mysqlInfo = $this->getHelper('Client')->getMysqlSettings();
-        $mysqlInfo['api'] = $this->getHelper('Client')->getMysqlApiName();
-        $prefix = $this->getHelper('Magento')->getDatabaseTablesPrefix();
-        $mysqlInfo['prefix'] = $prefix != '' ? $prefix : 'Disabled';
-        $mysqlInfo['version'] = $this->getHelper('Client')->getMysqlVersion();
-        $mysqlInfo['database'] = $this->getHelper('Magento')->getDatabaseName();
-
-        $info = <<<DATA
--------------------------------- PLATFORM INFO -----------------------------------
-Edition: {$platformInfo['edition']}
-Version: {$platformInfo['version']}
-
--------------------------------- MODULE INFO -------------------------------------
-Name: {$moduleInfo['name']}
-Version: {$moduleInfo['version']}
-
--------------------------------- LOCATION INFO -----------------------------------
-Domain: {$locationInfo['domain']}
-Ip: {$locationInfo['ip']}
-Directory: {$locationInfo['directory']}
-
--------------------------------- PHP INFO ----------------------------------------
-Version: {$phpInfo['version']}
-Api: {$phpInfo['api']}
-Memory Limit: {$phpInfo['memory_limit']}
-Max Execution Time: {$phpInfo['max_execution_time']}
-PHP ini file: {$phpInfo['ini_file_location']}
-
--------------------------------- MYSQL INFO --------------------------------------
-Version: {$mysqlInfo['version']}
-Api: {$mysqlInfo['api']}
-Database: {$mysqlInfo['database']}
-Tables Prefix: {$mysqlInfo['prefix']}
-Connection Timeout: {$mysqlInfo['connect_timeout']}
-Wait Timeout: {$mysqlInfo['wait_timeout']}
-DATA;
-
-        return $info;
-    }
-
-    //########################################
-
-    private function createBody($subject, $component, $description, $severity)
-    {
-        $body = <<<DATA
+    /**
+     * @param string $component
+     * @param string $description
+     *
+     * @return string
+     */
+    private function createBody(
+        string $component,
+        string $description
+    ): string {
+        return <<<DATA
 
 {$description}
 
 -------------------------------- GENERAL -----------------------------------------
-Component: {$component}
+Component: {$this->componentHelper->getComponentTitle($component)}
 
+-------------------------------- PLATFORM INFO -----------------------------------
+Edition: {$this->magentoHelper->getEditionName()}
+Version: {$this->magentoHelper->getVersion()}
 
+-------------------------------- MODULE INFO -------------------------------------
+Name: {$this->moduleHelper->getName()}
+Version: {$this->moduleHelper->getPublicVersion()}
+
+-------------------------------- LOCATION INFO -----------------------------------
+Domain: {$this->clientHelper->getDomain()}
+Ip: {$this->clientHelper->getIp()}
+
+-------------------------------- PHP INFO ----------------------------------------
+Version: {$this->clientHelper->getPhpVersion()}
+Api: {$this->clientHelper->getPhpApiName()}
+Memory Limit: {$this->clientHelper->getMemoryLimit()}
+Max Execution Time: {$this->clientHelper->getExecutionTime()}
 DATA;
-
-        $severity = $severity ? "Severity: {$severity}" : '';
-        $body = str_replace('%severity%', $severity, $body);
-
-        $body .= $this->getSummaryInfo();
-
-        return $body;
     }
 
-    private function sendMailNow($toEmail, $fromEmail, $fromName, $subject, $body, array $attachments = [])
-    {
+    /**
+     * @param string $toEmail
+     * @param string $fromEmail
+     * @param string $fromName
+     * @param string $subject
+     * @param string $body
+     * @param array $attachments
+     *
+     * @return void
+     * @throws \Zend_Mail_Exception
+     */
+    private function sendMailNow(
+        string $toEmail,
+        string $fromEmail,
+        string $fromName,
+        string $subject,
+        string $body,
+        array $attachments = []
+    ): void {
         $mail = new \Zend_Mail('UTF-8');
 
         $mail->addTo($toEmail)
@@ -156,6 +160,4 @@ DATA;
 
         $mail->send();
     }
-
-    //########################################
 }

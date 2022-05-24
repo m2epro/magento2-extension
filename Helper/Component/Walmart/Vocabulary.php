@@ -8,14 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Component\Walmart;
 
-/**
- * Class \Ess\M2ePro\Helper\Component\Walmart\Vocabulary
- */
 class Vocabulary extends \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
     protected $walmartParentFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartParentFactory,

@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add\Index
- */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 {
     //########################################
@@ -320,39 +317,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         $prefix .= '_listing_product';
 
         return $prefix;
-    }
-
-    //########################################
-
-    protected function filterProductsForSearch($productsIds)
-    {
-        $productsIds = $this->getHelper('Component_Amazon_Variation')->filterProductsByStatus($productsIds);
-
-        $unsetProducts = $this->getLockedProductsInAction($productsIds);
-        $unsetProducts = array_unique($unsetProducts);
-
-        foreach ($unsetProducts as $id) {
-            $key = array_search($id, $productsIds);
-            unset($productsIds[$key]);
-        }
-
-        return $productsIds;
-    }
-
-    //########################################
-
-    protected function getLockedProductsInAction($productsIds)
-    {
-        $connection = $this->resourceConnection->getConnection();
-        $table = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_processing_lock');
-
-        $select = $connection->select();
-        $select->from(['pl' => $table], ['object_id'])
-            ->where('model_name = "Listing_Product"')
-            ->where('object_id IN (?)', $productsIds)
-            ->where('tag = "in_action"');
-
-        return $connection->fetchCol($select);
     }
 
     //########################################

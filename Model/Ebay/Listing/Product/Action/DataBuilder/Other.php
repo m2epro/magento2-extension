@@ -8,12 +8,21 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Other
- */
 class Other extends AbstractModel
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+    }
 
     public function getBuilderData()
     {
@@ -111,7 +120,7 @@ class Other extends AbstractModel
      */
     public function getLotSizeData()
     {
-        $categoryFeatures = $this->getHelper('Component_Ebay_Category_Ebay')->getFeatures(
+        $categoryFeatures = $this->componentEbayCategoryEbay->getFeatures(
             $this->getEbayListingProduct()->getCategoryTemplateSource()->getMainCategory(),
             $this->getMarketplace()->getId()
         );

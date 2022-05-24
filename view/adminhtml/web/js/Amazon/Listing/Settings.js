@@ -128,7 +128,7 @@ define([
             }
 
             if (lastActiveTab && url) {
-                var tabsUrl = '|tab=' + jQuery('#amazonListingEditTabs').data().tabs.active.find('a')[0].id.split('_').pop();
+                var tabsUrl = '|tab=' + jQuery('#amazonListingEditTabs').data().mageTabs.active.find('a')[0].id.split('_').pop();
                 url = url + 'back/' + base64_encode('edit' + tabsUrl) + '/';
             }
 

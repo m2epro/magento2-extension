@@ -10,29 +10,19 @@ namespace Ess\M2ePro\Helper\Data\Cache;
 
 use Ess\M2ePro\Model\Exception;
 
-/**
- * Class \Ess\M2ePro\Helper\Data\Cache\Permanent
- */
 class Permanent extends \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
 {
-    /**
-     * @var \Magento\Framework\App\Cache
-     */
+    /** @var \Magento\Framework\App\Cache */
     protected $cache;
 
-    //########################################
-
-    /**
-     * @param \Magento\Framework\App\CacheInterface $cache
-     * @param \Magento\Framework\App\Helper\Context $context
-     */
     public function __construct(
         \Magento\Framework\App\CacheInterface $cache,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
-        $this->cache = $cache;
         parent::__construct($helperFactory, $context);
+
+        $this->cache = $cache;
     }
 
     //########################################

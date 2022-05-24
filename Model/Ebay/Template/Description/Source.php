@@ -513,6 +513,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $imageOriginalHeight = $image->getOriginalHeight();
         $imageOriginalWidth = $image->getOriginalWidth();
         $image->open();
+
+        $image->keepTransparency(true);
+
         $image->setWatermarkPosition($watermarkPositions[$this->getEbayDescriptionTemplate()->getWatermarkPosition()]);
 
         /** @var \Magento\Framework\Image $watermark */

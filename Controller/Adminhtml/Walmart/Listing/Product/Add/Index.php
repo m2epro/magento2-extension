@@ -9,12 +9,25 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
 use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode as SourceModeBlock;
+use Ess\M2ePro\Controller\Adminhtml\Context;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add\Index
  */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
+    protected $listingProductCollectionFactory;
+
+    public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\CollectionFactory $listingProductCollectionFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->listingProductCollectionFactory = $listingProductCollectionFactory;
+    }
+
     //########################################
 
     public function execute()
@@ -285,6 +298,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 
         $additionalData = $this->getListing()->getSettings('additional_data');
 
+        $this->addVariationAttributes($additionalData['adding_listing_products_ids']);
+
         $this->getHelper('Data\Session')->setValue(
             'added_products_ids',
             $additionalData['adding_listing_products_ids']
@@ -341,6 +356,20 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 
     //########################################
 
+    private function addVariationAttributes($productsIds)
+    {
+        $listingProductCollection = $this->listingProductCollectionFactory->create();
+        $listingProductCollection->addFieldToFilter('listing_product_id', ['in' => $productsIds]);
+        $listingProductCollection->addFieldToFilter('is_variation_product', 1);
+
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $listingProduct */
+        foreach ($listingProductCollection as $listingProduct) {
+            $listingProduct->addVariationAttributes();
+        }
+    }
+
+    //########################################
+
     protected function getHideProductsInOtherListingsPrefix()
     {
         $id = $this->getRequest()->getParam('id');
@@ -350,39 +379,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         $prefix .= '_listing_product';
 
         return $prefix;
-    }
-
-    //########################################
-
-    protected function filterProductsForSearch($productsIds)
-    {
-        $productsIds = $this->getHelper('Component_Walmart_Variation')->filterProductsByStatus($productsIds);
-
-        $unsetProducts = $this->getLockedProductsInAction($productsIds);
-        $unsetProducts = array_unique($unsetProducts);
-
-        foreach ($unsetProducts as $id) {
-            $key = array_search($id, $productsIds);
-            unset($productsIds[$key]);
-        }
-
-        return $productsIds;
-    }
-
-    //########################################
-
-    protected function getLockedProductsInAction($productsIds)
-    {
-        $connection = $this->resourceConnection->getConnection();
-        $table = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_processing_lock');
-
-        $select = $connection->select();
-        $select->from(['pl' => $table], ['object_id'])
-            ->where('model_name = "Listing_Product"')
-            ->where('object_id IN (?)', $productsIds)
-            ->where('tag = "in_action"');
-
-        return $connection->fetchCol($select);
     }
 
     //########################################

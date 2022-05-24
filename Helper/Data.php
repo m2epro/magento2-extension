@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Helper;
 
-/**
- * Class \Ess\M2ePro\Helper\Data
- */
 class Data extends AbstractHelper
 {
     const STATUS_ERROR      = 1;
@@ -24,10 +21,19 @@ class Data extends AbstractHelper
 
     const CUSTOM_IDENTIFIER = 'm2epro_extension';
 
+    /** @var \Magento\Framework\Module\Dir */
     protected $dir;
+
+    /** @var \Magento\Backend\Model\UrlInterface */
     protected $urlBuilder;
+
+    /** @var \Magento\Framework\Stdlib\DateTime\DateTime */
     protected $localeDate;
+
+    /** @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface */
     protected $timezone;
+
+    /** @var \Magento\Framework\ObjectManagerInterface */
     protected $objectManager;
 
     /** @var \Magento\Framework\Serialize\SerializerInterface */
@@ -37,17 +43,28 @@ class Data extends AbstractHelper
     /** @var \Magento\Framework\Locale\ResolverInterface */
     protected $localeResolverInterface;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    protected $exceptionHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module */
+    protected $helperModule;
+
+    /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
+    protected $permanentCache;
 
     public function __construct(
         \Magento\Framework\Module\Dir $dir,
         \Magento\Backend\Model\UrlInterface $urlBuilder,
         \Magento\Framework\Stdlib\DateTime\DateTime $localeDate,
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timezone,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Magento\Framework\Locale\ResolverInterface $localeResolverInterface
+        \Magento\Framework\Locale\ResolverInterface $localeResolverInterface,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
+        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
+        \Ess\M2ePro\Helper\Module $helperModule,
+        \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCache,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\App\Helper\Context $context
     ) {
         parent::__construct($helperFactory, $context);
 
@@ -57,9 +74,12 @@ class Data extends AbstractHelper
         $this->timezone = $timezone;
         $this->objectManager = $objectManager;
         $this->localeResolverInterface = $localeResolverInterface;
+        $this->exceptionHelper = $exceptionHelper;
+        $this->helperModule = $helperModule;
+        $this->permanentCache = $permanentCache;
 
-        if (version_compare($this->getHelper('Magento')->getVersion(), '2.4.3', '<')) {
-            $this->phpSerialize  = version_compare($this->getHelper('Magento')->getVersion(), '2.3.5', '>=')
+        if (version_compare($magentoHelper->getVersion(), '2.4.3', '<')) {
+            $this->phpSerialize  = version_compare($magentoHelper->getVersion(), '2.3.5', '>=')
                 ? \Laminas\Serializer\Serializer::getDefaultAdapter()
                 : \Zend\Serializer\Serializer::getDefaultAdapter();
         }
@@ -85,11 +105,21 @@ class Data extends AbstractHelper
 
     // ---------------------------------------
 
+    /**
+     * @param $timeString
+     *
+     * @return \DateTime
+     * @throws \Exception
+     */
     public function createGmtDateTime($timeString)
     {
         return new \DateTime($timeString, new \DateTimeZone($this->getDefaultTimezone()));
     }
 
+    /**
+     * @return \DateTime
+     * @throws \Exception
+     */
     public function createCurrentGmtDateTime()
     {
         return $this->createGmtDateTime('now');
@@ -117,25 +147,6 @@ class Data extends AbstractHelper
         }
 
         return $dateObject->format($format);
-    }
-
-    // ---------------------------------------
-
-    public function getDate($date, $returnTimestamp = false, $format = 'Y-m-d H:i:s')
-    {
-        if (is_numeric($date)) {
-            $result = (int)$date;
-        } else {
-            $result = strtotime($date);
-        }
-
-        $result = date($format, $result);
-
-        if ($returnTimestamp) {
-            return strtotime($result);
-        }
-
-        return $result;
     }
 
     // ---------------------------------------
@@ -199,6 +210,10 @@ class Data extends AbstractHelper
 
     public function escapeJs($string)
     {
+        if ($string === null) {
+            return '';
+        }
+
         return str_replace(
             ["\\"  , "\n"  , "\r" , "\""  , "'"],
             ["\\\\", "\\n" , "\\r", "\\\"", "\\'"],
@@ -556,7 +571,7 @@ class Data extends AbstractHelper
                 : $this->serializerInterface->unserialize($data);
 
         } catch (\Exception $e) {
-            $this->getHelper('Module_Exception')->process($e);
+            $this->exceptionHelper->process($e);
             return [];
         }
     }
@@ -609,8 +624,8 @@ class Data extends AbstractHelper
         $classRoute = str_replace('\\', '_', $controllerClass);
         $classRoute = implode('_', array_map('lcfirst', explode('_', $classRoute)));
 
-        if ($skipEnvironmentCheck || !$this->getHelper('Module')->isDevelopmentEnvironment()) {
-            $cachedActions = $this->getHelper('Data_Cache_Permanent')->getValue('controller_actions_' . $classRoute);
+        if ($skipEnvironmentCheck || !$this->helperModule->isDevelopmentEnvironment()) {
+            $cachedActions = $this->permanentCache->getValue('controller_actions_' . $classRoute);
 
             if ($cachedActions !== null) {
                 return $this->getActionsUrlsWithParameters($cachedActions, $params);
@@ -637,8 +652,8 @@ class Data extends AbstractHelper
             }
         }
 
-        if ($skipEnvironmentCheck || !$this->getHelper('Module')->isDevelopmentEnvironment()) {
-            $this->getHelper('Data_Cache_Permanent')->setValue('controller_actions_' . $classRoute, $actions);
+        if ($skipEnvironmentCheck || !$this->helperModule->isDevelopmentEnvironment()) {
+            $this->permanentCache->setValue('controller_actions_' . $classRoute, $actions);
         }
 
         return $this->getActionsUrlsWithParameters($actions, $params);

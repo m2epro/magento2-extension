@@ -8,14 +8,9 @@
 
 namespace Ess\M2ePro\Helper\Data;
 
-/**
- * Class \Ess\M2ePro\Helper\Data\GlobalData
- */
 class GlobalData extends \Ess\M2ePro\Helper\AbstractHelper
 {
     private $registryModel;
-
-    //########################################
 
     public function __construct(
         \Magento\Framework\Registry $registryModel,

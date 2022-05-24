@@ -208,8 +208,7 @@ class PlaceReservationsForSalesEvent extends \Ess\M2ePro\Plugin\AbstractPlugin
             $changeProcessor->setListingProduct($listingProduct);
             $changeProcessor->setDefaultInstructionTypes(
                 [
-                    ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_STATUS_DATA_POTENTIALLY_CHANGED,
-                    ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_QTY_DATA_POTENTIALLY_CHANGED,
+                    ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_DATA_POTENTIALLY_CHANGED,
                 ]
             );
             $changeProcessor->process();

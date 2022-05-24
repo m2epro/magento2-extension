@@ -8,14 +8,27 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Variations
- */
 class Variations extends AbstractModel
 {
     protected $variationsThatCanNotBeDeleted = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Configuration */
+    private $componentEbayConfiguration;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->componentEbayConfiguration = $componentEbayConfiguration;
+        $this->componentEbayCategoryEbay  = $componentEbayCategoryEbay;
+    }
 
     public function getBuilderData()
     {
@@ -262,11 +275,10 @@ class Variations extends AbstractModel
             return;
         }
 
-        $isVariationEnabled = $this->getHelper('Component_Ebay_Category_Ebay')
-            ->isVariationEnabled(
-                (int)$this->getCategorySource()->getCategoryId(),
-                $this->getMarketplace()->getId()
-            );
+        $isVariationEnabled = $this->componentEbayCategoryEbay->isVariationEnabled(
+            (int)$this->getCategorySource()->getCategoryId(),
+            $this->getMarketplace()->getId()
+        );
 
         if ($isVariationEnabled !== null && !$isVariationEnabled) {
             $this->addWarningMessage(
@@ -379,8 +391,7 @@ class Variations extends AbstractModel
             if ($tempType == 'mpn' && !empty($additionalData['online_product_details']['mpn'])) {
                 $data['mpn'] = $additionalData['online_product_details']['mpn'];
 
-                $isMpnCanBeChanged = $this->getHelper('Component_Ebay_Configuration')
-                    ->getVariationMpnCanBeChanged();
+                $isMpnCanBeChanged = $this->componentEbayConfiguration->getVariationMpnCanBeChanged();
 
                 if (!$isMpnCanBeChanged) {
                     continue;
@@ -455,8 +466,7 @@ class Variations extends AbstractModel
 
         $categoryId = $this->getCategorySource()->getCategoryId();
         $marketplaceId = $this->getMarketplace()->getId();
-        $categoryFeatures = $this->getHelper('Component_Ebay_Category_Ebay')
-            ->getFeatures($categoryId, $marketplaceId);
+        $categoryFeatures = $this->componentEbayCategoryEbay->getFeatures($categoryId, $marketplaceId);
 
         if (empty($categoryFeatures)) {
             return $data;

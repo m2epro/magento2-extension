@@ -140,8 +140,7 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
             $changeProcessor->setListingProduct($listingProduct);
             $changeProcessor->setDefaultInstructionTypes(
                 [
-                    ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_STATUS_DATA_POTENTIALLY_CHANGED,
-                    ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_QTY_DATA_POTENTIALLY_CHANGED,
+                    ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_DATA_POTENTIALLY_CHANGED,
                 ]
             );
             $changeProcessor->process();
@@ -178,31 +177,22 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
 
     // ---------------------------------------
 
-    /**
-     * @deprecated Only for version under 2.4.0
-     */
     private function getAffectedListingsParentProducts()
     {
-        if (version_compare($this->getHelper('magento')->getVersion(), '2.2.0', '>=') &&
-            version_compare($this->getHelper('magento')->getVersion(), '2.4.2', '<')) {
-
-            if (!empty($this->affectedListingsParentProducts)) {
-                return $this->affectedListingsParentProducts;
-            }
-
-            $listingProduct = $this->activeRecordFactory->getObject('Listing\Product')->getResource();
-            $parentIds = $listingProduct->getParentEntityIdsByChild($this->getProductId());
-
-            $affectedListingsParentProducts = [];
-            foreach ($parentIds as $id) {
-                $listingsParentProducts = $listingProduct->getItemsByProductId($id);
-                $affectedListingsParentProducts = array_merge($affectedListingsParentProducts, $listingsParentProducts);
-            }
-
-            $this->affectedListingsParentProducts = $affectedListingsParentProducts;
+        if (!empty($this->affectedListingsParentProducts)) {
+            return $this->affectedListingsParentProducts;
         }
 
-        return $this->affectedListingsParentProducts;
+        $listingProduct = $this->activeRecordFactory->getObject('Listing\Product')->getResource();
+        $parentIds = $listingProduct->getParentEntityIdsByChild($this->getProductId());
+
+        $affectedListingsParentProducts = [];
+        foreach ($parentIds as $id) {
+            $listingsParentProducts = $listingProduct->getItemsByProductId($id);
+            $affectedListingsParentProducts = array_merge($affectedListingsParentProducts, $listingsParentProducts);
+        }
+
+        return $this->affectedListingsParentProducts = $affectedListingsParentProducts;
     }
 
     //########################################

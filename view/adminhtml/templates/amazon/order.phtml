@@ -134,7 +134,9 @@ if (empty($currency)) {
                                         <span style="color: gray;"><?php echo $block->__('Pending') ?></span>
                                     <?php } ?>
 
-                                    <?php if ($block->order->getChildObject()->isUnshipped()) { ?>
+                                    <?php if ($block->order->getChildObject()->isCancellationRequested()) { ?>
+                                        <span style="color: red;"><?php echo $block->__('Unshipped (Cancellation Requested)') ?></span>
+                                    <?php } elseif ($block->order->getChildObject()->isUnshipped()) { ?>
                                         <span><?php echo $block->__('Unshipped') ?></span>
                                     <?php } ?>
 

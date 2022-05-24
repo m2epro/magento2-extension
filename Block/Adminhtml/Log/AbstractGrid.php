@@ -11,9 +11,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Log;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid as WidgetAbstractGrid;
 use \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
- */
 abstract class AbstractGrid extends WidgetAbstractGrid
 {
     const LISTING_ID_FIELD                = 'listing_id';
@@ -29,21 +26,20 @@ abstract class AbstractGrid extends WidgetAbstractGrid
     protected $messageCount = [];
     protected $entityIdFieldName;
     protected $logModelName;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View */
+    protected $viewHelper;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->resourceConnection = $resourceConnection;
-
         parent::__construct($context, $backendHelper, $data);
+        $this->resourceConnection = $resourceConnection;
+        $this->viewHelper = $viewHelper;
     }
-
-    //########################################
 
     protected function _construct()
     {
@@ -217,7 +213,7 @@ abstract class AbstractGrid extends WidgetAbstractGrid
         $fullDescription = str_replace(
             "\n",
             '<br>',
-            $this->getHelper('View')->getModifiedLogMessage($row->getData('description'))
+            $this->viewHelper->getModifiedLogMessage($row->getData('description'))
         );
 
         $renderedText = $this->stripTags($fullDescription, '<br>');

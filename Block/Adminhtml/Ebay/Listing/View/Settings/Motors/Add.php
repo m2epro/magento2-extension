@@ -8,16 +8,23 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add
- */
 class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
     private $motorsType = null;
-
     private $productGridId = null;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
+    private $componentEbayMotors;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+
+        $this->componentEbayMotors = $componentEbayMotors;
+    }
 
     public function _construct()
     {
@@ -121,12 +128,12 @@ JS
 
     public function isMotorsTypeKtype()
     {
-        return $this->getHelper('Component_Ebay_Motors')->isTypeBasedOnKtypes($this->getMotorsType());
+        return $this->componentEbayMotors->isTypeBasedOnKtypes($this->getMotorsType());
     }
 
     public function isMotorsTypeEpid()
     {
-        return $this->getHelper('Component_Ebay_Motors')->isTypeBasedOnEpids($this->getMotorsType());
+        return $this->componentEbayMotors->isTypeBasedOnEpids($this->getMotorsType());
     }
 
     // Add Custom Compatible Vehicle

@@ -8,15 +8,25 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Settings;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs
- */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 {
     const TAB_ID_MAIN = 'main';
     const TAB_ID_MOTORS = 'motors';
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
+    private $componentEbayMotors;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Json\EncoderInterface $jsonEncoder,
+        \Magento\Backend\Model\Auth\Session $authSession,
+        array $data = []
+    ) {
+        parent::__construct($context, $jsonEncoder, $authSession, $data);
+
+        $this->componentEbayMotors = $componentEbayMotors;
+    }
 
     protected function _prepareLayout()
     {
@@ -32,8 +42,6 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 
         // ---------------------------------------
 
-        // ---------------------------------------
-
         $tab = [
             'label' => __('Synchronization'),
             'title' => __('Synchronization'),
@@ -44,13 +52,9 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 
         // ---------------------------------------
 
-        // ---------------------------------------
+        $isMotorsEpidsMarketplaceEnabled = $this->componentEbayMotors->isEPidMarketplacesEnabled();
 
-        $isMotorsEpidsMarketplaceEnabled = $this->getHelper('Component_Ebay_Motors')
-            ->isEPidMarketplacesEnabled();
-
-        $isMotorsKtypesMarketplaceEnabled = $this->getHelper('Component_Ebay_Motors')
-            ->isKTypeMarketplacesEnabled();
+        $isMotorsKtypesMarketplaceEnabled = $this->componentEbayMotors->isKTypeMarketplacesEnabled();
 
         if ($isMotorsEpidsMarketplaceEnabled || $isMotorsKtypesMarketplaceEnabled) {
             $tab = [

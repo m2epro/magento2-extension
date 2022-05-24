@@ -82,6 +82,9 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Magento\Catalog\Model\ResourceModel\Product  */
     protected $resourceProduct;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
     /** @var \Ess\M2ePro\Model\Magento\Product\Variation */
     protected $_variationInstance = null;
 
@@ -99,7 +102,8 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     protected $isGroupedProductMode = \Ess\M2ePro\Model\Listing\Product::GROUPED_PRODUCT_MODE_OPTIONS;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
 
     public function __construct(
         Factory $inventoryFactory,
@@ -117,6 +121,8 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Catalog\Model\ResourceModel\Product $resourceProduct,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory
     ) {
@@ -135,6 +141,8 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $this->activeRecordFactory = $activeRecordFactory;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->resourceProduct = $resourceProduct;
+        $this->helperData = $helperData;
+        $this->moduleConfiguration = $moduleConfiguration;
 
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -914,9 +922,13 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
      */
     public function isSpecialPriceActual()
     {
-        $fromDate = strtotime($this->getSpecialPriceFromDate());
-        $toDate = strtotime($this->getSpecialPriceToDate());
-        $currentTimeStamp = $this->helperFactory->getObject('Data')->getCurrentGmtDate(true);
+        $fromDate = (int)$this->helperData
+            ->createGmtDateTime($this->getSpecialPriceFromDate())
+            ->format('U');
+        $toDate = (int)$this->helperData
+            ->createGmtDateTime($this->getSpecialPriceToDate())
+            ->format('U');
+        $currentTimeStamp = $this->helperData->getCurrentGmtDate(true);
 
         return $currentTimeStamp >= $fromDate && $currentTimeStamp < $toDate &&
            (float)$this->getProduct()->getSpecialPrice() > 0;
@@ -929,10 +941,13 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $fromDate = $this->getProduct()->getSpecialFromDate();
 
         if ($fromDate === null || $fromDate === false || $fromDate == '') {
-            $currentDateTime = $this->helperFactory->getObject('Data')->getCurrentGmtDate();
-            $fromDate = $this->helperFactory->getObject('Data')->getDate($currentDateTime, false, 'Y-01-01 00:00:00');
+            $fromDate = $this->helperData
+                ->createCurrentGmtDateTime()
+                ->format('Y-01-01 00:00:00');
         } else {
-            $fromDate = $this->helperFactory->getObject('Data')->getDate($fromDate, false, 'Y-m-d 00:00:00');
+            $fromDate = $this->helperData
+                ->createGmtDateTime($fromDate)
+                ->format('Y-m-d 00:00:00');
         }
 
         return $fromDate;
@@ -943,17 +958,17 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $toDate = $this->getProduct()->getSpecialToDate();
 
         if ($toDate === null || $toDate === false || $toDate == '') {
-            $currentDateTime = $this->helperFactory->getObject('Data')->getCurrentGmtDate();
-
-            $toDate = new \DateTime($currentDateTime, new \DateTimeZone('UTC'));
+            $toDate = $this->helperData->createCurrentGmtDateTime();
             $toDate->modify('+1 year');
-            $toDate = $this->helperFactory->getObject('Data')->getDate($toDate->format('U'), false, 'Y-01-01 00:00:00');
+            $toDate = $toDate->format('Y-01-01 00:00:00');
         } else {
-            $toDate = $this->helperFactory->getObject('Data')->getDate($toDate, false, 'Y-m-d 00:00:00');
+            $toDate = $this->helperData
+                ->createGmtDateTime($toDate)
+                ->format('Y-m-d 00:00:00');
 
-            $toDate = new \DateTime($toDate, new \DateTimeZone('UTC'));
+            $toDate = $this->helperData->createGmtDateTime($toDate);
             $toDate->modify('+1 day');
-            $toDate = $this->helperFactory->getObject('Data')->getDate($toDate->format('U'), false, 'Y-m-d 00:00:00');
+            $toDate = $toDate->format('Y-m-d 00:00:00');
         }
 
         return $toDate;
@@ -1038,11 +1053,11 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $backorders,
         $useConfigBackorders
     ) {
-        if (!$this->getHelper('Module_Configuration')->isEnableProductForceQtyMode()) {
+        if (!$this->moduleConfiguration->isEnableProductForceQtyMode()) {
             return $qty;
         }
 
-        $forceQtyValue = $this->getHelper('Module_Configuration')->getProductForceQtyValue();
+        $forceQtyValue = $this->moduleConfiguration->getProductForceQtyValue();
 
         $manageStockGlobal = $this->catalogInventoryConfiguration->getManageStock();
         if (($useConfigManageStock && !$manageStockGlobal) || (!$useConfigManageStock && !$manageStock)) {
@@ -1309,7 +1324,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                  * vendor/magento/module-eav/Model/Entity/Attribute/Source/Table.php
                  */
                 $value = $attribute->getSource()->getOptionText($value);
-                $value = $this->getHelper('Data')->deEscapeHtml($value, ENT_QUOTES);
+                $value = $this->helperData->deEscapeHtml($value, ENT_QUOTES);
 
                 $value = is_array($value) ? implode(',', $value) : (string)$value;
             }
@@ -1342,8 +1357,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                             ->load($this->getStoreId())
                             ->getBaseUrl(
                                 \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,
-                                $this->getHelper('Module_Configuration')
-                                    ->getSecureImageUrlInItemDescriptionMode()
+                                $this->moduleConfiguration->getSecureImageUrlInItemDescriptionMode()
                             )
                         . 'catalog/product/' . ltrim($value, '/');
                 }
@@ -1565,7 +1579,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                 ->load($this->getStoreId())
                 ->getBaseUrl(
                     \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,
-                    $this->getHelper('Module_Configuration')->getSecureImageUrlInItemDescriptionMode()
+                    $this->moduleConfiguration->getSecureImageUrlInItemDescriptionMode()
                 );
             $imageUrl .= 'catalog/product/' . ltrim($galleryImage['file'], '/');
             $imageUrl = $this->prepareImageUrl($imageUrl);
@@ -1628,7 +1642,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                 ->load($this->getStoreId())
                 ->getBaseUrl(
                     \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,
-                    $this->getHelper('Module_Configuration')->getSecureImageUrlInItemDescriptionMode()
+                    $this->moduleConfiguration->getSecureImageUrlInItemDescriptionMode()
                 ) . $imagePath;
 
         $imageUrl = $this->prepareImageUrl($imageUrl);

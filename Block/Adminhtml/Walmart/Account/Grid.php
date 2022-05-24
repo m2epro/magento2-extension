@@ -8,24 +8,20 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Account;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
 {
     protected $walmartFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $WalmartFactory,
+        \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
+        parent::__construct($viewHelper, $context, $backendHelper, $data);
         $this->walmartFactory = $WalmartFactory;
-        parent::__construct($context, $backendHelper, $data);
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {

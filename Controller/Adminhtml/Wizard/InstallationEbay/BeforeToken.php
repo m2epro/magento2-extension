@@ -10,11 +10,22 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay;
 
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay\BeforeToken
- */
 class BeforeToken extends InstallationEbay
 {
+    /** @var \Ess\M2ePro\Helper\View\Configuration */
+    protected $configurationHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\View\Configuration $configurationHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
+        \Magento\Framework\Code\NameBuilder $nameBuilder,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($ebayFactory, $ebayViewHelper, $nameBuilder, $context);
+        $this->configurationHelper = $configurationHelper;
+    }
+
     public function execute()
     {
         $accountMode = $this->getRequest()->getParam('mode');
@@ -57,7 +68,7 @@ class BeforeToken extends InstallationEbay
                 $error = $this->__(
                     $error,
                     $exception->getMessage(),
-                    $this->getHelper('View\Configuration')->getLicenseUrl(['wizard' => 1])
+                    $this->configurationHelper->getLicenseUrl(['wizard' => 1])
                 );
             } else {
                 $error = $this->__($error, $exception->getMessage());

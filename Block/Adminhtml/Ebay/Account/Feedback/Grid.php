@@ -15,6 +15,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     //########################################
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        array $data = []
+    ) {
+        $this->helperData = $helperData;
+        parent::__construct($context, $backendHelper, $data);
+    }
+
     public function _construct()
     {
         parent::_construct();
@@ -184,7 +197,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $url = $this->getUrl('*/*/goToItem', ['feedback_id' => $row->getData('id')]);
 
         return '<a href="'.$url.'" target="_blank">'
-                . $this->getHelper('Data')->escapeHtml($value)
+                . $this->helperData->escapeHtml($value)
                 . '</a>';
     }
 
@@ -193,7 +206,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $value == 0 && $value = $this->__('No ID For Auction');
         $url = $this->getUrl('*/*/goToOrder/', ['feedback_id' => $row->getData('id')]);
 
-        return '<a href="'.$url.'" target="_blank">'.$this->getHelper('Data')->escapeHtml($value).'</a>';
+        return '<a href="'.$url.'" target="_blank">'.$this->helperData->escapeHtml($value).'</a>';
     }
 
     public function callbackColumnBuyerFeedback($value, $row, $column, $isExport)
@@ -217,7 +230,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnBuyerFeedbackDate($value, $row, $column, $isExport)
     {
-        if (strtotime($row->getData('buyer_feedback_date')) < strtotime('2001-01-02')) {
+        $buyerFeedbackDate = (int)$this->helperData->createGmtDateTime(
+            $row->getData('buyer_feedback_date')
+        )->format('U');
+        $comparedDate = (int)$this->helperData
+            ->createGmtDateTime('2001-01-02')
+            ->format('U');
+        if ($buyerFeedbackDate < $comparedDate) {
             return $this->__('N/A');
         }
 
@@ -235,7 +254,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         '{$row->getData('id')}',
         '{$row->getData('ebay_transaction_id')}',
         '{$row->getData('ebay_item_id')}',
-        '{$this->getHelper('Data')->escapeJs($row->getData('buyer_feedback_text'))}');"
+        '{$this->helperData->escapeJs($row->getData('buyer_feedback_text'))}');"
     >{$this->__('Send Response')}</a>
 HTML;
         }
@@ -243,7 +262,13 @@ HTML;
 
     public function callbackColumnSellerFeedbackDate($value, $row, $column, $isExport)
     {
-        if (strtotime($row->getData('seller_feedback_date')) < strtotime('2001-01-02')) {
+        $sellerFeedbackDate = (int)$this->helperData->createGmtDateTime(
+            $row->getData('seller_feedback_date')
+        )->format('U');
+        $comparedDate = (int)$this->helperData
+            ->createGmtDateTime('2001-01-02')
+            ->format('U');
+        if ($sellerFeedbackDate < $comparedDate) {
             return $this->__('N/A');
         }
 

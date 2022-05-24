@@ -10,18 +10,20 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs;
 
 use \Ess\M2ePro\Helper\Component\Ebay as EbayHelper;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Motors
- */
 class Motors extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {
     protected $attributeColFactory;
     protected $resourceConnection;
     protected $ebayFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Configuration */
+    private $componentEbayConfiguration;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
+    private $componentEbayMotors;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
+        \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration,
         \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $attributeColFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -30,11 +32,13 @@ class Motors extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
-        $this->attributeColFactory = $attributeColFactory;
-        $this->ebayFactory = $ebayFactory;
-        $this->resourceConnection = $resourceConnection;
-
         parent::__construct($context, $registry, $formFactory, $data);
+
+        $this->attributeColFactory        = $attributeColFactory;
+        $this->ebayFactory                = $ebayFactory;
+        $this->resourceConnection         = $resourceConnection;
+        $this->componentEbayConfiguration = $componentEbayConfiguration;
+        $this->componentEbayMotors        = $componentEbayMotors;
     }
 
     protected function _prepareForm()
@@ -43,10 +47,10 @@ class Motors extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
         $magentoAttributeHelper = $this->getHelper('Magento_Attribute');
 
         /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors $eBayMotorsHelper */
-        $eBayMotorsHelper = $this->getHelper('Component_Ebay_Motors');
+        $eBayMotorsHelper = $this->componentEbayMotors;
 
         /** @var \Ess\M2ePro\Helper\Component\Ebay\Configuration $configurationHelper */
-        $configurationHelper = $this->getHelper('Component_Ebay_Configuration');
+        $configurationHelper = $this->componentEbayConfiguration;
 
         //----------------------------------------
 

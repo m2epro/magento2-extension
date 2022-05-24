@@ -14,38 +14,43 @@ namespace Ess\M2ePro\Model\Amazon;
  */
 class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
-    const STATUS_PENDING             = 0;
-    const STATUS_UNSHIPPED           = 1;
-    const STATUS_SHIPPED_PARTIALLY   = 2;
-    const STATUS_SHIPPED             = 3;
-    const STATUS_UNFULFILLABLE       = 4;
-    const STATUS_CANCELED            = 5;
-    const STATUS_INVOICE_UNCONFIRMED = 6;
-    const STATUS_PENDING_RESERVED    = 7;
+    const STATUS_PENDING                = 0;
+    const STATUS_UNSHIPPED              = 1;
+    const STATUS_SHIPPED_PARTIALLY      = 2;
+    const STATUS_SHIPPED                = 3;
+    const STATUS_UNFULFILLABLE          = 4;
+    const STATUS_CANCELED               = 5;
+    const STATUS_INVOICE_UNCONFIRMED    = 6;
+    const STATUS_PENDING_RESERVED       = 7;
+    const STATUS_CANCELLATION_REQUESTED = 8;
 
     const INVOICE_SOURCE_MAGENTO = 'magento';
     const INVOICE_SOURCE_EXTENSION = 'extension';
 
-    //########################################
-
+    /** @var \Ess\M2ePro\Model\Magento\Order\ShipmentFactory */
     private $shipmentFactory;
 
+    /** @var \Ess\M2ePro\Model\Amazon\Order\ShippingAddressFactory */
     private $shippingAddressFactory;
 
+    /** @var \Magento\Sales\Model\Order\Email\Sender\OrderSender */
     private $orderSender;
 
+    /** @var \Magento\Sales\Model\Order\Email\Sender\InvoiceSender */
     private $invoiceSender;
 
     private $subTotalPrice = null;
 
     private $grandTotalPrice = null;
 
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    protected $amazonHelper;
+
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory */
     protected $amazonFactory;
 
-    //########################################
-
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\Magento\Order\ShipmentFactory $shipmentFactory,
         \Ess\M2ePro\Model\Amazon\Order\ShippingAddressFactory $shippingAddressFactory,
@@ -61,12 +66,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-        $this->amazonFactory = $amazonFactory;
-        $this->shipmentFactory = $shipmentFactory;
-        $this->shippingAddressFactory = $shippingAddressFactory;
-        $this->orderSender = $orderSender;
-        $this->invoiceSender = $invoiceSender;
-
         parent::__construct(
             $parentFactory,
             $modelFactory,
@@ -78,9 +77,14 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             $resourceCollection,
             $data
         );
-    }
 
-    //########################################
+        $this->amazonHelper = $amazonHelper;
+        $this->amazonFactory = $amazonFactory;
+        $this->shipmentFactory = $shipmentFactory;
+        $this->shippingAddressFactory = $shippingAddressFactory;
+        $this->orderSender = $orderSender;
+        $this->invoiceSender = $invoiceSender;
+    }
 
     public function _construct()
     {
@@ -193,6 +197,19 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     public function getTaxRegistrationId()
     {
         return $this->getData('tax_registration_id');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isBuyerRequestedCancel()
+    {
+        return (bool)$this->getData('is_buyer_requested_cancel');
+    }
+
+    public function getBuyerCancelReason()
+    {
+        return $this->getData('buyer_cancel_reason');
     }
 
     /**
@@ -381,7 +398,9 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
      */
     public function isUnshipped()
     {
-        return $this->getStatus() == self::STATUS_UNSHIPPED;
+        $status = $this->getStatus();
+
+        return $status == self::STATUS_UNSHIPPED || $status == self::STATUS_CANCELLATION_REQUESTED;
     }
 
     /**
@@ -422,6 +441,14 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     public function isInvoiceUnconfirmed()
     {
         return $this->getStatus() == self::STATUS_INVOICE_UNCONFIRMED;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCancellationRequested()
+    {
+        return $this->getStatus() == self::STATUS_CANCELLATION_REQUESTED;
     }
 
     //########################################
@@ -729,7 +756,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
      */
     public function updateShippingStatus(array $trackingDetails = [], array $items = [])
     {
-        if (!$this->canUpdateShippingStatus($trackingDetails) || empty($trackingDetails['carrier_code'])) {
+        if (!$this->canUpdateShippingStatus($trackingDetails)) {
             return false;
         }
 
@@ -737,10 +764,12 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             $trackingDetails['fulfillment_date'] = $this->getHelper('Data')->getCurrentGmtDate();
         }
 
-        $trackingDetails['carrier_title'] = $this->getHelper('Component_Amazon')->getCarrierTitle(
-            $trackingDetails['carrier_code'],
-            isset($trackingDetails['carrier_title']) ? $trackingDetails['carrier_title'] : ''
-        );
+        if (!empty($trackingDetails['carrier_code'])) {
+            $trackingDetails['carrier_title'] = $this->getHelper('Component_Amazon')->getCarrierTitle(
+                $trackingDetails['carrier_code'],
+                isset($trackingDetails['carrier_title']) ? $trackingDetails['carrier_title'] : ''
+            );
+        }
 
         if (!empty($trackingDetails['carrier_title'])) {
             if ($trackingDetails['carrier_title'] == \Ess\M2ePro\Model\Order\Shipment\Handler::CUSTOM_CARRIER_CODE &&
@@ -861,15 +890,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             'items'    => $items,
         ];
 
-        $totalItemsCount = $this->amazonFactory->getObject('Order_Item')->getCollection()
-            ->addFieldToFilter('order_id', $this->getParentObject()->getId())
-            ->getSize();
-
         $orderId     = $this->getParentObject()->getId();
 
         $action = \Ess\M2ePro\Model\Order\Change::ACTION_CANCEL;
         if ($this->isShipped() || $this->isPartiallyShipped() ||
-            count($items) != $totalItemsCount || $this->getParentObject()->isOrderStatusUpdatingToShipped()
+            $this->getParentObject()->isOrderStatusUpdatingToShipped()
         ) {
             if (empty($items)) {
                 $this->getParentObject()->addErrorLog(
@@ -883,6 +908,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             }
 
             $action = \Ess\M2ePro\Model\Order\Change::ACTION_REFUND;
+        }
+
+        if ($action == \Ess\M2ePro\Model\Order\Change::ACTION_CANCEL && $this->isCancellationRequested()) {
+            $params['cancel_reason'] =
+                \Ess\M2ePro\Model\Amazon\Order\Creditmemo\Handler::AMAZON_REFUND_REASON_BUYER_CANCELED;
         }
 
         $this->activeRecordFactory->getObject('Order\Change')->create(

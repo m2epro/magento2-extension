@@ -8,30 +8,32 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Magento\Product;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Magento\Product\DetectSpecialPriceEndDate
- */
+use Magento\Catalog\Model\ResourceModel\Product\Collection;
+
 class DetectSpecialPriceEndDate extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'magento/product/detect_special_price_end_date';
 
-    /**
-     * @var int (in seconds)
-     */
+    /** @var int (in seconds) */
     protected $interval = 7200;
 
-    /** @var \Ess\M2ePro\PublicServices\Product\SqlChange  */
+    /** @var \Ess\M2ePro\PublicServices\Product\SqlChange */
     protected $publicService;
 
     protected $listingProductCollectionFactory;
     protected $catalogProductCollectionFactory;
+    protected $listingCollectionFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module */
+    private $module;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module $module,
+        \Ess\M2ePro\Model\ResourceModel\Listing\CollectionFactory $listingCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $catalogProductCollectionFactory,
         \Ess\M2ePro\PublicServices\Product\SqlChange $publicService,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
@@ -41,6 +43,7 @@ class DetectSpecialPriceEndDate extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
         \Magento\Framework\App\ResourceConnection $resource
     ) {
         parent::__construct(
+            $helperData,
             $eventManager,
             $parentFactory,
             $modelFactory,
@@ -53,6 +56,8 @@ class DetectSpecialPriceEndDate extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
         $this->publicService = $publicService;
         $this->listingProductCollectionFactory = $listingProductCollectionFactory;
         $this->catalogProductCollectionFactory = $catalogProductCollectionFactory;
+        $this->listingCollectionFactory = $listingCollectionFactory;
+        $this->module = $module;
     }
 
     //########################################
@@ -60,27 +65,20 @@ class DetectSpecialPriceEndDate extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
     protected function performActions()
     {
         if ($this->getLastProcessedProductId() === null) {
-            $this->setLastProcessedProductId($this->getFirstProductId());
+            $this->setLastProcessedProductId(0);
         }
 
-        $changedProductsPrice = [];
-        $magentoProducts = $this->getChangedProductsPrice();
-
-        /** @var \Magento\Catalog\Model\Product $magentoProduct */
-        foreach ($magentoProducts as $magentoProduct) {
-            $changedProductsPrice[$magentoProduct->getId()] = [
-                'price' => $magentoProduct->getPrice()
-            ];
-        }
+        $changedProductsPrice = $this->getAllChangedProductsPrice();
 
         if (!$changedProductsPrice) {
-            $this->setLastProcessedProductId($this->getFirstProductId());
+            $this->setLastProcessedProductId(0);
             return;
         }
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->listingProductCollectionFactory->create();
         $collection->addFieldToFilter('product_id', ['in' => array_keys($changedProductsPrice)]);
+        $collection->addFieldToFilter('status', ['neq' => 0]);
 
         /** @var  \Ess\M2ePro\Model\Listing\Product $listingProduct */
         foreach ($collection->getItems() as $listingProduct) {
@@ -96,11 +94,21 @@ class DetectSpecialPriceEndDate extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
 
         $this->publicService->applyChanges();
 
-        $lastMagentoProduct = array_pop($magentoProducts);
-        $this->setLastProcessedProductId((int)$lastMagentoProduct->getId());
+        $lastMagentoProduct = $this->getArrayKeyLast($changedProductsPrice);
+        $this->setLastProcessedProductId((int)$lastMagentoProduct);
     }
 
     //########################################
+
+    protected function getArrayKeyLast($array)
+    {
+        if (!is_array($array) || empty($array)) {
+            return NULL;
+        }
+
+        $arrayKeys = array_keys($array);
+        return $arrayKeys[count($array)-1];
+    }
 
     protected function getCurrentPrice(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
@@ -117,45 +125,71 @@ class DetectSpecialPriceEndDate extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
 
     //########################################
 
-    protected function getFirstProductId()
+    protected function getAllStoreIds()
     {
-        $collection = $this->catalogProductCollectionFactory->create();
-        $collection->setOrder('entity_id', 'asc');
-        $collection->setPageSize(1);
-        $collection->setCurPage(1);
+        $storeIds = [];
 
-        return (int)$collection->getFirstItem()->getId();
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Collection $collectionListing */
+        $collectionListing = $this->listingCollectionFactory->create();
+        $collectionListing->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
+        $collectionListing->getSelect()->columns(['store_id' => 'store_id']);
+        $collectionListing->getSelect()->group('store_id');
+
+        foreach ($collectionListing->getData() as $item){
+            $storeIds[] = $item['store_id'];
+        }
+
+        return $storeIds;
     }
 
-    protected function getChangedProductsPrice()
+    protected function getChangedProductsPrice($storeId)
     {
         $date = new \DateTime('now', new \DateTimeZone('UTC'));
         $date->modify('-1 day');
 
         $collection = $this->catalogProductCollectionFactory->create();
+        $collection->setStoreId($storeId);
         $collection->addAttributeToSelect('price');
         $collection->addAttributeToFilter('special_price', ['notnull' => true]);
-        $collection->addAttributeToFilter('special_to_date', ['notnull' => true]);
-        $collection->addAttributeToFilter('special_to_date', ['lt' => $date->format('Y-m-d H:i:s')]);
-        $collection->addFieldToFilter('entity_id', ['gteq' => (int)$this->getLastProcessedProductId()]);
+        $collection->addFieldToFilter('special_to_date', ['notnull' => true]);
+        $collection->addFieldToFilter('special_to_date', ['lt' => $date->format('Y-m-d H:i:s')]);
+        $collection->addFieldToFilter('entity_id', ['gt' => (int)$this->getLastProcessedProductId()]);
         $collection->setOrder('entity_id', 'asc');
         $collection->getSelect()->limit(1000);
 
         return $collection->getItems();
     }
 
+    protected function getAllChangedProductsPrice()
+    {
+        $changedProductsPrice = [];
+
+        /** @var \Magento\Catalog\Model\Product $magentoProduct */
+        foreach ($this->getAllStoreIds() as $storeId) {
+            foreach ($this->getChangedProductsPrice($storeId) as $magentoProduct) {
+                $changedProductsPrice[$magentoProduct->getId()] = [
+                    'price' => $magentoProduct->getPrice()
+                ];
+            }
+        }
+
+        ksort($changedProductsPrice);
+
+        return array_slice($changedProductsPrice, 0, 1000, true);
+    }
+
     // ---------------------------------------
 
     protected function getLastProcessedProductId()
     {
-        return $this->getHelper('Module')->getRegistry()->getValue(
+        return $this->module->getRegistry()->getValue(
             '/magento/product/detect_special_price_end_date/last_magento_product_id/'
         );
     }
 
     protected function setLastProcessedProductId($magentoProductId)
     {
-        $this->getHelper('Module')->getRegistry()->setValue(
+        $this->module->getRegistry()->setValue(
             '/magento/product/detect_special_price_end_date/last_magento_product_id/',
             (int)$magentoProductId
         );

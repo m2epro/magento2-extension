@@ -8,11 +8,22 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs\Main
- */
 class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Configuration */
+    protected $configuration;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Configuration $configuration,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $formFactory, $data);
+        $this->configuration = $configuration;
+    }
+
     //########################################
 
     protected function _prepareForm()
@@ -50,7 +61,7 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
                     0 => $this->__('Disabled'),
                     1 => $this->__('Enabled')
                 ],
-                'value' => $this->getHelper('Component_Amazon_Configuration')->isEnabledBusinessMode(),
+                'value' => $this->configuration->isEnabledBusinessMode(),
                 'tooltip' => $this->__(
                     'After you <strong>Enable</strong> this option, you can provide the settings for
                     <strong>Business Price</strong> and <strong >Quantity Discounts</strong>

@@ -31,10 +31,11 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
-        parent::__construct($parentFactory, $activeRecordFactory, $helperFactory, $modelFactory);
+        parent::__construct($parentFactory, $activeRecordFactory, $helperData, $helperFactory, $modelFactory);
 
         $this->walmartFactory = $walmartFactory;
     }
@@ -74,7 +75,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         $this->getProcessingAction()->setData('is_prepared', 1);
         $this->getProcessingAction()->setData(
             'request_data',
-            $this->getHelper('Data')->jsonEncode($params['request_data'])
+            $this->helperData->jsonEncode($params['request_data'])
         );
         $this->getProcessingAction()->save();
 

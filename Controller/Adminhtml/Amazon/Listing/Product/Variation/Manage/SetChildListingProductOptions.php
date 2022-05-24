@@ -10,11 +10,20 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manag
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manage\SetChildListingProductOptions
- */
 class SetChildListingProductOptions extends Main
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary */
+    protected $vocabularyHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+        $this->vocabularyHelper = $vocabularyHelper;
+    }
+
     public function execute()
     {
         $listingProductId = $this->getRequest()->getParam('product_id');
@@ -53,12 +62,9 @@ class SetChildListingProductOptions extends Main
         $parentTypeModel = $amazonParentListingProduct->getVariationManager()->getTypeModel();
         $parentTypeModel->getProcessor()->process();
 
-        /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper */
-        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
-
         $result = ['success' => true];
 
-        if ($vocabularyHelper->isOptionAutoActionDisabled()) {
+        if ($this->vocabularyHelper->isOptionAutoActionDisabled()) {
             $this->setJsonContent($result);
 
             return $this->getResult();
@@ -77,18 +83,28 @@ class SetChildListingProductOptions extends Main
                 continue;
             }
 
-            if ($vocabularyHelper->isOptionExistsInLocalStorage($productOption, $channelOption, $channelAttribute)) {
+            if ($this->vocabularyHelper->isOptionExistsInLocalStorage(
+                    $productOption,
+                    $channelOption,
+                    $channelAttribute
+                )
+            ) {
                 continue;
             }
 
-            if ($vocabularyHelper->isOptionExistsInServerStorage($productOption, $channelOption, $channelAttribute)) {
+            if ($this->vocabularyHelper->isOptionExistsInServerStorage(
+                    $productOption,
+                    $channelOption,
+                    $channelAttribute
+                )
+            ) {
                 continue;
             }
 
             $optionsForAddingToVocabulary[$channelAttribute] = [$productOption => $channelOption];
         }
 
-        if ($vocabularyHelper->isOptionAutoActionNotSet()) {
+        if ($this->vocabularyHelper->isOptionAutoActionNotSet()) {
             if (!empty($optionsForAddingToVocabulary)) {
                 $result['vocabulary_attribute_options'] = $optionsForAddingToVocabulary;
             }
@@ -100,7 +116,7 @@ class SetChildListingProductOptions extends Main
 
         foreach ($optionsForAddingToVocabulary as $channelAttribute => $options) {
             foreach ($options as $productOption => $channelOption) {
-                $vocabularyHelper->addOption($productOption, $channelOption, $channelAttribute);
+                $this->vocabularyHelper->addOption($productOption, $channelOption, $channelAttribute);
             }
         }
 

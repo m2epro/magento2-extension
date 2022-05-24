@@ -10,13 +10,20 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
 
 use Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Category\GetChooserEditHtml
- */
 class GetChooserEditHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
+    private $componentEbayCategory;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($ebayFactory, $context);
+
+        $this->componentEbayCategory = $componentEbayCategory;
+    }
 
     public function execute()
     {
@@ -30,7 +37,7 @@ class GetChooserEditHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         $editBlock = $this->createBlock('Ebay_Template_Category_Chooser_Edit');
         $editBlock->setCategoryType($categoryType);
 
-        $helper = $this->getHelper('Component_Ebay_Category');
+        $helper = $this->componentEbayCategory;
 
         if ($helper->isEbayCategoryType($categoryType)) {
             $recentCategories = $helper->getRecent($marketplaceId, $categoryType, $selectedValue);

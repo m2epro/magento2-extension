@@ -377,7 +377,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
         }
 
         if (is_numeric($settings)) {
-            $settings = ctype_digit($settings) ? (int)$settings : $settings;
+            $settings = ctype_digit((string)$settings) ? (int)$settings : $settings;
         }
 
         return $settings;

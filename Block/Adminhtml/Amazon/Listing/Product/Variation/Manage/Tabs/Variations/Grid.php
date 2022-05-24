@@ -1016,7 +1016,7 @@ HTML;
 
     private function prepareVariations($currentAttribute, $unusedVariations, $variationsSets, $filters = [])
     {
-        $return = false;
+        $return = [];
 
         $temp = array_flip(array_keys($variationsSets));
 
@@ -1044,14 +1044,14 @@ HTML;
                 $return[$currentAttribute][$option] = $result;
             }
 
-            if ($return !== false) {
+            if (!empty($return)) {
                 ksort($return[$currentAttribute]);
             }
 
             return $return;
         }
 
-        $return = false;
+        $return = [];
         foreach ($unusedVariations as $key => $magentoVariation) {
             foreach ($magentoVariation as $attribute => $option) {
                 if ($attribute == $currentAttribute) {
@@ -1083,11 +1083,11 @@ HTML;
             }
         }
 
-        if (count($unusedVariations) < 1) {
-            return false;
+        if (empty($unusedVariations)) {
+            return [];
         }
 
-        if ($return !== false) {
+        if (!empty($return)) {
             ksort($return[$currentAttribute]);
         }
 

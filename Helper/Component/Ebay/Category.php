@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Helper\Component\Ebay;
 
-/**
- * Class \Ess\M2ePro\Helper\Component\Ebay\Category
- */
 class Category extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const TYPE_EBAY_MAIN       = 0;
@@ -23,17 +20,25 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
     protected $activeRecordFactory;
     protected $resourceConnection;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Store */
+    private $componentEbayCategoryStore;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
-        $this->resourceConnection = $resourceConnection;
         parent::__construct($helperFactory, $context);
+
+        $this->activeRecordFactory        = $activeRecordFactory;
+        $this->resourceConnection         = $resourceConnection;
+        $this->componentEbayCategoryStore = $componentEbayCategoryStore;
+        $this->componentEbayCategoryEbay  = $componentEbayCategoryEbay;
     }
 
     //########################################
@@ -102,9 +107,9 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
         $recentCategories = $allRecentCategories[$configPath][$marketplaceOrAccountId];
 
         if (in_array($categoryType, $this->getEbayCategoryTypes())) {
-            $categoryHelper = $this->getHelper('Component_Ebay_Category_Ebay');
+            $categoryHelper = $this->componentEbayCategoryEbay;
         } else {
-            $categoryHelper = $this->getHelper('Component_Ebay_Category_Store');
+            $categoryHelper = $this->componentEbayCategoryStore;
         }
 
         $categoryIds = (array)explode(',', $recentCategories);
@@ -191,8 +196,8 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
     //todo categories: remove?
     public function fillCategoriesPaths(array &$data, \Ess\M2ePro\Model\Listing $listing)
     {
-        $ebayCategoryHelper = $this->getHelper('Component_Ebay_Category_Ebay');
-        $ebayStoreCategoryHelper = $this->getHelper('Component_Ebay_Category_Store');
+        $ebayCategoryHelper = $this->componentEbayCategoryEbay;
+        $ebayStoreCategoryHelper = $this->componentEbayCategoryStore;
 
         $temp = [
             'category_main'            => ['call' => [$ebayCategoryHelper,'getPath'],

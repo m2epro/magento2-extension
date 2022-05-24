@@ -8,12 +8,35 @@
 
 namespace Ess\M2ePro\Model\Ebay\Motor;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Motor\Filter
- */
 class Filter extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
+    private $componentEbayMotors;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        parent::__construct(
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
+
+        $this->componentEbayMotors = $componentEbayMotors;
+    }
 
     public function _construct()
     {
@@ -26,7 +49,7 @@ class Filter extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function delete()
     {
         /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors $ebayMotorsHelper */
-        $ebayMotorsHelper = $this->getHelper('Component_Ebay_Motors');
+        $ebayMotorsHelper = $this->componentEbayMotors;
         $groupsIds = $ebayMotorsHelper->getGroupsAssociatedWithFilter($this->getId());
 
         foreach ($groupsIds as $groupId) {

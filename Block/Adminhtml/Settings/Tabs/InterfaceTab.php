@@ -13,7 +13,20 @@ namespace Ess\M2ePro\Block\Adminhtml\Settings\Tabs;
  */
 class InterfaceTab extends AbstractTab
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $formFactory, $data);
+
+        $this->moduleConfiguration = $moduleConfiguration;
+    }
 
     protected function _prepareForm()
     {
@@ -54,7 +67,7 @@ HTML
                     0 => $this->__('Do Not Show'),
                     1 => $this->__('Show')
                 ],
-                'value' => $this->getHelper('Module_Configuration')->getViewShowProductsThumbnailsMode(),
+                'value' => $this->moduleConfiguration->getViewShowProductsThumbnailsMode(),
                 'tooltip' => $this->__(
                     'Choose whether you want to see Thumbnail Images for Products on the
                     Add Products and View Listing Pages.'
@@ -72,7 +85,7 @@ HTML
                     0 => $this->__('Do Not Show'),
                     1 => $this->__('Show')
                 ],
-                'value' => $this->getHelper('Module_Configuration')->getViewShowBlockNoticesMode(),
+                'value' => $this->moduleConfiguration->getViewShowBlockNoticesMode(),
                 'tooltip' => $this->__(
                     '<p>Choose whether you want the help information to be available at the top of
                     each M2E Pro Page.</p><br>

@@ -13,7 +13,20 @@ namespace Ess\M2ePro\Block\Adminhtml\Settings\Tabs;
  */
 class MagentoInventory extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $formFactory, $data);
+
+        $this->moduleConfiguration = $moduleConfiguration;
+    }
 
     protected function _prepareForm()
     {
@@ -55,7 +68,7 @@ HTML
                     1 => $this->__('Product Set'),
                     0 => $this->__('Variations')
                 ],
-                'value' => $this->getHelper('Module_Configuration')->getGroupedProductMode(),
+                'value' => $this->moduleConfiguration->getGroupedProductMode(),
                 'tooltip' => $this->__(
                     <<<HTML
 <b>Product Set</b> - a group of products will be listed as a Set (Individual Item).
@@ -92,7 +105,7 @@ HTML
                     0 => $this->__('Disallow'),
                     1 => $this->__('Allow')
                 ],
-                'value' => $this->getHelper('Module_Configuration')->isEnableProductForceQtyMode(),
+                'value' => $this->moduleConfiguration->isEnableProductForceQtyMode(),
                 'tooltip' => $this->__(
                     'Choose whether M2E Pro is allowed to List Products with unlimited stock or that are
                     temporarily out of stock.<br>
@@ -107,7 +120,7 @@ HTML
             [
                 'name' => 'product_force_qty_value',
                 'label' => $this->__('Quantity To Be Listed'),
-                'value' => $this->getHelper('Module_Configuration')->getProductForceQtyValue(),
+                'value' => $this->moduleConfiguration->getProductForceQtyValue(),
                 'tooltip' => $this->__(
                     'Set a number to List, e.g. if you have Manage Stock "No" in Magento Product and set this Value
                     to 10, 10 will be sent as available Quantity to the Channel.'
@@ -139,7 +152,7 @@ HTML
                     0 => $this->__('No'),
                     1 => $this->__('Yes')
                 ],
-                'value' => $this->getHelper('Module_Configuration')->getMagentoAttributePriceTypeConvertingMode(),
+                'value' => $this->moduleConfiguration->getMagentoAttributePriceTypeConvertingMode(),
                 'tooltip' => $this->__(
                     '<p>Choose whether Magento Price Attribute values should be converted automatically.
                     With this option enabled, M2E Pro will provide currency conversion based on Magento

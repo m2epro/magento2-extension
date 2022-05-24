@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs
- */
 class Tabs extends AbstractTabs
 {
     const TAB_ID_GENERAL                = 'general';
@@ -22,6 +19,21 @@ class Tabs extends AbstractTabs
     const TAB_ID_INVOICES_AND_SHIPMENTS = 'invoices_and_shipments';
     const TAB_ID_FEEDBACK               = 'feedback';
     const TAB_ID_MY_STORES              = 'my_stores';
+
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
+    private $componentEbayPickupStore;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Json\EncoderInterface $jsonEncoder,
+        \Magento\Backend\Model\Auth\Session $authSession,
+        array $data = []
+    ) {
+        parent::__construct($context, $jsonEncoder, $authSession, $data);
+
+        $this->componentEbayPickupStore = $componentEbayPickupStore;
+    }
 
     protected function _construct()
     {
@@ -101,7 +113,7 @@ class Tabs extends AbstractTabs
             );
         }
 
-        if ($account && $account->getId() && $this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
+        if ($account && $account->getId() && $this->componentEbayPickupStore->isFeatureEnabled()) {
             $this->addTab(
                 self::TAB_ID_MY_STORES,
                 [

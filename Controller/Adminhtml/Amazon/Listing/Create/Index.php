@@ -16,14 +16,19 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Transferring $transferring */
     protected $transferring;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\Amazon\Listing\Transferring $transferring,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         $this->transferring = $transferring;
+        $this->helperData = $helperData;
 
         parent::__construct($amazonFactory, $context);
     }
@@ -204,12 +209,12 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         $data = $this->getSessionValue();
 
         if ($this->getSessionValue('restock_date_value') === '') {
-            $data['restock_date_value'] = $this->getHelper('Data')->getCurrentGmtDate();
+            $data['restock_date_value'] = $this->helperData->getCurrentGmtDate();
         } else {
-            $timestamp = $this->getHelper('Data')->parseTimestampFromLocalizedFormat(
+            $timestamp = $this->helperData->parseTimestampFromLocalizedFormat(
                 $this->getSessionValue('restock_date_value')
             );
-            $data['restock_date_value'] = $this->getHelper('Data')->getDate($timestamp);
+            $data['restock_date_value'] = gmdate('Y-m-d H:i:s', $timestamp);
         }
 
         // Add new Listing

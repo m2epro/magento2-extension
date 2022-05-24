@@ -338,7 +338,7 @@ class Builder extends AbstractModel
         $this->createOrUpdateItems();
         $this->createOrUpdateExternalTransactions();
 
-        $finalFee = $this->order->getChildObject()->getFinalFee();
+        $finalFee = $this->order->getChildObject()->getApproximatelyFinalFee();
         $magentoOrder = $this->order->getMagentoOrder();
 
         if (!empty($finalFee) && !empty($magentoOrder)) {

@@ -10,20 +10,29 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tab
 
 use Ess\M2ePro\Helper\Component\Amazon\Vocabulary;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Vocabulary\Form
- */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct;
 
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary */
+    protected $vocabularyHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $formFactory, $data);
+        $this->vocabularyHelper = $vocabularyHelper;
+    }
+
     //########################################
 
     protected function _prepareForm()
     {
-        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
-
         $form = $this->_formFactory->create(
             [
                 'data' => [
@@ -53,9 +62,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     Vocabulary::VOCABULARY_AUTO_ACTION_NO => $this->__('Don\'t save'),
                     Vocabulary::VOCABULARY_AUTO_ACTION_YES => $this->__('Save')
                 ],
-                'value' => $vocabularyHelper->isAttributeAutoActionNotSet() ?
+                'value' => $this->vocabularyHelper->isAttributeAutoActionNotSet() ?
                     Vocabulary::VOCABULARY_AUTO_ACTION_NOT_SET :
-                    ($vocabularyHelper->isAttributeAutoActionEnabled() ?
+                    ($this->vocabularyHelper->isAttributeAutoActionEnabled() ?
                         Vocabulary::VOCABULARY_AUTO_ACTION_YES : Vocabulary::VOCABULARY_AUTO_ACTION_NO)
             ]
         );
@@ -71,8 +80,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     Vocabulary::VOCABULARY_AUTO_ACTION_NO => $this->__('Don\'t save'),
                     Vocabulary::VOCABULARY_AUTO_ACTION_YES => $this->__('Save')
                 ],
-                'value' => $vocabularyHelper->isOptionAutoActionNotSet() ? Vocabulary::VOCABULARY_AUTO_ACTION_NOT_SET :
-                    ($vocabularyHelper->isOptionAutoActionEnabled() ?
+                'value' => $this->vocabularyHelper->isOptionAutoActionNotSet() ?
+                    Vocabulary::VOCABULARY_AUTO_ACTION_NOT_SET :
+                    ($this->vocabularyHelper->isOptionAutoActionEnabled() ?
                         Vocabulary::VOCABULARY_AUTO_ACTION_YES : Vocabulary::VOCABULARY_AUTO_ACTION_NO)
             ]
         );

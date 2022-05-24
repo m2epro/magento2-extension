@@ -10,28 +10,27 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Category;
 
 use \Ess\M2ePro\Model\Ebay\Template\Category as Template;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Category\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $ebayFactory;
-
     protected $resourceConnection;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->ebayFactory = $ebayFactory;
-        $this->resourceConnection = $resourceConnection;
-
         parent::__construct($context, $backendHelper, $data);
+
+        $this->ebayFactory               = $ebayFactory;
+        $this->resourceConnection        = $resourceConnection;
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
     }
 
     //########################################
@@ -312,7 +311,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnPath($value, $row, $column, $isExport)
     {
         $mode = $row->getData('category_mode');
-        $value = $this->getHelper('Component_Ebay_Category_Ebay')->getPath(
+        $value = $this->componentEbayCategoryEbay->getPath(
             $row->getData('category_id'),
             $row->getData('marketplace_id')
         );

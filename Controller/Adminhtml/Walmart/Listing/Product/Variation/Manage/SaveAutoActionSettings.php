@@ -8,6 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Manage;
 
+use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
 /**
@@ -15,6 +16,19 @@ use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
  */
 class SaveAutoActionSettings extends Main
 {
+    /** @var \Ess\M2ePro\Helper\Component\Walmart\Vocabulary */
+    protected $vocabularyHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Walmart\Vocabulary $vocabularyHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->vocabularyHelper = $vocabularyHelper;
+    }
+
     public function execute()
     {
         $attributeAutoAction = $this->getRequest()->getParam('attribute_auto_action');
@@ -25,29 +39,27 @@ class SaveAutoActionSettings extends Main
             return $this->getResult();
         }
 
-        $vocabularyHelper = $this->getHelper('Component_Walmart_Vocabulary');
-
         switch ($attributeAutoAction) {
             case \Ess\M2ePro\Helper\Component\Walmart\Vocabulary::VOCABULARY_AUTO_ACTION_NOT_SET:
-                $vocabularyHelper->unsetAttributeAutoAction();
+                $this->vocabularyHelper->unsetAttributeAutoAction();
                 break;
             case \Ess\M2ePro\Helper\Component\Walmart\Vocabulary::VOCABULARY_AUTO_ACTION_NO:
-                $vocabularyHelper->disableAttributeAutoAction();
+                $this->vocabularyHelper->disableAttributeAutoAction();
                 break;
             case \Ess\M2ePro\Helper\Component\Walmart\Vocabulary::VOCABULARY_AUTO_ACTION_YES:
-                $vocabularyHelper->enableAttributeAutoAction();
+                $this->vocabularyHelper->enableAttributeAutoAction();
                 break;
         }
 
         switch ($optionAutoAction) {
             case \Ess\M2ePro\Helper\Component\Walmart\Vocabulary::VOCABULARY_AUTO_ACTION_NOT_SET:
-                $vocabularyHelper->unsetOptionAutoAction();
+                $this->vocabularyHelper->unsetOptionAutoAction();
                 break;
             case \Ess\M2ePro\Helper\Component\Walmart\Vocabulary::VOCABULARY_AUTO_ACTION_NO:
-                $vocabularyHelper->disableOptionAutoAction();
+                $this->vocabularyHelper->disableOptionAutoAction();
                 break;
             case \Ess\M2ePro\Helper\Component\Walmart\Vocabulary::VOCABULARY_AUTO_ACTION_YES:
-                $vocabularyHelper->enableOptionAutoAction();
+                $this->vocabularyHelper->enableOptionAutoAction();
                 break;
         }
 

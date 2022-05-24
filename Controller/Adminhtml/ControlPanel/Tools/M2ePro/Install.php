@@ -13,9 +13,6 @@ use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 use Ess\M2ePro\Helper\Module;
 use Magento\Framework\Component\ComponentRegistrar;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools\M2ePro\Install
- */
 class Install extends Command
 {
     /** @var \Magento\Framework\Filesystem\Driver\File  */
@@ -36,17 +33,18 @@ class Install extends Command
     /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\HandlerFactory */
     protected $handlerFactory;
 
-    //########################################
-
     public function __construct(
         \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
         \Magento\Framework\Filesystem $filesystem,
         \Magento\Framework\Filesystem\File\ReadFactory $fileReaderFactory,
         ComponentRegistrar $componentRegistrar,
+        \Ess\M2ePro\Helper\View\ControlPanel $controlPanelHelper,
         Context $context,
         \Ess\M2ePro\Model\ControlPanel\Inspection\Repository $repository,
         \Ess\M2ePro\Model\ControlPanel\Inspection\HandlerFactory $handlerFactory
     ) {
+        parent::__construct($controlPanelHelper, $context);
+
         $this->filesystemDriver  = $filesystemDriver;
         $this->fileSystem        = $filesystem;
         $this->fileReaderFactory = $fileReaderFactory;
@@ -55,11 +53,7 @@ class Install extends Command
 
         $this->repository = $repository;
         $this->handlerFactory = $handlerFactory;
-
-        parent::__construct($context);
     }
-
-    //########################################
 
     /**
      * @hidden
@@ -171,7 +165,7 @@ HTML;
 
     private function getEmptyResultsHtml($messageText)
     {
-        $backUrl = $this->getHelper('View\ControlPanel')->getPageOwerviewTabUrl();
+        $backUrl = $this->controlPanelHelper->getPageOwerviewTabUrl();
 
         return <<<HTML
 <h2 style="margin: 20px 0 0 10px">

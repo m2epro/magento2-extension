@@ -8,13 +8,28 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Category\Search
- */
 class Search extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Store */
+    private $componentEbayCategoryStore;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
+    private $componentEbayCategory;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($ebayFactory, $context);
+
+        $this->componentEbayCategoryStore = $componentEbayCategoryStore;
+        $this->componentEbayCategory      = $componentEbayCategory;
+        $this->componentEbayCategoryEbay  = $componentEbayCategoryEbay;
+    }
 
     public function execute()
     {
@@ -24,8 +39,8 @@ class Search extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         $accountId  = $this->getRequest()->getParam('account_id');
         $result = [];
 
-        $ebayCategoryTypes = $this->getHelper('Component_Ebay_Category')->getEbayCategoryTypes();
-        $storeCategoryTypes = $this->getHelper('Component_Ebay_Category')->getStoreCategoryTypes();
+        $ebayCategoryTypes = $this->componentEbayCategory->getEbayCategoryTypes();
+        $storeCategoryTypes = $this->componentEbayCategory->getStoreCategoryTypes();
 
         if ($query === null
             || (in_array($categoryType, $ebayCategoryTypes) && $marketplaceId === null)
@@ -72,12 +87,12 @@ class Search extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 
         foreach ($ids as $categoryId) {
             if (in_array($categoryType, $ebayCategoryTypes)) {
-                $treePath = $this->getHelper('Component_Ebay_Category_Ebay')->getPath(
+                $treePath = $this->componentEbayCategoryEbay->getPath(
                     $categoryId['category_id'],
                     $marketplaceId
                 );
             } else {
-                $treePath = $this->getHelper('Component_Ebay_Category_Store')->getPath(
+                $treePath = $this->componentEbayCategoryStore->getPath(
                     $categoryId['category_id'],
                     $accountId
                 );

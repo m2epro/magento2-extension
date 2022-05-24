@@ -10,15 +10,24 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item;
 
 use \Ess\M2ePro\Helper\Component\Ebay\Motors;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item\Grid
- */
 abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
+    protected $componentEbayMotors;
+
     private $listingId  = null;
     private $motorsType = null;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $backendHelper, $data);
+
+        $this->componentEbayMotors = $componentEbayMotors;
+    }
 
     public function _construct()
     {
@@ -28,7 +37,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
 
         // Initialization block
         //------------------------------
-        $motorsType = $this->getHelper('Component_Ebay_Motors')->getIdentifierKey($this->getMotorsType());
+        $motorsType = $this->componentEbayMotors->getIdentifierKey($this->getMotorsType());
         $this->setId('ebayMotor'.$motorsType.'Grid');
         //------------------------------
 
@@ -69,7 +78,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
 
     protected function _prepareMassaction()
     {
-        $typeIdentifier = $this->getHelper('Component_Ebay_Motors')->getIdentifierKey(
+        $typeIdentifier = $this->componentEbayMotors->getIdentifierKey(
             $this->getMotorsType()
         );
 
@@ -111,7 +120,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
     {
         $type = $this->getMotorsType();
 
-        $idKey = $this->getHelper('Component_Ebay_Motors')->getIdentifierKey($type);
+        $idKey = $this->componentEbayMotors->getIdentifierKey($type);
 
         $removeTitle = $this->__('Remove this record.');
 
@@ -293,7 +302,7 @@ HTML
 
     public function getItemTitle()
     {
-        if ($this->getHelper('Component_Ebay_Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
+        if ($this->componentEbayMotors->isTypeBasedOnEpids($this->getMotorsType())) {
             return $this->__('ePID(s)');
         }
 

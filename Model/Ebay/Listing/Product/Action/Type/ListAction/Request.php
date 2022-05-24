@@ -14,8 +14,27 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction;
 class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 {
     protected $isVerifyCall = false;
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
+        \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory
+    ) {
+        parent::__construct(
+            $componentEbayConfiguration,
+            $activeRecordFactory,
+            $ebayFactory,
+            $helperFactory,
+            $modelFactory
+        );
+
+        $this->moduleConfiguration = $moduleConfiguration;
+    }
 
     protected function beforeBuildDataEvent()
     {
@@ -27,8 +46,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
         $additionalData = $this->getListingProduct()->getAdditionalData();
 
         if ($this->getListingProduct()->getMagentoProduct()->isGroupedType()) {
-            $additionalData['grouped_product_mode'] = $this->getHelper('Module_Configuration')
-                ->getGroupedProductMode();
+            $additionalData['grouped_product_mode'] = $this->moduleConfiguration->getGroupedProductMode();
         }
 
         unset($additionalData['synch_template_list_rules_note']);

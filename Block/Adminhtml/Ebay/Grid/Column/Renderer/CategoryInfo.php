@@ -12,9 +12,6 @@ use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
 use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 use \Ess\M2ePro\Block\Adminhtml\Traits;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\CategoryInfo
- */
 class CategoryInfo extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 {
     use Traits\BlockTrait;
@@ -40,16 +37,21 @@ class CategoryInfo extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Te
     /** @var bool */
     protected $_hideUnselectedSpecifics = false;
 
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
+
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Backend\Block\Context $context,
         array $data = []
     ) {
         parent::__construct($context, $data);
 
-        $this->helperFactory = $helperFactory;
+        $this->helperFactory             = $helperFactory;
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
     }
 
     //########################################
@@ -125,7 +127,7 @@ HTML;
             return '';
         }
 
-        $specificsRequired = $this->getHelper('Component_Ebay_Category_Ebay')->hasRequiredSpecifics(
+        $specificsRequired = $this->componentEbayCategoryEbay->hasRequiredSpecifics(
             $categoryData[eBayCategory::TYPE_EBAY_MAIN]['value'],
             $this->_listing->getMarketplaceId()
         );

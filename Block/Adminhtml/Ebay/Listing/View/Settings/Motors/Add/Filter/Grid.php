@@ -8,29 +8,25 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     private $motorsType;
-
     private $resourceConnection;
-
-    //#########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
+    private $componentEbayMotors;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->resourceConnection = $resourceConnection;
-
         parent::__construct($context, $backendHelper, $data);
-    }
 
-    //#########################################
+        $this->resourceConnection  = $resourceConnection;
+        $this->componentEbayMotors = $componentEbayMotors;
+    }
 
     public function _construct()
     {
@@ -149,7 +145,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         /** @var \Ess\M2ePro\Model\Ebay\Motor\Filter $row */
         $conditions = $row->getConditions();
-        $helper = $this->getHelper('Component_Ebay_Motors');
+        $helper = $this->componentEbayMotors;
 
         $select = $this->resourceConnection->getConnection()
             ->select()
@@ -200,7 +196,7 @@ HTML;
     {
         $conditions = $this->getHelper('Data')->jsonDecode($row->getData('conditions'));
 
-        if ($this->getHelper('Component_Ebay_Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
+        if ($this->componentEbayMotors->isTypeBasedOnEpids($this->getMotorsType())) {
             if (!empty($conditions['year'])) {
                 $yearIndex = array_search("year", array_keys($conditions));
 
@@ -350,7 +346,7 @@ JS
 
     public function getItemsColumnTitle()
     {
-        if ($this->getHelper('Component_Ebay_Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
+        if ($this->componentEbayMotors->isTypeBasedOnEpids($this->getMotorsType())) {
             return $this->__('ePID(s)');
         }
 

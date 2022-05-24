@@ -22,6 +22,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -35,6 +36,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
     ) {
         $this->localeCurrency = $localeCurrency;
         parent::__construct(
+            $helperData,
             $walmartFactory,
             $amazonFactory,
             $ebayFactory,

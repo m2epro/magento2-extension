@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add\ResetDescriptionTemplate
- */
 class ResetDescriptionTemplate extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 {
-    //########################################
-
     public function execute()
     {
         $listingId = $this->getRequest()->getParam('listing_id');
@@ -22,7 +17,7 @@ class ResetDescriptionTemplate extends \Ess\M2ePro\Controller\Adminhtml\Amazon\L
         /** @var \Ess\M2ePro\Model\Listing $listing */
         $listing = $this->amazonFactory->getCachedObjectLoaded('Listing', $listingId);
         $ids = (array)$listing->getSetting('additional_data', 'adding_new_asin_listing_products_ids');
-        $ids = $this->getHelper('Component_Amazon_Variation')->filterLockedProducts($ids);
+        $ids = $this->variationHelper->filterLockedProducts($ids);
 
         $listing->setSetting('additional_data', 'adding_new_asin_description_templates_data', []);
         $this->setDescriptionTemplate($ids, null);
@@ -39,6 +34,4 @@ class ResetDescriptionTemplate extends \Ess\M2ePro\Controller\Adminhtml\Amazon\L
 
         return $this->getResult();
     }
-
-    //########################################
 }

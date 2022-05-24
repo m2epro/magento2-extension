@@ -1,9 +1,39 @@
-* 1.21.3 (27/04/2022) 
+* 1.22.1 (24/05/2022) 
+
+Common: [Fixed] End Date expiration for Special Price was not detected and Product Price value was not submitted during the Revise action [#3435]
+Common: [Fixed] QTY is not updated for a Grouped Product when changes are made and saved in a Simple Product [#3634]
+Common: [Improved] Compatibility improvements with Magento v2.4.4 on PHP 7.4 [#3512]
+Common: [Improved] Some UI text updates [#3511]
+Common: [Removed] Compatibility with PHP versions lower than 7.1 [#3558]
+eBay: [Added] Sold QTY column in the M2E Pro Listing grid [#3264]
+eBay: [Fixed] Product image is submitted with a black background after adding a watermark [#3564]
+eBay: [Fixed] Unable to save the watermark file in the Description Policy via the Save And Close option [#3527]
+eBay: [Improved] Ability to actualize Final Fee value in eBay orders [#2849]
+Amazon: [Fixed] Unable to update the shipping status on Amazon without carrier and tracking number data [#3595]
+Amazon: [Fixed] Undefined offset: 0 in Magento/Product/Rule/Condition/Product.php on line 101 when trying to use the Advanced Filter at the step of adding Magento Products to Listing [#3537]
+Amazon: [Improved] Changes in the buyer-initiated order cancelation process [#3472]
+Walmart: [Fixed] Error "Item (Ess\M2ePro\Model\Walmart\Listing\Product\Action\Processing) with the same ID already exists". [#1201]
+Walmart: [Fixed] Issues with Magento Product creation when the Product Not Found option is set to Create Product and Order [#3253]
+Walmart: [Fixed] Unable to save Manual Variational Attributes/Options matches [#2931]
+
+* 1.22.0.1 (17/05/2022)
+
+Common: [Fixed] End Date expiration for Special Price was not detected and Product Price value wasn't submitted during the Revise action [#3435]
+Common: [Improved] Compatibility improvements with Magento v2.4.4 on PHP 7.4 [#3512]
+Common: [Removed] Compatibility with PHP versions lower than 7.1 [#3558]
+eBay [Added] Sold Qty column in the M2E Pro Listing grid [#3264]
+eBay: [Fixed] Unable to save the watermark file in the Description Policy via the Save And Close option [#3527]
+Amazon: [Fixed] Unable to update the shipping status on Amazon without carrier and tracking number data [#3595]
+Amazon: [Fixed] Undefined offset: 0 in Magento/Product/Rule/Condition/Product.php on line 101 when trying to use the Advanced Filter at the step of adding Magento Products to Listing [#3537]
+Amazon: [Improved] Changes in buyer-initiated order cancellation process [#3472]
+Walmart: [Fixed] Issues with Magento Product creation when the Product Not Found option is set to Create Product and Order [#3253]
+
+* 1.21.3 (27/04/2022)
 
 Common: [Fixed] Issues with listing and mapping orders for Configurable Products with zero (0, 00, 000) size variations [#3350]
 eBay: [Fixed] "Invalid block type: Ess\M2ePro\Block\Adminhtml\Wizard\InstallationEbay\Notification" when downloading Rate Tables in the Shipping Policy [#3030]
 
-1.21.2 (13/04/2022)
+* 1.21.2 (13/04/2022)
 
 Common: [Improved] Some UI text updates [#3486]
 Common: [Improved] Optimize product grid loading when adding Magento products to the listing [#3374]

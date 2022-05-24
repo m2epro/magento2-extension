@@ -146,6 +146,11 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         return (float)$this->getData('price');
     }
 
+    public function setFinalFee(float $value): void
+    {
+        $this->setData('final_fee', $value);
+    }
+
     /**
      * @return float
      */
@@ -281,7 +286,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         }
 
         foreach ($channelItem->getVariations() as $variation) {
-            if ($variation['channel_options'] != $this->getVariationChannelOptions()) {
+            if ($variation['channel_options'] !== $this->getVariationChannelOptions()) {
                 continue;
             }
 

@@ -18,6 +18,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
     protected $amazonFactory;
     protected $resourceConnection;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
     //########################################
 
     public function __construct(
@@ -25,6 +28,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
@@ -33,6 +37,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
         $this->localeCurrency = $localeCurrency;
         $this->amazonFactory = $amazonFactory;
         $this->resourceConnection = $resourceConnection;
+        $this->helperData = $helperData;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -211,7 +216,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
                     return $this->__('AFN');
                 }
 
-                $productId = $this->getHelper('Data')->generateUniqueHash();
+                $productId = $this->helperData->generateUniqueHash();
 
                 $afnWord     = $this->__('AFN');
                 $totalWord   = $this->__('Total');
@@ -247,7 +252,7 @@ HTML;
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
-        $variationChildStatuses = $this->getHelper('Data')->jsonDecode($row->getData('variation_child_statuses'));
+        $variationChildStatuses = $this->helperData->jsonDecode($row->getData('variation_child_statuses'));
 
         if (empty($variationChildStatuses)) {
             return $this->__('N/A');
@@ -270,7 +275,7 @@ HTML;
         }
 
         $resultValue = $this->__('AFN');
-        $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+        $additionalData = (array)$this->helperData->jsonDecode($row->getData('additional_data'));
 
         if (!empty($additionalData['afn_count'])) {
             $resultValue = $resultValue."&nbsp;[".$additionalData['afn_count']."]";
@@ -300,7 +305,7 @@ HTML;
             $row->getData('is_repricing')
         ) {
             if ($row->getData('is_variation_parent')) {
-                $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+                $additionalData = (array)$this->helperData->jsonDecode($row->getData('additional_data'));
 
                 $enabledCount = isset($additionalData['repricing_managed_count'])
                     ? $additionalData['repricing_managed_count'] : null;
@@ -453,10 +458,16 @@ HTML;
 
         $salePrice = $row->getData('online_regular_sale_price');
         if (!$row->getData('is_variation_parent') && (float)$salePrice > 0 && !$row->getData('is_repricing')) {
-            $currentTimestamp = strtotime($this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d 00:00:00'));
+            $currentTimestamp = (int)$this->helperData->createGmtDateTime(
+                $this->helperData->getCurrentGmtDate(false, 'Y-m-d 00:00:00')
+            )->format('U');
 
-            $startDateTimestamp = strtotime($row->getData('online_regular_sale_price_start_date'));
-            $endDateTimestamp   = strtotime($row->getData('online_regular_sale_price_end_date'));
+            $startDateTimestamp = (int)$this->helperData->createGmtDateTime(
+                $row->getData('online_regular_sale_price_start_date')
+            )->format('U');
+            $endDateTimestamp = (int)$this->helperData->createGmtDateTime(
+                $row->getData('online_regular_sale_price_end_date')
+            )->format('U');
 
             if ($currentTimestamp <= $endDateTimestamp) {
                 $fromDate = $this->_localeDate->formatDate(

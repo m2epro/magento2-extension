@@ -35,6 +35,7 @@ class Product extends AbstractModel
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection $attrSetCollection,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Magento\Framework\Locale\FormatInterface $localeFormat,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Rule\Model\Condition\Context $context,
@@ -45,7 +46,7 @@ class Product extends AbstractModel
         $this->attrSetCollection = $attrSetCollection;
         $this->productFactory = $productFactory;
         $this->localeFormat = $localeFormat;
-        parent::__construct($helperFactory, $modelFactory, $context, $data);
+        parent::__construct($helperData, $helperFactory, $modelFactory, $context, $data);
     }
 
     //########################################
@@ -77,8 +78,14 @@ class Product extends AbstractModel
 
             if ($attr && $attr->getBackendType() == 'datetime' && !is_int($this->getValue())) {
                 $oldValue = $this->getValue();
-                $this->setValue(strtotime($this->getValue()));
-                $value = strtotime($object->getData($attrCode));
+                $this->setValue(
+                    (int)$this->helperData
+                        ->createGmtDateTime($this->getValue())
+                        ->format('U')
+                );
+                $value = (int)$this->helperData
+                    ->createGmtDateTime($object->getData($attrCode))
+                    ->format('U');
                 $result = $this->validateAttribute($value);
                 $this->setValue($oldValue);
                 return $result;
@@ -98,14 +105,24 @@ class Product extends AbstractModel
                 $productStoreId = 0;
             }
 
+            if (!isset($this->_entityAttributeValues[(int)$object->getId()][(int)$productStoreId])) {
+                return false;
+            }
+
             $attributeValue = $this->_entityAttributeValues[(int)$object->getId()][(int)$productStoreId];
 
             $attr = $object->getResource()->getAttribute($attrCode);
             if ($attr && $attr->getBackendType() == 'datetime') {
-                $attributeValue = strtotime($attributeValue);
+                $attributeValue = (int)$this->helperData
+                    ->createGmtDateTime($attributeValue)
+                    ->format('U');
 
                 if (!is_int($this->getValueParsed())) {
-                    $this->setValueParsed(strtotime($this->getValue()));
+                    $this->setValueParsed(
+                        (int)$this->helperData
+                            ->createGmtDateTime($this->getValue())
+                            ->format('U')
+                    );
                 }
             } elseif ($attr && $attr->getFrontendInput() == 'multiselect') {
                 $attributeValue = strlen($attributeValue) ? explode(',', $attributeValue) : [];

@@ -248,7 +248,9 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $minTime = new \DateTime('now', new \DateTimeZone('UTC'));
         $minTime->modify("-1 month");
 
-        if (empty($sinceTime) || strtotime($sinceTime) < (int)$minTime->format('U')) {
+        if (empty($sinceTime) ||
+            (int)$this->helperData->createGmtDateTime($sinceTime)->format('U') < (int)$minTime->format('U')
+        ) {
             $sinceTime = new \DateTime('now', new \DateTimeZone('UTC'));
             $sinceTime = $sinceTime->format('Y-m-d H:i:s');
         }

@@ -8,12 +8,23 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Grid\Column\Filter;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Grid\Column\Filter\Category
- */
 class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AbstractFilter
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
+    private $componentEbayCategory;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Magento\Backend\Block\Context $context,
+        \Magento\Framework\DB\Helper $resourceHelper,
+        array $data = []
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $context, $resourceHelper, $data);
+
+        $this->componentEbayCategory = $componentEbayCategory;
+    }
 
     protected function _renderOption($option, $value)
     {
@@ -32,7 +43,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Ab
             $optionsHtml .= $this->_renderOption($option, $value);
         }
 
-        $label = $this->getHelper('Component_Ebay_Category')
+        $label = $this->componentEbayCategory
             ->getCategoryTitle(\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN);
         $label = $this->__('%1% Assigned', $label);
 

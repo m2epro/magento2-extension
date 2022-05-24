@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Category;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Template\Category\Builder
- */
 class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 {
     private $initDefaultSpecifics = false;
@@ -18,17 +15,21 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     protected $activeRecordFactory;
     protected $transactionFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\DB\TransactionFactory $transactionFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
-        $this->transactionFactory = $transactionFactory;
         parent::__construct($helperFactory, $modelFactory);
+
+        $this->activeRecordFactory       = $activeRecordFactory;
+        $this->transactionFactory        = $transactionFactory;
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
     }
 
     //########################################
@@ -160,7 +161,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             return;
         }
 
-        $dictionarySpecifics = (array)$this->getHelper('Component_Ebay_Category_Ebay')->getSpecifics(
+        $dictionarySpecifics = (array)$this->componentEbayCategoryEbay->getSpecifics(
             $template->getCategoryId(),
             $template->getMarketplaceId()
         );

@@ -15,6 +15,19 @@ use \Ess\M2ePro\Model\Amazon\Listing\Product;
  */
 class Selling extends AbstractModel
 {
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        $this->helperData = $helperData;
+        parent::__construct($helperFactory, $modelFactory, $data);
+    }
+
     //########################################
 
     protected function check()
@@ -60,10 +73,16 @@ class Selling extends AbstractModel
             $actualOnlineRegularPrice = $amazonListingProduct->getOnlineRegularPrice();
 
             if ($regularSalePrice > 0) {
-                $startDateTimestamp = strtotime($amazonListingProduct->getOnlineRegularSalePriceStartDate());
-                $endDateTimestamp   = strtotime($amazonListingProduct->getOnlineRegularSalePriceEndDate());
+                $startDateTimestamp = (int)$this->helperData
+                    ->createGmtDateTime($amazonListingProduct->getOnlineRegularSalePriceStartDate())
+                    ->format('U');
+                $endDateTimestamp = (int)$this->helperData
+                    ->createGmtDateTime($amazonListingProduct->getOnlineRegularSalePriceEndDate())
+                    ->format('U');
 
-                $currentTimestamp = strtotime($this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d 00:00:00'));
+                $currentTimestamp = (int)$this->helperData
+                    ->createGmtDateTime($this->helperData->getCurrentGmtDate(false, 'Y-m-d 00:00:00'))
+                    ->format('U');
 
                 if ($currentTimestamp >= $startDateTimestamp &&
                     $currentTimestamp <= $endDateTimestamp &&

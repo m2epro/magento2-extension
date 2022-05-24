@@ -304,7 +304,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             'component_mode'        => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'payment_method'        => $paymentMethodTitle,
             'channel_order_id'      => $this->order->getEbayOrderId(),
-            'channel_final_fee'     => $this->convertPrice($this->order->getFinalFee()),
+            'channel_final_fee'     => $this->convertPrice($this->order->getApproximatelyFinalFee()),
             'cash_on_delivery_cost' => $this->convertPrice($this->order->getCashOnDeliveryCost()),
             'transactions'          => $this->getPaymentTransactions(),
             'tax_id'                => $this->order->getBuyerTaxId(),

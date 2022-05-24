@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Helper\Component\Walmart;
 
-/**
- * Class \Ess\M2ePro\Helper\Component\Walmart\Configuration
- */
 class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const SKU_MODE_DEFAULT          = 1;
@@ -45,11 +42,25 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 
     const CONFIG_GROUP = '/walmart/configuration/';
 
+    /** @var \Ess\M2ePro\Helper\Module */
+    protected $helperModule;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module $helperModule,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\App\Helper\Context $context
+    )
+    {
+        parent::__construct($helperFactory, $context);
+
+        $this->helperModule = $helperModule;
+    }
+
     //########################################
 
     public function getSkuMode()
     {
-        return (int)$this->getHelper('Module')->getConfig()->getGroupValue(self::CONFIG_GROUP, 'sku_mode');
+        return (int)$this->helperModule->getConfig()->getGroupValue(self::CONFIG_GROUP, 'sku_mode');
     }
 
     public function isSkuModeDefault()
@@ -71,14 +82,14 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getSkuCustomAttribute()
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue(self::CONFIG_GROUP, 'sku_custom_attribute');
+        return $this->helperModule->getConfig()->getGroupValue(self::CONFIG_GROUP, 'sku_custom_attribute');
     }
 
     //---------------------------------------
 
     public function getSkuModificationMode()
     {
-        return (int)$this->getHelper('Module')->getConfig()->getGroupValue(
+        return (int)$this->helperModule->getConfig()->getGroupValue(
             self::CONFIG_GROUP,
             'sku_modification_mode'
         );
@@ -108,7 +119,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getSkuModificationCustomValue()
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue(
+        return $this->helperModule->getConfig()->getGroupValue(
             self::CONFIG_GROUP,
             'sku_modification_custom_value'
         );
@@ -118,7 +129,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getGenerateSkuMode()
     {
-        return (int)$this->getHelper('Module')->getConfig()->getGroupValue(self::CONFIG_GROUP, 'generate_sku_mode');
+        return (int)$this->helperModule->getConfig()->getGroupValue(self::CONFIG_GROUP, 'generate_sku_mode');
     }
 
     public function isGenerateSkuModeYes()
@@ -130,7 +141,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getProductIdOverrideMode()
     {
-        return (int)$this->getHelper('Module')->getConfig()->getGroupValue(
+        return (int)$this->helperModule->getConfig()->getGroupValue(
             self::CONFIG_GROUP,
             'product_id_override_mode'
         );
@@ -155,7 +166,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getUpcMode()
     {
-        return (int)$this->getHelper('Module')->getConfig()->getGroupValue(self::CONFIG_GROUP, 'upc_mode');
+        return (int)$this->helperModule->getConfig()->getGroupValue(self::CONFIG_GROUP, 'upc_mode');
     }
 
     public function isUpcModeNotSet()
@@ -172,7 +183,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getUpcCustomAttribute()
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue(
+        return $this->helperModule->getConfig()->getGroupValue(
             self::CONFIG_GROUP,
             'upc_custom_attribute'
         );
@@ -182,7 +193,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getEanMode()
     {
-        return (int)$this->getHelper('Module')->getConfig()->getGroupValue(self::CONFIG_GROUP, 'ean_mode');
+        return (int)$this->helperModule->getConfig()->getGroupValue(self::CONFIG_GROUP, 'ean_mode');
     }
 
     public function isEanModeNotSet()
@@ -199,14 +210,14 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getEanCustomAttribute()
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue(self::CONFIG_GROUP, 'ean_custom_attribute');
+        return $this->helperModule->getConfig()->getGroupValue(self::CONFIG_GROUP, 'ean_custom_attribute');
     }
 
     //########################################
 
     public function getGtinMode()
     {
-        return (int)$this->getHelper('Module')->getConfig()->getGroupValue(self::CONFIG_GROUP, 'gtin_mode');
+        return (int)$this->helperModule->getConfig()->getGroupValue(self::CONFIG_GROUP, 'gtin_mode');
     }
 
     public function isGtinModeNotSet()
@@ -223,14 +234,14 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getGtinCustomAttribute()
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue(self::CONFIG_GROUP, 'gtin_custom_attribute');
+        return $this->helperModule->getConfig()->getGroupValue(self::CONFIG_GROUP, 'gtin_custom_attribute');
     }
 
     //########################################
 
     public function getIsbnMode()
     {
-        return (int)$this->getHelper('Module')->getConfig()->getGroupValue(self::CONFIG_GROUP, 'isbn_mode');
+        return (int)$this->helperModule->getConfig()->getGroupValue(self::CONFIG_GROUP, 'isbn_mode');
     }
 
     public function isIsbnModeNotSet()
@@ -247,14 +258,14 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getIsbnCustomAttribute()
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue(self::CONFIG_GROUP, 'isbn_custom_attribute');
+        return $this->helperModule->getConfig()->getGroupValue(self::CONFIG_GROUP, 'isbn_custom_attribute');
     }
 
     //########################################
 
     public function getOptionImagesURLMode()
     {
-        return (int)$this->getHelper('Module')->getConfig()->getGroupValue(
+        return (int)$this->helperModule->getConfig()->getGroupValue(
             self::CONFIG_GROUP,
             'option_images_url_mode'
         );
@@ -280,7 +291,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
     public function setConfigValues(array $values)
     {
         if (isset($values['sku_mode'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->helperModule->getConfig()->setGroupValue(
                 self::CONFIG_GROUP,
                 'sku_mode',
                 $values['sku_mode']
@@ -288,7 +299,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['sku_custom_attribute'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->helperModule->getConfig()->setGroupValue(
                 self::CONFIG_GROUP,
                 'sku_custom_attribute',
                 $values['sku_custom_attribute']
@@ -296,7 +307,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['sku_modification_mode'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->helperModule->getConfig()->setGroupValue(
                 self::CONFIG_GROUP,
                 'sku_modification_mode',
                 $values['sku_modification_mode']
@@ -304,7 +315,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['sku_modification_custom_value'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->helperModule->getConfig()->setGroupValue(
                 self::CONFIG_GROUP,
                 'sku_modification_custom_value',
                 $values['sku_modification_custom_value']
@@ -312,7 +323,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['generate_sku_mode'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->helperModule->getConfig()->setGroupValue(
                 self::CONFIG_GROUP,
                 'generate_sku_mode',
                 $values['generate_sku_mode']
@@ -320,7 +331,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['product_id_override_mode'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->helperModule->getConfig()->setGroupValue(
                 self::CONFIG_GROUP,
                 'product_id_override_mode',
                 $values['product_id_override_mode']
@@ -328,7 +339,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['upc_mode'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->helperModule->getConfig()->setGroupValue(
                 self::CONFIG_GROUP,
                 'upc_mode',
                 $values['upc_mode']
@@ -336,7 +347,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['upc_custom_attribute'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->helperModule->getConfig()->setGroupValue(
                 self::CONFIG_GROUP,
                 'upc_custom_attribute',
                 $values['upc_custom_attribute']
@@ -344,7 +355,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['ean_mode'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->helperModule->getConfig()->setGroupValue(
                 self::CONFIG_GROUP,
                 'ean_mode',
                 $values['ean_mode']
@@ -352,7 +363,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['ean_custom_attribute'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->helperModule->getConfig()->setGroupValue(
                 self::CONFIG_GROUP,
                 'ean_custom_attribute',
                 $values['ean_custom_attribute']
@@ -360,7 +371,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['gtin_mode'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->helperModule->getConfig()->setGroupValue(
                 self::CONFIG_GROUP,
                 'gtin_mode',
                 $values['gtin_mode']
@@ -368,7 +379,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['gtin_custom_attribute'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->helperModule->getConfig()->setGroupValue(
                 self::CONFIG_GROUP,
                 'gtin_custom_attribute',
                 $values['gtin_custom_attribute']
@@ -376,7 +387,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['isbn_mode'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->helperModule->getConfig()->setGroupValue(
                 self::CONFIG_GROUP,
                 'isbn_mode',
                 $values['isbn_mode']
@@ -384,7 +395,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['isbn_custom_attribute'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->helperModule->getConfig()->setGroupValue(
                 self::CONFIG_GROUP,
                 'isbn_custom_attribute',
                 $values['isbn_custom_attribute']
@@ -392,7 +403,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['option_images_url_mode'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->helperModule->getConfig()->setGroupValue(
                 self::CONFIG_GROUP,
                 'option_images_url_mode',
                 $values['option_images_url_mode']

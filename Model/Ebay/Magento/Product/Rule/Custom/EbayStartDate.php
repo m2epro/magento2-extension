@@ -39,7 +39,9 @@ class EbayStartDate extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Abstra
         }
 
         $startDate = $this->localeDate->formatDate($startDate, \IntlDateFormatter::MEDIUM, true);
-        return strtotime($startDate);
+        return (int)$this->helperData
+            ->createGmtDateTime($startDate)
+            ->format('U');
     }
 
     /**

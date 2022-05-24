@@ -10,11 +10,21 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Vocab
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Vocabulary\AddAttributes
- */
 class AddAttributes extends Main
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary */
+    protected $vocabularyHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+
+        $this->vocabularyHelper = $vocabularyHelper;
+    }
+
     public function execute()
     {
         $attributes           = $this->getRequest()->getParam('attributes');
@@ -29,10 +39,8 @@ class AddAttributes extends Main
             return;
         }
 
-        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
-
         if ($isRememberAutoAction && !$needAddToVocabulary) {
-            $vocabularyHelper->disableAttributeAutoAction();
+            $this->vocabularyHelper->disableAttributeAutoAction();
             return;
         }
 
@@ -41,7 +49,7 @@ class AddAttributes extends Main
         }
 
         if ($isRememberAutoAction) {
-            $vocabularyHelper->enableAttributeAutoAction();
+            $this->vocabularyHelper->enableAttributeAutoAction();
         }
 
         if (empty($attributes)) {
@@ -49,7 +57,7 @@ class AddAttributes extends Main
         }
 
         foreach ($attributes as $productAttribute => $channelAttribute) {
-            $vocabularyHelper->addAttribute($productAttribute, $channelAttribute);
+            $this->vocabularyHelper->addAttribute($productAttribute, $channelAttribute);
         }
     }
 }

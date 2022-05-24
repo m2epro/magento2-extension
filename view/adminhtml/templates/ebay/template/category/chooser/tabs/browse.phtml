@@ -11,7 +11,7 @@
 
 $categoryType = $block->getData('category_type');
 $ebayCategoryTypes =  $block->getHelper('Component\Ebay\Category')->getEbayCategoryTypes();
-$isWizard = !$block->getHelper('View\Ebay')->isInstallationWizardFinished();
+$isWizard = !$block->ebayViewHelper->isInstallationWizardFinished();
 
 $block->jsUrl->add($block->getUrl('*/general/getChildCategories'), 'general/getChildCategories');
 

@@ -8,26 +8,27 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Categories
- */
 class Parts extends AbstractModel
 {
     protected $resourceConnection;
     protected $activeRecordFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
+    private $componentEbayMotors;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
-        $this->resourceConnection = $resourceConnection;
-        $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->resourceConnection  = $resourceConnection;
+        $this->activeRecordFactory = $activeRecordFactory;
+        $this->componentEbayMotors = $componentEbayMotors;
     }
 
     //########################################
@@ -41,7 +42,7 @@ class Parts extends AbstractModel
         $data = [];
 
         if ($this->getEbayListing()->isPartsCompatibilityModeEpids()) {
-            $motorsType = $this->getHelper('Component_Ebay_Motors')->getEpidsTypeByMarketplace(
+            $motorsType = $this->componentEbayMotors->getEpidsTypeByMarketplace(
                 $this->getMarketplace()->getId()
             );
             $tempData = $this->getMotorsData($motorsType);
@@ -65,7 +66,7 @@ class Parts extends AbstractModel
         $attributeValue = '';
 
         if ($this->getEbayListing()->isPartsCompatibilityModeEpids()) {
-            $motorsType = $this->getHelper('Component_Ebay_Motors')->getEpidsTypeByMarketplace(
+            $motorsType = $this->componentEbayMotors->getEpidsTypeByMarketplace(
                 $this->getMarketplace()->getId()
             );
 
@@ -562,7 +563,7 @@ class Parts extends AbstractModel
      */
     protected function getMotorsHelper()
     {
-        return $this->getHelper('Component_Ebay_Motors');
+        return $this->componentEbayMotors;
     }
 
     protected function getMotorsAttribute($type)

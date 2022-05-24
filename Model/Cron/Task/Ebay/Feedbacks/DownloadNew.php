@@ -103,7 +103,13 @@ class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             ->from($tableFeedbacks, new \Zend_Db_Expr('MAX(`seller_feedback_date`)'))
             ->where('`account_id` = ?', (int)$account->getId());
         $maxSellerDate = $connection->fetchOne($dbSelect);
-        if (strtotime($maxSellerDate) < strtotime('2001-01-02')) {
+        $maxSellerDateTimestamp = (int)$this->helperData
+            ->createGmtDateTime($maxSellerDate)
+            ->format('U');
+        $comparedTimestamp = (int)$this->helperData
+            ->createGmtDateTime('2001-01-02')
+            ->format('U');
+        if ($maxSellerDateTimestamp < $comparedTimestamp) {
             $maxSellerDate = null;
         }
 
@@ -111,7 +117,10 @@ class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             ->from($tableFeedbacks, new \Zend_Db_Expr('MAX(`buyer_feedback_date`)'))
             ->where('`account_id` = ?', (int)$account->getId());
         $maxBuyerDate = $connection->fetchOne($dbSelect);
-        if (strtotime($maxBuyerDate) < strtotime('2001-01-02')) {
+        $maxBuyerDateTimestamp = (int)$this->helperData
+            ->createGmtDateTime($maxBuyerDate)
+            ->format('U');
+        if ($maxBuyerDateTimestamp < $comparedTimestamp) {
             $maxBuyerDate = null;
         }
 

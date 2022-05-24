@@ -14,6 +14,17 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping;
 class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
 {
     const TYPE_CURRENCY_CONVERSION = 'currency_conversion';
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+        $this->moduleConfiguration = $moduleConfiguration;
+    }
 
     //########################################
 
@@ -116,8 +127,7 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
             return false;
         }
 
-        $isPriceConvertEnabled = $this->getHelper('Module_Configuration')
-            ->isEnableMagentoAttributePriceTypeConvertingMode();
+        $isPriceConvertEnabled = $this->moduleConfiguration->isEnableMagentoAttributePriceTypeConvertingMode();
 
         if (!$isPriceConvertEnabled) {
             return false;

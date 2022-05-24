@@ -18,18 +18,23 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     private $activeRecordFactory;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $helperData;
+
     /** @var string */
     private $nick;
 
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         $nick,
         array $data = []
     ) {
+        $this->helperData          = $helperData;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->nick                = $nick;
         parent::__construct($helperFactory, $modelFactory, $data);
@@ -105,8 +110,10 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             return true;
         }
 
-        $currentTimestamp = $this->getHelper('Data')->getCurrentGmtDate(true);
-        $updateTimestamp = strtotime($lockItem->getUpdateDate());
+        $currentTimestamp = $this->helperData->getCurrentGmtDate(true);
+        $updateTimestamp = (int)$this->helperData
+            ->createGmtDateTime($lockItem->getUpdateDate())
+            ->format('U');
 
         if ($updateTimestamp < $currentTimestamp - $maxInactiveInterval) {
             return true;
@@ -158,14 +165,14 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
         $data = $lockItem->getContentData();
         if (!empty($data)) {
-            $data = $this->getHelper('Data')->jsonDecode($data);
+            $data = $this->helperData->jsonDecode($data);
         } else {
             $data = [];
         }
 
         $data[$key] = $value;
 
-        $lockItem->setData('data', $this->getHelper('Data')->jsonEncode($data));
+        $lockItem->setData('data', $this->helperData->jsonEncode($data));
         $lockItem->save();
 
         return true;
@@ -180,7 +187,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             );
         }
 
-        $lockItem->setData('data', $this->getHelper('Data')->jsonEncode($data));
+        $lockItem->setData('data', $this->helperData->jsonEncode($data));
         $lockItem->save();
 
         return true;
@@ -201,7 +208,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             return null;
         }
 
-        $data = $this->getHelper('Data')->jsonDecode($lockItem->getContentData());
+        $data = $this->helperData->jsonDecode($lockItem->getContentData());
         if ($key === null) {
             return $data;
         }

@@ -27,7 +27,7 @@ class GetDescriptionTemplatesList extends \Ess\M2ePro\Controller\Adminhtml\Amazo
         $descriptionTemplates = $collection->getData();
         if ($isNewAsinAccepted == 1) {
             usort($descriptionTemplates, function ($a, $b) {
-                return $a["is_new_asin_accepted"] < $b["is_new_asin_accepted"];
+                return $a["is_new_asin_accepted"] <=> $b["is_new_asin_accepted"];
             });
         }
 

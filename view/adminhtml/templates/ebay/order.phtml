@@ -266,16 +266,25 @@ $status = $this->getStatus();
                         <tr>
                             <td class="label"><?php echo $block->__('eBay Final Fee'); ?></td>
                             <td class="value">
-                                <strong>
-                                    <?php if ($block->order->getChildObject()->getFinalFee() <= 0) { ?>
+                                <?php if (!$block->hasSomeFinalFee()) { ?>
+                                    <strong id="ebay_order_final_fee">
                                         <?php echo $block->__('N/A'); ?>
-                                    <?php } else { ?>
-                                        <?php echo $block->formatPrice(
-                                            $block->order->getChildObject()->getCurrency(),
-                                            round($block->order->getChildObject()->getFinalFee(), 2)
-                                        ); ?>
+                                    </strong>
+                                <?php } else { ?>
+                                    <strong id="ebay_order_final_fee">
+                                        <?php echo $block->getFormattedFinalFee(); ?>
+                                    </strong>
+                                    <?php if ($block->canUpdateFee()) { ?>
+                                        <span id='ebay_order_final_fee_actualize'>
+                                                <?php echo $block->createBlock('Magento\Button')->setData([
+                                                    'label'   => $block->__('Actualize'),
+                                                    'style'   => 'margin-left: 15px',
+                                                    'class'   => 'action-default scalable primary',
+                                                    'onclick' => "OrderEditItemObj.actualizeFee({account_id: " . $block->order->getAccount()->getChildObject()->getId() . "});"
+                                                ])->toHtml(); ?>
+                                        </span>
                                     <?php } ?>
-                                </strong>
+                                <?php } ?>
                             </td>
                         </tr>
 

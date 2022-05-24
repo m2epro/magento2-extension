@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay;
 
 use Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty as OnlineQty;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
     protected $magentoProductCollectionFactory;
@@ -20,26 +17,26 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected $localeCurrency;
     protected $resourceConnection;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View\Ebay */
+    protected $ebayViewHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
+        parent::__construct($context, $backendHelper, $data);
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->ebayFactory = $ebayFactory;
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
-
-        parent::__construct($context, $backendHelper, $data);
+        $this->ebayViewHelper = $ebayViewHelper;
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -51,8 +48,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->showAdvancedFilterProductsOption = false;
     }
-
-    //########################################
 
     protected function _setCollectionOrder($column)
     {
@@ -248,7 +243,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'filter_condition_callback' => [$this, 'callbackFilterStatus']
         ];
 
-        if ($this->getHelper('View\Ebay')->isDuplicatesFilterShouldBeShown($this->listing->getId())) {
+        if ($this->ebayViewHelper->isDuplicatesFilterShouldBeShown($this->listing->getId())) {
             $statusColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\Status';
         }
         $this->addColumn('status', $statusColumn);

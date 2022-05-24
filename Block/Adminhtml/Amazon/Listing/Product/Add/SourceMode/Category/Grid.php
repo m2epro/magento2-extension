@@ -55,7 +55,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\Source
     {
         $this->getMassactionBlock()->setFormFieldName('ids');
 
-        $ids = $this->getRequest()->getPost($this->getMassactionBlock()->getFormFieldNameInternal());
+        $ids = $this->getRequest()->getPost($this->getMassactionBlock()->getFormFieldNameInternal(), '');
 
         if ($this->getRequest()->isXmlHttpRequest() && !$this->getRequest()->getParam('category_change')) {
             return parent::_prepareMassaction();

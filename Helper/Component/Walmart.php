@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Helper\Component;
 
 use \Ess\M2ePro\Model\Listing\Product as ListingProduct;
 
-/**
- * Class \Ess\M2ePro\Helper\Component\Walmart
- */
 class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const NICK  = 'walmart';
@@ -39,20 +36,32 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 
     const PRODUCT_STATUS_CHANGE_REASON_INVALID_PRICE = 'Reasonable Price Not Satisfied';
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
     private $walmartFactory;
-    private $activeRecordFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module */
+    protected $helperModule;
+
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    protected $moduleTranslation;
+
+    /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
+    protected $permanentCache;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Module $helperModule,
+        \Ess\M2ePro\Helper\Module\Translation $moduleTranslation,
+        \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCache,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
-        $this->walmartFactory = $walmartFactory;
-        $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $context);
+
+        $this->walmartFactory = $walmartFactory;
+        $this->helperModule = $helperModule;
+        $this->moduleTranslation = $moduleTranslation;
+        $this->permanentCache = $permanentCache;
     }
 
     //########################################
@@ -72,16 +81,11 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
     public function getHumanTitleByListingProductStatus($status)
     {
         $statuses = [
-            ListingProduct::STATUS_UNKNOWN    =>
-                $this->helperFactory->getObject('Module\Translation')->__('Unknown'),
-            ListingProduct::STATUS_NOT_LISTED =>
-                $this->helperFactory->getObject('Module\Translation')->__('Not Listed'),
-            ListingProduct::STATUS_LISTED     =>
-                $this->helperFactory->getObject('Module\Translation')->__('Active'),
-            ListingProduct::STATUS_STOPPED    =>
-                $this->helperFactory->getObject('Module\Translation')->__('Inactive'),
-            ListingProduct::STATUS_BLOCKED    =>
-                $this->helperFactory->getObject('Module\Translation')->__('Inactive (Blocked)')
+            ListingProduct::STATUS_UNKNOWN    => $this->moduleTranslation->__('Unknown'),
+            ListingProduct::STATUS_NOT_LISTED => $this->moduleTranslation->__('Not Listed'),
+            ListingProduct::STATUS_LISTED     => $this->moduleTranslation->__('Active'),
+            ListingProduct::STATUS_STOPPED    => $this->moduleTranslation->__('Inactive'),
+            ListingProduct::STATUS_BLOCKED    => $this->moduleTranslation->__('Inactive (Blocked)')
         ];
 
         if (!isset($statuses[$status])) {
@@ -95,7 +99,7 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function isEnabled()
     {
-        return (bool)$this->getHelper('Module')->getConfig()->getGroupValue('/component/'.self::NICK.'/', 'mode');
+        return (bool)$this->helperModule->getConfig()->getGroupValue('/component/'.self::NICK.'/', 'mode');
     }
 
     //########################################
@@ -153,22 +157,9 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function isASIN($string)
-    {
-        if (strlen($string) != 10) {
-            return false;
-        }
-
-        if (!preg_match('/^B[A-Z0-9]{9}$/', $string)) {
-            return false;
-        }
-
-        return true;
-    }
-
     public function getApplicationName()
     {
-        return (bool)$this->getHelper('Module')->getConfig()->getGroupValue('/walmart/', 'application_name');
+        return (bool)$this->helperModule->getConfig()->getGroupValue('/walmart/', 'application_name');
     }
 
     // ----------------------------------------
@@ -231,7 +222,7 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function clearCache()
     {
-        $this->getHelper('Data_Cache_Permanent')->removeTagsValues(self::NICK);
+        $this->permanentCache->removeTagValues(self::NICK);
     }
 
     //########################################

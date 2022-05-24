@@ -41,11 +41,15 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     protected $walmartFactory;
     protected $activeRecordFactory;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
@@ -54,6 +58,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
         $this->activeRecordFactory = $activeRecordFactory;
         $this->walmartFactory = $walmartFactory;
+        $this->helperData = $helperData;
 
         $this->helper = $this->modelFactory->getObject('Walmart_Order_Helper');
     }
@@ -84,14 +89,24 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         }
         $this->setData('status', $this->helper->getOrderStatus($itemsStatuses));
 
-        $this->setData('purchase_update_date', $this->getHelper('Data')->getDate($data['update_date']));
-        $this->setData('purchase_create_date', $this->getHelper('Data')->getDate($data['purchase_date']));
+        $this->setData(
+            'purchase_update_date',
+            $this->helperData
+                ->createGmtDateTime($data['update_date'])
+                ->format('Y-m-d H:i:s')
+        );
+        $this->setData(
+            'purchase_create_date',
+            $this->helperData
+                ->createGmtDateTime($data['purchase_date'])
+                ->format('Y-m-d H:i:s')
+        );
         // ---------------------------------------
 
         // Init sale data
         // ---------------------------------------
         $this->setData('paid_amount', (float)$data['amount_paid']);
-        $this->setData('tax_details', $this->getHelper('Data')->jsonEncode($data['tax_details']));
+        $this->setData('tax_details', $this->helperData->jsonEncode($data['tax_details']));
         $this->setData('currency', $data['currency']);
         // ---------------------------------------
 
@@ -100,7 +115,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $this->setData('buyer_name', $data['buyer']['name']);
         $this->setData('buyer_email', $data['buyer']['email']);
         $this->setData('shipping_service', $data['shipping']['level']);
-        $this->setData('shipping_address', $this->getHelper('Data')->jsonEncode($data['shipping']['address']));
+        $this->setData('shipping_address', $this->helperData->jsonEncode($data['shipping']['address']));
         $this->setData('shipping_price', (float)$data['shipping']['price']);
         $this->setData('shipping_date_to', $data['shipping']['estimated_ship_date']);
         // ---------------------------------------

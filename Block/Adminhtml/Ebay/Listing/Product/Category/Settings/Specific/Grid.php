@@ -14,7 +14,6 @@ use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 /**
  * @method setCategoriesData()
  * @method getCategoriesData()
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Specific\Grid
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
@@ -28,16 +27,22 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected $customCollectionFactory;
 
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
+
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->customCollectionFactory = $customCollectionFactory;
         parent::__construct($context, $backendHelper, $data);
+
+        $this->customCollectionFactory = $customCollectionFactory;
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
     }
 
     //########################################
@@ -70,7 +75,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $row = $data[eBayCategory::TYPE_EBAY_MAIN];
 
             if (!isset($row['is_custom_template'])) {
-                $specificsRequired = $this->getHelper('Component_Ebay_Category_Ebay')->hasRequiredSpecifics(
+                $specificsRequired = $this->componentEbayCategoryEbay->hasRequiredSpecifics(
                     $row['value'],
                     $this->listing->getMarketplaceId()
                 );
@@ -298,7 +303,7 @@ JS
     {
         foreach ($this->getCategoriesData() as $productId => $categoryData) {
             if ($categoryData[eBayCategory::TYPE_EBAY_MAIN]['is_custom_template'] === null) {
-                $specificsRequired = $this->getHelper('Component_Ebay_Category_Ebay')->hasRequiredSpecifics(
+                $specificsRequired = $this->componentEbayCategoryEbay->hasRequiredSpecifics(
                     $categoryData[eBayCategory::TYPE_EBAY_MAIN]['value'],
                     $this->listing->getMarketplaceId()
                 );

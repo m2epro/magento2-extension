@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Helper;
 
 use Magento\Framework\Component\ComponentRegistrar;
 
-/**
- * Class \Ess\M2ePro\Helper\Module
- */
 class Module extends AbstractHelper
 {
     const IDENTIFIER = 'Ess_M2ePro';
@@ -40,10 +37,14 @@ class Module extends AbstractHelper
 
     /** @var \Magento\Backend\Model\UrlInterface $urlBuilder */
     protected $urlBuilder;
+    /** @var \Ess\M2ePro\Helper\View\Ebay */
+    protected $ebayViewHelper;
+    /** @var \Ess\M2ePro\Helper\View\Amazon */
+    protected $amazonViewHelper;
+    /** @var \Ess\M2ePro\Helper\View\Walmart */
+    protected $walmartViewHelper;
 
     protected $areImportantTablesExist;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -58,8 +59,12 @@ class Module extends AbstractHelper
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\Framework\Component\ComponentRegistrar $componentRegistrar,
-        \Magento\Backend\Model\UrlInterface $urlBuilder
+        \Magento\Backend\Model\UrlInterface $urlBuilder,
+        \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
+        \Ess\M2ePro\Helper\View\Amazon $amazonViewHelper,
+        \Ess\M2ePro\Helper\View\Walmart $walmartViewHelper
     ) {
+        parent::__construct($helperFactory, $context);
         $this->activeRecordFactory = $activeRecordFactory;
         $this->config = $config;
         $this->registry = $registry;
@@ -71,11 +76,10 @@ class Module extends AbstractHelper
         $this->resourceConnection = $resourceConnection;
         $this->componentRegistrar = $componentRegistrar;
         $this->urlBuilder = $urlBuilder;
-
-        parent::__construct($helperFactory, $context);
+        $this->ebayViewHelper = $ebayViewHelper;
+        $this->amazonViewHelper = $amazonViewHelper;
+        $this->walmartViewHelper = $walmartViewHelper;
     }
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Config\Manager
@@ -168,9 +172,9 @@ class Module extends AbstractHelper
     {
         return $this->areImportantTablesExist() &&
             $this->getHelper('Component')->getEnabledComponents() &&
-            ($this->getHelper('View\Ebay')->isInstallationWizardFinished() ||
-                $this->getHelper('View\Amazon')->isInstallationWizardFinished() ||
-                $this->getHelper('View\Walmart')->isInstallationWizardFinished());
+            ($this->ebayViewHelper->isInstallationWizardFinished() ||
+                $this->amazonViewHelper->isInstallationWizardFinished() ||
+                $this->walmartViewHelper->isInstallationWizardFinished());
     }
 
     public function areImportantTablesExist()

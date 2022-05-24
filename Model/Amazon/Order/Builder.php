@@ -84,6 +84,15 @@ class Builder extends AbstractModel
 
         $this->setData('purchase_update_date', $data['purchase_update_date']);
         $this->setData('purchase_create_date', $data['purchase_create_date']);
+
+        $this->setData('is_buyer_requested_cancel', $data['is_buyer_requested_cancel']);
+        $this->setData('buyer_cancel_reason', $data['buyer_cancel_reason']);
+        if ($data['is_buyer_requested_cancel'] &&
+            $this->getData('status') == \Ess\M2ePro\Model\Amazon\Order::STATUS_UNSHIPPED
+        ) {
+            $this->setData('status', \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELLATION_REQUESTED);
+        }
+
         // ---------------------------------------
 
         // Init sale data
@@ -379,6 +388,21 @@ class Builder extends AbstractModel
                     break;
                 }
             }
+        }
+
+        if ($this->getData('status') == \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELLATION_REQUESTED) {
+            if ($reason = $this->getData('buyer_cancel_reason')) {
+                $noteText = 'A buyer requested order cancellation. Reason: ' .
+                    $this->getHelper('Data')->escapeHtml($reason);
+            } else {
+                $noteText = 'A buyer requested order cancellation. The reason was not specified.';
+            }
+
+            /** @var \Ess\M2ePro\Model\Order\Note $noteModel */
+            $noteModel = $this->activeRecordFactory->getObject('Order_Note');
+            $noteModel->setData('note', $noteText);
+            $noteModel->setData('order_id', $this->order->getId());
+            $noteModel->save();
         }
 
         $this->order->setAccount($this->account);

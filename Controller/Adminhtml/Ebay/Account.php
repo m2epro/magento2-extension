@@ -10,11 +10,21 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay;
 
 use Ess\M2ePro\Model\Ebay\Account as EbayAccount;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
- */
 abstract class Account extends Main
 {
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Store */
+    private $componentEbayCategoryStore;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($ebayFactory, $context);
+
+        $this->componentEbayCategoryStore = $componentEbayCategoryStore;
+    }
+
     //########################################
 
     protected function _isAllowed()
@@ -85,7 +95,7 @@ abstract class Account extends Main
         // ---------------------------------------
         $account->getChildObject()->updateEbayStoreInfo();
 
-        if ($this->getHelper('Component_Ebay_Category_Store')->isExistDeletedCategories()) {
+        if ($this->componentEbayCategoryStore->isExistDeletedCategories()) {
             $url = $this->getUrl('*/ebay_category/index', ['filter' => base64_encode('state=0')]);
 
             $this->messageManager->addWarning(
@@ -167,7 +177,7 @@ abstract class Account extends Main
         if ($isChangeTokenSession || (int)$this->getRequest()->getParam('update_ebay_store')) {
             $account->getChildObject()->updateEbayStoreInfo();
 
-            if ($this->getHelper('Component_Ebay_Category_Store')->isExistDeletedCategories()) {
+            if ($this->componentEbayCategoryStore->isExistDeletedCategories()) {
                 $url = $this->getUrl('*/ebay_category/index', ['filter' => base64_encode('state=0')]);
 
                 $this->messageManager->addWarning(

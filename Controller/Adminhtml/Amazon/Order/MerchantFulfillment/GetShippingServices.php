@@ -16,6 +16,18 @@ use Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment as MerchantFulfillmen
  */
 class GetShippingServices extends Order
 {
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        $this->helperData = $helperData;
+        parent::__construct($amazonFactory, $context);
+    }
+
     public function execute()
     {
         $orderId = $this->getRequest()->getParam('order_id');
@@ -165,7 +177,10 @@ class GetShippingServices extends Order
         ];
 
         if ($post['must_arrive_by_date']) {
-            $mustArriveByDateTimestamp = strtotime($post['must_arrive_by_date']);
+
+            $mustArriveByDateTimestamp = (int)$this->helperData->createGmtDateTime(
+                $post['must_arrive_by_date']
+            )->format('U');
             $mustArriveByDate = new \DateTime();
             $mustArriveByDate->setTimestamp($mustArriveByDateTimestamp);
             $requestData['arrive_by_date'] = $mustArriveByDate->format(DATE_ISO8601);

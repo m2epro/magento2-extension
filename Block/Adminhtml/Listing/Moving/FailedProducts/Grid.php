@@ -16,15 +16,20 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected $magentoProductCollectionFactory;
 
     //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         parent::__construct($context, $backendHelper, $data);
+
+        $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
+        $this->moduleConfiguration             = $moduleConfiguration;
     }
 
     public function _construct()
@@ -94,7 +99,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $url = $this->getUrl('catalog/product/edit', ['id' => $productId]);
         $withoutImageHtml = '<a href="'.$url.'" target="_blank">'.$productId.'</a>&nbsp;';
 
-        if (!$this->getHelper('Module_Configuration')->getViewShowProductsThumbnailsMode()) {
+        if (!$this->moduleConfiguration->getViewShowProductsThumbnailsMode()) {
             return $withoutImageHtml;
         }
 

@@ -236,14 +236,17 @@ class Grid extends AbstractGrid
                 'filter_index'   => 'second_table.status',
                 'type'           => 'options',
                 'options'        => [
-                    \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING             => $this->__('Pending'),
-                    \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING_RESERVED    => $this->__('Pending / QTY Reserved'),
-                    \Ess\M2ePro\Model\Amazon\Order::STATUS_UNSHIPPED           => $this->__('Unshipped'),
-                    \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED_PARTIALLY   => $this->__('Partially Shipped'),
-                    \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED             => $this->__('Shipped'),
-                    \Ess\M2ePro\Model\Amazon\Order::STATUS_INVOICE_UNCONFIRMED => $this->__('Invoice Not Confirmed'),
-                    \Ess\M2ePro\Model\Amazon\Order::STATUS_UNFULFILLABLE       => $this->__('Unfulfillable'),
-                    \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED            => $this->__('Canceled')
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING                => $this->__('Pending'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING_RESERVED       =>
+                        $this->__('Pending / QTY Reserved'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_UNSHIPPED              => $this->__('Unshipped'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED_PARTIALLY      => $this->__('Partially Shipped'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED                => $this->__('Shipped'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_INVOICE_UNCONFIRMED    => $this->__('Invoice Not Confirmed'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_UNFULFILLABLE          => $this->__('Unfulfillable'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED               => $this->__('Canceled'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELLATION_REQUESTED =>
+                        $this->__('Unshipped (Cancellation Requested)')
                 ],
                 'frame_callback' => [$this, 'callbackColumnStatus'],
                 'filter_condition_callback' => [$this, 'callbackFilterStatus']
@@ -445,12 +448,11 @@ HTML;
     public function callbackColumnMagentoOrder($value, $row, $column, $isExport)
     {
         $magentoOrderId = $row['magento_order_id'];
-        $magentoOrderNumber = $this->getHelper('Data')->escapeHtml($row['magento_order_num']);
-
         $returnString = $this->__('N/A');
 
         if ($magentoOrderId !== null) {
             if ($row['magento_order_num']) {
+                $magentoOrderNumber = $this->getHelper('Data')->escapeHtml($row['magento_order_num'] ?? '');
                 $orderUrl = $this->getUrl('sales/order/view', ['order_id' => $magentoOrderId]);
                 $returnString = '<a href="' . $orderUrl . '" target="_blank">' . $magentoOrderNumber . '</a>';
             } else {
@@ -617,22 +619,25 @@ HTML;
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
         $statuses = [
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING             => $this->__('Pending'),
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_UNSHIPPED           => $this->__('Unshipped'),
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED_PARTIALLY   => $this->__('Partially Shipped'),
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED             => $this->__('Shipped'),
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_INVOICE_UNCONFIRMED => $this->__('Invoice Not Confirmed'),
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_UNFULFILLABLE       => $this->__('Unfulfillable'),
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED            => $this->__('Canceled')
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING                => $this->__('Pending'),
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_UNSHIPPED              => $this->__('Unshipped'),
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED_PARTIALLY      => $this->__('Partially Shipped'),
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED                => $this->__('Shipped'),
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_INVOICE_UNCONFIRMED    => $this->__('Invoice Not Confirmed'),
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_UNFULFILLABLE          => $this->__('Unfulfillable'),
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED               => $this->__('Canceled'),
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELLATION_REQUESTED =>
+                $this->__('Unshipped (Cancellation Requested)')
         ];
         $status = $row->getChildObject()->getData('status');
 
         $value = $statuses[$status];
 
         $statusColors = [
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING  => 'gray',
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED  => 'green',
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED => 'red'
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING                => 'gray',
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED                => 'green',
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED               => 'red',
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELLATION_REQUESTED => 'red'
         ];
 
         $color = isset($statusColors[$status]) ? $statusColors[$status] : 'black';
@@ -743,6 +748,12 @@ HTML;
                 $collection->addFieldToFilter(
                     'reservation_state',
                     [\Ess\M2ePro\Model\Order\Reserve::STATE_PLACED]
+                );
+                break;
+            case \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELLATION_REQUESTED:
+                $collection->addFieldToFilter(
+                    'second_table.status',
+                    [\Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELLATION_REQUESTED]
                 );
                 break;
         }

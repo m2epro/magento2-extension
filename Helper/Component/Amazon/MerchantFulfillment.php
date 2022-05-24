@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
-/**
- * Class \Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment
- */
 class MerchantFulfillment extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const STATUS_PURCHASED       = 'Purchased';

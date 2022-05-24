@@ -62,6 +62,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     public function process()
     {
+        $this->removeInstructionOlderThenWeek();
         $this->deleteInstructionsWithoutListingProducts();
 
         $listingsProducts = $this->getNeededListingsProducts();
@@ -178,5 +179,28 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         );
     }
 
-    //########################################
+    /**
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function removeInstructionOlderThenWeek()
+    {
+        $greaterThenDate = $this
+            ->getHelper('Data')
+            ->createCurrentGmtDateTime()
+            ->modify("-7 day")
+            ->format('Y-m-d');
+
+        $productInstructionResource = $this->activeRecordFactory
+            ->getObject('Listing_Product_Instruction')
+            ->getResource();
+
+        $productInstructionResource
+            ->getConnection()
+            ->delete(
+                $productInstructionResource->getMainTable(),
+                ['? > create_date' => $greaterThenDate]
+            );
+    }
 }

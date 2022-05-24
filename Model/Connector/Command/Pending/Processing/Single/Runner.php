@@ -69,8 +69,10 @@ class Runner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runn
                 [
                     'component'       => $params['component'],
                     'server_hash'     => $params['server_hash'],
-                    'expiration_date' => $this->getHelper('Data')->getDate(
-                        $this->getHelper('Data')->getCurrentGmtDate(true)+static::PENDING_REQUEST_MAX_LIFE_TIME
+                    'expiration_date' => gmdate(
+                        'Y-m-d H:i:s',
+                        $this->helperData->getCurrentGmtDate(true)
+                            + static::PENDING_REQUEST_MAX_LIFE_TIME
                     )
                 ]
             );

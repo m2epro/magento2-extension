@@ -116,7 +116,7 @@ define([
                     var closeCallback = function (e) {
                         self.onClosePopupCallback();
                     };
-                    self.popupObj.data().modal.modal.find('.action-close')
+                    self.popupObj.data().mageModal.modal.find('.action-close')
                         .off('click', closeCallback)
                         .on('click', closeCallback);
 

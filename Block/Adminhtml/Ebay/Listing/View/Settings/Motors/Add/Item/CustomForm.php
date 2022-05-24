@@ -8,12 +8,22 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item\CustomForm
- */
 class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
+    private $componentEbayMotors;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $formFactory, $data);
+
+        $this->componentEbayMotors = $componentEbayMotors;
+    }
 
     protected function _prepareForm()
     {
@@ -24,7 +34,7 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $motorsType = $this->getRequest()->getParam('motors_type');
 
-        $itemTitle = $this->getHelper('Component_Ebay_Motors')->isTypeBasedOnEpids($motorsType)
+        $itemTitle = $this->componentEbayMotors->isTypeBasedOnEpids($motorsType)
             ? $this->__('ePID')
             : $this->__('kType');
 

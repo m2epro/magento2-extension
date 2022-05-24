@@ -165,7 +165,7 @@ abstract class LastActions extends AbstractBlock
 
         foreach ($actions as &$actionLogs) {
             usort($actionLogs['items'], function ($a, $b) use ($sortOrder) {
-                return $sortOrder[$a['type']] > $sortOrder[$b['type']];
+                return $sortOrder[$a['type']] <=> $sortOrder[$b['type']];
             });
         }
     }
@@ -173,7 +173,7 @@ abstract class LastActions extends AbstractBlock
     protected function sortActions(array &$actions)
     {
         usort($actions, function ($a, $b) {
-            return strtotime($a['date']) < strtotime($b['date']);
+            return strtotime($b['date']) <=> strtotime($a['date']);
         });
     }
 

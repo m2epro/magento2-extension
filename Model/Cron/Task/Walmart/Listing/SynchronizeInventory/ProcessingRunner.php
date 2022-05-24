@@ -30,12 +30,13 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\Listing\SynchronizeInventory\Walmart\BlockedProductsHandler $blockedProductsHandler,
         \Magento\Framework\App\ResourceConnection $resourceConnection
     ) {
-        parent::__construct($parentFactory, $activeRecordFactory, $helperFactory, $modelFactory);
+        parent::__construct($parentFactory, $activeRecordFactory, $helperData, $helperFactory, $modelFactory);
 
         $this->blockedProductsHandler = $blockedProductsHandler;
         $this->resourceConnection     = $resourceConnection;

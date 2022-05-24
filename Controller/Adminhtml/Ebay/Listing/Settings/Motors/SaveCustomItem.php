@@ -8,16 +8,24 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors\SaveCustomItem
- */
 class SaveCustomItem extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
+    private $componentEbayMotors;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($ebayFactory, $context);
+
+        $this->componentEbayMotors = $componentEbayMotors;
+    }
 
     public function execute()
     {
-        $helper = $this->getHelper('Component_Ebay_Motors');
+        $helper = $this->componentEbayMotors;
         $motorsType = $this->getRequest()->getParam('motors_type');
 
         $tableName = $helper->getDictionaryTable($motorsType);

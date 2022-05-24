@@ -3,24 +3,25 @@
 namespace Ess\M2ePro\Model\ControlPanel\Inspection\Inspector;
 
 use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
-use Ess\M2ePro\Helper\Factory as HelperFactory;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
 
 class MagentoSettings implements InspectorInterface
 {
-    /** @var HelperFactory */
-    private $helperFactory;
+    /** @var \Ess\M2ePro\Helper\Client\Cache */
+    private $cacheHelper;
 
-    /** @var IssueFactory */
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory */
     private $issueFactory;
 
-    //########################################
-
     public function __construct(
-        HelperFactory $helperFactory,
-        IssueFactory $issueFactory
+        \Ess\M2ePro\Helper\Client\Cache $cacheHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory $issueFactory
     ) {
-        $this->helperFactory = $helperFactory;
+        $this->cacheHelper = $cacheHelper;
+        $this->dataHelper = $dataHelper;
         $this->issueFactory = $issueFactory;
     }
 
@@ -36,26 +37,26 @@ class MagentoSettings implements InspectorInterface
             );
         }
 
-        if ($this->helperFactory->getObject('Data')->getDefaultTimeZone() !== 'UTC') {
+        if ($this->dataHelper->getDefaultTimeZone() !== 'UTC') {
             $issues[] = $this->issueFactory->create(
                 'Non-default Magento timezone set.',
-                $this->helperFactory->getObject('Data')->getDefaultTimeZone()
+                $this->dataHelper->getDefaultTimeZone()
             );
         }
 
-        if ($this->helperFactory->getObject('Client_Cache')->isApcAvailable()) {
+        if ($this->cacheHelper->isApcAvailable()) {
             $issues[] = $this->issueFactory->create(
                 'APC Cache is enabled.'
             );
         }
 
-        if ($this->helperFactory->getObject('Client_Cache')->isMemchachedAvailable()) {
+        if ($this->cacheHelper->isMemchachedAvailable()) {
             $issues[] = $this->issueFactory->create(
                 'Memchached Cache is enabled.'
             );
         }
 
-        if ($this->helperFactory->getObject('Client_Cache')->isRedisAvailable()) {
+        if ($this->cacheHelper->isRedisAvailable()) {
             $issues[] = $this->issueFactory->create(
                 'Redis Cache is enabled.'
             );

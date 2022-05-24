@@ -21,8 +21,11 @@ class ExternalTransaction extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     protected $ebayFactory;
 
     //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -33,7 +36,6 @@ class ExternalTransaction extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-        $this->ebayFactory = $ebayFactory;
         parent::__construct(
             $modelFactory,
             $activeRecordFactory,
@@ -44,6 +46,8 @@ class ExternalTransaction extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             $resourceCollection,
             $data
         );
+        $this->ebayFactory = $ebayFactory;
+        $this->moduleConfiguration = $moduleConfiguration;
     }
 
     //########################################
@@ -132,7 +136,7 @@ class ExternalTransaction extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         ];
 
         $modePrefix = $this->getOrder()->getAccount()->getChildObject()->isModeSandbox() ? 'sandbox.' : '';
-        $baseUrl = $this->getHelper('Module_Configuration')->getOtherPayPalUrl();
+        $baseUrl = $this->moduleConfiguration->getOtherPayPalUrl();
 
         return 'https://www.' . $modePrefix . $baseUrl . '?' . http_build_query($params, '', '&');
     }

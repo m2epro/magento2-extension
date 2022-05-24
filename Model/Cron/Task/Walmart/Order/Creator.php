@@ -22,15 +22,20 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
     /** @var bool */
     protected $_validateAccountCreateDate = true;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Data $helperData,
         array $data = []
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
+        $this->helperData = $helperData;
         parent::__construct($helperFactory, $modelFactory, $data);
     }
 
@@ -60,7 +65,7 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
 
         foreach ($ordersData as $orderData) {
             try {
-                $orderCreateDate = new \DateTime($this->getHelper('Data')->getDate($orderData['purchase_date']));
+                $orderCreateDate = $this->helperData->createGmtDateTime($orderData['purchase_date']);
                 if ($this->_validateAccountCreateDate && $orderCreateDate < $accountCreateDate) {
                     continue;
                 }

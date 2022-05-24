@@ -100,7 +100,9 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
         }
 
         if ($this->getInputType() == 'date' && !empty($validatedValue) && !is_numeric($validatedValue)) {
-            $validatedValue = strtotime($validatedValue);
+            $validatedValue = (int)$this->helperData
+                ->createGmtDateTime($validatedValue)
+                ->format('U');
         }
 
         /**
@@ -109,7 +111,9 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
         $value = $this->getValueParsed();
 
         if ($this->getInputType() == 'date' && !empty($value) && !is_numeric($value)) {
-            $value = strtotime($value);
+            $value = (int)$this->helperData
+                ->createGmtDateTime($value)
+                ->format('U');
         }
 
         // Comparison operator

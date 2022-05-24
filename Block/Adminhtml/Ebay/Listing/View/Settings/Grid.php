@@ -10,25 +10,25 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings;
 
 use Ess\M2ePro\Model\Ebay\Template\Manager;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
-    /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute */
-    private $motorsAttribute = null;
-
-    private $productsMotorsData = [];
-
     protected $resourceConnection;
     protected $productFactory;
     protected $templateManager;
     protected $magentoProductCollectionFactory;
     protected $ebayFactory;
 
-    //########################################
+    /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute */
+    private $motorsAttribute = null;
+    private $productsMotorsData = [];
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
+    private $componentEbayCategory;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
+    private $componentEbayMotors;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
+        \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Ess\M2ePro\Model\Ebay\Template\Manager $templateManager,
@@ -38,16 +38,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->resourceConnection = $resourceConnection;
-        $this->productFactory = $productFactory;
-        $this->templateManager = $templateManager;
+        $this->resourceConnection              = $resourceConnection;
+        $this->productFactory                  = $productFactory;
+        $this->templateManager                 = $templateManager;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
-        $this->ebayFactory = $ebayFactory;
+        $this->ebayFactory                     = $ebayFactory;
+        $this->componentEbayCategory           = $componentEbayCategory;
+        $this->componentEbayMotors             = $componentEbayMotors;
 
         parent::__construct($context, $backendHelper, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -62,7 +62,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         if ($this->isMotorsAvailable()) {
             $this->motorsAttribute = $this->productFactory->create()->getResource()->getAttribute(
-                $this->getHelper('Component_Ebay_Motors')->getAttribute($this->getMotorsType())
+                $this->componentEbayMotors->getAttribute($this->getMotorsType())
             );
         }
     }
@@ -503,11 +503,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         $value = '';
 
-        $categories = $this->getHelper('Component_Ebay_Category')->getCategoryTitles();
+        $categories = $this->componentEbayCategory->getCategoryTitles();
 
         if ($row->getData('category_main_mode') == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE) {
             $value .= $this->getCategoryInfoHtml(
-                $this->getHelper('Component_Ebay_Category')->getCategoryTitle(
+                $this->componentEbayCategory->getCategoryTitle(
                     \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN
                 ),
                 '<span style="color: red">' . $this->__('Not Set') . '</span>'
@@ -629,7 +629,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             return $this->__('N/A');
         }
 
-        if ($this->getHelper('Component_Ebay_Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
+        if ($this->componentEbayMotors->isTypeBasedOnEpids($this->getMotorsType())) {
             $motorsTypeTitle = 'ePIDs';
         } else {
             $motorsTypeTitle = 'kTypes';
@@ -940,7 +940,7 @@ HTML;
         }
 
         if ($this->isMotorEpidsAvailable()) {
-            return $this->getHelper('Component_Ebay_Motors')->getEpidsTypeByMarketplace(
+            return $this->componentEbayMotors->getEpidsTypeByMarketplace(
                 $this->listing->getMarketplaceId()
             );
         }
@@ -1115,7 +1115,7 @@ JS
         $taskCompletedErrorMessage = '"%task_title%" Task has completed with errors. '
             . ' <a target="_blank" href="%url%">View Log</a> for details.';
 
-        if ($this->getHelper('Component_Ebay_Motors')->isTypeBasedOnEpids($this->getMotorsType())) {
+        if ($this->componentEbayMotors->isTypeBasedOnEpids($this->getMotorsType())) {
             $motorsTypeTitle = 'ePID';
         } else {
             $motorsTypeTitle = 'kType';
@@ -1241,7 +1241,7 @@ JS
 
     private function prepareExistingMotorsData()
     {
-        $motorsHelper = $this->getHelper('Component_Ebay_Motors');
+        $motorsHelper = $this->componentEbayMotors;
 
         $products = $this->getCollection()->getItems();
 

@@ -8,29 +8,26 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 {
-    protected $amazonListingResourceModel;
     protected $amazonFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $moduleDatabaseStructure;
 
     public function __construct(
-        \Ess\M2ePro\Model\ResourceModel\Amazon\Listing $amazonListingResourceModel,
+        \Ess\M2ePro\Helper\Module\Database\Structure $moduleDatabaseStructure,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->amazonListingResourceModel = $amazonListingResourceModel;
-        $this->amazonFactory = $amazonFactory;
-        parent::__construct($context, $backendHelper, $data);
-    }
+        parent::__construct($viewHelper, $context, $backendHelper, $data);
 
-    //########################################
+        $this->amazonFactory           = $amazonFactory;
+        $this->moduleDatabaseStructure = $moduleDatabaseStructure;
+    }
 
     public function _construct()
     {
@@ -81,6 +78,30 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
                 ['marketplace_title'=>'title']
             );
         // ---------------------------------------
+
+        $m2eproListing = $this->moduleDatabaseStructure->getTableNameWithPrefix('m2epro_listing');
+        $m2eproAmazonListing = $this->moduleDatabaseStructure->getTableNameWithPrefix('m2epro_amazon_listing');
+        $m2eproListingProduct = $this->moduleDatabaseStructure->getTableNameWithPrefix('m2epro_listing_product');
+
+        $sql = "SELECT
+                    l.id                                           AS listing_id,
+                    COUNT(lp.id)                                   AS products_total_count,
+                    COUNT(CASE WHEN lp.status = 2 THEN lp.id END)  AS products_active_count,
+                    COUNT(CASE WHEN lp.status != 2 THEN lp.id END) AS products_inactive_count
+                FROM `{$m2eproListing}` AS `l`
+                    INNER JOIN `{$m2eproAmazonListing}` AS `al` ON l.id = al.listing_id
+                    LEFT JOIN `{$m2eproListingProduct}` AS `lp` ON l.id = lp.listing_id
+                GROUP BY listing_id";
+
+        $collection->getSelect()->joinLeft(
+            new \Zend_Db_Expr('('.$sql.')'),
+            'main_table.id=t.listing_id',
+            [
+                'products_total_count'    => 'products_total_count',
+                'products_active_count'   => 'products_active_count',
+                'products_inactive_count' => 'products_inactive_count',
+            ]
+        );
 
         $this->setCollection($collection);
 
@@ -218,45 +239,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
         ];
 
         return $actions;
-    }
-
-    //########################################
-
-    public function callbackColumnTotalProducts($value, $row, $column, $isExport)
-    {
-        $value = $this->amazonListingResourceModel->getStatisticTotalCount($row['id']);
-
-        if ($value == 0) {
-            $value = '<span style="color: red;">0</span>';
-        }
-
-        return $value;
-    }
-
-    //########################################
-
-    public function callbackColumnListedProducts($value, $row, $column, $isExport)
-    {
-        $value = $this->amazonListingResourceModel->getStatisticActiveCount($row['id']);
-
-        if ($value == 0) {
-            $value = '<span style="color: red;">0</span>';
-        }
-
-        return $value;
-    }
-
-    //########################################
-
-    public function callbackColumnInactiveProducts($value, $row, $column, $isExport)
-    {
-        $value = $this->amazonListingResourceModel->getStatisticInactiveCount($row['id']);
-
-        if ($value == 0) {
-            $value = '<span style="color: red;">0</span>';
-        }
-
-        return $value;
     }
 
     //########################################

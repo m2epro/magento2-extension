@@ -8,31 +8,24 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Log\Listing;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Log\Listing\AbstractGrid
- */
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 {
     protected $wrapperCollectionFactory;
     protected $customCollectionFactory;
 
-    //#######################################
-
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
+        parent::__construct($resourceConnection, $viewHelper, $context, $backendHelper, $data);
         $this->wrapperCollectionFactory = $wrapperCollectionFactory;
         $this->customCollectionFactory = $customCollectionFactory;
-
-        parent::__construct($resourceConnection, $context, $backendHelper, $data);
     }
-
-    //#######################################
 
     abstract protected function getViewMode();
 

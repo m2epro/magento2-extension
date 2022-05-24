@@ -8,40 +8,41 @@
 
 namespace Ess\M2ePro\Model\Ebay\Marketplace;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Marketplace\Synchronization
- */
 class Synchronization extends \Ess\M2ePro\Model\AbstractModel
 {
     const LOCK_ITEM_MAX_ALLOWED_INACTIVE_TIME = 1800; // 30 min
 
     /** @var \Ess\M2ePro\Model\Marketplace */
     protected $marketplace = null;
-
     /** @var \Ess\M2ePro\Model\Lock\Item\Manager */
     protected $lockItemManager = null;
-
     /** @var \Ess\M2ePro\Model\Lock\Item\Progress */
     protected $progressManager = null;
-
     /** @var \Ess\M2ePro\Model\Synchronization\Log  */
     protected $synchronizationLog = null;
-
     protected $activeRecordFactory;
     protected $resourceConnection;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
+    private $componentEbayCategory;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
+    private $componentEbayMotors;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
+        \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
-        $this->resourceConnection = $resourceConnection;
         parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->activeRecordFactory   = $activeRecordFactory;
+        $this->resourceConnection    = $resourceConnection;
+        $this->componentEbayCategory = $componentEbayCategory;
+        $this->componentEbayMotors   = $componentEbayMotors;
     }
 
     //########################################
@@ -191,7 +192,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
         );
 
         $connection->delete($tableCategories, ['marketplace_id = ?' => $this->marketplace->getId()]);
-        $this->getHelper('Component_Ebay_Category')->removeEbayRecent();
+        $this->componentEbayCategory->removeEbayRecent();
 
         $partNumber = 1;
 
@@ -256,7 +257,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
             'm2epro_ebay_dictionary_motor_epid'
         );
 
-        $helper = $this->getHelper('Component_Ebay_Motors');
+        $helper = $this->componentEbayMotors;
         $scope = $helper->getEpidsScopeByType(
             $helper->getEpidsTypeByMarketplace(
                 $this->marketplace->getId()
@@ -304,7 +305,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
             $temporaryIds = [];
             $itemsForInsert = [];
 
-            $helper = $this->getHelper('Component_Ebay_Motors');
+            $helper = $this->componentEbayMotors;
             $scope = $helper->getEpidsScopeByType(
                 $helper->getEpidsTypeByMarketplace(
                     $this->marketplace->getId()

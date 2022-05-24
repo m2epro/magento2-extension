@@ -17,8 +17,12 @@ class Connection extends \Ess\M2ePro\Model\Exception
 
     const CONNECTION_ERROR_REPEAT_TIMEOUT = 180;
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
 
     //########################################
 
@@ -30,6 +34,7 @@ class Connection extends \Ess\M2ePro\Model\Exception
 
         $this->activeRecordFactory = $objectManager->get(\Ess\M2ePro\Model\ActiveRecord\Factory::class);
         $this->helperFactory = $objectManager->get(\Ess\M2ePro\Helper\Factory::class);
+        $this->helperData = $objectManager->get(\Ess\M2ePro\Helper\Data::class);
 
         parent::__construct($message, $additionalData, 0, false);
     }
@@ -52,8 +57,12 @@ class Connection extends \Ess\M2ePro\Model\Exception
             return true;
         }
 
-        $currentDateTimeStamp = strtotime($currentDate);
-        $errorDateTimeStamp   = strtotime($firstConnectionErrorDate);
+        $currentDateTimeStamp = (int)$this->helperData
+            ->createGmtDateTime($currentDate)
+            ->format('U');
+        $errorDateTimeStamp = (int)$this->helperData
+            ->createGmtDateTime($firstConnectionErrorDate)
+            ->format('U');
         if ($currentDateTimeStamp - $errorDateTimeStamp < self::CONNECTION_ERROR_REPEAT_TIMEOUT) {
             return true;
         }

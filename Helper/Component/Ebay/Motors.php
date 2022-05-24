@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Helper\Component\Ebay;
 
-/**
- * Class \Ess\M2ePro\Helper\Component\Ebay\Motors
- */
 class Motors extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const TYPE_EPID_MOTOR = 1;
@@ -35,9 +32,11 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
     private $eavConfig;
     private $catalogProductCollectionFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Configuration */
+    private $componentEbayConfiguration;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $eBayFactory,
         \Magento\Eav\Model\Config $eavConfig,
@@ -45,11 +44,13 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
-        $this->resourceConnection = $resourceConnection;
-        $this->eBayFactory = $eBayFactory;
-        $this->eavConfig = $eavConfig;
-        $this->catalogProductCollectionFactory = $catalogProductCollectionFactory;
         parent::__construct($helperFactory, $context);
+
+        $this->resourceConnection              = $resourceConnection;
+        $this->eBayFactory                     = $eBayFactory;
+        $this->eavConfig                       = $eavConfig;
+        $this->catalogProductCollectionFactory = $catalogProductCollectionFactory;
+        $this->componentEbayConfiguration      = $componentEbayConfiguration;
     }
 
     //########################################
@@ -58,19 +59,19 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
     {
         switch ($type) {
             case self::TYPE_EPID_MOTOR:
-                return $this->getHelper('Component_Ebay_Configuration')->getMotorsEpidsAttribute();
+                return $this->componentEbayConfiguration->getMotorsEpidsAttribute();
 
             case self::TYPE_KTYPE:
-                return $this->getHelper('Component_Ebay_Configuration')->getKTypesAttribute();
+                return $this->componentEbayConfiguration->getKTypesAttribute();
 
             case self::TYPE_EPID_UK:
-                return $this->getHelper('Component_Ebay_Configuration')->getUkEpidsAttribute();
+                return $this->componentEbayConfiguration->getUkEpidsAttribute();
 
             case self::TYPE_EPID_DE:
-                return $this->getHelper('Component_Ebay_Configuration')->getDeEpidsAttribute();
+                return $this->componentEbayConfiguration->getDeEpidsAttribute();
 
             case self::TYPE_EPID_AU:
-                return $this->getHelper('Component_Ebay_Configuration')->getAuEpidsAttribute();
+                return $this->componentEbayConfiguration->getAuEpidsAttribute();
         }
 
         return '';

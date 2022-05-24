@@ -160,7 +160,7 @@ define([
 
                 var tabsUrl = '';
                 if (typeof tabsId != 'undefined') {
-                    tabsUrl = '|tab=' + jQuery('#' + tabsId).data().tabs.active.find('a').attr('name');
+                    tabsUrl = '|tab=' + jQuery('#' + tabsId).data().mageTabs.active.find('a').attr('name');
                 }
 
                 url = M2ePro.url.get('formSubmit', {'back': base64_encode('edit' + tabsUrl)});

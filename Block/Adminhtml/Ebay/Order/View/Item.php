@@ -10,22 +10,20 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Order\View;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
-/**
- * Class Ess\M2ePro\Block\Adminhtml\Ebay\Order\View\Item
- */
 class Item extends AbstractGrid
 {
-    /** @var $order \Ess\M2ePro\Model\Order */
-    private $order;
-
     protected $productModel;
     protected $resourceConnection;
     protected $ebayFactory;
     protected $taxCalculator;
 
-    //########################################
+    /** @var \Ess\M2ePro\Model\Order */
+    private $order;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay */
+    private $componentEbay;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay $componentEbay,
         \Magento\Catalog\Model\Product $productModel,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -34,10 +32,11 @@ class Item extends AbstractGrid
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->productModel = $productModel;
+        $this->productModel       = $productModel;
         $this->resourceConnection = $resourceConnection;
-        $this->ebayFactory = $ebayFactory;
-        $this->taxCalculator = $taxCalculator;
+        $this->ebayFactory        = $ebayFactory;
+        $this->taxCalculator      = $taxCalculator;
+        $this->componentEbay      = $componentEbay;
 
         parent::__construct($context, $backendHelper, $data);
     }
@@ -178,7 +177,7 @@ HTML;
             }
         }
 
-        $itemUrl = $this->getHelper('Component_Ebay')->getItemUrl(
+        $itemUrl = $this->componentEbay->getItemUrl(
             $eBayOrderItem->getItemId(),
             $this->order->getAccount()->getChildObject()->getMode(),
             $this->order->getMarketplaceId()

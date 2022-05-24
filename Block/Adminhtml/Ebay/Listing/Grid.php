@@ -8,31 +8,28 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 {
     const MASS_ACTION_ID_EDIT_PARTS_COMPATIBILITY = 'editPartsCompatibilityMode';
 
-    protected $ebayListingResourceModel;
     protected $ebayFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $moduleDatabaseStructure;
 
     public function __construct(
-        \Ess\M2ePro\Model\ResourceModel\Ebay\Listing $ebayListingResourceModel,
+        \Ess\M2ePro\Helper\Module\Database\Structure $moduleDatabaseStructure,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->ebayListingResourceModel = $ebayListingResourceModel;
-        $this->ebayFactory = $ebayFactory;
-        parent::__construct($context, $backendHelper, $data);
-    }
+        parent::__construct($viewHelper, $context, $backendHelper, $data);
 
-    //########################################
+        $this->ebayFactory             = $ebayFactory;
+        $this->moduleDatabaseStructure = $moduleDatabaseStructure;
+    }
 
     public function _construct()
     {
@@ -62,6 +59,34 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
             ['marketplace_title' => 'title']
         );
 
+        $m2eproListing = $this->moduleDatabaseStructure->getTableNameWithPrefix('m2epro_listing');
+        $m2eproEbayListing = $this->moduleDatabaseStructure->getTableNameWithPrefix('m2epro_ebay_listing');
+        $m2eproListingProduct = $this->moduleDatabaseStructure->getTableNameWithPrefix('m2epro_listing_product');
+        $m2eproEbayListingProduct = $this->moduleDatabaseStructure
+            ->getTableNameWithPrefix('m2epro_ebay_listing_product');
+
+        $sql = "SELECT l.id AS listing_id,
+                    COUNT(lp.id)                                   AS products_total_count,
+                    COUNT(CASE WHEN lp.status = 2 THEN lp.id END)  AS products_active_count,
+                    COUNT(CASE WHEN lp.status != 2 THEN lp.id END) AS products_inactive_count,
+                    IFNULL(SUM(elp.online_qty_sold), 0)            AS items_sold_count
+                FROM `{$m2eproListing}` AS `l`
+                    INNER JOIN `{$m2eproEbayListing}` AS `el` ON l.id = el.listing_id
+                    LEFT JOIN `{$m2eproListingProduct}` AS `lp` ON l.id = lp.listing_id
+                    LEFT JOIN `{$m2eproEbayListingProduct}` AS `elp` ON lp.id = elp.listing_product_id
+                GROUP BY lp.listing_id";
+
+        $collection->getSelect()->joinLeft(
+            new \Zend_Db_Expr('('.$sql.')'),
+            'main_table.id=t.listing_id',
+            [
+                'products_total_count'    => 'products_total_count',
+                'products_active_count'   => 'products_active_count',
+                'products_inactive_count' => 'products_inactive_count',
+                'items_sold_count'        => 'items_sold_count'
+            ]
+        );
+
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
@@ -77,6 +102,23 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
     }
 
     //########################################
+
+    protected function setColumns()
+    {
+        $this->addColumn(
+            'items_sold_count',
+            [
+                'header'         => $this->__('Sold QTY'),
+                'align'          => 'right',
+                'type'           => 'number',
+                'index'          => 'items_sold_count',
+                'filter_index'   => 't.items_sold_count',
+                'frame_callback' => [$this, 'callbackColumnProductsCount']
+            ]
+        );
+
+        return $this;
+    }
 
     protected function getColumnActionsItems()
     {
@@ -195,45 +237,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 
     //########################################
 
-    public function callbackColumnTotalProducts($value, $row, $column, $isExport)
-    {
-        $value = $this->ebayListingResourceModel->getStatisticTotalCount($row['id']);
-
-        if ($value == 0) {
-            $value = '<span style="color: red;">0</span>';
-        }
-
-        return $value;
-    }
-
-    //########################################
-
-    public function callbackColumnListedProducts($value, $row, $column, $isExport)
-    {
-        $value = $this->ebayListingResourceModel->getStatisticActiveCount($row['id']);
-
-        if ($value == 0) {
-            $value = '<span style="color: red;">0</span>';
-        }
-
-        return $value;
-    }
-
-    //########################################
-
-    public function callbackColumnInactiveProducts($value, $row, $column, $isExport)
-    {
-        $value = $this->ebayListingResourceModel->getStatisticInactiveCount($row['id']);
-
-        if ($value == 0) {
-            $value = '<span style="color: red;">0</span>';
-        }
-
-        return $value;
-    }
-
-    //########################################
-
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
         $title = $this->getHelper('Data')->escapeHtml($value);
@@ -274,11 +277,6 @@ HTML;
 HTML;
 
         return $value;
-    }
-
-    public function callbackColumnSoldQTY($value, $row, $column, $isExport)
-    {
-        return $this->getColumnValue($row->getChildObject()->getItemsSoldCount());
     }
 
     //########################################

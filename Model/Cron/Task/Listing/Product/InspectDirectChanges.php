@@ -20,8 +20,33 @@ class InspectDirectChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     const INSTRUCTION_TYPE      = 'inspector_triggered';
     const INSTRUCTION_INITIATOR = 'direct_changes_inspector';
     const INSTRUCTION_PRIORITY  = 10;
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Magento\Framework\Event\Manager $eventManager,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo,
+        \Magento\Framework\App\ResourceConnection $resource
+    ) {
+        parent::__construct(
+            $helperData,
+            $eventManager,
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $taskRepo,
+            $resource
+        );
+
+        $this->moduleConfiguration = $moduleConfiguration;
+    }
 
     protected function isModeEnabled()
     {
@@ -29,7 +54,7 @@ class InspectDirectChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             return false;
         }
 
-        return $this->getHelper('Module_Configuration')->isEnableListingProductInspectorMode();
+        return $this->moduleConfiguration->isEnableListingProductInspectorMode();
     }
 
     //########################################

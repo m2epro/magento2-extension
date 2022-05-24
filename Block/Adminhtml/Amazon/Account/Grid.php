@@ -8,24 +8,20 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
 {
     protected $amazonFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
+        parent::__construct($viewHelper, $context, $backendHelper, $data);
         $this->amazonFactory = $amazonFactory;
-        parent::__construct($context, $backendHelper, $data);
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {

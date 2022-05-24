@@ -32,6 +32,38 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     protected $variationManager = null;
 
+    /** @var \Ess\M2ePro\Helper\Component\Walmart\Vocabulary */
+    protected $vocabularyHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Walmart\Vocabulary $vocabularyHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        parent::__construct(
+            $walmartFactory,
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
+
+        $this->vocabularyHelper = $vocabularyHelper;
+    }
+
     //########################################
 
     public function _construct()
@@ -862,6 +894,58 @@ HTML;
     public function mapChannelItemProduct()
     {
         $this->getResource()->mapChannelItemProduct($this);
+    }
+
+    //########################################
+
+    public function addVariationAttributes()
+    {
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager $variationManager */
+        $variationManager = $this->getVariationManager();
+        if (!$variationManager->isVariationProduct()) {
+            return;
+        }
+
+        $matchedAttributes = $this->findLocalMatchedAttributesByMagentoAttributes(
+            $variationManager->getTypeModel()->getProductAttributes()
+        );
+
+        if (empty($matchedAttributes)) {
+            return;
+        }
+
+        $variationManager->getTypeModel()->setMatchedAttributes($matchedAttributes);
+        $variationManager->getTypeModel()->setChannelAttributes(array_values($matchedAttributes));
+        $variationManager->getTypeModel()->getProcessor()->process();
+    }
+
+    private function findLocalMatchedAttributesByMagentoAttributes($magentoAttributes)
+    {
+        if (empty($magentoAttributes)) {
+            return [];
+        }
+
+        $matchedAttributes = [];
+        foreach ($magentoAttributes as $magentoAttr) {
+            foreach ($this->vocabularyHelper->getLocalData() as $attribute => $attributeData) {
+                if (in_array($magentoAttr, $attributeData['names'])) {
+                    if (isset($matchedAttributes[$magentoAttr])) {
+                        return [];
+                    }
+                    $matchedAttributes[$magentoAttr] = $attribute;
+                }
+            }
+        }
+
+        if (empty($matchedAttributes)) {
+            return [];
+        }
+
+        if (count($magentoAttributes) != count($matchedAttributes)) {
+            return [];
+        }
+
+        return $matchedAttributes;
     }
 
     //########################################

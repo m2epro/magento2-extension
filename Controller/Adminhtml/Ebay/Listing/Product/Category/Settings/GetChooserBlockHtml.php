@@ -11,18 +11,13 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings
 use \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings\GetChooserBlockHtml
- */
 class GetChooserBlockHtml extends Settings
 {
-    //########################################
-
     public function execute()
     {
         $listing = $this->getListingFromRequest();
 
-        /** @var $chooserBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser */
+        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser $chooserBlock */
         $chooserBlock = $this->createBlock('Ebay_Listing_Product_Category_Settings_Chooser');
         $chooserBlock->setAccountId($listing->getAccountId());
         $chooserBlock->setMarketplaceId($listing->getMarketplaceId());
@@ -45,7 +40,7 @@ class GetChooserBlockHtml extends Settings
         $neededProducts = [];
         foreach ($this->getRequestIds('products_id') as $id) {
             $temp = [];
-            foreach ($this->getHelper('Component_Ebay_Category')->getCategoriesTypes() as $categoryType) {
+            foreach ($this->componentEbayCategory->getCategoriesTypes() as $categoryType) {
                 isset($sessionData[$id][$categoryType]) && $temp[$categoryType] = $sessionData[$id][$categoryType];
             }
 

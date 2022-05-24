@@ -45,6 +45,7 @@ class Modifier
         $this->migrateConfig();
         $this->migrateWizards();
         $this->migrateWalmartAccount();
+        $this->actualizeTablesStructure();
     }
 
     //########################################
@@ -172,6 +173,22 @@ class Modifier
             ->renameColumn('old_private_key', 'private_key');
     }
 
+    /**
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Setup
+     */
+    private function actualizeTablesStructure()
+    {
+        // y22_m04/AddFeeColumnForEbayOrder
+        $this->getTableModifier('ebay_order')
+             ->addColumn(
+                 'final_fee',
+                 'decimal(10,2) unsigned DEFAULT NULL',
+                 'NULL',
+                 'saved_amount'
+             );
+    }
+
     //########################################
 
     private function getConnection()
@@ -220,6 +237,4 @@ class Modifier
             ]
         );
     }
-
-    //########################################
 }

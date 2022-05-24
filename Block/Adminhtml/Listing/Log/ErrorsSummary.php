@@ -10,26 +10,22 @@ namespace Ess\M2ePro\Block\Adminhtml\Listing\Log;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Listing\Log\ErrorsSummary
- */
 class ErrorsSummary extends AbstractBlock
 {
     protected $resourceConnection;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View */
+    protected $viewHelper;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
     ) {
-        $this->resourceConnection = $resourceConnection;
-
         parent::__construct($context, $data);
+        $this->resourceConnection = $resourceConnection;
+        $this->viewHelper = $viewHelper;
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -70,7 +66,7 @@ class ErrorsSummary extends AbstractBlock
         $tempErrors = $connection->fetchAll($dbSelect);
 
         foreach ($tempErrors as $row) {
-            $row['description'] = $this->getHelper('View')->getModifiedLogMessage($row['description']);
+            $row['description'] = $this->viewHelper->getModifiedLogMessage($row['description']);
             $newErrors[] = $row;
         }
 

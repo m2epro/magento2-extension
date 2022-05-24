@@ -28,10 +28,11 @@ class Image extends AbstractModel
 
     protected $storeId = 0;
     protected $area = Area::AREA_FRONTEND;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Magento\Framework\Filesystem\DriverPool $driverPool,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Catalog\Model\Product\Media\Config $mediaConfig,
@@ -39,12 +40,13 @@ class Image extends AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
-        $this->driverPool = $driverPool;
-        $this->storeManager = $storeManager;
-        $this->mediaConfig = $mediaConfig;
-        $this->filesystem = $filesystem;
-
         parent::__construct($helperFactory, $modelFactory);
+
+        $this->driverPool          = $driverPool;
+        $this->storeManager        = $storeManager;
+        $this->mediaConfig         = $mediaConfig;
+        $this->filesystem          = $filesystem;
+        $this->moduleConfiguration = $moduleConfiguration;
     }
 
     //########################################
@@ -202,7 +204,7 @@ class Image extends AbstractModel
     private function getBaseMediaUrl()
     {
         $secure = $this->getArea() == Area::AREA_FRONTEND
-            ? $this->getHelper('Module_Configuration')->getSecureImageUrlInItemDescriptionMode() : null;
+            ? $this->moduleConfiguration->getSecureImageUrlInItemDescriptionMode() : null;
 
         return $this->storeManager->getStore($this->storeId)->getBaseUrl(
             \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,

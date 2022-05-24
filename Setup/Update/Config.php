@@ -210,6 +210,11 @@ class Config extends AbstractConfig
             'y22_m04' => [
                 'RemoveUnnecessaryConfig',
             ],
+            'y22_m05' => [
+                'AmazonOrderCancellationNewFlow',
+                'DropListingColumns',
+                'AddFeeColumnForEbayOrder'
+            ],
         ];
     }
 

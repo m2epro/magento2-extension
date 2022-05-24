@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Other;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Other\Updating
- */
 class Updating extends \Ess\M2ePro\Model\AbstractModel
 {
     const EBAY_STATUS_ACTIVE = 'Active';
@@ -20,28 +17,34 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
     const EBAY_DURATION_GTC         = 'GTC';
     const EBAY_DURATION_DAYS_PREFIX = 'Days_';
 
-    /**
-     * @var \Ess\M2ePro\Model\Account|null
-     */
+    /** @var \Ess\M2ePro\Model\Account|null */
     protected $account = null;
 
     protected $resourceConnection;
     protected $activeRecordFactory;
     protected $ebayFactory;
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
+        parent::__construct($helperFactory, $modelFactory);
+
         $this->resourceConnection = $resourceConnection;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->ebayFactory = $ebayFactory;
-        parent::__construct($helperFactory, $modelFactory);
+        $this->helperData = $helperData;
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
     }
 
     //########################################
@@ -100,8 +103,12 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
                 'online_bids'            => (int)$receivedItem['bidCount'],
                 'online_main_category'   => null,
                 'online_categories_data' => null,
-                'start_date'             => (string)$this->getHelper('Data')->getDate($receivedItem['startTime']),
-                'end_date'               => (string)$this->getHelper('Data')->getDate($receivedItem['endTime'])
+                'start_date'             => (string)$this->helperData
+                    ->createGmtDateTime($receivedItem['startTime'])
+                    ->format('Y-m-d H:i:s'),
+                'end_date'               => (string)$this->helperData
+                    ->createGmtDateTime($receivedItem['endTime'])
+                    ->format('Y-m-d H:i:s')
             ];
 
             if (!empty($receivedItem['categories'])) {
@@ -120,13 +127,13 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
 
                 unset($categoryValue);
 
-                $categoryPath = $this->getHelper('Component_Ebay_Category_Ebay')->getPath(
+                $categoryPath = $this->componentEbayCategoryEbay->getPath(
                     $categories['category_main_id'],
                     $itemMarketplace->getId()
                 );
 
                 $newData['online_main_category'] = $categoryPath.' ('.$categories['category_main_id'].')';
-                $newData['online_categories_data'] = $this->getHelper('Data')->jsonEncode($categories);
+                $newData['online_categories_data'] = $this->helperData->jsonEncode($categories);
             }
 
             if (isset($receivedItem['listingDuration'])) {
@@ -203,13 +210,15 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
 
     protected function updateToTimeLastSynchronization($responseData)
     {
-        $tempToTime = $this->getHelper('Data')->getCurrentGmtDate();
+        $tempToTime = $this->helperData->getCurrentGmtDate();
 
         if (isset($responseData['to_time'])) {
             if (is_array($responseData['to_time'])) {
                 $tempToTime = [];
                 foreach ($responseData['to_time'] as $tempToTime2) {
-                    $tempToTime[] = strtotime($tempToTime2);
+                    $tempToTime[] = (int)$this->helperData
+                        ->createGmtDateTime($tempToTime2)
+                        ->format('U');
                 }
                 sort($tempToTime, SORT_NUMERIC);
                 $tempToTime = array_pop($tempToTime);
@@ -220,7 +229,7 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if (!is_string($tempToTime) || empty($tempToTime)) {
-            $tempToTime = $this->getHelper('Data')->getCurrentGmtDate();
+            $tempToTime = $this->helperData->getCurrentGmtDate();
         }
 
         $childAccountObject = $this->getAccount()->getChildObject();

@@ -13,16 +13,22 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
  */
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 {
+    /** @var \Magento\Framework\Stdlib\DateTime  */
     protected $dateTime;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
 
     //########################################
 
     public function __construct(
         \Magento\Framework\Stdlib\DateTime $dateTime,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         $this->dateTime = $dateTime;
+        $this->helperData = $helperData;
         parent::__construct($amazonFactory, $context);
     }
 
@@ -134,14 +140,14 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         }
 
         if ($templateData['restock_date_value'] === '') {
-            $templateData['restock_date_value'] = $this->getHelper('Data')->getCurrentGmtDate();
+            $templateData['restock_date_value'] = $this->helperData->getCurrentGmtDate();
         } else {
-            $timestamp = $this->getHelper('Data')->parseTimestampFromLocalizedFormat(
+            $timestamp = $this->helperData->parseTimestampFromLocalizedFormat(
                 $templateData['restock_date_value'],
                 \IntlDateFormatter::SHORT,
                 \IntlDateFormatter::SHORT
             );
-            $templateData['restock_date_value'] = $this->getHelper('Data')->getDate($timestamp);
+            $templateData['restock_date_value'] = gmdate('Y-m-d H:i:s', $timestamp);
         }
         // ---------------------------------------
 
@@ -184,7 +190,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 
         $this->getMessageManager()->addSuccess($this->__('The Listing was saved.'));
 
-        return $this->_redirect($this->getHelper('Data')->getBackUrl('list', [], ['edit'=>['id'=>$id]]));
+        return $this->_redirect($this->helperData->getBackUrl('list', [], ['edit'=>['id'=>$id]]));
     }
 
     //########################################

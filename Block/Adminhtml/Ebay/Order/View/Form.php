@@ -29,7 +29,7 @@ class Form extends AbstractContainer
 
     public $realMagentoOrderId = null;
 
-    /** @var $order \Ess\M2ePro\Model\Order */
+    /** @var \Ess\M2ePro\Model\Order */
     public $order = null;
 
     //########################################
@@ -125,6 +125,10 @@ class Form extends AbstractContainer
         $this->setChild('external_transaction', $this->createBlock('Ebay_Order_View_ExternalTransaction'));
 
         $this->jsUrl->addUrls([
+            'order/actualizeFee' => $this->getUrl(
+                '*/ebay_order_finalFee/update/',
+                ['id' => $this->getRequest()->getParam('id')]
+            ),
             'order/getDebugInformation' => $this->getUrl(
                 '*/order/getDebugInformation/',
                 ['id' => $this->getRequest()->getParam('id')]
@@ -136,6 +140,12 @@ class Form extends AbstractContainer
             'saveShippingAddress' => $this->getUrl(
                 '*/ebay_order_shippingAddress/save',
                 ['id' => $this->getRequest()->getParam('id')]
+            ),
+            'ebay_account/edit' => $this->getUrl(
+                '*/ebay_account/edit',
+                [
+                    'close_on_save' => true,
+                ]
             ),
         ]);
 
@@ -273,10 +283,51 @@ class Form extends AbstractContainer
 
     //########################################
 
+    public function canUpdateFee(): bool
+    {
+        return $this->order->getChildObject()->getFinalFee() === null;
+    }
+
+    public function hasSomeFinalFee(): bool
+    {
+        return $this->order->getChildObject()->getFinalFee() !== null
+            || $this->order->getChildObject()->getApproximatelyFinalFee() > 0;
+    }
+
+    public function getFormattedFinalFee(): string
+    {
+        $value = $this->order->getChildObject()->getFinalFee()
+            ?? $this->order->getChildObject()->getApproximatelyFinalFee();
+
+        return $this->formatPrice(
+            $this->order->getChildObject()->getCurrency(),
+            round($value, 2)
+        );
+    }
+
+    //########################################
+
     protected function _toHtml()
     {
         $orderNoteGridId = $this->getChildBlock('order_note_grid')->getId();
-        $this->jsTranslator->add('Custom Note', $this->__('Custom Note'));
+        $this->jsTranslator->add('Custom Note', $this->__('Custom Note'))
+                           ->add(
+                               'ebay_order_fee_sell_api_popup_title',
+                               $this->__('Actualize eBay final fee')
+                           )
+                           ->add(
+                               'ebay_order_fee_sell_api_popup_text',
+                               $this->__(<<<HTML
+    To get actualized data on eBay final fee, you should grant M2E Pro access to your eBay data.
+If you consent, click <strong>Confirm</strong>. You will be redirected to M2E Pro eBay Account page. Under the
+<strong>Access Details</strong> section, click <strong>Get Token</strong> (the instructions can be found
+<a href="%url%" target="_blank">here</a>). After an eBay token is obtained, <strong>Save</strong> the changes to
+Account configuration.<br><br>
+HTML
+                                   ,
+                                   $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/xAcVB')
+                               )
+                           );
 
         $this->js->add(<<<JS
     require([

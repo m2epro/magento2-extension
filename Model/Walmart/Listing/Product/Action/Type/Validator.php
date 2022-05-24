@@ -28,6 +28,9 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator $configurator */
     private $configurator = null;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $helperData;
+
     /**
      * @var array
      */
@@ -37,6 +40,16 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
      * @var array
      */
     protected $data = [];
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        $this->helperData = $helperData;
+        parent::__construct($helperFactory, $modelFactory, $data);
+    }
 
     //########################################
 
@@ -327,7 +340,7 @@ HTML;
         $clearQty = $this->getClearQty();
 
         if ($clearQty > 0 && $qty <= 0) {
-            $message = 'You’re submitting an item with QTY contradicting the QTY settings in your Selling Policy. 
+            $message = 'You’re submitting an item with QTY contradicting the QTY settings in your Selling Policy.
             Please check Minimum Quantity to Be Listed and Quantity Percentage options.';
 
             $this->addMessage($message);
@@ -412,7 +425,10 @@ HTML;
                 return false;
             }
 
-            if (strtotime($endDate) < $this->getHelper('Data')->getCurrentGmtDate(true)) {
+            $endDateTimestamp = (int)$this->helperData
+                ->createGmtDateTime($endDate)
+                ->format('U');
+            if ($endDateTimestamp < $this->helperData->getCurrentGmtDate(true)) {
                 $this->addMessage('End Date must be greater than current date');
 
                 return false;
@@ -603,7 +619,7 @@ HTML;
 
         if ($gtin = $this->getGtin()) {
             if (strtoupper($gtin) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
-                !$this->getHelper('Data')->isGTIN($gtin)
+                !$this->helperData->isGTIN($gtin)
             ) {
                 $this->addMessage(
                     $this->getHelper('Module\Log')->encodeDescription(
@@ -622,7 +638,7 @@ HTML;
 
         if ($upc = $this->getUpc()) {
             if (strtoupper($upc) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
-                !$this->getHelper('Data')->isUpc($upc)
+                !$this->helperData->isUpc($upc)
             ) {
                 $this->addMessage(
                     $this->getHelper('Module\Log')->encodeDescription(
@@ -641,7 +657,7 @@ HTML;
 
         if ($ean = $this->getEan()) {
             if (strtoupper($ean) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
-                !$this->getHelper('Data')->isEAN($ean)
+                !$this->helperData->isEAN($ean)
             ) {
                 $this->addMessage(
                     $this->getHelper('Module\Log')->encodeDescription(
@@ -660,7 +676,7 @@ HTML;
 
         if ($isbn = $this->getIsbn()) {
             if (strtoupper($isbn) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
-                !$this->getHelper('Data')->isISBN($isbn)
+                !$this->helperData->isISBN($isbn)
             ) {
                 $this->addMessage(
                     $this->getHelper('Module\Log')->encodeDescription(

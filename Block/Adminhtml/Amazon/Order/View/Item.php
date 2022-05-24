@@ -10,24 +10,25 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Order\View;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Order\View\Item
- */
 class Item extends AbstractGrid
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    protected $amazonHelper;
+
     /** @var \Ess\M2ePro\Model\Order $order */
     protected $order = null;
 
+    /** @var \Magento\Catalog\Model\Product */
     protected $productModel;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
 
-    //########################################
-
-    /**
-     * {@inheritDoc}
-     */
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         \Magento\Catalog\Model\Product $productModel,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -35,16 +36,14 @@ class Item extends AbstractGrid
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
+        parent::__construct($context, $backendHelper, $data);
+
+        $this->amazonHelper = $amazonHelper;
         $this->productModel = $productModel;
         $this->resourceConnection = $resourceConnection;
         $this->amazonFactory = $amazonFactory;
-
-        parent::__construct($context, $backendHelper, $data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function _construct()
     {
         parent::_construct();
@@ -216,7 +215,7 @@ HTML;
 
         $amazonLink = '';
         if (!$amazonOrderItem->getIsIsbnGeneralId() || !$dataHelper->isISBN($amazonOrderItem->getGeneralId())) {
-            $itemUrl = $this->getHelper('Component_Amazon')->getItemUrl(
+            $itemUrl = $this->amazonHelper->getItemUrl(
                 $amazonOrderItem->getGeneralId(),
                 $this->order->getMarketplaceId()
             );

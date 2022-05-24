@@ -10,24 +10,30 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account;
 
 use Ess\M2ePro\Block\Adminhtml\Account\Grid as AccountGrid;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Grid
- */
 class Grid extends AccountGrid
 {
     protected $ebayFactory;
 
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
+    private $componentEbayPickupStore;
+    /** @var \Ess\M2ePro\Helper\View\Ebay */
+    protected $ebayViewHelper;
+
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
+        \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->ebayFactory = $ebayFactory;
-        parent::__construct($context, $backendHelper, $data);
-    }
+        parent::__construct($viewHelper, $context, $backendHelper, $data);
 
-    //########################################
+        $this->ebayFactory              = $ebayFactory;
+        $this->componentEbayPickupStore = $componentEbayPickupStore;
+        $this->ebayViewHelper           = $ebayViewHelper;
+    }
 
     protected function _prepareCollection()
     {
@@ -60,18 +66,18 @@ class Grid extends AccountGrid
         ]);
 
         $header = $this->__('Management');
-        $pickupStoreAccounts = $this->getHelper('Component_Ebay_PickupStore')->getEnabledAccounts();
-        $isFeedbacksEnabled = $this->getHelper('View\Ebay')->isFeedbacksShouldBeShown();
+        $pickupStoreAccounts = $this->componentEbayPickupStore->getEnabledAccounts();
+        $isFeedbacksEnabled = $this->ebayViewHelper->isFeedbacksShouldBeShown();
         if (!empty($pickupStoreAccounts) && !$isFeedbacksEnabled) {
             $header = $this->__('My Stores');
-        } elseif (empty($pickupStoreAccounts) && $this->getHelper('View\Ebay')->isFeedbacksShouldBeShown()) {
+        } elseif (empty($pickupStoreAccounts) && $this->ebayViewHelper->isFeedbacksShouldBeShown()) {
             $header = $this->__('Feedbacks');
         }
 
         $this->getHelper('Data\GlobalData')->setValue('pickup_store_accounts', $pickupStoreAccounts);
         $this->getHelper('Data\GlobalData')->setValue('feedbacks_enabled', $isFeedbacksEnabled);
 
-        if ($this->getHelper('View\Ebay')->isFeedbacksShouldBeShown() || !empty($pickupStoreAccounts)) {
+        if ($this->ebayViewHelper->isFeedbacksShouldBeShown() || !empty($pickupStoreAccounts)) {
             $this->addColumn('management', [
                 'header'         => $header,
                 'align'          => 'center',
@@ -126,7 +132,7 @@ HTML;
     {
         $html = '';
 
-        if ($this->getHelper('View\Ebay')->isFeedbacksShouldBeShown($row->getData('id'))) {
+        if ($this->ebayViewHelper->isFeedbacksShouldBeShown($row->getData('id'))) {
             $html = <<<HTML
             <a href="javascript:void(0)"
                onclick="EbayAccountGridObj.openAccountFeedbackPopup({$row->getData('id')})">

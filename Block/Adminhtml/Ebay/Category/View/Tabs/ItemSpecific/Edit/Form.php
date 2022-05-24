@@ -11,12 +11,22 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\ItemSpecific\Edit;
 use Ess\M2ePro\Model\Ebay\Template\Category\Specific;
 use \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Renderer\Dictionary;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\ItemSpecific\Edit\Form
- */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $formFactory, $data);
+
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+    }
 
     protected function _prepareForm()
     {
@@ -49,7 +59,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         );
 
         $templateSpecifics = $template->getSpecifics();
-        $dictionarySpecifics = (array)$this->getHelper('Component_Ebay_Category_Ebay')->getSpecifics(
+        $dictionarySpecifics = (array)$this->componentEbayCategoryEbay->getSpecifics(
             $template->getCategoryId(),
             $template->getMarketplaceId()
         );

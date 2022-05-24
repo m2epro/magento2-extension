@@ -29,10 +29,10 @@
     <?php else : ?>
     var BLOCK_NOTICES_SHOW = <?php echo $block->block_notices_show ? 'true' : 'false'; ?>;
 
-    var IS_VIEW_EBAY = <?php echo json_encode($block->getHelper('View')->isCurrentViewEbay()); ?>;
-    var IS_VIEW_AMAZON = <?php echo json_encode($block->getHelper('View')->isCurrentViewAmazon()); ?>;
-    var IS_VIEW_WALMART = <?php echo json_encode($block->getHelper('View')->isCurrentViewWalmart()); ?>;
-    var IS_VIEW_CONFIGURATION = <?php echo json_encode($block->getHelper('View')->isCurrentViewConfiguration()); ?>;
+    var IS_VIEW_EBAY = <?php echo json_encode($block->viewHelper->isCurrentViewEbay()); ?>;
+    var IS_VIEW_AMAZON = <?php echo json_encode($block->viewHelper->isCurrentViewAmazon()); ?>;
+    var IS_VIEW_WALMART = <?php echo json_encode($block->viewHelper->isCurrentViewWalmart()); ?>;
+    var IS_VIEW_CONFIGURATION = <?php echo json_encode($block->viewHelper->isCurrentViewConfiguration()); ?>;
 
     var M2ePro = {};
 

@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category;
 
 use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser
- */
 class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
     const MODE_BOTH_CATEGORY   = 'both';
@@ -20,8 +17,6 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     const MODE_EBAY_PRIMARY    = 'ebay_primary';
     const MODE_EBAY_SECONDARY  = 'ebay_secondary';
     const MODE_STORE_CATEGORY  = 'store';
-
-    //########################################
 
     protected $_marketplaceId;
     protected $_accountId;
@@ -34,18 +29,23 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
     protected $ebayFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
+    /** @var \Ess\M2ePro\Helper\View\Ebay */
+    public $ebayViewHelper;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         array $data = []
     ) {
-        $this->ebayFactory = $ebayFactory;
+        $this->ebayFactory               = $ebayFactory;
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+        $this->ebayViewHelper            = $ebayViewHelper;
         parent::__construct($context, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -164,7 +164,7 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
             return false;
         }
 
-        return $this->getHelper('Component_Ebay_Category_Ebay')->hasRequiredSpecifics(
+        return $this->componentEbayCategoryEbay->hasRequiredSpecifics(
             $this->_categoriesData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN]['value'],
             $this->getMarketplaceId()
         );

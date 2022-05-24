@@ -6,13 +6,10 @@
  * @license    Commercial use is forbidden
  */
 
-/**
- * @method \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Category getResource()
- */
 namespace Ess\M2ePro\Model\Ebay\Template;
 
 /**
- * Class \Ess\M2ePro\Model\Ebay\Template\Category
+ * @method \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Category getResource()
  */
 class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
@@ -20,29 +17,17 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     const CATEGORY_MODE_EBAY       = 1;
     const CATEGORY_MODE_ATTRIBUTE  = 2;
 
-    /**
-     * @var \Ess\M2ePro\Model\Marketplace
-     */
-    private $marketplaceModel = null;
-
-    /**
-     * @var \Ess\M2ePro\Model\Ebay\Template\Category\Source[]
-     */
-    private $categorySourceModels = [];
-
     protected $ebayFactory;
 
-    //########################################
-
-    public function _construct()
-    {
-        parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Template\Category');
-    }
-
-    //########################################
+    /** @var \Ess\M2ePro\Model\Marketplace */
+    private $marketplaceModel = null;
+    /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Source[] */
+    private $categorySourceModels = [];
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
+    private $componentEbayCategory;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -53,7 +38,6 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-        $this->ebayFactory = $ebayFactory;
         parent::__construct(
             $modelFactory,
             $activeRecordFactory,
@@ -64,6 +48,15 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             $resourceCollection,
             $data
         );
+
+        $this->ebayFactory           = $ebayFactory;
+        $this->componentEbayCategory = $componentEbayCategory;
+    }
+
+    public function _construct()
+    {
+        parent::_construct();
+        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Template\Category');
     }
 
     //########################################
@@ -331,7 +324,7 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             'category_attribute' => $src['attribute'],
         ];
 
-        $this->getHelper('Component_Ebay_Category')->fillCategoriesPaths($data, $listing);
+        $this->componentEbayCategory->fillCategoriesPaths($data, $listing);
 
         $path = $data['category_path'];
         if ($withId && $src['mode'] == self::CATEGORY_MODE_EBAY) {

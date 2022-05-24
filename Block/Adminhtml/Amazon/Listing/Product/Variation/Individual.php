@@ -85,14 +85,14 @@ abstract class Individual extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBl
 
     private function prepareVariations($currentAttribute, $magentoVariations, $filters = [])
     {
-        $return = false;
+        $return = [];
 
         $magentoVariationsSets = $this->getMagentoVariationsSets();
 
         $temp = array_flip(array_keys($magentoVariationsSets));
 
         if (!isset($temp[$currentAttribute])) {
-            return false;
+            return [];
         }
 
         $lastAttributePosition = count($magentoVariationsSets) - 1;
@@ -121,7 +121,7 @@ abstract class Individual extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBl
             return $return;
         }
 
-        $return = false;
+        $return = [];
         foreach ($magentoVariations as $key => $magentoVariation) {
             foreach ($magentoVariation as $option) {
                 $value = $option['option'];
@@ -156,8 +156,8 @@ abstract class Individual extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBl
             }
         }
 
-        if (count($magentoVariations) < 1) {
-            return false;
+        if (empty($magentoVariations)) {
+            return [];
         }
 
         return $return;

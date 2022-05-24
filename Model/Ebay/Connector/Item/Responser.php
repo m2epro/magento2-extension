@@ -36,11 +36,15 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
     /** @var EbayVariation\Resolver */
     protected $variationResolver;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
     protected $isSuccess = false;
 
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -64,6 +68,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
         $this->variationResolver = $variationResolver;
         $this->listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $this->params['product']['id']);
+        $this->helperData = $helperData;
     }
 
     //########################################
@@ -441,7 +446,10 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
             $minAllowedDate = new \DateTime('now', new \DateTimeZone('UTC'));
             $minAllowedDate->modify('- 1 day');
 
-            if (strtotime($getItemLastCallDate) > $minAllowedDate->format('U')) {
+            $getItemLastCallTimestamp = (int)$this->helperData
+                ->createGmtDateTime($getItemLastCallDate)
+                ->format('U');
+            if ($getItemLastCallTimestamp > $minAllowedDate->format('U')) {
                 return false;
             }
 
@@ -449,7 +457,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
         }
 
         $getItemCallsCount++;
-        $getItemLastCallDate = $this->getHelper('Data')->getCurrentGmtDate();
+        $getItemLastCallDate = $this->helperData->getCurrentGmtDate();
 
         $additionalData['get_item_calls_statistic']['count'] = $getItemCallsCount;
         $additionalData['get_item_calls_statistic']['last_call_date'] = $getItemLastCallDate;
@@ -577,7 +585,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
         $this->listingProduct->addData([
             'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
-            'additional_data' => $this->getHelper('Data')->jsonEncode($additionalData),
+            'additional_data' => $this->helperData->jsonEncode($additionalData),
         ])->save();
 
         $this->listingProduct->getChildObject()->updateVariationsStatus();

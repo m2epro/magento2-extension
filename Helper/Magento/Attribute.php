@@ -22,10 +22,11 @@ class Attribute extends AbstractHelper
     private $attributeColFactory;
     private $eavEntityAttributeColFactory;
     private $eavConfig;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\Catalog\Model\ResourceModel\Product $productResource,
         \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $attributeColFactory,
@@ -43,6 +44,7 @@ class Attribute extends AbstractHelper
         $this->eavConfig = $eavConfig;
         $this->resourceConnection = $resourceConnection;
         parent::__construct($objectManager, $helperFactory, $context);
+        $this->moduleConfiguration = $moduleConfiguration;
     }
 
     //########################################
@@ -479,8 +481,7 @@ class Attribute extends AbstractHelper
             return $attributeValue;
         }
 
-        $isPriceConvertEnabled = $this->getHelper('Module_Configuration')
-            ->isEnableMagentoAttributePriceTypeConvertingMode();
+        $isPriceConvertEnabled = $this->moduleConfiguration->isEnableMagentoAttributePriceTypeConvertingMode();
 
         if ($isPriceConvertEnabled && $this->isAttributeInputTypePrice($attributeCode)) {
             $attributeValue = $this->modelFactory->getObject('Currency')->convertPrice(

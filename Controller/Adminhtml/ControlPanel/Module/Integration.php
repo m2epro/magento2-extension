@@ -14,25 +14,19 @@ use Ess\M2ePro\Helper\Component\Walmart;
 use Ess\M2ePro\Helper\Component\Amazon;
 use Ess\M2ePro\Helper\Component\Ebay;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module\Integration
- */
 class Integration extends Command
 {
     /** @var \Magento\Framework\Data\Form\FormKey */
     private $formKey;
 
-    //########################################
-
     public function __construct(
         \Magento\Framework\Data\Form\FormKey $formKey,
+        \Ess\M2ePro\Helper\View\ControlPanel $controlPanelHelper,
         Context $context
     ) {
+        parent::__construct($controlPanelHelper, $context);
         $this->formKey = $formKey;
-        parent::__construct($context);
     }
-
-    //########################################
 
     /**
      * @title "Print Request Data"
@@ -403,7 +397,7 @@ HTML;
 
             if (!$order->getId()) {
                 $this->getMessageManager()->addError('Unable to load order instance.');
-                $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
+                $this->_redirect($this->controlPanelHelper->getPageModuleTabUrl());
                 return;
             }
 

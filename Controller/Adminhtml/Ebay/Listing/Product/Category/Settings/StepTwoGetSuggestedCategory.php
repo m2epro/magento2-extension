@@ -12,9 +12,6 @@ use \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings\StepTwoGetSuggestedCategory
- */
 class StepTwoGetSuggestedCategory extends Settings
 {
     //########################################
@@ -85,7 +82,7 @@ class StepTwoGetSuggestedCategory extends Settings
 
             $suggestedCategory = null;
             foreach ($suggestions as $suggestion) {
-                $categoryExists = $this->getHelper('Component_Ebay_Category_Ebay')->exists(
+                $categoryExists = $this->componentEbayCategoryEbay->exists(
                     $suggestion['category_id'],
                     $listing->getMarketplaceId()
                 );

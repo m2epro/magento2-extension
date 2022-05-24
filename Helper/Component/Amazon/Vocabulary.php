@@ -8,14 +8,10 @@
 
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
-/**
- * Class \Ess\M2ePro\Helper\Component\Amazon\Vocabulary
- */
 class Vocabulary extends \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonParentFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonParentFactory,
@@ -24,8 +20,9 @@ class Vocabulary extends \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
-        $this->amazonParentFactory = $amazonParentFactory;
         parent::__construct($modelFactory, $activeRecordFactory, $helperFactory, $context);
+
+        $this->amazonParentFactory = $amazonParentFactory;
     }
 
     //########################################

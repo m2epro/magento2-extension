@@ -8,12 +8,19 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Order\Log\Grid;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Order\Log\Grid\LastActions
- */
 class LastActions extends \Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View */
+    protected $viewHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\View $viewHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+        $this->viewHelper = $viewHelper;
+    }
 
     protected function _construct()
     {
@@ -43,7 +50,7 @@ class LastActions extends \Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions
         foreach ($logs as $log) {
             $actions[] = [
                 'type'           => $log->getData('type'),
-                'text'           => $this->getHelper('View')->getModifiedLogMessage($log->getData('description')),
+                'text'           => $this->viewHelper->getModifiedLogMessage($log->getData('description')),
                 'initiator'      => $this->getInitiator([$log]),
                 'date'           => $date = $log->getData('create_date'),
                 'localized_date' => $this->_localeDate->formatDate($date, \IntlDateFormatter::MEDIUM, true),

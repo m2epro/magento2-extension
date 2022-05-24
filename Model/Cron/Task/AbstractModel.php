@@ -17,42 +17,29 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN;
 
-    /**
-     * @var int (in seconds)
-     */
-    protected $interval = 60;
+    /** @var int */
+    protected $interval = 60; // in seconds
 
     protected $eventManager;
-
     protected $parentFactory;
-
     protected $activeRecordFactory;
-
     protected $resource;
 
-    /**
-     * @var \Ess\M2ePro\Model\Lock\Item\Manager
-     */
+    /** @var \Ess\M2ePro\Model\Lock\Item\Manager */
     protected $lockItemManager;
-
-    /**
-     * @var \Ess\M2ePro\Model\Cron\OperationHistory
-     */
+    /** @var \Ess\M2ePro\Model\Cron\OperationHistory */
     protected $operationHistory;
-
-    /**
-     * @var \Ess\M2ePro\Model\Cron\OperationHistory
-     */
+    /** @var \Ess\M2ePro\Model\Cron\OperationHistory */
     protected $parentOperationHistory;
-
-    /**
-     * @var \Ess\M2ePro\Model\Cron\Task\Repository
-     */
+    /** @var \Ess\M2ePro\Model\Cron\Task\Repository */
     protected $taskRepo;
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
 
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
@@ -66,7 +53,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         $this->parentFactory = $parentFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->resource = $resource;
-
+        $this->helperData = $helperData;
         $this->taskRepo = $taskRepo;
     }
 
@@ -205,10 +192,11 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
-        $currentTimeStamp = $this->getHelper('Data')->getCurrentGmtDate(true);
+        $currentTimeStamp = $this->helperData->getCurrentGmtDate(true);
 
         $startFrom = $this->getConfigValue('start_from');
-        $startFrom = !empty($startFrom) ? strtotime($startFrom) : $currentTimeStamp;
+        $startFrom = !empty($startFrom) ?
+            (int)$this->helperData->createGmtDateTime($startFrom)->format('U') : $currentTimeStamp;
 
         return $startFrom <= $currentTimeStamp && $this->isIntervalExceeded();
     }
@@ -223,14 +211,14 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected function updateLastAccess()
     {
-        $this->setConfigValue('last_access', $this->getHelper('Data')->getCurrentGmtDate());
+        $this->setConfigValue('last_access', $this->helperData->getCurrentGmtDate());
     }
 
     protected function updateLastRun()
     {
         $this->getHelper('Module')->getRegistry()->setValue(
             $this->getConfigGroup() . 'last_run/',
-            $this->getHelper('Data')->getCurrentGmtDate()
+            $this->helperData->getCurrentGmtDate()
         );
     }
 
@@ -291,9 +279,12 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             return true;
         }
 
-        $currentTimeStamp = $this->getHelper('Data')->getCurrentGmtDate(true);
+        $currentTimeStamp = $this->helperData->getCurrentGmtDate(true);
 
-        return $currentTimeStamp > strtotime($lastRun) + $this->getInterval();
+        $lastRunTimestamp = (int)$this->helperData
+            ->createGmtDateTime($lastRun)
+            ->format('U');
+        return $currentTimeStamp > $lastRunTimestamp + $this->getInterval();
     }
 
     public function getInterval()

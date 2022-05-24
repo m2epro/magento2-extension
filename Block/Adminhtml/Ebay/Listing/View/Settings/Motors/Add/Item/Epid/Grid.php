@@ -8,26 +8,24 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item\Epid;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item\Epid\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item\Grid
 {
     protected $itemCollectionFactory;
     protected $resourceConnection;
 
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Ebay\Motor\Item\CollectionFactory $itemCollectionFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
+        parent::__construct($componentEbayMotors, $context, $backendHelper, $data);
+
         $this->itemCollectionFactory = $itemCollectionFactory;
-        $this->resourceConnection = $resourceConnection;
-        parent::__construct($context, $backendHelper, $data);
+        $this->resourceConnection    = $resourceConnection;
     }
 
     //########################################
@@ -49,7 +47,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors
         $collection->getSelect()->columns([
             'epid', 'product_type', 'make', 'model', 'year', 'trim', 'engine', 'submodel', 'street_name', 'is_custom'
         ]);
-        $collection->setScope($this->getHelper('Component_Ebay_Motors')->getEpidsScopeByType($this->getMotorsType()));
+        $collection->setScope($this->componentEbayMotors->getEpidsScopeByType($this->getMotorsType()));
 
         $this->setCollection($collection);
 

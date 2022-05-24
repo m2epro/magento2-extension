@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Model\Ebay;
 
 use Ess\M2ePro\Model\Exception\Logic;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Account
- */
 class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
     const MODE_SANDBOX    = 0;
@@ -69,8 +66,35 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     const MAGENTO_ORDERS_STATUS_MAPPING_PAID    = 'processing';
     const MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED = 'complete';
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
+    private $componentEbayCategory;
 
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        parent::__construct(
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
+
+        $this->componentEbayCategory = $componentEbayCategory;
+    }
     public function _construct()
     {
         parent::_construct();
@@ -1303,7 +1327,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
         $connection->delete($tableAccountStoreCategories, ['account_id = ?' => $this->getId()]);
 
-        $this->getHelper('Component_Ebay_Category')->removeStoreRecent();
+        $this->componentEbayCategory->removeStoreRecent();
 
         if (empty($data['categories'])) {
             return;

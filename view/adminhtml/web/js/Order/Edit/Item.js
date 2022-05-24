@@ -397,6 +397,64 @@ define([
                     }
                 }
             });
+        },
+
+        actualizeFee: function (options) {
+            var self = this;
+
+            new Ajax.Request(M2ePro.url.get('order/actualizeFee'), {
+                method: 'get',
+                onSuccess: function (transport) {
+
+                    var response = transport.responseText.evalJSON(true);
+
+                    if (response.sell_api_disabled) {
+                        self.sellApiAuthPopup(options);
+                        return;
+                    }
+
+                    if (response.error) {
+                        self.alert(response.error);
+                        return;
+                    }
+
+                    if (response.data) {
+                        $('ebay_order_final_fee').update(response.data);
+                        $('ebay_order_final_fee_actualize').remove();
+                    }
+                }
+            });
+        },
+
+        sellApiAuthPopup: function (options)
+        {
+            var self = this;
+            this.confirm({
+                title: M2ePro.translator.translate("ebay_order_fee_sell_api_popup_title"),
+                content: M2ePro.translator.translate('ebay_order_fee_sell_api_popup_text'),
+                actions: {
+                    confirm: function () {
+                        var win = window.open(M2ePro.url.get('ebay_account/edit', {
+                            id: options.account_id,
+                            sell_api: 1
+                        }));
+
+                        setTimeout(function run() {
+
+                            if (!win.closed) {
+                                setTimeout(run, 250);
+                                return;
+                            }
+
+                            self.actualizeFee(options);
+
+                        }, 250);
+                    },
+                    cancel: function () {
+                        return false;
+                    }
+                }
+            });
         }
     });
 });

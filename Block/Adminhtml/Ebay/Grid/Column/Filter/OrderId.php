@@ -8,24 +8,24 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\OrderId
- */
 class OrderId extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Text
 {
-    //########################################
-
     protected $helperFactory;
 
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
+    private $componentEbayPickupStore;
+
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Backend\Block\Context $context,
         \Magento\Framework\DB\Helper $resourceHelper,
         array $data = []
     ) {
-        $this->helperFactory = $helperFactory;
-
         parent::__construct($context, $resourceHelper, $data);
+
+        $this->helperFactory = $helperFactory;
+        $this->componentEbayPickupStore = $componentEbayPickupStore;
     }
 
     public function getHelper($helper, array $arguments = [])
@@ -59,7 +59,7 @@ class OrderId extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Text
 
     public function getHtml()
     {
-        if (!$this->getHelper('Component_Ebay_PickupStore')->isFeatureEnabled()) {
+        if (!$this->componentEbayPickupStore->isFeatureEnabled()) {
             return parent::getHtml();
         }
 

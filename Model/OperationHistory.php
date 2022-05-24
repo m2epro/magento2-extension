@@ -22,7 +22,33 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     private $object = null;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $helperData;
+
     //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        $this->helperData = $helperData;
+        parent::__construct(
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
+    }
 
     public function _construct()
     {
@@ -90,9 +116,9 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $data = [
             'nick' => $nick,
             'parent_id'  => $parentId,
-            'data'       => $this->getHelper('Data')->jsonEncode($data),
+            'data'       => $this->helperData->jsonEncode($data),
             'initiator'  => $initiator,
-            'start_date' => $this->getHelper('Data')->getCurrentGmtDate()
+            'start_date' => $this->helperData->getCurrentGmtDate()
         ];
 
         $this->object = $this->activeRecordFactory
@@ -111,7 +137,7 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         $this->object->setData(
             'end_date',
-            $this->getHelper('Data')->getCurrentGmtDate()
+            $this->helperData->getCurrentGmtDate()
         )->save();
 
         return true;
@@ -127,13 +153,13 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         $data = [];
         if ($this->object->getData('data') != '') {
-            $data = $this->getHelper('Data')->jsonDecode($this->object->getData('data'));
+            $data = $this->helperData->jsonDecode($this->object->getData('data'));
         }
 
         $data[$key] = $value;
         $this->object->setData(
             'data',
-            $this->getHelper('Data')->jsonEncode($data)
+            $this->helperData->jsonEncode($data)
         )->save();
 
         return true;
@@ -162,7 +188,7 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             return null;
         }
 
-        $data = $this->getHelper('Data')->jsonDecode($this->object->getData('data'));
+        $data = $this->helperData->jsonDecode($this->object->getData('data'));
 
         if (isset($data[$key])) {
             return $data[$key];
@@ -235,7 +261,7 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         $nick = strtoupper($this->getObject()->getData('nick'));
 
-        $contentData = (array)$this->getHelper('Data')->jsonDecode($this->getObject()->getData('data'));
+        $contentData = (array)$this->helperData->jsonDecode($this->getObject()->getData('data'));
         $contentData = preg_replace('/^/m', "{$offset}", print_r($contentData, true));
 
         return <<<INFO
@@ -351,8 +377,13 @@ INFO;
 
     protected function getTotalTime()
     {
-        $totalTime = strtotime($this->getObject()->getData('end_date')) -
-                     strtotime($this->getObject()->getData('start_date'));
+        $endDateTimestamp = (int)$this->helperData
+            ->createGmtDateTime($this->getObject()->getData('end_date'))
+            ->format('U');
+        $startDateTimestamp = (int)$this->helperData
+            ->createGmtDateTime($this->getObject()->getData('start_date'))
+            ->format('U');
+        $totalTime = $endDateTimestamp - $startDateTimestamp;
 
         if ($totalTime < 0) {
             return 'n/a';

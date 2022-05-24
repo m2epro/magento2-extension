@@ -8,11 +8,21 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description\Assign
- */
 class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation */
+    protected $variationHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper,
+        \Magento\Framework\DB\TransactionFactory $transactionFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($transactionFactory, $amazonFactory, $context);
+        $this->variationHelper = $variationHelper;
+    }
+
     public function execute()
     {
         $productsIds = $this->getRequest()->getParam('products_ids');
@@ -28,9 +38,6 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
             $productsIds = explode(',', $productsIds);
         }
 
-        /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper */
-        $variationHelper = $this->getHelper('Component_Amazon_Variation');
-
         $msgType = 'success';
         $messages = [];
 
@@ -45,7 +52,7 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
             );
         }
 
-        $filteredProductsIdsByType = $variationHelper->filterProductsByMagentoProductType($productsIdsTemp);
+        $filteredProductsIdsByType = $this->variationHelper->filterProductsByMagentoProductType($productsIdsTemp);
 
         if (count($productsIdsTemp) != count($filteredProductsIdsByType)) {
             $msgType = 'warning';

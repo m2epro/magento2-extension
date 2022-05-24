@@ -21,13 +21,14 @@ class Combine extends AbstractModel
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\Rule\Model\Condition\Context $context,
         array $data = []
     ) {
         $this->_logger = $context->getLogger();
-        parent::__construct($helperFactory, $modelFactory, $context, $data);
+        parent::__construct($helperData, $helperFactory, $modelFactory, $context, $data);
 
         $this->setType('Magento\Product\Rule\Condition\Combine')
             ->setAggregator('all')

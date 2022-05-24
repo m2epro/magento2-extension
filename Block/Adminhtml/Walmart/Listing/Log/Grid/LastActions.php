@@ -8,26 +8,19 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Log\Grid;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Log\Grid\LastActions
- */
 class LastActions extends \Ess\M2ePro\Block\Adminhtml\Listing\Log\Grid\LastActions
 {
     protected $resourceConnection;
 
-    //########################################
-
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
     ) {
+        parent::__construct($viewHelper, $context, $data);
         $this->resourceConnection = $resourceConnection;
-
-        parent::__construct($context, $data);
     }
-
-    //########################################
 
     protected function getGroupedActions(array $logs)
     {

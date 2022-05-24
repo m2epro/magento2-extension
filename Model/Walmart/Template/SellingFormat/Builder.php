@@ -16,6 +16,19 @@ use Ess\M2ePro\Model\Walmart\Template\SellingFormat as WalmartSellingFormat;
  */
 class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 {
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        $this->helperData = $helperData;
+        parent::__construct($helperFactory, $modelFactory, $data);
+    }
+
     //########################################
 
     protected function prepareData()
@@ -33,32 +46,28 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         $data['title'] = strip_tags($data['title']);
 
         if ($data['sale_time_start_date_value'] === '') {
-            $data['sale_time_start_date_value'] = $this->getHelper('Data')->getCurrentGmtDate(
+            $data['sale_time_start_date_value'] = $this->helperData->getCurrentGmtDate(
                 false,
                 'Y-m-d 00:00:00'
             );
         } else {
-            $data['sale_time_start_date_value'] = $this->getHelper('Data')->getDate(
-                $data['sale_time_start_date_value'],
-                false,
-                'Y-m-d 00:00:00'
-            );
+            $data['sale_time_start_date_value'] = $this->helperData
+                ->createGmtDateTime($data['sale_time_start_date_value'])
+                ->format('Y-m-d 00:00:00');
         }
 
         if ($data['sale_time_end_date_value'] === '') {
-            $data['sale_time_end_date_value'] = $this->getHelper('Data')->getCurrentGmtDate(
+            $data['sale_time_end_date_value'] = $this->helperData->getCurrentGmtDate(
                 false,
                 'Y-m-d 00:00:00'
             );
         } else {
-            $data['sale_time_end_date_value'] = $this->getHelper('Data')->getDate(
-                $data['sale_time_end_date_value'],
-                false,
-                'Y-m-d 00:00:00'
-            );
+            $data['sale_time_end_date_value'] = $this->helperData
+                ->createGmtDateTime($data['sale_time_end_date_value'])
+                ->format('Y-m-d 00:00:00');
         }
 
-        $data['attributes'] = $this->getHelper('Data')->jsonEncode(
+        $data['attributes'] = $this->helperData->jsonEncode(
             $this->getComparedData($data, 'attributes_name', 'attributes_value')
         );
 
@@ -119,8 +128,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'sale_time_start_date_custom_attribute' => '',
             'sale_time_end_date_custom_attribute' => '',
 
-            'sale_time_start_date_value' => $this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d'),
-            'sale_time_end_date_value' => $this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d'),
+            'sale_time_start_date_value' => $this->helperData->getCurrentGmtDate(false, 'Y-m-d'),
+            'sale_time_end_date_value' => $this->helperData->getCurrentGmtDate(false, 'Y-m-d'),
 
             'item_weight_mode' => WalmartSellingFormat::WEIGHT_MODE_CUSTOM_VALUE,
             'item_weight_custom_value' => '',
@@ -146,8 +155,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
             'attributes_mode' => WalmartSellingFormat::ATTRIBUTES_MODE_NONE,
             'attributes' => '',
-            'attributes_name' => $this->getHelper('Data')->jsonEncode([]),
-            'attributes_value' => $this->getHelper('Data')->jsonEncode([]),
+            'attributes_name' => $this->helperData->jsonEncode([]),
+            'attributes_value' => $this->helperData->jsonEncode([]),
 
             'shipping_override_rule_mode' => WalmartSellingFormat::SHIPPING_OVERRIDE_RULE_MODE_NO,
             'shipping_override_rule' => []

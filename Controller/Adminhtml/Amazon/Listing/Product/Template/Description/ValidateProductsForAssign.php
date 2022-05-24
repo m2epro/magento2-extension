@@ -10,11 +10,21 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Descri
 
 use \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Description\ValidateProductsForAssign
- */
 class ValidateProductsForAssign extends Description
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation */
+    protected $variationHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper,
+        \Magento\Framework\DB\TransactionFactory $transactionFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($transactionFactory, $amazonFactory, $context);
+        $this->variationHelper = $variationHelper;
+    }
+
     public function execute()
     {
         $productsIds = $this->getRequest()->getParam('products_ids');
@@ -28,8 +38,6 @@ class ValidateProductsForAssign extends Description
         if (!is_array($productsIds)) {
             $productsIds = explode(',', $productsIds);
         }
-
-        $variationHelper = $this->getHelper('Component_Amazon_Variation');
 
         $messages = [];
 
@@ -56,7 +64,7 @@ class ValidateProductsForAssign extends Description
             ];
         }
 
-        $filteredProductsIdsByType = $variationHelper->filterProductsByMagentoProductType($productsIdsLocked);
+        $filteredProductsIdsByType = $this->variationHelper->filterProductsByMagentoProductType($productsIdsLocked);
 
         if (count($productsIdsLocked) != count($filteredProductsIdsByType)) {
             $messages[] = [

@@ -10,12 +10,27 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard;
 
 use Ess\M2ePro\Controller\Adminhtml\Wizard;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1
- */
 abstract class MigrationFromMagento1 extends Wizard
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View\Ebay */
+    protected $ebayViewHelper;
+    /** @var \Ess\M2ePro\Helper\View\Amazon */
+    protected $amazonViewHelper;
+    /** @var \Ess\M2ePro\Helper\View\Walmart */
+    protected $walmartViewHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
+        \Ess\M2ePro\Helper\View\Amazon $amazonViewHelper,
+        \Ess\M2ePro\Helper\View\Walmart $walmartViewHelper,
+        \Magento\Framework\Code\NameBuilder $nameBuilder,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($nameBuilder, $context);
+        $this->ebayViewHelper = $ebayViewHelper;
+        $this->amazonViewHelper = $amazonViewHelper;
+        $this->walmartViewHelper = $walmartViewHelper;
+    }
 
     protected function init()
     {
@@ -68,14 +83,13 @@ abstract class MigrationFromMagento1 extends Wizard
     {
         $referrer = $this->getRequest()->getParam('referrer');
 
-        if ($referrer == \Ess\M2ePro\Helper\View\Ebay::NICK) {
-            return $this->getHelper('View\Ebay')->getMenuRootNodeLabel();
-        }
-        if ($referrer == \Ess\M2ePro\Helper\View\Amazon::NICK) {
-            return $this->getHelper('View\Amazon')->getMenuRootNodeLabel();
-        }
-        if ($referrer == \Ess\M2ePro\Helper\View\Walmart::NICK) {
-            return $this->getHelper('View\Walmart')->getMenuRootNodeLabel();
+        switch ($referrer) {
+            case \Ess\M2ePro\Helper\View\Ebay::NICK:
+                return $this->ebayViewHelper->getMenuRootNodeLabel();
+            case \Ess\M2ePro\Helper\View\Amazon::NICK:
+                return $this->amazonViewHelper->getMenuRootNodeLabel();
+            case \Ess\M2ePro\Helper\View\Walmart::NICK:
+                return $this->walmartViewHelper->getMenuRootNodeLabel();
         }
 
         return null;

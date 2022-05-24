@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor
- */
 class Processor extends \Ess\M2ePro\Model\AbstractModel
 {
-    //########################################
-
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     private $listingProduct = null;
 
@@ -23,8 +18,11 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation $typeModel */
     private $typeModel = null;
 
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory|null  */
-    private $activeRecordFactory = null;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
+    private $activeRecordFactory;
+
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation */
+    private $variationHelper;
 
     /** @var \Ess\M2ePro\Model\Template\Description $descriptionTemplate */
     private $descriptionTemplate = null;
@@ -32,13 +30,16 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     private $possibleThemes = null;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         array $data = []
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->activeRecordFactory = $activeRecordFactory;
+        $this->variationHelper = $variationHelper;
     }
 
     //########################################
@@ -231,8 +232,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 $this->getAmazonDescriptionTemplate()->getProductDataNick()
             );
 
-        $variationHelper = $this->getHelper('Component_Amazon_Variation');
-        $themesUsageData = $variationHelper->getThemesUsageData();
+        $themesUsageData = $this->variationHelper->getThemesUsageData();
         $usedThemes = [];
 
         if (!empty($themesUsageData[$marketPlaceId])) {

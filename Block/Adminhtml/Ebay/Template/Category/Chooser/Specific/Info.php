@@ -8,13 +8,21 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Info
- */
 class Info extends \Ess\M2ePro\Block\Adminhtml\Widget\Info
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
 
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Magento\Framework\Math\Random $random,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        array $data = []
+    ) {
+        parent::__construct($random, $context, $data);
+
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+    }
     protected function _prepareLayout()
     {
         if ($this->getData('category_mode') == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE) {
@@ -22,7 +30,7 @@ class Info extends \Ess\M2ePro\Block\Adminhtml\Widget\Info
                 $this->getHelper('Magento\Attribute')->getAttributeLabel($this->getData('category_value'));
 
         } else {
-            $category = $this->getHelper('Component_Ebay_Category_Ebay')->getPath(
+            $category = $this->componentEbayCategoryEbay->getPath(
                 $this->getData('category_value'),
                 $this->getData('marketplace_id')
             );

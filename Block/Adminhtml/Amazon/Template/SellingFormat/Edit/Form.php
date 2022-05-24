@@ -11,24 +11,26 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Template\SellingFormat;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit\Form
- */
 class Form extends AbstractForm
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Configuration */
+    protected $configuration;
+
+    /** @var \Magento\Customer\Model\Group */
     protected $customerGroup;
 
-    //########################################
-
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Configuration $configuration,
         \Magento\Customer\Model\Group $customerGroup,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
-        $this->customerGroup = $customerGroup;
         parent::__construct($context, $registry, $formFactory, $data);
+
+        $this->configuration = $configuration;
+        $this->customerGroup = $customerGroup;
     }
 
     //########################################
@@ -131,7 +133,7 @@ class Form extends AbstractForm
             ]
         );
 
-        if ($this->getHelper('Component_Amazon_Configuration')->isEnabledBusinessMode()) {
+        if ($this->configuration->isEnabledBusinessMode()) {
             $fieldset = $form->addFieldset(
                 'magento_block_amazon_template_selling_format_business',
                 [
@@ -348,7 +350,7 @@ class Form extends AbstractForm
             ]
         );
 
-        $priceTitle = $this->getHelper('Component_Amazon_Configuration')->isEnabledBusinessMode() ?
+        $priceTitle = $this->configuration->isEnabledBusinessMode() ?
             $this->__('Price (B2C)') :
             $this->__('Price');
 
@@ -754,7 +756,7 @@ HTML
             ]
         );
 
-        if ($this->getHelper('Component_Amazon_Configuration')->isEnabledBusinessMode()) {
+        if ($this->configuration->isEnabledBusinessMode()) {
 
             $fieldset = $form->addFieldset(
                 'magento_block_amazon_template_selling_format_business_prices',

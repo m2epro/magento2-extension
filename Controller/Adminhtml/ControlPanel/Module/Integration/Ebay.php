@@ -12,9 +12,6 @@ use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 use Ess\M2ePro\Helper\Component\Ebay as EbayHelper;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module\Integration\Ebay
- */
 class Ebay extends Command
 {
     /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Repository */
@@ -23,20 +20,16 @@ class Ebay extends Command
     /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\HandlerFactory */
     protected $handlerFactory;
 
-    //########################################
-
     public function __construct(
+        \Ess\M2ePro\Helper\View\ControlPanel $controlPanelHelper,
         Context $context,
         \Ess\M2ePro\Model\ControlPanel\Inspection\Repository $repository,
         \Ess\M2ePro\Model\ControlPanel\Inspection\HandlerFactory $handlerFactory
     ) {
+        parent::__construct($controlPanelHelper, $context);
         $this->repository = $repository;
         $this->handlerFactory = $handlerFactory;
-
-        parent::__construct($context);
     }
-
-    //########################################
 
     /**
      * @title "Stop Unmanaged"
@@ -125,7 +118,7 @@ class Ebay extends Command
 
         if (empty($listingProducts)) {
             $this->getMessageManager()->addError('Failed to load Listing Product.');
-            return $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
+            return $this->_redirect($this->controlPanelHelper->getPageModuleTabUrl());
         }
 
         $affected = 0;
@@ -145,7 +138,7 @@ class Ebay extends Command
         }
 
         $this->getMessageManager()->addSuccess("Set for {$affected} affected Products.");
-        return $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
+        return $this->_redirect($this->controlPanelHelper->getPageModuleTabUrl());
     }
 
     /**
@@ -377,7 +370,7 @@ HTML;
 
     private function getEmptyResultsHtml($messageText)
     {
-        $backUrl = $this->getHelper('View\ControlPanel')->getPageModuleTabUrl();
+        $backUrl = $this->controlPanelHelper->getPageModuleTabUrl();
 
         return <<<HTML
     <h2 style="margin: 20px 0 0 10px">

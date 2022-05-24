@@ -38,25 +38,19 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     const CANCEL_REASON_DEFAULT   = 'OTHER';
     const CANCEL_REASON_BUYER_ASK = 'BUYER_ASKED_CANCEL';
 
-    //########################################
-
-    private $shipmentFactory;
-
-    private $externalTransactionsCollection = null;
-
-    private $orderSender;
-
-    private $invoiceSender;
-
-    private $subTotalPrice = null;
-
-    private $grandTotalPrice = null;
-
     protected $shippingAddressFactory;
 
-    //########################################
+    private $shipmentFactory;
+    private $externalTransactionsCollection = null;
+    private $orderSender;
+    private $invoiceSender;
+    private $subTotalPrice = null;
+    private $grandTotalPrice = null;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay */
+    private $componentEbay;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay $componentEbay,
         \Ess\M2ePro\Model\Magento\Order\ShipmentFactory $shipmentFactory,
         \Ess\M2ePro\Model\Ebay\Order\ShippingAddressFactory $shippingAddressFactory,
         \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
@@ -71,11 +65,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-        $this->shipmentFactory = $shipmentFactory;
-        $this->shippingAddressFactory = $shippingAddressFactory;
-        $this->orderSender = $orderSender;
-        $this->invoiceSender = $invoiceSender;
-
         parent::__construct(
             $parentFactory,
             $modelFactory,
@@ -87,12 +76,18 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             $resourceCollection,
             $data
         );
+
+        $this->shipmentFactory        = $shipmentFactory;
+        $this->shippingAddressFactory = $shippingAddressFactory;
+        $this->orderSender            = $orderSender;
+        $this->invoiceSender          = $invoiceSender;
+        $this->componentEbay          = $componentEbay;
     }
 
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Order');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Order::class);
     }
 
     //########################################
@@ -186,7 +181,17 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return $this->getData('currency');
     }
 
-    public function getFinalFee()
+    public function setFinalFee(float $value): void
+    {
+        $this->setData('final_fee', $value);
+    }
+
+    public function getFinalFee(): ?float
+    {
+        return $this->getData('final_fee');
+    }
+
+    public function getApproximatelyFinalFee()
     {
         /** @var \Ess\M2ePro\Model\Order\Item[] $items */
         $items = $this->getParentObject()->getItemsCollection()->getItems();
@@ -1095,7 +1100,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         }
 
         if (!empty($trackingDetails['carrier_code'])) {
-            $trackingDetails['carrier_title'] = $this->getHelper('Component_Ebay')->getCarrierTitle(
+            $trackingDetails['carrier_title'] = $this->componentEbay->getCarrierTitle(
                 $trackingDetails['carrier_code'],
                 isset($trackingDetails['carrier_title']) ? $trackingDetails['carrier_title'] : ''
             );

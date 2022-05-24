@@ -26,12 +26,16 @@ class Price extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
     /** @var \Magento\Framework\Locale\CurrencyInterface  */
     protected $localeCurrency;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Backend\Block\Context $context,
         array $data = []
     ) {
@@ -40,6 +44,7 @@ class Price extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         $this->helperFactory = $helperFactory;
         $this->amazonFactory = $amazonFactory;
         $this->localeCurrency = $localeCurrency;
+        $this->helperData = $helperData;
     }
 
     //########################################
@@ -132,10 +137,16 @@ HTML;
 
         $salePrice = $rowObject->getData('online_regular_sale_price');
         if ((float)$salePrice > 0) {
-            $currentTimestamp = strtotime($this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d 00:00:00'));
+            $currentTimestamp = (int)$this->helperData->createGmtDateTime(
+                $this->helperData->getCurrentGmtDate(false, 'Y-m-d 00:00:00')
+            )->format('U');
 
-            $startDateTimestamp = strtotime($rowObject->getData('online_regular_sale_price_start_date'));
-            $endDateTimestamp   = strtotime($rowObject->getData('online_regular_sale_price_end_date'));
+            $startDateTimestamp = (int)$this->helperData->createGmtDateTime(
+                $rowObject->getData('online_regular_sale_price_start_date')
+            )->format('U');
+            $endDateTimestamp = (int)$this->helperData->createGmtDateTime(
+                $rowObject->getData('online_regular_sale_price_end_date')
+            )->format('U');
 
             if ($currentTimestamp <= $endDateTimestamp) {
                 $fromDate = $this->_localeDate->formatDate(

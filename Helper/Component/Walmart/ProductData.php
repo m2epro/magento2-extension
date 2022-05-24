@@ -15,27 +15,36 @@ class ProductData extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const RECENT_MAX_COUNT = 5;
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
+
+    /** @var \Ess\M2ePro\Helper\Module */
+    protected $helperModule;
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\Module $helperModule,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
+        parent::__construct($helperFactory, $context);
+
+        $this->helperModule = $helperModule;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->resourceConnection = $resourceConnection;
-        parent::__construct($helperFactory, $context);
     }
 
     //########################################
 
     public function getRecent($marketplaceId, $excludedProductDataNick = null)
     {
-        $allRecent = $this->getHelper('Module')->getRegistry()->getValueFromJson($this->getConfigGroup());
+        $allRecent = $this->helperModule->getRegistry()->getValueFromJson($this->getConfigGroup());
 
         if (!isset($allRecent[$marketplaceId])) {
             return [];
@@ -54,7 +63,7 @@ class ProductData extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function addRecent($marketplaceId, $productDataNick)
     {
-        $allRecent = $this->getHelper('Module')->getRegistry()->getValueFromJson($this->getConfigGroup());
+        $allRecent = $this->helperModule->getRegistry()->getValueFromJson($this->getConfigGroup());
 
         !isset($allRecent[$marketplaceId]) && $allRecent[$marketplaceId] = [];
 
@@ -72,7 +81,7 @@ class ProductData extends \Ess\M2ePro\Helper\AbstractHelper
         $recent[] = $productDataNick;
         $allRecent[$marketplaceId] = $recent;
 
-        $this->getHelper('Module')->getRegistry()->setValue($this->getConfigGroup(), $allRecent);
+        $this->helperModule->getRegistry()->setValue($this->getConfigGroup(), $allRecent);
     }
 
     public function encodeWalmartSku($sku)

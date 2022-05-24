@@ -15,16 +15,18 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
  */
 class DirectDatabaseChanges extends AbstractForm
 {
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
         parent::__construct($context, $registry, $formFactory, $data);
+        $this->moduleConfiguration = $moduleConfiguration;
     }
 
     //########################################
@@ -46,7 +48,7 @@ class DirectDatabaseChanges extends AbstractForm
  <ul>
 <li>M2E Pro Models (Object or Structural Methods). Read <a target="_blank" href="%url1%"> the article</a> for more information.</li>
 <li>M2E Pro plug-in for the Magmi Import tool. Learn the details <a target="_blank" href="%url2%">here</a>.</li>
-<li>Track Direct Database Changes. Please note that this option is resource-consuming and may affect the 
+<li>Track Direct Database Changes. Please note that this option is resource-consuming and may affect the
 performance of your Magento site and synchronization with Channels.</li>
 </ul>
 HTML
@@ -62,7 +64,7 @@ HTML
             ['legend' => false, 'collabsable' => false]
         );
 
-        $inspectorMode = $this->getHelper('Module_Configuration')->isEnableListingProductInspectorMode();
+        $inspectorMode = $this->moduleConfiguration->isEnableListingProductInspectorMode();
 
         $button = $this->createBlock('Magento\Button', '', ['data' => [
             'id' => 'save_inspector_mode',

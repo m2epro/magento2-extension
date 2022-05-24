@@ -209,9 +209,12 @@ HTML
                     )
                     . '<span id="magento_orders_listings_other_product_mode_note">'
                     . $this->__(
-                        '<br/><b>Note:</b> Only Simple Products without Variations can be created in Magento.
-                            If there is a Product with Variations on eBay, M2E Pro creates different
-                            Simple Products for each Variation.'
+                        '<br/><b>Note:</b> M2E Pro will create only Simple Magento Products.
+                        For Channel variational items it will create a Simple Product for each variation.
+                        Please note that the Create Product and Order option is not meant
+                        for the creation of full-fledged products in your Magento catalog.
+                        <a href="%url%" target="_blank">See why</a>',
+                        $this->getHelper('Module\Support')->getDocumentationArticleUrl('spaces/m2/pages/68484950/Order+Import#Product-Is-Listed-by-Any-Other-Software')
                     )
                     . '</span>'
             ]

@@ -23,6 +23,8 @@ class Client extends AbstractHelper
     protected $resource;
     /** @var \Magento\Framework\HTTP\PhpEnvironment\Request */
     protected $phpEnvironmentRequest;
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
 
     //########################################
 
@@ -32,12 +34,14 @@ class Client extends AbstractHelper
         \Magento\Framework\App\ResourceConnection $resource,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context,
-        \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest
+        \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest,
+        \Ess\M2ePro\Helper\Data $helperData
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->filesystem = $filesystem;
         $this->resource = $resource;
         $this->phpEnvironmentRequest = $phpEnvironmentRequest;
+        $this->helperData = $helperData;
         parent::__construct($helperFactory, $context);
     }
 
@@ -83,16 +87,18 @@ class Client extends AbstractHelper
     {
         $dateLastCheck = $this->getHelper('Module')->getRegistry()->getValue('/location/date_last_check/');
         if ($dateLastCheck !== null) {
-            $dateLastCheck = strtotime($dateLastCheck);
+            $dateLastCheck = (int)$this->helperData
+                ->createGmtDateTime($dateLastCheck)
+                ->format('U');
 
-            if (!$forceUpdate && $this->getHelper('Data')->getCurrentGmtDate(true) < $dateLastCheck + 60*60*24) {
+            if (!$forceUpdate && $this->helperData->getCurrentGmtDate(true) < $dateLastCheck + 60*60*24) {
                 return;
             }
         }
 
         $this->getHelper('Module')->getRegistry()->setValue(
             '/location/date_last_check/',
-            $this->getHelper('Data')->getCurrentGmtDate()
+            $this->helperData->getCurrentGmtDate()
         );
 
         $domain = $this->getServerDomain();

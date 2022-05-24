@@ -35,6 +35,7 @@ class Inactive extends AbstractModel
     protected function getRelistInstructionTypes()
     {
         return [
+            ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_DATA_POTENTIALLY_CHANGED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_RELIST_MODE_ENABLED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_RELIST_MODE_DISABLED,
             \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_RELIST_SETTINGS_CHANGED,

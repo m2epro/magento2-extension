@@ -14,10 +14,6 @@ use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
 use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode as SourceModeBlock;
 
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings\Index
- */
 class Index extends Settings
 {
     /** @var \Ess\M2ePro\Model\Listing */
@@ -448,7 +444,7 @@ class Index extends Settings
             $primaryCategory = $categoryData[eBayCategory::TYPE_EBAY_MAIN];
             list($mainHash, $hash) = $this->getCategoryHashes($categoryData[eBayCategory::TYPE_EBAY_MAIN]);
 
-            $hasRequiredSpecifics = $this->getHelper('Component_Ebay_Category_Ebay')->hasRequiredSpecifics(
+            $hasRequiredSpecifics = $this->componentEbayCategoryEbay->hasRequiredSpecifics(
                 $categoryData[eBayCategory::TYPE_EBAY_MAIN]['value'],
                 $listing->getMarketplaceId()
             );

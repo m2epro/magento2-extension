@@ -11,9 +11,6 @@ namespace Ess\M2ePro\Model\Ebay\Feedback\Issue;
 use \Ess\M2ePro\Model\Issue\DataObject as Issue;
 use \Magento\Framework\Message\MessageInterface as Message;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Feedback\Issue\NegativeReceived
- */
 class NegativeReceived extends \Ess\M2ePro\Model\Issue\Locator\AbstractModel
 {
     const CACHE_KEY = __CLASS__;
@@ -21,22 +18,27 @@ class NegativeReceived extends \Ess\M2ePro\Model\Issue\Locator\AbstractModel
     protected $activeRecordFactory;
     protected $urlBuilder;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Configuration */
+    private $componentEbayConfiguration;
+    /** @var \Ess\M2ePro\Helper\View\Ebay */
+    protected $ebayViewHelper;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Backend\Model\UrlInterface $urlBuilder,
+        \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
-        $this->urlBuilder          = $urlBuilder;
-
         parent::__construct($helperFactory, $modelFactory, $data);
-    }
 
-    //########################################
+        $this->activeRecordFactory        = $activeRecordFactory;
+        $this->urlBuilder                 = $urlBuilder;
+        $this->componentEbayConfiguration = $componentEbayConfiguration;
+        $this->ebayViewHelper             = $ebayViewHelper;
+    }
 
     public function getIssues()
     {
@@ -44,7 +46,7 @@ class NegativeReceived extends \Ess\M2ePro\Model\Issue\Locator\AbstractModel
             return [];
         }
 
-        $eBayConfigHelper = $this->getHelper('Component_Ebay_Configuration');
+        $eBayConfigHelper = $this->componentEbayConfiguration;
         if (!$eBayConfigHelper->isEnableFeedbackNotificationMode()) {
             return [];
         }
@@ -93,7 +95,7 @@ class NegativeReceived extends \Ess\M2ePro\Model\Issue\Locator\AbstractModel
 
     public function isNeedProcess()
     {
-        return $this->getHelper('View\Ebay')->isInstallationWizardFinished() &&
+        return $this->ebayViewHelper->isInstallationWizardFinished() &&
             $this->getHelper('Component\Ebay')->isEnabled();
     }
 

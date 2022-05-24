@@ -30,8 +30,6 @@ abstract class PriceCalculator extends AbstractModel
     const MODE_ATTRIBUTE = 3;
     const MODE_TIER      = 4;
 
-    //########################################
-
     /**
      * @var null|array
      */
@@ -72,8 +70,19 @@ abstract class PriceCalculator extends AbstractModel
      * @var null|float
      */
     private $productValueCache = null;
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->moduleConfiguration = $moduleConfiguration;
+    }
 
     /**
      * @param array $source
@@ -488,7 +497,7 @@ abstract class PriceCalculator extends AbstractModel
             }
 
             if ($this->isSourceModeAttribute()) {
-                if ($this->getHelper('Module_Configuration')->isEnableMagentoAttributePriceTypeConvertingMode() &&
+                if ($this->moduleConfiguration->isEnableMagentoAttributePriceTypeConvertingMode() &&
                     ($this->getSource('attribute') == Attribute::PRICE_CODE ||
                      $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE)
                 ) {
@@ -826,7 +835,7 @@ abstract class PriceCalculator extends AbstractModel
         }
 
         if ($this->isSourceModeAttribute()) {
-            if ($this->getHelper('Module_Configuration')->isEnableMagentoAttributePriceTypeConvertingMode() &&
+            if ($this->moduleConfiguration->isEnableMagentoAttributePriceTypeConvertingMode() &&
                 ($this->getSource('attribute') == Attribute::PRICE_CODE ||
                  $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE)
             ) {
@@ -865,7 +874,7 @@ abstract class PriceCalculator extends AbstractModel
         }
 
         if ($this->isSourceModeAttribute()) {
-            if ($this->getHelper('Module_Configuration')->isEnableMagentoAttributePriceTypeConvertingMode() &&
+            if ($this->moduleConfiguration->isEnableMagentoAttributePriceTypeConvertingMode() &&
                 ($this->getSource('attribute') == Attribute::PRICE_CODE ||
                     $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE)
             ) {

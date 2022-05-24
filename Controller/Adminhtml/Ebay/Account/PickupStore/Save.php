@@ -8,12 +8,21 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore\Save
- */
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
+    private $componentEbayPickupStore;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($componentEbayCategoryStore, $ebayFactory, $context);
+
+        $this->componentEbayPickupStore = $componentEbayPickupStore;
+    }
 
     public function execute()
     {
@@ -106,7 +115,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 
         // creating of pickup store
         // ---------------------------------------
-        if (!$this->getHelper('Component_Ebay_PickupStore')->validateRequiredFields($data)) {
+        if (!$this->componentEbayPickupStore->validateRequiredFields($data)) {
             $this->getHelper('Data\Session')->setValue('pickup_store_form_data', $data);
 
             $this->getMessageManager()->addErrorMessage(
@@ -124,7 +133,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
                 'store',
                 'add',
                 'entity',
-                $this->getHelper('Component_Ebay_PickupStore')->prepareRequestData($data),
+                $this->componentEbayPickupStore->prepareRequestData($data),
                 null,
                 null,
                 $this->getRequest()->getParam('account_id')

@@ -8,23 +8,29 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command
- */
 abstract class Command extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View\ControlPanel */
+    protected $controlPanelHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\View\ControlPanel $controlPanelHelper,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+        $this->controlPanelHelper = $controlPanelHelper;
+    }
 
     public function execute()
     {
         if (!($action = $this->getRequest()->getParam('action'))) {
-            return $this->_redirect($this->getHelper('View\ControlPanel')->getPageInspectionTabUrl());
+            return $this->_redirect($this->controlPanelHelper->getPageInspectionTabUrl());
         }
 
         $methodName = $action.'Action';
 
         if (!method_exists($this, $methodName)) {
-            return $this->_redirect($this->getHelper('View\ControlPanel')->getPageInspectionTabUrl());
+            return $this->_redirect($this->controlPanelHelper->getPageInspectionTabUrl());
         }
 
         $actionResult = $this->$methodName();

@@ -18,69 +18,73 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     const INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED = 'channel_qty_changed';
     const INSTRUCTION_TYPE_CHANNEL_PRICE_CHANGED = 'channel_price_changed';
 
-    /**
-     * @var \Ess\M2ePro\Model\Ebay\Item
-     */
+    /** @var \Ess\M2ePro\Model\Ebay\Item */
     protected $ebayItemModel = null;
 
-    /**
-     * @var \Ess\M2ePro\Model\Ebay\Template\Category
-     */
+    /** @var \Ess\M2ePro\Model\Ebay\Template\Category */
     private $categoryTemplateModel = null;
 
-    /**
-     * @var \Ess\M2ePro\Model\Ebay\Template\Category
-     */
+    /** @var \Ess\M2ePro\Model\Ebay\Template\Category */
     protected $categorySecondaryTemplateModel = null;
 
-    /**
-     * @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory
-     */
+    /** @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory */
     protected $storeCategoryTemplateModel = null;
 
-    /**
-     * @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory
-     */
+    /** @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory */
     protected $storeCategorySecondaryTemplateModel = null;
 
-    /**
-     * @var \Ess\M2ePro\Model\Ebay\Template\Manager[]
-     */
+    /** @var \Ess\M2ePro\Model\Ebay\Template\Manager[] */
     private $templateManagers = [];
 
     // ---------------------------------------
 
-    /**
-     * @var \Ess\M2ePro\Model\Template\SellingFormat
-     */
+    /** @var \Ess\M2ePro\Model\Template\SellingFormat */
     private $sellingFormatTemplateModel = null;
 
-    /**
-     * @var \Ess\M2ePro\Model\Template\Synchronization
-     */
+    /** @var \Ess\M2ePro\Model\Template\Synchronization */
     private $synchronizationTemplateModel = null;
 
-    /**
-     * @var \Ess\M2ePro\Model\Template\Description
-     */
+    /** @var \Ess\M2ePro\Model\Template\Description */
     private $descriptionTemplateModel = null;
 
-    /**
-     * @var \Ess\M2ePro\Model\Ebay\Template\Payment
-     */
+    /** @var \Ess\M2ePro\Model\Ebay\Template\Payment */
     private $paymentTemplateModel = null;
 
-    /**
-     * @var \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy
-     */
+    /** @var \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy */
     private $returnTemplateModel = null;
 
-    /**
-     * @var \Ess\M2ePro\Model\Ebay\Template\Shipping
-     */
+    /** @var \Ess\M2ePro\Model\Ebay\Template\Shipping */
     private $shippingTemplateModel = null;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        parent::__construct(
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
+
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+    }
 
     public function _construct()
     {
@@ -947,11 +951,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             return false;
         }
 
-        $isVariationEnabled = $this->getHelper('Component_Ebay_Category_Ebay')
-            ->isVariationEnabled(
-                (int)$this->getCategoryTemplateSource()->getCategoryId(),
-                $this->getMarketplace()->getId()
-            );
+        $isVariationEnabled = $this->componentEbayCategoryEbay->isVariationEnabled(
+            (int)$this->getCategoryTemplateSource()->getCategoryId(),
+            $this->getMarketplace()->getId()
+        );
 
         if ($isVariationEnabled === null) {
             $isVariationEnabled = true;

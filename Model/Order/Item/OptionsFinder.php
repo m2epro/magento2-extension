@@ -28,8 +28,19 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
     private $optionsData    = ['associated_options'  => [], 'associated_products' => []];
     /** @var bool */
     private $isNeedToReturnFirstOptionValues;
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->moduleConfiguration = $moduleConfiguration;
+    }
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
@@ -311,7 +322,7 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
 
         foreach ($this->magentoOptions as $option) {
             // return product if it's name is equal to variation name
-            if ($variationName === null || trim(strtolower($option->getName())) == trim(strtolower($variationName))) {
+            if ($variationName === null || trim(strtolower($option->getName())) === trim(strtolower($variationName))) {
                 return $option;
             }
         }
@@ -328,8 +339,7 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
             return $this->isNeedToReturnFirstOptionValues;
         }
 
-        $configValue = (bool)$this->getHelper('Module_Configuration')
-            ->getCreateWithFirstProductOptionsWhenVariationUnavailable();
+        $configValue = (bool)$this->moduleConfiguration->getCreateWithFirstProductOptionsWhenVariationUnavailable();
 
         return $this->isNeedToReturnFirstOptionValues = $configValue;
     }

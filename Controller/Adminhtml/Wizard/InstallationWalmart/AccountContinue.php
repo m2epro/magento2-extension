@@ -11,12 +11,21 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart;
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart;
 use Ess\M2ePro\Model\Walmart\Account as WalmartAccount;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart\AccountContinue
- */
 class AccountContinue extends InstallationWalmart
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View\Configuration */
+    protected $configurationHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\View\Configuration $configurationHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Helper\View\Walmart $walmartViewHelper,
+        \Magento\Framework\Code\NameBuilder $nameBuilder,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $walmartViewHelper, $nameBuilder, $context);
+        $this->configurationHelper = $configurationHelper;
+    }
 
     public function execute()
     {
@@ -116,7 +125,7 @@ class AccountContinue extends InstallationWalmart
                 $error = $this->__(
                     $error,
                     $exception->getMessage(),
-                    $this->getHelper('View\Configuration')->getLicenseUrl(['wizard' => 1])
+                    $this->configurationHelper->getLicenseUrl(['wizard' => 1])
                 );
             } else {
                 $error = $this->__($error, $exception->getMessage());
@@ -165,6 +174,4 @@ class AccountContinue extends InstallationWalmart
 
         return $data;
     }
-
-    //########################################
 }

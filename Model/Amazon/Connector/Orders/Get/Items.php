@@ -177,6 +177,11 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
                 $order['tax_registration_details'] = isset($orderData['tax_registration_details']) ?
                     $orderData['tax_registration_details'] : [];
 
+                $order['is_buyer_requested_cancel'] = isset($orderData['is_buyer_requested_cancel']) ?
+                    (int)$orderData['is_buyer_requested_cancel'] : 0;
+                $order['buyer_cancel_reason'] = isset($orderData['buyer_cancel_reason']) ?
+                    $orderData['buyer_cancel_reason'] : null;
+
                 $order['discount_details'] = isset($orderData['price']['discounts'])
                     ? $orderData['price']['discounts'] : [];
 
@@ -192,8 +197,8 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
                         'price'                => (float)$item['prices']['product']['value'],
                         'shipping_price'       => (float)$item['prices']['shipping']['value'],
                         'gift_price'           => (float)$item['prices']['gift']['value'],
-                        'gift_type'            => trim($item['gift_type']),
-                        'gift_message'         => trim($item['gift_message']),
+                        'gift_type'            => trim($item['gift_type'] ?? ''),
+                        'gift_message'         => trim($item['gift_message'] ?? ''),
                         'currency'             => trim($item['prices']['product']['currency']),
                         'tax_details'          => $item['taxes'],
                         'ioss_number'          => $item['ioss_number'],

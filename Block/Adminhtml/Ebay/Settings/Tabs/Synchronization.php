@@ -15,7 +15,20 @@ use Magento\Framework\Message\MessageInterface;
  */
 class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $formFactory, $data);
+
+        $this->moduleConfiguration = $moduleConfiguration;
+    }
 
     /**
      * @var int
@@ -32,7 +45,7 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->inspectorMode = $this->getHelper('Module_Configuration')->isEnableListingProductInspectorMode();
+        $this->inspectorMode = $this->moduleConfiguration->isEnableListingProductInspectorMode();
         // ---------------------------------------
 
         $form = $this->_formFactory->create([

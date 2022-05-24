@@ -305,7 +305,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
                 'type'     => strtolower($row['Type']),
                 'null'     => strtolower($row['Null']),
                 'key'      => strtolower($row['Key']),
-                'default'  => strtolower($row['Default']),
+                'default'  => strtolower($row['Default'] ?? ''),
                 'extra'    => strtolower($row['Extra']),
                 'after'    => $afterPosition
             ];

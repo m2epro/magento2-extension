@@ -32,15 +32,18 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     protected $emailTemplateFilter;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Magento\Email\Model\Template\Filter $emailTemplateFilter,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
-        $this->emailTemplateFilter = $emailTemplateFilter;
         parent::__construct($helperFactory, $modelFactory);
+        $this->emailTemplateFilter = $emailTemplateFilter;
+        $this->moduleConfiguration = $moduleConfiguration;
     }
 
     //########################################
@@ -722,8 +725,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
             return $attributeValue;
         }
 
-        $isPriceConvertEnabled = $this->getHelper('Module_Configuration')
-            ->isEnableMagentoAttributePriceTypeConvertingMode();
+        $isPriceConvertEnabled = $this->moduleConfiguration->isEnableMagentoAttributePriceTypeConvertingMode();
 
         if ($isPriceConvertEnabled &&
             $this->getHelper('Magento\Attribute')->isAttributeInputTypePrice($attributeCode)) {

@@ -10,12 +10,20 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific;
 
 use \Ess\M2ePro\Model\Ebay\Template\Category\Specific as Specific;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Edit
- */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+    }
 
     public function _construct()
     {
@@ -101,7 +109,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             return [];
         }
 
-        $specifics = $this->getHelper('Component_Ebay_Category_Ebay')->getSpecifics(
+        $specifics = $this->componentEbayCategoryEbay->getSpecifics(
             $this->getData('category_value'),
             $this->getData('marketplace_id')
         );
@@ -155,11 +163,11 @@ JS
     <div style="margin-top: 15px;">
         {$infoBlock->_toHtml()}
     </div>
-    
+
     <div id="ebay-category-chooser-specific" overflow: auto;">
         {$parentHtml}
     </div>
-    
+
 </div>
 HTML;
     }

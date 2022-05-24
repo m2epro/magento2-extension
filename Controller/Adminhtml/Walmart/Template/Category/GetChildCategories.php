@@ -50,6 +50,10 @@ class GetChildCategories extends Category
 
     private function isItOtherCategory($row)
     {
+        if ($row['path'] === null) {
+            return false;
+        }
+
         $parentTitle = explode('>', $row['path']);
         $parentTitle = array_pop($parentTitle);
 

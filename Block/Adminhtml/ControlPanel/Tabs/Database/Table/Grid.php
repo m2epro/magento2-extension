@@ -178,11 +178,18 @@ class Grid extends AbstractGrid
     {
         parent::_beforeToHtml();
 
-        $urlParams = [
-            'table'     => urlencode($this->tableModel->getTableName()),
-            'component' => urlencode($this->tableModel->getMergeModeComponent()),
-            'merge'     => urlencode($this->tableModel->getIsMergeModeEnabled())
-        ];
+        $urlParams = [];
+        if ($this->tableModel->getTableName()) {
+            $urlParams['table'] = urlencode($this->tableModel->getTableName());
+        }
+
+        if ($this->tableModel->getMergeModeComponent()) {
+            $urlParams['component'] = urlencode($this->tableModel->getMergeModeComponent());
+        }
+
+        if ($this->tableModel->getIsMergeModeEnabled()) {
+            $urlParams['merge'] = urlencode($this->tableModel->getIsMergeModeEnabled());
+        }
 
         $urls = [
             'controlPanel/deleteTableRows'        => $this->getUrl('*/*/deleteTableRows', $urlParams),

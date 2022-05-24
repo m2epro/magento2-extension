@@ -133,7 +133,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Prod
 
         foreach ($this->nestedLogs as &$logs) {
             usort($logs, function ($a, $b) use ($sortOrder) {
-                return $sortOrder[$a['type']] > $sortOrder[$b['type']];
+                return $sortOrder[$a['type']] <=> $sortOrder[$b['type']];
             });
         }
 

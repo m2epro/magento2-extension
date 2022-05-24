@@ -10,13 +10,22 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
- */
 abstract class Add extends Main
 {
     protected $sessionKey = 'amazon_listing_product_add';
     protected $listing = null;
+
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation */
+    protected $variationHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+        $this->variationHelper = $variationHelper;
+    }
 
     //########################################
 
@@ -56,7 +65,7 @@ abstract class Add extends Main
 
     protected function filterProductsForNewAsin($productsIds)
     {
-        return $this->getHelper('Component_Amazon_Variation')->filterProductsNotMatchingForNewAsin($productsIds);
+        return $this->variationHelper->filterProductsNotMatchingForNewAsin($productsIds);
     }
 
     //########################################

@@ -66,7 +66,7 @@ class Datetime extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Datetime
                 return null;
             }
 
-            $simpleRes = new \DateTime(null, new \DateTimeZone($timezone));
+            $simpleRes = new \DateTime('', new \DateTimeZone($timezone));
             $simpleRes->setTimestamp($timeStamp);
             $simpleRes->setTimezone(new \DateTimeZone('UTC'));
 

@@ -22,6 +22,7 @@ class TypeId extends AbstractModel
         $filterCondition,
         \Magento\Catalog\Model\Product\Type $type,
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
@@ -30,6 +31,7 @@ class TypeId extends AbstractModel
             $filterOperator,
             $filterCondition,
             $localeDate,
+            $helperData,
             $helperFactory,
             $modelFactory,
             $data

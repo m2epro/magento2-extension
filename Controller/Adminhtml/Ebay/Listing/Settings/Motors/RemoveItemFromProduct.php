@@ -8,12 +8,20 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors\RemoveItemFromProduct
- */
 class RemoveItemFromProduct extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
+    private $componentEbayMotors;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($ebayFactory, $context);
+
+        $this->componentEbayMotors = $componentEbayMotors;
+    }
 
     public function execute()
     {
@@ -27,16 +35,16 @@ class RemoveItemFromProduct extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listin
 
         $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $entityId);
 
-        $motorsAttribute = $this->getHelper('Component_Ebay_Motors')->getAttribute($motorsType);
+        $motorsAttribute = $this->componentEbayMotors->getAttribute($motorsType);
         $attributeValue = $listingProduct->getMagentoProduct()->getAttributeValue($motorsAttribute);
 
-        $motorsData = $this->getHelper('Component_Ebay_Motors')->parseAttributeValue($attributeValue);
+        $motorsData = $this->componentEbayMotors->parseAttributeValue($attributeValue);
 
         foreach ($itemsIds as $itemId) {
             unset($motorsData['items'][$itemId]);
         }
 
-        $attributeValue = $this->getHelper('Component_Ebay_Motors')->buildAttributeValue($motorsData);
+        $attributeValue = $this->componentEbayMotors->buildAttributeValue($motorsData);
 
         $this->activeRecordFactory->getObject('Ebay\Listing')->getResource()->updateMotorsAttributesData(
             $listingProduct->getListingId(),

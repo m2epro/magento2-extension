@@ -14,13 +14,8 @@ use Ess\M2ePro\Model\Exception\Logic;
 use Ess\M2ePro\Model\Listing\Product\Variation;
 use Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Resolver
- */
 class Resolver extends \Ess\M2ePro\Model\AbstractModel
 {
-    //########################################
-
     const MPN_SPECIFIC_NAME = 'MPN';
 
     /** @var \Ess\M2ePro\Model\Listing\Product */
@@ -33,30 +28,34 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
     protected $moduleVariations  = [];
     protected $channelVariations = [];
-
     protected $variationMpnValues = [];
 
     /** @var \Ess\M2ePro\Model\Response\Message\Set */
     protected $messagesSet;
-
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory */
     protected $parentFactory;
-
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Configuration */
+    private $componentEbayConfiguration;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         array $data = []
     ) {
-        $this->parentFactory       = $parentFactory;
-        $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->parentFactory              = $parentFactory;
+        $this->activeRecordFactory        = $activeRecordFactory;
+        $this->componentEbayConfiguration = $componentEbayConfiguration;
+        $this->componentEbayCategoryEbay  = $componentEbayCategoryEbay;
     }
 
     //########################################
@@ -272,8 +271,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
                 $tempVariation['details']['mpn'] = $additionalData['online_product_details']['mpn'];
 
-                $isMpnCanBeChanged = $this->getHelper('Component_Ebay_Configuration')
-                    ->getVariationMpnCanBeChanged();
+                $isMpnCanBeChanged = $this->componentEbayConfiguration->getVariationMpnCanBeChanged();
 
                 if (!$isMpnCanBeChanged) {
                     continue;
@@ -344,8 +342,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
         $categoryId    = $ebayListingProduct->getCategoryTemplateSource()->getCategoryId();
         $marketplaceId = $this->listingProduct->getMarketplace()->getId();
 
-        $categoryFeatures = $this->getHelper('Component_Ebay_Category_Ebay')
-            ->getFeatures($categoryId, $marketplaceId);
+        $categoryFeatures = $this->componentEbayCategoryEbay->getFeatures($categoryId, $marketplaceId);
 
         if (empty($categoryFeatures)) {
             return;

@@ -11,11 +11,20 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\UnmapFromAsin
- */
 class UnmapFromAsin extends Main
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation */
+    protected $variationHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+        $this->variationHelper = $variationHelper;
+    }
+
     public function execute()
     {
         $productsIds = $this->getRequest()->getParam('products_ids');
@@ -26,7 +35,7 @@ class UnmapFromAsin extends Main
                 $this->getRequest()->getParam('listing_id')
             );
             $productsIds = $listing->getSetting('additional_data', 'adding_new_asin_listing_products_ids');
-            $productsIds = $this->getHelper('Component_Amazon_Variation')->filterLockedProducts($productsIds);
+            $productsIds = $this->variationHelper->filterLockedProducts($productsIds);
         }
 
         if (empty($productsIds)) {

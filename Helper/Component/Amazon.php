@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Helper\Component;
 
 use \Ess\M2ePro\Model\Listing\Product as ListingProduct;
 
-/**
- * Class \Ess\M2ePro\Helper\Component\Amazon
- */
 class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const NICK  = 'amazon';
@@ -35,32 +32,49 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
     const MARKETPLACE_JP = 42;
     const MARKETPLACE_PL = 43;
 
+    /** @var \Magento\Directory\Model\ResourceModel\Region\Collection */
     protected $regionCollection;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    protected $moduleTranslation;
+
+    /** @var \Ess\M2ePro\Helper\Module */
+    protected $helperModule;
+
+    /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
+    protected $cachePermanent;
 
     public function __construct(
         \Magento\Directory\Model\ResourceModel\Region\Collection $regionCollection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Helper\Module\Translation $moduleTranslation,
+        \Ess\M2ePro\Helper\Module $helperModule,
+        \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
+        parent::__construct($helperFactory, $context);
+
         $this->regionCollection = $regionCollection;
         $this->amazonFactory = $amazonFactory;
-        parent::__construct($helperFactory, $context);
+        $this->moduleTranslation = $moduleTranslation;
+        $this->helperModule = $helperModule;
+        $this->cachePermanent = $cachePermanent;
     }
 
     //########################################
 
     public function getTitle()
     {
-        return $this->getHelper('Module\Translation')->__('Amazon');
+        return $this->moduleTranslation->__('Amazon');
     }
 
     public function getChannelTitle()
     {
-        return $this->getHelper('Module\Translation')->__('Amazon');
+        return $this->moduleTranslation->__('Amazon');
     }
 
     //########################################
@@ -68,11 +82,11 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
     public function getHumanTitleByListingProductStatus($status)
     {
         $statuses = [
-            ListingProduct::STATUS_UNKNOWN    => $this->getHelper('Module\Translation')->__('Unknown'),
-            ListingProduct::STATUS_NOT_LISTED => $this->getHelper('Module\Translation')->__('Not Listed'),
-            ListingProduct::STATUS_LISTED     => $this->getHelper('Module\Translation')->__('Active'),
-            ListingProduct::STATUS_STOPPED    => $this->getHelper('Module\Translation')->__('Inactive'),
-            ListingProduct::STATUS_BLOCKED    => $this->getHelper('Module\Translation')->__('Inactive (Blocked)')
+            ListingProduct::STATUS_UNKNOWN    => $this->moduleTranslation->__('Unknown'),
+            ListingProduct::STATUS_NOT_LISTED => $this->moduleTranslation->__('Not Listed'),
+            ListingProduct::STATUS_LISTED     => $this->moduleTranslation->__('Active'),
+            ListingProduct::STATUS_STOPPED    => $this->moduleTranslation->__('Inactive'),
+            ListingProduct::STATUS_BLOCKED    => $this->moduleTranslation->__('Inactive (Blocked)')
         ];
 
         if (!isset($statuses[$status])) {
@@ -86,7 +100,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function isEnabled()
     {
-        return (bool)$this->getHelper('Module')->getConfig()->getGroupValue('/component/'.self::NICK.'/', 'mode');
+        return (bool)$this->helperModule->getConfig()->getGroupValue('/component/'.self::NICK.'/', 'mode');
     }
 
     //########################################
@@ -132,6 +146,10 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function isASIN($string)
     {
+        if ($string === null) {
+            return false;
+        }
+
         if (strlen($string) != 10) {
             return false;
         }
@@ -145,7 +163,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getApplicationName()
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue('/amazon/', 'application_name');
+        return $this->helperModule->getConfig()->getGroupValue('/amazon/', 'application_name');
     }
 
     // ----------------------------------------
@@ -233,7 +251,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function clearCache()
     {
-        $this->getHelper('Data_Cache_Permanent')->removeTagsValues(self::NICK);
+        $this->cachePermanent->removeTagValues(self::NICK);
     }
 
     //########################################

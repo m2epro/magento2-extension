@@ -18,16 +18,21 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     protected $activeRecordFactory;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\Account $account = null,
         array $params = []
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
+        $this->helperData = $helperData;
 
         $this->rawPdfDoc = $params['order']['document_pdf'];
         unset($params['order']['document_pdf']);
@@ -67,9 +72,10 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
                 [
                     'component'       => \Ess\M2ePro\Helper\Component\Amazon::NICK,
                     'server_hash'     => $this->processingServerHash,
-                    'expiration_date' => $this->getHelper('Data')->getDate(
-                        $this->getHelper('Data')->getCurrentGmtDate(true)
-                        + \Ess\M2ePro\Model\Amazon\Order\Action\Processor::PENDING_REQUEST_MAX_LIFE_TIME
+                    'expiration_date' => gmdate(
+                        'Y-m-d H:i:s',
+                        $this->helperData->getCurrentGmtDate(true)
+                            + \Ess\M2ePro\Model\Amazon\Order\Action\Processor::PENDING_REQUEST_MAX_LIFE_TIME
                     )
                 ]
             );
@@ -99,7 +105,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
                 'change_id'    => $this->params['order']['change_id'],
                 'action_type'  => \Ess\M2ePro\Model\Amazon\Order\Action\Processing::ACTION_TYPE_SEND_INVOICE,
                 'lock_name'    => 'send_invoice_order',
-                'start_date'   => $this->getHelper('Data')->getCurrentGmtDate(),
+                'start_date'   => $this->helperData->getCurrentGmtDate(),
             ]
         );
     }

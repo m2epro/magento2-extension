@@ -11,9 +11,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools\M2ePro;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools\M2ePro\General
- */
 class General extends Command
 {
     /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Repository */
@@ -22,21 +19,16 @@ class General extends Command
     /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\HandlerFactory */
     protected $handlerFactory;
 
-    //########################################
-
     public function __construct(
+        \Ess\M2ePro\Helper\View\ControlPanel $controlPanelHelper,
         Context $context,
         \Ess\M2ePro\Model\ControlPanel\Inspection\Repository $repository,
         \Ess\M2ePro\Model\ControlPanel\Inspection\HandlerFactory $handlerFactory
-    )
-    {
+    ) {
+        parent::__construct($controlPanelHelper, $context);
         $this->repository = $repository;
         $this->handlerFactory = $handlerFactory;
-
-        parent::__construct($context);
     }
-
-    //########################################
 
     /**
      * @hidden

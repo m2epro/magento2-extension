@@ -46,7 +46,7 @@ $categoryModeJson       = $block->getHelper('Data')->jsonEncode($block->getCateg
 $selectedCategoriesJson = json_encode($categoriesData, JSON_FORCE_OBJECT);
 $attributesJson         = $block->getHelper('Data')->jsonEncode($block->getAttributes());
 $isEditCategoryAllowed  = (int)$block->getIsEditCategoryAllowed();
-$isWizardModeJson       = $block->getHelper('Data')->jsonEncode(!$block->getHelper('View\Ebay')->isInstallationWizardFinished());
+$isWizardModeJson       = $block->getHelper('Data')->jsonEncode(!$block->ebayViewHelper->isInstallationWizardFinished());
 
 
 $js = "

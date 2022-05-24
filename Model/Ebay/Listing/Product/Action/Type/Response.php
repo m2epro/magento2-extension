@@ -11,49 +11,35 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type;
 use Ess\M2ePro\Model\Ebay\Listing\Product\Variation as EbayVariation;
 use Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract as ChangeProcessor;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Response
- */
 abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 {
     const INSTRUCTION_INITIATOR = 'action_response';
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $params = [];
-
-    /**
-     * @var \Ess\M2ePro\Model\Listing\Product
-     */
-    private $listingProduct = null;
-
-    /**
-     * @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator
-     */
-    private $configurator = null;
-
-    /**
-     * @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\RequestData
-     */
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\RequestData */
     protected $requestData = null;
-
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $requestMetaData = [];
-
     protected $activeRecordFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Model\Listing\Product */
+    private $listingProduct = null;
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
+    private $configurator = null;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory);
+
+        $this->activeRecordFactory = $activeRecordFactory;
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
     }
 
     //########################################
@@ -459,7 +445,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->getRequestData()->hasPrimaryCategory()) {
-            $tempPath = $this->getHelper('Component_Ebay_Category_Ebay')->getPath(
+            $tempPath = $this->componentEbayCategoryEbay->getPath(
                 $this->getRequestData()->getPrimaryCategory(),
                 $this->getMarketplace()->getId()
             );

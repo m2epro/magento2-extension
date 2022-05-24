@@ -11,9 +11,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Walmart;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 use Ess\M2ePro\Model\Listing\Log;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Walmart\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
     private $lockedDataCache = [];
@@ -31,14 +28,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected $walmartFactory;
     protected $localeCurrency;
     protected $resourceConnection;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View\Walmart */
+    protected $walmartViewHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\View\Walmart $walmartViewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
@@ -47,11 +45,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->walmartFactory = $walmartFactory;
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
+        $this->walmartViewHelper = $walmartViewHelper;
 
         parent::__construct($context, $backendHelper, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -263,7 +260,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'filter_condition_callback' => [$this, 'callbackFilterStatus']
         ];
 
-        $isShouldBeShown = $this->getHelper('View_Walmart')->isResetFilterShouldBeShown(
+        $isShouldBeShown = $this->walmartViewHelper->isResetFilterShouldBeShown(
             'listing_id',
             $this->listing->getId()
         );

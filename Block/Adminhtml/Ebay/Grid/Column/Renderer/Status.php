@@ -11,9 +11,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer;
 use \Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Model\Listing\Log;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Status
- */
 class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
 {
     use Traits\BlockTrait;
@@ -33,13 +30,15 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
     /** @var \Ess\M2ePro\Helper\Factory  */
     protected $helperFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View */
+    protected $viewHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\View $viewHelper,
         \Magento\Backend\Block\Context $context,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
@@ -50,9 +49,8 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
         $this->ebayFactory = $ebayFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->resourceConnection = $resourceConnection;
+        $this->viewHelper = $viewHelper;
     }
-
-    //########################################
 
     public function render(\Magento\Framework\DataObject $row)
     {
@@ -71,7 +69,7 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
                                 ? $additionalData['synch_template_list_rules_note']
                                 : [];
             if (!empty($synchNote)) {
-                $synchNote = $this->getHelper('View')->getModifiedLogMessage($synchNote);
+                $synchNote = $this->viewHelper->getModifiedLogMessage($synchNote);
 
                 if (empty($html)) {
                     $html = <<<HTML

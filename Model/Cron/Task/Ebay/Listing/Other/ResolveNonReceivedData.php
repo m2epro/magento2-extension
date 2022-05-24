@@ -8,14 +8,37 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Other;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Other\ResolveNonReceivedData
- */
 class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'ebay/listing/other/resolve_nonReceived_data';
 
-    //####################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
+    private $componentEbayCategoryEbay;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Magento\Framework\Event\Manager $eventManager,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo,
+        \Magento\Framework\App\ResourceConnection $resource
+    ) {
+        parent::__construct(
+            $helperData,
+            $eventManager,
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $taskRepo,
+            $resource
+        );
+
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+    }
 
     public function isPossibleToRun()
     {
@@ -157,13 +180,13 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
                 unset($categoryValue);
 
-                $categoryPath = $this->getHelper('Component_Ebay_Category_Ebay')->getPath(
+                $categoryPath = $this->componentEbayCategoryEbay->getPath(
                     $categories['category_main_id'],
                     $listingOther->getMarketplaceId()
                 );
 
                 $newData['online_main_category'] = $categoryPath.' ('.$categories['category_main_id'].')';
-                $newData['online_categories_data'] = $this->getHelper('Data')->jsonEncode($categories);
+                $newData['online_categories_data'] = $this->helperData->jsonEncode($categories);
             }
 
             $listingOther->getChildObject()->addData($newData);
@@ -190,8 +213,11 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 continue;
             }
 
+            $startDateTimestamp = (int)$this->helperData
+                ->createGmtDateTime($ebayListingOther->getStartDate())
+                ->format('U');
             if ($toTimeReceived !== null &&
-                strtotime($ebayListingOther->getStartDate()) >= strtotime($toTimeReceived)
+                $startDateTimestamp >= (int)$this->helperData->createGmtDateTime($toTimeReceived)->format('U')
             ) {
                 continue;
             }

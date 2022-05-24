@@ -67,10 +67,12 @@ class SendResponse extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             /** @var $feedback \Ess\M2ePro\Model\Ebay\Feedback **/
             $lastResponseAttemptDate = $feedback->getData('last_response_attempt_date');
-            $currentGmtDate = $this->getHelper('Data')->getCurrentGmtDate(true);
+            $currentGmtDate = $this->helperData->getCurrentGmtDate(true);
 
             if ($lastResponseAttemptDate !== null &&
-                strtotime($lastResponseAttemptDate) + self::ATTEMPT_INTERVAL > $currentGmtDate) {
+                (int)$this->helperData->createGmtDateTime($lastResponseAttemptDate)->format('U')
+                    + self::ATTEMPT_INTERVAL > $currentGmtDate
+            ) {
                 continue;
             }
 

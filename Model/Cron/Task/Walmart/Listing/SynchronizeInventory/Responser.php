@@ -32,6 +32,9 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
     /** @var \Ess\M2ePro\Model\Listing\SynchronizeInventory\Walmart\OtherListingsHandler */
     protected $otherListingsHandler;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
     //########################################
 
     public function __construct(
@@ -44,6 +47,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
         \Ess\M2ePro\Model\Listing\SynchronizeInventory\Walmart\ListingProductsHandler $listingProductHandler,
         \Ess\M2ePro\Model\Listing\SynchronizeInventory\Walmart\OtherListingsHandler $otherListingsHandler,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\Data $helperData,
         array $params = []
     ) {
         parent::__construct(
@@ -60,6 +64,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
         $this->listingProductHandler = $listingProductHandler;
         $this->otherListingsHandler  = $otherListingsHandler;
         $this->resourceConnection    = $resourceConnection;
+        $this->helperData            = $helperData;
     }
 
     //########################################
@@ -93,11 +98,14 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
         parent::eventAfterExecuting();
 
         $acc = $this->walmartFactory->getObjectLoaded('Account', $this->params['account_id'])->getChildObject();
-        $newSynchDate = $this->getHelper('Data')->getCurrentGmtDate();
+        $newSynchDate = $this->helperData->getCurrentGmtDate();
 
         if ($this->getResponse()->getMessages() && $this->getResponse()->getMessages()->hasErrorEntities()) {
             //try to download inventory again in an hour
-            $newSynchDate = date('Y-m-d H:i:s', strtotime($newSynchDate) + 3600);
+            $newSynchDateTimestamp = (int)$this->helperData
+                ->createGmtDateTime($newSynchDate)
+                ->format('U');
+            $newSynchDate = date('Y-m-d H:i:s', $newSynchDateTimestamp + 3600);
         }
 
         $acc->setData('inventory_last_synchronization', $newSynchDate)->save();

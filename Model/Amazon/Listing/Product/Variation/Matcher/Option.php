@@ -8,12 +8,12 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Option
- */
 class Option extends \Ess\M2ePro\Model\AbstractModel
 {
-    /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary */
+    protected $vocabularyHelper;
+
+    /** @var \Ess\M2ePro\Model\Magento\Product */
     private $magentoProduct = null;
 
     private $destinationOptions = [];
@@ -26,6 +26,17 @@ class Option extends \Ess\M2ePro\Model\AbstractModel
 
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Option\Resolver $resolver */
     private $resolver = null;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->vocabularyHelper = $vocabularyHelper;
+    }
 
     //########################################
 
@@ -184,13 +195,11 @@ class Option extends \Ess\M2ePro\Model\AbstractModel
             return $this->destinationOptionsLocalVocabularyNames;
         }
 
-        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
-
         foreach ($this->destinationOptions as $generalId => $destinationOption) {
             foreach ($destinationOption as $attributeName => $optionName) {
                 $this->destinationOptionsLocalVocabularyNames[$generalId][$attributeName] = $this->prepareOptionNames(
                     $optionName,
-                    $vocabularyHelper->getLocalOptionNames($attributeName, $optionName)
+                    $this->vocabularyHelper->getLocalOptionNames($attributeName, $optionName)
                 );
             }
         }
@@ -204,13 +213,11 @@ class Option extends \Ess\M2ePro\Model\AbstractModel
             return $this->destinationOptionsServerVocabularyNames;
         }
 
-        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
-
         foreach ($this->destinationOptions as $generalId => $destinationOption) {
             foreach ($destinationOption as $attributeName => $optionName) {
                 $this->destinationOptionsServerVocabularyNames[$generalId][$attributeName] = $this->prepareOptionNames(
                     $optionName,
-                    $vocabularyHelper->getServerOptionNames($attributeName, $optionName)
+                    $this->vocabularyHelper->getServerOptionNames($attributeName, $optionName)
                 );
             }
         }

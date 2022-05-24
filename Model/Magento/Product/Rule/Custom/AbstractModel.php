@@ -16,6 +16,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface  */
     protected $localeDate;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $helperData;
+
     protected $filterOperator  = null;
     protected $filterCondition = null;
 
@@ -25,6 +28,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         $filterOperator,
         $filterCondition,
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
@@ -32,6 +36,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         $this->localeDate      = $localeDate;
         $this->filterOperator  = $filterOperator;
         $this->filterCondition = $filterCondition;
+        $this->helperData      = $helperData;
 
         parent::__construct($helperFactory, $modelFactory);
     }

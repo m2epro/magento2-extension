@@ -8,24 +8,17 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon;
 
-use Ess\M2ePro\Controller\Adminhtml\Context;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
- */
 abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Main
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
-        Context $context
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        $this->amazonFactory = $amazonFactory;
-
         parent::__construct($context);
+        $this->amazonFactory = $amazonFactory;
     }
 
     //########################################

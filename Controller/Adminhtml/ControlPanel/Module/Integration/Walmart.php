@@ -11,9 +11,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module\Integration;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module\Integration\Walmart
- */
 class Walmart extends Command
 {
     private $formKey;
@@ -21,23 +18,20 @@ class Walmart extends Command
     private $phpEnvironmentRequest;
     private $productFactory;
 
-    //########################################
-
     public function __construct(
         \Magento\Framework\Data\Form\FormKey $formKey,
         \Magento\Framework\File\Csv $csvParser,
         \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest,
         \Magento\Catalog\Model\ProductFactory $productFactory,
+        \Ess\M2ePro\Helper\View\ControlPanel $controlPanelHelper,
         Context $context
     ) {
+        parent::__construct($controlPanelHelper, $context);
         $this->formKey = $formKey;
         $this->csvParser = $csvParser;
         $this->phpEnvironmentRequest = $phpEnvironmentRequest;
         $this->productFactory = $productFactory;
-        parent::__construct($context);
     }
-
-    //########################################
 
     /**
      * @title "Show Duplicates [listing_id/sku]"
@@ -159,7 +153,7 @@ HTML;
 
     private function getEmptyResultsHtml($messageText)
     {
-        $backUrl = $this->getHelper('View\ControlPanel')->getPageModuleTabUrl();
+        $backUrl = $this->controlPanelHelper->getPageModuleTabUrl();
 
         return <<<HTML
     <h2 style="margin: 20px 0 0 10px">
@@ -168,6 +162,4 @@ HTML;
     </h2>
 HTML;
     }
-
-    //########################################
 }

@@ -11,31 +11,25 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools\Magento
- */
 class Magento extends Command
 {
     protected $fullModuleList;
     protected $moduleList;
     protected $packageInfo;
 
-    //########################################
-
     public function __construct(
+        \Ess\M2ePro\Helper\View\ControlPanel $controlPanelHelper,
         Context $context,
         \Magento\Framework\Module\FullModuleList $fullModuleList,
         \Magento\Framework\Module\ModuleList $moduleList,
         \Magento\Framework\Module\PackageInfo $packageInfo,
         \Magento\Framework\Interception\PluginListInterface $pluginList
     ) {
-        parent::__construct($context);
+        parent::__construct($controlPanelHelper, $context);
         $this->fullModuleList = $fullModuleList;
         $this->moduleList     = $moduleList;
         $this->packageInfo    = $packageInfo;
     }
-
-    //########################################
 
     /**
      * @title "Show Event Observers"
@@ -215,7 +209,7 @@ HTML;
     {
         $this->getHelper('Magento')->clearCache();
         $this->getMessageManager()->addSuccess('Magento cache was cleared.');
-        $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
+        $this->_redirect($this->controlPanelHelper->getPageModuleTabUrl());
     }
 
     /**
@@ -229,7 +223,7 @@ HTML;
         if (!$this->getHelper('Client\Cache')->isApcAvailable() &&
             !$this->getHelper('Client\Cache')->isZendOpcacheAvailable()) {
             $this->getMessageManager()->addError('Opcode extensions are not installed.');
-            return $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
+            return $this->_redirect($this->controlPanelHelper->getPageModuleTabUrl());
         }
 
         if ($this->getHelper('Client\Cache')->isApcAvailable()) {
@@ -243,14 +237,14 @@ HTML;
         }
 
         $this->getMessageManager()->addSuccess(implode(' and ', $messages) . ' caches are cleared.');
-        return $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
+        return $this->_redirect($this->controlPanelHelper->getPageModuleTabUrl());
     }
 
     //########################################
 
     private function getEmptyResultsHtml($messageText)
     {
-        $backUrl = $this->getHelper('View\ControlPanel')->getPageModuleTabUrl();
+        $backUrl = $this->controlPanelHelper->getPageModuleTabUrl();
 
         return <<<HTML
 <h2 style="margin: 20px 0 0 10px">

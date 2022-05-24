@@ -10,23 +10,22 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Wizard
- */
 abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
 {
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
     protected $walmartFactory;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View\Walmart */
+    protected $walmartViewHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Helper\View\Walmart $walmartViewHelper,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
         Context $context
     ) {
-        $this->walmartFactory = $walmartFactory;
         parent::__construct($nameBuilder, $context);
+        $this->walmartFactory = $walmartFactory;
+        $this->walmartViewHelper = $walmartViewHelper;
     }
 
     protected function _isAllowed()
@@ -59,10 +58,8 @@ abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
 
     protected function getMenuRootNodeLabel()
     {
-        return $this->getHelper('View\Walmart')->getMenuRootNodeLabel();
+        return $this->walmartViewHelper->getMenuRootNodeLabel();
     }
-
-    //########################################
 
     protected function indexAction()
     {
@@ -72,6 +69,4 @@ abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
 
         return parent::indexAction();
     }
-
-    //########################################
 }

@@ -8,34 +8,30 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Item;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Item\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
-    //########################################
-
-    private $listingProductId;
-    private $listingProduct;
-
-    private $motorsType;
-
     protected $customCollectionFactory;
     protected $resourceConnection;
 
-    //########################################
+    private $listingProductId;
+    private $listingProduct;
+    private $motorsType;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
+    private $componentEbayMotors;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
         \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->customCollectionFactory = $customCollectionFactory;
-        $this->resourceConnection = $resourceConnection;
-
         parent::__construct($context, $backendHelper, $data);
+
+        $this->customCollectionFactory = $customCollectionFactory;
+        $this->resourceConnection      = $resourceConnection;
+        $this->componentEbayMotors     = $componentEbayMotors;
     }
 
     //########################################
@@ -371,7 +367,7 @@ JS
      */
     private function getMotorsHelper()
     {
-        return $this->getHelper('Component_Ebay_Motors');
+        return $this->componentEbayMotors;
     }
 
     //########################################

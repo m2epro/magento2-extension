@@ -10,11 +10,26 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manag
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manage\SetVariationTheme
- */
 class SetVariationTheme extends Main
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation */
+    protected $variationHelper;
+
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary */
+    protected $vocabularyHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper,
+        \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+
+        $this->variationHelper = $variationHelper;
+        $this->vocabularyHelper = $vocabularyHelper;
+    }
+
     public function execute()
     {
         $listingProductId = $this->getRequest()->getParam('product_id');
@@ -42,8 +57,7 @@ class SetVariationTheme extends Main
 
         $parentTypeModel->setChannelTheme($variationTheme, true, false);
 
-        $variationHelper = $this->getHelper('Component_Amazon_Variation');
-        $variationHelper->increaseThemeUsageCount($variationTheme, $listingProduct->getMarketplace()->getId());
+        $this->variationHelper->increaseThemeUsageCount($variationTheme, $listingProduct->getMarketplace()->getId());
 
         $productDataNick = $amazonListingProduct->getAmazonDescriptionTemplate()->getProductDataNick();
 
@@ -72,35 +86,32 @@ class SetVariationTheme extends Main
             return $this->getResult();
         }
 
-        /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper */
-        $vocabularyHelper = $this->getHelper('Component_Amazon_Vocabulary');
-
-        if ($vocabularyHelper->isAttributeAutoActionDisabled()) {
+        if ($this->vocabularyHelper->isAttributeAutoActionDisabled()) {
             $this->setJsonContent($result);
 
             return $this->getResult();
         }
 
-        if ($vocabularyHelper->isAttributeExistsInLocalStorage($productAttribute, $themeAttribute)) {
+        if ($this->vocabularyHelper->isAttributeExistsInLocalStorage($productAttribute, $themeAttribute)) {
             $this->setJsonContent($result);
 
             return $this->getResult();
         }
 
-        if ($vocabularyHelper->isAttributeExistsInServerStorage($productAttribute, $themeAttribute)) {
+        if ($this->vocabularyHelper->isAttributeExistsInServerStorage($productAttribute, $themeAttribute)) {
             $this->setJsonContent($result);
 
             return $this->getResult();
         }
 
-        if ($vocabularyHelper->isAttributeAutoActionNotSet()) {
+        if ($this->vocabularyHelper->isAttributeAutoActionNotSet()) {
             $result['vocabulary_attributes'] = [$productAttribute => $themeAttribute];
             $this->setJsonContent($result);
 
             return $this->getResult();
         }
 
-        $vocabularyHelper->addAttribute($productAttribute, $themeAttribute);
+        $this->vocabularyHelper->addAttribute($productAttribute, $themeAttribute);
 
         $this->setJsonContent($result);
 

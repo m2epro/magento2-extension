@@ -8,34 +8,43 @@
 
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
-/**
- * Class \Ess\M2ePro\Helper\Component\Amazon\Category
- */
 class Category extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const RECENT_MAX_COUNT = 20;
 
+    /** @var \Ess\M2ePro\Helper\Module */
+    protected $helperModule;
+
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    protected $databaseStructure;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
-    //########################################
-
     public function __construct(
+        \Ess\M2ePro\Helper\Module $helperModule,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseStructure,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     ) {
+        parent::__construct($helperFactory, $context);
+
+        $this->helperModule      = $helperModule;
+        $this->databaseStructure = $databaseStructure;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->resourceConnection = $resourceConnection;
-        parent::__construct($helperFactory, $context);
     }
 
     //########################################
 
     public function getRecent($marketplaceId, array $excludedCategory = [])
     {
-        $allRecentCategories = $this->getHelper('Module')->getRegistry()->getValueFromJson($this->getConfigGroup());
+        $allRecentCategories = $this->helperModule->getRegistry()->getValueFromJson($this->getConfigGroup());
 
         if (!isset($allRecentCategories[$marketplaceId])) {
             return [];
@@ -63,7 +72,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function addRecent($marketplaceId, $browseNodeId, $categoryPath)
     {
-        $allRecentCategories = $this->getHelper('Module')->getRegistry()->getValueFromJson($this->getConfigGroup());
+        $allRecentCategories = $this->helperModule->getRegistry()->getValueFromJson($this->getConfigGroup());
 
         !isset($allRecentCategories[$marketplaceId]) && $allRecentCategories[$marketplaceId] = [];
 
@@ -91,7 +100,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
         $recentCategories[] = $categoryInfo;
         $allRecentCategories[$marketplaceId] = $recentCategories;
 
-        $this->getHelper('Module')->getRegistry()->setValue($this->getConfigGroup(), $allRecentCategories);
+        $this->helperModule->getRegistry()->setValue($this->getConfigGroup(), $allRecentCategories);
     }
 
     private function removeNotAccessibleCategories($marketplaceId, array &$recentCategories)
@@ -108,8 +117,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
         $select = $this->resourceConnection->getConnection()
             ->select()
             ->from(
-                $this->getHelper('Module_Database_Structure')
-                    ->getTableNameWithPrefix('m2epro_amazon_dictionary_category')
+                $this->databaseStructure->getTableNameWithPrefix('m2epro_amazon_dictionary_category')
             )
             ->where('marketplace_id = ?', $marketplaceId)
             ->where('browsenode_id IN (?)', array_unique($nodeIdsForCheck));
@@ -136,7 +144,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function removeRecentCategory(array $category, $marketplaceId)
     {
-        $allRecentCategories = $this->getHelper('Module')->getRegistry()->getValueFromJson($this->getConfigGroup());
+        $allRecentCategories = $this->helperModule->getRegistry()->getValueFromJson($this->getConfigGroup());
         $currentRecentCategories = $allRecentCategories[$marketplaceId];
 
         foreach ($currentRecentCategories as $index => $recentCategory) {
@@ -147,7 +155,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
             }
         }
 
-        $this->getHelper('Module')->getRegistry()->setValue($this->getConfigGroup(), $allRecentCategories);
+        $this->helperModule->getRegistry()->setValue($this->getConfigGroup(), $allRecentCategories);
     }
 
     //########################################

@@ -8,12 +8,21 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\EditListingProductsPolicy
- */
 class EditListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Template
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Template\Switcher\DataLoader */
+    private $componentEbayTemplateSwitcherDataLoader;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Template\Switcher\DataLoader $componentEbayTemplateSwitcherDataLoader,
+        \Ess\M2ePro\Model\Ebay\Template\Manager $templateManager,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($templateManager, $ebayFactory, $context);
+
+        $this->componentEbayTemplateSwitcherDataLoader = $componentEbayTemplateSwitcherDataLoader;
+    }
 
     public function execute()
     {
@@ -37,7 +46,7 @@ class EditListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
 
         // ---------------------------------------
         /** @var \Ess\M2ePro\Helper\Component\Ebay\Template\Switcher\DataLoader $dataLoader */
-        $dataLoader = $this->getHelper('Component_Ebay_Template_Switcher_DataLoader');
+        $dataLoader = $this->componentEbayTemplateSwitcherDataLoader;
         $dataLoader->load($collection);
         // ---------------------------------------
 

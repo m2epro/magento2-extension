@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Variations;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Variations\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $lockedDataCache = [];
@@ -25,24 +22,24 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected $walmartFactory;
     protected $localeCurrency;
     protected $resourceConnection;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\View\Walmart */
+    protected $walmartViewHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\View\Walmart $walmartViewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
+        parent::__construct($context, $backendHelper, $data);
         $this->walmartFactory = $walmartFactory;
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
-        parent::__construct($context, $backendHelper, $data);
+        $this->walmartViewHelper = $walmartViewHelper;
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -226,7 +223,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_condition_callback' => [$this, 'callbackFilterStatus']
         ];
 
-        $isShouldBeShown = $this->getHelper('View_Walmart')->isResetFilterShouldBeShown(
+        $isShouldBeShown = $this->walmartViewHelper->isResetFilterShouldBeShown(
             'variation_parent_id',
             $this->getListingProduct()->getId()
         );
@@ -832,7 +829,7 @@ JS
 
     private function prepareVariations($currentAttribute, $unusedVariations, $variationsSets, $filters = [])
     {
-        $return = false;
+        $return = [];
 
         $temp = array_flip(array_keys($variationsSets));
 
@@ -860,14 +857,14 @@ JS
                 $return[$currentAttribute][$option] = $result;
             }
 
-            if ($return !== false) {
+            if (!empty($return)) {
                 ksort($return[$currentAttribute]);
             }
 
             return $return;
         }
 
-        $return = false;
+        $return = [];
         foreach ($unusedVariations as $key => $magentoVariation) {
             foreach ($magentoVariation as $attribute => $option) {
                 if ($attribute == $currentAttribute) {
@@ -899,11 +896,11 @@ JS
             }
         }
 
-        if (count($unusedVariations) < 1) {
-            return false;
+        if (empty($unusedVariations)) {
+            return [];
         }
 
-        if ($return !== false) {
+        if (!empty($return)) {
             ksort($return[$currentAttribute]);
         }
 
