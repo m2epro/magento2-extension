@@ -27,7 +27,6 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     const OWNER_LISTING_PRODUCT = 'Listing\Product';
 
     const TEMPLATE_RETURN_POLICY   = 'return_policy';
-    const TEMPLATE_PAYMENT         = 'payment';
     const TEMPLATE_SHIPPING        = 'shipping';
     const TEMPLATE_DESCRIPTION     = 'description';
     const TEMPLATE_SELLING_FORMAT  = 'selling_format';
@@ -130,7 +129,6 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         return [
             self::TEMPLATE_RETURN_POLICY,
             self::TEMPLATE_SHIPPING,
-            self::TEMPLATE_PAYMENT,
             self::TEMPLATE_DESCRIPTION,
             self::TEMPLATE_SELLING_FORMAT,
             self::TEMPLATE_SYNCHRONIZATION
@@ -155,7 +153,6 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         return [
             self::TEMPLATE_RETURN_POLICY,
             self::TEMPLATE_SHIPPING,
-            self::TEMPLATE_PAYMENT,
         ];
     }
 
@@ -197,7 +194,6 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function getMarketplaceDependentTemplates()
     {
         return [
-            self::TEMPLATE_PAYMENT,
             self::TEMPLATE_SHIPPING,
             self::TEMPLATE_RETURN_POLICY,
         ];
@@ -355,9 +351,6 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         $name = null;
 
         switch ($this->getTemplate()) {
-            case self::TEMPLATE_PAYMENT:
-                $name = 'Ebay_Template_Payment';
-                break;
             case self::TEMPLATE_SHIPPING:
                 $name = 'Ebay_Template_Shipping';
                 break;
@@ -389,7 +382,6 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         $model = null;
 
         switch ($this->getTemplate()) {
-            case self::TEMPLATE_PAYMENT:
             case self::TEMPLATE_SHIPPING:
             case self::TEMPLATE_RETURN_POLICY:
                 $model = $this->activeRecordFactory->getObject($this->getTemplateModelName());
@@ -422,7 +414,6 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         $collection = null;
 
         switch ($this->getTemplate()) {
-            case self::TEMPLATE_PAYMENT:
             case self::TEMPLATE_SHIPPING:
             case self::TEMPLATE_RETURN_POLICY:
                 $collection = $this->getTemplateModel()->getCollection();
@@ -449,9 +440,6 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         $model = null;
 
         switch ($this->getTemplate()) {
-            case self::TEMPLATE_PAYMENT:
-                $model = $this->modelFactory->getObject('Ebay_Template_Payment_Builder');
-                break;
             case self::TEMPLATE_SHIPPING:
                 $model = $this->modelFactory->getObject('Ebay_Template_Shipping_Builder');
                 break;

@@ -23,7 +23,7 @@ $variations = $block->getVariations();
         you a chance to <strong>Preview</strong> how the Product will be Shown on eBay.<br/><br/>
         You can have a preliminary <strong>Overview</strong> of the Product Title, eBay Category, Item Condition, Quantity,
         Price, all of the available Product Variations and more other.<br/><br/>
-        There are tabs under which the main Item Specifics, Description, Shipping, Payment and Return data can be found.
+        There are tabs under which the main Item Specifics, Description, Shipping and Return data can be found.
         The available information <strong>does not contain all of the details</strong>, only the Key Points.
     '),
     'no_hide' => true
@@ -246,9 +246,6 @@ $variations = $block->getVariations();
         <?php endif; ?>
         <li data-tab="shipping" onclick="EbayListingPreviewItemsObj.onTabClick(this);">
             <?php echo $block->__('Shipping'); ?>
-        </li>
-        <li data-tab="payment" onclick="EbayListingPreviewItemsObj.onTabClick(this);">
-            <?php echo $block->__('Payment'); ?>
         </li>
         <?php if (!empty($return)) : ?>
         <li data-tab="return" onclick="EbayListingPreviewItemsObj.onTabClick(this);">
@@ -498,29 +495,6 @@ $variations = $block->getVariations();
                 <span class="field_title"><?php echo $block->__('Locations'); ?>:</span>
                 <?php echo $excludedLocations; ?>
             </div>
-        <?php endif; ?>
-    </div>
-
-    <div class="payment_container tab_container">
-        <?php
-        $payment = $block->getPayment();
-
-        if (isset($payment['paypal'])) {
-            echo "<img src='{$block->getViewFileUrl('Ess_M2ePro::images/img_echeck.png')}'>";
-        }
-        ?>
-
-        <?php if (!empty($payment['paymentMethods'])) : ?>
-            <table>
-                <tr>
-                    <td class="field_title"><?php echo $block->__('Payment Methods'); ?>:&nbsp;</td>
-                    <td>
-                        <?php foreach ($payment['paymentMethods'] as $paymentMethod) : ?>
-                            <div><?php echo $paymentMethod; ?></div>
-                        <?php endforeach; ?>
-                    </td>
-                </tr>
-            </table>
         <?php endif; ?>
     </div>
 

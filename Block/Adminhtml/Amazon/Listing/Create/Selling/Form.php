@@ -1274,7 +1274,7 @@ JS
             'handling_time_custom_attribute' => '',
 
             'restock_date_mode'             => AmazonListing::RESTOCK_DATE_MODE_NONE,
-            'restock_date_value'            => $this->getHelper('Data')->getCurrentGmtDate(),
+            'restock_date_value'            => $this->getHelper('Data')->getCurrentTimezoneDate(),
             'restock_date_custom_attribute' => ''
         ];
     }
@@ -1297,7 +1297,9 @@ JS
                 $data['restock_date_value'],
                 new \DateTimeZone($this->_localeDate->getDefaultTimezone())
             );
-            $dateTime->setTimezone(new \DateTimeZone($this->_localeDate->getConfigTimezone()));
+            if ($this->getRequest()->getParam('id') !== null) {
+                $dateTime->setTimezone(new \DateTimeZone($this->_localeDate->getConfigTimezone()));
+            }
 
             $data['restock_date_value'] = $dateTime;
         }

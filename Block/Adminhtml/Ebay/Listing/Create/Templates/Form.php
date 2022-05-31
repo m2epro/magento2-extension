@@ -66,66 +66,10 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         );
 
         $fieldset = $form->addFieldset(
-            'payment_and_shipping_settings',
+            'shipping_settings',
             [
-                'legend'      => $this->__('Payment and Shipping'),
+                'legend'      => $this->__('Shipping'),
                 'collapsable' => false
-            ]
-        );
-
-        $paymentTemplates = $this->getPaymentTemplates($formData['marketplace_id']);
-        $style = count($paymentTemplates) === 0 ? 'display: none' : '';
-
-        $templatePayment = $this->elementFactory->create(
-            'select',
-            [
-                'data' => [
-                    'html_id'  => 'template_payment_id',
-                    'name'     => 'template_payment_id',
-                    'style'    => 'width: 50%;' . $style,
-                    'no_span'  => true,
-                    'values'   => array_merge(['' => ''], $paymentTemplates),
-                    'value'    => $formData['template_payment_id'],
-                    'required' => true
-                ]
-            ]
-        );
-        $templatePayment->setForm($form);
-
-        $style = count($paymentTemplates) === 0 ? '' : 'display: none';
-        $fieldset->addField(
-            'template_payment_container',
-            self::CUSTOM_CONTAINER,
-            [
-                'label'                  => $this->__('Payment Policy'),
-                'style'                  => 'line-height: 34px;display: initial;',
-                'field_extra_attributes' => 'style="margin-bottom: 5px"',
-                'required'               => true,
-                'text'                   => <<<HTML
-    <span id="template_payment_label" style="{$style}">
-        {$this->__('No Policies available.')}
-    </span>
-    {$templatePayment->toHtml()}
-HTML
-                ,
-                'after_element_html'     => <<<HTML
-&nbsp;
-<span style="line-height: 30px;">
-    <span id="edit_payment_template_link" style="color:#41362f">
-        <a href="javascript: void(0);" onclick="EbayListingSettingsObj.editTemplate(
-            '{$this->getEditUrl(TemplateManager::TEMPLATE_PAYMENT)}', 
-            $('template_payment_id').value,
-            EbayListingSettingsObj.newPaymentTemplateCallback
-        );">{$this->__('View')}&nbsp;/&nbsp;{$this->__('Edit')}</a>
-        <span>{$this->__('or')}</span>
-    </span>
-    <a id="add_payment_template_link" href="javascript: void(0);"
-        onclick="EbayListingSettingsObj.addNewTemplate(
-        '{$this->getAddNewUrl($formData['marketplace_id'], TemplateManager::TEMPLATE_PAYMENT)}',
-        EbayListingSettingsObj.newPaymentTemplateCallback
-    );">{$this->__('Add New')}</a>
-</span>
-HTML
             ]
         );
 
@@ -169,7 +113,7 @@ HTML
 <span style="line-height: 30px;">
     <span id="edit_shipping_template_link" style="color:#41362f">
         <a href="javascript: void(0);" onclick="EbayListingSettingsObj.editTemplate(
-            '{$this->getEditUrl(TemplateManager::TEMPLATE_SHIPPING)}', 
+            '{$this->getEditUrl(TemplateManager::TEMPLATE_SHIPPING)}',
             $('template_shipping_id').value,
             EbayListingSettingsObj.newShippingTemplateCallback
         );">{$this->__('View')}&nbsp;/&nbsp;{$this->__('Edit')}</a>
@@ -225,7 +169,7 @@ HTML
 <span style="line-height: 30px;">
     <span id="edit_return_policy_template_link" style="color:#41362f">
         <a href="javascript: void(0);" onclick="EbayListingSettingsObj.editTemplate(
-            '{$this->getEditUrl(TemplateManager::TEMPLATE_RETURN_POLICY)}', 
+            '{$this->getEditUrl(TemplateManager::TEMPLATE_RETURN_POLICY)}',
             $('template_return_policy_id').value,
             EbayListingSettingsObj.newReturnPolicyTemplateCallback
         );">
@@ -300,7 +244,7 @@ HTML
 <span style="line-height: 30px;">
     <span id="edit_selling_format_template_link" style="color:#41362f">
         <a href="javascript: void(0);" style="" onclick="EbayListingSettingsObj.editTemplate(
-            '{$this->getEditUrl(TemplateManager::TEMPLATE_SELLING_FORMAT)}', 
+            '{$this->getEditUrl(TemplateManager::TEMPLATE_SELLING_FORMAT)}',
             $('template_selling_format_id').value,
             EbayListingSettingsObj.newSellingFormatTemplateCallback
         );">
@@ -358,7 +302,7 @@ HTML
 <span style="line-height: 30px;">
     <span id="edit_description_template_link" style="color:#41362f">
         <a href="javascript: void(0);" onclick="EbayListingSettingsObj.editTemplate(
-            '{$this->getEditUrl(TemplateManager::TEMPLATE_DESCRIPTION)}', 
+            '{$this->getEditUrl(TemplateManager::TEMPLATE_DESCRIPTION)}',
             $('template_description_id').value,
             EbayListingSettingsObj.newDescriptionTemplateCallback
         );">
@@ -424,7 +368,7 @@ HTML
 <span style="line-height: 30px;">
     <span id="edit_synchronization_template_link" style="color:#41362f">
         <a href="javascript: void(0);" onclick="EbayListingSettingsObj.editTemplate(
-            '{$this->getEditUrl(TemplateManager::TEMPLATE_SYNCHRONIZATION)}', 
+            '{$this->getEditUrl(TemplateManager::TEMPLATE_SYNCHRONIZATION)}',
             $('template_synchronization_id').value,
             EbayListingSettingsObj.newSynchronizationTemplateCallback
         );">
@@ -465,18 +409,6 @@ HTML
                     '*/template/checkMessages',
                     [
                         'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK
-                    ]
-                ),
-                'getPaymentTemplates'         => $this->getUrl(
-                    '*/general/modelGetAll',
-                    [
-                        'model'              => 'Ebay_Template_Payment',
-                        'id_field'           => 'id',
-                        'data_field'         => 'title',
-                        'sort_field'         => 'title',
-                        'sort_dir'           => 'ASC',
-                        'marketplace_id'     => $formData['marketplace_id'],
-                        'is_custom_template' => 0
                     ]
                 ),
                 'getShippingTemplates'        => $this->getUrl(
@@ -563,7 +495,6 @@ JS
     public function getDefaultFieldsValues()
     {
         return [
-            'template_payment_id'         => '',
             'template_shipping_id'        => '',
             'template_return_policy_id'   => '',
             'template_selling_format_id'  => '',
@@ -600,26 +531,6 @@ JS
     }
 
     //########################################
-
-    protected function getPaymentTemplates($marketplaceId)
-    {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Payment\Collection */
-        $collection = $this->activeRecordFactory->getObject('Ebay_Template_Payment')->getCollection();
-        $collection->addFieldToFilter('marketplace_id', $marketplaceId);
-        $collection->addFieldToFilter('is_custom_template', 0);
-        $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
-
-        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
-            [
-                'value' => 'id',
-                'label' => 'title'
-            ]
-        );
-
-        $result = $collection->toArray();
-
-        return $result['items'];
-    }
 
     protected function getShippingTemplates($marketplaceId)
     {

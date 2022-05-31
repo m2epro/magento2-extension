@@ -125,19 +125,6 @@ class Grid extends AbstractGrid
         $collectionDescription->addFieldToFilter('is_custom_template', 0);
         // ---------------------------------------
 
-        // Prepare payment collection
-        // ---------------------------------------
-        $collectionPayment = $this->activeRecordFactory->getObject('Ebay_Template_Payment')->getCollection();
-        $collectionPayment->getSelect()->reset(Select::COLUMNS);
-        $collectionPayment->getSelect()->columns(
-            ['id as template_id', 'title', 'marketplace_id as marketplace',
-                new \Zend_Db_Expr('\''.\Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT.'\' as `nick`'),
-                'create_date', 'update_date']
-        );
-        $collectionPayment->addFieldToFilter('is_custom_template', 0);
-        $collectionPayment->addFieldToFilter('marketplace_id', ['in' => $this->getEnabledMarketplacesIds()]);
-        // ---------------------------------------
-
         // Prepare shipping collection
         // ---------------------------------------
         $collectionShipping = $this->activeRecordFactory->getObject('Ebay_Template_Shipping')->getCollection();
@@ -171,7 +158,6 @@ class Grid extends AbstractGrid
             $collectionSellingFormat->getSelect(),
             $collectionSynchronization->getSelect(),
             $collectionDescription->getSelect(),
-            $collectionPayment->getSelect(),
             $collectionShipping->getSelect(),
             $collectionReturn->getSelect()
         ]);
@@ -206,7 +192,6 @@ class Grid extends AbstractGrid
         ]);
 
         $options = [
-            \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT => $this->__('Payment'),
             \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING => $this->__('Shipping'),
             \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY => $this->__('Return'),
             \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT => $this->__('Selling'),

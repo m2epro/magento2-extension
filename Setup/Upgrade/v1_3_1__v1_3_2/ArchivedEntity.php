@@ -9,7 +9,6 @@
 namespace Ess\M2ePro\Setup\Upgrade\v1_3_1__v1_3_2;
 
 use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature;
-use Ess\M2ePro\Setup\InstallSchema;
 use Magento\Framework\DB\Ddl\Table;
 
 class ArchivedEntity extends AbstractFeature
@@ -34,7 +33,7 @@ class ArchivedEntity extends AbstractFeature
                 ['nullable' => false]
             )
             ->addColumn(
-                'data', Table::TYPE_TEXT, InstallSchema::LONG_COLUMN_SIZE,
+                'data', Table::TYPE_TEXT, \Ess\M2ePro\Model\Setup\Installer::LONG_COLUMN_SIZE,
                 ['nullable' => false]
             )
             ->addColumn(

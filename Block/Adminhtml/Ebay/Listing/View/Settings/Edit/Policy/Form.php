@@ -62,7 +62,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     {
         $articles = [
             \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY => 'x/dgAVB',
-            \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT => 'x/VwAVB',
             \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING => 'x/YgAVB',
             \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION => 'x/ff8UB ',
             \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT =>

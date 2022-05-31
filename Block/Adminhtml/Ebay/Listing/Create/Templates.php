@@ -83,12 +83,12 @@ class Templates extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContain
             [
                 'content' => $this->__(
                     <<<HTML
-<p>In this Section, you set the payment methods you accept, the shipping methods you offer, and whether you accept 
-returns. For that, select <b>Payment</b>, <b>Shipping</b>, and <b>Return</b> Policies for the Listing.</p>
-<p>Also, you can choose the right listing format, provide a competitive price for your Items, set the detailed 
-description for products to attract more buyers. For that, select <b>Selling</b> and <b>Description</b> 
+<p>In this Section, you set the shipping methods you offer, and whether you accept
+returns. For that, select <b>Shipping</b>, and <b>Return</b> Policies for the Listing.</p>
+<p>Also, you can choose the right listing format, provide a competitive price for your Items, set the detailed
+description for products to attract more buyers. For that, select <b>Selling</b> and <b>Description</b>
 Policies for the Listing.</p>
-<p>You can set the preferences on how to synchronize your Items with Magento Catalog data. The rules can be defined in 
+<p>You can set the preferences on how to synchronize your Items with Magento Catalog data. The rules can be defined in
 <b>Synchronization</b> policy.</p>
 <p>More details in <a href="%url%" target="_blank">our documentation</a>.</p>
 HTML

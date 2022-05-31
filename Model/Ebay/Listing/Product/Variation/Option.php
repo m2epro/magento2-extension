@@ -207,14 +207,6 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstrac
     // ---------------------------------------
 
     /**
-     * @return \Ess\M2ePro\Model\Ebay\Template\Payment
-     */
-    public function getPaymentTemplate()
-    {
-        return $this->getEbayListingProductVariation()->getPaymentTemplate();
-    }
-
-    /**
      * @return \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy
      */
     public function getReturnTemplate()

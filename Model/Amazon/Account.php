@@ -293,6 +293,18 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     }
 
     /**
+     * @return bool
+     */
+    public function isImportShipByDateToMagentoOrder(): bool
+    {
+        return (bool)$this->getSetting(
+            'magento_orders_settings',
+            ['shipping_information', 'ship_by_date'],
+            true
+        );
+    }
+
+    /**
      * @return int
      */
     public function getOtherListingsMappingGeneralIdPriority()

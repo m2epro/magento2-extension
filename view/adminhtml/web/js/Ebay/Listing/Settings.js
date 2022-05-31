@@ -9,22 +9,6 @@ define([
         },
 
         initObservers: function() {
-            $('template_payment_id').observe('change', function() {
-                if ($('template_payment_id').value) {
-                    $('edit_payment_template_link').show();
-                } else {
-                    $('edit_payment_template_link').hide();
-                }
-            });
-            $('template_payment_id').simulate('change');
-
-            $('template_payment_id').observe('change', function() {
-                EbayListingSettingsObj.hideEmptyOption(this);
-            });
-            if ($('template_payment_id').value) {
-                $('template_payment_id').simulate('change');
-            }
-
             $('template_shipping_id').observe('change', function() {
                 if ($('template_shipping_id').value) {
                     $('edit_shipping_template_link').show();
@@ -235,21 +219,6 @@ define([
         },
 
         // ---------------------------------------
-
-        newPaymentTemplateCallback: function() {
-            var noteEl = $('template_payment_note');
-
-            EbayListingSettingsObj.reload(M2ePro.url.get('getPaymentTemplates'), 'template_payment_id');
-            if ($('template_payment_id').children.length > 0) {
-                $('template_payment_id').show();
-                noteEl && $('template_payment_note').show();
-                $('template_payment_label').hide();
-            } else {
-                $('template_payment_id').hide();
-                noteEl && $('template_payment_note').hide();
-                $('template_payment_label').show();
-            }
-        },
 
         newShippingTemplateCallback: function() {
             var noteEl = $('template_shipping_note');

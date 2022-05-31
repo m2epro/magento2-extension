@@ -90,10 +90,6 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
             $isPlural = true;
         }
 
-        if ($this->getConfigurator()->isPaymentAllowed()) {
-            $sequenceStrings[] = 'Payment';
-        }
-
         if ($this->getConfigurator()->isShippingAllowed()) {
             $sequenceStrings[] = 'Shipping';
         }

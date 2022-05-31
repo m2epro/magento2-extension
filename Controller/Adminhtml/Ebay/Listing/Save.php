@@ -44,7 +44,6 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         $data = [];
         $keys = [
-            'template_payment_id',
             'template_shipping_id',
             'template_return_policy_id',
             'template_selling_format_id',

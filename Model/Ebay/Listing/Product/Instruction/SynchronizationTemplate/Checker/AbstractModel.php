@@ -32,7 +32,6 @@ abstract class AbstractModel extends CheckerAbstractModel
                 $this->getReviseCategoriesInstructionTypes(),
                 $this->getRevisePartsInstructionTypes(),
                 $this->getReviseShippingInstructionTypes(),
-                $this->getRevisePaymentInstructionTypes(),
                 $this->getReviseReturnInstructionTypes(),
                 $this->getReviseOtherInstructionTypes()
             )
@@ -248,24 +247,6 @@ abstract class AbstractModel extends CheckerAbstractModel
         ];
     }
 
-    protected function getRevisePaymentInstructionTypes()
-    {
-        return [
-            \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::
-            INSTRUCTION_TYPE_PAYMENT_DATA_CHANGED,
-            \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_PAYMENT_ENABLED,
-            \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor::INSTRUCTION_TYPE_REVISE_PAYMENT_DISABLED,
-            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
-            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
-            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
-            \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Relist\Response::INSTRUCTION_TYPE_CHECK_PAYMENT,
-            \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
-            \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel::
-            INSTRUCTION_TYPE_MAGMI_PLUGIN_PRODUCT_CHANGED,
-            \Ess\M2ePro\Model\Cron\Task\Listing\Product\InspectDirectChanges::INSTRUCTION_TYPE,
-        ];
-    }
-
     protected function getReviseReturnInstructionTypes()
     {
         return [
@@ -349,10 +330,6 @@ abstract class AbstractModel extends CheckerAbstractModel
             $propertiesData[] = 'shipping';
         }
 
-        if ($this->input->hasInstructionWithTypes($this->getRevisePaymentInstructionTypes())) {
-            $propertiesData[] = 'payment';
-        }
-
         if ($this->input->hasInstructionWithTypes($this->getReviseReturnInstructionTypes())) {
             $propertiesData[] = 'return';
         }
@@ -406,10 +383,6 @@ abstract class AbstractModel extends CheckerAbstractModel
 
         if ($configurator->isCategoriesAllowed()) {
             $propertiesData[] = 'categories';
-        }
-
-        if ($configurator->isPaymentAllowed()) {
-            $propertiesData[] = 'payment';
         }
 
         if ($configurator->isShippingAllowed()) {

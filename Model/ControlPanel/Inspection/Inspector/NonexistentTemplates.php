@@ -32,7 +32,6 @@ class NonexistentTemplates implements InspectorInterface, FixerInterface
         \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SYNCHRONIZATION,
         \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION,
         \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING,
-        \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT,
         \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY,
     ];
 

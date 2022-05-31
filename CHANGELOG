@@ -1,4 +1,11 @@
-* 1.22.1 (24/05/2022) 
+* 1.23.0 (31/05/2022) 
+
+Common: [Added] Possibility to disable import of Ship by date to Magento orders [#3504]
+Common: [Added] M2E Pro compatibility with PHP 8.1 and Magento 2.4.4 on PHP 8.1 [#3637]
+eBay: [Removed] The Payment policy [#3462]
+Amazon: [Fixed] The time is offset according to the Magento time zone when the Restock Date is set to a Custom Value [#3533]
+
+* 1.22.1 (24/05/2022)
 
 Common: [Fixed] End Date expiration for Special Price was not detected and Product Price value was not submitted during the Revise action [#3435]
 Common: [Fixed] QTY is not updated for a Grouped Product when changes are made and saved in a Simple Product [#3634]

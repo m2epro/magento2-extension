@@ -705,7 +705,17 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return isset($settings['use_marketplace_prefix']) ? (bool)$settings['use_marketplace_prefix'] : false;
     }
 
-    // ---------------------------------------
+    /**
+     * @return bool
+     */
+    public function isImportShipByDateToMagentoOrder(): bool
+    {
+        return (bool)$this->getSetting(
+            'magento_orders_settings',
+            ['shipping_information', 'ship_by_date'],
+            true
+        );
+    }
 
     public function getMagentoOrdersCreationMode()
     {

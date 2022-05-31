@@ -193,14 +193,6 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
     // ---------------------------------------
 
     /**
-     * @return \Ess\M2ePro\Model\Ebay\Template\Payment
-     */
-    public function getPaymentTemplate()
-    {
-        return $this->getEbayListingProduct()->getPaymentTemplate();
-    }
-
-    /**
      * @return \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy
      */
     public function getReturnTemplate()

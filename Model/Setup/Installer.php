@@ -3707,12 +3707,6 @@ class Installer
                 ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_payment_id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'default' => null]
-            )
-            ->addColumn(
                 'template_shipping_id',
                 Table::TYPE_INTEGER,
                 null,
@@ -3781,7 +3775,6 @@ class Installer
                 'auto_website_adding_template_store_category_secondary_id'
             )
             ->addIndex('template_description_id', 'template_description_id')
-            ->addIndex('template_payment_id', 'template_payment_id')
             ->addIndex('template_return_policy_id', 'template_return_policy_id')
             ->addIndex('template_selling_format_id', 'template_selling_format_id')
             ->addIndex('template_shipping_id', 'template_shipping_id')
@@ -4100,12 +4093,6 @@ class Installer
                 ['default' => null]
             )
             ->addColumn(
-                'online_payment_data',
-                Table::TYPE_TEXT,
-                40,
-                ['default' => null]
-            )
-            ->addColumn(
                 'online_return_data',
                 Table::TYPE_TEXT,
                 40,
@@ -4128,18 +4115,6 @@ class Installer
                 Table::TYPE_DATETIME,
                 null,
                 ['default' => null]
-            )
-            ->addColumn(
-                'template_payment_mode',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
-                'template_payment_id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'template_shipping_mode',
@@ -4224,8 +4199,6 @@ class Installer
             ->addIndex('template_store_category_secondary_id', 'template_store_category_secondary_id')
             ->addIndex('template_description_id', 'template_description_id')
             ->addIndex('template_description_mode', 'template_description_mode')
-            ->addIndex('template_payment_id', 'template_payment_id')
-            ->addIndex('template_payment_mode', 'template_payment_mode')
             ->addIndex('template_return_policy_id', 'template_return_policy_id')
             ->addIndex('template_return_policy_mode', 'template_return_policy_mode')
             ->addIndex('template_selling_format_id', 'template_selling_format_id')
@@ -5574,104 +5547,6 @@ class Installer
             ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($ebayTemplateOtherCategoryTable);
 
-        $ebayTemplatePaymentTable = $this->getConnection()->newTable($this->getFullTableName('ebay_template_payment'))
-            ->addColumn(
-                'id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
-            )
-            ->addColumn(
-                'marketplace_id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'title',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'is_custom_template',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 1]
-            )
-            ->addColumn(
-                'managed_payments_mode',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
-                'pay_pal_mode',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
-                'pay_pal_email_address',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'pay_pal_immediate_payment',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
-                'update_date',
-                Table::TYPE_DATETIME,
-                null,
-                ['default' => null]
-            )
-            ->addColumn(
-                'create_date',
-                Table::TYPE_DATETIME,
-                null,
-                ['default' => null]
-            )
-            ->addIndex('is_custom_template', 'is_custom_template')
-            ->addIndex('marketplace_id', 'marketplace_id')
-            ->addIndex('title', 'title')
-            ->setOption('type', 'INNODB')
-            ->setOption('charset', 'utf8')
-            ->setOption('collate', 'utf8_general_ci')
-            ->setOption('row_format', 'dynamic');
-        $this->getConnection()->createTable($ebayTemplatePaymentTable);
-
-        $ebayTemplatePaymentServiceTable = $this->getConnection()->newTable(
-            $this->getFullTableName('ebay_template_payment_service')
-        )
-            ->addColumn(
-                'id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
-            )
-            ->addColumn(
-                'template_payment_id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'code_name',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addIndex('template_payment_id', 'template_payment_id')
-            ->setOption('type', 'INNODB')
-            ->setOption('charset', 'utf8')
-            ->setOption('collate', 'utf8_general_ci')
-            ->setOption('row_format', 'dynamic');
-        $this->getConnection()->createTable($ebayTemplatePaymentServiceTable);
-
         $ebayTemplateReturnPolicyTable = $this->getConnection()->newTable(
             $this->getFullTableName('ebay_template_return_policy')
         )
@@ -6593,12 +6468,6 @@ class Installer
             )
             ->addColumn(
                 'revise_update_shipping',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'revise_update_payment',
                 Table::TYPE_SMALLINT,
                 null,
                 ['unsigned' => true, 'nullable' => false]

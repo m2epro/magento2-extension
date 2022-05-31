@@ -119,14 +119,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'template_store_category_secondary_id' => 'template_store_category_secondary_id',
 
                 'template_return_policy_mode'   => 'template_return_policy_mode',
-                'template_payment_mode'         => 'template_payment_mode',
                 'template_shipping_mode'        => 'template_shipping_mode',
                 'template_description_mode'     => 'template_description_mode',
                 'template_selling_format_mode'  => 'template_selling_format_mode',
                 'template_synchronization_mode' => 'template_synchronization_mode',
 
                 'template_return_policy_id'   => 'template_return_policy_id',
-                'template_payment_id'         => 'template_payment_id',
                 'template_shipping_id'        => 'template_shipping_id',
                 'template_description_id'     => 'template_description_id',
                 'template_selling_format_id'  => 'template_selling_format_id',
@@ -221,7 +219,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
 
         $tdTable = $this->activeRecordFactory->getObject('Template_Description')->getResource()->getMainTable();
-        $etpTable = $this->activeRecordFactory->getObject('Ebay_Template_Payment')->getResource()->getMainTable();
         $etrpTable = $this->activeRecordFactory->getObject('Ebay_Template_ReturnPolicy')->getResource()->getMainTable();
         $tsfTable = $this->activeRecordFactory->getObject('Template_SellingFormat')->getResource()->getMainTable();
         $etsTable = $this->activeRecordFactory->getObject('Ebay_Template_Shipping')->getResource()->getMainTable();
@@ -231,13 +228,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 ['td' => $tdTable],
                 'id=template_description_id',
                 ['description_policy_title' => 'title'],
-                null,
-                'left'
-            )
-            ->joinTable(
-                ['etp' => $etpTable],
-                'id=template_payment_id',
-                ['payment_policy_title' => 'title'],
                 null,
                 'left'
             )
@@ -393,12 +383,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareMassactionItems()
     {
-        // --- Payment and Shipping Settings -----
-
-        $this->getMassactionBlock()->addItem('editPaymentSettings', [
-            'label' => $this->__('Payment'),
-            'url' => '',
-        ], 'edit_settings');
+        // --- Shipping Settings -----
 
         $this->getMassactionBlock()->addItem('editShippingSettings', [
             'label' => $this->__('Shipping'),
@@ -544,7 +529,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     public function callbackColumnSetting($value, $row, $column, $isExport)
     {
         $templatesNames = [
-            Manager::TEMPLATE_PAYMENT         => $this->__('Payment'),
             Manager::TEMPLATE_SHIPPING        => $this->__('Shipping'),
             Manager::TEMPLATE_RETURN_POLICY   => $this->__('Return'),
             Manager::TEMPLATE_SELLING_FORMAT  => $this->__('Selling'),
@@ -737,7 +721,6 @@ HTML;
             $collection->addAttributeToFilter(
                 [
                     ['attribute' => 'description_policy_title', 'like' => '%' . $inputValue . '%'],
-                    ['attribute' => 'payment_policy_title', 'like' => '%' . $inputValue . '%'],
                     ['attribute' => 'return_policy_title', 'like' => '%' . $inputValue . '%'],
                     ['attribute' => 'selling_policy_title', 'like' => '%' . $inputValue . '%'],
                     ['attribute' => 'shipping_policy_title', 'like' => '%' . $inputValue . '%'],
@@ -750,10 +733,6 @@ HTML;
             switch ($value['select']) {
                 case Manager::MODE_PARENT:
                     // no policy overrides
-                    $collection->addAttributeToFilter(
-                        'template_payment_mode',
-                        ['eq' => Manager::MODE_PARENT]
-                    );
                     $collection->addAttributeToFilter(
                         'template_shipping_mode',
                         ['eq' => Manager::MODE_PARENT]
@@ -780,10 +759,6 @@ HTML;
                     // policy templates and custom settings
                     $collection->addAttributeToFilter(
                         [
-                            [
-                                'attribute' => 'template_payment_mode',
-                                'eq' => (int) $value['select']
-                            ],
                             [
                                 'attribute' => 'template_shipping_mode',
                                 'eq' => (int) $value['select']
@@ -970,14 +945,7 @@ HTML;
             ]
         ];
 
-        // --- Payment and Shipping Settings -----
-
-        $actions['editPayment'] = [
-            'caption' => $this->__('Payment'),
-            'group' => 'edit_general_settings',
-            'field' => 'id',
-            'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editPaymentSettingsAction\']'
-        ];
+        // --- Shipping Settings -----
 
         $actions['editShipping'] = [
             'caption' => $this->__('Shipping'),
@@ -1124,7 +1092,6 @@ JS
         //------------------------------
         $this->jsTranslator->addTranslations([
             'Edit Return Policy Setting' => $this->__('Edit Return Policy Setting'),
-            'Edit Payment Policy Setting' => $this->__('Edit Payment Policy Setting'),
             'Edit Shipping Policy Setting' => $this->__('Edit Shipping Policy Setting'),
             'Edit Description Policy Setting' => $this->__('Edit Description Policy Setting'),
             'Edit Selling Policy Setting' => $this->__('Edit Selling Policy Setting'),

@@ -240,14 +240,6 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
     /**
      * @return bool
      */
-    public function isReviseUpdatePayment()
-    {
-        return $this->getData('revise_update_payment') != 0;
-    }
-
-    /**
-     * @return bool
-     */
     public function isReviseUpdateReturn()
     {
         return $this->getData('revise_update_return') != 0;

@@ -82,11 +82,6 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
                 unset($data['account_id'], $data['additional_data'], $data['product_add_ids']);
                 break;
 
-            case \Ess\M2ePro\Helper\Component\Ebay::NICK . '::Ebay_Template_Payment':
-                /**@var $item \Ess\M2ePro\Model\Ebay\Template\Payment */
-                $data['services'] = $this->unsetDataInRelatedItems($item->getServices(), 'template_payment_id');
-                break;
-
             case \Ess\M2ePro\Helper\Component\Ebay::NICK . '::Ebay_Template_Shipping':
                 /**@var $item \Ess\M2ePro\Model\Ebay\Template\Shipping */
                 if ($calculated = $item->getCalculatedShipping()) {

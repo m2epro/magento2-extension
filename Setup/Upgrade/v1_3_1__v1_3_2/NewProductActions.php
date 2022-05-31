@@ -110,15 +110,15 @@ class NewProductActions extends AbstractFeature
                 ['nullable' => false]
             )
             ->addColumn(
-                'params', Table::TYPE_TEXT, \Ess\M2ePro\Setup\InstallSchema::LONG_COLUMN_SIZE,
+                'params', Table::TYPE_TEXT, \Ess\M2ePro\Model\Setup\Installer::LONG_COLUMN_SIZE,
                 ['default' => NULL]
             )
             ->addColumn(
-                'result_data', Table::TYPE_TEXT, \Ess\M2ePro\Setup\InstallSchema::LONG_COLUMN_SIZE,
+                'result_data', Table::TYPE_TEXT, \Ess\M2ePro\Model\Setup\Installer::LONG_COLUMN_SIZE,
                 ['default' => NULL]
             )
             ->addColumn(
-                'result_messages', Table::TYPE_TEXT, \Ess\M2ePro\Setup\InstallSchema::LONG_COLUMN_SIZE,
+                'result_messages', Table::TYPE_TEXT, \Ess\M2ePro\Model\Setup\Installer::LONG_COLUMN_SIZE,
                 ['default' => NULL]
             )
             ->addColumn(
@@ -179,7 +179,7 @@ class NewProductActions extends AbstractFeature
                 ['unsigned' => true, 'default' => NULL]
             )
             ->addColumn(
-                'request_data', Table::TYPE_TEXT, \Ess\M2ePro\Setup\InstallSchema::LONG_COLUMN_SIZE,
+                'request_data', Table::TYPE_TEXT, \Ess\M2ePro\Model\Setup\Installer::LONG_COLUMN_SIZE,
                 ['nullable' => false]
             )
             ->addColumn(
@@ -231,7 +231,7 @@ class NewProductActions extends AbstractFeature
                 ['nullable' => false]
             )
             ->addColumn(
-                'request_data', Table::TYPE_TEXT, \Ess\M2ePro\Setup\InstallSchema::LONG_COLUMN_SIZE,
+                'request_data', Table::TYPE_TEXT, \Ess\M2ePro\Model\Setup\Installer::LONG_COLUMN_SIZE,
                 ['nullable' => false]
             )
             ->addColumn(

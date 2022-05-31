@@ -136,10 +136,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $data['revise_update_shipping'] = (int)$this->rawData['revise_update_shipping'];
         }
 
-        if (isset($this->rawData['revise_update_payment'])) {
-            $data['revise_update_payment'] = (int)$this->rawData['revise_update_payment'];
-        }
-
         if (isset($this->rawData['revise_update_return'])) {
             $data['revise_update_return'] = (int)$this->rawData['revise_update_return'];
         }
@@ -282,7 +278,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'revise_update_categories'                       => 0,
             'revise_update_parts'                            => 0,
             'revise_update_shipping'                         => 0,
-            'revise_update_payment'                          => 0,
             'revise_update_return'                           => 0,
             'revise_update_other'                            => 0,
 

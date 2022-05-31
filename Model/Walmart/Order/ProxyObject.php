@@ -56,7 +56,11 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         $additionalData = '';
 
         $shippingDateTo = $this->order->getShippingDateTo();
-        if (!empty($shippingDateTo)) {
+        $isImportShipByDate = $this->order
+            ->getWalmartAccount()
+            ->isImportShipByDateToMagentoOrder();
+
+        if (!empty($shippingDateTo) && $isImportShipByDate) {
             $shippingDate = $this->getHelper('Data')->gmtDateToTimezone(
                 $shippingDateTo,
                 false,

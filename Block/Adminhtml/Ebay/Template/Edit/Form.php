@@ -83,7 +83,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $templateNick = $this->getTemplateNick();
         if ($templateNick == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING
-            || $templateNick == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT
             || $templateNick == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY
         ) {
             if ($this->getRequest()->getParam('marketplace_id', false) !== false) {

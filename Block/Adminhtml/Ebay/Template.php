@@ -66,12 +66,6 @@ class Template extends AbstractContainer
     protected function _getAddTemplateButtonOptions()
     {
         $data = [
-            Manager::TEMPLATE_PAYMENT         => [
-                'label'   => $this->__('Payment'),
-                'id'      => 'payment',
-                'onclick' => "setLocation('" . $this->getTemplateUrl(Manager::TEMPLATE_PAYMENT) . "')",
-                'default' => true
-            ],
             Manager::TEMPLATE_SHIPPING        => [
                 'label'   => $this->__('Shipping'),
                 'id'      => 'shipping',

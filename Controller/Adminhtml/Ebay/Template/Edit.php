@@ -69,10 +69,6 @@ class Edit extends Template
                 $this->setPageHelpLink('x/dgAVB');
                 break;
 
-            case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT:
-                $this->setPageHelpLink('x/VwAVB');
-                break;
-
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING:
                 $this->setPageHelpLink('x/YgAVB');
                 break;
@@ -114,9 +110,6 @@ class Edit extends Template
         $title = '';
 
         switch ($nick) {
-            case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT:
-                $title = $this->__('Payment');
-                break;
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING:
                 $title = $this->__('Shipping');
                 break;

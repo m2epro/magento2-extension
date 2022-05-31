@@ -245,23 +245,6 @@ HTML
         );
 
         $fieldset->addField(
-            'revise_update_payment',
-            self::SELECT,
-            [
-                'name' => 'synchronization[revise_update_payment]',
-                'label' => $this->__('Payment'),
-                'value' => $formData['revise_update_payment'],
-                'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
-                ],
-                'tooltip' => $this->__(
-                    'Automatically revises Item Payment information on eBay when Payment Policy Template is modified.'
-                )
-            ]
-        );
-
-        $fieldset->addField(
             'revise_update_return',
             self::SELECT,
             [

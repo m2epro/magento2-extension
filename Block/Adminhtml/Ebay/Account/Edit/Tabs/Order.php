@@ -340,6 +340,28 @@ HTML
             ]
         );
 
+        $shipByDateFieldset = $form->addFieldset(
+            'magento_block_ebay_accounts_magento_orders_shipping_information',
+            [
+                'legend'      => $this->__('Shipping information'),
+                'collapsable' => true
+            ]
+        );
+
+        $shipByDateFieldset->addField(
+            'magento_orders_ship_by_date_settings',
+            'select',
+            [
+                'name'    => 'magento_orders_settings[shipping_information][ship_by_date]',
+                'label'   => $this->__('Import Ship by date to Magento order'),
+                'values'  => [
+                    1 => $this->__('Yes'),
+                    0 => $this->__('No'),
+                ],
+                'value'   => $formData['magento_orders_settings']['shipping_information']['ship_by_date'] ?? 1,
+            ]
+        );
+
         $fieldset = $form->addFieldset(
             'magento_block_ebay_accounts_magento_orders_customer',
             [

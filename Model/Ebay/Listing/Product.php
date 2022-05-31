@@ -47,9 +47,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     /** @var \Ess\M2ePro\Model\Template\Description */
     private $descriptionTemplateModel = null;
 
-    /** @var \Ess\M2ePro\Model\Ebay\Template\Payment */
-    private $paymentTemplateModel = null;
-
     /** @var \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy */
     private $returnTemplateModel = null;
 
@@ -109,7 +106,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $this->sellingFormatTemplateModel          = null;
         $this->synchronizationTemplateModel        = null;
         $this->descriptionTemplateModel            = null;
-        $this->paymentTemplateModel                = null;
         $this->returnTemplateModel                 = null;
         $this->shippingTemplateModel               = null;
 
@@ -429,29 +425,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function setDescriptionTemplate(\Ess\M2ePro\Model\Template\Description $instance)
     {
         $this->descriptionTemplateModel = $instance;
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return \Ess\M2ePro\Model\Ebay\Template\Payment
-     */
-    public function getPaymentTemplate()
-    {
-        if ($this->paymentTemplateModel === null) {
-            $template = \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT;
-            $this->paymentTemplateModel = $this->getTemplateManager($template)->getResultObject();
-        }
-
-        return $this->paymentTemplateModel;
-    }
-
-    /**
-     * @param \Ess\M2ePro\Model\Ebay\Template\Payment $instance
-     */
-    public function setPaymentTemplate(\Ess\M2ePro\Model\Ebay\Template\Payment $instance)
-    {
-        $this->paymentTemplateModel = $instance;
     }
 
     // ---------------------------------------
@@ -861,15 +834,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function getOnlineShippingData()
     {
         return $this->getData('online_shipping_data');
-    }
-
-    /**
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function getOnlinePaymentData()
-    {
-        return $this->getData('online_payment_data');
     }
 
     /**

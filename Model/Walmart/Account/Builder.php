@@ -287,7 +287,12 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
-        $data['magento_orders_settings'] = $this->getHelper('Data')->jsonEncode($data['magento_orders_settings']);
+        $data['magento_orders_settings']['shipping_information']['ship_by_date']
+            = (int)($this->rawData['magento_orders_settings']['shipping_information']['ship_by_date'] ?? 1);
+
+        $data['magento_orders_settings'] = $this
+            ->getHelper('Data')
+            ->jsonEncode($data['magento_orders_settings']);
 
         // tab invoice and shipment
         // ---------------------------------------
@@ -374,6 +379,9 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                 ],
                 'refund_and_cancellation' => [
                     'refund_mode' => 1,
+                ],
+                'shipping_information' => [
+                    'ship_by_date' => 1,
                 ],
             ],
             'create_magento_invoice'  => 1,

@@ -25,7 +25,6 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
     const DATA_TYPE_CATEGORIES = 'categories';
     const DATA_TYPE_PARTS = 'parts';
     const DATA_TYPE_SHIPPING = 'shipping';
-    const DATA_TYPE_PAYMENT = 'payment';
     const DATA_TYPE_RETURN = 'return';
     const DATA_TYPE_OTHER = 'other';
     const DATA_TYPE_VARIATIONS = 'variations';
@@ -48,7 +47,6 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
             self::DATA_TYPE_CATEGORIES,
             self::DATA_TYPE_PARTS,
             self::DATA_TYPE_SHIPPING,
-            self::DATA_TYPE_PAYMENT,
             self::DATA_TYPE_RETURN,
             self::DATA_TYPE_OTHER,
             self::DATA_TYPE_VARIATIONS,
@@ -313,32 +311,6 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
     public function disallowShipping()
     {
         return $this->disallow(self::DATA_TYPE_SHIPPING);
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return bool
-     */
-    public function isPaymentAllowed()
-    {
-        return $this->isAllowed(self::DATA_TYPE_PAYMENT);
-    }
-
-    /**
-     * @return $this
-     */
-    public function allowPayment()
-    {
-        return $this->allow(self::DATA_TYPE_PAYMENT);
-    }
-
-    /**
-     * @return $this
-     */
-    public function disallowPayment()
-    {
-        return $this->disallow(self::DATA_TYPE_PAYMENT);
     }
 
     // ---------------------------------------

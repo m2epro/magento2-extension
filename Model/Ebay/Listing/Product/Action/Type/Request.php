@@ -23,7 +23,6 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         'categories',
         'parts',
         'shipping',
-        'payment',
         'returnPolicy',
         'other'
     ];
@@ -518,23 +517,6 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         $hash = $dataBuilder->getHash();
 
         $this->addMetaData('parts_data_hash', $hash);
-
-        return $data;
-    }
-
-    /**
-     * @return array
-     */
-    public function getPaymentData()
-    {
-        if (!$this->getConfigurator()->isPaymentAllowed()) {
-            return [];
-        }
-
-        $dataBuilder = $this->getDataBuilder('payment');
-        $data = $dataBuilder->getBuilderData();
-
-        $this->addMetaData('payment_data', $data);
 
         return $data;
     }

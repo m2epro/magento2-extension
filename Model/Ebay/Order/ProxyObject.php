@@ -366,7 +366,11 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         }
 
         $shippingDateTo = $this->order->getShippingDateTo();
-        if (!empty($shippingDateTo)) {
+        $isImportShipByDate = $this->order
+            ->getEbayAccount()
+            ->isImportShipByDateToMagentoOrder();
+
+        if (!empty($shippingDateTo) && $isImportShipByDate) {
             $shippingDate = $this->getHelper('Data')->gmtDateToTimezone(
                 $shippingDateTo,
                 false,

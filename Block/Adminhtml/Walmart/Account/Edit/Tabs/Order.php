@@ -172,7 +172,7 @@ HTML
                 ],
                 'value'   => $formData['magento_orders_settings']['listing_other']['mode'],
                 'tooltip' => $this->__(
-                    'Choose whether a Magento Order should be created if a Walmart Order is received for an item that 
+                    'Choose whether a Magento Order should be created if a Walmart Order is received for an item that
                     does <b>not</b> belong to the M2E Pro Listing.'
                 )
             ]
@@ -229,7 +229,7 @@ HTML
                     [
                         'type'    => \Magento\Framework\Message\MessageInterface::TYPE_NOTICE,
                         'content' => $this->__(
-                            'Please note that a new Magento Product will be created 
+                            'Please note that a new Magento Product will be created
                             if the corresponding SKU is not found in your Catalog.'
                         )
                     ]
@@ -253,6 +253,28 @@ HTML
                 'values'       => $values,
                 'value'        => $formData['magento_orders_settings']['listing_other']['product_tax_class_id'],
                 'tooltip'      => $this->__('Select the Tax Class which will be used for Products created by M2E Pro.')
+            ]
+        );
+
+        $shipByDateFieldset = $form->addFieldset(
+            'magento_block_walmart_accounts_magento_orders_shipping_information',
+            [
+                'legend'      => $this->__('Shipping information'),
+                'collapsable' => true
+            ]
+        );
+
+        $shipByDateFieldset->addField(
+            'magento_orders_ship_by_date_settings',
+            'select',
+            [
+                'name'    => 'magento_orders_settings[shipping_information][ship_by_date]',
+                'label'   => $this->__('Import Ship by date to Magento order'),
+                'values'  => [
+                    1 => $this->__('Yes'),
+                    0 => $this->__('No'),
+                ],
+                'value'   => $formData['magento_orders_settings']['shipping_information']['ship_by_date'] ?? 1,
             ]
         );
 

@@ -30,7 +30,7 @@ class RunReviseProducts extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Ac
     {
         $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
         $configurator->enableAll();
-        $tag = '/qty/price/title/subtitle/description/images/categories/payment/shipping/return/other/';
+        $tag = '/qty/price/title/subtitle/description/images/categories/shipping/return/other/';
         $params['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER;
 
         return [

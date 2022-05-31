@@ -329,8 +329,7 @@ class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function isTemplateInstance($source)
     {
-        if ($source instanceof \Ess\M2ePro\Model\Ebay\Template\Payment
-            || $source instanceof \Ess\M2ePro\Model\Ebay\Template\Shipping
+        if ($source instanceof \Ess\M2ePro\Model\Ebay\Template\Shipping
             || $source instanceof \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy
             || $source instanceof \Ess\M2ePro\Model\Template\SellingFormat
             || $source instanceof \Ess\M2ePro\Model\Template\Description

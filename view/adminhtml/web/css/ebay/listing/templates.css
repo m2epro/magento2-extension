@@ -1,4 +1,3 @@
-#template_payment_data_container,
 #template_shipping_data_container,
 #template_return_policy_data_container,
 #template_description_data_container,
@@ -7,7 +6,6 @@
     padding: 0 20px;
 }
 
-#template_payment_data_container .admin__collapsible-block-wrapper:last-child,
 #template_shipping_data_container .admin__collapsible-block-wrapper:last-child,
 #template_return_policy_data_container .admin__collapsible-block-wrapper:last-child,
 #template_description_data_container .admin__collapsible-block-wrapper:last-child,
@@ -15,7 +13,6 @@
     border-bottom: 0;
 }
 
-#template_payment_nick_label,
 #template_shipping_nick_label,
 #template_return_policy_nick_label,
 #template_selling_format_nick_label,
@@ -24,7 +21,6 @@
     float: left;
     padding-right: 10px;
 }
-#template_payment_buttons_container,
 #template_shipping_buttons_container,
 #template_return_policy_buttons_container,
 #template_selling_format_buttons_container,

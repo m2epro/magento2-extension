@@ -207,7 +207,6 @@ HTML;
                 $html .='isMeetReviseDescription: '.json_encode($checker->isMeetReviseDescriptionRequirements()).'<br>';
                 $html .= 'isMeetReviseImages: '.json_encode($checker->isMeetReviseImagesRequirements()).'<br>';
                 $html .= 'isMeetReviseCategories: '.json_encode($checker->isMeetReviseCategoriesRequirements()).'<br>';
-                $html .= 'isMeetRevisePayment: '.json_encode($checker->isMeetRevisePaymentRequirements()).'<br>';
                 $html .= 'isMeetReviseShipping: '.json_encode($checker->isMeetReviseShippingRequirements()).'<br>';
                 $html .= 'isMeetReviseReturn: '.json_encode($checker->isMeetReviseReturnRequirements()).'<br>';
                 $html .= 'isMeetReviseOther: '.json_encode($checker->isMeetReviseOtherRequirements()).'<br><br>';

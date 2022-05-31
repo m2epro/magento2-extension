@@ -944,7 +944,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $this->_appendComponentPolicyInfo('selling_format', 'ebay', $data);
         $this->_appendComponentPolicyInfo('synchronization', 'ebay', $data);
         $this->_appendComponentPolicyInfo('description', 'ebay', $data);
-        $this->_appendComponentPolicyInfo('payment', 'ebay', $data);
         $this->_appendComponentPolicyInfo('shipping', 'ebay', $data);
         $this->_appendComponentPolicyInfo('return_policy', 'ebay', $data);
         $this->_appendComponentPolicyInfo('category', 'ebay', $data);

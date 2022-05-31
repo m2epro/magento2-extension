@@ -21,7 +21,6 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
     const INSTRUCTION_TYPE_CHECK_IMAGES      = 'success_relist_check_images';
     const INSTRUCTION_TYPE_CHECK_CATEGORIES  = 'success_relist_check_categories';
     const INSTRUCTION_TYPE_CHECK_PARTS       = 'success_relist_check_parts';
-    const INSTRUCTION_TYPE_CHECK_PAYMENT     = 'success_relist_check_payment';
     const INSTRUCTION_TYPE_CHECK_SHIPPING    = 'success_relist_check_shipping';
     const INSTRUCTION_TYPE_CHECK_RETURN      = 'success_relist_check_return';
     const INSTRUCTION_TYPE_CHECK_OTHER       = 'success_relist_check_other';
@@ -128,11 +127,6 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
 
                 case 'images':
                     $instructionType     = self::INSTRUCTION_TYPE_CHECK_IMAGES;
-                    $instructionPriority = 30;
-                    break;
-
-                case 'payment':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_PAYMENT;
                     $instructionPriority = 30;
                     break;
 

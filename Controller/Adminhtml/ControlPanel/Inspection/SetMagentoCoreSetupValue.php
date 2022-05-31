@@ -14,6 +14,7 @@ class SetMagentoCoreSetupValue extends Main
 {
     /** @var \Magento\Framework\Module\ModuleResource $moduleResource */
     protected $moduleResource;
+
     /** @var \Ess\M2ePro\Helper\View\ControlPanel */
     protected $controlPanelHelper;
 
@@ -36,11 +37,11 @@ class SetMagentoCoreSetupValue extends Main
         }
 
         $version = str_replace(',', '.', $version);
-        if (!version_compare(\Ess\M2ePro\Setup\UpgradeData::MIN_SUPPORTED_VERSION_FOR_UPGRADE, $version, '<=')) {
+        if (!version_compare(\Ess\M2ePro\Model\Setup\Upgrader::MIN_SUPPORTED_VERSION_FOR_UPGRADE, $version, '<=')) {
             $this->messageManager->addError(
                 sprintf(
                     'Extension upgrade can work only from %s version.',
-                    \Ess\M2ePro\Setup\UpgradeData::MIN_SUPPORTED_VERSION_FOR_UPGRADE
+                    \Ess\M2ePro\Model\Setup\Upgrader::MIN_SUPPORTED_VERSION_FOR_UPGRADE
                 )
             );
             return $this->_redirect($this->controlPanelHelper->getPageUrl());

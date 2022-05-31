@@ -38,9 +38,6 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Template\Synchronization\ChangeP
     const INSTRUCTION_TYPE_REVISE_PARTS_ENABLED          = 'template_synchronization_revise_parts_enabled';
     const INSTRUCTION_TYPE_REVISE_PARTS_DISABLED         = 'template_synchronization_revise_parts_disabled';
 
-    const INSTRUCTION_TYPE_REVISE_PAYMENT_ENABLED        = 'template_synchronization_revise_payment_enabled';
-    const INSTRUCTION_TYPE_REVISE_PAYMENT_DISABLED       = 'template_synchronization_revise_payment_disabled';
-
     const INSTRUCTION_TYPE_REVISE_SHIPPING_ENABLED       = 'template_synchronization_revise_shipping_enabled';
     const INSTRUCTION_TYPE_REVISE_SHIPPING_DISABLED      = 'template_synchronization_revise_shipping_disabled';
 
@@ -169,20 +166,6 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Template\Synchronization\ChangeP
         } elseif ($diff->isRevisePartsDisabled()) {
             $data[] = [
                 'type'      => self::INSTRUCTION_TYPE_REVISE_PARTS_DISABLED,
-                'priority'  => 5,
-            ];
-        }
-
-        //----------------------------------------
-
-        if ($diff->isRevisePaymentEnabled()) {
-            $data[] = [
-                'type'      => self::INSTRUCTION_TYPE_REVISE_PAYMENT_ENABLED,
-                'priority'  => $status === \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED ? 30 : 5,
-            ];
-        } elseif ($diff->isRevisePaymentDisabled()) {
-            $data[] = [
-                'type'      => self::INSTRUCTION_TYPE_REVISE_PAYMENT_DISABLED,
                 'priority'  => 5,
             ];
         }

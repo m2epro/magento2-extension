@@ -224,13 +224,13 @@ class Walmart extends AbstractFeature
             ->addColumn(
                 'product_data',
                 Table::TYPE_TEXT,
-                \Ess\M2ePro\Setup\InstallSchema::LONG_COLUMN_SIZE,
+                \Ess\M2ePro\Model\Setup\Installer::LONG_COLUMN_SIZE,
                 ['default' => null]
             )
             ->addColumn(
                 'tax_codes',
                 Table::TYPE_TEXT,
-                \Ess\M2ePro\Setup\InstallSchema::LONG_COLUMN_SIZE,
+                \Ess\M2ePro\Model\Setup\Installer::LONG_COLUMN_SIZE,
                 ['nullable' => true]
             )
             ->addIndex('marketplace_id', 'marketplace_id')
@@ -903,7 +903,7 @@ class Walmart extends AbstractFeature
             ->addColumn(
                 'request_data',
                 Table::TYPE_TEXT,
-                \Ess\M2ePro\Setup\InstallSchema::LONG_COLUMN_SIZE,
+                \Ess\M2ePro\Model\Setup\Installer::LONG_COLUMN_SIZE,
                 ['nullable' => false]
             )
             ->addColumn(

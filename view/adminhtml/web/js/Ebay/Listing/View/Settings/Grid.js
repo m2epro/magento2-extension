@@ -55,11 +55,6 @@ define([
                         M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_SYNCHRONIZATION')
                     );
                 }.bind(this),
-                editPaymentSettingsAction: function(id) {
-                    this.editSettings(id,
-                        M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_PAYMENT')
-                    );
-                }.bind(this),
                 editShippingSettingsAction: function(id) {
                     this.editSettings(id,
                         M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_SHIPPING')
@@ -250,9 +245,6 @@ define([
             templatesNames[
                 M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_RETURN_POLICY')
             ] = M2ePro.translator.translate('Edit Return Policy Setting');
-            templatesNames[
-                M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_PAYMENT')
-            ] = M2ePro.translator.translate('Edit Payment Policy Setting');
             templatesNames[
                 M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_SHIPPING')
             ] = M2ePro.translator.translate('Edit Shipping Policy Setting');

@@ -285,16 +285,6 @@ class Active extends AbstractModel
             }
         }
 
-        if ($this->input->hasInstructionWithTypes($this->getRevisePaymentInstructionTypes())) {
-            if ($this->isMeetRevisePaymentRequirements()) {
-                $configurator->allowPayment();
-                $tags['payment'] = true;
-            } else {
-                $configurator->disallowPayment();
-                unset($tags['payment']);
-            }
-        }
-
         if ($this->input->hasInstructionWithTypes($this->getReviseReturnInstructionTypes())) {
             if ($this->isMeetReviseReturnRequirements()) {
                 $configurator->allowReturn();
@@ -700,36 +690,6 @@ class Active extends AbstractModel
         $actionDataBuilder->setListingProduct($listingProduct);
 
         if ($actionDataBuilder->getHash() == $ebayListingProduct->getData('online_parts_data')) {
-            return false;
-        }
-
-        return true;
-    }
-
-    // ---------------------------------------
-
-    public function isMeetRevisePaymentRequirements()
-    {
-        $listingProduct = $this->input->getListingProduct();
-
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct = $listingProduct->getChildObject();
-
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdatePayment()) {
-            return false;
-        }
-
-        $actionDataBuilder = $this->modelFactory->getObject('Ebay_Listing_Product_Action_DataBuilder_Payment');
-        $actionDataBuilder->setListingProduct($listingProduct);
-
-        $hashReturnData = $this->getHelper('Data')->hashString(
-            $this->getHelper('Data')->jsonEncode($actionDataBuilder->getBuilderData()),
-            'md5'
-        );
-
-        if ($hashReturnData == $ebayListingProduct->getOnlinePaymentData()) {
             return false;
         }
 

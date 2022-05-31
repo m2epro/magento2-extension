@@ -617,21 +617,6 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         return $data;
     }
 
-    protected function appendPaymentValues($data)
-    {
-        $requestMetadata = $this->getRequestMetaData();
-        if (!isset($requestMetadata['payment_data'])) {
-            return $data;
-        }
-
-        $data['online_payment_data'] = $this->getHelper('Data')->hashString(
-            $this->getHelper('Data')->jsonEncode($requestMetadata['payment_data']),
-            'md5'
-        );
-
-        return $data;
-    }
-
     protected function appendShippingValues($data)
     {
         $requestMetadata = $this->getRequestMetaData();
@@ -758,15 +743,6 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             $instructions[] = [
                 'listing_product_id' => $this->getListingProduct()->getId(),
                 'type'               => ChangeProcessor::INSTRUCTION_TYPE_SHIPPING_DATA_CHANGED,
-                'initiator'          => self::INSTRUCTION_INITIATOR,
-                'priority'           => 60
-            ];
-        }
-
-        if ($this->getConfigurator()->isPaymentAllowed()) {
-            $instructions[] = [
-                'listing_product_id' => $this->getListingProduct()->getId(),
-                'type'               => ChangeProcessor::INSTRUCTION_TYPE_PAYMENT_DATA_CHANGED,
                 'initiator'          => self::INSTRUCTION_INITIATOR,
                 'priority'           => 60
             ];

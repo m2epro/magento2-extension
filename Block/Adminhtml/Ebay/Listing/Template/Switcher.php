@@ -43,9 +43,6 @@ class Switcher extends AbstractBlock
         $title = '';
 
         switch ($this->getTemplateNick()) {
-            case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT:
-                $title = $this->__('Payment');
-                break;
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING:
                 $title = $this->__('Shipping');
                 break;
@@ -73,7 +70,6 @@ class Switcher extends AbstractBlock
         switch ($this->getTemplateNick()) {
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY:
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING:
-            case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT:
                 $width = 100;
                 break;
 
@@ -172,9 +168,6 @@ class Switcher extends AbstractBlock
         $blockName = null;
 
         switch ($this->getTemplateNick()) {
-            case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT:
-                $blockName = 'Ess\M2ePro\Block\Adminhtml\Ebay\Template\Payment\Edit\Form\Data';
-                break;
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY:
                 $blockName = 'Ess\M2ePro\Block\Adminhtml\Ebay\Template\ReturnPolicy\Edit\Form\Data';
                 break;

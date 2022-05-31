@@ -33,7 +33,6 @@ class RemoveUnused extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->removeUnusedTemplates(\Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SYNCHRONIZATION);
         $this->removeUnusedTemplates(\Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT);
         $this->removeUnusedTemplates(\Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION);
-        $this->removeUnusedTemplates(\Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT);
         $this->removeUnusedTemplates(\Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING);
         $this->removeUnusedTemplates(\Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY);
 

@@ -163,7 +163,6 @@ class Analytics extends \Ess\M2ePro\Model\Servicing\Task
                 'Template_Description',
                 'Template_SellingFormat',
                 'Ebay_Template_ReturnPolicy',
-                'Ebay_Template_Payment',
                 'Ebay_Template_Shipping',
                 'Ebay_Template_Category',
             ],

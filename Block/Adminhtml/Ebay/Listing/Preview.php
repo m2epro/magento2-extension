@@ -880,33 +880,6 @@ JS
         return $services;
     }
 
-    public function getPayment()
-    {
-        $data = [];
-
-        if ($this->ebayListingProduct->getPaymentTemplate()->isPayPalEnabled()) {
-            $data['paypal'] = true;
-        }
-
-        $services = $this->ebayListingProduct->getPaymentTemplate()->getServices(true);
-        $paymentMethodsInfo = $this->ebayListingProduct->getMarketplace()->getChildObject()->getPaymentInfo();
-
-        $paymentMethods = [];
-        foreach ($services as $service) {
-            /** @var $service \Ess\M2ePro\Model\Ebay\Template\Payment\Service */
-
-            foreach ($paymentMethodsInfo as $paymentMethodInfo) {
-                if ($service->getCodeName() == $paymentMethodInfo['ebay_id']) {
-                    $paymentMethods[] = $paymentMethodInfo['title'];
-                }
-            }
-        }
-
-        $data['paymentMethods'] = $paymentMethods;
-
-        return $data;
-    }
-
     public function getShippingExcludedLocations()
     {
         $locations = [];

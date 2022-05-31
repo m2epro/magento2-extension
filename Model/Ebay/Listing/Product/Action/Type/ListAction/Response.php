@@ -47,7 +47,6 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $data = $this->appendImagesValues($data);
         $data = $this->appendCategoriesValues($data);
         $data = $this->appendPartsValues($data);
-        $data = $this->appendPaymentValues($data);
         $data = $this->appendShippingValues($data);
         $data = $this->appendReturnValues($data);
         $data = $this->appendOtherValues($data);

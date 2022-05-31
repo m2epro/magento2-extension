@@ -213,6 +213,7 @@ class Config extends AbstractConfig
             'y22_m05' => [
                 'AmazonOrderCancellationNewFlow',
                 'DropListingColumns',
+                'RemoveEbayPayment',
                 'AddFeeColumnForEbayOrder'
             ],
         ];
