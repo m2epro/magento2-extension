@@ -85,7 +85,7 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
             ListingProduct::STATUS_NOT_LISTED => $this->moduleTranslation->__('Not Listed'),
             ListingProduct::STATUS_LISTED     => $this->moduleTranslation->__('Active'),
             ListingProduct::STATUS_STOPPED    => $this->moduleTranslation->__('Inactive'),
-            ListingProduct::STATUS_BLOCKED    => $this->moduleTranslation->__('Inactive (Blocked)')
+            ListingProduct::STATUS_BLOCKED    => $this->moduleTranslation->__('Incomplete')
         ];
 
         if (!isset($statuses[$status])) {

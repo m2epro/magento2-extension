@@ -1183,9 +1183,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         $listingProduct = $this->getParentObject()->addProduct(
             $sourceListingProduct->getProductId(),
-            \Ess\M2ePro\Helper\Data::INITIATOR_USER,
-            false,
-            false
+            \Ess\M2ePro\Helper\Data::INITIATOR_USER
         );
 
         /** @var \Ess\M2ePro\Model\Listing\Log $logModel */
@@ -1213,37 +1211,6 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
             );
 
-            $listingProduct->getChildObject()->setData(
-                'general_id',
-                $sourceListingProduct->getChildObject()->getGeneralId()
-            );
-
-            $listingProduct->getChildObject()->setData(
-                'is_general_id_owner',
-                $sourceListingProduct->getChildObject()->isGeneralIdOwner()
-            );
-
-            $sourceAdditionalData = $sourceListingProduct->getSettings('additional_data');
-            $additionalData = $listingProduct->getSettings('additional_data');
-            $keys = [
-                'variation_product_attributes',
-                'variation_virtual_channel_attributes',
-                'variation_channel_variations',
-                'variation_channel_attributes_sets',
-                'variation_virtual_product_attributes',
-                'variation_matched_attributes'
-            ];
-
-            foreach ($keys as $key) {
-                if (!isset($sourceAdditionalData[$key])) {
-                    continue;
-                }
-
-                $additionalData[$key] = $sourceAdditionalData[$key];
-            }
-
-            $listingProduct->setSettings('additional_data', $additionalData);
-
             if ($sourceListing->getMarketplaceId() == $this->getParentObject()->getMarketplaceId()) {
                 $listingProduct->getChildObject()->setData(
                     'template_description_id',
@@ -1261,7 +1228,6 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
             // @codingStandardsIgnoreLine
             $listingProduct->getChildObject()->save();
-            $listingProduct->save();
 
             return $listingProduct;
         }

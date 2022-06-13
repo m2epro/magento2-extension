@@ -148,7 +148,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Active'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Inactive'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Inactive (Blocked)')
+                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Incomplete')
             ],
             'frame_callback' => [$this, 'callbackColumnStatus'],
             'filter_condition_callback' => [$this, 'callbackFilterStatus']
@@ -561,7 +561,7 @@ HTML;
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:
                 return'<span style="color: orange; font-weight: bold;">' .
-                $this->__('Inactive (Blocked)') . '</span>';
+                $this->__('Incomplete') . '</span>';
         }
 
         return '';

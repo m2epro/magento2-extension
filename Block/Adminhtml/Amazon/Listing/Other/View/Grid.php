@@ -166,7 +166,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN => $this->__('Unknown'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Active'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Inactive'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Inactive (Blocked)')
+                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Incomplete')
             ],
             'frame_callback' => [$this, 'callbackColumnStatus']
         ]);

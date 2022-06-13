@@ -88,7 +88,7 @@ class AmazonStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Abstrac
             ],
             [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
-                'label' => $helper->__('Inactive (Blocked)'),
+                'label' => $helper->__('Incomplete'),
             ],
         ];
     }

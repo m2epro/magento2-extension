@@ -190,7 +190,7 @@ HTML;
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:
                 return'<span style="color: orange; font-weight: bold;">' .
-                    $translator->__('Inactive (Blocked)') . '</span>';
+                    $translator->__('Incomplete') . '</span>';
         }
 
         return '';

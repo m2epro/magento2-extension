@@ -87,7 +87,7 @@ class WalmartStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Abstra
             ],
             [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
-                'label' => $this->helperFactory->getObject('Module\Translation')->__('Inactive (Blocked)'),
+                'label' => $this->helperFactory->getObject('Module\Translation')->__('Incomplete'),
             ],
         ];
     }

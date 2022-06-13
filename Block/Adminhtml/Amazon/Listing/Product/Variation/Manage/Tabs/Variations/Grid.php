@@ -257,7 +257,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Active'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Inactive'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Inactive (Blocked)')
+                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Incomplete')
             ],
             'is_variation_grid' => true,
             'renderer' => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Status',

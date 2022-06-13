@@ -902,7 +902,7 @@ HTML;
     {
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager $variationManager */
         $variationManager = $this->getVariationManager();
-        if (!$variationManager->isVariationProduct()) {
+        if (!$variationManager->isRelationParentType()) {
             return;
         }
 

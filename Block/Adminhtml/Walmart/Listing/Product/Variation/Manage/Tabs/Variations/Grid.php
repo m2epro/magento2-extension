@@ -216,7 +216,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Active'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Inactive'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Inactive (Blocked)')
+                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Incomplete')
             ],
             'is_variation_grid' => true,
             'renderer' => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Status',
@@ -276,7 +276,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->getMassactionBlock()->addItem('resetProducts', [
-            'label'    => $this->__('Reset Inactive (Blocked) Item(s)'),
+            'label'    => $this->__('Reset Incomplete Item(s)'),
             'url'      => ''
         ], 'other');
 

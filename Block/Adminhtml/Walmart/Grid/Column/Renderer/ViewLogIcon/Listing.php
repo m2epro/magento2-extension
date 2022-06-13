@@ -25,7 +25,7 @@ class Listing extends \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewLogIc
                 Log::ACTION_DELETE_PRODUCT_FROM_COMPONENT => $translator->__('Remove from Channel'),
                 Log::ACTION_DELETE_AND_REMOVE_PRODUCT     => $translator->__('Remove from Channel & Listing'),
                 Log::ACTION_DELETE_PRODUCT_FROM_LISTING   => $translator->__('Remove from Listing'),
-                Log::ACTION_RESET_BLOCKED_PRODUCT         => $translator->__('Reset Inactive (Blocked) Item'),
+                Log::ACTION_RESET_BLOCKED_PRODUCT         => $translator->__('Reset Incomplete Item'),
                 Log::ACTION_SWITCH_TO_AFN_ON_COMPONENT    => $translator->__('Switch to AFN'),
                 Log::ACTION_SWITCH_TO_MFN_ON_COMPONENT    => $translator->__('Switch to MFN')
             ];

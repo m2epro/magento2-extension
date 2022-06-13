@@ -24,10 +24,10 @@ class PerformanceNotes extends AbstractBlock
             'no_hide' => true,
             'content' => $this->__(
                 <<<HTML
-Find useful tips on how to optimize your Module work in <a target="_blank" href="%url">this article</a>.
+Find useful tips on how to optimize your Module work in <a target="_blank" href="%url%">this article</a>.
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/CgAW')
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/PX39')
             )
         ]]);
         return $helpBlock->toHtml() . parent::_toHtml();

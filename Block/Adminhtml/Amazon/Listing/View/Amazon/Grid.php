@@ -293,7 +293,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Active'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Inactive'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Inactive (Blocked)')
+                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Incomplete')
             ],
             'frame_callback' => [$this, 'callbackColumnStatus'],
             'filter_condition_callback' => [$this, 'callbackFilterStatus']

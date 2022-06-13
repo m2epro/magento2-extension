@@ -289,7 +289,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $deletingAndRemovingSelectedItemsMessage = $this->__('Removing From Walmart And Listing Selected Items');
         $removingSelectedItemsMessage = $this->__('Removing From Listing Selected Items');
 
-        $resetBlockedProductsMessage = $this->__('Reset Inactive (Blocked) Items');
+        $resetBlockedProductsMessage = $this->__('Reset Incomplete Items');
 
         $selectItemsMessage = $this->__('Please select the Products you want to perform the Action on.');
         $selectActionMessage = $this->__('Please select Action.');

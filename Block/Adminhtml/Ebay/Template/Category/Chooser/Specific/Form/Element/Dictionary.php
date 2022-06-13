@@ -252,6 +252,10 @@ HTML;
             $customValues = $this->getHelperData()->jsonDecode($specific['template_specific']['value_custom_value']);
         }
 
+        if (!is_array($customValues)) {
+            $customValues = [''];
+        }
+
         $display = 'display: none;';
         $disabled = true;
         if (isset($specific['template_specific']['value_mode']) &&

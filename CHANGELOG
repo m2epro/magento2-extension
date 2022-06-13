@@ -1,4 +1,16 @@
-* 1.23.0 (31/05/2022) 
+* 1.23.1 (13/06/2022) 
+
+Common: [Fixed] Article link in the Performance Notes tab under the Developers/Administrators Area [#3658]
+Common: [Fixed] Log type was not updated from "Channel Change" to "External Change" for Products in M2E Pro Listing [#3455]
+Common: [Fixed] Magento order cannot be created automatically due to missing Last Name [#3663]
+Common: [Fixed] Warning "Parameter must be an array or an object that implements Countable" at the step of selecting an item's category and adding it to M2E Pro Listing (PHP v7.4) [#3424]
+eBay: [Fixed] Multi-variation listings were disabled for some supported eBay categories [#3429]
+Amazon: [Fixed] Product is added to M2E Pro Listing with incorrect ASIN/ISBN when using the "Sell on another Marketplace" feature [#3503]
+Amazon: [Improved] "Inactive/Blocked" product status replaced with "Incomplete" [#3657]
+Walmart: [Fixed] Server error appears at the step of configuring an Unmanaged item and moving it to M2E Pro Listing [#3652]
+Walmart: [Improved] "Inactive/Blocked" product status replaced with "Incomplete" [#3657]
+
+* 1.23.0 (31/05/2022)
 
 Common: [Added] Possibility to disable import of Ship by date to Magento orders [#3504]
 Common: [Added] M2E Pro compatibility with PHP 8.1 and Magento 2.4.4 on PHP 8.1 [#3637]
