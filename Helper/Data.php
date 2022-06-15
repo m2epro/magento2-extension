@@ -333,11 +333,26 @@ class Data extends AbstractHelper
         return $data;
     }
 
-    public function reduceWordsInString($string, $neededLength, $longWord = 6, $minWordLen = 2, $atEndOfWord = '.')
-    {
+    /**
+     * @param string $string
+     * @param int $neededLength
+     * @param int $longWord
+     * @param int $minWordLen
+     * @param int $atEndOfWord
+     *
+     * @return string
+     */
+    public function reduceWordsInString(
+        $string,
+        $neededLength,
+        $longWord = 6,
+        $minWordLen = 2,
+        $atEndOfWord = '.'
+    ) {
         $oldEncoding = mb_internal_encoding();
         mb_internal_encoding('UTF-8');
 
+        $string = (string)$string;
         if (mb_strlen($string) <= $neededLength) {
             mb_internal_encoding($oldEncoding);
             return $string;
@@ -345,7 +360,7 @@ class Data extends AbstractHelper
 
         $longWords = [];
         foreach (explode(' ', $string) as $word) {
-            if (mb_strlen($word) >= $longWord && !preg_match('/[0-9]/', $word)) {
+            if (mb_strlen($word) >= $longWord && !preg_match('/\d/', $word)) {
                 $longWords[$word] = mb_strlen($word) - $minWordLen;
             }
         }
@@ -781,6 +796,11 @@ class Data extends AbstractHelper
 
     //########################################
 
+    /**
+     * @param string $string
+     *
+     * @return bool
+     */
     public function isISBN($string)
     {
         return $this->isISBN10($string) || $this->isISBN13($string);
@@ -788,60 +808,85 @@ class Data extends AbstractHelper
 
     // ---------------------------------------
 
+    /**
+     * @param string $string
+     *
+     * @return bool
+     */
     public function isISBN10($string)
     {
-        if (strlen($string) != 10) {
+        $string = (string)$string;
+        if (strlen($string) !== 10) {
             return false;
         }
 
         $a = 0;
-        $string = (string)$string;
-
         for ($i = 0; $i < 10; $i++) {
-            if ($string[$i] == "X" || $string[$i] == "x") {
-                $a += 10 * intval(10 - $i);
+            if ($string[$i] === "X" || $string[$i] === "x") {
+                $a += 10 * 10 - $i;
             } elseif (is_numeric($string[$i])) {
-                $a += intval($string[$i]) * intval(10 - $i);
+                $a += (int)$string[$i] * 10 - $i;
             } else {
                 return false;
             }
         }
-        return ($a % 11 == 0);
+        return $a % 11 === 0;
     }
 
+    /**
+     * @param string $string
+     *
+     * @return bool
+     */
     public function isISBN13($string)
     {
-        if (strlen($string) != 13) {
+        $string = (string)$string;
+        if (strlen($string) !== 13) {
             return false;
         }
 
-        if (substr($string, 0, 3) != '978') {
+        if (strpos($string, '978') !== 0) {
             return false;
         }
 
         $check = 0;
         for ($i = 0; $i < 13; $i += 2) {
-            $check += (int)substr($string, $i, 1);
+            $check += (int)$string[$i];
         }
         for ($i = 1; $i < 12; $i += 2) {
-            $check += 3 * substr($string, $i, 1);
+            $check += 3 * $string[$i];
         }
 
-        return $check % 10 == 0;
+        return $check % 10 === 0;
     }
 
     //########################################
 
+    /**
+     * @param string $gtin
+     *
+     * @return bool
+     */
     public function isGTIN($gtin)
     {
         return $this->isWorldWideId($gtin, 'GTIN');
     }
 
+    /**
+     * @param string $upc
+     *
+     * @return bool
+     */
     public function isUPC($upc)
     {
         return $this->isWorldWideId($upc, 'UPC');
     }
 
+    /**
+     * @param string $ean
+     *
+     * @return bool
+     */
     public function isEAN($ean)
     {
         return $this->isWorldWideId($ean, 'EAN');
@@ -849,25 +894,31 @@ class Data extends AbstractHelper
 
     // ---------------------------------------
 
+    /**
+     * @param string $worldWideId
+     * @param string $type
+     *
+     * @return bool
+     */
     private function isWorldWideId($worldWideId, $type)
     {
         $adapters = [
             'UPC' => [
-                '12' => 'Upca'
+                12 => 'Upca'
             ],
             'EAN' => [
-                '13' => 'Ean13'
+                13 => 'Ean13'
             ],
             'GTIN' => [
-                '12' => 'Gtin12',
-                '13' => 'Gtin13',
-                '14' => 'Gtin14'
+                12 => 'Gtin12',
+                13 => 'Gtin13',
+                14 => 'Gtin14'
             ]
         ];
 
-        $length = strlen($worldWideId);
+        $length = strlen((string)$worldWideId);
 
-        if (!isset($adapters[$type], $adapters[$type][$length])) {
+        if (!isset($adapters[$type][$length])) {
             return false;
         }
 

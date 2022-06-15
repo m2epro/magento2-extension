@@ -17,7 +17,7 @@ class PartialReviseBySpecifics extends AbstractFeature
     public function execute()
     {
         $this->getTableModifier('ebay_template_synchronization')
-             ->addColumn('revise_update_specifics', 'SMALLINT(4) UNSIGNED NOT NULL', NULL, 'revise_update_images');
+             ->addColumn('revise_update_specifics', 'SMALLINT UNSIGNED NOT NULL', NULL, 'revise_update_images');
     }
 
     //########################################

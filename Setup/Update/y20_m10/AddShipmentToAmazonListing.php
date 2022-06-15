@@ -17,7 +17,7 @@ class AddShipmentToAmazonListing extends AbstractFeature
             $this->getTableModifier('amazon_listing')
                 ->addColumn(
                     'template_shipping_id',
-                    'INT(11) UNSIGNED DEFAULT NULL',
+                    'INT UNSIGNED DEFAULT NULL',
                     null,
                     'template_synchronization_id',
                     true

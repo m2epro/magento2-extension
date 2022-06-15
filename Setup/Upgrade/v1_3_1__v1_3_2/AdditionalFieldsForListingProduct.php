@@ -17,7 +17,7 @@ class AdditionalFieldsForListingProduct extends AbstractFeature
     public function execute()
     {
         $this->getTableModifier("ebay_listing_product")
-             ->addColumn("online_is_variation", "SMALLINT(5) UNSIGNED", "NULL", "is_duplicate", true);
+             ->addColumn("online_is_variation", "SMALLINT UNSIGNED", "NULL", "is_duplicate", true);
 
         $mainTableName      = $this->getFullTableName("ebay_listing_product");
         $productTableName   = $this->getFullTableName("listing_product");
@@ -61,7 +61,7 @@ SQL
         // ---------------------------------------
 
         $this->getTableModifier("ebay_listing_product")
-             ->addColumn("online_is_auction_type", "SMALLINT(5) UNSIGNED", "NULL", "online_is_variation", true);
+             ->addColumn("online_is_auction_type", "SMALLINT UNSIGNED", "NULL", "online_is_variation", true);
 
         for ($i = 0, $step = 1000 ;; $i++) {
 

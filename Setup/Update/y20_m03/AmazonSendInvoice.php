@@ -30,14 +30,14 @@ class AmazonSendInvoice extends AbstractFeature
             ->commit();
 
         $this->getTableModifier('amazon_order')
-            ->addColumn('is_invoice_sent', 'smallint(5) UNSIGNED NOT NULL', '0', 'status', true, false)
-            ->addColumn('is_credit_memo_sent', 'smallint(5) UNSIGNED NOT NULL', '0', 'is_invoice_sent', true, false)
+            ->addColumn('is_invoice_sent', 'smallint UNSIGNED NOT NULL', '0', 'status', true, false)
+            ->addColumn('is_credit_memo_sent', 'smallint UNSIGNED NOT NULL', '0', 'is_invoice_sent', true, false)
             ->commit();
 
         $this->getTableModifier('amazon_marketplace')
             ->addColumn(
                 'is_upload_invoices_available',
-                'smallint(5) UNSIGNED NOT NULL',
+                'smallint UNSIGNED NOT NULL',
                 '0',
                 'is_automatic_token_retrieving_available',
                 true,

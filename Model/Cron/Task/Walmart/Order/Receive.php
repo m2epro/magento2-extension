@@ -153,7 +153,7 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $orders[] = $responseData['items'];
             $breakDate = $fromDate;
 
-            if ($this->getHelper('Module')->isTestingManualEnvironment()) {
+            if ($fromDate > $toDate) {
                 break;
             }
         } while (!empty($responseData['items']));

@@ -1974,7 +1974,7 @@ class Walmart extends AbstractFeature
             ->addColumn(
                 'template_selling_format_id',
                 Table::TYPE_INTEGER,
-                11,
+                null,
                 ['unsigned'  => true, 'nullable'  => false]
             )
             ->addColumn(

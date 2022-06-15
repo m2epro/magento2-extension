@@ -21,7 +21,7 @@ class EbayManagedPayments extends AbstractFeature
     {
         $this->getTableModifier('ebay_template_payment')->addColumn(
             'managed_payments_mode',
-            'TINYINT(2) UNSIGNED NOT NULL',
+            'TINYINT UNSIGNED NOT NULL',
             '0',
             'is_custom_template'
         );
@@ -34,7 +34,7 @@ class EbayManagedPayments extends AbstractFeature
 
         $tableModifier->addColumn(
             'is_managed_payments',
-            'TINYINT(2) UNSIGNED NOT NULL',
+            'TINYINT UNSIGNED NOT NULL',
             '0',
             'is_metric_measurement_system',
             true

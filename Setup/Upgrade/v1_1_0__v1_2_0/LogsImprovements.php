@@ -159,12 +159,12 @@ class LogsImprovements extends AbstractFeature
 
     protected function processModifyActionId($tableName)
     {
-        $this->getTableModifier($tableName)->changeColumn('action_id', 'INT(10) UNSIGNED NOT NULL');
+        $this->getTableModifier($tableName)->changeColumn('action_id', 'INT UNSIGNED NOT NULL');
     }
 
     protected function processModifyEntityId($tableName, $entityIdField)
     {
-        $this->getTableModifier($tableName)->changeColumn($entityIdField, 'INT(10) UNSIGNED NOT NULL');
+        $this->getTableModifier($tableName)->changeColumn($entityIdField, 'INT UNSIGNED NOT NULL');
     }
 
     protected function processIndex($tableName)
@@ -175,8 +175,8 @@ class LogsImprovements extends AbstractFeature
     protected function processColumns($tableName, $entityTableName, $entityIdField)
     {
         $this->getTableModifier($tableName)
-            ->addColumn('account_id', 'INT(10) UNSIGNED NOT NULL', NULL, 'id', true, false)
-            ->addColumn('marketplace_id', 'INT(10) UNSIGNED NOT NULL', NULL, 'account_id', true, false)
+            ->addColumn('account_id', 'INT UNSIGNED NOT NULL', NULL, 'id', true, false)
+            ->addColumn('marketplace_id', 'INT UNSIGNED NOT NULL', NULL, 'account_id', true, false)
             ->commit();
 
         $table = $this->getFullTableName($tableName);

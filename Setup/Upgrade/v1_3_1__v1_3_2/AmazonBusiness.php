@@ -23,15 +23,15 @@ class AmazonBusiness extends AbstractFeature
 
         $this->getTableModifier('amazon_marketplace')
             ->addColumn(
-                'is_business_available', 'SMALLINT(5) UNSIGNED NOT NULL', 0,
+                'is_business_available', 'SMALLINT UNSIGNED NOT NULL', 0,
                 'is_merchant_fulfillment_available', true, false
             )
             ->addColumn(
-                'is_vat_calculation_service_available', 'SMALLINT(5) UNSIGNED NOT NULL', 0,
+                'is_vat_calculation_service_available', 'SMALLINT UNSIGNED NOT NULL', 0,
                 'is_business_available', true, false
             )
             ->addColumn(
-                'is_product_tax_code_policy_available', 'SMALLINT(5) UNSIGNED NOT NULL', 0,
+                'is_product_tax_code_policy_available', 'SMALLINT UNSIGNED NOT NULL', 0,
                 'is_vat_calculation_service_available', true, false
             )
             ->commit();
@@ -56,11 +56,11 @@ class AmazonBusiness extends AbstractFeature
 
         $this->getTableModifier('amazon_account')
             ->addColumn(
-                'is_vat_calculation_service_enabled', 'SMALLINT(5) UNSIGNED NOT NULL', 0,
+                'is_vat_calculation_service_enabled', 'SMALLINT UNSIGNED NOT NULL', 0,
                 'magento_orders_settings', false, false
             )
             ->addColumn(
-                'is_magento_invoice_creation_disabled', 'SMALLINT(5) UNSIGNED NOT NULL', 0,
+                'is_magento_invoice_creation_disabled', 'SMALLINT UNSIGNED NOT NULL', 0,
                 'is_vat_calculation_service_enabled', false, false
             )
             ->commit();
@@ -231,7 +231,7 @@ class AmazonBusiness extends AbstractFeature
                 'online_sale_price_end_date', 'online_regular_sale_price_end_date', false, false
             )
             ->addColumn(
-                'template_product_tax_code_id', 'INT(10) UNSIGNED', 'NULL', 'template_shipping_override_id', true, false
+                'template_product_tax_code_id', 'INT UNSIGNED', 'NULL', 'template_shipping_override_id', true, false
             )
             ->addColumn(
                 'online_business_price', 'DECIMAL(12, 4)', 'NULL', 'online_regular_sale_price_end_date', true, false
@@ -293,14 +293,14 @@ class AmazonBusiness extends AbstractFeature
                 'price_vat_percent', 'regular_price_vat_percent', false, false
             )
             ->addColumn(
-                'is_regular_customer_allowed', 'SMALLINT(5) UNSIGNED NOT NULL', 1, 'qty_max_posted_value', false, false
+                'is_regular_customer_allowed', 'SMALLINT UNSIGNED NOT NULL', 1, 'qty_max_posted_value', false, false
             )
             ->addColumn(
-                'is_business_customer_allowed', 'SMALLINT(5) UNSIGNED NOT NULL', 0,
+                'is_business_customer_allowed', 'SMALLINT UNSIGNED NOT NULL', 0,
                 'is_regular_customer_allowed', false, false
             )
             ->addColumn(
-                'business_price_mode', 'SMALLINT(5) UNSIGNED NOT NULL', NULL, 'regular_price_vat_percent', false, false
+                'business_price_mode', 'SMALLINT UNSIGNED NOT NULL', NULL, 'regular_price_vat_percent', false, false
             )
             ->addColumn(
                 'business_price_custom_attribute', 'VARCHAR(255) NOT NULL', NULL, 'business_price_mode', false, false
@@ -310,14 +310,14 @@ class AmazonBusiness extends AbstractFeature
                 'business_price_custom_attribute', false, false
             )
             ->addColumn(
-                'business_price_variation_mode', 'SMALLINT(5) UNSIGNED NOT NULL',
+                'business_price_variation_mode', 'SMALLINT UNSIGNED NOT NULL',
                 NULL, 'business_price_coefficient', false, false
             )
             ->addColumn(
                 'business_price_vat_percent', 'FLOAT', 'NULL', 'business_price_variation_mode', false, false
             )
             ->addColumn(
-                'business_discounts_mode', 'SMALLINT(5) UNSIGNED NOT NULL',
+                'business_discounts_mode', 'SMALLINT UNSIGNED NOT NULL',
                 NULL, 'business_price_vat_percent', false, false
             )
             ->addColumn(
@@ -325,7 +325,7 @@ class AmazonBusiness extends AbstractFeature
                 NULL, 'business_discounts_mode', false, false
             )
             ->addColumn(
-                'business_discounts_tier_customer_group_id', 'INT(10) UNSIGNED',
+                'business_discounts_tier_customer_group_id', 'INT UNSIGNED',
                 'NULL', 'business_discounts_tier_coefficient', false, false
             )
             ->dropIndex('price_variation_mode', false)
@@ -337,12 +337,12 @@ class AmazonBusiness extends AbstractFeature
         //########################################
 
         $this->getTableModifier('amazon_order')
-            ->addColumn('is_business', 'SMALLINT(5) UNSIGNED NOT NULL', '0', 'is_prime', true);
+            ->addColumn('is_business', 'SMALLINT UNSIGNED NOT NULL', '0', 'is_prime', true);
 
         //########################################
 
         $this->getTableModifier('amazon_template_synchronization')->addColumn(
-            'revise_change_product_tax_code_template', 'SMALLINT(5) UNSIGNED NOT NULL', NULL,
+            'revise_change_product_tax_code_template', 'SMALLINT UNSIGNED NOT NULL', NULL,
             'revise_change_shipping_template'
         );
 

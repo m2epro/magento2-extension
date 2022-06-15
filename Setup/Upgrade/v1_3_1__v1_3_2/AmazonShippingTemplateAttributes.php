@@ -24,7 +24,7 @@ class AmazonShippingTemplateAttributes extends AbstractFeature
                     'template_name', 'template_name_value', false, false
                 )
                 ->addColumn(
-                    'template_name_mode', 'SMALLINT(5) UNSIGNED NOT NULL', '0', 'title', false, false
+                    'template_name_mode', 'SMALLINT UNSIGNED NOT NULL', '0', 'title', false, false
                 )
                 ->addColumn(
                     'template_name_attribute', 'VARCHAR(255) NOT NULL', NULL, 'template_name_value', false, false

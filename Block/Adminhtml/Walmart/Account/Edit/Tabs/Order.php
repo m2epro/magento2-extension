@@ -550,9 +550,8 @@ HTML
                 ],
                 'value'   => $formData['magento_orders_settings']['status_mapping']['mode'],
                 'tooltip' => $this->__(
-                    'Set the correspondence between Walmart and Magento Order statuses.
-                    M2E Pro supports an automatic generation of Invoices and Shipments.
-                    Enable the options next to the related Order statuses.<br/>'
+                    'Set the correspondence between Walmart and Magento order statuses.
+                    The status of your Magento order will be updated based on these settings.'
                 )
             ]
         );

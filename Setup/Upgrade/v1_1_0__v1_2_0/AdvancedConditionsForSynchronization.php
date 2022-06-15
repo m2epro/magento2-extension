@@ -18,13 +18,13 @@ class AdvancedConditionsForSynchronization extends AbstractFeature
     {
         $this->getTableModifier('amazon_template_synchronization')
             ->addColumn(
-                'list_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'list_qty_calculated_value_max'
+                'list_advanced_rules_mode','SMALLINT UNSIGNED NOT NULL',NULL,'list_qty_calculated_value_max'
             )
             ->addColumn(
-                'relist_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'relist_qty_calculated_value_max'
+                'relist_advanced_rules_mode','SMALLINT UNSIGNED NOT NULL',NULL,'relist_qty_calculated_value_max'
             )
             ->addColumn(
-                'stop_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'stop_qty_calculated_value_max'
+                'stop_advanced_rules_mode','SMALLINT UNSIGNED NOT NULL',NULL,'stop_qty_calculated_value_max'
             )
             ->addColumn('list_advanced_rules_filters','TEXT',NULL,'list_advanced_rules_mode')
             ->addColumn('relist_advanced_rules_filters','TEXT',NULL,'relist_advanced_rules_mode')
@@ -32,13 +32,13 @@ class AdvancedConditionsForSynchronization extends AbstractFeature
 
         $this->getTableModifier('ebay_template_synchronization')
            ->addColumn(
-               'list_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'list_qty_calculated_value_max'
+               'list_advanced_rules_mode','SMALLINT UNSIGNED NOT NULL',NULL,'list_qty_calculated_value_max'
            )
            ->addColumn(
-               'relist_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'relist_qty_calculated_value_max'
+               'relist_advanced_rules_mode','SMALLINT UNSIGNED NOT NULL',NULL,'relist_qty_calculated_value_max'
            )
            ->addColumn(
-               'stop_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'stop_qty_calculated_value_max'
+               'stop_advanced_rules_mode','SMALLINT UNSIGNED NOT NULL',NULL,'stop_qty_calculated_value_max'
            )
            ->addColumn('list_advanced_rules_filters','TEXT',NULL,'list_advanced_rules_mode')
            ->addColumn('relist_advanced_rules_filters','TEXT',NULL,'relist_advanced_rules_mode')

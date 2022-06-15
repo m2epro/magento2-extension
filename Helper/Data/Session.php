@@ -43,10 +43,8 @@ class Session extends \Ess\M2ePro\Helper\AbstractHelper
         $return = [];
         $session = $this->session->getData();
 
-        $identifierLength = strlen(\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER);
-
         foreach ($session as $key => $value) {
-            if (substr($key, 0, $identifierLength) == \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER) {
+            if (strpos($key, \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER) === 0) {
                 $tempReturnedKey = substr($key, strlen(\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER)+1);
                 $return[$tempReturnedKey] = $this->session->getData($key);
             }
@@ -65,10 +63,9 @@ class Session extends \Ess\M2ePro\Helper\AbstractHelper
     public function removeAllValues()
     {
         $session = $this->session->getData();
-        $identifierLength = strlen(\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER);
 
         foreach ($session as $key => $value) {
-            if (substr($key, 0, $identifierLength) == \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER) {
+            if (strpos($key, \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER) === 0) {
                 $this->session->getData($key, true);
             }
         }

@@ -18,7 +18,7 @@ class PartialReviseByShippingServices extends AbstractFeature
     {
         $this->getTableModifier('ebay_template_synchronization')
              ->addColumn(
-                 'revise_update_shipping_services','SMALLINT(4) UNSIGNED NOT NULL',NULL,'revise_update_specifics'
+                 'revise_update_shipping_services','SMALLINT UNSIGNED NOT NULL',NULL,'revise_update_specifics'
              );
     }
 

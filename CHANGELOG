@@ -1,4 +1,11 @@
-* 1.23.1 (13/06/2022) 
+* 1.23.2 (15/06/2022) 
+
+Common: [Improved] Compatibility improvements with MySQL 8.0.19 and later [#2560]
+Common: [Improved] Compatibility improvements with PHP 8.1 [#3679]
+Common: [Improved] Some UI text updates [#3148]
+eBay: [Fixed] Uncaught Error: Call to a member function getIdentifierKey() on null in /home/germancarparts/public_html/vendor/m2epro/magento2-extension/Block/Adminhtml/Ebay/Listing/View/Settings/Motors/Add/Item/Grid.php:40 when trying to add Compatible Vehicles to products in M2E Pro Listing [#3680]
+
+* 1.23.1 (13/06/2022)
 
 Common: [Fixed] Article link in the Performance Notes tab under the Developers/Administrators Area [#3658]
 Common: [Fixed] Log type was not updated from "Channel Change" to "External Change" for Products in M2E Pro Listing [#3455]

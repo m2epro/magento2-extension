@@ -117,13 +117,19 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
+    /**
+     * @param string $sku
+     *
+     * @return bool
+     */
     private function checkSkuRequirements($sku)
     {
+        $sku = (string)$sku;
         if (strlen($sku) > \Ess\M2ePro\Helper\Component\Walmart::SKU_MAX_LENGTH) {
             return false;
         }
 
-        if ($this->isExistInM2ePro($sku, false)) {
+        if ($this->isExistInM2ePro($sku)) {
             return false;
         }
 

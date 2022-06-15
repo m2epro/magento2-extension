@@ -641,8 +641,8 @@ HTML
                 ],
                 'value'   => $formData['magento_orders_settings']['status_mapping']['mode'],
                 'tooltip' => $this->__(
-                    'Match stages in the eBay Order process to Order Statuses in Magento.
-                     You can also choose whether to create invoices and shipment notifications automatically.'
+                    'Set the correspondence between eBay and Magento order statuses.
+                    The status of your Magento order will be updated based on these settings.'
                 )
             ]
         );

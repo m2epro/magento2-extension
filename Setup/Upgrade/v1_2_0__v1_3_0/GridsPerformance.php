@@ -18,7 +18,7 @@ class GridsPerformance extends AbstractFeature
     public function execute()
     {
         $this->getTableModifier('amazon_listing_product')
-            ->addColumn('is_repricing', 'SMALLINT(5) UNSIGNED NOT NULL', 0, 'online_qty', true);
+            ->addColumn('is_repricing', 'SMALLINT UNSIGNED NOT NULL', 0, 'online_qty', true);
 
         //----------------------------------------
 

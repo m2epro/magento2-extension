@@ -21,19 +21,19 @@ class WalmartSynchAdvancedConditions extends AbstractFeature
         $this->getTableModifier('walmart_template_synchronization')
             ->addColumn(
                 'list_advanced_rules_mode',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 null,
                 'list_qty_calculated_value_max'
             )
             ->addColumn(
                 'relist_advanced_rules_mode',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 null,
                 'relist_qty_calculated_value_max'
             )
             ->addColumn(
                 'stop_advanced_rules_mode',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 null,
                 'stop_qty_calculated_value_max'
             )

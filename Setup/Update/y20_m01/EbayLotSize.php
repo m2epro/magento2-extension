@@ -17,7 +17,7 @@ class EbayLotSize extends AbstractFeature
         $this->getTableModifier('ebay_template_selling_format')
             ->addColumn(
                 'lot_size_mode',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 0,
                 'qty_max_posted_value',
                 false,
@@ -25,7 +25,7 @@ class EbayLotSize extends AbstractFeature
             )
             ->addColumn(
                 'lot_size_custom_value',
-                'INT(10) UNSIGNED',
+                'INT UNSIGNED',
                 'NULL',
                 'lot_size_mode',
                 false,

@@ -144,17 +144,19 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
+    /**
+     * @param string $string
+     *
+     * @return bool
+     */
     public function isASIN($string)
     {
-        if ($string === null) {
+        $string = (string)$string;
+        if (strlen($string) !== 10) {
             return false;
         }
 
-        if (strlen($string) != 10) {
-            return false;
-        }
-
-        if (!preg_match('/^B[A-Z0-9]{9}$/', $string)) {
+        if (!preg_match('/^B[A-Z\d]{9}$/', $string)) {
             return false;
         }
 

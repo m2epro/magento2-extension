@@ -15,7 +15,7 @@ class RemoteFulfillmentProgram extends AbstractFeature
     {
         $this->getTableModifier('amazon_account')->addColumn(
             'remote_fulfillment_program_mode',
-            'TINYINT(2) UNSIGNED NOT NULL',
+            'TINYINT UNSIGNED NOT NULL',
             '0',
             'create_magento_shipment'
         );

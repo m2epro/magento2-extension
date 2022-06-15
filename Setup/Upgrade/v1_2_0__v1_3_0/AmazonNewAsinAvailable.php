@@ -20,7 +20,7 @@ class AmazonNewAsinAvailable extends AbstractFeature
             'is_asin_available', 'is_new_asin_available', true
         );
         $this->getTableModifier('amazon_marketplace')->changeColumn(
-            'is_new_asin_available', 'SMALLINT(5) UNSIGNED NOT NULL', 1
+            'is_new_asin_available', 'SMALLINT UNSIGNED NOT NULL', 1
         );
     }
 

@@ -17,13 +17,10 @@ class Congratulation extends AbstractBlock
 {
     protected function _toHtml()
     {
-        $supportUrl = $this->getUrl('*/support/index');
-
         return <<<HTML
 <h2>
     {$this->__(
-        'This wizard was already finished. Please
-        <a href="%1%" class="external-link">Contact Us</a>, if it is need.', $supportUrl
+        'Installation Wizard is completed. If you can\'t proceed, please contact us at <a href="mailto:support@m2epro.com">support@m2epro.com</a>.'
     )}
 </h2>
 

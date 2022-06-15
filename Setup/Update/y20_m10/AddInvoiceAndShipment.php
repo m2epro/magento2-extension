@@ -33,7 +33,7 @@ class AddInvoiceAndShipment extends AbstractFeature
             $this->getTableModifier('ebay_account')
                 ->addColumn(
                     'create_magento_invoice',
-                    'SMALLINT(5) UNSIGNED NOT NULL',
+                    'SMALLINT UNSIGNED NOT NULL',
                     1,
                     'magento_orders_settings',
                     false,
@@ -41,7 +41,7 @@ class AddInvoiceAndShipment extends AbstractFeature
                 )
                 ->addColumn(
                     'create_magento_shipment',
-                    'SMALLINT(5) UNSIGNED NOT NULL',
+                    'SMALLINT UNSIGNED NOT NULL',
                     1,
                     'create_magento_invoice',
                     false,
@@ -90,7 +90,7 @@ class AddInvoiceAndShipment extends AbstractFeature
             $this->getTableModifier('walmart_account')
                 ->addColumn(
                     'create_magento_invoice',
-                    'SMALLINT(5) UNSIGNED NOT NULL',
+                    'SMALLINT UNSIGNED NOT NULL',
                     1,
                     'magento_orders_settings',
                     false,
@@ -98,7 +98,7 @@ class AddInvoiceAndShipment extends AbstractFeature
                 )
                 ->addColumn(
                     'create_magento_shipment',
-                    'SMALLINT(5) UNSIGNED NOT NULL',
+                    'SMALLINT UNSIGNED NOT NULL',
                     1,
                     'create_magento_invoice',
                     false,

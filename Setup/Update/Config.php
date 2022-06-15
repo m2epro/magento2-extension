@@ -216,6 +216,9 @@ class Config extends AbstractConfig
                 'RemoveEbayPayment',
                 'AddFeeColumnForEbayOrder'
             ],
+            'y22_m06' => [
+                'FixMistakenConfigs'
+            ]
         ];
     }
 

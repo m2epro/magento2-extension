@@ -18,7 +18,7 @@ class EbayItemUUID extends AbstractFeature
     {
         $this->getTableModifier('ebay_listing_product')
             ->addColumn('item_uuid', 'VARCHAR(32)', 'NULL', 'ebay_item_id', true, false)
-            ->addColumn('is_duplicate', 'SMALLINT(5) UNSIGNED NOT NULL', '0', 'item_uuid', true, false)
+            ->addColumn('is_duplicate', 'SMALLINT UNSIGNED NOT NULL', '0', 'item_uuid', true, false)
             ->commit();
     }
 

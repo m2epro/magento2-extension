@@ -16,7 +16,7 @@ class WalmartReviseDescription extends AbstractFeature
         $this->getTableModifier('walmart_template_synchronization')
             ->addColumn(
                 'revise_update_details',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 null,
                 'revise_update_promotions',
                 false,

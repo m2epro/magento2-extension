@@ -13,7 +13,7 @@ class AddSkipEvtinSetting extends AbstractFeature
     {
         $this->getTableModifier('ebay_account')->addColumn(
             'skip_evtin',
-            'TINYINT(2) UNSIGNED NOT NULL',
+            'TINYINT UNSIGNED NOT NULL',
             0,
             'create_magento_shipment',
             false

@@ -67,21 +67,33 @@ class Fieldset extends \Magento\Config\Block\System\Config\Form\Fieldset
     protected function getIntegrationHelpBlockHtml($htmlId)
     {
         if (strpos($htmlId, 'ebay') !== false) {
+            $url = $this->helperFactory->getObject('Module\Support')->getClientsPortalUrl();
             $content = __(<<<HTML
             <p>You can enable/disable eBay Integration.</p><br>
 
-            <p>Once the Integration is disabled, its menu is not available in Magento panel.
-            Automatic data synchronization for eBay channel will not be running
-            (even if you did not remove the data from M2E Pro).</p>
+            <p>Total sales will be counted through eBay accounts connected to the M2E Pro subscription.
+            If you want to stop the service for a certain account,
+            please delete it from your subscription on <a href="{$url}" target="_blank" class="external-link">Clients</a>.</p>
 HTML
             );
         } elseif (strpos($htmlId, 'amazon') !== false) {
+            $url = $this->helperFactory->getObject('Module\Support')->getClientsPortalUrl();
             $content = __(<<<HTML
             <p>You can enable/disable Amazon Integration.</p><br>
 
-            <p>Once the Integration is disabled, its menu is not available in Magento panel.
-            Automatic data synchronization for Amazon channel will not be running
-            (even if you did not remove the data from M2E Pro).</p>
+            <p>Total sales will be counted through Amazon accounts connected to the M2E Pro subscription.
+            If you want to stop the service for a certain account,
+            please delete it from your subscription on <a href="{$url}" target="_blank" class="external-link">Clients</a>.</p>
+HTML
+            );
+        } elseif (strpos($htmlId, 'walmart') !== false) {
+            $url = $this->helperFactory->getObject('Module\Support')->getClientsPortalUrl();
+            $content = __(<<<HTML
+            <p>You can enable/disable Walmart Integration.</p><br>
+
+            <p>Total sales will be counted through Walmart accounts connected to the M2E Pro subscription.
+            If you want to stop the service for a certain account,
+            please delete it from your subscription on <a href="{$url}" target="_blank" class="external-link">Clients</a>.</p>
 HTML
             );
         } elseif (strpos($htmlId, 'buy') !== false) {

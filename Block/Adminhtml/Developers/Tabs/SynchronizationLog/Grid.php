@@ -21,11 +21,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
     {
         parent::_construct();
 
-        $task = $this->getRequest()->getParam('task');
-        $channel = $this->getRequest()->getParam('referrer');
+        $task = $this->getRequest()->getParam('task', '');
+        $channel = $this->getRequest()->getParam('referrer', '');
 
         $this->setId(
-            'synchronizationLogGrid' . ($task !== null ? $task : '') . ucfirst($channel)
+            'synchronizationLogGrid' . $task . ucfirst($channel)
         );
 
         $this->setDefaultSort('create_date');

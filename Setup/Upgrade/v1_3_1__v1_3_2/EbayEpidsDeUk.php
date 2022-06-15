@@ -17,7 +17,7 @@ class EbayEpidsDeUk extends AbstractFeature
     public function execute()
     {
         $this->getTableModifier('ebay_dictionary_motor_epid')
-             ->addColumn('scope', 'SMALLINT(5) UNSIGNED NOT NULL', '0', 'is_custom', true);
+             ->addColumn('scope', 'SMALLINT UNSIGNED NOT NULL', '0', 'is_custom', true);
 
         $this->getConnection()->update(
             $this->getFullTableName('ebay_dictionary_motor_epid'),

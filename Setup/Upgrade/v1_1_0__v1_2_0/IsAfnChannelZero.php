@@ -17,7 +17,7 @@ class IsAfnChannelZero extends AbstractFeature
     public function execute()
     {
         $this->getTableModifier('amazon_listing_product')
-             ->changeColumn('is_afn_channel', 'SMALLINT(4) UNSIGNED NOT NULL', 0, 'online_qty');
+             ->changeColumn('is_afn_channel', 'SMALLINT UNSIGNED NOT NULL', 0, 'online_qty');
 
         $this->getConnection()->update(
             $this->getFullTableName('amazon_listing_product'),

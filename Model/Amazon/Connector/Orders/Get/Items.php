@@ -140,10 +140,10 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
             foreach ($ordersData as $orderData) {
                 $order = [];
 
-                $order['amazon_order_id'] = trim($orderData['id']);
-                $order['status'] = trim($orderData['status']);
+                $order['amazon_order_id'] = trim((string)$orderData['id']);
+                $order['status'] = trim((string)$orderData['status']);
 
-                $sellerOrderId = trim($orderData['seller_id']);
+                $sellerOrderId = trim((string)$orderData['seller_id']);
                 $order['seller_order_id'] = empty($sellerOrderId) ? null : $sellerOrderId;
 
                 $order['marketplace_id'] = $marketplace->getId();

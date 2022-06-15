@@ -258,7 +258,7 @@ class NewProductActions extends AbstractFeature
         $this->getConnection()->createTable($amazonProcessingActionTable);
 
         $this->getTableModifier('listing_product')->addColumn(
-            'need_synch_rules_check', 'SMALLINT(5) UNSIGNED NOT NULL', '0', 'additional_data', true
+            'need_synch_rules_check', 'SMALLINT UNSIGNED NOT NULL', '0', 'additional_data', true
         );
 
         $this->getConnection()->dropTable($this->getTableName('ebay_processing_action_item'));

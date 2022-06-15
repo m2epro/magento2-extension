@@ -13,7 +13,7 @@ class AmazonOrderCancellationNewFlow extends AbstractFeature
         $this->getTableModifier('amazon_order')
              ->addColumn(
                  'is_buyer_requested_cancel',
-                 'SMALLINT(5) UNSIGNED NOT NULL',
+                 'SMALLINT UNSIGNED NOT NULL',
                  0,
                  'tax_registration_id',
                  false,

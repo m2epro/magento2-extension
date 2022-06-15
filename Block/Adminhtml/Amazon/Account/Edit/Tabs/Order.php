@@ -780,11 +780,8 @@ in the Shipping Address of your Magento Order.'
                 ],
                 'value'   => $formData['magento_orders_settings']['status_mapping']['mode'],
                 'tooltip' => $this->__(
-                    'In this Block you can configure Mapping between Amazon Order state and Magento Order Statuses.
-                    Depending on the state of Amazon Order you can either manually determine certain Statuses
-                    for Magento Order and enable automatic Shipment and Invoice
-                    creation by selecting appropriate check-boxes, or use predefined default Settings.
-                    (i.e. Amazon: Order is Shipped -> Magento Order is Complete).<br/>'
+                    'Set the correspondence between Amazon and Magento order statuses.
+                    The status of your Magento order will be updated based on these settings.'
                 )
             ]
         );

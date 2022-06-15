@@ -15,7 +15,7 @@ class EbayOrderCancelRefund extends AbstractFeature
     {
         $this->getTableModifier('ebay_order')->addColumn(
             'cancellation_status',
-            'TINYINT(2) UNSIGNED NOT NULL',
+            'TINYINT UNSIGNED NOT NULL',
             '0',
             'payment_status'
         );

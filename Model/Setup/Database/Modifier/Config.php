@@ -162,7 +162,7 @@ class Config extends AbstractModifier
 
     /**
      * @param string $value
-     * @param string $where
+     * @param string|array $where
      * @return int
      */
     public function updateGroup($value, $where)
@@ -172,7 +172,7 @@ class Config extends AbstractModifier
 
     /**
      * @param string $value
-     * @param string $where
+     * @param string|array $where
      * @return int
      */
     public function updateKey($value, $where)
@@ -182,7 +182,7 @@ class Config extends AbstractModifier
 
     /**
      * @param string $value
-     * @param string $where
+     * @param string|array $where
      * @return int
      */
     public function updateValue($value, $where)

@@ -18,10 +18,10 @@ class AmazonShippingTemplate extends AbstractFeature
     public function execute()
     {
         $this->getTableModifier('amazon_listing_product')
-            ->addColumn('template_shipping_template_id', 'INT(10) UNSIGNED', 'NULL', 'template_description_id', true);
+            ->addColumn('template_shipping_template_id', 'INT UNSIGNED', 'NULL', 'template_description_id', true);
 
         $this->getTableModifier('amazon_account')
-            ->addColumn('shipping_mode', 'INT(10) UNSIGNED', '1', 'related_store_id');
+            ->addColumn('shipping_mode', 'INT UNSIGNED', '1', 'related_store_id');
 
         $this->getTableModifier('amazon_template_synchronization')
             ->renameColumn('revise_change_shipping_override_template', 'revise_change_shipping_template');

@@ -18,11 +18,11 @@ class CatchMagentoOrdersCreationFailure extends AbstractFeature
     {
         $this->getTableModifier('order')
              ->addColumn(
-                 'magento_order_creation_failure', 'SMALLINT(5) UNSIGNED NOT NULL', '0',
+                 'magento_order_creation_failure', 'SMALLINT UNSIGNED NOT NULL', '0',
                  'magento_order_id', true, false
              )
             ->addColumn(
-                'magento_order_creation_fails_count', 'SMALLINT(5) UNSIGNED NOT NULL', '0',
+                'magento_order_creation_fails_count', 'SMALLINT UNSIGNED NOT NULL', '0',
                 'magento_order_creation_failure', true, false
             )
              ->addColumn(

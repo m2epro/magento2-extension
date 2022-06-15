@@ -75,11 +75,11 @@ class VCSLiteInvoices extends AbstractFeature
 
         $this->getTableModifier('amazon_account')
             ->addColumn(
-                'invoice_generation', 'SMALLINT(5) UNSIGNED NOT NULL', 0, 'auto_invoicing', false, false
+                'invoice_generation', 'SMALLINT UNSIGNED NOT NULL', 0, 'auto_invoicing', false, false
             )
             ->addColumn(
                 'create_magento_shipment',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 1,
                 'is_magento_invoice_creation_disabled',
                 false,
@@ -129,7 +129,7 @@ class VCSLiteInvoices extends AbstractFeature
             }
 
             $this->getTableModifier('amazon_account')
-                ->changeColumn('is_magento_invoice_creation_disabled', 'SMALLINT(5) UNSIGNED NOT NULL', 1, null, false)
+                ->changeColumn('is_magento_invoice_creation_disabled', 'SMALLINT UNSIGNED NOT NULL', 1, null, false)
                 ->commit();
             $this->getTableModifier('amazon_account')
                 ->renameColumn('is_magento_invoice_creation_disabled', 'create_magento_invoice', false, false)

@@ -17,8 +17,8 @@ class MarketplacesFeatures extends AbstractFeature
     public function execute()
     {
         $this->getTableModifier('ebay_marketplace')
-            ->addColumn('is_epid', 'SMALLINT(5) UNSIGNED NOT NULL', 0, 'is_holiday_return', true, false)
-            ->addColumn('is_ktype', 'SMALLINT(5) UNSIGNED NOT NULL', 0, 'is_epid', true, false)
+            ->addColumn('is_epid', 'SMALLINT UNSIGNED NOT NULL', 0, 'is_holiday_return', true, false)
+            ->addColumn('is_ktype', 'SMALLINT UNSIGNED NOT NULL', 0, 'is_epid', true, false)
             ->commit();
 
         $this->getConnection()->update(

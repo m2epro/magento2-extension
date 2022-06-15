@@ -24,7 +24,7 @@ class WalmartOrderItemQty extends AbstractFeature
     public function execute()
     {
         $this->getTableModifier('walmart_order_item')
-            ->changeAndRenameColumn('qty', 'qty_purchased', 'int(10) unsigned not null', '0', 'price', false)
+            ->changeAndRenameColumn('qty', 'qty_purchased', 'int unsigned not null', '0', 'price', false)
             ->commit();
     }
 

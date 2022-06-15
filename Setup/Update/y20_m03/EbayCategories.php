@@ -64,7 +64,7 @@ class EbayCategories extends AbstractFeature
         $this->getTableModifier('ebay_template_category')
             ->addColumn(
                 'is_custom_template',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 '0',
                 'marketplace_id',
                 true
@@ -80,7 +80,7 @@ class EbayCategories extends AbstractFeature
         $this->getTableModifier('ebay_template_store_category')
             ->addColumn(
                 'category_id',
-                'INT(10) UNSIGNED NOT NULL',
+                'INT UNSIGNED NOT NULL',
                 null,
                 'account_id',
                 false,
@@ -96,7 +96,7 @@ class EbayCategories extends AbstractFeature
             )
             ->addColumn(
                 'category_mode',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 2,
                 'category_path',
                 false,
@@ -117,7 +117,7 @@ class EbayCategories extends AbstractFeature
         $this->getTableModifier('ebay_listing_product')
             ->addColumn(
                 'template_category_secondary_id',
-                'INT(11) UNSIGNED',
+                'INT UNSIGNED',
                 'NULL',
                 'template_category_id',
                 true,
@@ -125,7 +125,7 @@ class EbayCategories extends AbstractFeature
             )
             ->addColumn(
                 'template_store_category_id',
-                'INT(11) UNSIGNED',
+                'INT UNSIGNED',
                 'NULL',
                 'template_category_secondary_id',
                 true,
@@ -133,7 +133,7 @@ class EbayCategories extends AbstractFeature
             )
             ->addColumn(
                 'template_store_category_secondary_id',
-                'INT(11) UNSIGNED',
+                'INT UNSIGNED',
                 'NULL',
                 'template_store_category_id',
                 true,
@@ -144,7 +144,7 @@ class EbayCategories extends AbstractFeature
         $this->getTableModifier('ebay_listing')
             ->addColumn(
                 'auto_global_adding_template_category_secondary_id',
-                'INT(11) UNSIGNED',
+                'INT UNSIGNED',
                 'NULL',
                 'auto_global_adding_template_category_id',
                 true,
@@ -152,7 +152,7 @@ class EbayCategories extends AbstractFeature
             )
             ->addColumn(
                 'auto_global_adding_template_store_category_id',
-                'INT(11) UNSIGNED',
+                'INT UNSIGNED',
                 'NULL',
                 'auto_global_adding_template_category_secondary_id',
                 true,
@@ -160,7 +160,7 @@ class EbayCategories extends AbstractFeature
             )
             ->addColumn(
                 'auto_global_adding_template_store_category_secondary_id',
-                'INT(11) UNSIGNED',
+                'INT UNSIGNED',
                 'NULL',
                 'auto_global_adding_template_store_category_id',
                 true,
@@ -168,7 +168,7 @@ class EbayCategories extends AbstractFeature
             )
             ->addColumn(
                 'auto_website_adding_template_category_secondary_id',
-                'INT(11) UNSIGNED',
+                'INT UNSIGNED',
                 'NULL',
                 'auto_website_adding_template_category_id',
                 true,
@@ -176,7 +176,7 @@ class EbayCategories extends AbstractFeature
             )
             ->addColumn(
                 'auto_website_adding_template_store_category_id',
-                'INT(11) UNSIGNED',
+                'INT UNSIGNED',
                 'NULL',
                 'auto_website_adding_template_category_secondary_id',
                 true,
@@ -184,7 +184,7 @@ class EbayCategories extends AbstractFeature
             )
             ->addColumn(
                 'auto_website_adding_template_store_category_secondary_id',
-                'INT(11) UNSIGNED',
+                'INT UNSIGNED',
                 'NULL',
                 'auto_website_adding_template_store_category_id',
                 true,
@@ -195,7 +195,7 @@ class EbayCategories extends AbstractFeature
         $this->getTableModifier('ebay_listing_auto_category_group')
             ->addColumn(
                 'adding_template_category_secondary_id',
-                'INT(11) UNSIGNED',
+                'INT UNSIGNED',
                 'NULL',
                 'adding_template_category_id',
                 true,
@@ -203,7 +203,7 @@ class EbayCategories extends AbstractFeature
             )
             ->addColumn(
                 'adding_template_store_category_id',
-                'INT(11) UNSIGNED',
+                'INT UNSIGNED',
                 'NULL',
                 'adding_template_category_secondary_id',
                 true,
@@ -211,7 +211,7 @@ class EbayCategories extends AbstractFeature
             )
             ->addColumn(
                 'adding_template_store_category_secondary_id',
-                'INT(11) UNSIGNED',
+                'INT UNSIGNED',
                 'NULL',
                 'adding_template_store_category_id',
                 true,

@@ -17,7 +17,7 @@ class AmazonMarketplaces extends AbstractFeature
     public function execute()
     {
         $this->getTableModifier('amazon_marketplace')
-            ->addColumn('is_automatic_token_retrieving_available', 'SMALLINT(5) UNSIGNED NOT NULL', 0,
+            ->addColumn('is_automatic_token_retrieving_available', 'SMALLINT UNSIGNED NOT NULL', 0,
                 'is_product_tax_code_policy_available', true);
 
         $this->getConnection()->update($this->getFullTableName('amazon_marketplace'),

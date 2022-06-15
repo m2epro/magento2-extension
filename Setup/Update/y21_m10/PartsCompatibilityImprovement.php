@@ -146,7 +146,7 @@ SQL
         $this->getTableModifier('ebay_template_synchronization')
             ->addColumn(
                 'revise_update_parts',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 null,
                 'revise_update_categories',
                 false,

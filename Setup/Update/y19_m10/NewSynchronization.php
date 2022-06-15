@@ -427,7 +427,7 @@ class NewSynchronization extends AbstractFeature
     private function upgradeProcessingData()
     {
         $this->getTableModifier('processing')
-            ->addColumn('type', 'SMALLINT(5) UNSIGNED NOT NULL', 0, 'params', true, false)
+            ->addColumn('type', 'SMALLINT UNSIGNED NOT NULL', 0, 'params', true, false)
             ->commit();
 
         // ---------------------------------------
@@ -456,7 +456,7 @@ class NewSynchronization extends AbstractFeature
             ->renameColumn('related_id', 'listing_product_id', true, false)
             ->dropColumn('account_id', true, false)
             ->dropColumn('start_date', true, false)
-            ->addColumn('is_prepared', 'SMALLINT(6) NOT NULL', 0, 'type', true, false)
+            ->addColumn('is_prepared', 'SMALLINT NOT NULL', 0, 'type', true, false)
             ->addColumn('group_hash', 'VARCHAR(255)', 'NULL', 'is_prepared', true, false)
             ->changeColumn('request_data', 'LONGTEXT', 'NULL', null, false)
             ->dropIndex('related_id', false)
@@ -573,9 +573,9 @@ SQL
         }
 
         $this->getTableModifier('walmart_listing_product_action_processing_list')
-            ->addColumn('listing_product_id', 'INT(10) UNSIGNED NOT NULL', null, 'account_id', true, false)
-            ->addColumn('stage', 'SMALLINT(5) UNSIGNED NOT NULL', 1, 'sku', true, false)
-            ->addColumn('relist_request_pending_single_id', 'INT(10) UNSIGNED', 'NULL', 'stage', false, false)
+            ->addColumn('listing_product_id', 'INT UNSIGNED NOT NULL', null, 'account_id', true, false)
+            ->addColumn('stage', 'SMALLINT UNSIGNED NOT NULL', 1, 'sku', true, false)
+            ->addColumn('relist_request_pending_single_id', 'INT UNSIGNED', 'NULL', 'stage', false, false)
             ->addColumn('relist_request_data', 'LONGTEXT', 'NULL', 'relist_request_pending_single_id', false, false)
             ->addColumn('relist_configurator_data', 'LONGTEXT', 'NULL', 'relist_request_data', false, false)
             ->commit();
@@ -595,7 +595,7 @@ SQL
             ->renameColumn('related_id', 'listing_product_id', true, false)
             ->dropColumn('account_id', true, false)
             ->dropColumn('start_date', true, false)
-            ->addColumn('is_prepared', 'SMALLINT(6) NOT NULL', 0, 'type', true, false)
+            ->addColumn('is_prepared', 'SMALLINT NOT NULL', 0, 'type', true, false)
             ->addColumn('group_hash', 'VARCHAR(255)', 'NULL', 'is_prepared', true, false)
             ->changeColumn('request_data', 'LONGTEXT', 'NULL', null, false)
             ->commit();
@@ -779,7 +779,7 @@ SELECT `id`, `component_mode` FROM `{$listingProductTable}` WHERE `synch_status`
         // ---------------------------------------
 
         $this->getTableModifier('amazon_listing_product')
-            ->addColumn('online_handling_time', 'INT(10) UNSIGNED', 'NULL', 'online_qty', false, false)
+            ->addColumn('online_handling_time', 'INT UNSIGNED', 'NULL', 'online_qty', false, false)
             ->addColumn('online_restock_date', 'DATETIME', 'NULL', 'online_handling_time', false, false)
             ->addColumn('online_details_data', 'LONGTEXT', 'NULL', 'online_restock_date', false, false)
             ->addColumn('online_images_data', 'LONGTEXT', 'NULL', 'online_details_data', false, false)
@@ -788,10 +788,10 @@ SELECT `id`, `component_mode` FROM `{$listingProductTable}` WHERE `synch_status`
         // ---------------------------------------
 
         $this->getTableModifier('amazon_listing_product_repricing')
-            ->changeColumn('is_online_disabled', 'SMALLINT(5) UNSIGNED NOT NULL', '0', null, false)
+            ->changeColumn('is_online_disabled', 'SMALLINT UNSIGNED NOT NULL', '0', null, false)
             ->addColumn(
                 'is_online_inactive',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 '0',
                 'is_online_disabled',
                 true,
@@ -823,7 +823,7 @@ SELECT `id`, `component_mode` FROM `{$listingProductTable}` WHERE `synch_status`
             )
             ->addColumn(
                 'last_updated_is_disabled',
-                'SMALLINT(5) UNSIGNED',
+                'SMALLINT UNSIGNED',
                 'NULL',
                 'last_updated_max_price',
                 false,
@@ -872,21 +872,21 @@ SELECT `id`, `component_mode` FROM `{$listingProductTable}` WHERE `synch_status`
             $this->getTableModifier('ebay_template_synchronization')
             ->changeColumn(
                 'revise_update_shipping',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 null,
                 'revise_update_categories',
                 false
             )
             ->changeColumn(
                 'revise_update_categories',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 null,
                 'revise_update_images',
                 false
             )
             ->addColumn(
                 'revise_update_other',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 null,
                 'revise_update_return',
                 false,
@@ -894,7 +894,7 @@ SELECT `id`, `component_mode` FROM `{$listingProductTable}` WHERE `synch_status`
             )
             ->addColumn(
                 'stop_mode',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 null,
                 'relist_advanced_rules_filters',
                 false,
@@ -909,7 +909,7 @@ SELECT `id`, `component_mode` FROM `{$listingProductTable}` WHERE `synch_status`
             ->dropColumn('revise_change_product_tax_code_template', false, false)
             ->addColumn(
                 'stop_mode',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 null,
                 'relist_advanced_rules_filters',
                 false,
@@ -938,7 +938,7 @@ SQL
             ->commit();
 
         $this->getTableModifier('amazon_template_description_definition')
-            ->changeColumn('msrp_rrp_mode', 'SMALLINT(5) UNSIGNED', '0', 'number_of_items_custom_attribute', false)
+            ->changeColumn('msrp_rrp_mode', 'SMALLINT UNSIGNED', '0', 'number_of_items_custom_attribute', false)
             ->changeColumn('msrp_rrp_custom_attribute', 'VARCHAR(255)', 'NULL', 'msrp_rrp_mode', false)
             ->commit();
     }
@@ -984,7 +984,7 @@ SQL
         $this->getTableModifier('ebay_template_shipping')
             ->addColumn(
                 'dispatch_time_mode',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 '1',
                 'address_custom_attribute',
                 false,
@@ -995,14 +995,14 @@ SQL
             ->addColumn('international_shipping_rate_table', 'TEXT', 'NULL', 'local_shipping_rate_table', false, false)
             ->changeColumn(
                 'local_shipping_discount_promotional_mode',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 '0',
                 null,
                 false
             )
             ->changeColumn(
                 'international_shipping_discount_promotional_mode',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 '0',
                 null,
                 false
@@ -1070,7 +1070,7 @@ SQL
         $this->getTableModifier('amazon_listing_other')
             ->addColumn(
                 'is_repricing_inactive',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 '0',
                 'is_repricing_disabled',
                 true,

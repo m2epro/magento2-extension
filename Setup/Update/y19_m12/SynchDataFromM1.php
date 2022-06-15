@@ -33,7 +33,7 @@ class SynchDataFromM1 extends AbstractFeature
             ->commit();
 
         $this->getTableModifier('amazon_template_product_tax_code')
-            ->changeColumn('product_tax_code_mode', 'SMALLINT(6) NOT NULL', null, null, false)
+            ->changeColumn('product_tax_code_mode', 'SMALLINT NOT NULL', null, null, false)
             ->commit();
 
         $this->getTableModifier('ebay_indexer_listing_product_variation_parent')
@@ -61,7 +61,7 @@ class SynchDataFromM1 extends AbstractFeature
             ->dropColumn('is_holiday_return', true, false)
             ->addColumn(
                 'is_return_description',
-                'SMALLINT(5) UNSIGNED NOT NULL',
+                'SMALLINT UNSIGNED NOT NULL',
                 '0',
                 'is_in_store_pickup',
                 true,

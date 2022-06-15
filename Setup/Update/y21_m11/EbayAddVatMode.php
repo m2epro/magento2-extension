@@ -20,7 +20,7 @@ class EbayAddVatMode extends AbstractFeature
     {
         $this->getTableModifier('ebay_template_selling_format')->addColumn(
             'vat_mode',
-            'SMALLINT(5) UNSIGNED NOT NULL',
+            'SMALLINT UNSIGNED NOT NULL',
             0,
             'lot_size_attribute'
         );
