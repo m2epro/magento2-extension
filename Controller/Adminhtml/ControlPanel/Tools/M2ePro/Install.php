@@ -87,8 +87,8 @@ class Install extends Command
      */
     public function filesDiffAction()
     {
-        $filePath     = base64_decode($this->getRequest()->getParam('filePath'));
-        $originalPath = base64_decode($this->getRequest()->getParam('originalPath'));
+        $filePath     = base64_decode((string)$this->getRequest()->getParam('filePath'));
+        $originalPath = base64_decode((string)$this->getRequest()->getParam('originalPath'));
 
         $basePath = $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, Module::IDENTIFIER);
         $fullPath = $basePath .DIRECTORY_SEPARATOR. $filePath;
