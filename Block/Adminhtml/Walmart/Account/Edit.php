@@ -37,7 +37,7 @@ class Edit extends AbstractContainer
         $this->removeButton('edit');
         // ---------------------------------------
 
-        /** @var $wizardHelper \Ess\M2ePro\Helper\Module\Wizard */
+        /** @var \Ess\M2ePro\Helper\Module\Wizard $wizardHelper */
         $wizardHelper = $this->getHelper('Module\Wizard');
 
         if ($wizardHelper->isActive(\Ess\M2ePro\Helper\View\Walmart::WIZARD_INSTALLATION_NICK)) {
@@ -125,7 +125,7 @@ class Edit extends AbstractContainer
                 'class'        => 'add',
                 'button_class' => '',
                 'onclick'      => 'WalmartAccountObj.saveAndEditClick(\'\',\'walmartAccountEditTabs\')',
-                'class_name'   => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'class_name'   => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options'      => [
                     'save' => [
                         'label'   => $this->__('Save And Back'),

@@ -248,7 +248,7 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
                 );
             }
 
-            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
             $variation = reset($variations);
             $sku = $variation->getChildObject()->getSku();
 

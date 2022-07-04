@@ -14,12 +14,12 @@ namespace Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated;
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
-     * @var $magentoProduct \Ess\M2ePro\Model\Magento\Product
+     * @var \Ess\M2ePro\Model\Magento\Product $magentoProduct
      */
     private $magentoProduct = null;
 
     /**
-     * @var $shippingCalculatedTemplateModel \Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated
+     * @var \Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated $shippingCalculatedTemplateModel
      */
     private $shippingCalculatedTemplateModel = null;
 
@@ -127,7 +127,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
             $minor = $major = 0;
             if (count($weightArray) >= 2) {
-                list($major, $minor) = $weightArray;
+                [$major, $minor] = $weightArray;
 
                 if ($minor > 0 && $this->getShippingCalculatedTemplate()->isMeasurementSystemEnglish()) {
                     $minor = ($minor / pow(10, strlen($minor))) * 16;

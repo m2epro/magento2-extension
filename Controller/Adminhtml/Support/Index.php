@@ -19,7 +19,7 @@ class Index extends Support
 
     public function execute()
     {
-        $this->addContent($this->createBlock('Support\Form'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Support\Form::class));
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Contact Us'));
 

@@ -8,26 +8,31 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Search;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Search\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     private $productId;
     private $currency;
 
-    /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct  */
+    /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     private $listingProduct;
+
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Attribute $matcherAttributes */
     private $matcherAttributes;
+
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Option $matcherOptions */
     private $matcherOptions;
 
+    /** @var \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory */
     protected $customCollectionFactory;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
+
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
@@ -35,11 +40,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->customCollectionFactory = $customCollectionFactory;
         $this->resourceConnection = $resourceConnection;
         $this->localeCurrency = $localeCurrency;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -213,7 +220,7 @@ HTML;
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
         $value = '<div style="margin-left: 3px; margin-bottom: 3px;">'.
-                        $this->getHelper('Data')->escapeHtml($value)."</div>";
+                        $this->dataHelper->escapeHtml($value)."</div>";
 
         $id = $row->getId();
         $generalId = $row->getData('general_id');
@@ -272,7 +279,7 @@ HTML;
                         ucfirst(strtolower($magentoAttr)).
                         '</span>';
                     $magentoProductAttributesHtml .= '<input type="hidden" value="' .
-                                       $this->getHelper('Data')->escapeHtml($magentoAttr) . '"
+                                       $this->dataHelper->escapeHtml($magentoAttr) . '"
                                        id="magento_product_attribute_'.$attributeId.'_'.$id.'">';
                     $magentoProductAttributesHtml .=
                     <<<HTML
@@ -297,7 +304,7 @@ ListingGridObj.productSearchHandler.attributesChange({id:"magento_product_attrib
 JS;
                         }
 
-                        $attrKey = $this->getHelper('Data')->escapeHtml($attrKey);
+                        $attrKey = $this->dataHelper->escapeHtml($attrKey);
                         $magentoProductAttributesHtml .= '<option value="'.$attrKey.'" '.$selected.'>'
                             .$attrKey.'</option>';
                     }
@@ -308,17 +315,17 @@ JS;
                 $magentoProductAttributesJs .= '</script>';
 
                 $magentoProductAttributesHtml .= '<div id="variations_'.$id.'" style="display: none;">'.
-                    $this->getHelper('Data')->jsonEncode($variations).
+                    $this->dataHelper->jsonEncode($variations).
                     '</div>';
             } else {
                 $matchedAttributes = json_encode($this->matcherAttributes->getMatchedAttributes(), JSON_FORCE_OBJECT);
-                $destinationAttributes = $this->getHelper('Data')->jsonEncode($destinationAttributes);
+                $destinationAttributes = $this->dataHelper->jsonEncode($destinationAttributes);
 
                 foreach ($variations['set'] as $attribute => $options) {
                     $variations['set'][$attribute] = array_values($options);
                 }
 
-                $amazonVariations = $this->getHelper('Data')->jsonEncode($variations);
+                $amazonVariations = $this->dataHelper->jsonEncode($variations);
 
                 $magentoAttributesText = $this->__('Magento Attributes');
                 $amazonAttributesText = $this->__('Amazon Attributes');
@@ -345,10 +352,10 @@ HTML;
                 if ($this->matcherAttributes->isSourceAmountGreater()) {
                     $magentoProductVariationsSet = $this->listingProduct->getMagentoProduct()
                         ->getVariationInstance()->getVariationsTypeStandard();
-                    $magentoProductVariationsSet = $this->getHelper('Data')->jsonEncode(
+                    $magentoProductVariationsSet = $this->dataHelper->jsonEncode(
                         $magentoProductVariationsSet['set']
                     );
-                    $productAttributes = $this->getHelper('Data')->jsonEncode(
+                    $productAttributes = $this->dataHelper->jsonEncode(
                         $this->listingProduct->getChildObject()
                         ->getVariationManager()->getTypeModel()->getProductAttributes()
                     );
@@ -435,7 +442,7 @@ HTML;
             $attributesNames .= '<span style="margin-bottom: 15px; display: inline-block;">'.
                                     ucfirst(strtolower($specificName)).
                               '</span><br/>';
-            $attributeValues .= '<input type="hidden" value="' . $this->getHelper('Data')->escapeHtml($specificName) .
+            $attributeValues .= '<input type="hidden" value="' . $this->dataHelper->escapeHtml($specificName) .
                                 '" class="specifics_name_'.$id.'">';
             $attributeValues .=
             <<<HTML
@@ -456,7 +463,7 @@ HTML;
                         $selected = 'selected';
                     }
 
-                    $option = $this->getHelper('Data')->escapeHtml($option);
+                    $option = $this->dataHelper->escapeHtml($option);
                     $attributeValues .= '<option value="'.$option.'" '.$selected.'>'.$option.'</option>';
                 }
             }
@@ -474,8 +481,8 @@ JS;
 
         $specificsJs .= '</script>';
 
-        $variationAsins = $this->getHelper('Data')->jsonEncode($variations['asins']);
-        $variationTree = $this->getHelper('Data')->jsonEncode($this->getChannelVariationsTree($variations));
+        $variationAsins = $this->dataHelper->jsonEncode($variations['asins']);
+        $variationTree = $this->dataHelper->jsonEncode($this->getChannelVariationsTree($variations));
 
         $specificsJsonContainer = <<<HTML
 <div id="parent_asin_{$id}" style="display: none">{$generalId}</div>

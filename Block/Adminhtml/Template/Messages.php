@@ -27,11 +27,13 @@ class Messages extends AbstractBlock
         if ($templateNick == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING &&
             $componentMode == \Ess\M2ePro\Helper\Component\Ebay::NICK
         ) {
-            $block = $this->createBlock('Ebay_Template_Shipping_Messages');
+            $block = $this->getLayout()
+                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping\Messages::class);
         }
 
         if ($templateNick == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT) {
-            $block = $this->createBlock('Template_SellingFormat_Messages');
+            $block = $this->getLayout()
+                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Template\SellingFormat\Messages::class);
         }
 
         $block->setComponentMode($componentMode);

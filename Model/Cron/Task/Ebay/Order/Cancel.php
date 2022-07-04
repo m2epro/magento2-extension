@@ -88,7 +88,7 @@ class Cancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function getPermittedAccounts()
     {
-        /** @var $accountsCollection \Ess\M2ePro\Model\ResourceModel\Account\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
         $accountsCollection = $this->parentFactory->getObject(
             \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'Account'
@@ -109,7 +109,7 @@ class Cancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->activeRecordFactory->getObject('Order\Change')->getResource()
             ->incrementAttemptCount(array_keys($relatedChanges));
 
-        /** @var $dispatcherObject \Ess\M2ePro\Model\Ebay\Connector\Dispatcher */
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
 
         $failedChangesIds = [];

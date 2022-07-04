@@ -76,7 +76,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
                 'header'      => $this->__('Date'),
                 'align'       => 'left',
                 'type'        => 'datetime',
-                'filter'      => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+                'filter'      => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
                 'filter_time' => true,
                 'format'      => \IntlDateFormatter::MEDIUM,
                 'index'       => 'create_date'

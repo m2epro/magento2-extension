@@ -31,7 +31,7 @@ class Inspection extends AbstractBlock
     {
         $this->setChild(
             'inspections',
-            $this->createBlock('ControlPanel_Inspection_Grid')
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\Grid::class)
         );
 
         return parent::_beforeToHtml();

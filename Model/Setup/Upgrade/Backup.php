@@ -181,10 +181,9 @@ class Backup extends AbstractModel
     }
 
     /**
-     * @param $tableModifier TableModifier
-     * @param $columnTitle string
-     * @param $columnInfo array
-     *
+     * @param TableModifier $tableModifier
+     * @param string        $columnTitle
+     * @param array         $columnInfo
      * convert FLOAT UNSIGNED columns to FLOAT because of zend framework bug in ->createTableByDdl method,
      * that does not support 'FLOAT UNSIGNED' column type
      */
@@ -203,10 +202,9 @@ class Backup extends AbstractModel
     }
 
     /**
-     * @param $tableModifier TableModifier
-     * @param $columnTitle string
-     * @param $columnInfo array
-     *
+     * @param TableModifier $tableModifier
+     * @param string        $columnTitle
+     * @param array         $columnInfo
      * convert VARCHAR(256-500) to VARCHAR(255) because ->createTableByDdl method will handle this column
      * as TEXT. Due to the incorrect length > 255
      */

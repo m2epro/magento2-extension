@@ -26,9 +26,8 @@ abstract class Category extends Template
     protected function prepareGridBlock()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Specific\Add\Grid $grid */
-        $grid = $this->createBlock(
-            'Walmart_Template_Category_Categories_Specific_Add_Grid'
-        );
+        $grid = $this->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Specific\Add\Grid::class);
 
         $grid->setMarketplaceId($this->getRequest()->getParam('marketplace_id'));
         $grid->setProductDataNick($this->getRequest()->getParam('product_data_nick'));

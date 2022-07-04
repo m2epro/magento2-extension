@@ -95,7 +95,7 @@ class Images extends AbstractModel
         $attributes = [];
 
         foreach ($attributeCodes as $attributeCode) {
-            /** @var $attribute Attribute */
+            /** @var Attribute $attribute */
             $attribute = $product->getResource()->getAttribute($attributeCode);
 
             if (!$attribute) {
@@ -112,12 +112,12 @@ class Images extends AbstractModel
 
         $attributeLabels = [];
 
-        /** @var $productTypeInstance \Magento\ConfigurableProduct\Model\Product\Type\Configurable */
+        /** @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable $productTypeInstance */
         $productTypeInstance = $this->getMagentoProduct()->getTypeInstance();
 
         foreach ($productTypeInstance->getConfigurableAttributes($product) as $configurableAttribute) {
 
-            /** @var $configurableAttribute \Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute */
+            /** @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute $configurableAttribute */
             $configurableAttribute->setStoteId($product->getStoreId());
 
             foreach ($attributes as $attribute) {
@@ -166,7 +166,7 @@ class Images extends AbstractModel
         $attributeLabel = false;
 
         foreach ($this->getListingProduct()->getVariations(true) as $variation) {
-            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
 
             if ($variation->getChildObject()->isDelete()) {
                 continue;
@@ -174,7 +174,7 @@ class Images extends AbstractModel
 
             foreach ($variation->getOptions(true) as $option) {
 
-                /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+                /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
 
                 $optionLabel = trim($option->getAttribute());
                 $optionValue = trim($option->getOption());

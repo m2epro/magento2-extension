@@ -8,12 +8,31 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Log\Listing\Product;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid
- */
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\AbstractGrid
 {
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Model\Config\Manager $config,
+        \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\View $viewHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        parent::__construct(
+            $config,
+            $wrapperCollectionFactory,
+            $customCollectionFactory,
+            $resourceConnection,
+            $viewHelper,
+            $context,
+            $backendHelper,
+            $dataHelper,
+            $data
+        );
+    }
 
     public function _construct()
     {
@@ -107,7 +126,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
             'header'    => $this->__('Creation Date'),
             'align'     => 'left',
             'type'      => 'datetime',
-            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+            'filter'    => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
             'filter_time' => true,
             'filter_index' => 'main_table.create_date',
             'index'     => 'create_date',
@@ -203,7 +222,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
             $value = $this->filterManager->truncate($value, ['length' => 50]);
         }
 
-        $value = $this->getHelper('Data')->escapeHtml($value);
+        $value = $this->dataHelper->escapeHtml($value);
         $productId = (int)$row->getData('product_id');
 
         $urlData = [
@@ -239,10 +258,10 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
 
         $url = $this->getUrl('catalog/product/edit', ['id' => $row->getData('product_id')]);
         $value = '<a target="_blank" href="' . $url . '" target="_blank">' .
-            $this->getHelper('Data')->escapeHtml($value) .
+            $this->dataHelper->escapeHtml($value) .
             '</a><br/>ID: ' . $row->getData('product_id');
 
-        $additionalData = $this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+        $additionalData = $this->dataHelper->jsonDecode($row->getData('additional_data'));
         if (empty($additionalData['variation_options'])) {
             return $value;
         }
@@ -253,9 +272,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
                 $option = '--';
             }
             $value .= '<strong>' .
-                $this->getHelper('Data')->escapeHtml($attribute) .
+                $this->dataHelper->escapeHtml($attribute) .
                 '</strong>:&nbsp;' .
-                $this->getHelper('Data')->escapeHtml($option) . '<br/>';
+                $this->dataHelper->escapeHtml($option) . '<br/>';
         }
         $value .= '</div>';
 
@@ -264,7 +283,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
 
     public function callbackColumnAttributes($value, $row, $column, $isExport)
     {
-        $additionalData = $this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+        $additionalData = $this->dataHelper->jsonDecode($row->getData('additional_data'));
         if (empty($additionalData['variation_options'])) {
             return '';
         }
@@ -275,9 +294,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
                 $option = '--';
             }
             $result .= '<strong>' .
-                $this->getHelper('Data')->escapeHtml($attribute) .
+                $this->dataHelper->escapeHtml($attribute) .
                 '</strong>:&nbsp;' .
-                $this->getHelper('Data')->escapeHtml($option) . '<br/>';
+                $this->dataHelper->escapeHtml($option) . '<br/>';
         }
         $result .= '</div>';
 

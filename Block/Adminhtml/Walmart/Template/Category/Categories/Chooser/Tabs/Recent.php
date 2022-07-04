@@ -8,15 +8,22 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs\Recent
- */
 class Recent extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     protected $_template = 'walmart/template/category/categories/chooser/tabs/recent.phtml';
     protected $_selectedCategory = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Walmart\Category */
+    private $walmartCategoryHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Component\Walmart\Category $walmartCategoryHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+        $this->walmartCategoryHelper = $walmartCategoryHelper;
+    }
 
     public function _construct()
     {
@@ -28,11 +35,9 @@ class Recent extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         // ---------------------------------------
     }
 
-    //########################################
-
     public function getCategories()
     {
-        return $this->getHelper('Component_Walmart_Category')->getRecent(
+        return $this->walmartCategoryHelper->getRecent(
             $this->getRequest()->getPost('marketplace_id'),
             [
                 'product_data_nick' => $this->getRequest()->getPost('product_data_nick'),
@@ -41,6 +46,4 @@ class Recent extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             ]
         );
     }
-
-    //########################################
 }

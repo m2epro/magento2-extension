@@ -15,9 +15,32 @@ use Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
  */
 class CheckAuth extends Account
 {
+    /** @var \Ess\M2ePro\Helper\Module */
+    private $helperModule;
+
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $helperException;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $helperData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module $helperModule,
+        \Ess\M2ePro\Helper\Module\Exception $helperException,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+
+        $this->helperModule = $helperModule;
+        $this->helperException = $helperException;
+        $this->helperData = $helperData;
+    }
+
     public function execute()
     {
-        if (!$this->getHelper('Module')->isProductionEnvironment()) {
+        if (!$this->helperModule->isProductionEnvironment()) {
             $this->setJsonContent(
                 [
                     'result' => true,
@@ -58,11 +81,11 @@ class CheckAuth extends Account
                 $result['result'] = isset($response['status']) ? $response['status']
                     : null;
                 if (isset($response['reason'])) {
-                    $result['reason'] = $this->getHelper('Data')->escapeJs($response['reason']);
+                    $result['reason'] = $this->helperData->escapeJs($response['reason']);
                 }
             } catch (\Exception $exception) {
                 $result['result'] = false;
-                $this->getHelper('Module\Exception')->process($exception);
+                $this->helperException->process($exception);
             }
         }
 

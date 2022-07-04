@@ -33,7 +33,7 @@ class AssignProduct extends Order
         $productId = $this->getRequest()->getPost('product_id');
         $orderItemId = $this->getRequest()->getPost('order_item_id');
 
-        /** @var $orderItem \Ess\M2ePro\Model\Order\Item */
+        /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
         $orderItem = $this->activeRecordFactory->getObjectLoaded('Order\Item', $orderItemId);
 
         if ((!$productId && !$sku) || !$orderItem->getId()) {
@@ -43,7 +43,7 @@ class AssignProduct extends Order
             return $this->getResult();
         }
 
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->setStoreId($orderItem->getStoreId());
         $collection->joinStockItem();

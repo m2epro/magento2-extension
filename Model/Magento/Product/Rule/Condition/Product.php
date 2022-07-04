@@ -149,7 +149,7 @@ class Product extends AbstractModel
         }
 
         return $this->_layout->getBlockSingleton(
-            'Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\Renderer\Editable'
+            \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\Renderer\Editable::class
         );
     }
 
@@ -249,7 +249,7 @@ class Product extends AbstractModel
 
         $attributes = [];
         foreach ($productAttributes as $attribute) {
-            /** @var $attribute \Magento\Catalog\Model\ResourceModel\Eav\Attribute */
+            /** @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attribute */
             if (!$attribute->isAllowedForRuleCondition() || !$this->isAllowedForRuleCondition($attribute)) {
                 continue;
             }

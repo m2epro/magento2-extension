@@ -8,6 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Vocabulary;
 
+use Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\VocabularyAttributesPopup;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 /**
@@ -17,7 +18,7 @@ class GetAttributesPopup extends Main
 {
     public function execute()
     {
-        $block = $this->createBlock('Amazon_Listing_Product_Variation_VocabularyAttributesPopup');
+        $block = $this->getLayout()->createBlock(VocabularyAttributesPopup::class);
 
         $this->setAjaxContent($block);
 

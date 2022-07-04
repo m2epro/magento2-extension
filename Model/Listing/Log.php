@@ -102,7 +102,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Listing\Log');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Listing\Log::class);
     }
 
     //########################################
@@ -211,7 +211,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         $actionId = null,
         $action = self::ACTION_UNKNOWN,
         $description = null,
-        $type = self::TYPE_NOTICE,
+        $type = self::TYPE_INFO,
         array $additionalData = []
     ) {
         return [

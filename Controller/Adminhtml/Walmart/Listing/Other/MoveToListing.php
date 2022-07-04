@@ -12,16 +12,25 @@ use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 use Ess\M2ePro\Helper\Component\Walmart as ComponentWalmart;
 use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode as SourceModeBlock;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other\MoveToListing
- */
 class MoveToListing extends Main
 {
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->sessionHelper = $sessionHelper;
+    }
+
     public function execute()
     {
-        $sessionHelper = $this->getHelper('Data\Session');
         $sessionKey = ComponentWalmart::NICK . '_' . \Ess\M2ePro\Helper\View::MOVING_LISTING_OTHER_SELECTED_SESSION_KEY;
-        $selectedProducts = $sessionHelper->getValue($sessionKey);
+        $selectedProducts = $this->sessionHelper->getValue($sessionKey);
 
         /** @var \Ess\M2ePro\Model\Listing $listingInstance */
         $listingInstance = $this->walmartFactory->getCachedObjectLoaded(
@@ -59,7 +68,7 @@ class MoveToListing extends Main
         $listingInstance->setSetting('additional_data', 'source', SourceModeBlock::MODE_OTHER);
         $listingInstance->save();
 
-        $sessionHelper->removeValue($sessionKey);
+        $this->sessionHelper->removeValue($sessionKey);
 
         if ($errorsCount) {
             if (count($selectedProducts) == $errorsCount) {

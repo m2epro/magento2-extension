@@ -95,7 +95,7 @@ class Details extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
      */
     protected function getPermittedAccounts()
     {
-        /** @var $accountsCollection \Ess\M2ePro\Model\ResourceModel\Account\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
         $accountsCollection = $this->parentFactory->getObject(
             \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'Account'

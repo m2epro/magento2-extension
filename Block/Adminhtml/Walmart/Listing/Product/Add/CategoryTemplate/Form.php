@@ -16,7 +16,19 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     /** @var  \Ess\M2ePro\Model\Listing */
     protected $listing;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     protected function _construct()
     {
@@ -158,7 +170,7 @@ HTML
     public function getCategoryTemplateMode()
     {
         $listingAdditionalData = $this->listing->getData('additional_data');
-        $listingAdditionalData = $this->getHelper('Data')->jsonDecode($listingAdditionalData);
+        $listingAdditionalData = $this->dataHelper->jsonDecode($listingAdditionalData);
 
         $mode = 'same';
 

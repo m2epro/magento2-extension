@@ -57,15 +57,11 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
             /** @var \Magento\Sales\Model\Order\Shipment\Item $shipmentItem */
             $orderItem = $shipmentItem->getOrderItem();
 
-            $parentOrderItemId = $orderItem->getParentItemId();
-            if ($parentOrderItemId !== null && !in_array($parentOrderItemId, $allowedItems)) {
-                $allowedItems[] = $parentOrderItemId;
+            if ($orderItem->getParentItemId() !== null ) {
                 continue;
             }
 
-            if (!$this->getHelper('Magento_Product')->isBundleType($orderItem->getProductType())) {
-                $allowedItems[] = $orderItem->getId();
-            }
+            $allowedItems[] = $orderItem->getId();
 
             $item = $this->getItemToShipLoader($order, $shipmentItem)->loadItem();
             if (empty($item)) {

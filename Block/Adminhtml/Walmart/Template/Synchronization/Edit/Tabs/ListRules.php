@@ -12,11 +12,22 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Walmart\Template\Synchronization;
 use Ess\M2ePro\Model\Template\Synchronization as TemplateSynchronization;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs\ListRules
- */
 class ListRules extends AbstractForm
 {
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     protected function _prepareForm()
     {
         $template = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
@@ -196,7 +207,8 @@ HTML
             $ruleModel->loadFromSerialized($formData['list_advanced_rules_filters']);
         }
 
-        $ruleBlock = $this->createBlock('Magento_Product_Rule')->setData(['rule_model' => $ruleModel]);
+        $ruleBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule::class)
+                                       ->setData(['rule_model' => $ruleModel]);
 
         $fieldset->addField(
             'advanced_filter',
@@ -209,12 +221,12 @@ HTML
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Template\Synchronization::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Template\Synchronization::class)
         );
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\Synchronization::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\Synchronization::class)
         );
-        $this->jsPhp->addConstants($this->getHelper('Data')
+        $this->jsPhp->addConstants($this->dataHelper
             ->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class));
 
         $this->jsUrl->addUrls([

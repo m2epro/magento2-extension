@@ -19,7 +19,7 @@ class GoToAmazon extends Order
     {
         $magentoOrderId = $this->getRequest()->getParam('magento_order_id');
 
-        /** @var $order \Ess\M2ePro\Model\Order */
+        /** @var \Ess\M2ePro\Model\Order $order */
         $order = $this->amazonFactory->getObjectLoaded('Order', $magentoOrderId, 'magento_order_id');
 
         if ($order->getId() === null) {

@@ -25,7 +25,7 @@ class PickupStore extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Account\PickupStore');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Account\PickupStore::class);
     }
 
     //########################################

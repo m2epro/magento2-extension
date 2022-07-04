@@ -20,7 +20,8 @@ class StepTwoModeProductGrid extends Settings
     public function execute()
     {
         $categoriesData = $this->getSessionValue($this->getSessionDataKey());
-        $block = $this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_Product_Grid');
+        $block = $this->getLayout()
+          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Product\Grid::class);
         $block->setCategoriesData($categoriesData);
 
         $this->setAjaxContent($block);

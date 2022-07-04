@@ -62,7 +62,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Amazon\Template\SellingFormat');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Template\SellingFormat::class);
     }
 
     //########################################
@@ -115,7 +115,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
         );
 
         if ($asObjects) {
-            /** @var $businessDiscount \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount */
+            /** @var \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount $businessDiscount */
             foreach ($businessDiscounts as $businessDiscount) {
                 $businessDiscount->setSellingFormatTemplate($this->getParentObject());
             }

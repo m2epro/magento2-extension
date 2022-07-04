@@ -10,24 +10,27 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template;
 
 use Magento\Framework\DB\Select;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
-    const TEMPLATE_SELLING_FORMAT    = 'selling_format';
-    const TEMPLATE_SYNCHRONIZATION   = 'synchronization';
-    const TEMPLATE_SHIPPING          = 'shipping';
-    const TEMPLATE_DESCRIPTION       = 'description';
-    const TEMPLATE_PRODUCT_TAX_CODE  = 'product_tax_code';
+    public const TEMPLATE_SELLING_FORMAT = 'selling_format';
+    public const TEMPLATE_SYNCHRONIZATION = 'synchronization';
+    public const TEMPLATE_SHIPPING = 'shipping';
+    public const TEMPLATE_DESCRIPTION = 'description';
+    public const TEMPLATE_PRODUCT_TAX_CODE = 'product_tax_code';
 
+    /** @var \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory */
     protected $wrapperCollectionFactory;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
-    private $enabledMarketplacesCollection = null;
+    private $enabledMarketplacesCollection;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory,
@@ -35,11 +38,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->wrapperCollectionFactory = $wrapperCollectionFactory;
         $this->amazonFactory            = $amazonFactory;
         $this->resourceConnection       = $resourceConnection;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -266,7 +271,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'align'     => 'left',
             'width'     => '150px',
             'type'      => 'datetime',
-            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+            'filter'    => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
             'filter_time' => true,
             'format'    => \IntlDateFormatter::MEDIUM,
             'index'     => 'create_date',
@@ -278,7 +283,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'align'     => 'left',
             'width'     => '150px',
             'type'      => 'datetime',
-            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+            'filter'    => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
             'filter_time' => true,
             'format'    => \IntlDateFormatter::MEDIUM,
             'index'     => 'update_date',
@@ -293,7 +298,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'     => 'actions',
             'filter'    => false,
             'sortable'  => false,
-            'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
             'getter'    => 'getTemplateId',
             'actions'   => [
                 [
@@ -348,7 +353,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             return $value;
         }
 
-        $title = $this->getHelper('Data')->escapeHtml($value);
+        $title = $this->dataHelper->escapeHtml($value);
 
         $categoryWord = $this->__('Category');
         $categoryPath = !empty($row['category_path']) ? "{$row['category_path']} ({$row['browsenode_id']})"

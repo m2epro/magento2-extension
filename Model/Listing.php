@@ -92,7 +92,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Listing');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Listing::class);
     }
 
     //########################################
@@ -153,7 +153,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_LISTING,
             'Listing was deleted',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
         );
 
         $this->accountModel = null;
@@ -233,7 +233,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
         if ($asObjects) {
             foreach ($products as $product) {
-                /** @var $product \Ess\M2ePro\Model\Listing\Product */
+                /** @var \Ess\M2ePro\Model\Listing\Product $product */
                 $product->setListing($this);
             }
         }
@@ -517,7 +517,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_PRODUCT_TO_LISTING,
             'Product was Added',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO,
             $logAdditionalInfo
         );
         // ---------------------------------------
@@ -661,7 +661,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             $actionId,
             \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
             $logMessage,
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
         );
 
         $logModel->addProductMessage(
@@ -672,7 +672,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             $actionId,
             \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
             $logMessage,
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
         );
 
         // ---------------------------------------
@@ -726,7 +726,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
         $listingsProductsForRemove = [];
 
-        /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+        /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         foreach ($listingsProducts as $listingProduct) {
             $message = $this->getHelper('Module\Translation')->__('Item was deleted from Magento.');
             if ($listingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
@@ -808,7 +808,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
         $processedVariationsIds = [];
 
-        /** @var $variationOption \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+        /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $variationOption */
         foreach ($variationOptions as $variationOption) {
             if (in_array($variationOption->getListingProductVariationId(), $processedVariationsIds)) {
                 continue;
@@ -816,7 +816,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
             $processedVariationsIds[] = $variationOption->getListingProductVariationId();
 
-            /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $variationOption->getListingProduct();
 
             if ($variationOption->isComponentModeEbay()) {

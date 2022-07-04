@@ -8,14 +8,23 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs
- */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 {
     protected $_groups = ['configuration'];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Json\EncoderInterface $jsonEncoder,
+        \Magento\Backend\Model\Auth\Session $authSession,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $jsonEncoder, $authSession, $data);
+        $this->dataHelper = $dataHelper;
+    }
 
     public function _construct()
     {
@@ -36,22 +45,25 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $this->addTab('general', [
             'label'   => $this->__('Main'),
             'title'   => $this->__('Main'),
-            'content' => $this->createBlock('Amazon_Template_Description_Edit_Tabs_General')
-                              ->toHtml(),
+            'content' => $this->getLayout()
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs\General::class)
+                      ->toHtml(),
         ]);
 
         $this->addTab('definition', [
             'label'   => $this->__('Definition'),
             'title'   => $this->__('Definition'),
-            'content' => $this->createBlock('Amazon_Template_Description_Edit_Tabs_Definition')
-                              ->toHtml(),
+            'content' => $this->getLayout()
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs\Definition::class)
+                      ->toHtml(),
         ]);
 
         $this->addTab('specifics', [
             'label'   => $this->__('Specifics'),
             'title'   => $this->__('Specifics'),
-            'content' => $this->createBlock('Amazon_Template_Description_Edit_Tabs_Specifics')
-                              ->toHtml(),
+            'content' => $this->getLayout()
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs\Specifics::class)
+                      ->toHtml(),
         ]);
 
         $this->setActiveTab($this->getRequest()->getParam('tab', 'general'));
@@ -64,14 +76,14 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
     public function _beforeToHtml()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\Description::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\Description::class)
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class)
         );
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon_Template_Description'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon_Template_Description'));
         $this->jsUrl->addUrls([
             'formSubmit'    => $this->getUrl(
                 '*/amazon_template_description/save',

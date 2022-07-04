@@ -8,28 +8,36 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\TaxCodes;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\TaxCodes\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
+    /** @var \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory */
     private $customCollectionFactory;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     private $resourceConnection;
 
     private $marketplaceId;
     private $noSelection = false;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->customCollectionFactory = $customCollectionFactory;
         $this->resourceConnection = $resourceConnection;
+        $this->databaseHelper = $databaseHelper;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -70,7 +78,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $select = $connRead->select()
             ->from(
-                $this->getHelper('Module_Database_Structure')
+                $this->databaseHelper
                     ->getTableNameWithPrefix('m2epro_walmart_dictionary_marketplace'),
                 ['tax_codes']
             )
@@ -79,7 +87,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $row = $select->query()->fetchColumn();
 
         $collection = $this->customCollectionFactory->create();
-        foreach ($this->getHelper('Data')->jsonDecode($row) as $item) {
+        foreach ($this->dataHelper->jsonDecode($row) as $item) {
             $collection->addItem(new \Magento\Framework\DataObject($item));
         }
 

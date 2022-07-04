@@ -23,10 +23,10 @@ class PickupStore extends \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewL
     protected function getAvailableActions()
     {
         return [
-            Log::ACTION_UNKNOWN        => $this->getHelper('Module\Translation')->__('Unknown'),
-            Log::ACTION_ADD_PRODUCT    => $this->getHelper('Module\Translation')->__('Add'),
-            Log::ACTION_UPDATE_QTY     => $this->getHelper('Module\Translation')->__('Update'),
-            Log::ACTION_DELETE_PRODUCT => $this->getHelper('Module\Translation')->__('Delete'),
+            Log::ACTION_UNKNOWN        => $this->translationHelper->__('Unknown'),
+            Log::ACTION_ADD_PRODUCT    => $this->translationHelper->__('Add'),
+            Log::ACTION_UPDATE_QTY     => $this->translationHelper->__('Update'),
+            Log::ACTION_DELETE_PRODUCT => $this->translationHelper->__('Delete'),
         ];
     }
 
@@ -62,7 +62,8 @@ class PickupStore extends \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewL
             $log['initiator'] = \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION;
         }
 
-        $summary = $this->createBlock('Listing_Log_Grid_LastActions')->setData([
+        $summary = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\Log\Grid\LastActions::class)
+                                     ->setData([
             'entity_id' => (int)$columnId,
             'logs' => $logs,
             'available_actions' => $this->getAvailableActions(),
@@ -74,7 +75,7 @@ class PickupStore extends \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewL
 
         $this->jsTranslator->addTranslations([
             'Log For SKU ' . $stateId =>
-                $this->getHelper('Module\Translation')->__('Log For SKU (%s%)', $pickupStoreState->getSku())
+                $this->translationHelper->__('Log For SKU (%s%)', $pickupStoreState->getSku())
         ]);
 
         return $summary->toHtml();

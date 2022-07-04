@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\Database;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
+use Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\Database\Content\Form;
 use Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
 use Ess\M2ePro\Setup\MigrationFromMagento1\PreconditionsChecker\UnexpectedlyCopied;
 
@@ -31,9 +32,26 @@ class Content extends AbstractBlock
     /** @var array */
     protected $messages = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $exceptionHelper;
 
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Helper\Data\Session $sessionHelper
+     * @param \Ess\M2ePro\Helper\Module\Exception $exceptionHelper
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Ess\M2ePro\Setup\MigrationFromMagento1\PreconditionsChecker\UnexpectedlyCopied $preconditionsChecker
+     * @param \Ess\M2ePro\Setup\MigrationFromMagento1\MappingTablesDownloader $mappingTablesDownloader
+     * @param array $data
+     */
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Ess\M2ePro\Setup\MigrationFromMagento1\PreconditionsChecker\UnexpectedlyCopied $preconditionsChecker,
         \Ess\M2ePro\Setup\MigrationFromMagento1\MappingTablesDownloader $mappingTablesDownloader,
@@ -43,6 +61,9 @@ class Content extends AbstractBlock
 
         $this->preconditionsChecker    = $preconditionsChecker;
         $this->mappingTablesDownloader = $mappingTablesDownloader;
+        $this->supportHelper = $supportHelper;
+        $this->sessionHelper = $sessionHelper;
+        $this->exceptionHelper = $exceptionHelper;
     }
 
     //########################################
@@ -53,9 +74,9 @@ class Content extends AbstractBlock
             return parent::_beforeToHtml();
         }
 
-        $this->messagesBlock = $this->getLayout()->createBlock('Magento\Framework\View\Element\Messages');
+        $this->messagesBlock = $this->getLayout()->createBlock(\Magento\Framework\View\Element\Messages::class);
         $this->messages = ['M2E Pro database tables were transferred from Magento v1.x to Magento v2.x.'];
-        $this->getHelper('Data\Session')->removeValue('unexpected_migration_m1_url');
+        $this->sessionHelper->removeValue('unexpected_migration_m1_url');
 
         try {
             $this->preconditionsChecker->checkPreconditions();
@@ -72,8 +93,8 @@ class Content extends AbstractBlock
         }
 
         $this->messages[] =
-            '<br><br><b>Note</b>: The step is rather time-consuming. If you are logged out from Magento, log in again 
-            and go to 
+            '<br><br><b>Note</b>: The step is rather time-consuming. If you are logged out from Magento, log in again
+            and go to
             <i>Stores > Settings > Configuration > M2E Pro > Advanced Settings > Migration from Magento v1.x</i>.';
 
         $this->messagesBlock->addWarning($this->__(implode(' ', $this->messages)));
@@ -93,9 +114,9 @@ class Content extends AbstractBlock
             case UnexpectedlyCopied::EXCEPTION_CODE_WRONG_VERSION:
                 $this->messages[] = sprintf(
                     '<br><br>Your current version of M2E Pro does not support the migration to Magento v2.x.
-                    Please follow <a href="%s" target="_blank">these instructions</a> to get the required Module 
+                    Please follow <a href="%s" target="_blank">these instructions</a> to get the required Module
                     version and complete the migration process.',
-                    $this->helperFactory->getObject('Module_Support')->getKnowledgebaseArticleUrl('1600682')
+                    $this->supportHelper->getKnowledgebaseArticleUrl('1600682')
                 );
                 return true;
 
@@ -104,7 +125,7 @@ class Content extends AbstractBlock
 
                 if (!$this->tryResolveM1Url()) {
                     $this->messages[] =
-                        'To upload it, the Migration Tool requires an exact location of your Magento website. 
+                        'To upload it, the Migration Tool requires an exact location of your Magento website.
                         Please type the URL address of your Magento v1.x below.';
                 } else {
                     $this->messages[] = 'The Migration Tool will try to upload it automatically.';
@@ -113,13 +134,13 @@ class Content extends AbstractBlock
                 $this->messages[] =
                     'Choose whether to stop automatic synchronization on Magento v1.x, then click <b>Continue</b>.';
 
-                $form = $this->createBlock('Wizard_MigrationFromMagento1_Installation_Database_Content_Form');
+                $form = $this->getLayout()->createBlock(Form::class);
                 $this->setChild('magento1_url_form', $form);
                 return true;
 
             case UnexpectedlyCopied::EXCEPTION_CODE_TABLES_DO_NOT_EXIST:
                 $this->messages = [
-                    'M2E Pro tables dump from Magento v1.x was not imported to the Magneto v2.x database. 
+                    'M2E Pro tables dump from Magento v1.x was not imported to the Magneto v2.x database.
                     Please complete the action, then click <b>Continue</b>.'
                 ];
                 return true;
@@ -135,7 +156,7 @@ class Content extends AbstractBlock
      */
     private function processUnexpectedException(\Exception $e)
     {
-        $this->getHelper('Module\Exception')->process($e);
+        $this->exceptionHelper->process($e);
 
         $this->messagesBlock->addError(
             $this->__('Checking migration preconditions failed. Reason: %reason%', $e->getMessage())
@@ -153,7 +174,7 @@ class Content extends AbstractBlock
             $wizard = $this->helperFactory->getObject('Module_Wizard')->getWizard(MigrationFromMagento1::NICK);
 
             $m1BaseUrl = $this->mappingTablesDownloader->resolveM1Endpoint($wizard->getPossibleM1Domain());
-            $this->getHelper('Data\Session')->setValue('unexpected_migration_m1_url', $m1BaseUrl);
+            $this->sessionHelper->setValue('unexpected_migration_m1_url', $m1BaseUrl);
         } catch (\Ess\M2ePro\Model\Exception\Logic $exception) {
             return false;
         }

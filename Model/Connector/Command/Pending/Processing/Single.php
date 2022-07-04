@@ -24,7 +24,7 @@ class Single extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Connector\Command\Pending\Processing\Single');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Connector\Command\Pending\Processing\Single::class);
     }
 
     //########################################

@@ -13,6 +13,24 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
  */
 class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
 {
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $helperException;
+
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $helperDataSession;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Exception $helperException,
+        \Ess\M2ePro\Helper\Data\Session $helperDataSession,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+
+        $this->helperException = $helperException;
+        $this->helperDataSession = $helperDataSession;
+    }
+
     //########################################
 
     public function execute()
@@ -41,10 +59,10 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
             }
         }
 
-        $this->getHelper('Data\Session')->setValue('merchant_id', $params['Merchant']);
-        $this->getHelper('Data\Session')->setValue('mws_token', $params['MWSAuthToken']);
+        $this->helperDataSession->setValue('merchant_id', $params['Merchant']);
+        $this->helperDataSession->setValue('mws_token', $params['MWSAuthToken']);
 
-        $id = $this->getHelper('Data\Session')->getValue('account_id');
+        $id = $this->helperDataSession->getValue('account_id');
 
         if ((int)$id <= 0) {
             return $this->_redirect('*/*/new', [
@@ -61,7 +79,7 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
                 ]
             );
         } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
+            $this->helperException->process($exception);
 
             $this->messageManager->addError($this->__(
                 'The Amazon access obtaining is currently unavailable.<br/>Reason: %error_message%',

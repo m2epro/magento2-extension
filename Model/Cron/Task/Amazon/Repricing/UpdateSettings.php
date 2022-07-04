@@ -88,7 +88,8 @@ class UpdateSettings extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     }
 
     /**
-     * @param $account \Ess\M2ePro\Model\Account
+     * @param \Ess\M2ePro\Model\Account $account
+     *
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing[]
      */
     protected function getProcessRequiredProducts(\Ess\M2ePro\Model\Account $account)

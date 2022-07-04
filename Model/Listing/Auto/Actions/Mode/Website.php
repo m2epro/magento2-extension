@@ -20,7 +20,7 @@ class Website extends AbstractMode
         if ($websiteId == 0) {
             $storeIds = [\Magento\Store\Model\Store::DEFAULT_STORE_ID];
         } else {
-            /** @var $websiteObject \Magento\Store\Model\Website */
+            /** @var \Magento\Store\Model\Website $websiteObject */
             $websiteObject = $this->storeManager->getWebsite($websiteId);
             $storeIds = (array)$websiteObject->getStoreIds();
         }

@@ -239,7 +239,7 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
                 'From [%from%] to [%to%].',
                 ['!from' => $oldValue, '!to' => $newValue]
             ),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
         );
     }
 

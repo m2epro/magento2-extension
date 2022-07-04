@@ -30,6 +30,7 @@ class Action extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Ac
         \Magento\Backend\Block\Context $context,
         \Magento\Framework\Json\EncoderInterface $jsonEncoder,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         parent::__construct(
@@ -41,6 +42,7 @@ class Action extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Ac
             $jsUrlRenderer,
             $context,
             $jsonEncoder,
+            $dataHelper,
             $data
         );
         $this->ebayFactory = $ebayFactory;

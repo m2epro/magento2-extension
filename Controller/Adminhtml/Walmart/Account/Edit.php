@@ -10,12 +10,30 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Account\Edit
- */
 class Edit extends Account
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Walmart */
+    private $walmartHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalData;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalData,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->walmartHelper = $walmartHelper;
+        $this->globalData = $globalData;
+        $this->dataHelper = $dataHelper;
+    }
 
     protected function getLayoutType()
     {
@@ -38,7 +56,7 @@ class Edit extends Account
             return $this->_redirect('*/walmart_account');
         }
 
-        $marketplaces = $this->getHelper('Component\Walmart')->getMarketplacesAvailableForApiCreation();
+        $marketplaces = $this->walmartHelper->getMarketplacesAvailableForApiCreation();
         if ($marketplaces->getSize() <= 0) {
             $message = 'You should select and update at least one Walmart marketplace.';
             $this->messageManager->addError($this->__($message));
@@ -49,7 +67,7 @@ class Edit extends Account
             $this->addLicenseMessage($account);
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('edit_account', $account);
+        $this->globalData->setValue('edit_account', $account);
 
         // Set header text
         // ---------------------------------------
@@ -61,7 +79,7 @@ class Edit extends Account
             $account->getId()
         ) {
             $headerText = $headerTextEdit;
-            $headerText .= ' "'.$this->getHelper('Data')->escapeHtml($account->getTitle()).'"';
+            $headerText .= ' "'.$this->dataHelper->escapeHtml($account->getTitle()).'"';
         } else {
             $headerText = $headerTextAdd;
         }
@@ -70,8 +88,8 @@ class Edit extends Account
 
         // ---------------------------------------
 
-        $this->addLeft($this->createBlock('Walmart_Account_Edit_Tabs'));
-        $this->addContent($this->createBlock('Walmart_Account_Edit'));
+        $this->addLeft($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs::class));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit::class));
         $this->setPageHelpLink('x/hv1IB');
 
         return $this->getResultPage();
@@ -111,6 +129,4 @@ class Edit extends Account
 
         $this->addExtendedErrorMessage($errorMessage);
     }
-
-    //########################################
 }

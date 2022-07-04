@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\Installation\Registration;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Wizard\Installation\Registration\Content
- */
 abstract class Content extends AbstractForm
 {
     /** @var \Magento\Backend\Model\Auth\Session */
@@ -21,17 +18,47 @@ abstract class Content extends AbstractForm
     /** @var \Ess\M2ePro\Model\Registration\Manager */
     private $manager;
 
+    /** @var \Ess\M2ePro\Helper\Magento\Admin */
+    protected $magentoAdminHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\License */
+    private $helperModuleLicense;
+
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Magento $magentoHelper
+     * @param \Ess\M2ePro\Helper\Module\License $helperModuleLicense
+     * @param \Ess\M2ePro\Model\Registration\Manager $manager
+     * @param \Magento\Backend\Model\Auth\Session $authSession
+     * @param \Ess\M2ePro\Helper\Magento\Admin $magentoAdminHelper
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param array $data
+     */
     public function __construct(
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
+        \Ess\M2ePro\Helper\Module\License $helperModuleLicense,
         \Ess\M2ePro\Model\Registration\Manager $manager,
         \Magento\Backend\Model\Auth\Session $authSession,
+        \Ess\M2ePro\Helper\Magento\Admin $magentoAdminHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         array $data = []
     ) {
         $this->manager = $manager;
         $this->authSession = $authSession;
-
+        $this->magentoAdminHelper = $magentoAdminHelper;
+        $this->helperModuleLicense = $helperModuleLicense;
+        $this->supportHelper = $supportHelper;
+        $this->magentoHelper = $magentoHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -50,8 +77,8 @@ Having access to your Account on clients.m2epro.com will let you manage your Sub
 monitor Trial and Paid Period terms, control License Key(s) data, etc.
 HTML
                 ,
-                $this->getHelper('Module\Support')->getWebsiteUrl() . 'privacy',
-                $this->getHelper('Module\Support')->getClientsPortalUrl()
+                $this->supportHelper->getWebsiteUrl() . 'privacy',
+                $this->supportHelper->getClientsPortalUrl()
             )
         );
 
@@ -61,13 +88,13 @@ HTML
     protected function _beforeToHtml()
     {
         // ---------------------------------------
-        $countries = $this->getHelper('Magento')->getCountries();
+        $countries = $this->magentoHelper->getCountries();
         unset($countries[0]);
         $this->setData('available_countries', $countries);
         // ---------------------------------------
 
         // ---------------------------------------
-        $userInfo = $this->getHelper('Magento\Admin')->getCurrentInfo();
+        $userInfo = $this->magentoAdminHelper->getCurrentInfo();
         // ---------------------------------------
 
         // ---------------------------------------
@@ -90,7 +117,7 @@ HTML
         $this->setData('user_info', $userInfo);
         $this->setData(
             'isLicenseStepFinished',
-            !empty($earlierFormData) && $this->getHelper('Module\License')->getKey()
+            !empty($earlierFormData) && $this->helperModuleLicense->getKey()
         );
         // ---------------------------------------
 

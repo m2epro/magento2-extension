@@ -8,12 +8,19 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add
- */
 class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -51,7 +58,7 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             ]);
 
             if ($backParam = $this->getRequest()->getParam('back')) {
-                $url = $this->getHelper('Data')->getBackUrl();
+                $url = $this->dataHelper->getBackUrl();
             }
         }
 
@@ -86,7 +93,7 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         ]);
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Listing::class)
         );
 
         return parent::_prepareLayout();
@@ -94,13 +101,13 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
     public function getGridHtml()
     {
-        $viewHeaderBlock = $this->createBlock('Listing_View_Header', '', [
+        $viewHeaderBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class, '', [
             'data' => ['listing' => $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add')]
         ]);
 
-        $hideOthersListingsProductsFilterBlock = $this->createBlock(
-            'Listing_Product_ShowOthersListingsProductsFilter'
-        )->setData([
+        $hideOthersListingsProductsFilterBlock = $this->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\Product\ShowOthersListingsProductsFilter::class)
+            ->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'controller' => 'ebay_listing_product_add'
         ]);

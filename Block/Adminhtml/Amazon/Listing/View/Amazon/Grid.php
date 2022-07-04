@@ -45,6 +45,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
@@ -52,8 +53,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         $this->helperData = $helperData;
-
-        parent::__construct($context, $backendHelper, $data);
+        parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
 
     //########################################
@@ -84,7 +84,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareCollection()
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->setListingProductModeOn();
@@ -207,7 +207,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'     => 'number',
             'index'    => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
         ]);
 
         $this->addColumn('name', [
@@ -228,7 +228,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'         => 'text',
             'index'        => 'amazon_sku',
             'filter_index' => 'amazon_sku',
-            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Sku'
+            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Sku::class
         ]);
 
         $this->addColumn('general_id', [
@@ -238,7 +238,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'           => 'text',
             'index'          => 'general_id',
             'filter_index'   => 'general_id',
-            'filter'         => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\GeneralId',
+            'filter'         => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\GeneralId::class,
             'frame_callback' => [$this, 'callbackColumnGeneralId'],
             'filter_condition_callback' => [$this, 'callbackFilterGeneralId']
         ]);
@@ -250,8 +250,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'         => 'number',
             'index'        => 'online_qty',
             'filter_index' => 'online_qty',
-            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Qty',
-            'filter'       => 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty',
+            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Qty::class,
+            'filter'       => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty::class,
             'filter_condition_callback' => [$this, 'callbackFilterQty']
         ]);
 
@@ -276,7 +276,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
             $this->listing->getAccount()->getChildObject()->isRepricing()) {
-            $priceColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price';
+            $priceColumn['filter'] = \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price::class;
         }
 
         $this->addColumn('online_price', $priceColumn);
@@ -893,7 +893,8 @@ HTML;
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Status $status */
-        $status = $this->createBlock('Amazon_Grid_Column_Renderer_Status');
+        $status = $this->getLayout()
+                       ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Status::class);
         $status->setParentAndChildReviseScheduledCache($this->parentAndChildReviseScheduledCache);
 
         return $status->render($row);

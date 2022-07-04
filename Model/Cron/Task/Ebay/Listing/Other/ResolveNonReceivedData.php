@@ -68,7 +68,7 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function performActions()
     {
-        /** @var $accountsCollection \Ess\M2ePro\Model\ResourceModel\Account\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
         $accountsCollection = $this->parentFactory->getObject(
             \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'Account'
@@ -76,7 +76,7 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $accountsCollection->addFieldToFilter('other_listings_synchronization', 1);
 
         foreach ($accountsCollection->getItems() as $account) {
-            /** @var $account \Ess\M2ePro\Model\Account **/
+            /** @var \Ess\M2ePro\Model\Account $account **/
 
             $this->getOperationHistory()->addTimePoint(
                 __METHOD__.'process'.$account->getId(),
@@ -103,7 +103,7 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function updateItems(\Ess\M2ePro\Model\Account $account)
     {
-        /** @var $listingOtherCollection \Ess\M2ePro\Model\ResourceModel\Listing\Other\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other\Collection $listingOtherCollection */
         $listingOtherCollection = $this->parentFactory->getObject(
             \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'Listing\Other'
@@ -126,7 +126,7 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $listingOthers = [];
         foreach ($listingOtherCollection->getItems() as $item) {
-            /** @var $item \Ess\M2ePro\Model\Listing\Other */
+            /** @var \Ess\M2ePro\Model\Listing\Other $item */
             $listingOthers[(string)$item->getChildObject()->getData('item_id')] = $item;
         }
 
@@ -149,7 +149,7 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
      */
     protected function updateReceivedItems($listingOthers, \Ess\M2ePro\Model\Account $account, array $items)
     {
-        /** @var $mappingModel \Ess\M2ePro\Model\Ebay\Listing\Other\Mapping */
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Other\Mapping $mappingModel */
         $mappingModel = $this->modelFactory->getObject('Ebay_Listing_Other_Mapping');
 
         foreach ($items as $item) {
@@ -157,7 +157,7 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 continue;
             }
 
-            /** @var $listingOther \Ess\M2ePro\Model\Listing\Other */
+            /** @var \Ess\M2ePro\Model\Listing\Other $listingOther */
             $listingOther = $listingOthers[$item['id']];
 
             $newData = [

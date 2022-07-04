@@ -8,24 +8,25 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit
- */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->ebayFactory = $ebayFactory;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $data);
     }
 
@@ -47,7 +48,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->removeButton('edit');
 
         if ($this->getRequest()->getParam('back')) {
-            $url = $this->getHelper('Data')->getBackUrl(
+            $url = $this->dataHelper->getBackUrl(
                 '*/ebay_listing/index'
             );
             $this->addButton(
@@ -69,7 +70,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             ]
         );
 
-        $backUrl = $this->getHelper('Data')->getBackUrlParam('list');
+        $backUrl = $this->dataHelper->getBackUrlParam('list');
 
         $url = $this->getUrl(
             '*/ebay_listing/save',
@@ -86,7 +87,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             ]
         ];
 
-        $editBackUrl = $this->getHelper('Data')->makeBackUrlParam(
+        $editBackUrl = $this->dataHelper->makeBackUrlParam(
             $this->getUrl(
                 '*/ebay_listing/edit',
                 [
@@ -108,7 +109,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             'class'        => 'add',
             'button_class' => '',
             'onclick'      => 'EbayListingSettingsObj.saveAndEditClick(\'' . $url . '\', 1)',
-            'class_name'   => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+            'class_name'   => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
             'options'      => $saveButtonsProps
         ];
 
@@ -122,11 +123,11 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->css->addFile('listing/autoAction.css');
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Listing::class)
         );
 
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions(
+            $this->dataHelper->getControllerActions(
                 'Ebay_Listing_AutoAction',
                 ['listing_id' => $this->getListing()->getId()]
             )
@@ -164,8 +165,8 @@ JS
 
     public function getFormHtml()
     {
-        $viewHeaderBlock = $this->createBlock(
-            'Listing_View_Header',
+        $viewHeaderBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
             '',
             [
                 'data' => ['listing' => $this->getListing()]

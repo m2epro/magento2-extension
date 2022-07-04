@@ -12,24 +12,29 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Helper\Component\Walmart;
 use Ess\M2ePro\Model\Walmart\Account as WalmartAccount;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\General
- */
 class General extends AbstractForm
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory  */
     protected $walmartFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $WalmartFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->walmartFactory = $WalmartFactory;
-
+        $this->supportHelper = $supportHelper;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -37,12 +42,12 @@ class General extends AbstractForm
 
     protected function _prepareForm()
     {
-        /** @var $account \Ess\M2ePro\Model\Account */
+        /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         if (isset($formData['other_listings_mapping_settings'])) {
-            $formData['other_listings_mapping_settings'] = (array)$this->getHelper('Data')->jsonDecode(
+            $formData['other_listings_mapping_settings'] = (array)$this->dataHelper->jsonDecode(
                 $formData['other_listings_mapping_settings'],
                 true
             );
@@ -71,7 +76,7 @@ class General extends AbstractForm
 </div>
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/hv1IB')
+                $this->supportHelper->getDocumentationArticleUrl('x/hv1IB')
             );
         } else {
             $content = $this->__(
@@ -84,7 +89,7 @@ HTML
 </div>
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/hv1IB')
+                $this->supportHelper->getDocumentationArticleUrl('x/hv1IB')
             );
         }
 
@@ -260,15 +265,15 @@ HTML
         );
 
         $id = $this->getRequest()->getParam('id');
-        $title = $this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeHtml($formData['title']));
+        $title = $this->dataHelper->escapeJs($this->dataHelper->escapeHtml($formData['title']));
 
         $this->js->add("M2ePro.formData.id = '$id';");
         $this->js->add("M2ePro.formData.title = '$title';");
 
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(WalmartAccount::class));
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(Walmart::class));
+        $this->jsPhp->addConstants($this->dataHelper->getClassConstants(WalmartAccount::class));
+        $this->jsPhp->addConstants($this->dataHelper->getClassConstants(Walmart::class));
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Account', ['_current' => true]));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart\Account', ['_current' => true]));
         $this->jsUrl->addUrls(
             [
                 'formSubmit'   => $this->getUrl(

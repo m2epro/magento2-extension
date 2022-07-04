@@ -11,26 +11,27 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Create;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Block\Adminhtml\StoreSwitcher;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Create\Form
- */
 class Form extends AbstractForm
 {
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
     protected $walmartFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->walmartFactory = $walmartFactory;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -139,7 +140,9 @@ class Form extends AbstractForm
 HTML
                 ,
 
-                'after_element_html' => $this->createBlock('Magento\Button')->setData(
+                'after_element_html' => $this->getLayout()
+                                             ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                             ->setData(
                     [
                         'id'      => 'add_account_button',
                         'label'   => $this->__('Add Another'),
@@ -280,7 +283,7 @@ HTML
         {$editPolicyTooltip}</div>
         <span>{$this->__('or')}</span>
     </span>
-    <a id="add_selling_format_template_link" href="javascript: void(0);" 
+    <a id="add_selling_format_template_link" href="javascript: void(0);"
         onclick="WalmartListingSettingsObj.addNewTemplate(
             M2ePro.url.get('addNewSellingFormatTemplate'),
             WalmartListingSettingsObj.newSellingFormatTemplateCallback
@@ -440,12 +443,12 @@ HTML
     protected function _prepareLayout()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')
+            $this->dataHelper
                 ->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class)
         );
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Account'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Marketplace'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart\Account'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart\Marketplace'));
 
         $this->jsUrl->addUrls(
             [
@@ -570,12 +573,12 @@ HTML
         'M2ePro/Walmart/Listing/Create/General'
     ], function(){
         M2ePro.formData.wizard = {$this->getRequest()->getParam('wizard', 0)};
-    
+
         window.TemplateManagerObj = new TemplateManager();
-    
+
         window.WalmartListingCreateGeneralObj = new WalmartListingCreateGeneral();
         window.WalmartListingSettingsObj = new WalmartListingSettings();
-        
+
         WalmartListingCreateGeneralObj.initObservers();
         WalmartListingSettingsObj.initObservers();
     });

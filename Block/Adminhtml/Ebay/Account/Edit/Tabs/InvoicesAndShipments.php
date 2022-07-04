@@ -10,12 +10,21 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
-/**
- * Class  \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\InvoicesAndShipments
- */
 class InvoicesAndShipments extends AbstractForm
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     protected function _prepareForm()
     {
@@ -104,7 +113,7 @@ Set <b>Yes</b> if you want to exclude
 <a href="%url%" target="_blank">eVTN</a> from your Magento orders.
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getKnowledgebaseUrl('1608273')
+                    $this->supportHelper->getKnowledgebaseUrl('1608273')
                 )
             ]
         );

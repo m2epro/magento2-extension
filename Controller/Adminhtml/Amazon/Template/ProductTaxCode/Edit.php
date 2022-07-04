@@ -43,7 +43,8 @@ class Edit extends Template
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Product Tax Code Policies'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
-        $this->addContent($this->createBlock('Amazon_Template_ProductTaxCode_Edit'));
+        $this->addContent($this->getLayout()
+                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductTaxCode\Edit::class));
 
         $this->setPageHelpLink('x/-A03B');
 

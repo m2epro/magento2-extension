@@ -96,7 +96,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Order');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Order::class);
     }
 
     //########################################
@@ -112,7 +112,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             ->walk('delete');
 
         foreach ($this->getItemsCollection()->getItems() as $item) {
-            /** @var $item \Ess\M2ePro\Model\Order\Item */
+            /** @var \Ess\M2ePro\Model\Order\Item $item */
             $item->delete();
         }
         $this->deleteChildInstance();
@@ -303,7 +303,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
                                                          ->addFieldToFilter('order_id', $this->getId());
 
             foreach ($this->itemsCollection as $item) {
-                /** @var $item \Ess\M2ePro\Model\Order\Item */
+                /** @var \Ess\M2ePro\Model\Order\Item $item */
                 $item->setOrder($this);
             }
         }
@@ -387,7 +387,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     public function addLog($description, $type, array $params = [], array $links = [])
     {
-        /** @var $log \Ess\M2ePro\Model\Order\Log */
+        /** @var \Ess\M2ePro\Model\Order\Log $log */
         $log = $this->getLog();
 
         if (!empty($params)) {
@@ -402,9 +402,9 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         $this->addLog($description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS, $params, $links);
     }
 
-    public function addNoticeLog($description, array $params = [], array $links = [])
+    public function addInfoLog($description, array $params = [], array $links = [])
     {
-        $this->addLog($description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE, $params, $links);
+        $this->addLog($description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO, $params, $links);
     }
 
     public function addWarningLog($description, array $params = [], array $links = [])
@@ -533,7 +533,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     public function associateItemsWithProducts()
     {
         foreach ($this->getItemsCollection()->getItems() as $item) {
-            /** @var $item \Ess\M2ePro\Model\Order\Item */
+            /** @var \Ess\M2ePro\Model\Order\Item $item */
             $item->associateWithProduct();
         }
     }
@@ -555,7 +555,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         }
 
         foreach ($this->getItemsCollection()->getItems() as $item) {
-            /** @var $item \Ess\M2ePro\Model\Order\Item */
+            /** @var \Ess\M2ePro\Model\Order\Item $item */
 
             if (!$item->isReservable()) {
                 return false;
@@ -578,7 +578,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         }
 
         foreach ($this->getItemsCollection()->getItems() as $item) {
-            /** @var $item \Ess\M2ePro\Model\Order\Item */
+            /** @var \Ess\M2ePro\Model\Order\Item $item */
 
             if (!$item->canCreateMagentoOrder()) {
                 return false;
@@ -733,7 +733,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     {
         // add history comments
         // ---------------------------------------
-        /** @var $magentoOrderUpdater \Ess\M2ePro\Model\Magento\Order\Updater */
+        /** @var \Ess\M2ePro\Model\Magento\Order\Updater $magentoOrderUpdater */
         $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
         $magentoOrderUpdater->setMagentoOrder($this->getMagentoOrder());
         $magentoOrderUpdater->updateComments($this->getProxy()->getComments());
@@ -757,7 +757,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             return;
         }
 
-        /** @var $magentoOrderUpdater \Ess\M2ePro\Model\Magento\Order\Updater */
+        /** @var \Ess\M2ePro\Model\Magento\Order\Updater $magentoOrderUpdater */
         $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
         $magentoOrderUpdater->setMagentoOrder($this->getMagentoOrder());
         $magentoOrderUpdater->updateStatus($this->getChildObject()->getStatusForMagentoOrder());
@@ -773,8 +773,14 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     {
         $magentoOrder = $this->getMagentoOrder();
 
-        if ($magentoOrder === null || $magentoOrder->isCanceled()) {
+        if ($magentoOrder === null || $magentoOrder->isCanceled() || $magentoOrder->hasCreditmemos()) {
             return false;
+        }
+
+        if ($magentoOrder->getState() === \Magento\Sales\Model\Order::STATE_COMPLETE ||
+            $magentoOrder->getState() === \Magento\Sales\Model\Order::STATE_CLOSED) {
+            return false;
+
         }
 
         return true;
@@ -787,7 +793,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         }
 
         try {
-            /** @var $magentoOrderUpdater \Ess\M2ePro\Model\Magento\Order\Updater */
+            /** @var \Ess\M2ePro\Model\Magento\Order\Updater $magentoOrderUpdater */
             $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
             $magentoOrderUpdater->setMagentoOrder($this->getMagentoOrder());
             $magentoOrderUpdater->cancel();
@@ -833,7 +839,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     {
         if (!$this->getChildObject()->canCreateShipments()) {
             if ($this->getMagentoOrder() && $this->getMagentoOrder()->getIsVirtual()) {
-                $this->addNoticeLog(
+                $this->addInfoLog(
                     'Magento Order was created without the Shipping Address since your Virtual Product ' .
                     'has no weight and cannot be shipped.'
                 );

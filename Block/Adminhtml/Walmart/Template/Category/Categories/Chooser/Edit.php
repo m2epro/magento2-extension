@@ -46,9 +46,8 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     protected function _toHtml()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs $tabsBlock */
-        $tabsBlock = $this->createBlock(
-            'Walmart_Template_Category_Categories_Chooser_Tabs'
-        );
+        $tabsBlock = $this->getLayout()
+                    ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs::class);
 
         return parent::_toHtml() .
                $tabsBlock->toHtml() .

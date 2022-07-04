@@ -8,32 +8,30 @@
 
 namespace Ess\M2ePro\Helper\Component\Ebay\Category;
 
-/**
- * Class \Ess\M2ePro\Helper\Component\Ebay\Category\Store
- */
-class Store extends \Ess\M2ePro\Helper\AbstractHelper
+class Store
 {
-    protected $modelFactory;
-    protected $activeRecordFactory;
-    protected $ebayParentFactory;
-    protected $resourceConnection;
-
-    //########################################
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
+    private $activeRecordFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
+    private $ebayParentFactory;
+    /** @var \Magento\Framework\App\ResourceConnection */
+    private $resourceConnection;
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $dbStructure;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayParentFactory,
-        \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Helper\Module\Database\Structure $dbStructure,
+        \Magento\Framework\App\ResourceConnection $resourceConnection
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->ebayParentFactory = $ebayParentFactory;
         $this->resourceConnection = $resourceConnection;
-        parent::__construct($helperFactory, $context);
+        $this->dbStructure = $dbStructure;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function getPath($categoryId, $accountId, $delimiter = '>')
     {
@@ -67,6 +65,7 @@ class Store extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         array_reverse($pathData);
+
         return implode($delimiter, $pathData);
     }
 
@@ -75,32 +74,38 @@ class Store extends \Ess\M2ePro\Helper\AbstractHelper
     public function isExistDeletedCategories()
     {
         $stmt = $this->resourceConnection->getConnection()
-            ->select()
-            ->from(
-                ['etsc' => $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory')->getResource()
-                                                                                               ->getMainTable()
-                ]
-            )
-            ->joinLeft(
-                [
-                    'edc' => $this->getHelper('Module_Database_Structure')
-                        ->getTableNameWithPrefix('m2epro_ebay_account_store_category')
-                ],
-                'edc.account_id = etsc.account_id AND edc.category_id = etsc.category_id'
-            )
-            ->reset(\Magento\Framework\DB\Select::COLUMNS)
-            ->columns(
-                [
-                    'category_id',
-                    'account_id',
-                ]
-            )
-            ->where('etsc.category_mode = ?', \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY)
-            ->where('edc.category_id IS NULL')
-            ->group(
-                ['etsc.category_id', 'etsc.account_id']
-            )
-            ->query();
+                                         ->select()
+                                         ->from(
+                                             [
+                                                 'etsc' => $this->activeRecordFactory->getObject(
+                                                     'Ebay_Template_StoreCategory'
+                                                 )->getResource()
+                                                                                     ->getMainTable(),
+                                             ]
+                                         )
+                                         ->joinLeft(
+                                             [
+                                                 'edc' => $this->dbStructure
+                                                     ->getTableNameWithPrefix('m2epro_ebay_account_store_category'),
+                                             ],
+                                             'edc.account_id = etsc.account_id AND edc.category_id = etsc.category_id'
+                                         )
+                                         ->reset(\Magento\Framework\DB\Select::COLUMNS)
+                                         ->columns(
+                                             [
+                                                 'category_id',
+                                                 'account_id',
+                                             ]
+                                         )
+                                         ->where(
+                                             'etsc.category_mode = ?',
+                                             \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY
+                                         )
+                                         ->where('edc.category_id IS NULL')
+                                         ->group(
+                                             ['etsc.category_id', 'etsc.account_id']
+                                         )
+                                         ->query();
 
         return $stmt->fetchColumn() !== false;
     }

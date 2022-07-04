@@ -8,13 +8,28 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SearchAsin;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SearchAsin\NewAsinPopup
- */
 class NewAsinPopup extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
 
+    /**
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+        $this->supportHelper = $supportHelper;
+    }
+
+    /**
+     * @return void
+     */
     public function _construct()
     {
         parent::_construct();
@@ -27,11 +42,9 @@ class NewAsinPopup extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $this->setTemplate('amazon/listing/product/add/search_asin/new_asin_popup.phtml');
     }
 
-    //########################################
-
     protected function _prepareLayout()
     {
-        $helpBlock = $this->createBlock('HelpBlock')->setData([
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
             'no_collapse' => true,
             'no_hide' => true,
             'style' => 'margin-bottom: 0px',
@@ -56,18 +69,15 @@ HTML
         return parent::_prepareLayout();
     }
 
-    //########################################
-
-    public function getTitleHelpTipsHtml()
+    /**
+     * @return string
+     */
+    public function getTitleHelpTipsHtml(): string
     {
-        $helpLinkBlock = $this->createBlock('PageHelpLink')->setData([
-            'page_help_link' => $this->getHelper('Module\Support')->getDocumentationArticleUrl(
-                'x/cwQVB'
-            )
+        $helpLinkBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\PageHelpLink::class)->setData([
+            'page_help_link' => $this->supportHelper->getDocumentationArticleUrl('x/1QkVB')
         ]);
 
         return $helpLinkBlock->toHtml();
     }
-
-    //########################################
 }

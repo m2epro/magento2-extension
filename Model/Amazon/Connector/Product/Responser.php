@@ -275,7 +275,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
     protected function getResponseObject()
     {
         if ($this->responseObject === null) {
-            /** @var $response \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response */
+            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response $response */
             $response = $this->modelFactory->getObject(
                 'Amazon\Listing\Product\Action\Type\\'.$this->getOrmActionType().'\Response'
             );

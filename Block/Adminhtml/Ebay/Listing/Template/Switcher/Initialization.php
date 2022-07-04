@@ -8,12 +8,19 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher\Initialization
- */
 class Initialization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+        $this->dataHelper = $dataHelper;
+    }
 
     public function _construct()
     {
@@ -91,7 +98,7 @@ class Initialization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\Manager::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\Manager::class)
         );
 
         $this->jsTranslator->addTranslations([

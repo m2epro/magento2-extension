@@ -91,7 +91,7 @@ abstract class AbstractGrid extends Extended
 
     public function getMassactionBlockName()
     {
-        return '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Massaction';
+        return \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Massaction::class;
     }
 
     //####################################

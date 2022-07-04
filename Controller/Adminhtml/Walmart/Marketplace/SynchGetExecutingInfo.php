@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace\SynchGetExecutingInfo
- */
 class SynchGetExecutingInfo extends Marketplace
 {
-    //########################################
-
     public function execute()
     {
         /** @var \Ess\M2ePro\Model\Walmart\Marketplace\Synchronization $synchronization */
@@ -40,6 +35,4 @@ class SynchGetExecutingInfo extends Marketplace
         $this->setJsonContent($response);
         return $this->getResult();
     }
-
-    //########################################
 }

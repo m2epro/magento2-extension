@@ -20,7 +20,7 @@ class RestoreRememberedChoices extends \Ess\M2ePro\Controller\Adminhtml\Base
         $collection = $this->activeRecordFactory->getObject('Listing')->getCollection();
 
         foreach ($collection as $listing) {
-            /** @var $listing \Ess\M2ePro\Model\Listing */
+            /** @var \Ess\M2ePro\Model\Listing $listing */
 
             $additionalData = $listing->getSettings('additional_data');
 

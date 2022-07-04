@@ -165,12 +165,12 @@ abstract class ActiveRecordAbstract extends \Magento\Framework\Model\AbstractMod
             $processingIds[] = $processingLock->getProcessingId();
         }
 
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel */
+        /** @var \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel $collection */
         $collection = $this->activeRecordFactory->getObject('Processing')->getCollection();
         $collection->addFieldToFilter('id', ['in'=>array_unique($processingIds)]);
 
         foreach ($collection->getItems() as $processing) {
-            /** @var $processing \Ess\M2ePro\Model\Processing */
+            /** @var \Ess\M2ePro\Model\Processing $processing */
 
             /** @var \Ess\M2ePro\Model\Processing\Runner $processingRunner */
             $processingRunner = $this->modelFactory->getObject($processing->getModel());

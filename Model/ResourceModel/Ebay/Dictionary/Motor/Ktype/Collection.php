@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Ebay\Dictionary\Motor\Ktype',
-            'Ess\M2ePro\Model\ResourceModel\Ebay\Dictionary\Motor\Ktype'
+            \Ess\M2ePro\Model\Ebay\Dictionary\Motor\Ktype::class,
+            \Ess\M2ePro\Model\ResourceModel\Ebay\Dictionary\Motor\Ktype::class
         );
     }
 

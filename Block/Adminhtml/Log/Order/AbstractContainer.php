@@ -106,21 +106,21 @@ HTML;
 
     protected function createAccountSwitcherBlock()
     {
-        return $this->createBlock('Account\Switcher')->setData([
+        return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Account\Switcher::class)->setData([
             'component_mode' => $this->getComponentMode(),
         ]);
     }
 
     protected function createMarketplaceSwitcherBlock()
     {
-        return $this->createBlock('Marketplace\Switcher')->setData([
+        return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher::class)->setData([
             'component_mode' => $this->getComponentMode(),
         ]);
     }
 
     protected function createUniqueMessageFilterBlock()
     {
-        return $this->createBlock('Log\UniqueMessageFilter')->setData([
+        return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Log\UniqueMessageFilter::class)->setData([
             'route' => "*/{$this->getComponentMode()}_log_order/",
             'title' => $this->__('Only messages with a unique Order ID')
         ]);

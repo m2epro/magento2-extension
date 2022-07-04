@@ -19,7 +19,8 @@ class SnapshotBuilder extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     /**
-     * @param $model ActiveRecordAbstract|AbstractModel
+     * @param ActiveRecordAbstract|AbstractModel $model
+     *
      * @return $this
      */
     public function setModel($model)

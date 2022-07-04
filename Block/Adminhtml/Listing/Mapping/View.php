@@ -24,7 +24,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
     protected function _beforeToHtml()
     {
-        $helpBlock = $this->createBlock('HelpBlock')->addData(
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->addData(
             [
                 'content' => $this->__(
                     'From the list below you should select a Magento Product to which you would like the Item
@@ -35,8 +35,8 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->setChild('help_block', $helpBlock);
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Listing\Mapping\Grid $block */
-        $block = $this->createBlock(
-            'Listing_Mapping_Grid',
+        $block = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Listing\Mapping\Grid::class,
             '',
             [
                 'data' => [

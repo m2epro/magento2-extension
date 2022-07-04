@@ -117,7 +117,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
         } elseif ($sku === '') {
             $sku = '<i style="color:gray;">' . $this->__('none') . '</i>';
         } else {
-            $sku = $this->getHelper('Data')->escapeHtml($sku);
+            $sku = $this->dataHelper->escapeHtml($sku);
         }
 
         return $html . '<br/><strong>' . $this->__('SKU') . ':</strong>&nbsp;' . $sku;
@@ -127,7 +127,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
 
     public function callbackColumnActions($value, $row, $column, $isExport)
     {
-        $altTitle  = $this->getHelper('Data')->escapeHtml($this->__('Go to Listing'));
+        $altTitle  = $this->dataHelper->escapeHtml($this->__('Go to Listing'));
         $iconSrc   = $this->getViewFileUrl('Ess_M2ePro::images/goto_listing.png');
 
         $manageUrl = $this->getUrl('*/ebay_listing_other/view/', [

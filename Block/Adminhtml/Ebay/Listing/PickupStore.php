@@ -144,7 +144,7 @@ class PickupStore extends AbstractContainer
         }
 
         // ---------------------------------------
-        $viewHeaderBlock = $this->createBlock('Listing_View_Header', '', [
+        $viewHeaderBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class, '', [
             'data' => ['listing' => $this->listing]
         ]);
         // ---------------------------------------

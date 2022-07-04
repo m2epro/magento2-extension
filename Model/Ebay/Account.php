@@ -98,7 +98,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Account');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Account::class);
     }
 
     //########################################
@@ -1287,66 +1287,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function buildEbayStoreCategoriesTree()
     {
         return $this->buildEbayStoreCategoriesTreeRec($this->getEbayStoreCategories(), 0);
-    }
-
-    // ---------------------------------------
-
-    public function updateEbayStoreInfo()
-    {
-        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
-        $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
-        $connectorObj = $dispatcherObj->getVirtualConnector(
-            'account',
-            'get',
-            'store',
-            [],
-            null,
-            null,
-            $this->getId()
-        );
-
-        $dispatcherObj->process($connectorObj);
-        $data = $connectorObj->getResponseData();
-
-        if (!is_array($data)) {
-            return;
-        }
-
-        $infoKeys = [
-            'title',
-            'url',
-            'subscription_level',
-            'description',
-        ];
-
-        $dataForUpdate = [];
-        foreach ($infoKeys as $key) {
-            if (!isset($data['data'][$key])) {
-                $dataForUpdate['ebay_store_' . $key] = '';
-                continue;
-            }
-            $dataForUpdate['ebay_store_' . $key] = $data['data'][$key];
-        }
-        $this->addData($dataForUpdate);
-        $this->save();
-
-        $connection = $this->getResource()->getConnection();
-
-        $tableAccountStoreCategories = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
-
-        $connection->delete($tableAccountStoreCategories, ['account_id = ?' => $this->getId()]);
-
-        $this->componentEbayCategory->removeStoreRecent();
-
-        if (empty($data['categories'])) {
-            return;
-        }
-
-        foreach ($data['categories'] as &$item) {
-            $item['account_id'] = $this->getId();
-            $connection->insertOnDuplicate($tableAccountStoreCategories, $item);
-        }
     }
 
     //########################################

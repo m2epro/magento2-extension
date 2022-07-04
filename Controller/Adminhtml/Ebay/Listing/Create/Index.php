@@ -105,7 +105,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $this->setSessionValue('creation_mode', $listingOnlyMode);
         }
 
-        $this->addContent($this->createBlock('Ebay_Listing_Create_General'));
+        $this->addContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create\General::class)
+        );
     }
 
     private function stepTwo()
@@ -120,9 +122,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         if ($this->getRequest()->isPost()) {
-            $dataKeys = $this->createBlock(
-                'Ebay_Listing_Create_Templates_Form'
-            )->getDefaultFieldsValues();
+            $dataKeys = $this->getLayout()
+                             ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create\Templates\Form::class)
+                             ->getDefaultFieldsValues();
 
             $post = $this->getRequest()->getPost();
             foreach ($dataKeys as $key => $value) {
@@ -178,7 +180,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         $this->setWizardStep('listingTemplates');
-        $this->addContent($this->createBlock('Ebay_Listing_Create_Templates'));
+        $this->addContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create\Templates::class)
+        );
     }
 
     //########################################
@@ -207,7 +211,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_LISTING,
             'Listing was Added',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
         );
 
         return $model;

@@ -19,8 +19,8 @@ class MapProductPopupHtml extends Listing
 
     public function execute()
     {
-        $block = $this->createBlock(
-            'Listing_Mapping_View',
+        $block = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Listing\Mapping\View::class,
             '',
             [
                 'data' => [

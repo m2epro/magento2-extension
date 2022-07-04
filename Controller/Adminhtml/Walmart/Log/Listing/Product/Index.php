@@ -8,25 +8,19 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing\Product;
 
-use Ess\M2ePro\Controller\Adminhtml\Context;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing\Product\Index
- */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing
 {
-    //########################################
-
-    protected $filterManager;
+   /** @var \Magento\Framework\Filter\FilterManager */
+    private $filterManager;
 
     public function __construct(
         \Magento\Framework\Filter\FilterManager $filterManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
-        Context $context
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        $this->filterManager = $filterManager;
-
         parent::__construct($walmartFactory, $context);
+
+        $this->filterManager = $filterManager;
     }
 
     public function execute()
@@ -73,10 +67,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing
         }
 
         $this->setPageHelpLink('x/gv1IB');
-        $this->addContent($this->createBlock('Walmart_Log_Listing_Product_View'));
+        $this->addContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Log\Listing\Product\View::class)
+        );
 
         return $this->getResult();
     }
-
-    //########################################
 }

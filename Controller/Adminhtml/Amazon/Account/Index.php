@@ -17,7 +17,7 @@ class Index extends Account
 {
     public function execute()
     {
-        $this->addContent($this->createBlock('Amazon\Account'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account::class));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Accounts'));
         $this->setPageHelpLink('x/Hv8UB');
 

@@ -55,12 +55,14 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
         $this->addTab('variations', [
             'label'   => $this->__('Child Products'),
             'title'   => $this->__('Child Products'),
-            'content' => $this->createBlock('Walmart_Listing_Product_Variation_Manage_Tabs_Variations')
+            'content' => $this->getLayout()
+              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Variations::class)
                 ->setListingProduct($this->getListingProduct())
                 ->toHtml()
         ]);
 
-        $settingsBlock = $this->createBlock('Walmart_Listing_Product_Variation_Manage_Tabs_Settings_Form')
+        $settingsBlock = $this->getLayout()
+          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Settings\Form::class)
             ->setListingProduct($this->getListingProduct());
         $settingsBlock->calculateWarnings();
 
@@ -74,7 +76,8 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
         $this->addTab('vocabulary', [
             'label'   => $this->__('Advanced'),
             'title'   => $this->__('Advanced'),
-            'content' => $this->createBlock('Walmart_Listing_Product_Variation_Manage_Tabs_Vocabulary')
+            'content' => $this->getLayout()
+              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Vocabulary::class)
                 ->setListingProduct($this->getListingProduct())
                 ->toHtml()
         ]);

@@ -35,7 +35,9 @@ class Tabs extends AbstractTabs
             [
                 'label'   => $this->__('General'),
                 'title'   => $this->__('General'),
-                'content' => $this->createBlock('Walmart_Account_Edit_Tabs_General')->toHtml(),
+                'content' => $this->getLayout()
+                                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\General::class)
+                                  ->toHtml(),
             ]
         );
 
@@ -44,7 +46,9 @@ class Tabs extends AbstractTabs
             [
                 'label'   => $this->__('Unmanaged Listings'),
                 'title'   => $this->__('Unmanaged Listings'),
-                'content' => $this->createBlock('Walmart_Account_Edit_Tabs_ListingOther')->toHtml(),
+                'content' => $this->getLayout()
+                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\ListingOther::class)
+                              ->toHtml(),
             ]
         );
 
@@ -53,7 +57,9 @@ class Tabs extends AbstractTabs
             [
                 'label'   => $this->__('Orders'),
                 'title'   => $this->__('Orders'),
-                'content' => $this->createBlock('Walmart_Account_Edit_Tabs_Order')->toHtml(),
+                'content' => $this->getLayout()
+                                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\Order::class)
+                                  ->toHtml(),
             ]
         );
 
@@ -62,7 +68,9 @@ class Tabs extends AbstractTabs
             [
                 'label'   => $this->__('Invoices & Shipments'),
                 'title'   => $this->__('Invoices & Shipments'),
-                'content' => $this->createBlock('Walmart_Account_Edit_Tabs_InvoicesAndShipments')->toHtml(),
+                'content' => $this->getLayout()
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\InvoicesAndShipments::class)
+                      ->toHtml(),
             ]
         );
 

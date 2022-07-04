@@ -19,7 +19,8 @@ class Datetime extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Datetime
     /** @var Factory $helperFactory */
     protected $helperFactory = null;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Backend\Block\Context $context,
@@ -28,10 +29,12 @@ class Datetime extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Datetime
         \Magento\Framework\Locale\ResolverInterface $localeResolver,
         DateTimeFormatterInterface $dateTimeFormatter,
         \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->helperFactory = $helperFactory;
         parent::__construct($context, $resourceHelper, $mathRandom, $localeResolver, $dateTimeFormatter, $data);
+        $this->dataHelper = $dataHelper;
     }
 
     //########################################
@@ -55,7 +58,7 @@ class Datetime extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Datetime
             $timezone = $this->getColumn()->getTimezone() !== false ? $this->_localeDate->getConfigTimezone()
                                                                     : 'UTC';
 
-            $timeStamp = $this->helperFactory->getObject('Data')->parseTimestampFromLocalizedFormat(
+            $timeStamp = $this->dataHelper->parseTimestampFromLocalizedFormat(
                 $date,
                 $format,
                 $format,

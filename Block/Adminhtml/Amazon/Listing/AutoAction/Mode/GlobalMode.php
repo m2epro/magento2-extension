@@ -8,19 +8,38 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode\GlobalMode
- */
 class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\AbstractGlobalMode
 {
+    /** @var int */
     public $showCreateNewAsin = 0;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    /**
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $registry, $formFactory, $dataHelper, $data);
+    }
 
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create();
-        $selectElementType = 'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select';
+        $selectElementType = \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select::class;
 
         $form->addField(
             'global_mode_help_block',
@@ -37,7 +56,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                     Catalog, the Item will be removed from the Listing and its sale will be stopped on Channel.</p><br>
                     <p>More detailed information you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/uAMVB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/uAMVB')
                 )
             ]
         );
@@ -211,7 +230,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Amazon\Listing::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Amazon\Listing::class)
         );
 
         $this->js->add(<<<JS

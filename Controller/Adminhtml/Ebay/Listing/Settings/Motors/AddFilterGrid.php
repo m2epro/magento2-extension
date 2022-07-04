@@ -20,7 +20,8 @@ class AddFilterGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $motorsType = $this->getRequest()->getParam('motors_type');
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter\Grid $block */
-        $block = $this->createBlock('Ebay_Listing_View_Settings_Motors_Add_Filter_Grid');
+        $block = $this->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter\Grid::class);
         $block->setMotorsType($motorsType);
 
         $this->setAjaxContent($block);

@@ -23,7 +23,7 @@ class CreateMagentoOrder extends Order
         $errors   = 0;
 
         foreach ($ids as $id) {
-            /** @var $order \Ess\M2ePro\Model\Order */
+            /** @var \Ess\M2ePro\Model\Order $order */
             $order = $this->walmartFactory->getObjectLoaded('Order', (int)$id);
             $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_USER);
 
@@ -47,7 +47,7 @@ class CreateMagentoOrder extends Order
             }
 
             $order->createShipments();
-            
+
             // ---------------------------------------
             $order->updateMagentoOrderStatus();
             // ---------------------------------------

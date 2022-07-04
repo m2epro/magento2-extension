@@ -97,7 +97,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Listing');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing::class);
     }
 
     //########################################
@@ -801,7 +801,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
                 $logModel->getResource()->getNextActionId(),
                 \Ess\M2ePro\Model\Listing\Log::ACTION_SELL_ON_ANOTHER_SITE,
                 $logMessage,
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
             );
 
             if ($sourceListing->getMarketplaceId() == $this->getParentObject()->getMarketplaceId()) {

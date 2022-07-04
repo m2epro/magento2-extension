@@ -28,7 +28,7 @@ abstract class ShippingAddress extends AbstractBlock
     public function getShippingAddress()
     {
         if ($this->shippingAddress === null) {
-            /** @var $shippingAddress \Ess\M2ePro\Model\Amazon\Order\ShippingAddress */
+            /** @var \Ess\M2ePro\Model\Amazon\Order\ShippingAddress $shippingAddress */
             $shippingAddress = $this->getOrder()->getShippingAddress();
 
             $this->shippingAddress = $shippingAddress->getData();

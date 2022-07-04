@@ -8,46 +8,49 @@
 
 namespace Ess\M2ePro\Helper\Module\Renderer;
 
-/**
- * Class \Ess\M2ePro\Helper\Module\Renderer\Description
- */
-class Description extends \Ess\M2ePro\Helper\AbstractHelper
+class Description
 {
-    const IMAGES_MODE_DEFAULT    = 0;
+    public const IMAGES_MODE_DEFAULT = 0;
     /**
      * Is not supported more. Links to non eBay resources are not allowed due to eBay regulations.
      */
-    const IMAGES_MODE_NEW_WINDOW = 1;
-    const IMAGES_MODE_GALLERY    = 2;
+    public const IMAGES_MODE_NEW_WINDOW = 1;
+    public const IMAGES_MODE_GALLERY = 2;
 
-    const IMAGES_QTY_ALL = 0;
+    public const IMAGES_QTY_ALL = 0;
 
-    const LAYOUT_MODE_ROW    = 'row';
-    const LAYOUT_MODE_COLUMN = 'column';
+    public const LAYOUT_MODE_ROW = 'row';
+    public const LAYOUT_MODE_COLUMN = 'column';
 
-    protected $appEmulation;
-    protected $filter;
-    protected $layout;
+    /** @var \Magento\Store\Model\App\Emulation */
+    private $appEmulation;
+    /** @var \Magento\Email\Model\Template\Filter */
+    private $filter;
+    /** @var \Magento\Framework\View\LayoutInterface */
+    private $layout;
 
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
 
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration
+     * @param \Magento\Store\Model\App\Emulation $appEmulation
+     * @param \Magento\Email\Model\Template\Filter $filter
+     * @param \Magento\Framework\View\LayoutInterface $layout
+     */
     public function __construct(
         \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Magento\Store\Model\App\Emulation $appEmulation,
         \Magento\Email\Model\Template\Filter $filter,
-        \Magento\Framework\View\LayoutInterface $layout,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Framework\View\LayoutInterface $layout
     ) {
         $this->appEmulation = $appEmulation;
         $this->filter = $filter;
         $this->layout = $layout;
-        parent::__construct($helperFactory, $context);
         $this->moduleConfiguration = $moduleConfiguration;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function parseTemplate($text, \Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
@@ -64,17 +67,18 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
         $text = $this->insertMediaGalleries($text, $magentoProduct);
 
         // the CMS static block replacement i.e. {{media url=’image.jpg’}}
-        $this->filter->setVariables(['product'=>$magentoProduct->getProduct()]);
+        $this->filter->setVariables(['product' => $magentoProduct->getProduct()]);
         $text = $this->filter->filter((string)$text);
 
         //-- Stop store emulation process
         $this->appEmulation->stopEnvironmentEmulation();
+
         //--
 
         return $text;
     }
 
-    //########################################
+    // ----------------------------------------
 
     private function insertAttributes($text, \Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
@@ -118,7 +122,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
             return $text;
         }
 
-        $mainImage     = $magentoProduct->getImage('image');
+        $mainImage = $magentoProduct->getImage('image');
         $mainImageLink = $mainImage ? $mainImage->getUrl() : '';
 
         $search = [];
@@ -127,7 +131,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
         foreach ($matches[0] as $key => $match) {
             $tempImageAttributes = explode(',', $matches[1][$key]);
             $realImageAttributes = [];
-            for ($i=0; $i<6; $i++) {
+            for ($i = 0; $i < 6; $i++) {
                 if (!isset($tempImageAttributes[$i])) {
                     $realImageAttributes[$i] = 0;
                 } else {
@@ -146,7 +150,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
             }
 
             $blockObj = $this->layout->createBlock(
-                'Ess\M2ePro\Block\Adminhtml\Renderer\Description\Image'
+                \Ess\M2ePro\Block\Adminhtml\Renderer\Description\Image::class
             );
 
             $data = [
@@ -156,7 +160,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
                 'linked_mode'  => $realImageAttributes[3],
                 'watermark'    => $realImageAttributes[4],
                 'src'          => $tempImageLink,
-                'index_number' => $key
+                'index_number' => $key,
             ];
             $search[] = $match;
             $replace[] = ($tempImageLink == '')
@@ -183,7 +187,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
         foreach ($matches[0] as $key => $match) {
             $tempMediaGalleryAttributes = explode(',', $matches[1][$key]);
             $realMediaGalleryAttributes = [];
-            for ($i=0; $i<8; $i++) {
+            for ($i = 0; $i < 8; $i++) {
                 if (!isset($tempMediaGalleryAttributes[$i])) {
                     $realMediaGalleryAttributes[$i] = '';
                 } else {
@@ -192,7 +196,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
             }
 
             $imagesQty = (int)$realMediaGalleryAttributes[5];
-            if ($imagesQty == self::IMAGES_QTY_ALL) {
+            if ($imagesQty === self::IMAGES_QTY_ALL) {
                 $imagesQty = $realMediaGalleryAttributes[3] == self::IMAGES_MODE_GALLERY ? 100 : 25;
             }
 
@@ -228,11 +232,11 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
                 'gallery_hint' => trim($realMediaGalleryAttributes[6], '"'),
                 'watermark'    => (int)$realMediaGalleryAttributes[7],
                 'images'       => $galleryImagesLinks,
-                'index_number' => $key
+                'index_number' => $key,
             ];
 
             $blockObj = $this->layout->createBlock(
-                'Ess\M2ePro\Block\Adminhtml\Renderer\Description\Gallery'
+                \Ess\M2ePro\Block\Adminhtml\Renderer\Description\Gallery::class
             );
             $tempHtml = $blockObj->addData($data)->toHtml();
 
@@ -240,14 +244,17 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
             $replace[] = preg_replace('/\s{2,}/', '', $tempHtml);
         }
 
-        $text = str_replace($search, $replace, $text);
-
-        return $text;
+        return str_replace($search, $replace, $text);
     }
 
     // ---------------------------------------
 
-    private function normalizeDescription($str)
+    /**
+     * @param string $str
+     *
+     * @return string
+     */
+    private function normalizeDescription(string $str): string
     {
         // Trim whitespace
         if (($str = trim($str)) === '') {
@@ -264,7 +271,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
         // The following regexes only need to be executed if the string contains html
         if ($html_found = (strpos($str, '<') !== false)) {
             // Elements that should not be surrounded by p tags
-            $no_p  = '(?:p|div|h[1-6r]|ul|ol|li|blockquote|d[dlt]|pre|t[dhr]|t(?:able|body|foot|head)|';
+            $no_p = '(?:p|div|h[1-6r]|ul|ol|li|blockquote|d[dlt]|pre|t[dhr]|t(?:able|body|foot|head)|';
             $no_p .= 'c(?:aption|olgroup)|form|s(?:elect|tyle)|a(?:ddress|rea)|ma(?:p|th))';
 
             // Put at least two linebreaks before and after $no_p elements
@@ -291,6 +298,4 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
 
         return $str;
     }
-
-    //########################################
 }

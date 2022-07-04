@@ -104,7 +104,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat::class);
     }
 
     //########################################
@@ -220,7 +220,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
         );
 
         if ($asObjects) {
-            /** @var $service \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion */
+            /** @var \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion $service */
             foreach ($services as $service) {
                 $service->setSellingFormatTemplate($this);
             }
@@ -245,7 +245,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
         );
 
         if ($asObjects) {
-            /** @var $shippingOverride \Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride */
+            /** @var \Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride $shippingOverride */
             foreach ($shippingOverrides as $shippingOverride) {
                 $shippingOverride->setSellingFormatTemplate($this);
             }

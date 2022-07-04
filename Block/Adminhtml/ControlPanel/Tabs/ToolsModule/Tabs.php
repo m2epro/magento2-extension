@@ -35,8 +35,8 @@ class Tabs extends AbstractTabs
             [
                 'label' => __('Magento'),
                 'title' => __('Magento'),
-                'content' => $this->createBlock(
-                    'ControlPanel_Tabs_Command_Group',
+                'content' => $this->getLayout()->createBlock(
+                    \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group::class,
                     '',
                     [
                         'data' => [
@@ -52,8 +52,8 @@ class Tabs extends AbstractTabs
             [
                 'label' => __('Integration'),
                 'title' => __('Integration'),
-                'content' => $this->createBlock(
-                    'ControlPanel_Tabs_Command_Group',
+                'content' => $this->getLayout()->createBlock(
+                    \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group::class,
                     '',
                     [
                         'data' => [
@@ -69,8 +69,8 @@ class Tabs extends AbstractTabs
             [
                 'label' => __('Integration [eBay]'),
                 'title' => __('Integration [eBay]'),
-                'content' => $this->createBlock(
-                    'ControlPanel_Tabs_Command_Group',
+                'content' => $this->getLayout()->createBlock(
+                    \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group::class,
                     '',
                     [
                         'data' => [
@@ -86,8 +86,8 @@ class Tabs extends AbstractTabs
             [
                 'label' => __('Integration [Amazon]'),
                 'title' => __('Integration [Amazon]'),
-                'content' => $this->createBlock(
-                    'ControlPanel_Tabs_Command_Group',
+                'content' => $this->getLayout()->createBlock(
+                    \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group::class,
                     '',
                     [
                         'data' => [
@@ -103,8 +103,8 @@ class Tabs extends AbstractTabs
             [
                 'label' => __('Integration [Walmart]'),
                 'title' => __('Integration [Walmart]'),
-                'content' => $this->createBlock(
-                    'ControlPanel_Tabs_Command_Group',
+                'content' => $this->getLayout()->createBlock(
+                    \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group::class,
                     '',
                     [
                         'data' => [

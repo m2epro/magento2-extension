@@ -59,7 +59,7 @@ class Grid extends AbstractGrid
             'align'     => 'left',
             'width'     => '150px',
             'type'      => 'datetime',
-            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+            'filter'    => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
             'format'    => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
             'index'     => 'create_date',
@@ -71,7 +71,7 @@ class Grid extends AbstractGrid
             'align'     => 'left',
             'width'     => '150px',
             'type'      => 'datetime',
-            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+            'filter'    => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
             'format'    => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
             'index'     => 'update_date',
@@ -91,7 +91,7 @@ class Grid extends AbstractGrid
             'filter'    => false,
             'sortable'  => false,
             'getter'    => 'getId',
-            'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
             'actions'   => [
                 [
                     'caption'   => $this->__('Delete'),

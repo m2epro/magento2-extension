@@ -8,18 +8,32 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\AbstractMode
- */
 class Mode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\AbstractMode
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
 
-    public function getHelpPageUrl()
-    {
-        return $this->getHelper('Module\Support')
-            ->getDocumentationArticleUrl('x/uAMVB');
+    /**
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param array $data
+     */
+    public function __construct(
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        parent::__construct($formFactory, $context, $data);
+        $this->supportHelper = $supportHelper;
     }
 
-    //########################################
+    /**
+     * @return string
+     */
+    public function getHelpPageUrl(): string
+    {
+        return $this->supportHelper->getDocumentationArticleUrl('x/uAMVB');
+    }
 }

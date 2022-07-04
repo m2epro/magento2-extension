@@ -20,8 +20,8 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
-        parent::__construct($context, $registry, $formFactory, $data);
         $this->configuration = $configuration;
+        parent::__construct($context, $registry, $formFactory, $data);
     }
 
     //########################################

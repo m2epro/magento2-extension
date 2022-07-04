@@ -17,7 +17,19 @@ class AbstractGlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstra
 
     public $formData = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     public function _construct()
     {
@@ -32,7 +44,7 @@ class AbstractGlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstra
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create();
-        $selectElementType = 'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select';
+        $selectElementType = \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select::class;
 
         $form->addField(
             'auto_mode',
@@ -157,7 +169,7 @@ class AbstractGlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstra
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Listing::class)
         );
 
         $hasFormData = $this->hasFormData() ? 'true' : 'false';

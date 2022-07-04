@@ -43,7 +43,7 @@ abstract class Account extends Main
         try {
             $params = $this->getDataForServer($data);
 
-            /** @var $dispatcherObject \Ess\M2ePro\Model\Walmart\Connector\Dispatcher */
+            /** @var \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
 
             /** @var \Ess\M2ePro\Model\Walmart\Connector\Account\Add\EntityRequester $connectorObj */
@@ -89,7 +89,7 @@ abstract class Account extends Main
                 return $account;
             }
 
-            /** @var $dispatcherObject \Ess\M2ePro\Model\Walmart\Connector\Dispatcher */
+            /** @var \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
 
             /** @var \Ess\M2ePro\Model\Walmart\Connector\Account\Update\EntityRequester $connectorObj */

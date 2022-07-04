@@ -10,12 +10,24 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Log\Listing\Product;
 
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractView;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Log\Listing\Product\View
- */
 class View extends AbstractView
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $data);
+    }
 
     protected function getComponentMode()
     {
@@ -24,36 +36,34 @@ class View extends AbstractView
 
     protected function createAccountSwitcherBlock()
     {
-        return $this->createBlock('Amazon_Account_Switcher')->setData([
+        return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Switcher::class)->setData([
             'component_mode' => $this->getComponentMode(),
         ]);
     }
 
     protected function createMarketplaceSwitcherBlock()
     {
-        return $this->createBlock('Amazon_Marketplace_Switcher')->setData([
+        return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Marketplace\Switcher::class)
+                                 ->setData([
             'component_mode' => $this->getComponentMode(),
         ]);
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function _toHtml()
     {
-        $supportHelper = $this->helperFactory->getObject('Module_Support');
         $message = <<<TEXT
 This Log contains information about the actions applied to M2E Pro Listings and related Items.<br/><br/>
 Find detailed info in <a href="%url%" target="_blank">the article</a>.
 TEXT;
-        $helpBlock = $this->createBlock('HelpBlock')->setData([
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
             'content' => $this->__(
                 $message,
-                $supportHelper->getDocumentationArticleUrl('x/PZFCB#Logs&Events-M2EProListinglogs')
-            )
+                $this->supportHelper->getDocumentationArticleUrl('x/PZFCB#Logs&Events-M2EProListinglogs')
+            ),
         ]);
 
         return $helpBlock->toHtml() . parent::_toHtml();
     }
-
-    //########################################
 }

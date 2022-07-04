@@ -16,8 +16,11 @@ class GetSelectedCategoryDetails extends \Ess\M2ePro\Controller\Adminhtml\Ebay\C
     private $componentEbayCategory;
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
     private $componentEbayCategoryEbay;
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    private $magentoAttributeHelper;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
@@ -29,6 +32,7 @@ class GetSelectedCategoryDetails extends \Ess\M2ePro\Controller\Adminhtml\Ebay\C
         $this->componentEbayCategoryStore = $componentEbayCategoryStore;
         $this->componentEbayCategory      = $componentEbayCategory;
         $this->componentEbayCategoryEbay  = $componentEbayCategoryEbay;
+        $this->magentoAttributeHelper     = $magentoAttributeHelper;
     }
 
     public function execute()
@@ -58,7 +62,7 @@ class GetSelectedCategoryDetails extends \Ess\M2ePro\Controller\Adminhtml\Ebay\C
                 break;
             case \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE:
                 $details['path'] = $this->__('Magento Attribute') .' > '.
-                    $this->getHelper('Magento\Attribute')->getAttributeLabel($value);
+                    $this->magentoAttributeHelper->getAttributeLabel($value);
 
                 $details['interface_path'] = $details['path'];
 

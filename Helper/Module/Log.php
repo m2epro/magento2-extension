@@ -7,20 +7,33 @@
 
 namespace Ess\M2ePro\Helper\Module;
 
-/**
- * Class \Ess\M2ePro\Helper\Module\Log
- */
-class Log extends \Ess\M2ePro\Helper\AbstractHelper
+class Log
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
+    /** @var \Magento\Framework\ObjectManagerInterface */
+    private $objectManager;
+
+    /**
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager
+     * @param \Ess\M2ePro\Helper\Module\Translation $translationHelper
+     */
+    public function __construct(
+        \Magento\Framework\ObjectManagerInterface $objectManager,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper
+    ) {
+        $this->translationHelper = $translationHelper;
+        $this->objectManager = $objectManager;
+    }
 
     /**
      * @param string $string
      * @param array $params
      * @param array $links
+     *
      * @return string
      */
-    public function encodeDescription($string, array $params = [], array $links = [])
+    public function encodeDescription(string $string, array $params = [], array $links = []): string
     {
         if (empty($params) && empty($links)) {
             return $string;
@@ -29,15 +42,17 @@ class Log extends \Ess\M2ePro\Helper\AbstractHelper
         $descriptionData = [
             'string' => $string,
             'params' => $params,
-            'links'  => $links
+            'links'  => $links,
         ];
 
-        return $this->getHelper('Data')->jsonEncode($descriptionData);
+        return json_encode($descriptionData);
     }
 
     /**
      * @param string $string
+     *
      * @return string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function decodeDescription($string)
     {
@@ -45,12 +60,12 @@ class Log extends \Ess\M2ePro\Helper\AbstractHelper
             return '';
         }
 
-        if ($string[0] != '{') {
-            return $this->getHelper('Module\Translation')->__($string);
+        if ($string[0] !== '{') {
+            return $this->translationHelper->__($string);
         }
 
-        $descriptionData = $this->getHelper('Data')->jsonDecode($string);
-        $string = $this->getHelper('Module\Translation')->__($descriptionData['string']);
+        $descriptionData = json_decode($string, true);
+        $string = $this->translationHelper->__($descriptionData['string']);
 
         if (!empty($descriptionData['params'])) {
             $string = $this->addPlaceholdersToMessage($string, $descriptionData['params']);
@@ -63,29 +78,40 @@ class Log extends \Ess\M2ePro\Helper\AbstractHelper
         return $string;
     }
 
-    // ---------------------------------------
-
-    protected function addPlaceholdersToMessage($string, $params)
+    /**
+     * @param $string
+     * @param $params
+     *
+     * @return array|mixed|string|string[]
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function addPlaceholdersToMessage($string, $params)
     {
         foreach ($params as $key => $value) {
-            if (isset($value[0]) && $value[0] == '{') {
-                $tempValueArray = $this->getHelper('Data')->jsonDecode($value);
+            if (isset($value[0]) && $value[0] === '{') {
+                $tempValueArray = json_decode($value, true);
                 is_array($tempValueArray) && $value = $this->decodeDescription($value);
             }
 
-            if ($key[0] == '!') {
+            if ($key[0] === '!') {
                 $key = substr($key, 1);
             } else {
-                $value = $this->getHelper('Module\Translation')->__($value);
+                $value = $this->translationHelper->__($value);
             }
 
-            $string = str_replace('%'.$key.'%', $value, $string);
+            $string = str_replace('%' . $key . '%', $value, $string);
         }
 
         return $string;
     }
 
-    protected function addLinksToMessage($string, $links)
+    /**
+     * @param $string
+     * @param $links
+     *
+     * @return array|string|string[]
+     */
+    private function addLinksToMessage($string, $links)
     {
         $readMoreLinks = [];
         $resultString = $string;
@@ -115,14 +141,14 @@ class Log extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (!empty($readMoreLinks)) {
-            $translation = $this->getHelper('Module\Translation');
+            $translation = $this->translationHelper;
 
             foreach ($readMoreLinks as &$link) {
                 $link = '<a href="' . $link . '" target="_blank">' . $translation->__('here') . '</a>';
             }
 
             $delimiter = $translation->__('or');
-            $readMoreString = $translation->__('Details').' '.implode(' '.$delimiter.' ', $readMoreLinks).'.';
+            $readMoreString = $translation->__('Details') . ' ' . implode(' ' . $delimiter . ' ', $readMoreLinks) . '.';
 
             $resultString .= ' ' . $readMoreString;
         }
@@ -130,31 +156,40 @@ class Log extends \Ess\M2ePro\Helper\AbstractHelper
         return $resultString;
     }
 
-    // ---------------------------------------
-
+    /**
+     * @param $class
+     * @param $type
+     *
+     * @return \Magento\Framework\Phrase|mixed|string
+     */
     public function getActionTitleByClass($class, $type)
     {
         $reflectionClass = new \ReflectionClass($class);
         $tempConstants = $reflectionClass->getConstants();
 
         foreach ($tempConstants as $key => $value) {
-            if ($key == '_'.$type) {
-                return $this->getHelper('Module\Translation')->__($key);
+            if ($key == '_' . $type) {
+                return $this->translationHelper->__($key);
             }
         }
 
         return '';
     }
 
+    /**
+     * @param $class
+     *
+     * @return array
+     */
     public function getActionsTitlesByClass($class)
     {
         switch ($class) {
-            case 'Ess\M2ePro\Model\Listing\Log':
-            case 'Ess\M2ePro\Model\Ebay\Account\PickupStore\Log':
+            case \Ess\M2ePro\Model\Listing\Log::class:
+            case \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::class:
                 $prefix = 'ACTION_';
                 break;
 
-            case 'Ess\M2ePro\Model\Synchronization\Log':
+            case \Ess\M2ePro\Model\Synchronization\Log::class:
                 $prefix = 'TASK_';
                 break;
         }
@@ -172,9 +207,8 @@ class Log extends \Ess\M2ePro\Helper\AbstractHelper
         $actionsValues = [];
         foreach ($actionsNames as $action => $valueAction) {
             foreach ($tempConstants as $key => $valueConstant) {
-                if ($key == '_'.$action) {
-                    $actionsValues[$valueAction] = $this->helperFactory
-                        ->getObject('Module\Translation')->__($valueConstant);
+                if ($key === '_' . $action) {
+                    $actionsValues[$valueAction] = $this->translationHelper->__($valueConstant);
                 }
             }
         }
@@ -182,10 +216,15 @@ class Log extends \Ess\M2ePro\Helper\AbstractHelper
         return $actionsValues;
     }
 
+    /**
+     * @param $resultType
+     *
+     * @return mixed
+     */
     public function getStatusByResultType($resultType)
     {
         $typesStatusesMap = [
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE  => \Ess\M2ePro\Helper\Data::STATUS_SUCCESS,
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO  => \Ess\M2ePro\Helper\Data::STATUS_SUCCESS,
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => \Ess\M2ePro\Helper\Data::STATUS_SUCCESS,
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => \Ess\M2ePro\Helper\Data::STATUS_WARNING,
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR   => \Ess\M2ePro\Helper\Data::STATUS_ERROR,
@@ -194,11 +233,14 @@ class Log extends \Ess\M2ePro\Helper\AbstractHelper
         return $typesStatusesMap[$resultType];
     }
 
-    public function platformInfo()
+    /**
+     * @return string
+     */
+    public function platformInfo(): string
     {
         $platformInfo = [];
-        $platformInfo['edition'] = $this->getHelper('Magento')->getEditionName();
-        $platformInfo['version'] = $this->getHelper('Magento')->getVersion();
+        $platformInfo['edition'] = $this->objectManager->get(\Ess\M2ePro\Helper\Magento::class)->getEditionName();
+        $platformInfo['version'] = $this->objectManager->get(\Ess\M2ePro\Helper\Magento::class)->getVersion();
 
         return <<<DATA
 -------------------------------- PLATFORM INFO -----------------------------------
@@ -208,11 +250,14 @@ Version: {$platformInfo['version']}
 DATA;
     }
 
-    public function moduleInfo()
+    /**
+     * @return string
+     */
+    public function moduleInfo(): string
     {
         $moduleInfo = [];
-        $moduleInfo['name'] = $this->getHelper('Module')->getName();
-        $moduleInfo['version'] = $this->getHelper('Module')->getPublicVersion();
+        $moduleInfo['name'] = $this->objectManager->get(\Ess\M2ePro\Helper\Module::class)->getName();
+        $moduleInfo['version'] = $this->objectManager->get(\Ess\M2ePro\Helper\Module::class)->getPublicVersion();
 
         return <<<DATA
 -------------------------------- MODULE INFO -------------------------------------
@@ -221,6 +266,4 @@ Version: {$moduleInfo['version']}
 
 DATA;
     }
-
-    //########################################
 }

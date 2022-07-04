@@ -33,8 +33,8 @@ class Index extends Developers
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Developers\Tabs $tabsBlock */
-        $tabsBlock = $this->createBlock(
-            'Developers\Tabs',
+        $tabsBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Developers\Tabs::class,
             '',
             [
                 'data' => [
@@ -52,7 +52,7 @@ class Index extends Developers
         }
 
         $this->addLeft($tabsBlock);
-        $this->addContent($this->createBlock('Developers'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Developers::class));
 
         $this->setPageHelpLink('x/2gY3B');
 

@@ -8,14 +8,32 @@
 
 namespace Ess\M2ePro\Helper\Module\Support;
 
-/**
- * Class \Ess\M2ePro\Helper\Module\Support\Search
- */
-class Search extends \Ess\M2ePro\Helper\AbstractHelper
+class Search
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
-    public function process($query)
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper
+    ) {
+        $this->supportHelper = $supportHelper;
+        $this->dataHelper = $dataHelper;
+    }
+
+    /**
+     * @param string $query
+     *
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function process(string $query): array
     {
         if (empty($query)) {
             return [];
@@ -23,27 +41,30 @@ class Search extends \Ess\M2ePro\Helper\AbstractHelper
 
         $params = [
             'query' => strip_tags($query),
-            'count' => 10
+            'count' => 10,
         ];
 
         $results = [];
         $response = $this->sendRequestAsGet($params);
 
         if ($response !== false) {
-            $results = (array)$this->getHelper('Data')->jsonDecode($response);
+            $results = (array)$this->dataHelper->jsonDecode($response);
         }
 
         return $results;
     }
 
-    //########################################
-
-    private function sendRequestAsGet($params)
+    /**
+     * @param array $params
+     *
+     * @return bool|string
+     */
+    private function sendRequestAsGet(array $params)
     {
         $curlObject = curl_init();
 
-        $url = $this->getHelper('Module\Support')->getSupportUrl('extension/search');
-        $url = $url . '?'.http_build_query($params, '', '&');
+        $url = $this->supportHelper->getSupportUrl('extension/search');
+        $url = $url . '?' . http_build_query($params, '', '&');
         curl_setopt($curlObject, CURLOPT_URL, $url);
 
         curl_setopt($curlObject, CURLOPT_FOLLOWLOCATION, true);
@@ -66,6 +87,4 @@ class Search extends \Ess\M2ePro\Helper\AbstractHelper
 
         return $response;
     }
-
-    //########################################
 }

@@ -116,7 +116,7 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
         $isMappingEnabled = $this->getAccount()->getChildObject()->isOtherListingsMappingEnabled();
 
         if ($isMappingEnabled) {
-            /** @var $mappingModel \Ess\M2ePro\Model\Amazon\Listing\Other\Mapping */
+            /** @var \Ess\M2ePro\Model\Amazon\Listing\Other\Mapping $mappingModel */
             $mappingModel = $this->modelFactory->getObject('Amazon_Listing_Other_Mapping');
             $mappingModel->initialize($this->getAccount());
         }
@@ -179,7 +179,7 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
             return $this->preparedListingsOtherCollection;
         }
 
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Listing\Other\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other\Collection $collection */
         $collection = $this->parentFactory->getObject($this->getComponentMode(), 'Listing\Other')->getCollection();
         $collection->addFieldToFilter('account_id', (int)$this->getAccount()->getId());
 

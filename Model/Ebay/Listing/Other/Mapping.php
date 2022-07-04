@@ -59,7 +59,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            /** @var $otherListing \Ess\M2ePro\Model\Listing\Other */
+            /** @var \Ess\M2ePro\Model\Listing\Other $otherListing */
 
             if ($otherListing->getProductId()) {
                 continue;
@@ -76,7 +76,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
 
         foreach ($otherListingsFiltered as $otherListing) {
 
-            /** @var $otherListing \Ess\M2ePro\Model\Listing\Other */
+            /** @var \Ess\M2ePro\Model\Listing\Other $otherListing */
 
             $identifier = $otherListing->getAccountId();
 
@@ -91,7 +91,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
 
         foreach ($accounts as $otherListings) {
             foreach ($otherListings as $otherListing) {
-                /** @var $otherListing \Ess\M2ePro\Model\Listing\Other */
+                /** @var \Ess\M2ePro\Model\Listing\Other $otherListing */
                 $temp = $this->autoMapOtherListingProduct($otherListing);
                 $temp === false && $result = false;
             }

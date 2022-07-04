@@ -8,12 +8,21 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category
- */
 abstract class AbstractCategory extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     public function _construct()
     {
@@ -33,7 +42,7 @@ abstract class AbstractCategory extends \Ess\M2ePro\Block\Adminhtml\Magento\Form
 
         $form->addField(
             'custom_listing_auto_action_mode_category',
-            'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\CustomContainer',
+            \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\CustomContainer::class,
             [
                 'text' => $containerHtml,
                 'field_extra_attributes' => 'style="width: 100%"'
@@ -53,14 +62,14 @@ abstract class AbstractCategory extends \Ess\M2ePro\Block\Adminhtml\Magento\Form
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Listing::class)
         );
 
         // ---------------------------------------
         $groupGrid = $this->getChildBlock('group_grid');
         // ---------------------------------------
 
-        $skipConfirmation = $this->getHelper('Data')->jsonEncode($groupGrid->getCollection()->getSize() == 0);
+        $skipConfirmation = $this->dataHelper->jsonEncode($groupGrid->getCollection()->getSize() == 0);
         $this->js->add(<<<JS
         var skipConfirmation = {$skipConfirmation};
 

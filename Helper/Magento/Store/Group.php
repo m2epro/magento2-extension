@@ -8,34 +8,49 @@
 
 namespace Ess\M2ePro\Helper\Magento\Store;
 
-/**
- * Class \Ess\M2ePro\Helper\Magento\Store\Group
- */
-class Group extends \Ess\M2ePro\Helper\AbstractHelper
+class Group
 {
-    private $defaultStoreGroup = null;
+    /** @var \Magento\Store\Api\Data\GroupInterface */
+    private $defaultStoreGroup;
+    /** @var \Magento\Catalog\Model\CategoryFactory */
+    private $catalogCategoryFactory;
+    /** @var \Magento\Store\Model\GroupFactory */
+    private $storeGroupFactory;
+    /** @var \Magento\Store\Model\StoreManagerInterface  */
+    private $storeManager;
+    /** @var \Ess\M2ePro\Helper\Magento\Store\Website */
+    private $websiteHelper;
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
 
-    protected $catalogCategoryFactory;
-    protected $storeGroupFactory;
-    protected $storeManager;
-
-    //########################################
-
+    /**
+     * @param \Magento\Catalog\Model\CategoryFactory $catalogCategoryFactory
+     * @param \Magento\Store\Model\GroupFactory $storeGroupFactory
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Ess\M2ePro\Helper\Magento\Store\Website $websiteHelper
+     * @param \Ess\M2ePro\Helper\Module\Translation $translationHelper
+     */
     public function __construct(
         \Magento\Catalog\Model\CategoryFactory $catalogCategoryFactory,
         \Magento\Store\Model\GroupFactory $storeGroupFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Helper\Magento\Store\Website $websiteHelper,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper
     ) {
         $this->catalogCategoryFactory = $catalogCategoryFactory;
         $this->storeGroupFactory = $storeGroupFactory;
         $this->storeManager = $storeManager;
-        parent::__construct($helperFactory, $context);
+        $this->websiteHelper = $websiteHelper;
+        $this->translationHelper = $translationHelper;
     }
 
-    //########################################
+    // ----------------------------------------
 
+    /**
+     * @param $entity
+     *
+     * @return bool
+     */
     public function isExists($entity)
     {
         if ($entity instanceof \Magento\Store\Model\Group) {
@@ -57,9 +72,13 @@ class Group extends \Ess\M2ePro\Helper\AbstractHelper
         return ($group->getWebsiteId() == $websiteId);
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getDefault()
+    /**
+     * @return \Magento\Store\Api\Data\GroupInterface
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getDefault(): \Magento\Store\Api\Data\GroupInterface
     {
         if ($this->defaultStoreGroup === null) {
             $defaultWebsite = $this->storeManager->getWebsite(true);
@@ -71,17 +90,19 @@ class Group extends \Ess\M2ePro\Helper\AbstractHelper
         return $this->defaultStoreGroup;
     }
 
-    public function getDefaultGroupId()
+    /**
+     * @return int
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getDefaultGroupId(): int
     {
         return (int)$this->getDefault()->getId();
     }
 
-    //########################################
-
     public function addGroup($websiteId, $name, $rootCategoryId)
     {
-        if (!$this->getHelper('Magento_Store_Website')->isExists($websiteId)) {
-            $error = $this->getHelper('Module\Translation')->__(
+        if (!$this->websiteHelper->isExists($websiteId)) {
+            $error = $this->translationHelper->__(
                 'Website with id %value% does not exist.',
                 (int)$websiteId
             );
@@ -99,7 +120,7 @@ class Group extends \Ess\M2ePro\Helper\AbstractHelper
             $category = $this->catalogCategoryFactory->create()->load($rootCategoryId);
 
             if (!$category->hasEntityId()) {
-                $error = $this->getHelper('Module\Translation')->__(
+                $error = $this->translationHelper->__(
                     'Category with %category_id% doen\'t exist',
                     $rootCategoryId
                 );
@@ -107,7 +128,7 @@ class Group extends \Ess\M2ePro\Helper\AbstractHelper
             }
 
             if ((int)$category->getLevel() !== 1) {
-                $error = $this->getHelper('Module\Translation')->__('Category of level 1 must be provided.');
+                $error = $this->translationHelper->__('Category of level 1 must be provided.');
                 throw new \Ess\M2ePro\Model\Exception($error);
             }
 
@@ -123,6 +144,4 @@ class Group extends \Ess\M2ePro\Helper\AbstractHelper
     {
         return $this->storeManager->getGroups($withDefault);
     }
-
-    //########################################
 }

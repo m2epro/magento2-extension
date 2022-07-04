@@ -10,6 +10,7 @@ namespace  Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer;
 
 use Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Model\Listing\Log;
+use Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\ViewLogIcon\Listing;
 
 class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
 {
@@ -34,6 +35,12 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
 
     protected $parentAndChildReviseScheduledCache = [];
 
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
@@ -41,6 +48,8 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\View $viewHelper,
         \Magento\Backend\Block\Context $context,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -50,12 +59,14 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
         $this->modelFactory = $modelFactory;
         $this->resourceConnection = $resourceConnection;
         $this->viewHelper = $viewHelper;
+        $this->translationHelper = $translationHelper;
+        $this->dataHelper = $dataHelper;
     }
 
     public function render(\Magento\Framework\DataObject $row)
     {
         $listingProductId  = (int)$row->getData('id');
-        $additionalData    = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+        $additionalData    = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
         $isVariationParent = (bool)(int)$row->getData('is_variation_parent');
         $isVariationGrid   = false;
 
@@ -69,7 +80,7 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\ViewLogIcon\Listing $viewLogIcon */
-        $viewLogIcon = $this->createBlock('Amazon_Grid_Column_Renderer_ViewLogIcon_Listing', '', ['data' => $data]);
+        $viewLogIcon = $this->getLayout()->createBlock(Listing::class, '', ['data' => $data]);
         $html = $viewLogIcon->render($row);
 
         if (!empty($additionalData['synch_template_list_rules_note'])) {
@@ -111,7 +122,7 @@ HTML;
                     . $this->getLockedTag($row);
             }
 
-            $variationChildStatuses = $this->getHelper('Data')->jsonDecode($variationChildStatuses);
+            $variationChildStatuses = $this->dataHelper->jsonDecode($variationChildStatuses);
 
             $sortedStatuses = [];
             if (isset($variationChildStatuses[$statusUnknown])) {
@@ -134,7 +145,7 @@ HTML;
                 $sortedStatuses[$statusBlocked] = $variationChildStatuses[$statusBlocked];
             }
 
-            $linkTitle = $this->getHelper('Module\Translation')->__('Show all Child Products with such Status');
+            $linkTitle = $this->translationHelper->__('Show all Child Products with such Status');
 
             foreach ($sortedStatuses as $status => $productsCount) {
                 if (empty($productsCount)) {
@@ -143,8 +154,8 @@ HTML;
 
                 $filter = base64_encode('status=' . $status);
 
-                $productTitle = $this->getHelper('Data')->escapeHtml($row->getData('name'));
-                $vpmt = $this->getHelper('Module\Translation')->__(
+                $productTitle = $this->dataHelper->escapeHtml($row->getData('name'));
+                $vpmt = $this->translationHelper->__(
                     'Manage Variations of &quot;%s%&quot; ',
                     $productTitle
                 );
@@ -174,7 +185,7 @@ HTML;
 
     protected function getProductStatus($status)
     {
-        $translator = $this->getHelper('Module\Translation');
+        $translator = $this->translationHelper;
         switch ($status) {
             case \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN:
                 return '<span style="color: gray;">' . $translator->__('Unknown') . '</span>';

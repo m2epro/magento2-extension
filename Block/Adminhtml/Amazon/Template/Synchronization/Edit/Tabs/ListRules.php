@@ -12,11 +12,27 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Template\Synchronization;
 use Ess\M2ePro\Model\Template\Synchronization as TemplateSynchronization;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs\ListRules
- */
 class ListRules extends AbstractForm
 {
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     protected function _prepareForm()
     {
         $template = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
@@ -44,7 +60,7 @@ class ListRules extends AbstractForm
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/bf8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/bf8UB')
                 )
             ]
         );
@@ -196,7 +212,8 @@ HTML
             $ruleModel->loadFromSerialized($formData['list_advanced_rules_filters']);
         }
 
-        $ruleBlock = $this->createBlock('Magento_Product_Rule')->setData(['rule_model' => $ruleModel]);
+        $ruleBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule::class)
+                                       ->setData(['rule_model' => $ruleModel]);
 
         $fieldset->addField(
             'advanced_filter',
@@ -209,12 +226,12 @@ HTML
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Template\Synchronization::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Template\Synchronization::class)
         );
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\Synchronization::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\Synchronization::class)
         );
-        $this->jsPhp->addConstants($this->getHelper('Data')
+        $this->jsPhp->addConstants($this->dataHelper
             ->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class));
 
         $this->jsUrl->addUrls([
@@ -246,7 +263,7 @@ HTML
         $this->js->add("M2ePro.formData.id = '{$this->getRequest()->getParam('id')}';");
         $this->js->add(
             "M2ePro.formData.title
-            = '{$this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeHtml($formData['title']))}';"
+            = '{$this->dataHelper->escapeJs($this->dataHelper->escapeHtml($formData['title']))}';"
         );
 
         $this->js->add(<<<JS

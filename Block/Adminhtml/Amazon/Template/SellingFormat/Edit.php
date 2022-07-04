@@ -28,7 +28,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getHelper('Data')->getBackUrl('list');
+        $url = $this->dataHelper->getBackUrl('list');
         $this->addButton('back', [
             'label'     => $this->__('Back'),
             'onclick'   => 'AmazonTemplateSellingFormatObj.backClick(\'' . $url . '\')',
@@ -73,7 +73,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                     . '\'' . $this->getSaveConfirmationText() . '\','
                     . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SELLING_FORMAT . '\''
                     . ')',
-                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
                         'label' => $this->__('Save And Continue Edit'),
@@ -97,7 +97,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                     . '\'' . $this->getSaveConfirmationText() . '\','
                     . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SELLING_FORMAT . '\''
                     . ')',
-                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
                         'label'     => $this->__('Save And Back'),

@@ -15,7 +15,7 @@ use \Ess\M2ePro\Model\Order as Order;
  */
 class Status extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 {
-    /** @var $orderItem Order\Item */
+    /** @var Order\Item $orderItem */
     private $orderItem;
     private $activeRecordFactory;
 

@@ -38,7 +38,7 @@ abstract class Main extends Base
 
         if ($request->isGet() && !$request->isPost() && !$request->isXmlHttpRequest()) {
             try {
-                $this->getHelper('Client')->updateLocationData(false);
+                $this->_objectManager->get(\Ess\M2ePro\Helper\Client::class)->updateLocationData(false);
             } catch (\Exception $exception) {
                 $this->getHelper('Module_Exception')->process($exception);
             }
@@ -120,7 +120,7 @@ abstract class Main extends Base
             return;
         }
 
-        $block = $this->createBlock('MsiNotificationPopup');
+        $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\MsiNotificationPopup::class);
         $this->getLayout()->setChild('js', $block->getNameInLayout(), '');
     }
 
@@ -139,7 +139,7 @@ abstract class Main extends Base
             return;
         }
 
-        $block = $this->createBlock('RequirementsPopup');
+        $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\RequirementsPopup::class);
         $this->getLayout()->setChild('js', $block->getNameInLayout(), '');
 
         $this->systemRequirementsChecked = true;
@@ -178,12 +178,12 @@ abstract class Main extends Base
 
     protected function getCustomViewHelper()
     {
-        return $this->getHelper('View')->getViewHelper($this->getCustomViewNick());
+        return $this->getViewHelper()->getViewHelper($this->getCustomViewNick());
     }
 
     protected function getCustomViewControllerHelper()
     {
-        return $this->getHelper('View')->getControllerHelper($this->getCustomViewNick());
+        return $this->getViewHelper()->getControllerHelper($this->getCustomViewNick());
     }
 
     abstract protected function getCustomViewNick();

@@ -30,13 +30,23 @@ class Builder extends AbstractModel
     const UPDATE_ITEMS_COUNT        = 'items_count';
     const UPDATE_EMAIL              = 'email';
 
+    /** @var \Ess\M2ePro\Model\Ebay\Order\Helper */
     private $helper;
 
-    /** @var $order \Ess\M2ePro\Model\Account */
-    private $account = null;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
+    protected $activeRecordFactory;
 
-    /** @var $order \Ess\M2ePro\Model\Order */
-    private $order = null;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
+    protected $ebayFactory;
+
+    /** @var \Ess\M2ePro\Model\Account */
+    private $account;
+
+    /** @var \Ess\M2ePro\Model\Order */
+    private $order;
+
+    /** @var \Ess\M2ePro\Model\Order[] */
+    private $relatedOrders = [];
 
     private $items = [];
 
@@ -45,11 +55,6 @@ class Builder extends AbstractModel
     private $status = self::STATUS_NOT_MODIFIED;
 
     private $updates = [];
-
-    private $relatedOrders = [];
-
-    protected $activeRecordFactory;
-    protected $ebayFactory;
 
     //########################################
 
@@ -61,10 +66,11 @@ class Builder extends AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+
         $this->activeRecordFactory = $activeRecordFactory;
         $this->ebayFactory = $ebayFactory;
         $this->helper = $orderHelper;
-        parent::__construct($helperFactory, $modelFactory, $data);
     }
 
     //########################################
@@ -383,7 +389,7 @@ class Builder extends AbstractModel
         foreach ($this->items as $itemData) {
             $itemData['order_id'] = $this->order->getId();
 
-            /** @var $itemBuilder \Ess\M2ePro\Model\Ebay\Order\Item\Builder */
+            /** @var \Ess\M2ePro\Model\Ebay\Order\Item\Builder $itemBuilder */
             $itemBuilder = $this->modelFactory->getObject('Ebay_Order_Item_Builder');
             $itemBuilder->initialize($itemData);
 
@@ -422,7 +428,7 @@ class Builder extends AbstractModel
                 $transactionData['transaction_id'] = $paymentTransactionId . '-' . ++$postfix;
             }
 
-            /** @var $transactionBuilder \Ess\M2ePro\Model\Ebay\Order\ExternalTransaction\Builder */
+            /** @var \Ess\M2ePro\Model\Ebay\Order\ExternalTransaction\Builder $transactionBuilder */
             $transactionBuilder = $this->modelFactory->getObject('Ebay_Order_ExternalTransaction_Builder');
             $transactionBuilder->initialize($transactionData);
 
@@ -617,7 +623,7 @@ class Builder extends AbstractModel
             $this->processOrdersContainingItemsFromCurrentOrder();
         }
 
-        /** @var $ebayAccount \Ess\M2ePro\Model\Ebay\Account */
+        /** @var \Ess\M2ePro\Model\Ebay\Account $ebayAccount */
         $ebayAccount = $this->account->getChildObject();
 
         if ($this->order->hasListingItems() && !$ebayAccount->isMagentoOrdersListingsModeEnabled()) {
@@ -646,48 +652,75 @@ class Builder extends AbstractModel
      */
     protected function processOrdersContainingItemsFromCurrentOrder()
     {
-        /** @var $log \Ess\M2ePro\Model\Order\Log */
-        $log = $this->activeRecordFactory->getObject('Order\Log');
-        $log->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK);
-
-        /** @var \Ess\M2ePro\Model\Order $order */
-        foreach ($this->relatedOrders as $order) {
-            if ($order->canCancelMagentoOrder()) {
-                $description = 'Magento Order #%order_id% should be canceled ' .
-                    'as new combined eBay order #%new_id% was created.';
-                $description = $this->getHelper('Module\Log')->encodeDescription(
-                    $description,
+        foreach ($this->relatedOrders as $relatedOrder) {
+            if ($relatedOrder->canCancelMagentoOrder()) {
+                $relatedOrder->addWarningLog(
+                    'Magento Order #%order_id% should be canceled ' .
+                    'as new combined eBay order #%new_id% was created.',
                     [
-                        '!order_id' => $order->getMagentoOrder()->getRealOrderId(),
-                        '!new_id'   => $this->order->getChildObject()->getEbayOrderId()
+                        '!order_id' => $relatedOrder->getMagentoOrder()->getRealOrderId(),
+                        '!new_id'   => $this->order->getChildObject()->getEbayOrderId(),
                     ]
                 );
 
-                $log->addMessage($order, $description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING);
-
                 try {
-                    $order->cancelMagentoOrder();
+                    $relatedOrder->cancelMagentoOrder();
                 } catch (\Exception $e) {
                     $this->getHelper('Module_Exception')->process($e);
                 }
             }
 
-            if ($order->getReserve()->isPlaced()) {
-                $order->getReserve()->release();
-            }
+            $relatedOrder->getReserve()->cancel();
+            $relatedOrder->getChildObject()->setData('cancellation_status', 1);
+            $relatedOrder->getChildObject()->save();
 
-            $description = 'eBay Order #%old_id% was deleted as new combined eBay order #%new_id% was created.';
-            $description = $this->getHelper('Module\Log')->encodeDescription(
-                $description,
+            $relatedOrder->addWarningLog(
+                'eBay order #%old_id% was canceled. A new combined eBay order #%new_id% was created.',
                 [
-                    '!old_id' => $order->getChildObject()->getEbayOrderId(),
-                    '!new_id' => $this->order->getChildObject()->getEbayOrderId()
+                    '!old_id' => $relatedOrder->getChildObject()->getEbayOrderId(),
+                    '!new_id' => $this->order->getChildObject()->getEbayOrderId(),
                 ]
             );
+        }
 
-            $log->addMessage($order, $description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING);
+        $this->logOrdersContainingItemsFromCurrentOrder();
+        $this->logUnpaidOrdersContainingItemsFromCurrentOrder();
+    }
 
-            $order->delete();
+    private function logOrdersContainingItemsFromCurrentOrder()
+    {
+        $ebayOrderIds = array_map(function (\Ess\M2ePro\Model\Order $order) {
+            return $order->getChildObject()->getEbayOrderId();
+        }, $this->relatedOrders);
+
+        if (!empty($ebayOrderIds)) {
+            $this->order->addWarningLog(
+                'Combined eBay order #%new_id% was created for canceled eBay order(s) #%old_ids%.',
+                [
+                    '!old_ids' => implode(', ', $ebayOrderIds),
+                    '!new_id'  => $this->order->getChildObject()->getEbayOrderId(),
+                ]
+            );
+        }
+    }
+
+    private function logUnpaidOrdersContainingItemsFromCurrentOrder()
+    {
+        $ebayOrderIds = [];
+        foreach ($this->relatedOrders as $relatedOrder) {
+            if ($this->order->getChildObject()->isPaymentCompleted() &&
+                !$relatedOrder->getChildObject()->isPaymentCompleted()
+            ) {
+                $ebayOrderIds[] = $relatedOrder->getChildObject()->getEbayOrderId();
+            }
+        }
+
+        if (!empty($ebayOrderIds)) {
+            $this->order->addWarningLog(
+                'This combined order was created for unpaid eBay order(s) #%ids%.' .
+                ' Please check the order details on eBay.',
+                ['!ids' => implode(', ', $ebayOrderIds)]
+            );
         }
     }
 
@@ -810,7 +843,7 @@ class Builder extends AbstractModel
             return false;
         }
 
-        /** @var $ebayOrder \Ess\M2ePro\Model\Ebay\Order */
+        /** @var \Ess\M2ePro\Model\Ebay\Order $ebayOrder */
         $ebayOrder = $this->order->getChildObject();
         $paymentDetails = $this->getData('payment_details');
 
@@ -835,7 +868,7 @@ class Builder extends AbstractModel
             return false;
         }
 
-        /** @var $ebayOrder \Ess\M2ePro\Model\Ebay\Order */
+        /** @var \Ess\M2ePro\Model\Ebay\Order $ebayOrder */
         $ebayOrder = $this->order->getChildObject();
         $shippingDetails = $this->getData('shipping_details');
         $taxDetails = $this->getData('tax_details');
@@ -981,7 +1014,7 @@ class Builder extends AbstractModel
             return;
         }
 
-        /** @var $magentoOrderUpdater \Ess\M2ePro\Model\Magento\Order\Updater */
+        /** @var \Ess\M2ePro\Model\Magento\Order\Updater $magentoOrderUpdater */
         $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
         $magentoOrderUpdater->setMagentoOrder($magentoOrder);
 

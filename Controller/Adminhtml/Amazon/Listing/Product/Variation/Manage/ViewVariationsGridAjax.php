@@ -8,6 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manage;
 
+use Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Variations\Grid;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 /**
@@ -25,7 +26,7 @@ class ViewVariationsGridAjax extends Main
             return $this->getResult();
         }
 
-        $grid = $this->createBlock('Amazon_Listing_Product_Variation_Manage_Tabs_Variations_Grid');
+        $grid = $this->getLayout()->createBlock(Grid::class);
         $grid->setListingProduct($this->amazonFactory->getObjectLoaded('Listing\Product', $productId));
 
         $this->setAjaxContent($grid);

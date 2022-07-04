@@ -143,7 +143,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
         $taskNick = ucfirst($taskNick);
 
-        /** @var $task \Ess\M2ePro\Model\Cron\Task\AbstractModel **/
+        /** @var \Ess\M2ePro\Model\Cron\Task\AbstractModel $task **/
         $task = $this->modelFactory->getObject('Cron\Task\\'.trim($taskNick));
 
         $task->setInitiator($this->getInitiator());

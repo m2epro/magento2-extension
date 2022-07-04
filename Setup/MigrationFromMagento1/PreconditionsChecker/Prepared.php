@@ -13,7 +13,19 @@ namespace Ess\M2ePro\Setup\MigrationFromMagento1\PreconditionsChecker;
  */
 class Prepared extends AbstractModel
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $activeRecordFactory, $resourceConnection);
+        $this->supportHelper = $supportHelper;
+    }
 
     /**
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -27,7 +39,7 @@ class Prepared extends AbstractModel
         ) {
             throw new \Exception(
                 $this->helperFactory->getObject('Module\Translation')->translate([
-                    'M2E Pro tables dump from Magento v1.x was not imported to the Magneto v2.x database. 
+                    'M2E Pro tables dump from Magento v1.x was not imported to the Magneto v2.x database.
                     Please complete the action, then click <b>Continue</b>.'
                 ])
             );
@@ -65,7 +77,7 @@ class Prepared extends AbstractModel
                     'Your current Module version <b>%v%</b> for Magento v1.x does not support Data Migration.
                     Please read our <a href="%url%" target="_blank">Migration Guide</a> for more details.',
                     $sourceParams['/migrationtomagento2/source/m2epro/']['version'],
-                    $this->helperFactory->getObject('Module\Support')->getDocumentationArticleUrl('x/Ov0kB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/Ov0kB')
                 ])
             );
         }

@@ -20,7 +20,7 @@ class Config extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     protected function _construct()
     {
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Config');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Config::class);
     }
 
     //########################################

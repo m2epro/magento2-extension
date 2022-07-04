@@ -17,7 +17,9 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Order
 
     public function execute()
     {
-        $this->setAjaxContent($this->createBlock('Amazon_Log_Order_Grid'));
+        $this->setAjaxContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Log\Order\Grid::class)
+        );
 
         return $this->getResult();
     }

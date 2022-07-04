@@ -43,7 +43,7 @@ class ReserveCancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->getSynchronizationLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
 
         foreach ($permittedAccounts as $account) {
-            /** @var $account \Ess\M2ePro\Model\Account **/
+            /** @var \Ess\M2ePro\Model\Account $account **/
 
             $this->getOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
 
@@ -65,7 +65,7 @@ class ReserveCancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function getPermittedAccounts()
     {
-        /** @var $accountsCollection \Ess\M2ePro\Model\ResourceModel\Account\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
         $accountsCollection = $this->parentFactory->getObject(
             \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'Account'

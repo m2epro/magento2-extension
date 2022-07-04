@@ -64,7 +64,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Item');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Item::class);
     }
 
     //########################################

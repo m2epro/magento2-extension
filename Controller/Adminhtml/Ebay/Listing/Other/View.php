@@ -26,9 +26,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Unmanaged Listings'));
 
-        $this->addContent($this->createBlock(
-            'Ebay_Listing_Other_View'
-        ));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Other\View::class));
 
         return $this->getResult();
     }

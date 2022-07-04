@@ -8,21 +8,14 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Create;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Create\Index
- */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 {
     protected $sessionKey = 'walmart_listing_create';
-
-    //########################################
 
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::walmart_listings_m2epro');
     }
-
-    //########################################
 
     public function execute()
     {
@@ -44,7 +37,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
             );
         }
 
-        $content = $this->createBlock('Walmart_Listing_Create');
+        $content = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Create::class);
         $this->addContent($content);
 
         $this->setPageHelpLink('x/Xf1IB');
@@ -52,8 +45,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 
         return $this->getResult();
     }
-
-    //########################################
 
     protected function createListing()
     {
@@ -79,19 +70,15 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_LISTING,
             'Listing was Added',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
         );
 
         return $listing;
     }
-
-    //########################################
 
     private function isCreationModeListingOnly()
     {
         return $this->getRequest()->getParam('creation_mode') ==
             \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY;
     }
-
-    //########################################
 }

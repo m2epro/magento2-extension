@@ -11,13 +11,26 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Ebay\Account;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Feedback
- */
 class Feedback extends AbstractForm
 {
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     protected function _prepareForm()
     {
@@ -28,8 +41,8 @@ class Feedback extends AbstractForm
         $formData = array_merge($defaults, $formData);
         $this->setData('form_data', $formData);
 
-        $feedbacksReceive = $this->getHelper('Data')->escapeJs($formData['feedbacks_receive']);
-        $feedbacksAutoResponse = $this->getHelper('Data')->escapeJs($formData['feedbacks_auto_response']);
+        $feedbacksReceive = $this->dataHelper->escapeJs($formData['feedbacks_receive']);
+        $feedbacksAutoResponse = $this->dataHelper->escapeJs($formData['feedbacks_auto_response']);
 
         $form = $this->_formFactory->create();
 
@@ -43,7 +56,7 @@ class Feedback extends AbstractForm
      <br /><br />
      More detailed information about ability to work with this Page you can find
      <a href="%url%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/pf0bB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/pf0bB')
                 )
             ]
         );
@@ -190,7 +203,7 @@ JS
 CSS
         );
 
-        $addBtn = $this->createBlock('Magento\Button')
+        $addBtn = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
             ->setData([
                 'onclick' => 'EbayAccountObj.openFeedbackTemplatePopup();',
                 'label' => $this->__('Add Template'),
@@ -200,7 +213,8 @@ CSS
         $formData = $this->getData('form_data');
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Feedback\Template\Grid $grid */
-        $grid = $this->createBlock('Ebay_Account_Edit_Tabs_Feedback_Template_Grid');
+        $grid = $this->getLayout()
+                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Feedback\Template\Grid::class);
         $gridHtml = $grid->toHtml();
 
         $showTemplates = (

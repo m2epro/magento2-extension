@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Order\Matching',
-            'Ess\M2ePro\Model\ResourceModel\Order\Matching'
+            \Ess\M2ePro\Model\Order\Matching::class,
+            \Ess\M2ePro\Model\ResourceModel\Order\Matching::class
         );
     }
 

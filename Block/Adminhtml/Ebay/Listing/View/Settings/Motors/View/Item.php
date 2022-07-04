@@ -29,7 +29,8 @@ class Item extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     {
         //------------------------------
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Item\Grid $block */
-        $block = $this->createBlock('Ebay_Listing_View_Settings_Motors_View_Item_Grid');
+        $block = $this->getLayout()
+                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Item\Grid::class);
         $block->setListingProductId($this->getListingProductId());
         $block->setMotorsType($this->getMotorsType());
         $this->setChild('view_item_grid', $block);

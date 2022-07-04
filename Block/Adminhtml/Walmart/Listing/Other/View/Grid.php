@@ -13,11 +13,18 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Other\View;
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
+
     protected $resourceConnection;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
     protected $walmartFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
@@ -25,11 +32,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         $this->walmartFactory = $walmartFactory;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -98,7 +107,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'  => 'product_id',
             'filter_index' => 'product_id',
             'frame_callback' => [$this, 'callbackColumnProductId'],
-            'filter' => 'Ess\M2ePro\Block\Adminhtml\Grid\Column\Filter\ProductId',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Grid\Column\Filter\ProductId::class,
             'filter_condition_callback' => [$this, 'callbackFilterProductId']
         ]);
 
@@ -217,8 +226,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             if (strlen($productTitle) > 60) {
                 $productTitle = substr($productTitle, 0, 60) . '...';
             }
-            $productTitle = $this->getHelper('Data')->escapeHtml($productTitle);
-            $productTitle = $this->getHelper('Data')->escapeJs($productTitle);
+            $productTitle = $this->dataHelper->escapeHtml($productTitle);
+            $productTitle = $this->dataHelper->escapeJs($productTitle);
             $htmlValue = '&nbsp;<a href="javascript:void(0);"
                                     onclick="ListingOtherMappingObj.openPopUp(
                                     '. (int)$row->getId(). ',
@@ -239,7 +248,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $htmlValue .= '&nbsp&nbsp&nbsp<a href="javascript:void(0);"'
                       .' onclick="WalmartListingOtherGridObj.movingHandler.getGridHtml('
-                      .$this->getHelper('Data')->jsonEncode([(int)$row->getData('id')])
+                      .$this->dataHelper->jsonEncode([(int)$row->getData('id')])
                       .')">'
                       .$this->__('Move')
                       .'</a>';

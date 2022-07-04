@@ -14,7 +14,28 @@ use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
 
 class StepTwoGetSuggestedCategory extends Settings
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\AttributeSet */
+    protected $magentoAttributeSetHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\AttributeSet $magentoAttributeSetHelper,
+        \Ess\M2ePro\Helper\Magento\Category $magentoCategoryHelper,
+        eBayCategory\Ebay $componentEbayCategoryEbay,
+        eBayCategory $componentEbayCategory,
+        eBayCategory\Store $componentEbayCategoryStore,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct(
+            $magentoCategoryHelper,
+            $componentEbayCategoryEbay,
+            $componentEbayCategory,
+            $componentEbayCategoryStore,
+            $ebayFactory,
+            $context
+        );
+        $this->magentoAttributeSetHelper = $magentoAttributeSetHelper;
+    }
 
     public function execute()
     {
@@ -45,8 +66,8 @@ class StepTwoGetSuggestedCategory extends Settings
             }
 
             $attributeSetId = $product->getData('attribute_set_id');
-            if (!$this->getHelper('Magento\AttributeSet')->isDefault($attributeSetId)) {
-                $query .= ' ' . $this->getHelper('Magento\AttributeSet')->getName($attributeSetId);
+            if (!$this->magentoAttributeSetHelper->isDefault($attributeSetId)) {
+                $query .= ' ' . $this->magentoAttributeSetHelper->getName($attributeSetId);
             }
 
             try {

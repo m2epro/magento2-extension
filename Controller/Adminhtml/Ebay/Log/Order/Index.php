@@ -38,7 +38,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order
             $this->getResult()->getConfig()->getTitle()->prepend($this->__('Orders Logs & Events'));
         }
 
-        $this->addContent($this->createBlock('Ebay_Log_Order'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Log\Order::class));
         return $this->getResult();
     }
 

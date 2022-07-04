@@ -17,7 +17,10 @@ class GetProductsVariations extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listin
 
     public function execute()
     {
-        $this->setAjaxContent($this->createBlock('Ebay_Listing_PickupStore_Variation_Product_View'));
+        $this->setAjaxContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Variation\Product\View::class)
+        );
         return $this->getResult();
     }
 

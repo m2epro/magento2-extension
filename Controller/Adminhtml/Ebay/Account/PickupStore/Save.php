@@ -10,17 +10,33 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore;
 
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 {
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $helperException;
+
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $helperDataSession;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $helperData;
+
     /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
     private $componentEbayPickupStore;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Exception $helperException,
+        \Ess\M2ePro\Helper\Data\Session $helperDataSession,
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
+        \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update $storeCategoryUpdate,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        parent::__construct($componentEbayCategoryStore, $ebayFactory, $context);
+        parent::__construct($storeCategoryUpdate, $componentEbayCategoryStore, $ebayFactory, $context);
 
+        $this->helperException = $helperException;
+        $this->helperDataSession = $helperDataSession;
+        $this->helperData = $helperData;
         $this->componentEbayPickupStore = $componentEbayPickupStore;
     }
 
@@ -82,11 +98,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 
         // tab: businessHours
         // ---------------------------------------
-        $data['business_hours'] = $this->getHelper('Data')->jsonEncode($post['business_hours']);
+        $data['business_hours'] = $this->helperData->jsonEncode($post['business_hours']);
         $data['special_hours'] = '';
 
         if (isset($post['special_hours'])) {
-            $data['special_hours'] = $this->getHelper('Data')->jsonEncode($post['special_hours']);
+            $data['special_hours'] = $this->helperData->jsonEncode($post['special_hours']);
         }
         // ---------------------------------------
 
@@ -116,7 +132,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
         // creating of pickup store
         // ---------------------------------------
         if (!$this->componentEbayPickupStore->validateRequiredFields($data)) {
-            $this->getHelper('Data\Session')->setValue('pickup_store_form_data', $data);
+            $this->helperDataSession->setValue('pickup_store_form_data', $data);
 
             $this->getMessageManager()->addErrorMessage(
                 $this->__('Validation error. You must fill all required fields.'),
@@ -141,8 +157,8 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 
             $dispatcherObject->process($connectorObj);
         } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
-            $this->getHelper('Data\Session')->setValue('pickup_store_form_data', $data);
+            $this->helperException->process($exception);
+            $this->helperDataSession->setValue('pickup_store_form_data', $data);
 
             $this->getMessageManager()->addErrorMessage($this->__(
                 'The New Store has not been created. <br/>Reason: %error_message%',
@@ -168,7 +184,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
             self::GLOBAL_MESSAGES_GROUP
         );
 
-        return $this->_redirect($this->getHelper('Data')->getBackUrl(
+        return $this->_redirect($this->helperData->getBackUrl(
             'list',
             [],
             [

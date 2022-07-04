@@ -17,8 +17,8 @@ class MapGrid extends Listing
 {
     public function execute()
     {
-        $block = $this->createBlock(
-            'Listing_Mapping_Grid',
+        $block = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Listing\Mapping\Grid::class,
             '',
             [
                 'data' => [

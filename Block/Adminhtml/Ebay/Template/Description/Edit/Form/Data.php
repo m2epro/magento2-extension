@@ -11,35 +11,45 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description\Edit\Form;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Ebay\Template\Description;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description\Edit\Form\Data
- */
 class Data extends AbstractForm
 {
     protected $attributes = [];
     protected $M2eProAttributes = [];
 
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    protected $magentoAttributeHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     protected function _construct()
     {
         parent::_construct();
 
-        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
-        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
-
-        $this->attributes = $magentoAttributeHelper->getAll();
+        $this->attributes = $this->magentoAttributeHelper->getAll();
     }
 
     protected function _prepareForm()
     {
-        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
-        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
-
-        $attributesConfigurable = $magentoAttributeHelper->getAllConfigurable();
+        $attributesConfigurable = $this->magentoAttributeHelper->getAllConfigurable();
 
         $allAttributesByTypes = [
-            'text'        => $magentoAttributeHelper->filterByInputTypes($this->attributes, ['text']),
-            'text_select' => $magentoAttributeHelper->filterByInputTypes($this->attributes, ['text', 'select']),
-            'text_images' => $magentoAttributeHelper->filterByInputTypes(
+            'text'        => $this->magentoAttributeHelper->filterByInputTypes($this->attributes, ['text']),
+            'text_select' => $this->magentoAttributeHelper->filterByInputTypes($this->attributes, ['text', 'select']),
+            'text_images' => $this->magentoAttributeHelper->filterByInputTypes(
                 $this->attributes,
                 ['text', 'image', 'media_image', 'gallery', 'multiline', 'textarea', 'select', 'multiselect']
             ),
@@ -268,7 +278,8 @@ class Data extends AbstractForm
             ];
         }
 
-        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData(
+        $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
+                                    ->addData(
             [
                 'label'          => $this->__('Insert'),
                 'destination_id' => 'condition_note_template',
@@ -614,7 +625,22 @@ class Data extends AbstractForm
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select,multiselect');
 
-        $watermarkFieldset = $fieldset->addFieldset('watermark_block', []);
+        $watermarkFieldset = $form->addFieldset(
+            'watermark_block',
+            [
+                'legend'      => $this->__('Watermark'),
+                'collapsable' => true,
+            ]
+        );
+
+        $watermarkFieldset->addField(
+            'old_watermark_settings_opacity_level',
+            'hidden',
+            [
+                'name'  => 'description[old_watermark_settings][opacity_level]',
+                'value' => $formData['watermark_settings']['opacity_level'],
+            ]
+        );
 
         $watermarkFieldset->addField(
             'old_watermark_settings_transparent',
@@ -684,7 +710,7 @@ class Data extends AbstractForm
             'file',
             [
                 'container_id' => 'watermark_image_container',
-                'label'        => $this->__('Watermark Upload'),
+                'label'        => $this->__('Upload'),
                 'name'         => 'watermark_image',
                 'required'     => $formData['watermark_image'] === null,
                 'values'       => [
@@ -711,7 +737,7 @@ class Data extends AbstractForm
                 'watermark_uploaded_image',
                 'note',
                 [
-                    'label'        => $this->__('Watermark Preview'),
+                    'label'        => $this->__('Preview'),
                     'container_id' => 'watermark_uploaded_image_container',
                     'text'         => <<<HTML
 <img src="data:image/png;base64,{$encodedImage}" style="max-width: 300px;"  alt=""/>
@@ -725,14 +751,41 @@ HTML
             'select',
             [
                 'container_id' => 'watermark_transparent_container',
-                'label'        => $this->__('Watermark Transparency'),
+                'label'        => $this->__('Transparency'),
                 'name'         => 'description[watermark_settings][transparent]',
                 'values'       => [
                     Description::WATERMARK_TRANSPARENT_MODE_NO  => $this->__('Disable'),
                     Description::WATERMARK_TRANSPARENT_MODE_YES => $this->__('Enable'),
                 ],
                 'value'        => $formData['watermark_settings']['transparent'],
-                'tooltip'      => $this->__('Sets transparency of watermark image to 30 %.')
+            ]
+        );
+
+        $opacityLevel = [];
+
+        foreach (Description::WATERMARK_OPACITY_LEVEL as $item) {
+            $attrs = [];
+            if ($item === $formData['watermark_settings']['opacity_level']) {
+                $attrs['selected'] = 'selected';
+            }
+
+            $opacityLevel[] = [
+                'attrs' => $attrs,
+                'value' => $item,
+                'label' => $item . ' %'
+            ];
+        }
+
+        $watermarkFieldset->addField(
+            'watermark_opacity_level',
+            'select',
+            [
+                'container_id' => 'watermark_opacity_level_container',
+                'label'        => $this->__('Opacity'),
+                'name'         => 'description[watermark_settings][opacity_level]',
+                'values'       => $opacityLevel,
+                'value'        => $formData['watermark_settings']['opacity_level'],
+                'tooltip'      => $this->__('10% - highly transparent<br>90% - not transparent')
             ]
         );
 
@@ -741,7 +794,7 @@ HTML
             'select',
             [
                 'container_id' => 'watermark_scale_container',
-                'label'        => $this->__('Scale Watermark Image'),
+                'label'        => $this->__('Scale Image'),
                 'name'         => 'description[watermark_settings][scale]',
                 'values'       => [
                     Description::WATERMARK_SCALE_MODE_NONE     => $this->__('None'),
@@ -758,7 +811,7 @@ HTML
             'select',
             [
                 'container_id' => 'watermark_position_container',
-                'label'        => $this->__('Watermark Position'),
+                'label'        => $this->__('Position'),
                 'name'         => 'description[watermark_settings][position]',
                 'values'       => [
                     Description::WATERMARK_POSITION_TOP    => $this->__('Top'),
@@ -804,7 +857,8 @@ HTML
             ];
         }
 
-        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData(
+        $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
+                                    ->addData(
             [
                 'label'          => $this->__('Insert'),
                 'destination_id' => 'title_template',
@@ -870,7 +924,8 @@ HTML
             ];
         }
 
-        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData(
+        $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
+                                    ->addData(
             [
                 'label'          => $this->__('Insert'),
                 'destination_id' => 'subtitle_template',
@@ -932,7 +987,7 @@ HTML
             ]
         );
 
-        $button = $this->createBlock('Magento\Button')->addData(
+        $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->addData(
             [
                 'label'   => $this->__('Preview'),
                 'onclick' => 'EbayTemplateDescriptionObj.openPreviewPopup()',
@@ -986,19 +1041,23 @@ HTML
 
         $showHideWYSIWYGButton = '';
         if ($this->wysiwygConfig->isEnabled()) {
-            $showHideWYSIWYGButtonBlock = $this->createBlock('Magento\Button')->setData(
+            $showHideWYSIWYGButtonBlock = $this->getLayout()
+                                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                               ->setData(
                 [
                     'id'    => 'description_template_show_hide_wysiwyg',
                     'label' => ($formData['editor_type'] == Description::EDITOR_TYPE_SIMPLE)
                         ? $this->__('Show Editor') : $this->__('Hide Editor'),
-                    'class' => 'action-primary'
+                    'class' => 'action-primary hidden'
                 ]
             );
 
             $showHideWYSIWYGButton = $showHideWYSIWYGButtonBlock->toHtml();
         }
 
-        $openCustomInsertsButton = $this->createBlock('Magento\Button')->setData(
+        $openCustomInsertsButton = $this->getLayout()
+                                        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                        ->setData(
             [
                 'id'    => 'custom_inserts_open_popup',
                 'label' => $this->__('Insert Customs'),
@@ -1021,7 +1080,7 @@ HTML
                 'config'             => $this->wysiwygConfig->getConfig(
                     [
                         'hidden'        => true,
-                        'enabled'       => true,
+                        'enabled'       => false,
                         'no_display'    => false,
                         'add_variables' => false,
                         'force_load'    => true
@@ -1525,7 +1584,7 @@ HTML
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Ebay\Template\Description')
+            $this->dataHelper->getClassConstants(Description::class)
         );
 
         $this->jsUrl->addUrls(
@@ -1536,7 +1595,7 @@ HTML
             ]
         );
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay_Template_Description'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay_Template_Description'));
 
         $this->jsTranslator->addTranslations(
             [
@@ -1629,13 +1688,13 @@ JS
         }
 
         if (!empty($data['product_details']) && is_string($data['product_details'])) {
-            $data['product_details'] = $this->getHelper('Data')->jsonDecode($data['product_details']);
+            $data['product_details'] = $this->dataHelper->jsonDecode($data['product_details']);
         } else {
             unset($data['product_details']);
         }
 
         if (!empty($data['variation_configurable_images']) && is_string($data['variation_configurable_images'])) {
-            $data['variation_configurable_images'] = $this->getHelper('Data')->jsonDecode(
+            $data['variation_configurable_images'] = $this->dataHelper->jsonDecode(
                 $data['variation_configurable_images']
             );
         } else {
@@ -1643,7 +1702,7 @@ JS
         }
 
         if (!empty($data['watermark_settings']) && is_string($data['watermark_settings'])) {
-            $watermarkSettings = $this->getHelper('Data')->jsonDecode($data['watermark_settings']);
+            $watermarkSettings = $this->dataHelper->jsonDecode($data['watermark_settings']);
             unset($data['watermark_settings']);
 
             if (isset($watermarkSettings['position'])) {
@@ -1654,6 +1713,9 @@ JS
             }
             if (isset($watermarkSettings['transparent'])) {
                 $data['watermark_settings']['transparent'] = $watermarkSettings['transparent'];
+            }
+            if (isset($watermarkSettings['opacity_level'])) {
+                $data['watermark_settings']['opacity_level'] = $watermarkSettings['opacity_level'];
             }
 
             if (isset($watermarkSettings['hashes']['current'])) {
@@ -1676,11 +1738,11 @@ JS
         $default = $this->modelFactory->getObject('Ebay_Template_Description_Builder')->getDefaultData();
 
         $default['enhancement'] = explode(',', $default['enhancement']);
-        $default['product_details'] = $this->getHelper('Data')->jsonDecode($default['product_details']);
-        $default['variation_configurable_images'] = $this->getHelper('Data')->jsonDecode(
+        $default['product_details'] = $this->dataHelper->jsonDecode($default['product_details']);
+        $default['variation_configurable_images'] = $this->dataHelper->jsonDecode(
             $default['variation_configurable_images']
         );
-        $default['watermark_settings'] = $this->getHelper('Data')->jsonDecode(
+        $default['watermark_settings'] = $this->dataHelper->jsonDecode(
             $default['watermark_settings']
         );
 
@@ -1703,7 +1765,7 @@ JS
             ];
         }
 
-        $button = $this->createBlock('Magento\Button')->setData(
+        $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->setData(
             [
                 'label'   => $this->__('Insert'),
                 'class'   => 'action-primary',
@@ -1991,7 +2053,7 @@ HTML;
             ]
         );
 
-        $button = $this->createBlock('Magento\Button')->addData(
+        $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->addData(
             [
                 'label'   => $this->__('Select Randomly'),
                 'onclick' => 'EbayTemplateDescriptionObj.selectProductIdRandomly()',

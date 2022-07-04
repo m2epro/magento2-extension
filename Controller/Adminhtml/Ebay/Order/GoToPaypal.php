@@ -24,7 +24,7 @@ class GoToPaypal extends Order
             return $this->_redirect('*/ebay_order/index');
         }
 
-        /** @var $transaction \Ess\M2ePro\Model\Ebay\Order\ExternalTransaction */
+        /** @var \Ess\M2ePro\Model\Ebay\Order\ExternalTransaction $transaction */
         $transaction = $this->activeRecordFactory->getObject('Ebay_Order_ExternalTransaction')->load(
             $transactionId,
             'transaction_id'

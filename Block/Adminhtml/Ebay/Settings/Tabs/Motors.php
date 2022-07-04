@@ -12,14 +12,26 @@ use \Ess\M2ePro\Helper\Component\Ebay as EbayHelper;
 
 class Motors extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {
+    /** @var \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory */
     protected $attributeColFactory;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Configuration */
     private $componentEbayConfiguration;
+
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
     private $componentEbayMotors;
+
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    private $magentoAttributeHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
@@ -27,25 +39,25 @@ class Motors extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
         \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $attributeColFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $registry, $formFactory, $data);
-
         $this->attributeColFactory        = $attributeColFactory;
         $this->ebayFactory                = $ebayFactory;
         $this->resourceConnection         = $resourceConnection;
         $this->componentEbayConfiguration = $componentEbayConfiguration;
         $this->componentEbayMotors        = $componentEbayMotors;
+        $this->magentoAttributeHelper     = $magentoAttributeHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
     }
 
     protected function _prepareForm()
     {
-        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
-        $magentoAttributeHelper = $this->getHelper('Magento_Attribute');
-
         /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors $eBayMotorsHelper */
         $eBayMotorsHelper = $this->componentEbayMotors;
 
@@ -54,8 +66,8 @@ class Motors extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 
         //----------------------------------------
 
-        $attributes = $magentoAttributeHelper->filterByInputTypes(
-            $magentoAttributeHelper->getAll(),
+        $attributes = $this->magentoAttributeHelper->filterByInputTypes(
+            $this->magentoAttributeHelper->getAll(),
             ['textarea'],
             ['text']
         );
@@ -118,7 +130,7 @@ class Motors extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 
             $motorsType = \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_MOTOR;
             $popupTitle = $this->__('Manage Custom Compatibility [ePIDs Motor]');
-            list($count, $customCount) = $eBayMotorsHelper->getDictionaryRecordCount(
+            [$count, $customCount] = $eBayMotorsHelper->getDictionaryRecordCount(
                 \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_MOTOR
             );
 
@@ -188,7 +200,7 @@ HTML
 
             $motorsType = \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_UK;
             $popupTitle = $this->__('Manage Custom Compatibility [ePIDs UK]');
-            list($count, $customCount) = $eBayMotorsHelper->getDictionaryRecordCount(
+            [$count, $customCount] = $eBayMotorsHelper->getDictionaryRecordCount(
                 \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_UK
             );
 
@@ -258,7 +270,7 @@ HTML
 
             $motorsType = \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_DE;
             $popupTitle = $this->__('Manage Custom Compatibility [ePIDs DE]');
-            list($count, $customCount) = $eBayMotorsHelper->getDictionaryRecordCount(
+            [$count, $customCount] = $eBayMotorsHelper->getDictionaryRecordCount(
                 \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_DE
             );
 
@@ -328,7 +340,7 @@ HTML
 
             $motorsType = \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_AU;
             $popupTitle = $this->__('Manage Custom Compatibility [ePIDs AU]');
-            list($count, $customCount) = $eBayMotorsHelper->getDictionaryRecordCount(
+            [$count, $customCount] = $eBayMotorsHelper->getDictionaryRecordCount(
                 \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_AU
             );
 
@@ -393,7 +405,7 @@ HTML
 
             $motorsType = \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE;
             $popupTitle = $this->__('Manage Custom Compatibility [kTypes]');
-            list($count, $customCount) = $eBayMotorsHelper->getDictionaryRecordCount(
+            [$count, $customCount] = $eBayMotorsHelper->getDictionaryRecordCount(
                 \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE
             );
 
@@ -434,10 +446,10 @@ HTML
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay\Motors::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay\Motors::class)
         );
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay_Settings_Motors'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay_Settings_Motors'));
 
         $this->js->add(<<<JS
     require([

@@ -72,7 +72,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing
             $this->getResult()->getConfig()->getTitle()->prepend($this->__('Listings Logs & Events'));
         }
 
-        $this->addContent($this->createBlock('Amazon_Log_Listing_Product_View'));
+        $this->addContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Log\Listing\Product\View::class)
+        );
 
         return $this->getResult();
     }

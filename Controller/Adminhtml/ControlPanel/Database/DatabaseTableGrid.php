@@ -16,7 +16,8 @@ class DatabaseTableGrid extends Table
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\Grid $grid */
-        $grid = $this->createBlock('ControlPanel_Tabs_Database_Table_Grid');
+        $grid = $this->getLayout()
+                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\Grid::class);
         $this->setAjaxContent($grid->toHtml());
         return $this->getResult();
     }

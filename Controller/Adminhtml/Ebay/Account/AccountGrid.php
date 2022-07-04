@@ -20,9 +20,7 @@ class AccountGrid extends Account
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Grid $switcherBlock */
-        $grid = $this->createBlock(
-            'Ebay_Account_Grid'
-        );
+        $grid = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Grid::class);
 
         $this->setAjaxContent($grid->toHtml());
         return $this->getResult();

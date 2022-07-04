@@ -13,17 +13,18 @@ namespace Ess\M2ePro\Block\Adminhtml\System\Config\General;
  */
 class Fieldset extends \Magento\Config\Block\System\Config\Form\Fieldset
 {
-    private $helperFactory = null;
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Backend\Block\Context $context,
         \Magento\Backend\Model\Auth\Session $authSession,
         \Magento\Framework\View\Helper\Js $jsHelper,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         array $data = []
     ) {
-        $this->helperFactory = $helperFactory;
         parent::__construct($context, $authSession, $jsHelper, $data);
+        $this->supportHelper = $supportHelper;
     }
 
     /**
@@ -67,7 +68,7 @@ class Fieldset extends \Magento\Config\Block\System\Config\Form\Fieldset
     protected function getIntegrationHelpBlockHtml($htmlId)
     {
         if (strpos($htmlId, 'ebay') !== false) {
-            $url = $this->helperFactory->getObject('Module\Support')->getClientsPortalUrl();
+            $url = $this->supportHelper->getClientsPortalUrl();
             $content = __(<<<HTML
             <p>You can enable/disable eBay Integration.</p><br>
 
@@ -77,7 +78,7 @@ class Fieldset extends \Magento\Config\Block\System\Config\Form\Fieldset
 HTML
             );
         } elseif (strpos($htmlId, 'amazon') !== false) {
-            $url = $this->helperFactory->getObject('Module\Support')->getClientsPortalUrl();
+            $url = $this->supportHelper->getClientsPortalUrl();
             $content = __(<<<HTML
             <p>You can enable/disable Amazon Integration.</p><br>
 
@@ -87,7 +88,7 @@ HTML
 HTML
             );
         } elseif (strpos($htmlId, 'walmart') !== false) {
-            $url = $this->helperFactory->getObject('Module\Support')->getClientsPortalUrl();
+            $url = $this->supportHelper->getClientsPortalUrl();
             $content = __(<<<HTML
             <p>You can enable/disable Walmart Integration.</p><br>
 
@@ -106,7 +107,7 @@ HTML
 HTML
             );
         } elseif (strpos($htmlId, 'advanced') !== false) {
-            $url = $this->helperFactory->getObject('Module\Support')->getDocumentationArticleUrl("x/Ov0kB");
+            $url = $this->supportHelper->getDocumentationArticleUrl("x/Ov0kB");
             $content = __(<<<HTML
             <p>This page contains additional functionality for M2E Pro Module’s management such as ability to
             enable/disable the Module and Automatic Synchronization in it,

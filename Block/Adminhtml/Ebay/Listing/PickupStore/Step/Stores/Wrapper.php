@@ -27,8 +27,10 @@ class Wrapper extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     protected function _toHtml()
     {
-        $helpBlock = $this->createBlock('HelpBlock', '', [
-            'data' => [
+        $helpBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\HelpBlock::class,
+            '',
+            ['data' => [
                 'content' => $this->__('
                 In this section, you can <strong>review</strong> Store and Product details as well as Product Quantity
                 and Logs.<br/>
@@ -36,14 +38,16 @@ class Wrapper extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
                 In-Store Pickup Service.<br/>
                 If you want to <strong>unassign</strong> the Product from the Store you can use a
                 <strong>Unassign Option</strong> from the Actions bulk at the top of the Grid.
-            ')
+                ')]
             ]
-        ]);
+        );
 
-        $breadcrumb = $this->createBlock('Ebay_Listing_PickupStore_Breadcrumb');
+        $breadcrumb = $this->getLayout()
+                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Breadcrumb::class);
         $breadcrumb->setSelectedStep(2);
 
-        $grid = $this->createBlock('Ebay_Listing_PickupStore_Step_Stores_Grid');
+        $grid = $this->getLayout()
+                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Step\Stores\Grid::class);
 
         return $helpBlock->toHtml() . $breadcrumb->toHtml() . parent::_toHtml() . $grid->toHtml();
     }

@@ -20,8 +20,33 @@ class Order extends AbstractForm
     protected $orderConfig;
     protected $customerGroup;
     protected $taxClass;
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Magento\Store\Website */
+    private $storeWebsiteHelper;
 
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
+     * @param \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsiteHelper
+     * @param \Magento\Tax\Model\ClassModel $taxClass
+     * @param \Magento\Customer\Model\Group $customerGroup
+     * @param \Magento\Sales\Model\Order\Config $orderConfig
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param array $data
+     */
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsiteHelper,
         \Magento\Tax\Model\ClassModel $taxClass,
         \Magento\Customer\Model\Group $customerGroup,
         \Magento\Sales\Model\Order\Config $orderConfig,
@@ -33,18 +58,21 @@ class Order extends AbstractForm
         $this->orderConfig = $orderConfig;
         $this->customerGroup = $customerGroup;
         $this->taxClass = $taxClass;
-
+        $this->supportHelper = $supportHelper;
+        $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->storeWebsiteHelper = $storeWebsiteHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
     protected function _prepareForm()
     {
-        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
+        $account = $this->globalDataHelper->getValue('edit_account');
         $ordersSettings = $account !== null ? $account->getChildObject()->getData('magento_orders_settings') : [];
-        $ordersSettings = !empty($ordersSettings) ? $this->getHelper('Data')->jsonDecode($ordersSettings) : [];
+        $ordersSettings = !empty($ordersSettings) ? $this->dataHelper->jsonDecode($ordersSettings) : [];
 
         // ---------------------------------------
-        $websites = $this->getHelper('Magento_Store_Website')->getWebsites(true);
+        $websites = $this->storeWebsiteHelper->getWebsites(true);
         // ---------------------------------------
 
         // ---------------------------------------
@@ -61,7 +89,7 @@ class Order extends AbstractForm
 
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
         $formData['magento_orders_settings'] = !empty($formData['magento_orders_settings'])
-            ? $this->getHelper('Data')->jsonDecode($formData['magento_orders_settings']) : [];
+            ? $this->dataHelper->jsonDecode($formData['magento_orders_settings']) : [];
 
         $defaults = $this->modelFactory->getObject('Amazon_Account_Builder')->getDefaultData();
 
@@ -104,7 +132,7 @@ shipment notifications.</p><br/>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Xv8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/Xv8UB')
                 )
             ]
         );
@@ -400,9 +428,10 @@ HTML
             'magento_orders_number_prefix_container',
             self::CUSTOM_CONTAINER,
             [
-                'text'      => $this->createBlock('Amazon_Account_Edit_Tabs_Order_PrefixesTable')
-                    ->addData(['form_data' => $formData])
-                    ->toHtml(),
+                'text'      => $this->getLayout()
+                        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\Order\PrefixesTable::class)
+                        ->addData(['form_data' => $formData])
+                        ->toHtml(),
                 'css_class' => 'm2epro-fieldset-table',
                 'style'     => 'padding: 0 !important;'
             ]
@@ -672,7 +701,7 @@ HTML
             ]
         );
 
-        $button = $this->createBlock('Magento\Button')->addData(
+        $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->addData(
             [
                 'label'   => $this->__('Show States'),
                 'onclick' => 'AmazonAccountObj.openExcludedStatesPopup()',

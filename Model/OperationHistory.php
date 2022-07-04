@@ -53,7 +53,7 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\OperationHistory');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\OperationHistory::class);
     }
 
     //########################################
@@ -81,7 +81,8 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     //########################################
 
     /**
-     * @param $nick string
+     * @param string $nick
+     *
      * @return \Ess\M2ePro\Model\OperationHistory
      */
     public function getParentObject($nick = null)

@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Ebay\Listing\Auto\Category\Group',
-            'Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Auto\Category\Group'
+            \Ess\M2ePro\Model\Ebay\Listing\Auto\Category\Group::class,
+            \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Auto\Category\Group::class
         );
     }
 

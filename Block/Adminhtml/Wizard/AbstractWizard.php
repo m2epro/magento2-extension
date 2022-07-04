@@ -10,11 +10,24 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Wizard\AbstractWizard
- */
 abstract class AbstractWizard extends AbstractContainer
 {
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Module\Wizard */
+    private $wizardHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Module\Wizard $wizardHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        $this->wizardHelper = $wizardHelper;
+        parent::__construct($context, $data);
+    }
+
     protected function _prepareLayout()
     {
         $this->css->addFile('wizard.css');
@@ -22,17 +35,18 @@ abstract class AbstractWizard extends AbstractContainer
         return parent::_prepareLayout();
     }
 
+
     protected function _beforeToHtml()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')
+            $this->dataHelper
                 ->getClassConstants(\Ess\M2ePro\Helper\Module\Wizard::class)
         );
 
         $this->jsUrl->addUrls(
             [
                 'setStep'   => $this->getUrl('*/wizard_' . $this->getNick() . '/setStep'),
-                'setStatus' => $this->getUrl('*/wizard_' . $this->getNick() . '/setStatus')
+                'setStatus' => $this->getUrl('*/wizard_' . $this->getNick() . '/setStatus'),
             ]
         );
 
@@ -43,11 +57,11 @@ abstract class AbstractWizard extends AbstractContainer
             ]
         );
 
-        $step = $this->getHelper('Module\Wizard')->getStep($this->getNick());
-        $steps = $this->getHelper('Data')->jsonEncode(
-            $this->getHelper('Module\Wizard')->getWizard($this->getNick())->getSteps()
+        $step = $this->wizardHelper->getStep($this->getNick());
+        $steps = $this->dataHelper->jsonEncode(
+            $this->wizardHelper->getWizard($this->getNick())->getSteps()
         );
-        $status = $this->getHelper('Module\Wizard')->getStatus($this->getNick());
+        $status = $this->wizardHelper->getStatus($this->getNick());
 
         $this->js->add(
             <<<JS

@@ -48,7 +48,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      */
     public function runSettings(array $listingsProducts)
     {
-        /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+        /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         foreach ($listingsProducts as $key => $listingProduct) {
             if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
                 unset($listingsProducts[$key]);
@@ -70,7 +70,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             /** @var \Ess\M2ePro\Model\Amazon\Search\Settings $settingsSearch */
             $settingsSearch = $this->modelFactory->getObject('Amazon_Search_Settings');
 
-            /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             foreach ($listingsProducts as $listingProduct) {
                 $settingsSearch->setListingProduct($listingProduct);
                 $settingsSearch->resetStep();

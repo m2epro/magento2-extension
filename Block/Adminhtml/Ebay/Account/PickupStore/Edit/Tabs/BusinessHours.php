@@ -74,9 +74,10 @@ class BusinessHours extends AbstractForm
             'work_hours_custom_container',
             self::CUSTOM_CONTAINER,
             [
-                'text' => $this->createBlock('Ebay_Account_PickupStore_Edit_Tabs_BusinessHours_WorkHours')
-                               ->setData(['form_data' => $formData])
-                               ->toHtml(),
+                'text' => $this->getLayout()
+           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs\BusinessHours\WorkHours::class)
+           ->setData(['form_data' => $formData])
+           ->toHtml(),
                 'style' => 'width: 100%'
             ]
         );
@@ -92,7 +93,8 @@ class BusinessHours extends AbstractForm
             'special_hours_custom_container',
             self::CUSTOM_CONTAINER,
             [
-                'text' => $this->createBlock('Ebay_Account_PickupStore_Edit_Tabs_BusinessHours_SpecialHours')
+                'text' => $this->getLayout()
+        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs\BusinessHours\SpecialHours::class)
                     ->setData(['form_data' => $formData])
                     ->toHtml()
             ]

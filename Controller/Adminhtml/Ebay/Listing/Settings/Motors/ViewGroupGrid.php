@@ -21,7 +21,8 @@ class ViewGroupGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $motorsType = $this->getRequest()->getParam('motors_type');
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Group\Grid $block */
-        $block = $this->createBlock('Ebay_Listing_View_Settings_Motors_View_Group_Grid');
+        $block = $this->getLayout()
+                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Group\Grid::class);
         $block->setListingProductId($entityId);
         $block->setMotorsType($motorsType);
 

@@ -530,7 +530,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
     protected function getResponseObject()
     {
         if (empty($this->responseObject)) {
-            /** @var $response \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Response */
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Response $response */
             $response = $this->modelFactory->getObject(
                 'Ebay\Listing\Product\Action\Type\\' . $this->getOrmActionType() . '\Response'
             );

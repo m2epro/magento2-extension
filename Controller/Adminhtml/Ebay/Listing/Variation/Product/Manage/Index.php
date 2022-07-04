@@ -23,7 +23,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         $this->getHelper('Data\GlobalData')->setValue('listing_product_id', $productId);
-        $view = $this->createBlock('Ebay_Listing_Variation_Product_Manage_View');
+        $view = $this->getLayout()
+                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage\View::class);
 
         $this->setAjaxContent($view);
         return $this->getResult();

@@ -8,18 +8,15 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Category\GetCategorySpecificHtml
- */
+use Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Edit;
+
 class GetCategorySpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {
-    //########################################
-
     public function execute()
     {
-        /** @var $specific \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Edit */
-        $specific = $this->createBlock(
-            'Ebay_Template_Category_Chooser_Specific_Edit',
+        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Edit $specific */
+        $specific = $this->getLayout()->createBlock(
+            Edit::class,
             '',
             [
                 'data' => [

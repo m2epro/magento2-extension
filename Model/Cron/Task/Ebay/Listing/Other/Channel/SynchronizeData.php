@@ -52,7 +52,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function performActions()
     {
-        /** @var $accountsCollection \Ess\M2ePro\Model\ResourceModel\Account\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
         $accountsCollection = $this->parentFactory->getObject(
             \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'Account'
@@ -66,7 +66,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         foreach ($accounts as $account) {
-            /** @var $account \Ess\M2ePro\Model\Account **/
+            /** @var \Ess\M2ePro\Model\Account $account **/
 
             $this->getOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
 
@@ -125,7 +125,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $sinceTime = $this->prepareSinceTime($sinceTime);
         $changes = $this->getChangesByAccount($account, $sinceTime);
 
-        /** @var $updatingModel \Ess\M2ePro\Model\Ebay\Listing\Other\Updating */
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Other\Updating $updatingModel */
         $updatingModel = $this->modelFactory->getObject('Ebay_Listing_Other_Updating');
         $updatingModel->initialize($account);
         $updatingModel->processResponseData($changes);
@@ -260,7 +260,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function isLockedAccount(\Ess\M2ePro\Model\Account $account)
     {
-        /** @var $lockItem \Ess\M2ePro\Model\Lock\Item\Manager */
+        /** @var \Ess\M2ePro\Model\Lock\Item\Manager $lockItem */
         $lockItemManager = $this->modelFactory->getObject('Lock_Item_Manager', [
             'nick' => self::LOCK_ITEM_PREFIX.'_'.$account->getId()
         ]);

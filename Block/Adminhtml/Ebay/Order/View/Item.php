@@ -19,8 +19,15 @@ class Item extends AbstractGrid
 
     /** @var \Ess\M2ePro\Model\Order */
     private $order;
+
     /** @var \Ess\M2ePro\Helper\Component\Ebay */
     private $componentEbay;
+
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay $componentEbay,
@@ -30,6 +37,8 @@ class Item extends AbstractGrid
         \Magento\Tax\Model\Calculation $taxCalculator,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->productModel       = $productModel;
@@ -37,7 +46,8 @@ class Item extends AbstractGrid
         $this->ebayFactory        = $ebayFactory;
         $this->taxCalculator      = $taxCalculator;
         $this->componentEbay      = $componentEbay;
-
+        $this->translationHelper = $translationHelper;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -157,11 +167,9 @@ class Item extends AbstractGrid
      */
     public function callbackColumnProduct($value, $row, $column, $isExport)
     {
-        /** @var \Ess\M2ePro\Helper\Data $dataHelper */
-        $dataHelper = $this->getHelper('Data');
+        $dataHelper = $this->dataHelper;
 
-        /** @var \Ess\M2ePro\Helper\Module\Translation $translationHelper */
-        $translationHelper = $this->getHelper('Module_Translation');
+        $translationHelper = $this->translationHelper;
 
         $eBayOrderItem = $row->getChildObject();
         $variationHtml = '';
@@ -300,7 +308,7 @@ HTML;
             return '0%';
         }
 
-        $taxDetails = $this->getHelper('Data')->jsonDecode($taxDetails);
+        $taxDetails = $this->dataHelper->jsonDecode($taxDetails);
         if (empty($taxDetails)) {
             return '0%';
         }
@@ -310,7 +318,7 @@ HTML;
 
     public function callbackColumnEbayCollectTax($value, $row, $column, $isExport)
     {
-        $collectTax = $this->getHelper('Data')->jsonDecode($row->getData('tax_details'));
+        $collectTax = $this->dataHelper->jsonDecode($row->getData('tax_details'));
 
         if (isset($collectTax['ebay_collect_taxes'])) {
             return $this->modelFactory->getObject('Currency')->formatPrice(
@@ -328,7 +336,7 @@ HTML;
 
         $taxDetails = $row->getChildObject()->getData('tax_details');
         if (!empty($taxDetails)) {
-            $taxDetails = $this->getHelper('Data')->jsonDecode($taxDetails);
+            $taxDetails = $this->dataHelper->jsonDecode($taxDetails);
 
             if (!empty($taxDetails['amount'])) {
                 $total += $taxDetails['amount'];

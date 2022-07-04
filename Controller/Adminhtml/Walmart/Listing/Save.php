@@ -8,32 +8,25 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Save
- */
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
 {
-    protected $dateTime;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
-        \Magento\Framework\Stdlib\DateTime $dateTime,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        $this->dateTime = $dateTime;
         parent::__construct($walmartFactory, $context);
-    }
 
-    //########################################
+        $this->dataHelper = $dataHelper;
+    }
 
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::walmart_listings_m2epro');
     }
-
-    //########################################
 
     public function execute()
     {
@@ -89,10 +82,8 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
 
         $this->getMessageManager()->addSuccess($this->__('The Listing was saved.'));
 
-        return $this->_redirect($this->getHelper('Data')->getBackUrl('list', [], ['edit'=>['id'=>$id]]));
+        return $this->_redirect($this->dataHelper->getBackUrl('list', [], ['edit'=>['id'=>$id]]));
     }
-
-    //########################################
 
     protected function processDescriptionTemplateChange(
         array $oldData,
@@ -209,6 +200,4 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
         $changeProcessor = $this->modelFactory->getObject('Walmart_Template_Synchronization_ChangeProcessor');
         $changeProcessor->process($diff, $affectedListingsProductsData);
     }
-
-    //########################################
 }

@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Order;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Order\Index
- */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Order
 {
-    //########################################
-
     public function execute()
     {
         $orderId = $this->getRequest()->getParam('id', false);
@@ -39,9 +34,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Order
         }
 
         $this->setPageHelpLink('x/gv1IB');
-        $this->addContent($this->createBlock('Walmart_Log_Order'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Log\Order::class));
         return $this->getResult();
     }
-
-    //########################################
 }

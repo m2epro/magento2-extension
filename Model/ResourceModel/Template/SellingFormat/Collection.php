@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Template\SellingFormat',
-            'Ess\M2ePro\Model\ResourceModel\Template\SellingFormat'
+            \Ess\M2ePro\Model\Template\SellingFormat::class,
+            \Ess\M2ePro\Model\ResourceModel\Template\SellingFormat::class
         );
     }
 

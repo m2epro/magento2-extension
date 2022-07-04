@@ -46,7 +46,7 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 
         // Find orders which contains at least one order item from current order
         // ---------------------------------------
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel */
+        /** @var \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel $collection */
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Ebay::NICK, 'Order')
             ->getCollection();
         $collection
@@ -64,6 +64,8 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
                 )
                 ->where($whereSql)
                 ->where('`main_table`.`account_id` = ?', $accountId)
+                ->where('`main_table`.`reservation_state` != ?', \Ess\M2ePro\Model\Order\Reserve::STATE_CANCELED)
+                ->where('`second_table`.`cancellation_status` = 0')
                 ->order(['main_table.id ASC']);
         // ---------------------------------------
 
@@ -74,7 +76,7 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 
     public function getCancellationCandidatesChannelIds($accountId, \DateTime $startDate, \DateTime $endDate)
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel */
+        /** @var \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel $collection */
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Ebay::NICK, 'Order')
             ->getCollection();
         $collection->addFieldToFilter('account_id', $accountId);

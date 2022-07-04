@@ -37,7 +37,7 @@ class Before extends \Ess\M2ePro\Observer\AbstractModel
         }
 
         /** @var \Ess\M2ePro\PublicServices\Product\SqlChange $changesModel */
-        $changesModel = $this->objectManager->get('Ess\M2ePro\PublicServices\Product\SqlChange');
+        $changesModel = $this->objectManager->get(\Ess\M2ePro\PublicServices\Product\SqlChange::class);
 
         foreach ($changedProductsIds as $productId) {
             $changesModel->markProductChanged($productId);

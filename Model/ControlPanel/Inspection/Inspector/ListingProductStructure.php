@@ -80,7 +80,7 @@ class ListingProductStructure implements InspectorInterface, FixerInterface
         $listingProductVariationTable = $this->activeRecordFactory->getObject('Listing_Product_Variation')
             ->getResource()->getMainTable();
 
-        /** @var $collection \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection */
+        /** @var \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection $collection */
         $collection = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')->getCollection();
         $collection->getSelect()->joinLeft(
             ['mlpv' => $listingProductVariationTable],
@@ -112,7 +112,7 @@ class ListingProductStructure implements InspectorInterface, FixerInterface
         $listingProductVariationOptionTable = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')
             ->getResource()->getMainTable();
 
-        /** @var $collection \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection */
+        /** @var \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection $collection */
         $collection = $this->activeRecordFactory->getObject('Listing_Product_Variation')->getCollection();
         $collection->getSelect()->joinLeft(
             ['mlp' => $listingProductTable],
@@ -146,7 +146,7 @@ class ListingProductStructure implements InspectorInterface, FixerInterface
     {
         $listingTable = $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable();
 
-        /** @var $collection \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection */
+        /** @var \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection $collection */
         $collection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();
         $collection->getSelect()->joinLeft(
             ['ml' => $listingTable],
@@ -174,7 +174,7 @@ class ListingProductStructure implements InspectorInterface, FixerInterface
     {
         $accountTable = $this->activeRecordFactory->getObject('Account')->getResource()->getMainTable();
 
-        /** @var $collection \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection */
+        /** @var \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection $collection */
         $collection = $this->activeRecordFactory->getObject('Listing')->getCollection();
         $collection->getSelect()->joinLeft(
             ['ma' => $accountTable],

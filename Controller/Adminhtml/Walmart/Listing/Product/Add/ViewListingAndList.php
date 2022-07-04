@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add\ViewListingAndList
- */
 class ViewListingAndList extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
-    //########################################
-
     public function execute()
     {
         $listingId = $this->getRequest()->getParam('id');
@@ -28,6 +23,4 @@ class ViewListingAndList extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listin
             'do_list' => true
         ]);
     }
-
-    //########################################
 }

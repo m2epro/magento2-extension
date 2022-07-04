@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create\General;
 
 use Ess\M2ePro\Block\Adminhtml\StoreSwitcher;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create\General\Form
- */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var \Ess\M2ePro\Model\Listing */
@@ -20,18 +17,22 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     protected $marketplaces;
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->ebayFactory = $ebayFactory;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -65,7 +66,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $marketplaceSelectionDisabled = true;
         if (!$marketplaceId && $account->getId()) {
             $accountId = $account->getId();
-            $info = $this->getHelper('Data')->jsonDecode($account->getChildObject()->getInfo());
+            $info = $this->dataHelper->jsonDecode($account->getChildObject()->getInfo());
             $marketplaceId = $this->activeRecordFactory->getObject('Marketplace')->getIdByCode($info['Site']);
             $marketplaceSelectionDisabled = false;
         }
@@ -162,7 +163,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 HTML
                 ,
 
-                'after_element_html' => $this->createBlock('Magento\Button')->setData(
+                'after_element_html' => $this->getLayout()
+                                             ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                             ->setData(
                     [
                         'id'      => 'add_account_button',
                         'label'   => $this->__('Add Another'),
@@ -254,15 +257,15 @@ HTML
     protected function _prepareLayout()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')
+            $this->dataHelper
                 ->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay::class)
         );
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Account'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Marketplace'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay\Account'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay\Marketplace'));
 
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Ebay_Listing_Create', ['_current' => true])
+            $this->dataHelper->getControllerActions('Ebay_Listing_Create', ['_current' => true])
         );
 
         $this->jsUrl->add(
@@ -300,7 +303,7 @@ HTML
             ]
         );
 
-        $marketplaces = $this->getHelper('Data')->jsonEncode($this->getMarketplaces());
+        $marketplaces = $this->dataHelper->jsonEncode($this->getMarketplaces());
 
         $this->js->addOnReadyJs(
             <<<JS
@@ -308,7 +311,7 @@ HTML
         'M2ePro/Ebay/Listing/Create/General'
     ], function(){
         M2ePro.formData.wizard = {$this->getRequest()->getParam('wizard', 0)};
-        
+
         window.EbayListingCreateGeneralObj = new EbayListingCreateGeneral({$marketplaces});
     });
 JS

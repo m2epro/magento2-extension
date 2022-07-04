@@ -40,7 +40,9 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $tab = [
             'label' => $this->__('About Module / Magento'),
             'title' => $this->__('About Module / Magento'),
-            'content' => $this->createBlock('Developers_Tabs_AboutModule')->toHtml()
+            'content' => $this->getLayout()
+                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Developers\Tabs\AboutModule::class)
+                              ->toHtml()
         ];
 
         $this->addTab(self::TAB_ID_INSTALLATION_DETAILS, $tab);
@@ -51,7 +53,9 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $tab = [
             'label' => $this->__('System Requirements'),
             'title' => $this->__('System Requirements'),
-            'content' => $this->createBlock('Developers_Tabs_SystemRequirements')->toHtml()
+            'content' => $this->getLayout()
+                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Developers\Tabs\SystemRequirements::class)
+                              ->toHtml()
         ];
 
         $this->addTab(self::TAB_ID_SYSTEM_REQUIREMENTS, $tab);
@@ -62,9 +66,13 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $tab = [
             'label' => $this->__('Cron Job Details / Status'),
             'title' => $this->__('Cron Job Details / Status'),
-            'content' => $this->createBlock('Developers_Tabs_CronJobDetails', '', [
+            'content' => $this->getLayout()->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\Developers\Tabs\CronJobDetails::class,
+                '',
+                [
                 'data' => ['is_support_mode' => true]
-            ])->toHtml()
+                ]
+            )->toHtml()
         ];
 
         $this->addTab(self::TAB_ID_CRON_JOB_INFO, $tab);
@@ -75,7 +83,9 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $tab = [
             'label' => $this->__('Synchronization Log'),
             'title' => $this->__('Synchronization Log'),
-            'content' => $this->createBlock('Developers_Tabs_SynchronizationLog')->toHtml()
+            'content' => $this->getLayout()
+                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Developers\Tabs\SynchronizationLog::class)
+                              ->toHtml()
         ];
 
         $this->addTab(self::TAB_ID_SYNCHRONIZATION_LOG, $tab);
@@ -86,7 +96,9 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $tab = [
             'label' => $this->__('Direct Database Changes'),
             'title' => $this->__('Direct Database Changes'),
-            'content' => $this->createBlock('Developers_Tabs_DirectDatabaseChanges')->toHtml()
+            'content' => $this->getLayout()
+                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Developers\Tabs\DirectDatabaseChanges::class)
+                              ->toHtml()
         ];
 
         $this->addTab(self::TAB_ID_DIRECT_DATABASE_CHANGES, $tab);
@@ -97,7 +109,9 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $tab = [
             'label' => $this->__('Performance Notes'),
             'title' => $this->__('Performance Notes'),
-            'content' => $this->createBlock('Developers_Tabs_PerformanceNotes')->toHtml()
+            'content' => $this->getLayout()
+                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Developers\Tabs\PerformanceNotes::class)
+                              ->toHtml()
         ];
 
         $this->addTab(self::TAB_ID_PERFORMANCE_NOTES, $tab);

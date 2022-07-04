@@ -21,12 +21,12 @@ class Mapping extends AbstractContainer
     {
         $this->setChild(
             'product_mapping_grid',
-            $this->createBlock('Order_Item_Product_Mapping_Grid')
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Mapping\Grid::class)
         );
 
         $this->setChild(
             'product_mapping_help_block',
-            $this->createBlock('HelpBlock')->setData([
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
                 'content' => $this->__(
                     'As M2E Pro was not able to find appropriate Product in Magento Catalog,
                      you are supposed to find and map it manualy.

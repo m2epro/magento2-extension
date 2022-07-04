@@ -27,7 +27,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             // ---------------------------------------
 
             $this->setAjaxContent(
-                $this->createBlock('Ebay_Listing_View')->getGridHtml()
+                $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View::class)->getGridHtml()
             );
             return $this->getResult();
         }
@@ -78,7 +78,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $this->__('M2E Pro Listing "%listing_title%"', $listing->getTitle())
         );
 
-        $this->addContent($this->createBlock('Ebay_Listing_View'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View::class));
 
         return $this->getResult();
     }

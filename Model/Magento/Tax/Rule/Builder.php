@@ -26,7 +26,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     protected $classModelFactory;
     protected $rateFactory;
     protected $ruleFactory;
-    /** @var $rule \Magento\Tax\Model\Calculation\Rule */
+    /** @var \Magento\Tax\Model\Calculation\Rule $rule */
     protected $rule = null;
 
     //########################################

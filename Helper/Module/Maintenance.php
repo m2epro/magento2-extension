@@ -8,95 +8,113 @@
 
 namespace Ess\M2ePro\Helper\Module;
 
-use Ess\M2ePro\Helper\Factory;
-use Magento\Framework\App\Helper\Context;
-use Magento\Framework\App\ResourceConnection;
-
-/**
- * Class \Ess\M2ePro\Helper\Module\Maintenance
- */
-class Maintenance extends \Ess\M2ePro\Helper\AbstractHelper
+class Maintenance
 {
-    const MAINTENANCE_CONFIG_PATH = 'm2epro/maintenance';
-    const MENU_ROOT_NODE_NICK = 'Ess_M2ePro::m2epro_maintenance';
+    public const MENU_ROOT_NODE_NICK = 'Ess_M2ePro::m2epro_maintenance';
+    private const MAINTENANCE_CONFIG_PATH = 'm2epro/maintenance';
 
+    /** @var \Magento\Framework\App\ResourceConnection */
     private $resourceConnection;
+
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
+
+    /** @var array */
     private $cache = [];
 
-    //########################################
-
+    /**
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     * @param \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper
+     */
     public function __construct(
-        Factory $helperFactory,
-        Context $context,
-        ResourceConnection $resourceConnection
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper
     ) {
-        parent::__construct($helperFactory, $context);
         $this->resourceConnection = $resourceConnection;
+        $this->databaseHelper = $databaseHelper;
     }
 
-    //########################################
-
-    public function isEnabled()
+    /**
+     * @return bool
+     */
+    public function isEnabled(): bool
     {
         return (bool)$this->getConfig(self::MAINTENANCE_CONFIG_PATH);
     }
 
-    public function enable()
+    /**
+     * @return void
+     */
+    public function enable(): void
     {
         $this->setConfig(self::MAINTENANCE_CONFIG_PATH, 1);
     }
 
-    public function disable()
+    /**
+     * @return void
+     */
+    public function disable(): void
     {
         $this->setConfig(self::MAINTENANCE_CONFIG_PATH, 0);
     }
 
-    //########################################
-
-    protected function getConfig($path)
+    /**
+     * @param $path
+     *
+     * @return mixed|string
+     */
+    private function getConfig($path)
     {
         if (isset($this->cache[$path])) {
             return $this->cache[$path];
         }
 
+        $configDataTableName = $this->databaseHelper
+            ->getTableNameWithPrefix('core_config_data');
         $select = $this->resourceConnection->getConnection()
-            ->select()
-            ->from($this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('core_config_data'), 'value')
-            ->where('scope = ?', 'default')
-            ->where('scope_id = ?', 0)
-            ->where('path = ?', $path);
+                                           ->select()
+                                           ->from($configDataTableName, 'value')
+                                           ->where('scope = ?', 'default')
+                                           ->where('scope_id = ?', 0)
+                                           ->where('path = ?', $path);
 
         return $this->cache[$path] = $this->resourceConnection->getConnection()->fetchOne($select);
     }
 
-    protected function setConfig($path, $value)
+    /**
+     * @param $path
+     * @param $value
+     *
+     * @return void
+     */
+    private function setConfig($path, $value): void
     {
         $connection = $this->resourceConnection->getConnection();
 
+        $configDataTableName = $this->databaseHelper
+            ->getTableNameWithPrefix('core_config_data');
         if ($this->getConfig($path) === false) {
             $connection->insert(
-                $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('core_config_data'),
+                $configDataTableName,
                 [
                     'scope'    => 'default',
                     'scope_id' => 0,
                     'path'     => $path,
-                    'value'    => $value
+                    'value'    => $value,
                 ]
             );
         } else {
             $connection->update(
-                $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('core_config_data'),
+                $configDataTableName,
                 ['value' => $value],
                 [
                     'scope = ?'    => 'default',
                     'scope_id = ?' => 0,
-                    'path = ?'     => $path
+                    'path = ?'     => $path,
                 ]
             );
         }
 
         unset($this->cache[$path]);
     }
-
-    //########################################
 }

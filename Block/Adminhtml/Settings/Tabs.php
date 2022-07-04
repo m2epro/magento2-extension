@@ -39,7 +39,8 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $tab = [
             'label' => $this->__('Interface'),
             'title' => $this->__('Interface'),
-            'content' => $this->createBlock('Settings_Tabs_InterfaceTab')->toHtml()
+            'content' => $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Settings\Tabs\InterfaceTab::class)
+                                           ->toHtml()
         ];
 
         $this->addTab(self::TAB_ID_INTERFACE, $tab);
@@ -51,7 +52,9 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $tab = [
             'label' => $this->__('Magento Inventory'),
             'title' => $this->__('Magento Inventory'),
-            'content' => $this->createBlock('Settings_Tabs_MagentoInventory')->toHtml()
+            'content' => $this->getLayout()
+                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Settings\Tabs\MagentoInventory::class)
+                              ->toHtml()
         ];
 
         $this->addTab(self::TAB_ID_MAGENTO_INVENTORY, $tab);
@@ -63,7 +66,9 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $tab = [
             'label' => $this->__('Logs Clearing'),
             'title' => $this->__('Logs Clearing'),
-            'content' => $this->createBlock('Settings_Tabs_LogsClearing')->toHtml()
+            'content' => $this->getLayout()
+                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Settings\Tabs\LogsClearing::class)
+                              ->toHtml()
         ];
 
         $this->addTab(self::TAB_ID_LOGS_CLEARING, $tab);
@@ -75,7 +80,8 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $tab = [
             'label' => $this->__('License'),
             'title' => $this->__('License'),
-            'content' => $this->createBlock('Settings_Tabs_License')->toHtml()
+            'content' => $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Settings\Tabs\License::class)
+                                           ->toHtml()
         ];
 
         $this->addTab(self::TAB_ID_LICENSE, $tab);

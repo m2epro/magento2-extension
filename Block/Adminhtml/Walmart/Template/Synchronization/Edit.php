@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit
- */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
 {
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
@@ -35,7 +30,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getHelper('Data')->getBackUrl('list');
+        $url = $this->dataHelper->getBackUrl('list');
         $this->addButton('back', [
             'label'     => $this->__('Back'),
             'onclick'   => 'WalmartTemplateSynchronizationObj.backClick(\'' . $url . '\')',
@@ -81,7 +76,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
                     . '\'' . $this->getSaveConfirmationText() . '\','
                     . '\'' . \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_SYNCHRONIZATION . '\''
                     . ')',
-                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
                         'label' => $this->__('Save And Continue Edit'),
@@ -106,7 +101,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
                     . '\'' . $this->getSaveConfirmationText() . '\','
                     . '\'' . \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_SYNCHRONIZATION . '\''
                     . ')',
-                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
                         'label'     => $this->__('Save And Back'),

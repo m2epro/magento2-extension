@@ -70,7 +70,7 @@ class Grid extends AbstractGrid
             'filter'    => false,
             'sortable'  => false,
             'getter'    => 'getId',
-            'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
             'actions'   => [
                 [
                     'caption'        => $this->__('Edit'),

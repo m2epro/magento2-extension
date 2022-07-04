@@ -11,31 +11,39 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Order;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 use Ess\M2ePro\Model\Amazon\Listing\Product;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Order\Grid
- */
 class Grid extends AbstractGrid
 {
-    /** @var $itemsCollection \Ess\M2ePro\Model\ResourceModel\Order\Item\Collection */
-    private $itemsCollection = null;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Order\Item\Collection $itemsCollection */
+    private $itemsCollection;
 
-    /** @var $notesCollection \Ess\M2ePro\Model\ResourceModel\Order\Note\Collection */
-    protected $notesCollection = null;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Order\Note\Collection $notesCollection */
+    protected $notesCollection;
 
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->amazonFactory = $amazonFactory;
+        $this->databaseHelper = $databaseHelper;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -56,7 +64,7 @@ class Grid extends AbstractGrid
 
     public function getMassactionBlockName()
     {
-        return 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Massaction';
+        return \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Massaction::class;
     }
 
     protected function _prepareCollection()
@@ -65,7 +73,7 @@ class Grid extends AbstractGrid
 
         $collection->getSelect()
             ->joinLeft(
-                ['so' => $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('sales_order')],
+                ['so' => $this->databaseHelper->getTableNameWithPrefix('sales_order')],
                 '(so.entity_id = `main_table`.magento_order_id)',
                 ['magento_order_num' => 'increment_id']
             );
@@ -126,7 +134,7 @@ class Grid extends AbstractGrid
                 'header'         => $this->__('Sale Date'),
                 'align'          => 'left',
                 'type'           => 'datetime',
-                'filter'         => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+                'filter'         => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
                 'format'         => \IntlDateFormatter::MEDIUM,
                 'filter_time'    => true,
                 'index'          => 'purchase_create_date',
@@ -141,7 +149,7 @@ class Grid extends AbstractGrid
                 'header'         => $this->__('Ship By Date'),
                 'align'          => 'left',
                 'type'           => 'datetime',
-                'filter'         => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+                'filter'         => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
                 'format'         => \IntlDateFormatter::MEDIUM,
                 'filter_time'    => true,
                 'index'          => 'shipping_date_to',
@@ -263,7 +271,7 @@ class Grid extends AbstractGrid
                 'index'    => 'actions',
                 'filter'   => false,
                 'sortable' => false,
-                'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+                'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
                 'getter'   => 'getId',
                 'actions'  => [
                     [
@@ -388,10 +396,10 @@ class Grid extends AbstractGrid
 
     public function callbackColumnAmazonOrderId($value, $row, $column, $isExport)
     {
-        $back = $this->getHelper('Data')->makeBackUrlParam('*/amazon_order/index');
+        $back = $this->dataHelper->makeBackUrlParam('*/amazon_order/index');
         $itemUrl = $this->getUrl('*/amazon_order/view', ['id' => $row->getId(), 'back' => $back]);
 
-        $orderId = $this->getHelper('Data')->escapeHtml($row->getChildObject()->getData('amazon_order_id'));
+        $orderId = $this->dataHelper->escapeHtml($row->getChildObject()->getData('amazon_order_id'));
         $url = $this->getHelper('Component\Amazon')->getOrderUrl($orderId, $row->getData('marketplace_id'));
 
         $returnString = <<<HTML
@@ -422,7 +430,7 @@ HTML;
         $returnString .= $primeImageHtml;
         $returnString .= $businessImageHtml;
 
-        /** @var $notes \Ess\M2ePro\Model\Order\Note[] */
+        /** @var \Ess\M2ePro\Model\Order\Note[] $notes */
         $notes = $this->notesCollection->getItemsByColumnValue('order_id', $row->getData('id'));
 
         if ($notes) {
@@ -452,7 +460,7 @@ HTML;
 
         if ($magentoOrderId !== null) {
             if ($row['magento_order_num']) {
-                $magentoOrderNumber = $this->getHelper('Data')->escapeHtml($row['magento_order_num'] ?? '');
+                $magentoOrderNumber = $this->dataHelper->escapeHtml($row['magento_order_num'] ?? '');
                 $orderUrl = $this->getUrl('sales/order/view', ['order_id' => $magentoOrderId]);
                 $returnString = '<a href="' . $orderUrl . '" target="_blank">' . $magentoOrderNumber . '</a>';
             } else {
@@ -461,7 +469,8 @@ HTML;
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewLogIcon\Order $viewLogIcon */
-        $viewLogIcon = $this->createBlock('Grid_Column_Renderer_ViewLogIcon_Order');
+        $viewLogIcon = $this->getLayout()
+                            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewLogIcon\Order::class);
         $logIconHtml = $viewLogIcon->render($row);
 
         if ($logIconHtml !== '') {
@@ -475,7 +484,7 @@ HTML;
 
     public function callbackColumnItems($value, $row, $column, $isExport)
     {
-        /** @var $items \Ess\M2ePro\Model\Order\Item[] */
+        /** @var \Ess\M2ePro\Model\Order\Item[] $items */
         $items = $this->itemsCollection->getItemsByColumnValue('order_id', $row->getData('id'));
 
         $html = '';
@@ -533,7 +542,7 @@ HTML;
             $skuHtml = '';
             if ($item->getChildObject()->getSku()) {
                 $skuLabel = $this->__('SKU');
-                $sku = $this->getHelper('Data')->escapeHtml($item->getChildObject()->getSku());
+                $sku = $this->dataHelper->escapeHtml($item->getChildObject()->getSku());
                 if ($product !== null) {
                     $productUrl = $this->getUrl('catalog/product/edit', ['id' => $product->getId()]);
                     $sku = <<<STRING
@@ -547,7 +556,7 @@ STRING;
             }
 
             $generalIdLabel = $this->__($item->getChildObject()->getIsIsbnGeneralId() ? 'ISBN' : 'ASIN');
-            $generalId = $this->getHelper('Data')->escapeHtml($item->getChildObject()->getGeneralId());
+            $generalId = $this->dataHelper->escapeHtml($item->getChildObject()->getGeneralId());
 
             $itemUrl = $this->getHelper('Component\Amazon')->getItemUrl(
                 $item->getChildObject()->getGeneralId(),
@@ -560,7 +569,7 @@ STRING;
 <span style="padding-left: 10px;"><b>{$generalIdLabel}:</b>&nbsp;{$itemLink}</span><br/>
 STRING;
 
-            $itemTitle = $this->getHelper('Data')->escapeHtml($item->getChildObject()->getTitle());
+            $itemTitle = $this->dataHelper->escapeHtml($item->getChildObject()->getTitle());
             $qtyLabel = $this->__('QTY');
             $qtyHtml = <<<HTML
 <span style="padding-left: 10px;"><b>{$qtyLabel}:</b> {$item->getChildObject()->getQtyPurchased()}</span>
@@ -581,7 +590,7 @@ HTML;
             return $this->__('N/A');
         }
 
-        return $this->getHelper('Data')->escapeHtml($row->getChildObject()->getData('buyer_name'));
+        return $this->dataHelper->escapeHtml($row->getChildObject()->getData('buyer_name'));
     }
 
     public function callbackColumnTotal($value, $row, $column, $isExport)
@@ -782,7 +791,7 @@ JS
         }
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')
+            $this->dataHelper
                 ->getClassConstants(\Ess\M2ePro\Model\Log\AbstractModel::class)
         );
 
@@ -790,15 +799,15 @@ JS
             [
                 'amazon_order/view'          => $this->getUrl(
                     '*/amazon_order/view',
-                    ['back' => $this->getHelper('Data')->makeBackUrlParam('*/amazon_order/index')]
+                    ['back' => $this->dataHelper->makeBackUrlParam('*/amazon_order/index')]
                 ),
                 'getEditShippingAddressForm' => $this->getUrl(
                     '*/amazon_order_shippingAddress/edit/'
                 )
             ]
         );
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Order'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Order\MerchantFulfillment'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon\Order'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon\Order\MerchantFulfillment'));
 
         $this->jsTranslator->addTranslations(
             [
@@ -817,7 +826,7 @@ JS
         $tempGridIds = [];
         $this->getHelper('Component\Amazon')->isEnabled() && $tempGridIds[] = $this->getId();
 
-        $tempGridIds = $this->getHelper('Data')->jsonEncode($tempGridIds);
+        $tempGridIds = $this->dataHelper->jsonEncode($tempGridIds);
 
         $this->js->add(
             <<<JS

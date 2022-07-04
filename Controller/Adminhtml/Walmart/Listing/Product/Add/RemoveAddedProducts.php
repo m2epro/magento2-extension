@@ -10,11 +10,21 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
 use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode as SourceModeBlock;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add\RemoveAddedProducts
- */
 class RemoveAddedProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->sessionHelper = $sessionHelper;
+    }
+
     public function execute()
     {
         $this->deleteListingProducts($this->getListing()->getSetting('additional_data', 'adding_listing_products_ids'));
@@ -34,7 +44,7 @@ class RemoveAddedProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listi
             'step' => 2,
             'id' => $this->getRequest()->getParam('id'),
             '_query' => [
-                'source' => $this->getHelper('Data\Session')->getValue('products_source')
+                'source' => $this->sessionHelper->getValue('products_source')
             ]
         ]);
     }

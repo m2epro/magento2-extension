@@ -14,12 +14,12 @@ namespace Ess\M2ePro\Model\Amazon\Template\Description;
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
-     * @var $magentoProduct \Ess\M2ePro\Model\Magento\Product
+     * @var \Ess\M2ePro\Model\Magento\Product $magentoProduct
      */
     private $magentoProduct = null;
 
     /**
-     * @var $descriptionTemplateModel \Ess\M2ePro\Model\Template\Description
+     * @var \Ess\M2ePro\Model\Template\Description $descriptionTemplateModel
      */
     private $descriptionTemplateModel = null;
 

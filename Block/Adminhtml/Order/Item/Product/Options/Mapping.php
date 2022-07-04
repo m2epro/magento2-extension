@@ -17,7 +17,7 @@ class Mapping extends AbstractContainer
 {
     protected $_template = 'order/item/product/options/mapping.phtml';
 
-    /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
+    /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
     private $magentoProduct = null;
 
     //########################################
@@ -142,7 +142,7 @@ class Mapping extends AbstractContainer
 
         $this->setChild(
             'product_mapping_options_help_block',
-            $this->createBlock('HelpBlock')->setData([
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
                 'content' => $this->__(
                     'As M2E Pro was not able to find appropriate Option in Magento Product you are supposed
                     find and Link it manualy.

@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Magento;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Magento\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
     /** @var  \Ess\M2ePro\Model\Listing */
@@ -23,8 +20,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected $status;
     protected $type;
     protected $visibility;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Product */
+    protected $magentoProductHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
@@ -33,9 +30,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Magento\Catalog\Model\Product\Attribute\Source\Status $status,
         \Magento\Catalog\Model\Product\Type $type,
         \Magento\Catalog\Model\Product\Visibility $visibility,
+        \Ess\M2ePro\Helper\Magento\Product $magentoProductHelper,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
@@ -45,11 +44,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->status = $status;
         $this->type = $type;
         $this->visibility = $visibility;
-
-        parent::__construct($context, $backendHelper, $data);
+        $this->magentoProductHelper = $magentoProductHelper;
+        parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -73,7 +70,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         // Get collection
         // ---------------------------------------
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->getSelect()->group('e.entity_id');
@@ -189,7 +186,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'     => 'number',
             'index'    => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
         ]);
 
         $this->addColumn('name', [
@@ -249,7 +246,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'align'     => 'right',
             'width'     => '100px',
             'type'      => 'price',
-            'filter'    => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Price',
+            'filter'    => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Price::class,
             'currency_code' => $store->getBaseCurrency()->getCode(),
             'index'     => $priceAttributeAlias,
             'filter_index' => $priceAttributeAlias,
@@ -377,7 +374,7 @@ JS
     protected function getProductTypes()
     {
         $magentoProductTypes = $this->type->getOptionArray();
-        $knownTypes = $this->getHelper('Magento\Product')->getOriginKnownTypes();
+        $knownTypes = $this->magentoProductHelper->getOriginKnownTypes();
 
         foreach ($magentoProductTypes as $type => $magentoProductTypeLabel) {
             if (in_array($type, $knownTypes)) {
@@ -394,7 +391,7 @@ JS
 
     protected function isShowRuleBlock()
     {
-        /** @var $ruleModel \Ess\M2ePro\Model\Magento\Product\Rule */
+        /** @var \Ess\M2ePro\Model\Magento\Product\Rule $ruleModel */
         $ruleModel = $this->getHelper('Data\GlobalData')->getValue('rule_model');
 
         if ($ruleModel->isEmpty()) {

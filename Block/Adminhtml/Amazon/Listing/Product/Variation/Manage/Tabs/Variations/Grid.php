@@ -9,27 +9,30 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Variations;
 
 use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation;
-use Ess\M2ePro\Model\Listing\Log;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Variations\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     private $lockedDataCache = [];
 
-    protected $childListingProducts = null;
-    protected $currentProductVariations = null;
-    protected $usedProductVariations = null;
+    protected $childListingProducts;
+    protected $currentProductVariations;
+    protected $usedProductVariations;
 
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct;
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
+
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
     //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -37,11 +40,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->amazonFactory = $amazonFactory;
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -174,7 +179,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_index'   => 'additional_data',
             'frame_callback' => [$this, 'callbackColumnProductOptions'],
             'filter_condition_callback' => [$this, 'callbackProductOptions'],
-            'filter' => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions'
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions::class
         ]);
 
         $this->addColumn('channel_options', [
@@ -185,7 +190,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'          => 'additional_data',
             'filter_index'   => 'additional_data',
             'frame_callback' => [$this, 'callbackColumnChannelOptions'],
-            'filter'         => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions',
+            'filter'         => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions::class,
             'options'        => $channelAttributes,
             'filter_condition_callback' => [$this, 'callbackChannelOptions']
         ]);
@@ -219,8 +224,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_index'        => 'online_qty',
             'show_receiving'      => false,
             'is_variation_grid'   => true,
-            'renderer'            => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Qty',
-            'filter'              => 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty',
+            'renderer'            => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Qty::class,
+            'filter'              => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty::class,
             'filter_condition_callback' => [$this, 'callbackFilterQty']
         ]);
 
@@ -234,13 +239,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'is_variation_grid'         => true,
             'marketplace_id'            => $this->getListingProduct()->getListing()->getMarketplaceId(),
             'account_id'                => $this->getListingProduct()->getListing()->getAccountId(),
-            'renderer'                  => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Price',
+            'renderer'                  => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Price::class,
             'filter_condition_callback' => [$this, 'callbackFilterPrice']
         ];
 
         if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
             $this->getListingProduct()->getListing()->getAccount()->getChildObject()->isRepricing()) {
-            $priceColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price';
+            $priceColumn['filter'] = \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price::class;
         }
 
         $this->addColumn('online_current_price', $priceColumn);
@@ -260,7 +265,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Incomplete')
             ],
             'is_variation_grid' => true,
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Status',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Status::class,
             'filter_condition_callback' => [$this, 'callbackFilterStatus']
         ]);
 
@@ -348,8 +353,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                     $option = '--';
                 }
                 $optionHtml = '<span class="attribute-row" style="' . $style . '"><span class="attribute"><strong>' .
-                    $this->getHelper('Data')->escapeHtml($attribute) .
-                    '</strong></span>:&nbsp;<span class="value">' . $this->getHelper('Data')->escapeHtml($option) .
+                    $this->dataHelper->escapeHtml($attribute) .
+                    '</strong></span>:&nbsp;<span class="value">' . $this->dataHelper->escapeHtml($option) .
                     '</span></span>';
 
                 if ($uniqueProductsIds && $option !== '--' && !in_array($attribute, $virtualProductAttributes, true)) {
@@ -373,9 +378,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $linkTitle = $this->__('Change Variation');
             $linkContent = $this->__('Change Variation');
 
-            $attributes = $this->getHelper('Data')->escapeHtml($this->getHelper('Data')->jsonEncode($attributes));
-            $variationsTree = $this->getHelper('Data')->escapeHtml(
-                $this->getHelper('Data')->jsonEncode($variationsTree)
+            $attributes = $this->dataHelper->escapeHtml($this->dataHelper->jsonEncode($attributes));
+            $variationsTree = $this->dataHelper->escapeHtml(
+                $this->dataHelper->jsonEncode($variationsTree)
             );
 
             $html .= <<<HTML
@@ -464,8 +469,8 @@ HTML;
                 $option = '--';
             }
 
-            $attrName = $this->getHelper('Data')->escapeHtml($attribute);
-            $optionName = $this->getHelper('Data')->escapeHtml($option);
+            $attrName = $this->dataHelper->escapeHtml($attribute);
+            $optionName = $this->dataHelper->escapeHtml($option);
 
             if (empty($generalId) && $amazonListingProduct->isGeneralIdOwner()) {
                 $html .= <<<HTML
@@ -495,7 +500,7 @@ HTML;
         }
 
         if ($row->getChildObject()->getData('defected_messages')) {
-            $defectedMessages = $this->getHelper('Data')->jsonDecode(
+            $defectedMessages = $this->dataHelper->jsonDecode(
                 $row->getChildObject()->getData('defected_messages')
             );
 
@@ -740,7 +745,8 @@ HTML;
                 'style'   => 'float: right;',
                 'id'      => 'add_new_child_button'
             ];
-            $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
+            $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                             ->setData($data);
             $this->setChild('add_new_child_button', $buttonBlock);
             // ---------------------------------------
         }
@@ -977,7 +983,7 @@ JS
             'id' => $listingProduct->getChildObject()->getTemplateDescriptionId()
         ]);
 
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
         $templateTitle = $listingProduct->getChildObject()->getDescriptionTemplate()->getTitle();
 
         return <<<HTML

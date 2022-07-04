@@ -10,9 +10,6 @@ namespace  Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer;
 
 use Ess\M2ePro\Block\Adminhtml\Traits;
 
-/**
- * Class  \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Gtin
- */
 class Gtin extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 {
     use Traits\BlockTrait;
@@ -20,16 +17,24 @@ class Gtin extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
     /** @var \Ess\M2ePro\Helper\Factory  */
     protected $helperFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Backend\Block\Context $context,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
 
         $this->helperFactory = $helperFactory;
+        $this->translationHelper = $translationHelper;
+        $this->dataHelper = $dataHelper;
     }
 
     //########################################
@@ -48,11 +53,11 @@ class Gtin extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         }
 
         if (empty($gtin)) {
-            return $this->getHelper('Module\Translation')->__('N/A');
+            return $this->translationHelper->__('N/A');
         }
 
         $productId = $row->getData('id');
-        $gtinHtml = $this->getHelper('Data')->escapeHtml($gtin);
+        $gtinHtml = $this->dataHelper->escapeHtml($gtin);
 
         $walmartHelper = $this->getHelper('Component\Walmart');
         $marketplaceId = ($this->getColumn()->getData('marketplace_id') !== null)
@@ -108,8 +113,8 @@ HTML;
                 $htmlAdditional .= "<div class='separator-line'></div>";
             }
 
-            $identifierCode  = $this->getHelper('Module\Translation')->__($title);
-            $identifierValue = $this->getHelper('Data')->escapeHtml($value);
+            $identifierCode  = $this->translationHelper->__($title);
+            $identifierValue = $this->dataHelper->escapeHtml($value);
 
             $htmlAdditional .= <<<HTML
 <div>

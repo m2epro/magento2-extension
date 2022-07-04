@@ -12,11 +12,29 @@ use Ess\M2ePro\Model\Ebay\Template\Synchronization;
 use Ess\M2ePro\Model\Template\Synchronization as TemplateSynchronization;
 use Magento\Framework\Message\MessageInterface;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs\StopRules
- */
 class StopRules extends AbstractTab
 {
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     protected function _prepareForm()
     {
         $default = $this->modelFactory->getObject('Ebay_Template_Synchronization_Builder')->getDefaultData();
@@ -38,7 +56,7 @@ class StopRules extends AbstractTab
                     Conditions is met.<br/><br/>
                     More detailed information about ability to work with this Page you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/a-8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/a-8UB')
                 )
             ]
         );
@@ -142,7 +160,7 @@ Disabling this option might affect actual product data updates.
 Please read <a href="%url%" target="_blank">this article</a> before disabling the option.
 HTML
                     ,
-                    $this->getHelper('Module_Support')->getKnowledgebaseUrl('1606824')
+                    $this->supportHelper->getKnowledgebaseUrl('1606824')
                 ),
                 'style' => 'display: none;'
             ]
@@ -224,7 +242,8 @@ HTML
             $ruleModel->loadFromSerialized($formData['stop_advanced_rules_filters']);
         }
 
-        $ruleBlock = $this->createBlock('Magento_Product_Rule')->setData(['rule_model' => $ruleModel]);
+        $ruleBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule::class)
+                                       ->setData(['rule_model' => $ruleModel]);
 
         $fieldset->addField(
             'advanced_filter',

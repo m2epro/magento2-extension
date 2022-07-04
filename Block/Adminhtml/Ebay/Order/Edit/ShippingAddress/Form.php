@@ -10,11 +10,22 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Order\Edit\ShippingAddress;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Order\Edit\ShippingAddress\Form
- */
 class Form extends AbstractForm
 {
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $formFactory, $data);
+        $this->dataHelper = $dataHelper;
+    }
+
     protected function _prepareForm()
     {
         /** @var \Ess\M2ePro\Model\Ebay\Order $order */
@@ -83,7 +94,7 @@ class Form extends AbstractForm
                 'name'     => 'recipient_name',
                 'label'    => $this->__('Recipient Name'),
                 'value'    => isset($address['recipient_name'])
-                    ? $this->getHelper('Data')->escapeHtml($address['recipient_name']) : '',
+                    ? $this->dataHelper->escapeHtml($address['recipient_name']) : '',
                 'required' => true,
             ]
         );
@@ -95,7 +106,7 @@ class Form extends AbstractForm
                 'name'     => 'street[0]',
                 'label'    => $this->__('Street Address'),
                 'value'    => isset($address['street'][0])
-                    ? $this->getHelper('Data')->escapeHtml($address['street'][0]) : '',
+                    ? $this->dataHelper->escapeHtml($address['street'][0]) : '',
                 'required' => true,
             ]
         );
@@ -107,7 +118,7 @@ class Form extends AbstractForm
                 'name'  => 'street[1]',
                 'label' => '',
                 'value' => isset($address['street'][1])
-                    ? $this->getHelper('Data')->escapeHtml($address['street'][1]) : '',
+                    ? $this->dataHelper->escapeHtml($address['street'][1]) : '',
             ]
         );
 
@@ -166,7 +177,7 @@ class Form extends AbstractForm
         $form->setUseContainer(true);
         $this->setForm($form);
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Order'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Order'));
         $this->jsUrl->add(
             $this->getUrl(
                 '*/ebay_order_shippingAddress/save',
@@ -175,7 +186,7 @@ class Form extends AbstractForm
             'formSubmit'
         );
 
-        $this->js->add("M2ePro.formData.region = '" . $this->getHelper('Data')->escapeJs($regionCode) . "';");
+        $this->js->add("M2ePro.formData.region = '" . $this->dataHelper->escapeJs($regionCode) . "';");
 
         $this->js->add(
             <<<JS

@@ -5,120 +5,128 @@
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
+
 namespace Ess\M2ePro\Helper\Server;
 
-/**
- * Class \Ess\M2ePro\Helper\Server\Maintenance
- */
-class Maintenance extends \Ess\M2ePro\Helper\AbstractHelper
+class Maintenance
 {
-    protected $_dateEnabledFrom;
-    protected $_dateEnabledTo;
+    /** @var false | \DateTime | null */
+    private $enabledFrom;
+    /** @var false | \DateTime | null */
+    private $enabledTo;
 
-    protected $activeRecordFactory;
+    /** @var \Ess\M2ePro\Model\Registry\Manager */
+    private $registry;
 
-    //########################################
-
+    /**
+     * @param \Ess\M2ePro\Model\Registry\Manager $registry
+     */
     public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Model\Registry\Manager $registry
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
-        parent::__construct($helperFactory, $context);
+        $this->registry = $registry;
     }
 
-    //########################################
-
-    public function isScheduled()
+    /**
+     * @return bool
+     * @throws \Exception
+     */
+    public function isScheduled(): bool
     {
         $dateEnabledFrom = $this->getDateEnabledFrom();
         $dateEnabledTo = $this->getDateEnabledTo();
 
-        if ($dateEnabledFrom == false || $dateEnabledTo == false) {
+        if ($dateEnabledFrom === false || $dateEnabledTo === false) {
             return false;
         }
 
         $dateCurrent = new \DateTime('now', new \DateTimeZone('UTC'));
-        if ($dateCurrent < $dateEnabledFrom && $dateCurrent < $dateEnabledTo) {
-            return true;
-        }
 
-        return false;
+        return $dateCurrent < $dateEnabledFrom && $dateCurrent < $dateEnabledTo;
     }
 
-    public function isNow()
+    /**
+     * @return bool
+     * @throws \Exception
+     */
+    public function isNow(): bool
     {
         $dateEnabledFrom = $this->getDateEnabledFrom();
         $dateEnabledTo = $this->getDateEnabledTo();
 
-        if ($dateEnabledFrom == false || $dateEnabledTo == false) {
+        if ($dateEnabledFrom === false || $dateEnabledTo === false) {
             return false;
         }
 
         $dateCurrent = new \DateTime('now', new \DateTimeZone('UTC'));
-        if ($dateCurrent > $dateEnabledFrom && $dateCurrent < $dateEnabledTo) {
-            return true;
-        }
 
-        return false;
+        return $dateCurrent > $dateEnabledFrom && $dateCurrent < $dateEnabledTo;
     }
 
-    //########################################
-
+    /**
+     * @return \DateTime|false
+     * @throws \Exception
+     */
     public function getDateEnabledFrom()
     {
-        if ($this->_dateEnabledFrom === null) {
-            $dateEnabledFrom = $this->getHelper('Module')->getRegistry()->getValue(
+        if ($this->enabledFrom === null) {
+            $dateEnabledFrom = $this->registry->getValue(
                 '/server/maintenance/schedule/date/enabled/from/'
             );
-            $this->_dateEnabledFrom = $dateEnabledFrom
+            $this->enabledFrom = $dateEnabledFrom
                 ? new \DateTime($dateEnabledFrom, new \DateTimeZone('UTC'))
                 : false;
         }
 
-        return $this->_dateEnabledFrom;
+        return $this->enabledFrom;
     }
 
-    public function setDateEnabledFrom($date)
+    /**
+     * @param string $date
+     *
+     * @return void
+     */
+    public function setDateEnabledFrom(string $date): void
     {
-        $this->getHelper('Module')->getRegistry()->setValue(
-            '/server/maintenance/schedule/date/enabled/from/',
-            $date
-        );
-
-        $this->_dateEnabledFrom = $date;
-        return $this;
+        $this->registry->setValue('/server/maintenance/schedule/date/enabled/from/', $date);
+        $this->enabledFrom = new \DateTime($date, new \DateTimeZone('UTC'));
     }
 
+    /**
+     * @return \DateTime|false|null
+     * @throws \Exception
+     */
     public function getDateEnabledTo()
     {
-        if ($this->_dateEnabledTo === null) {
-            $dateEnabledTo = $this->getHelper('Module')->getRegistry()->getValue(
+        if ($this->enabledTo === null) {
+            $dateEnabledTo = $this->registry->getValue(
                 '/server/maintenance/schedule/date/enabled/to/'
             );
-            $this->_dateEnabledTo = $dateEnabledTo
+            $this->enabledTo = $dateEnabledTo
                 ? new \DateTime($dateEnabledTo, new \DateTimeZone('UTC'))
                 : false;
         }
 
-        return $this->_dateEnabledTo;
+        return $this->enabledTo;
     }
 
-    public function setDateEnabledTo($date)
+    /**
+     * @param string $date
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function setDateEnabledTo(string $date): void
     {
-        $this->getHelper('Module')->getRegistry()->setValue(
-            '/server/maintenance/schedule/date/enabled/to/',
-            $date
-        );
-
-        $this->_dateEnabledTo = $date;
-        return $this;
+        $this->registry->setValue('/server/maintenance/schedule/date/enabled/to/', $date);
+        $this->enabledTo = new \DateTime($date, new \DateTimeZone('UTC'));
     }
 
-    //########################################
-
-    public function processUnexpectedMaintenance()
+    /**
+     * @return void
+     * @throws \Exception
+     */
+    public function processUnexpectedMaintenance(): void
     {
         if ($this->isNow()) {
             return;
@@ -132,6 +140,4 @@ class Maintenance extends \Ess\M2ePro\Helper\AbstractHelper
         $this->setDateEnabledFrom((new \DateTime('now', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s'));
         $this->setDateEnabledTo($to->format('Y-m-d H:i:s'));
     }
-
-    //########################################
 }

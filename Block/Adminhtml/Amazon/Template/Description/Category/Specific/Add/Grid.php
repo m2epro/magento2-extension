@@ -8,13 +8,16 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Specific\Add;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Specific\Add\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
+    /** @var \Magento\Framework\Data\CollectionFactory  */
     protected $collectionFactory;
+
+    /** @var \Magento\Framework\App\ResourceConnection  */
     protected $resourceConnection;
+
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
 
     public $marketplaceId;
     public $productDataNick;
@@ -29,17 +32,22 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public $allRenderedSpecifics = [];
     public $blockRenderedSpecifics = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Framework\Data\CollectionFactory $collectionFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->collectionFactory = $collectionFactory;
         $this->resourceConnection = $resourceConnection;
+        $this->databaseHelper = $databaseHelper;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -73,7 +81,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $select = $this->resourceConnection->getConnection()->select()
               ->from(
-                  $this->getHelper('Module_Database_Structure')
+                  $this->databaseHelper
                       ->getTableNameWithPrefix('m2epro_amazon_dictionary_specific')
               )
               ->where('marketplace_id = ?', (int)$this->marketplaceId)
@@ -105,7 +113,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 }
             }
 
-            $row['data_definition'] = (array)$this->getHelper('Data')->jsonDecode($row['data_definition']);
+            $row['data_definition'] = (array)$this->dataHelper->jsonDecode($row['data_definition']);
             $row['is_desired'] = !empty($row['data_definition']['is_desired']) && $row['data_definition']['is_desired'];
 
             if ($this->onlyDesired && !$row['is_desired']) {
@@ -182,12 +190,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnTitle($title, $row, $column, $isExport)
     {
         strlen($title) > 60 && $title = substr($title, 0, 60) . '...';
-        $title = $this->getHelper('Data')->escapeHtml($title);
+        $title = $this->dataHelper->escapeHtml($title);
 
         $path = explode('/', ltrim($row->getData('xpath'), '/'));
         array_pop($path);
         $path = implode(' > ', $path);
-        $path = $this->getHelper('Data')->escapeHtml($path);
+        $path = $this->dataHelper->escapeHtml($path);
 
         $fullPath = $path;
         strlen($path) > 135 && $path = substr($path, 0, 135) . '...';

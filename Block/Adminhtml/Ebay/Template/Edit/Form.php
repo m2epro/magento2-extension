@@ -11,9 +11,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Edit;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Edit\Form
- */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     private $stringUtils;
@@ -21,7 +18,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     private $enabledMarketplaces = null;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Framework\Stdlib\StringUtils $stringUtils,
@@ -29,10 +27,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->stringUtils = $stringUtils;
         $this->templateManager = $templateManager;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -168,7 +168,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $optionsResult = [
             ['value' => '', 'label' => '']
         ];
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
         foreach ($this->getEnabledMarketplaces() as $marketplace) {
             $optionsResult[] = [
                 'value' => $marketplace->getId(),

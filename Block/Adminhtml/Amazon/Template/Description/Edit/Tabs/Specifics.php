@@ -8,16 +8,30 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs\Specifics
- */
 class Specifics extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected $_template = 'amazon/template/description/tabs/specifics.phtml';
 
     public $formData = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     public function _construct()
     {
@@ -49,7 +63,7 @@ class Specifics extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     protected function _beforeToHtml()
     {
-        $helpBlock = $this->createBlock('HelpBlock')->setData([
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
             'content' => $this->__(
                 'On this Tab you can specify Product Specifics for more detailed Description of its properties.
                 List of available Specifics determines for the Category that you have chosen on General Tab. <br/><br/>
@@ -77,7 +91,7 @@ class Specifics extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 <br/>
                 More detailed information about ability to work with this Page you can find
                 <a href="%url%" target="_blank" class="external-link">here</a>.',
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/iAMVB')
+                $this->supportHelper->getDocumentationArticleUrl('x/iAMVB')
             )
         ]);
 
@@ -130,8 +144,8 @@ CSS
             'Add Specific into current container' => $this->__('Add Specific into current container'),
 
             'Value of this Specific can be automatically overwritten by M2E Pro.' => $this->__(
-                'If you submit a certain value for one of the following Specifics and use this Description Policy 
-                to create a new Amazon Parent-Child Product with variations, 
+                'If you submit a certain value for one of the following Specifics and use this Description Policy
+                to create a new Amazon Parent-Child Product with variations,
                 this value will be automatically overwritten with the corresponding values of Amazon Child Products.'
             ),
             'Amazon Parentage Specific will be overridden notice.' =>
@@ -141,7 +155,7 @@ CSS
                 this Value will be overwritten and the Value you selected will not be/cannot be used.'
         ]);
 
-        $formData = $this->getHelper('Data')->jsonEncode($this->formData);
+        $formData = $this->dataHelper->jsonEncode($this->formData);
         $this->js->add("
             wait(
                 function() { return typeof AmazonTemplateDescriptionCategorySpecificObj != 'undefined'; },

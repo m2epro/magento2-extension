@@ -64,7 +64,7 @@ class General extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valid
                     ]
                 );
             }
-            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
             $variation = reset($variations);
             return $variation->getChildObject()->getSku();
         }

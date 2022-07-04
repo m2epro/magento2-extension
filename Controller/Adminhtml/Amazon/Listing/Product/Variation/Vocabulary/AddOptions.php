@@ -15,7 +15,11 @@ class AddOptions extends Main
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary */
     protected $vocabularyHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $helperData;
+
     public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
@@ -23,6 +27,7 @@ class AddOptions extends Main
         parent::__construct($amazonFactory, $context);
 
         $this->vocabularyHelper = $vocabularyHelper;
+        $this->helperData = $helperData;
     }
 
     public function execute()
@@ -32,7 +37,7 @@ class AddOptions extends Main
         $needAddToVocabulary  = (bool)$this->getRequest()->getParam('need_add', false);
 
         if (!empty($optionsData)) {
-            $optionsData = $this->getHelper('Data')->jsonDecode($optionsData);
+            $optionsData = $this->helperData->jsonDecode($optionsData);
         }
 
         if (!$isRememberAutoAction && !$needAddToVocabulary) {

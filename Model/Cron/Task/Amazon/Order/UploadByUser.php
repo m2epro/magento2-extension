@@ -56,7 +56,7 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $ordersCreator->setValidateAccountCreateDate(false);
 
         foreach ($permittedAccounts as $merchantId => $accounts) {
-            /** @var $account \Ess\M2ePro\Model\Account **/
+            /** @var \Ess\M2ePro\Model\Account $account **/
 
             /** @var \Ess\M2ePro\Model\Cron\Task\Amazon\Order\UploadByUser\Manager $manager */
             $manager = $this->modelFactory->getObject('Cron_Task_Amazon_Order_UploadByUser_Manager');
@@ -121,7 +121,7 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function getPermittedAccounts()
     {
-        /** @var $accountsCollection \Ess\M2ePro\Model\ResourceModel\Account\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
         $accountsCollection = $this->parentFactory->getObject(
             \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'Account'
@@ -129,7 +129,7 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $accounts = [];
         foreach ($accountsCollection->getItems() as $accountItem) {
-            /** @var $accountItem \Ess\M2ePro\Model\Account */
+            /** @var \Ess\M2ePro\Model\Account $accountItem */
 
             $merchantId = $accountItem->getChildObject()->getMerchantId();
             if (!isset($accounts[$merchantId])) {

@@ -52,7 +52,7 @@ td.help_line .hl_container_error {
     background-color: #FFF7EA;
 }
 
-td.help_line .hl_container_notice {
+td.help_line .hl_container_info {
     border: 1px dashed #C0C0C0;
     background-color: #F9F9F9;
 }

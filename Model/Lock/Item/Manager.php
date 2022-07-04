@@ -51,7 +51,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     public function create($parentNick = null)
     {
-        /** @var $parentLockItem \Ess\M2ePro\Model\Lock\Item */
+        /** @var \Ess\M2ePro\Model\Lock\Item $parentLockItem */
         $parentLockItem = $this->activeRecordFactory->getObject('Lock\Item');
         if ($parentNick !== null) {
             $parentLockItem->load($parentNick, 'nick');
@@ -62,7 +62,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             'parent_id' => $parentLockItem->getId(),
         ];
 
-        /** @var $lockModel \Ess\M2ePro\Model\Lock\Item */
+        /** @var \Ess\M2ePro\Model\Lock\Item $lockModel */
         $lockModel = $this->activeRecordFactory->getObject('Lock\Item')->setData($data);
         $lockModel->save();
 
@@ -133,11 +133,11 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
         if ($lockItem->getParentId() !== null) {
 
-            /** @var $parentLockItem \Ess\M2ePro\Model\Lock\Item */
+            /** @var \Ess\M2ePro\Model\Lock\Item $parentLockItem */
             $parentLockItem = $this->activeRecordFactory->getObject('Lock\Item')->load($lockItem->getParentId());
 
             if ($parentLockItem->getId()) {
-                /** @var $parentManager \Ess\M2ePro\Model\Lock\Item\Manager */
+                /** @var \Ess\M2ePro\Model\Lock\Item\Manager $parentManager */
                 $parentManager = $this->modelFactory->getObject(
                     'Lock_Item_Manager',
                     ['nick' => $parentLockItem->getNick()]

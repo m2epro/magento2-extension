@@ -36,7 +36,7 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         $listing = $this->getHelper('Data\GlobalData')->getValue('review_listing');
 
         // ---------------------------------------
-        $viewHeaderBlock = $this->createBlock('Listing_View_Header', '', [
+        $viewHeaderBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class, '', [
             'data' => ['listing' => $listing]
         ]);
 
@@ -47,7 +47,7 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         $url = $this->getUrl('*/ebay_listing/view', [
             'id' => $this->getRequest()->getParam('id')
         ]);
-        $buttonBlock = $this->createBlock('Magento\Button')
+        $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
             ->setData([
                 'id'   => $this->__('go_to_the_listing'),
                 'label'   => $this->__('Go To The Listing'),
@@ -63,7 +63,7 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
             'currentProductId' => $addedProductsIds[0],
             'productIds' => implode(',', $addedProductsIds),
         ]);
-        $buttonBlock = $this->createBlock('Magento\Button')
+        $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
             ->setData([
                 'label'   => $this->__('Preview Added Products Now'),
                 'onclick' => 'window.open(\''.$url.'\').focus();',
@@ -77,7 +77,7 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
             'id' => $this->getRequest()->getParam('id'),
             'do_list' => true
         ]);
-        $buttonBlock = $this->createBlock('Magento\Button')
+        $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
             ->setData([
                 'label' => $this->__('List Added Products Now'),
                 'onclick' => 'setLocation(\''.$url.'\');',
@@ -93,7 +93,7 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
                     'account'     => $listing->getAccountId(),
                     'marketplace' => $listing->getMarketplaceId(),
             ]);
-            $buttonBlock = $this->createBlock('Magento\Button')
+            $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
                 ->setData([
                     'label' => $this->__('Back to Unmanaged Listing'),
                     'onclick' => 'setLocation(\''.$url.'\');',

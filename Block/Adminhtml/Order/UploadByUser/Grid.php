@@ -28,8 +28,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->customCollectionFactory = $customCollectionFactory;
         parent::__construct($context, $backendHelper, $data);
+        $this->customCollectionFactory = $customCollectionFactory;
     }
 
     public function _construct()
@@ -207,7 +207,7 @@ HTML;
 HTML;
         }
 
-        $button = $this->createBlock('Magento\Button')->setData($data);
+        $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->setData($data);
         return $button->toHtml() . $state;
     }
 

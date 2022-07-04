@@ -12,14 +12,42 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Template\Synchronization as TemplateSynchronization;
 use Ess\M2ePro\Model\Walmart\Template\Synchronization;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs\RelistRules
- */
 class RelistRules extends AbstractForm
 {
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     protected function _prepareForm()
     {
-        $template = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
+        $template = $this->globalDataHelper->getValue('tmp_template');
         $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
@@ -40,7 +68,7 @@ class RelistRules extends AbstractForm
                     <strong>Walmart Integration > Configuration > Settings > Synchronization</strong>. Otherwise,
                     Synchronization Rules will not take effect.</p>
 HTML
-                )
+                ),
             ]
         );
 
@@ -48,7 +76,7 @@ HTML
             'magento_block_walmart_template_synchronization_relist_filters',
             [
                 'legend'      => $this->__('General'),
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -65,7 +93,7 @@ HTML
                 ],
                 'tooltip' => $this->__(
                     'Enable to automatically relist the Not Listed Item(s) when the Relist Conditions are met.'
-                )
+                ),
             ]
         );
 
@@ -83,7 +111,7 @@ HTML
                 ],
                 'tooltip'      => $this->__(
                     'Enable if you want to relist the Items that were stopped manually.'
-                )
+                ),
             ]
         );
 
@@ -91,7 +119,7 @@ HTML
             'magento_block_walmart_template_synchronization_relist_rules',
             [
                 'legend'      => $this->__('Relist Conditions'),
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -109,7 +137,7 @@ HTML
                 'class'   => 'M2ePro-validate-stop-relist-conditions-product-status',
                 'tooltip' => $this->__(
                     'Magento Product Status at which the Item(s) have to be relisted.'
-                )
+                ),
             ]
         );
 
@@ -127,7 +155,7 @@ HTML
                 'class'   => 'M2ePro-validate-stop-relist-conditions-stock-availability',
                 'tooltip' => $this->__(
                     'Magento Stock Availability at which the Item(s) have to be relisted.'
-                )
+                ),
             ]
         );
 
@@ -141,9 +169,9 @@ Disabling this option might affect actual product data updates.
 Please read <a href="%url%" target="_blank">this article</a> before disabling the option.
 HTML
                     ,
-                    $this->getHelper('Module_Support')->getKnowledgebaseUrl('1606824')
+                    $this->supportHelper->getKnowledgebaseUrl('1606824')
                 ),
-                'style' => 'display: none;'
+                'style' => 'display: none;',
             ]
         );
 
@@ -165,7 +193,7 @@ HTML
 
                     <strong>Note:</strong> This option will be ignored for Magento Variational
                     Product listed as Walmart Variant Group.'
-                )
+                ),
             ]
         )->setAfterElementHtml(
             <<<HTML
@@ -184,7 +212,7 @@ HTML
                 'tooltip'     => $this->__(
                     '<p>Define Magento Attribute value(s) based on which a product must be relisted on the Channel.<br>
                     Once both Relist Conditions and Advanced Conditions are met, the product will be relisted.</p>'
-                )
+                ),
             ]
         );
 
@@ -199,9 +227,9 @@ HTML
                             'Please be very thoughtful before enabling this option as this functionality can have
                         a negative impact on the Performance of your system.<br> It can decrease the speed of running
                         in case you have a lot of Products with the high number of changes made to them.'
-                        )
-                    ]
-                ]
+                        ),
+                    ],
+                ],
             ]
         );
 
@@ -227,7 +255,8 @@ HTML
             $ruleModel->loadFromSerialized($formData['relist_advanced_rules_filters']);
         }
 
-        $ruleBlock = $this->createBlock('Magento_Product_Rule')->setData(['rule_model' => $ruleModel]);
+        $ruleBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule::class)
+                                       ->setData(['rule_model' => $ruleModel]);
 
         $fieldset->addField(
             'advanced_filter',
@@ -252,7 +281,7 @@ HTML
         ];
 
         foreach ($jsFormData as $item) {
-            $this->js->add("M2ePro.formData.$item = '{$this->getHelper('Data')->escapeJs($formData[$item])}';");
+            $this->js->add("M2ePro.formData.$item = '{$this->dataHelper->escapeJs($formData[$item])}';");
         }
 
         $this->setForm($form);

@@ -11,26 +11,25 @@ namespace Ess\M2ePro\Helper\Magento;
 /**
  * Class \Ess\M2ePro\Helper\Magento\AbstractHelper
  */
-abstract class AbstractHelper extends \Ess\M2ePro\Helper\AbstractHelper
+abstract class AbstractHelper
 {
-    const RETURN_TYPE_IDS = 1;
-    const RETURN_TYPE_ARRAYS = 2;
-    const RETURN_TYPE_OBJECTS = 3;
+    public const RETURN_TYPE_IDS = 1;
+    public const RETURN_TYPE_ARRAYS = 2;
+    public const RETURN_TYPE_OBJECTS = 3;
 
+    /** @var \Magento\Framework\ObjectManagerInterface */
     private $objectManager;
 
-    //########################################
-
+    /**
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager
+     */
     public function __construct(
-        \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Framework\ObjectManagerInterface $objectManager
     ) {
         $this->objectManager = $objectManager;
-        parent::__construct($helperFactory, $context);
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function _getIdsFromInput($input, $idKey = 'id')
     {
@@ -108,6 +107,4 @@ abstract class AbstractHelper extends \Ess\M2ePro\Helper\AbstractHelper
 
         return $result;
     }
-
-    //########################################
 }

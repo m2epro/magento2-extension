@@ -52,7 +52,7 @@ class OrderItemStructure implements InspectorInterface, FixerInterface
     {
         $issues = [];
 
-        /** @var $collection \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection */
+        /** @var \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection $collection */
         $collection = $this->activeRecordFactory->getObject('Order\Item')->getCollection();
         $collection->getSelect()->joinLeft(
             ['mo' => $this->activeRecordFactory->getObject('Order')->getResource()->getMainTable()],
@@ -111,7 +111,7 @@ HTML;
 
     public function fix($ids)
     {
-        /** @var $collection \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection */
+        /** @var \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection $collection */
         $collection = $this->activeRecordFactory->getObject('Order\Item')->getCollection();
         $collection->addFieldToFilter('id', ['in' => $ids]);
 

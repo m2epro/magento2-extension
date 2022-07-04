@@ -19,7 +19,7 @@ class Listing extends \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewLogIc
 
     protected function getAvailableActions()
     {
-        $translator = $this->getHelper('Module\Translation');
+        $translator = $this->translationHelper;
         return parent::getAvailableActions() +
             [
                 Log::ACTION_DELETE_PRODUCT_FROM_COMPONENT => $translator->__('Remove from Channel'),
@@ -35,7 +35,9 @@ class Listing extends \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewLogIc
 
     protected function getLastActions($listingProductId, $logs)
     {
-        $summary = $this->createBlock('Walmart_Listing_Log_Grid_LastActions')->setData([
+        $summary = $this->getLayout()
+                        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Log\Grid\LastActions::class)
+                        ->setData([
             'entity_id'           => $listingProductId,
             'logs'                => $logs,
             'available_actions'   => $this->getAvailableActions(),

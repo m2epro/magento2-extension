@@ -105,7 +105,7 @@ class Delete extends \Ess\M2ePro\Plugin\AbstractPlugin
                 'The "%source%" Source was unassigned from product.',
                 ['!source' => $sourceItem->getSourceCode()]
             ),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
         );
     }
 

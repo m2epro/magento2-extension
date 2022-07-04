@@ -16,15 +16,20 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
  */
 class Custom extends MagentoElement
 {
+    /** @var \Ess\M2ePro\Helper\Factory  */
     public $helperFactory;
+
+    /** @var \Magento\Framework\View\LayoutInterface  */
     public $layout;
 
     protected $element;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    public $translationHelper;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -32,6 +37,7 @@ class Custom extends MagentoElement
         $this->helperFactory = $context->getHelperFactory();
         $this->layout = $context->getLayout();
         $this->setTemplate('ebay/template/category/chooser/specific/form/renderer/custom.phtml');
+        $this->translationHelper = $translationHelper;
     }
 
     //########################################
@@ -53,7 +59,7 @@ class Custom extends MagentoElement
         $buttonBlock = $this->layout->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
             ->setData(
                 [
-                    'label'   => $this->getTranslator()->__('Remove'),
+                    'label'   => $this->translationHelper->__('Remove'),
                     'onclick' => 'EbayTemplateCategorySpecificsObj.removeCustomSpecific(this);',
                     'class'   => 'action remove_custom_specific_button'
                 ]
@@ -69,7 +75,7 @@ class Custom extends MagentoElement
             ->setData(
                 [
                     'id'      => 'add_custom_specific_button',
-                    'label'   => $this->getTranslator()->__('Add Specific'),
+                    'label'   => $this->translationHelper->__('Add Specific'),
                     'onclick' => 'EbayTemplateCategorySpecificsObj.addCustomSpecificRow();',
                     'class'   => 'action-primary add'
                 ]
@@ -77,13 +83,4 @@ class Custom extends MagentoElement
 
         return $buttonBlock->toHtml();
     }
-
-    //########################################
-
-    public function getTranslator()
-    {
-        return $this->helperFactory->getObject('Module\Translation');
-    }
-
-    //########################################
 }

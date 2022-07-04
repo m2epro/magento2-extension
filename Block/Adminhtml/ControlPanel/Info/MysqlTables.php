@@ -17,7 +17,17 @@ use Ess\M2ePro\Helper\Module\Database\Structure;
  */
 class MysqlTables extends AbstractBlock
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+        $this->databaseHelper = $databaseHelper;
+    }
 
     public function _construct()
     {
@@ -31,8 +41,7 @@ class MysqlTables extends AbstractBlock
 
     public function getTablesInfo()
     {
-        /** @var Structure $helper */
-        $helper = $this->getHelper('Module_Database_Structure');
+        $helper = $this->databaseHelper;
         $tablesInfo = [];
 
         foreach ($this->getTablesList() as $category => $tables) {

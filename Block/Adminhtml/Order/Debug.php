@@ -40,7 +40,7 @@ class Debug extends AbstractContainer
 
     protected function _beforeToHtml()
     {
-        /** @var $order \Ess\M2ePro\Model\Order */
+        /** @var \Ess\M2ePro\Model\Order $order */
         $order = $this->getHelper('Data\GlobalData')->getValue('order');
         $store = $this->storeModel->load($order->getStoreId());
 

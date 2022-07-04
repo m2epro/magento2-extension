@@ -56,7 +56,7 @@ class RemovePotentialDuplicates extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
 
         foreach ($collection->getItems() as $product) {
 
-            /** @var $product \Ess\M2ePro\Model\Listing\Product */
+            /** @var \Ess\M2ePro\Model\Listing\Product $product */
 
             $productStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
 
@@ -83,7 +83,7 @@ class RemovePotentialDuplicates extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
 
         foreach ($products as $product) {
 
-            /** @var $product \Ess\M2ePro\Model\Listing\Product */
+            /** @var \Ess\M2ePro\Model\Listing\Product $product */
 
             $productStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
 

@@ -8,36 +8,43 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment;
 
-/**
- * Class Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment\ShippingServices
- */
 class ShippingServices extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
     private $localeCurrency;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
 
+    /**
+     * @param \Magento\Framework\Locale\CurrencyInterface $localeCurrency
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param array $data
+     */
     public function __construct(
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         array $data = []
     ) {
         $this->localeCurrency = $localeCurrency;
-
+        $this->supportHelper = $supportHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
-    //########################################
-
+    /**
+     * @return void
+     */
     public function _construct()
     {
         parent::_construct();
         $this->setId('amazonOrderMerchantFulfillmentShippingServices');
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
@@ -74,14 +81,14 @@ class ShippingServices extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
                 [
                     'content'     => $this->__(
                         <<<HTML
-There were <strong>no</strong> suitable <strong>Shipping Services</strong> found according to the provided 
+There were <strong>no</strong> suitable <strong>Shipping Services</strong> found according to the provided
 <strong>Configuration Settings</strong>.<br/>
-You can press '<strong>Back</strong>' Button and Return to the <strong>Previous Page</strong> to adjust the 
+You can press '<strong>Back</strong>' Button and Return to the <strong>Previous Page</strong> to adjust the
 Settings. We recommend you to edit '<strong>Carrier Will Pick Up</strong>' and '<strong>Delivery Experience</strong>'
 Conditions.
 HTML
                         ,
-                        $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/YAMVB')
+                        $this->supportHelper->getDocumentationArticleUrl('x/YAMVB')
                     ),
                     'no_hide'     => true,
                     'no_collapse' => true
@@ -99,7 +106,7 @@ HTML
                 $gridRowsHtml .= <<<HTML
     <tr>
         <td class="radio-input">
-            <input id="{$shippingService['id']}" value="{$shippingService['id']}" 
+            <input id="{$shippingService['id']}" value="{$shippingService['id']}"
             class="shipping-services-radio-input" name="shipping_service_id" type="radio" />
         </td>
         <td>
@@ -167,7 +174,7 @@ HTML;
             </strong>
             <div class="shipping-service-details temporarily-unavailable-details">
                 {$this->__(
-                    'A Carrier is temporarily unavailable, most likely due to a service outage experienced by the 
+                    'A Carrier is temporarily unavailable, most likely due to a service outage experienced by the
                     carrier. Please, try again later.'
                 )}
             </div>
@@ -205,8 +212,6 @@ HTML;
 
         return $this;
     }
-
-    //########################################
 
     protected function _prepareLayout()
     {
@@ -249,26 +254,27 @@ JS
         return parent::_prepareLayout();
     }
 
-    //########################################
-
-    protected function _toHtml()
+    /**
+     * @return string
+     */
+    protected function _toHtml(): string
     {
-        $helpBlock = $this->createBlock('HelpBlock');
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class);
         $helpBlock->setData(
             [
                 'title'   => $this->__('Amazon\'s Shipping Services'),
                 'content' => $this->__(
                     <<<HTML
-<p>Amazon's Shipping Services offer a variety of <strong>Shipping Benefits</strong>, including several Shipping Options 
+<p>Amazon's Shipping Services offer a variety of <strong>Shipping Benefits</strong>, including several Shipping Options
 if you need to expedite your delivery.</p>
 <br/>
-<p>This Tool provides <strong>programmatic access</strong> to Amazon’s Shipping Services for Sellers, including 
-competitive rates from Amazon-partnered Carriers. Sellers can find out what Shipping Service offers are available by 
-<strong>submitting information</strong> about a proposed Shipment, such as <strong>Package Size</strong> and 
-<strong>Weight</strong>, <strong>Shipment Origin</strong>, and <strong>Delivery Date</strong> requirements. Sellers 
-can choose from the Shipping Service offers returned by Amazon, and then Purchase Shipping Labels for Fulfilling 
+<p>This Tool provides <strong>programmatic access</strong> to Amazon’s Shipping Services for Sellers, including
+competitive rates from Amazon-partnered Carriers. Sellers can find out what Shipping Service offers are available by
+<strong>submitting information</strong> about a proposed Shipment, such as <strong>Package Size</strong> and
+<strong>Weight</strong>, <strong>Shipment Origin</strong>, and <strong>Delivery Date</strong> requirements. Sellers
+can choose from the Shipping Service offers returned by Amazon, and then Purchase Shipping Labels for Fulfilling
 their Orders.</p>
-<br/> 
+<br/>
 <p>For more information about Amazon's Shipping Services Program, see the Seller Central Help.</p>
 <br/>
 <p>Amazon's Shipping Service tool is required to be used for Amazon Prime Orders.</p>
@@ -277,13 +283,12 @@ HTML
             ]
         );
 
-        $breadcrumb = $this->createBlock('Amazon_Order_MerchantFulfillment_Breadcrumb')
-            ->setSelectedStep(2);
+        $breadcrumb = $this->getLayout()
+                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment\Breadcrumb::class)
+                           ->setSelectedStep(2);
 
         return $helpBlock->toHtml() .
             $breadcrumb->toHtml() .
             parent::_toHtml();
     }
-
-    //########################################
 }

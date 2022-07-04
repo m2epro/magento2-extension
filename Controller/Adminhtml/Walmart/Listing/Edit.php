@@ -8,19 +8,12 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Edit
- */
 class Edit extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
 {
-    //########################################
-
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::walmart_listings_m2epro');
     }
-
-    //########################################
 
     public function execute()
     {
@@ -32,7 +25,7 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
             return $this->_redirect('*/walmart_listing/index');
         }
 
-        $this->addContent($this->createBlock('Walmart_Listing_Edit'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Edit::class));
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('Edit M2E Pro Listing "%listing_title%" Settings', $listing->getTitle())
@@ -42,6 +35,4 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
 
         return $this->getResult();
     }
-
-    //########################################
 }

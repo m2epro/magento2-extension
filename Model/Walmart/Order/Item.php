@@ -23,7 +23,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
     const STATUS_SHIPPED_PARTIALLY = 'shippedPartially';
     const STATUS_CANCELLED = 'cancelled';
 
-    /** @var $channelItem \Ess\M2ePro\Model\Walmart\Item */
+    /** @var \Ess\M2ePro\Model\Walmart\Item $channelItem */
     private $channelItem = null;
 
     protected $productBuilderFactory;
@@ -66,7 +66,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Walmart\Order\Item');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Order\Item::class);
     }
 
     //########################################
@@ -345,7 +345,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
 
         // Create product in magento
         // ---------------------------------------
-        /** @var $productBuilder \Ess\M2ePro\Model\Magento\Product\Builder */
+        /** @var \Ess\M2ePro\Model\Magento\Product\Builder $productBuilder */
         $productBuilder = $this->productBuilderFactory->create()->setData($productData);
         $productBuilder->buildProduct();
         // ---------------------------------------
@@ -373,5 +373,20 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
         return $this->getQtyPurchased();
     }
 
-    //########################################
+    /**
+     * @return bool
+     */
+    public function isBuyerCancellationRequested(): bool
+    {
+        return $this->getData('buyer_cancellation_requested') == '1';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isBuyerCancellationPossible(): bool
+    {
+        $status = $this->getStatus();
+        return $status === self::STATUS_CREATED || $status === self::STATUS_ACKNOWLEDGED;
+    }
 }

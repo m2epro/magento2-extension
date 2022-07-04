@@ -20,7 +20,7 @@ class Index extends Main
     {
         $this->init();
 
-        $block = $this->createBlock('ControlPanel\Tabs', '');
+        $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs::class, '');
         $block->setData('tab', 'summary');
         $this->addContent($block);
 

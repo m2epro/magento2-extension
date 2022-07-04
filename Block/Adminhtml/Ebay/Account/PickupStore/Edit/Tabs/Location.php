@@ -25,10 +25,9 @@ class Location extends AbstractForm
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
-        parent::__construct($context, $registry, $formFactory, $data);
-
         $this->ebayFactory = $ebayFactory;
         $this->componentEbayPickupStore = $componentEbayPickupStore;
+        parent::__construct($context, $registry, $formFactory, $data);
     }
 
     //########################################
@@ -250,7 +249,7 @@ class Location extends AbstractForm
             'get_geocord_custom_container',
             self::CUSTOM_CONTAINER,
             [
-                'text' => $this->createBlock('Magento\Button')
+                'text' => $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
                         ->setData(
                             [
                                 'label' => $this->__('Get Latitude & Longitude'),

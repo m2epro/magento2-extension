@@ -10,29 +10,48 @@ namespace Ess\M2ePro\Helper;
 
 use Magento\Framework\Component\ComponentRegistrar;
 
-class Module extends AbstractHelper
+class Module
 {
-    const IDENTIFIER = 'Ess_M2ePro';
+    public const IDENTIFIER = 'Ess_M2ePro';
 
-    const MESSAGE_TYPE_NOTICE  = 0;
-    const MESSAGE_TYPE_ERROR   = 1;
-    const MESSAGE_TYPE_WARNING = 2;
-    const MESSAGE_TYPE_SUCCESS = 3;
+    public const MESSAGE_TYPE_NOTICE  = 0;
+    public const MESSAGE_TYPE_ERROR   = 1;
+    public const MESSAGE_TYPE_WARNING = 2;
+    public const MESSAGE_TYPE_SUCCESS = 3;
 
-    const ENVIRONMENT_PRODUCTION     = 'production';
-    const ENVIRONMENT_DEVELOPMENT    = 'development';
-    const ENVIRONMENT_TESTING_MANUAL = 'testing-manual';
-    const ENVIRONMENT_TESTING_AUTO   = 'testing-auto';
+    public const ENVIRONMENT_PRODUCTION     = 'production';
+    public const ENVIRONMENT_DEVELOPMENT    = 'development';
+    public const ENVIRONMENT_TESTING_MANUAL = 'testing-manual';
+    public const ENVIRONMENT_TESTING_AUTO   = 'testing-auto';
 
+    /**  @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
+
+    /** @var \Ess\M2ePro\Model\Config\Manager */
     protected $config;
+
+    /** @var \Ess\M2ePro\Model\Registry\Manager */
     protected $registry;
+
+    /** @var \Magento\Framework\Module\ModuleListInterface */
     protected $moduleList;
+
+    /** @var \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory */
     protected $cookieMetadataFactory;
+
+    /** @var \Magento\Framework\Stdlib\CookieManagerInterface  */
     protected $cookieManager;
+
+    /** @var \Magento\Framework\Module\PackageInfo */
     protected $packageInfo;
+
+    /** @var \Magento\Framework\Module\ModuleResource */
     protected $moduleResource;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
+
+    /** @var \Magento\Framework\Component\ComponentRegistrar  */
     protected $componentRegistrar;
 
     /** @var \Magento\Backend\Model\UrlInterface $urlBuilder */
@@ -44,8 +63,51 @@ class Module extends AbstractHelper
     /** @var \Ess\M2ePro\Helper\View\Walmart */
     protected $walmartViewHelper;
 
+    /** @var bool|null */
     protected $areImportantTablesExist;
 
+    /**  @var \Ess\M2ePro\Helper\Component */
+    private $componentHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
+
+    /**  @var \Ess\M2ePro\Helper\Data\Cache\Runtime */
+    private $runtimeCache;
+
+    /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
+    private $permanentCache;
+    /**
+     * @var \Ess\M2ePro\Helper\Magento
+     */
+    private $magentoHelper;
+    /**
+     * @var \Ess\M2ePro\Helper\Client
+     */
+    private $clientHelper;
+
+    /**
+     * @param \Ess\M2ePro\Model\ActiveRecord\Factory                 $activeRecordFactory
+     * @param \Ess\M2ePro\Model\Config\Manager                       $config
+     * @param \Ess\M2ePro\Model\Registry\Manager                     $registry
+     * @param \Magento\Framework\Module\ModuleListInterface          $moduleList
+     * @param \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory $cookieMetadataFactory
+     * @param \Magento\Framework\Stdlib\CookieManagerInterface       $cookieManager
+     * @param \Magento\Framework\Module\PackageInfo                  $packageInfo
+     * @param \Magento\Framework\Model\ResourceModel\Db\Context      $dbContext
+     * @param \Magento\Framework\App\ResourceConnection              $resourceConnection
+     * @param \Magento\Framework\Component\ComponentRegistrar        $componentRegistrar
+     * @param \Magento\Backend\Model\UrlInterface                    $urlBuilder
+     * @param \Ess\M2ePro\Helper\View\Ebay                           $ebayViewHelper
+     * @param \Ess\M2ePro\Helper\View\Amazon                         $amazonViewHelper
+     * @param \Ess\M2ePro\Helper\View\Walmart                        $walmartViewHelper
+     * @param \Ess\M2ePro\Helper\Component                           $componentHelper
+     * @param \Ess\M2ePro\Helper\Module\Database\Structure           $databaseHelper
+     * @param \Ess\M2ePro\Helper\Data\Cache\Runtime                  $runtimeCache
+     * @param \Ess\M2ePro\Helper\Data\Cache\Permanent                $permanentCache
+     * @param \Ess\M2ePro\Helper\Magento                             $magentoHelper
+     * @param \Ess\M2ePro\Helper\Client                              $clientHelper
+     */
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Config\Manager $config,
@@ -55,16 +117,19 @@ class Module extends AbstractHelper
         \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
         \Magento\Framework\Module\PackageInfo $packageInfo,
         \Magento\Framework\Model\ResourceModel\Db\Context $dbContext,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\Framework\Component\ComponentRegistrar $componentRegistrar,
         \Magento\Backend\Model\UrlInterface $urlBuilder,
         \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
         \Ess\M2ePro\Helper\View\Amazon $amazonViewHelper,
-        \Ess\M2ePro\Helper\View\Walmart $walmartViewHelper
+        \Ess\M2ePro\Helper\View\Walmart $walmartViewHelper,
+        \Ess\M2ePro\Helper\Component $componentHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
+        \Ess\M2ePro\Helper\Data\Cache\Runtime $runtimeCache,
+        \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCache,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
+        \Ess\M2ePro\Helper\Client $clientHelper
     ) {
-        parent::__construct($helperFactory, $context);
         $this->activeRecordFactory = $activeRecordFactory;
         $this->config = $config;
         $this->registry = $registry;
@@ -79,64 +144,88 @@ class Module extends AbstractHelper
         $this->ebayViewHelper = $ebayViewHelper;
         $this->amazonViewHelper = $amazonViewHelper;
         $this->walmartViewHelper = $walmartViewHelper;
+        $this->componentHelper = $componentHelper;
+        $this->databaseHelper = $databaseHelper;
+        $this->runtimeCache = $runtimeCache;
+        $this->permanentCache = $permanentCache;
+        $this->magentoHelper = $magentoHelper;
+        $this->clientHelper = $clientHelper;
     }
 
+    // ----------------------------------------
+
     /**
+     * @deprecated use explicitly
      * @return \Ess\M2ePro\Model\Config\Manager
      */
-    public function getConfig()
+    public function getConfig(): \Ess\M2ePro\Model\Config\Manager
     {
         return $this->config;
     }
 
-    //########################################
-
     /**
+     * * @deprecated use explicitly
      * @return \Ess\M2ePro\Model\Registry\Manager
      */
-    public function getRegistry()
+    public function getRegistry(): \Ess\M2ePro\Model\Registry\Manager
     {
         return $this->registry;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getName()
+    /**
+     * @return string
+     */
+    public function getName(): string
     {
         return 'm2epro-m2';
     }
 
-    //########################################
-
-    public function getPublicVersion()
+    /**
+     * @return string
+     */
+    public function getPublicVersion(): string
     {
         return $this->packageInfo->getVersion(self::IDENTIFIER);
     }
 
+    /**
+     * @return mixed
+     */
     public function getSetupVersion()
     {
         return $this->moduleList->getOne(self::IDENTIFIER)['setup_version'];
     }
 
+    /**
+     * @return false|mixed|string
+     */
     public function getSchemaVersion()
     {
         return $this->moduleResource->getDbVersion(self::IDENTIFIER);
     }
 
+    /**
+     * @return false|mixed|string
+     */
     public function getDataVersion()
     {
         return $this->moduleResource->getDataVersion(self::IDENTIFIER);
     }
 
-    //########################################
-
+    /**
+     * @return mixed|null
+     */
     public function getInstallationKey()
     {
         return $this->config->getGroupValue('/', 'installation_key');
     }
 
-    //########################################
-
+    /**
+     * @return mixed
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function getSetupInstallationDate()
     {
         $setupCollection = $this->activeRecordFactory->getObject('Setup')->getCollection();
@@ -148,6 +237,10 @@ class Module extends AbstractHelper
         return $setupCollection->setPageSize(1)->getFirstItem()->getUpdateDate();
     }
 
+    /**
+     * @return mixed
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function getSetupLastUpgradeDate()
     {
         $setupCollection = $this->activeRecordFactory->getObject('Setup')->getCollection();
@@ -159,32 +252,37 @@ class Module extends AbstractHelper
         return $setupCollection->setPageSize(1)->getFirstItem()->getUpdateDate();
     }
 
-    //########################################
-
-    public function isDisabled()
+    /**
+     * @return bool
+     */
+    public function isDisabled(): bool
     {
-        return (bool)$this->getConfig()->getGroupValue('/', 'is_disabled');
+        return (bool)$this->config->getGroupValue('/', 'is_disabled');
     }
 
-    //########################################
-
-    public function isReadyToWork()
+    /**
+     * @return bool
+     */
+    public function isReadyToWork(): bool
     {
         return $this->areImportantTablesExist() &&
-            $this->getHelper('Component')->getEnabledComponents() &&
+            $this->componentHelper->getEnabledComponents() &&
             ($this->ebayViewHelper->isInstallationWizardFinished() ||
                 $this->amazonViewHelper->isInstallationWizardFinished() ||
                 $this->walmartViewHelper->isInstallationWizardFinished());
     }
 
-    public function areImportantTablesExist()
+    /**
+     * @return bool
+     */
+    public function areImportantTablesExist(): bool
     {
         if ($this->areImportantTablesExist !== null) {
             return $this->areImportantTablesExist;
         }
 
         foreach (['m2epro_config', 'm2epro_setup'] as $table) {
-            $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($table);
+            $tableName = $this->databaseHelper->getTableNameWithPrefix($table);
             if (!$this->resourceConnection->getConnection()->isTableExists($tableName)) {
                 return $this->areImportantTablesExist = false;
             }
@@ -193,43 +291,63 @@ class Module extends AbstractHelper
         return $this->areImportantTablesExist = true;
     }
 
-    // ---------------------------------------
-
+    /**
+     * @return mixed|null
+     */
     public function getEnvironment()
     {
-        return $this->getConfig()->getGroupValue('/', 'environment');
+        return $this->config->getGroupValue('/', 'environment');
     }
 
-    public function isProductionEnvironment()
+    /**
+     * @return bool
+     */
+    public function isProductionEnvironment(): bool
     {
-        return $this->getEnvironment() === null || $this->getEnvironment() === self::ENVIRONMENT_PRODUCTION;
+        return $this->getEnvironment() === null
+            || $this->getEnvironment() === self::ENVIRONMENT_PRODUCTION;
     }
 
-    public function isDevelopmentEnvironment()
+    /**
+     * @return bool
+     */
+    public function isDevelopmentEnvironment(): bool
     {
         return $this->getEnvironment() === self::ENVIRONMENT_DEVELOPMENT;
     }
 
-    public function isTestingManualEnvironment()
+    /**
+     * @return bool
+     */
+    public function isTestingManualEnvironment(): bool
     {
         return $this->getEnvironment() === self::ENVIRONMENT_TESTING_MANUAL;
     }
 
-    public function isTestingAutoEnvironment()
+    /**
+     * @return bool
+     */
+    public function isTestingAutoEnvironment(): bool
     {
         return $this->getEnvironment() === self::ENVIRONMENT_TESTING_AUTO;
     }
 
-    public function setEnvironment($env)
+    /**
+     * @param string $env
+     *
+     * @return void
+     */
+    public function setEnvironment(string $env): void
     {
-        $this->getConfig()->setGroupValue('/', 'environment', $env);
+        $this->config->setGroupValue('/', 'environment', $env);
     }
 
-    // ---------------------------------------
-
+    /**
+     * @return bool|mixed
+     */
     public function isStaticContentDeployed()
     {
-        $staticContentValidationResult = $this->getHelper('Data_Cache_Runtime')->getValue(__METHOD__);
+        $staticContentValidationResult = $this->runtimeCache->getValue(__METHOD__);
 
         if ($staticContentValidationResult !== null) {
             return $staticContentValidationResult;
@@ -237,25 +355,24 @@ class Module extends AbstractHelper
 
         $result = true;
 
-        /** @var \Ess\M2ePro\Helper\Magento $magentoHelper */
-        $magentoHelper = $this->getHelper('Magento');
         $moduleDir = \Ess\M2ePro\Helper\Module::IDENTIFIER . DIRECTORY_SEPARATOR;
 
-        if (!$magentoHelper->isStaticContentExists($moduleDir . 'css') ||
-            !$magentoHelper->isStaticContentExists($moduleDir . 'fonts') ||
-            !$magentoHelper->isStaticContentExists($moduleDir . 'images') ||
-            !$magentoHelper->isStaticContentExists($moduleDir . 'js')) {
+        if (!$this->magentoHelper->isStaticContentExists($moduleDir . 'css') ||
+            !$this->magentoHelper->isStaticContentExists($moduleDir . 'fonts') ||
+            !$this->magentoHelper->isStaticContentExists($moduleDir . 'images') ||
+            !$this->magentoHelper->isStaticContentExists($moduleDir . 'js')) {
             $result = false;
         }
 
-        $this->getHelper('Data_Cache_Runtime')->setValue(__METHOD__, $result);
+        $this->runtimeCache->setValue(__METHOD__, $result);
 
         return $result;
     }
 
-    //########################################
-
-    public function getServerMessages()
+    /**
+     * @return array
+     */
+    public function getServerMessages(): array
     {
         $messages = $this->getRegistry()->getValueFromJson('/server/messages/');
 
@@ -265,7 +382,10 @@ class Module extends AbstractHelper
         return $messages;
     }
 
-    public function getUpgradeMessages()
+    /**
+     * @return array
+     */
+    public function getUpgradeMessages(): array
     {
         $messages = $this->getRegistry()->getValueFromJson('/upgrade/messages/');
 
@@ -301,32 +421,33 @@ class Module extends AbstractHelper
         return $messages;
     }
 
-    public function getMessagesFilterModuleMessages($message)
+    /**
+     * @param array $message
+     *
+     * @return bool
+     */
+    public function getMessagesFilterModuleMessages($message): bool
     {
-        if (!isset($message['text']) || !isset($message['type'])) {
-            return false;
-        }
-
-        return true;
+        return isset($message['text'], $message['type']);
     }
 
-    //########################################
-
+    /**
+     * @return array|mixed|string|string[]|null
+     */
     public function getBaseRelativeDirectory()
     {
         return str_replace(
-            $this->getHelper('Client')->getBaseDirectory(),
+            $this->clientHelper->getBaseDirectory(),
             '',
             $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, \Ess\M2ePro\Helper\Module::IDENTIFIER)
         );
     }
 
-    //########################################
-
-    public function clearCache()
+    /**
+     * @return void
+     */
+    public function clearCache(): void
     {
-        $this->getHelper('Data_Cache_Permanent')->removeAllValues();
+        $this->permanentCache->removeAllValues();
     }
-
-    //########################################
 }

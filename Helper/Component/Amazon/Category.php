@@ -8,43 +8,37 @@
 
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
-class Category extends \Ess\M2ePro\Helper\AbstractHelper
+class Category
 {
-    const RECENT_MAX_COUNT = 20;
-
-    /** @var \Ess\M2ePro\Helper\Module */
-    protected $helperModule;
+    private const RECENT_MAX_COUNT = 20;
 
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
-    protected $databaseStructure;
-
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
-    protected $activeRecordFactory;
-
+    private $databaseStructure;
     /** @var \Magento\Framework\App\ResourceConnection */
-    protected $resourceConnection;
+    private $resourceConnection;
+    /** @var \Ess\M2ePro\Model\Registry\Manager */
+    private $registry;
 
+    /**
+     * @param \Ess\M2ePro\Model\Registry\Manager $registry
+     * @param \Ess\M2ePro\Helper\Module\Database\Structure $databaseStructure
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     */
     public function __construct(
-        \Ess\M2ePro\Helper\Module $helperModule,
+        \Ess\M2ePro\Model\Registry\Manager $registry,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseStructure,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Framework\App\ResourceConnection $resourceConnection
     ) {
-        parent::__construct($helperFactory, $context);
-
-        $this->helperModule      = $helperModule;
         $this->databaseStructure = $databaseStructure;
-        $this->activeRecordFactory = $activeRecordFactory;
         $this->resourceConnection = $resourceConnection;
+        $this->registry = $registry;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function getRecent($marketplaceId, array $excludedCategory = [])
     {
-        $allRecentCategories = $this->helperModule->getRegistry()->getValueFromJson($this->getConfigGroup());
+        $allRecentCategories = $this->registry->getValueFromJson($this->getConfigGroup());
 
         if (!isset($allRecentCategories[$marketplaceId])) {
             return [];
@@ -57,7 +51,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
 
             $isCategoryEqualExcludedCategory = !empty($excludedCategory) &&
                 ($excludedCategory['browsenode_id'] == $recentCategoryValue['browsenode_id'] &&
-                 $excludedCategory['path']          == $recentCategoryValue['path']);
+                    $excludedCategory['path'] == $recentCategoryValue['path']);
 
             if (!$isRecentCategoryExists || $isCategoryEqualExcludedCategory) {
                 unset($recentCategories[$index]);
@@ -72,7 +66,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function addRecent($marketplaceId, $browseNodeId, $categoryPath)
     {
-        $allRecentCategories = $this->helperModule->getRegistry()->getValueFromJson($this->getConfigGroup());
+        $allRecentCategories = $this->registry->getValueFromJson($this->getConfigGroup());
 
         !isset($allRecentCategories[$marketplaceId]) && $allRecentCategories[$marketplaceId] = [];
 
@@ -82,8 +76,10 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
                 continue;
             }
 
-            if ($recentCategoryValue['browsenode_id'] == $browseNodeId &&
-                $recentCategoryValue['path'] == $categoryPath) {
+            if (
+                $recentCategoryValue['browsenode_id'] == $browseNodeId &&
+                $recentCategoryValue['path'] == $categoryPath
+            ) {
                 return;
             }
         }
@@ -94,13 +90,13 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
 
         $categoryInfo = [
             'browsenode_id' => $browseNodeId,
-            'path'          => $categoryPath
+            'path'          => $categoryPath,
         ];
 
         $recentCategories[] = $categoryInfo;
         $allRecentCategories[$marketplaceId] = $recentCategories;
 
-        $this->helperModule->getRegistry()->setValue($this->getConfigGroup(), $allRecentCategories);
+        $this->registry->setValue($this->getConfigGroup(), $allRecentCategories);
     }
 
     private function removeNotAccessibleCategories($marketplaceId, array &$recentCategories)
@@ -115,25 +111,27 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $select = $this->resourceConnection->getConnection()
-            ->select()
-            ->from(
-                $this->databaseStructure->getTableNameWithPrefix('m2epro_amazon_dictionary_category')
-            )
-            ->where('marketplace_id = ?', $marketplaceId)
-            ->where('browsenode_id IN (?)', array_unique($nodeIdsForCheck));
+                                           ->select()
+                                           ->from(
+                                               $this->databaseStructure->getTableNameWithPrefix(
+                                                   'm2epro_amazon_dictionary_category'
+                                               )
+                                           )
+                                           ->where('marketplace_id = ?', $marketplaceId)
+                                           ->where('browsenode_id IN (?)', array_unique($nodeIdsForCheck));
 
         $queryStmt = $select->query();
         $tempCategories = [];
 
         while ($row = $queryStmt->fetch()) {
-            $path = $row['path'] ? $row['path'] .'>'. $row['title'] : $row['title'];
-            $key = $row['browsenode_id'] .'##'. $path;
+            $path = $row['path'] ? $row['path'] . '>' . $row['title'] : $row['title'];
+            $key = $row['browsenode_id'] . '##' . $path;
             $tempCategories[$key] = $row;
         }
 
         foreach ($recentCategories as $categoryKey => &$categoryData) {
             $categoryPath = str_replace(' > ', '>', $categoryData['path']);
-            $key = $categoryData['browsenode_id'] .'##'. $categoryPath;
+            $key = $categoryData['browsenode_id'] . '##' . $categoryPath;
 
             if (!array_key_exists($key, $tempCategories)) {
                 $this->removeRecentCategory($categoryData, $marketplaceId);
@@ -144,26 +142,29 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function removeRecentCategory(array $category, $marketplaceId)
     {
-        $allRecentCategories = $this->helperModule->getRegistry()->getValueFromJson($this->getConfigGroup());
+        $allRecentCategories = $this->registry->getValueFromJson($this->getConfigGroup());
         $currentRecentCategories = $allRecentCategories[$marketplaceId];
 
         foreach ($currentRecentCategories as $index => $recentCategory) {
-            if ($category['browsenode_id'] == $recentCategory['browsenode_id'] &&
-                $category['path']          == $recentCategory['path']) {
+            if (
+                $category['browsenode_id'] == $recentCategory['browsenode_id'] &&
+                $category['path'] == $recentCategory['path']
+            ) {
                 unset($allRecentCategories[$marketplaceId][$index]);
                 break;
             }
         }
 
-        $this->helperModule->getRegistry()->setValue($this->getConfigGroup(), $allRecentCategories);
+        $this->registry->setValue($this->getConfigGroup(), $allRecentCategories);
     }
 
-    //########################################
+    // ----------------------------------------
 
-    private function getConfigGroup()
+    /**
+     * @return string
+     */
+    private function getConfigGroup(): string
     {
-        return "/amazon/category/recent/";
+        return '/amazon/category/recent/';
     }
-
-    //########################################
 }

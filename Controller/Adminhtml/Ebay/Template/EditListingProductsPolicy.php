@@ -50,9 +50,11 @@ class EditListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
         $dataLoader->load($collection);
         // ---------------------------------------
 
-        $initialization = $this->createBlock('Ebay_Listing_Template_Switcher_Initialization');
+        $initialization = $this->getLayout()
+                        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher\Initialization::class);
         $initialization->setMode(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher::MODE_LISTING_PRODUCT);
-        $content = $this->createBlock('Ebay_Listing_View_Settings_Edit_Policy');
+        $content = $this->getLayout()
+                        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Edit\Policy::class);
 
         $this->setAjaxContent($initialization->toHtml() . $content->toHtml());
         return $this->getResult();

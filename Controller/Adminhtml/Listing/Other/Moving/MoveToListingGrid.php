@@ -37,8 +37,8 @@ class MoveToListingGrid extends Listing
         $component = ucfirst(strtolower($this->getRequest()->getParam('componentMode')));
         $movingHandlerJs = $component.'ListingOtherGridObj.movingHandler';
 
-        $block = $this->createBlock(
-            'Listing_Moving_Grid',
+        $block = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Listing\Moving\Grid::class,
             '',
             ['data' => [
                 'grid_url' => $this->getUrl(

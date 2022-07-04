@@ -25,8 +25,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
-        parent::__construct($context, $registry, $formFactory, $data);
         $this->vocabularyHelper = $vocabularyHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
     }
 
     //########################################

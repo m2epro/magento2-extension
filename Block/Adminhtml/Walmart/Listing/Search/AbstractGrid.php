@@ -64,7 +64,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'type'     => 'number',
             'index'    => 'entity_id',
             'filter_index' => 'entity_id',
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
             'filter_condition_callback' => [$this, 'callbackFilterProductId']
         ]);
 
@@ -87,7 +87,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'index' => 'online_sku',
             'filter_index' => 'online_sku',
             'show_edit_sku' => false,
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Sku',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Sku::class,
             'filter_condition_callback' => [$this, 'callbackFilterOnlineSku']
         ]);
 
@@ -98,7 +98,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'type' => 'text',
             'index' => 'gtin',
             'show_edit_identifier' => false,
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Gtin',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Gtin::class,
             'filter_index' => 'gtin',
             'filter_condition_callback' => [$this, 'callbackFilterGtin']
         ]);
@@ -110,7 +110,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'type' => 'number',
             'index' => 'online_qty',
             'filter_index' => 'online_qty',
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Qty',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Qty::class,
             'filter_condition_callback' => [$this, 'callbackFilterQty']
         ]);
 

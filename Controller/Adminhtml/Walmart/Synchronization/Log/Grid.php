@@ -17,7 +17,9 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Settings
 
     public function execute()
     {
-        $this->setAjaxContent($this->createBlock('Walmart_Synchronization_Log_Grid'));
+        $this->setAjaxContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Synchronization\Log\Grid::class)
+        );
 
         return $this->getResult();
     }

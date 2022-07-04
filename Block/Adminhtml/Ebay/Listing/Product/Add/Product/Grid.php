@@ -8,34 +8,37 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Product;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Product\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Grid
 {
     protected $visibility;
     protected $status;
     protected $websiteFactory;
 
-    //########################################
-
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Catalog\Model\Product\Type $type,
+        \Ess\M2ePro\Helper\Magento\Product $magentoProductHelper,
         \Magento\Catalog\Model\Product\Visibility $visibility,
         \Magento\Catalog\Model\Product\Attribute\Source\Status $status,
         \Magento\Store\Model\WebsiteFactory $websiteFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->visibility = $visibility;
         $this->status = $status;
         $this->websiteFactory = $websiteFactory;
-        parent::__construct($magentoProductCollectionFactory, $type, $context, $backendHelper, $data);
+        parent::__construct(
+            $magentoProductCollectionFactory,
+            $type,
+            $magentoProductHelper,
+            $context,
+            $backendHelper,
+            $dataHelper,
+            $data
+        );
     }
-
-    //########################################
 
     protected function _prepareColumns()
     {

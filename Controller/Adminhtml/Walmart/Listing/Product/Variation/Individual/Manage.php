@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Indi
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Individual\Manage
- */
 class Manage extends Main
 {
-    //########################################
-
     public function execute()
     {
         $listingProductId = (int)$this->getRequest()->getParam('listing_product_id');
@@ -33,7 +28,7 @@ class Manage extends Main
             return $this->getResult();
         }
 
-        /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+        /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         $listingProduct = $this->walmartFactory->getObjectLoaded('Listing\Product', $listingProductId);
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager $variationManager */
@@ -101,8 +96,6 @@ class Manage extends Main
         return $this->getResult();
     }
 
-    //########################################
-
     private function duplicateListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
         $duplicatedListingProduct = $listingProduct->getListing()->addProduct(
@@ -131,6 +124,4 @@ class Manage extends Main
 
         return $duplicatedListingProduct;
     }
-
-    //########################################
 }

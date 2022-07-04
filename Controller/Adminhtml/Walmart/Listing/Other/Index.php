@@ -8,14 +8,11 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other\Index
- */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other
 {
     public function execute()
     {
-        $this->addContent($this->createBlock('Walmart_Listing_Other'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Other::class));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Unmanaged Listings'));
         $this->setPageHelpLink('x/ev1IB');
 

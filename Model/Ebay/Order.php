@@ -671,7 +671,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             $subtotal = 0;
 
             foreach ($this->getParentObject()->getItemsCollection() as $item) {
-                /** @var $item \Ess\M2ePro\Model\Order\Item */
+                /** @var \Ess\M2ePro\Model\Order\Item $item */
                 $subtotal += $item->getChildObject()->getPrice() * $item->getChildObject()->getQtyPurchased();
             }
 
@@ -834,13 +834,13 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             return null;
         }
 
-        /** @var $proxy \Ess\M2ePro\Model\Ebay\Order\ProxyObject */
+        /** @var \Ess\M2ePro\Model\Ebay\Order\ProxyObject $proxy */
         $proxy = $this->getParentObject()->getProxy();
         $proxy->setStore($this->getParentObject()->getStore());
 
         foreach ($proxy->getPaymentTransactions() as $transaction) {
             try {
-                /** @var $paymentTransactionBuilder \Ess\M2ePro\Model\Magento\Order\PaymentTransaction */
+                /** @var \Ess\M2ePro\Model\Magento\Order\PaymentTransaction $paymentTransactionBuilder */
                 $paymentTransactionBuilder = $this->modelFactory->getObject('Magento_Order_PaymentTransaction');
                 $paymentTransactionBuilder->setMagentoOrder($this->getParentObject()->getMagentoOrder());
                 $paymentTransactionBuilder->setData($transaction);
@@ -895,7 +895,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
         $magentoOrder = $this->getParentObject()->getMagentoOrder();
 
-        /** @var $invoiceBuilder \Ess\M2ePro\Model\Magento\Order\Invoice */
+        /** @var \Ess\M2ePro\Model\Magento\Order\Invoice $invoiceBuilder */
         $invoiceBuilder = $this->modelFactory->getObject('Magento_Order_Invoice');
         $invoiceBuilder->setMagentoOrder($magentoOrder);
         $invoiceBuilder->buildInvoice();
@@ -947,7 +947,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             return null;
         }
 
-        /** @var $shipmentBuilder \Ess\M2ePro\Model\Magento\Order\Shipment */
+        /** @var \Ess\M2ePro\Model\Magento\Order\Shipment $shipmentBuilder */
         $shipmentBuilder = $this->shipmentFactory->create($this->getParentObject()->getMagentoOrder());
         $shipmentBuilder->setMagentoOrder($this->getParentObject()->getMagentoOrder());
         $shipmentBuilder->buildShipments();
@@ -991,7 +991,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $tracks = [];
 
         try {
-            /** @var $trackBuilder \Ess\M2ePro\Model\Magento\Order\Shipment\Track */
+            /** @var \Ess\M2ePro\Model\Magento\Order\Shipment\Track $trackBuilder */
             $trackBuilder = $this->modelFactory->getObject('Magento_Order_Shipment_Track');
             $trackBuilder->setMagentoOrder($this->getParentObject()->getMagentoOrder());
             $trackBuilder->setTrackingDetails($this->getShippingTrackingDetails());
@@ -1016,7 +1016,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
     private function processConnector($action, array $params = [])
     {
-        /** @var $dispatcher \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher */
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher $dispatcher */
         $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Order_Dispatcher');
 
         return $dispatcher->process($action, $this->getParentObject(), $params);

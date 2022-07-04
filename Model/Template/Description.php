@@ -24,7 +24,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Template\Description');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Template\Description::class);
     }
 
     //########################################

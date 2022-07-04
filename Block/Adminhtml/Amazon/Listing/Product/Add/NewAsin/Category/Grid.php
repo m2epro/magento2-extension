@@ -8,37 +8,50 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Category;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Category\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 {
     /** @var \Ess\M2ePro\Model\Listing */
-    protected $listing = null;
+    protected $listing;
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     protected $magentoProductCollectionFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Category */
+    protected $magentoCategoryHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
+        \Ess\M2ePro\Helper\Magento\Category $magentoCategoryHelper,
         \Ess\M2ePro\Model\ResourceModel\Magento\Category\CollectionFactory $categoryCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->amazonFactory = $amazonFactory;
         $this->resourceConnection = $resourceConnection;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
-
-        parent::__construct($categoryCollectionFactory, $context, $backendHelper, $data);
+        $this->magentoCategoryHelper = $magentoCategoryHelper;
+        $this->databaseHelper = $databaseHelper;
+        parent::__construct(
+            $categoryCollectionFactory,
+            $context,
+            $backendHelper,
+            $dataHelper,
+            $data
+        );
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -111,7 +124,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 
         $actionsColumn = [
             'header'    => $this->__('Actions'),
-            'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
             'align'     => 'center',
             'width'     => '130px',
             'type'      => 'text',
@@ -202,7 +215,7 @@ HTML;
             $descriptionTemplateId
         );
 
-        $title = $this->getHelper('Data')->escapeHtml($descriptionTemplate->getData('title'));
+        $title = $this->dataHelper->escapeHtml($descriptionTemplate->getData('title'));
 
         return <<<HTML
 <a target="_blank" href="{$templateDescriptionEditUrl}">{$title}</a>
@@ -321,7 +334,7 @@ JS
         }
         $productsIds = array_unique($productsIds);
 
-        $categoriesIds = $this->getHelper('Magento\Category')->getLimitedCategoriesByProducts(
+        $categoriesIds = $this->magentoCategoryHelper->getLimitedCategoriesByProducts(
             $productsIds,
             $this->listing->getStoreId()
         );
@@ -329,7 +342,7 @@ JS
         $categoriesData = [];
 
         foreach ($categoriesIds as $categoryId) {
-            /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+            /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
             $collection = $this->magentoProductCollectionFactory->create();
             $collection->setListing($this->listing);
             $collection->setStoreId($this->listing->getStoreId());
@@ -337,7 +350,7 @@ JS
 
             $collection->joinTable(
                 [
-                    'ccp' => $this->getHelper('Module_Database_Structure')
+                    'ccp' => $this->databaseHelper
                         ->getTableNameWithPrefix('catalog_category_product')
                 ],
                 'product_id=entity_id',

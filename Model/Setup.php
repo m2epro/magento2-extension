@@ -19,7 +19,7 @@ class Setup extends ActiveRecord\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Setup');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Setup::class);
     }
 
     //########################################

@@ -128,7 +128,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Details\It
                 continue;
             }
 
-            /** @var $magentoOrderUpdater \Ess\M2ePro\Model\Magento\Order\Updater */
+            /** @var \Ess\M2ePro\Model\Magento\Order\Updater $magentoOrderUpdater */
             $orderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
             $orderUpdater->setMagentoOrder($order->getMagentoOrder());
             $orderUpdater->updateComments($order->getChildObject()->getProxy()->getAFNWarehouseComments());

@@ -12,13 +12,23 @@ use Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty as OnlineQty;
 
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     protected $magentoProductCollectionFactory;
+
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
     /** @var \Ess\M2ePro\Helper\View\Ebay */
     protected $ebayViewHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
@@ -28,14 +38,16 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
         \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $backendHelper, $data);
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->localeCurrency = $localeCurrency;
         $this->ebayFactory = $ebayFactory;
         $this->resourceConnection = $resourceConnection;
         $this->ebayViewHelper = $ebayViewHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $backendHelper, $data);
     }
 
     abstract protected function callbackColumnActions($value, $row, $column, $isExport);
@@ -65,7 +77,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'type'         => 'number',
             'index'        => 'entity_id',
             'filter_index' => 'entity_id',
-            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId',
+            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
             'filter_condition_callback' => [$this, 'callbackFilterProductId']
         ]);
 
@@ -87,7 +99,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'type'         => 'text',
             'index'        => 'item_id',
             'filter_index' => 'item_id',
-            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ItemId',
+            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ItemId::class,
             'filter_condition_callback' => [$this, 'callbackFilterItemId']
         ]);
 
@@ -98,7 +110,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'type'         => 'number',
             'index'        => 'online_qty',
             'filter_index' => 'online_qty',
-            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty',
+            'renderer'     => OnlineQty::class,
             'render_online_qty' => OnlineQty::ONLINE_AVAILABLE_QTY,
             'filter_condition_callback' => [$this, 'callbackFilterOnlineQty']
         ]);
@@ -110,7 +122,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'type'         => 'number',
             'index'        => 'online_qty_sold',
             'filter_index' => 'online_qty_sold',
-            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty'
+            'renderer'     => OnlineQty::class
         ]);
 
         $this->addColumn('price', [
@@ -120,7 +132,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'type'         => 'number',
             'index'        => 'online_current_price',
             'filter_index' => 'online_current_price',
-            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\CurrentPrice',
+            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\CurrentPrice::class,
             'filter_condition_callback' => [$this, 'callbackFilterPrice']
         ]);
 
@@ -140,7 +152,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
                 \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED => $this->__('Finished'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Pending')
             ],
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Status',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Status::class,
             'filter_condition_callback' => [$this, 'callbackFilterStatus']
         ];
 
@@ -152,7 +164,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
         if ($this->ebayViewHelper->isDuplicatesFilterShouldBeShown()
             && $listingType == \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_M2E_PRO
         ) {
-            $statusColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\Status';
+            $statusColumn['filter'] = \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\Status::class;
         }
 
         if ($listingType == \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_LISTING_OTHER) {
@@ -182,7 +194,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
         $onlineTitle = $row->getData('online_title');
 
         !empty($onlineTitle) && $title = $onlineTitle;
-        $value = '<div style="margin-bottom: 5px;">' . $this->getHelper('Data')->escapeHtml($title) . '</div>';
+        $value = '<div style="margin-bottom: 5px;">' . $this->dataHelper->escapeHtml($title) . '</div>';
 
         $additionalHtml = $this->getColumnProductTitleAdditionalHtml($row);
 

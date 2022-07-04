@@ -29,7 +29,8 @@ class Filter extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     {
         //------------------------------
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Filter\Grid $block */
-        $block = $this->createBlock('Ebay_Listing_View_Settings_Motors_View_Filter_Grid');
+        $block = $this->getLayout()
+                ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Filter\Grid::class);
         $block->setListingProductId($this->getListingProductId());
         $block->setMotorsType($this->getMotorsType());
         $this->setChild('view_filter_grid', $block);

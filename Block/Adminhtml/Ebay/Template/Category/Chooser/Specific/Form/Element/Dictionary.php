@@ -23,19 +23,27 @@ class Dictionary extends \Magento\Framework\Data\Form\Element\AbstractElement
 
     public $layout;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         Factory $factoryElement,
         CollectionFactory $factoryCollection,
         Escaper $escaper,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         $data = []
     ) {
         $this->helperFactory = $context->getHelperFactory();
         $this->layout = $context->getLayout();
         parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
         $this->setType('specifics');
+        $this->translationHelper = $translationHelper;
+        $this->dataHelper = $dataHelper;
     }
 
     //########################################
@@ -102,19 +110,19 @@ HTML;
         $values = [
             Specific::VALUE_MODE_NONE             => [
                 'value' => Specific::VALUE_MODE_NONE,
-                'label' => $this->getTranslator()->__('None'),
+                'label' => $this->translationHelper->__('None'),
             ],
             Specific::VALUE_MODE_EBAY_RECOMMENDED => [
                 'value' => Specific::VALUE_MODE_EBAY_RECOMMENDED,
-                'label' => $this->getTranslator()->__('eBay Recommended'),
+                'label' => $this->translationHelper->__('eBay Recommended'),
             ],
             Specific::VALUE_MODE_CUSTOM_VALUE     => [
                 'value' => Specific::VALUE_MODE_CUSTOM_VALUE,
-                'label' => $this->getTranslator()->__('Custom Value'),
+                'label' => $this->translationHelper->__('Custom Value'),
             ],
             Specific::VALUE_MODE_CUSTOM_ATTRIBUTE => [
                 'value' => Specific::VALUE_MODE_CUSTOM_ATTRIBUTE,
-                'label' => $this->getTranslator()->__('Custom Attribute'),
+                'label' => $this->translationHelper->__('Custom Attribute'),
             ],
         ];
 
@@ -195,7 +203,7 @@ HTML;
                         'style'           => 'width: 100%;' . $display,
                         'value'           => empty($specific['template_specific']['value_ebay_recommended'])
                             ? []
-                            : $this->getHelperData()->jsonDecode(
+                            : $this->dataHelper->jsonDecode(
                                 $specific['template_specific']['value_ebay_recommended']
                             ),
                         'values'          => $values,
@@ -222,7 +230,7 @@ HTML;
                     'style'    => 'width: 100%;' . $display,
                     'value'    => empty($specific['template_specific']['value_ebay_recommended'])
                         ? ''
-                        : $this->getHelperData()->jsonDecode($specific['template_specific']['value_ebay_recommended']),
+                        : $this->dataHelper->jsonDecode($specific['template_specific']['value_ebay_recommended']),
                     'values'   => $values,
                     'disabled' => $disabled
                 ]
@@ -242,14 +250,14 @@ HTML;
 
     public function getValueCustomValueHtml($index, $specific)
     {
-        $addMoreTxt = $this->getTranslator()->__('Add more');
+        $addMoreTxt = $this->translationHelper->__('Add more');
 
         $customValueRows = '';
 
         if (empty($specific['template_specific']['value_custom_value'])) {
             $customValues = [''];
         } else {
-            $customValues = $this->getHelperData()->jsonDecode($specific['template_specific']['value_custom_value']);
+            $customValues = $this->dataHelper->jsonDecode($specific['template_specific']['value_custom_value']);
         }
 
         if (!is_array($customValues)) {
@@ -275,7 +283,7 @@ HTML;
             $removeCustomValueBtn = $this->layout->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
                 ->setData(
                     [
-                        'label'   => $this->getTranslator()->__('Remove'),
+                        'label'   => $this->translationHelper->__('Remove'),
                         'onclick' => 'EbayTemplateCategorySpecificsObj.removeItemSpecificsCustomValue(this);',
                         'class'   => 'action remove_item_specifics_custom_value_button',
                         'style'   => 'margin-left: 3px;'
@@ -371,18 +379,4 @@ HTML;
 
         return $element->getHtml();
     }
-
-    //########################################
-
-    public function getTranslator()
-    {
-        return $this->helperFactory->getObject('Module\Translation');
-    }
-
-    public function getHelperData()
-    {
-        return $this->helperFactory->getObject('Data');
-    }
-
-    //########################################
 }

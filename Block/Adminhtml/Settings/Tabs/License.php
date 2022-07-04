@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Settings\Tabs;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\License
- */
 class License extends AbstractTab
 {
     public $key;
@@ -18,7 +15,34 @@ class License extends AbstractTab
     public $licenseData;
     public $licenseFormData;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\License */
+    private $helperModuleLicense;
+
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    /** @var \Ess\M2ePro\Helper\Client */
+    private $clientHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\License $helperModuleLicense,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Client $clientHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->helperModuleLicense = $helperModuleLicense;
+        $this->supportHelper = $supportHelper;
+        $this->clientHelper = $clientHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     protected function _prepareForm()
     {
@@ -88,7 +112,7 @@ class License extends AbstractTab
                         'That is an e-mail address associated to your License.
                         Also, you can use this e-mail to access a
                         <a href="%url%" target="_blank" class="external-link">clients portal</a>',
-                        $this->getHelper('Module\Support')->getClientsPortalUrl()
+                        $this->supportHelper->getClientsPortalUrl()
                     )
                 ]
             );
@@ -101,7 +125,7 @@ class License extends AbstractTab
                 [
                     'label' => '',
                     'value' => $this->__('Manage License'),
-                    'href' => $this->getHelper('Module\Support')->getClientsPortalUrl(),
+                    'href' => $this->supportHelper->getClientsPortalUrl(),
                     'class' => 'external-link',
                     'target' => '_blank'
                 ]
@@ -124,7 +148,7 @@ class License extends AbstractTab
                 if (!$this->licenseData['valid']['domain'] &&
                     $this->licenseData['connection']['domain'] !== null) {
                     $text .= '<span> ('.$this->__('Your Domain').': '
-                          .$this->getHelper('Data')->escapeHtml($this->licenseData['connection']['domain']).')</span>';
+                          .$this->dataHelper->escapeHtml($this->licenseData['connection']['domain']).')</span>';
                 }
 
                 $fieldSet->addField(
@@ -144,7 +168,7 @@ class License extends AbstractTab
                 if (!$this->licenseData['valid']['ip'] &&
                     $this->licenseData['connection']['ip'] !== null) {
                     $text .= '<span> ('.$this->__('Your IP').': '
-                        .$this->getHelper('Data')->escapeHtml($this->licenseData['connection']['ip']).')</span>';
+                        .$this->dataHelper->escapeHtml($this->licenseData['connection']['ip']).')</span>';
                 }
 
                 $fieldSet->addField(
@@ -186,23 +210,23 @@ class License extends AbstractTab
 
     protected function prepareLicenseData()
     {
-        $this->key = $this->getHelper('Data')->escapeHtml($this->getHelper('Module\License')->getKey());
-        $this->status = $this->getHelper('Module\License')->getStatus();
+        $this->key = $this->dataHelper->escapeHtml($this->helperModuleLicense->getKey());
+        $this->status = $this->helperModuleLicense->getStatus();
 
         $this->licenseData = [
-            'domain' => $this->getHelper('Data')->escapeHtml($this->getHelper('Module\License')->getDomain()),
-            'ip' => $this->getHelper('Data')->escapeHtml($this->getHelper('Module\License')->getIp()),
+            'domain' => $this->dataHelper->escapeHtml($this->helperModuleLicense->getDomain()),
+            'ip' => $this->dataHelper->escapeHtml($this->helperModuleLicense->getIp()),
             'info' => [
-                'email' => $this->getHelper('Data')->escapeHtml($this->getHelper('Module\License')->getEmail()),
+                'email' => $this->dataHelper->escapeHtml($this->helperModuleLicense->getEmail()),
             ],
             'valid' => [
-                'domain' => $this->getHelper('Module\License')->isValidDomain(),
-                'ip'     => $this->getHelper('Module\License')->isValidIp()
+                'domain' => $this->helperModuleLicense->isValidDomain(),
+                'ip'     => $this->helperModuleLicense->isValidIp()
             ],
             'connection' => [
-                'domain'    => $this->getHelper('Client')->getDomain(),
-                'ip'        => $this->getHelper('Client')->getIp(),
-                'directory' => $this->getHelper('Client')->getBaseDirectory()
+                'domain'    => $this->clientHelper->getDomain(),
+                'ip'        => $this->clientHelper->getIp(),
+                'directory' => $this->clientHelper->getBaseDirectory()
             ]
         ];
 
@@ -211,7 +235,8 @@ class License extends AbstractTab
             'onclick' => 'LicenseObj.refreshStatus();',
             'class'   => 'refresh_status primary'
         ];
-        $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
+        $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                         ->setData($data);
         $this->setChild('refresh_status', $buttonBlock);
         // ---------------------------------------
 
@@ -222,7 +247,8 @@ class License extends AbstractTab
             'onclick' => 'LicenseObj.changeLicenseKeyPopup();',
             'class'   => 'change_license primary'
         ];
-        $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
+        $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                         ->setData($data);
         $this->setChild('change_license', $buttonBlock);
     }
 
@@ -231,7 +257,7 @@ class License extends AbstractTab
     protected function _beforeToHtml()
     {
         try {
-            $this->getHelper('Client')->updateLocationData(true);
+            $this->clientHelper->updateLocationData(true);
         // @codingStandardsIgnoreLine
         } catch (\Exception $exception) {}
 

@@ -26,10 +26,9 @@ class Information extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
-        parent::__construct($context, $registry, $formFactory, $data);
-
         $this->merchantFulfillment = $merchantFulfillment;
         $this->localeCurrency = $localeCurrency;
+        parent::__construct($context, $registry, $formFactory, $data);
     }
 
     public function _construct()
@@ -96,7 +95,8 @@ HTML;
             $statusBtnHtml = '';
 
             if ($fulfillmentData['status'] == MerchantFulfillment::STATUS_PURCHASED) {
-                $statusBtnHtml = $this->createBlock('Magento\Button')->setData(
+                $statusBtnHtml = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                                   ->setData(
                     [
                         'label'   => $this->__('Cancel'),
                         'onclick' => 'AmazonOrderMerchantFulfillmentObj.cancelShippingOfferAction()',
@@ -104,7 +104,8 @@ HTML;
                     ]
                 )->toHtml();
             } elseif ($this->getData('fulfillment_not_wizard') !== null) {
-                $statusBtnHtml = $this->createBlock('Magento\Button')->setData(
+                $statusBtnHtml = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                                   ->setData(
                     [
                         'label'   => $this->__('Refresh'),
                         'onclick' => 'AmazonOrderMerchantFulfillmentObj.refreshDataAction()',
@@ -281,7 +282,8 @@ HTML;
             );
 
             if (!empty($fulfillmentData['label'])) {
-                $labelHtml = $this->createBlock('Magento\Button')->setData(
+                $labelHtml = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                               ->setData(
                     [
                         'label'   => $this->__('Print'),
                         'onclick' => 'AmazonOrderMerchantFulfillmentObj.getShippingLabelAction()',
@@ -558,7 +560,7 @@ HTML;
 
     protected function _toHtml()
     {
-        $helpBlock = $this->createBlock('HelpBlock');
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class);
         $helpBlock->setData(
             [
                 'title'   => $this->__('Amazon\'s Shipping Services'),
@@ -578,8 +580,9 @@ HTML
         $html = $helpBlock->toHtml();
 
         if ($this->getData('fulfillment_not_wizard') === null) {
-            $breadcrumb = $this->createBlock('Amazon_Order_MerchantFulfillment_Breadcrumb')
-                ->setSelectedStep(3);
+            $breadcrumb = $this->getLayout()
+                       ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment\Breadcrumb::class)
+                       ->setSelectedStep(3);
 
             $html .= $breadcrumb->toHtml();
         }
@@ -595,7 +598,7 @@ HTML
 
         foreach ($this->getData('order_items') as $parentOrderItem) {
             /**
-             * @var $parentOrderItem \Ess\M2ePro\Model\Order\Item
+             * @var \Ess\M2ePro\Model\Order\Item $parentOrderItem
              */
             $orderItem = $parentOrderItem->getChildObject();
 

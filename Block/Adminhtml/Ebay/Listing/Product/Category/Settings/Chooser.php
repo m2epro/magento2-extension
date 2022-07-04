@@ -23,8 +23,9 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     protected function _toHtml()
     {
-        /** @var $chooserBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser */
-        $chooserBlock = $this->createBlock('Ebay_Template_Category_Chooser');
+        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser $chooserBlock */
+        $chooserBlock = $this->getLayout()
+                             ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser::class);
         $chooserBlock->setAccountId($this->_accountId);
         $chooserBlock->setMarketplaceId($this->_marketplaceId);
         $chooserBlock->setCategoryMode($this->_categoryMode);

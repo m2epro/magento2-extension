@@ -56,9 +56,13 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $resultSet->fill($this->resultSet->getByType(InfoType::TYPE));
 
         /** @var \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Dashboard $tabObj */
-        $tabObj = $this->createBlock('HealthStatus_Tabs_Dashboard', '', [
+        $tabObj = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Dashboard::class,
+            '',
+            [
             'resultSet' => $resultSet
-        ]);
+            ]
+        );
 
         $this->addTab(self::TAB_ID_DASHBOARD, [
             'label'   => $this->__('Dashboard'),
@@ -86,9 +90,13 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
             ));
 
             /** @var \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\IssueGroup $tabObj */
-            $tabObj = $this->createBlock('HealthStatus_Tabs_IssueGroup', '', [
+            $tabObj = $this->getLayout()->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\IssueGroup::class,
+                '',
+                [
                 'resultSet' => $resultSet
-            ]);
+                ]
+            );
 
             $tabClass = '';
             $resultSet->isCritical() && $tabClass = 'health-status-tab-critical';
@@ -108,7 +116,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 
         // ---------------------------------------
         /** @var \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Notifications $tabObj */
-        $tabObj = $this->createBlock('HealthStatus_Tabs_Notifications');
+        $tabObj = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Notifications::class);
 
         $this->addTab(self::TAB_ID_NOTIFICATIONS, [
             'label'   => $this->__('Notification Settings'),

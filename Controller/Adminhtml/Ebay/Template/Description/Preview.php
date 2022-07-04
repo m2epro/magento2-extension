@@ -61,7 +61,9 @@ class Preview extends Description
             );
         }
 
-        $previewBlock = $this->createBlock('Ebay_Template_Description_Preview')->setData([
+        $previewBlock = $this->getLayout()
+                             ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description\Preview::class)
+                             ->setData([
             'title' => $productsEntities['magento_product']->getProduct()->getData('name'),
             'magento_product_id' => $productsEntities['magento_product']->getProductId(),
             'description' => $description

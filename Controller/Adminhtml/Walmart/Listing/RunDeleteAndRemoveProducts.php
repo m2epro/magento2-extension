@@ -8,11 +8,21 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\RunDeleteAndRemoveProducts
- */
 class RunDeleteAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\ActionAbstract
 {
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $exceptionHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->exceptionHelper = $exceptionHelper;
+    }
+
     public function execute()
     {
         if (!$listingsProductsIds = $this->getRequest()->getParam('selected_products')) {
@@ -111,7 +121,7 @@ class RunDeleteAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmar
                 try {
                     $dispatcher->process($connector);
                 } catch (\Exception $exception) {
-                    $this->getHelper('Module\Exception')->process($exception);
+                    $this->exceptionHelper->process($exception);
                 }
             }
 

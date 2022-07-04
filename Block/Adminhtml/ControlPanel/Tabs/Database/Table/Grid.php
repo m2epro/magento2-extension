@@ -11,9 +11,6 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 use \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel as ParentAbstractModel;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\Grid
- */
 class Grid extends AbstractGrid
 {
     const MERGE_MODE_COOKIE_KEY = 'database_tables_merge_mode_cookie_key';
@@ -23,19 +20,24 @@ class Grid extends AbstractGrid
 
     /** @var  \Ess\M2ePro\Model\ControlPanel\Database\TableModel */
     private $tableModel;
+
+    /** @var \Ess\M2ePro\Model\ControlPanel\Database\TableModelFactory  */
     private $databaseTableFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
 
     public function __construct(
         \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
         \Ess\M2ePro\Model\ControlPanel\Database\TableModelFactory $databaseTableFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         array $data = []
     ) {
         $this->cookieManager = $cookieManager;
         $this->databaseTableFactory = $databaseTableFactory;
+        $this->databaseHelper = $databaseHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -134,11 +136,11 @@ class Grid extends AbstractGrid
                 $params['timezone']    = false;
                 $params['filter_time'] = true;
                 $params['format']      = \IntlDateFormatter::MEDIUM;
-                $params['filter']      = '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime';
+                $params['filter']      = \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class;
             }
 
             if ($this->tableModel->getTableName() == 'm2epro_operation_history' && $column['name'] == 'nick') {
-                $params['filter'] = '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\Column\Filter\Select';
+                $params['filter'] = \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\Column\Filter\Select::class;
             }
 
             if ($this->tableModel->getTableName() == 'm2epro_operation_history' && $column['name'] == 'data') {
@@ -148,7 +150,7 @@ class Grid extends AbstractGrid
                     'width'                     => '70px',
                     'type'                      => 'text',
                     'index'                     => 'total_run_time',
-                    'filter'                    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Range',
+                    'filter'                    => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Range::class,
                     'sortable'                  => true,
                     'frame_callback'            => [$this, 'callbackColumnTotalRunTime'],
                     'filter_condition_callback' => [$this, 'callbackTotalRunTimeFilter']
@@ -332,7 +334,7 @@ HTML;
 </a>
 HTML;
         }
-        $helper = $this->getHelper('Module_Database_Structure');
+        $helper = $this->databaseHelper;
         $componentMode = $row->getData('component_mode');
 
         if (!$this->tableModel->getIsMergeModeEnabled() && $componentMode &&
@@ -382,7 +384,7 @@ HTML;
         }
 
         $value = array_map(function ($item) {
-            list($minutes, $seconds) = explode(':', $item);
+            [$minutes, $seconds] = explode(':', $item);
             return (int) $minutes * 60 + $seconds;
         }, $value);
 

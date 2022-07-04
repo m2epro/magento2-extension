@@ -26,7 +26,7 @@ class View extends Order
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('View Order Details'));
 
-        $this->addContent($this->createBlock('Walmart_Order_View'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Order\View::class));
 
         return $this->getResult();
     }

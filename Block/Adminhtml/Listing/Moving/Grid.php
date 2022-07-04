@@ -8,24 +8,29 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\Moving;
 
-use Ess\M2ePro\Helper\Component\Walmart;
-
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
+    /** @var \Magento\Store\Model\StoreFactory */
     protected $storeFactory;
+
     /** @var \Ess\M2ePro\Helper\View */
     protected $viewHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Store\Model\StoreFactory $storeFactory,
         \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $backendHelper, $data);
         $this->storeFactory = $storeFactory;
         $this->viewHelper = $viewHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $backendHelper, $data);
     }
 
     public function _construct()
@@ -62,6 +67,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
 
         $this->addAccountAndMarketplaceFilter($collection);
+
+        $collection->addProductsTotalCount();
 
         $this->setCollection($collection);
 
@@ -132,7 +139,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
-        $title = $this->getHelper('Data')->escapeHtml($value);
+        $title = $this->dataHelper->escapeHtml($value);
         $url = $this->viewHelper->getUrl(
             $row,
             'listing',
@@ -200,7 +207,7 @@ HTML;
                 $this->getHelper('Data\GlobalData')->getValue('componentMode')
             );
 
-            $helpBlockHtml = $this->createBlock('HelpBlock')->setData([
+            $helpBlockHtml = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
                 'content' => <<<HTML
                 Item(s) can be moved to a Listing within the same {$componentTitle} Account and Marketplace.<br>
                 You can select an existing M2E Pro Listing or create a new one.<br><br>

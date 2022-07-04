@@ -66,7 +66,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
 
         foreach ($variations as $variation) {
 
-            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
 
             $data = [
                 'add' => 0

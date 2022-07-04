@@ -97,7 +97,7 @@ class Relation extends \Ess\M2ePro\Model\AbstractModel
 
         !empty($this->params['sorder_ofset']) && $sortOrder += $this->params['sorder_ofset'];
 
-        /** @var $collection \Magento\Eav\Model\ResourceModel\Entity\Attribute */
+        /** @var \Magento\Eav\Model\ResourceModel\Entity\Attribute $collection */
         $relation = $this->attributeFactory->create();
         $relation->setEntityTypeId($this->attributeSetObj->getEntityTypeId())
                  ->setAttributeSetId($this->attributeSetObj->getId())
@@ -118,7 +118,7 @@ class Relation extends \Ess\M2ePro\Model\AbstractModel
 
     private function checkIsAlreadyInSet()
     {
-        /** @var $collection \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection */
+        /** @var \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection $collection */
         $collection = $this->attributeFactory->create()->getResourceCollection()
               ->setAttributeSetFilter($this->setId)
               ->addFieldToFilter('entity_attribute.attribute_id', $this->attributeObj->getId());
@@ -132,7 +132,7 @@ class Relation extends \Ess\M2ePro\Model\AbstractModel
             return $this->attributeSetObj->getDefaultGroupId();
         }
 
-        /** @var $collection \Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection */
+        /** @var \Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection $collection */
         $collection = $this->attributeGroupFactory->create()->getCollection();
         $collection->addFieldToFilter('attribute_group_name', $this->groupName);
         $collection->addFieldToFilter('attribute_set_id', $this->setId);
@@ -148,7 +148,7 @@ class Relation extends \Ess\M2ePro\Model\AbstractModel
 
     private function getMaxSortOrderByGroup($groupId)
     {
-        /** @var $collection \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection */
+        /** @var \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection $collection */
         $collection = $this->attributeFactory->create()->getResourceCollection();
         $collection->setAttributeSetFilter($this->setId);
         $collection->setAttributeGroupFilter($groupId);

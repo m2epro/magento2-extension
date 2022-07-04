@@ -11,9 +11,6 @@ namespace Ess\M2ePro\Block\Adminhtml\General\CreateAttribute;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Magento\Attribute\Builder as AttributeBuilder;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\General\CreateAttribute\Form
- */
 class Form extends AbstractForm
 {
     protected $handlerId;
@@ -21,7 +18,24 @@ class Form extends AbstractForm
     protected $allowedTypes = [];
     protected $applyToAllAttributeSets = true;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\AttributeSet */
+    protected $magentoAttributeSetHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\AttributeSet $magentoAttributeSetHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->magentoAttributeSetHelper = $magentoAttributeSetHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     protected function _prepareForm()
     {
@@ -139,7 +153,7 @@ class Form extends AbstractForm
 
         $attributeSets = [];
         $values = [];
-        foreach ($this->getHelper('Magento\AttributeSet')->getAll() as $item) {
+        foreach ($this->magentoAttributeSetHelper->getAll() as $item) {
             $attributeSets[] = [
                 'value' => $item['attribute_set_id'],
                 'label' => $item['attribute_set_name']
@@ -193,7 +207,7 @@ class Form extends AbstractForm
         ]);
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Magento\Attribute\Builder::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Magento\Attribute\Builder::class)
         );
 
         $this->jsUrl->addUrls([

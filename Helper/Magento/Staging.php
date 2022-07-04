@@ -12,36 +12,30 @@ use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Catalog\Api\Data\CategoryAttributeInterface;
 use Magento\Framework\Config\ConfigOptionsListConstants;
 
-/**
- * Class \Ess\M2ePro\Helper\Magento\Staging
- */
-class Staging extends \Ess\M2ePro\Helper\AbstractHelper
+class Staging
 {
     /** @var \Magento\Framework\Module\FullModuleList */
-    protected $fullModuleList;
-
+    private $fullModuleList;
     /** @var \Magento\Framework\App\DeploymentConfig */
-    protected $deploymentConfig;
-
+    private $deploymentConfig;
     /** @var \Magento\Framework\App\ResourceConnection */
-    protected $resourceConnection;
-
-    //########################################
+    private $resourceConnection;
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $dbStructure;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Database\Structure $dbStructure,
         \Magento\Framework\Module\FullModuleList $fullModuleList,
         \Magento\Framework\App\DeploymentConfig $deploymentConfig,
-        \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Framework\App\ResourceConnection $resourceConnection
     ) {
         $this->fullModuleList = $fullModuleList;
         $this->deploymentConfig = $deploymentConfig;
         $this->resourceConnection = $resourceConnection;
-        parent::__construct($helperFactory, $context);
+        $this->dbStructure = $dbStructure;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function isInstalled()
     {
@@ -60,14 +54,22 @@ class Staging extends \Ess\M2ePro\Helper\AbstractHelper
             $entityType . '_entity_decimal'
         ];
 
-        if ($entityType == ProductAttributeInterface::ENTITY_TYPE_CODE) {
+        if ($entityType === ProductAttributeInterface::ENTITY_TYPE_CODE) {
             $tables[] = $entityType . '_entity_gallery';
         }
 
         return $tables;
     }
 
-    public function isStagedTable($tableName, $entityType = null)
+    /**
+     * @param $tableName
+     * @param $entityType
+     *
+     * @return bool
+     * @throws \Magento\Framework\Exception\FileSystemException
+     * @throws \Magento\Framework\Exception\RuntimeException
+     */
+    public function isStagedTable($tableName, $entityType = null): bool
     {
         $tableName = is_array($tableName) ? $tableName[key($tableName)] : $tableName;
         $tableName = str_replace(
@@ -83,16 +85,17 @@ class Staging extends \Ess\M2ePro\Helper\AbstractHelper
         return in_array($tableName, $this->getStagedTables($entityType));
     }
 
-    //########################################
-
+    /**
+     * @param $entityType
+     *
+     * @return mixed
+     */
     public function getTableLinkField($entityType)
     {
         $connection = $this->resourceConnection->getConnection();
-        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($entityType . '_entity');
+        $tableName = $this->dbStructure->getTableNameWithPrefix($entityType . '_entity');
 
         $indexList = $connection->getIndexList($tableName);
         return $indexList[$connection->getPrimaryKeyName($tableName)]['COLUMNS_LIST'][0];
     }
-
-    //########################################
 }

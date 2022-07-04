@@ -23,6 +23,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
     private $componentEbayCategory;
+
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
     private $componentEbayCategoryEbay;
 
@@ -32,9 +33,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         \Ess\M2ePro\Model\ResourceModel\Magento\Category\CollectionFactory $categoryCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($categoryCollectionFactory, $context, $backendHelper, $data);
+        parent::__construct(
+            $categoryCollectionFactory,
+            $context,
+            $backendHelper,
+            $dataHelper,
+            $data
+        );
 
         $this->componentEbayCategory     = $componentEbayCategory;
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
@@ -97,8 +105,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
             'align'     => 'left',
             'width'     => '*',
             'type'      => 'options',
-            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\CategoryMode',
+            'filter'    => CategoryModeFilter::class,
             'category_type' => eBayCategory::TYPE_EBAY_MAIN,
+            'index'     => 'category',
             'options'   => [
                 //Primary Category Selected
                 CategoryModeFilter::MODE_SELECTED     => $this->__('%1% Selected', $category),
@@ -119,7 +128,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
             'type'      => 'text',
             'sortable'  => false,
             'filter'    => false,
-            'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
             'actions'   => $this->getColumnActionsItems()
         ]);
 
@@ -158,7 +167,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\CategoryInfo $renderer */
         $renderer = $this->getLayout()->getBlockSingleton(
-            'Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\CategoryInfo'
+            \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\CategoryInfo::class
         );
         $renderer->setColumn($column);
         $renderer->setCategoriesData($this->getCategoriesData());
@@ -267,11 +276,11 @@ JS
         }
 
         // ---------------------------------------
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions(
             'Ebay_Listing_Product_Category_Settings',
             ['_current' => true]
         ));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay_Category', ['_current' => true]));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay_Category', ['_current' => true]));
 
         $this->jsUrl->add($this->getUrl('*/ebay_listing_product_category_settings', [
             'step' => 3,

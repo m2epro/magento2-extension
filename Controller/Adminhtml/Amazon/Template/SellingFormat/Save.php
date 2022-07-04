@@ -18,7 +18,11 @@ class Save extends Template
     /** @var \Magento\Framework\Stdlib\DateTime */
     protected $dateTime;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $helperData;
+
     public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Component\Amazon\Configuration $configuration,
         \Magento\Framework\Stdlib\DateTime $dateTime,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -28,6 +32,7 @@ class Save extends Template
 
         $this->configuration = $configuration;
         $this->dateTime = $dateTime;
+        $this->helperData = $helperData;
     }
 
     //########################################
@@ -96,7 +101,7 @@ class Save extends Template
         $id = $model->getId();
 
         $this->messageManager->addSuccess($this->__('Policy was saved'));
-        return $this->_redirect($this->getHelper('Data')->getBackUrl('*/amazon_template/index', [], [
+        return $this->_redirect($this->helperData->getBackUrl('*/amazon_template/index', [], [
             'edit' => [
                 'id' => $id,
                 'wizard' => $this->getRequest()->getParam('wizard'),

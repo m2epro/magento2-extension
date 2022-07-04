@@ -369,7 +369,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
     {
         if ($this->validatorObject === null) {
 
-            /** @var $validator \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Validator */
+            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Validator $validator */
             $validator = $this->modelFactory->getObject(
                 'Amazon\Listing\Product\Action\Type\\' . $this->getOrmActionType() . '\Validator'
             );
@@ -392,7 +392,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
     protected function getRequestObject()
     {
         if ($this->requestObject === null) {
-            /** @var $request \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Request */
+            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Request $request */
             $request = $this->modelFactory->getObject(
                 'Amazon\Listing\Product\Action\Type\\' . $this->getOrmActionType() . '\Request'
             );

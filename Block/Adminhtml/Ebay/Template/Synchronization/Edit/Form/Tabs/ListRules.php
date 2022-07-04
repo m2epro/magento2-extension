@@ -11,11 +11,22 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tab
 use Ess\M2ePro\Model\Ebay\Template\Synchronization;
 use Ess\M2ePro\Model\Template\Synchronization as TemplateSynchronization;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs\ListRules
- */
 class ListRules extends AbstractTab
 {
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     protected function _prepareForm()
     {
         $default = $this->modelFactory->getObject('Ebay_Template_Synchronization_Builder')->getDefaultData();
@@ -72,7 +83,7 @@ class ListRules extends AbstractTab
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Zf8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/Zf8UB')
                 )
             ]
         );
@@ -219,7 +230,8 @@ HTML
             $ruleModel->loadFromSerialized($formData['list_advanced_rules_filters']);
         }
 
-        $ruleBlock = $this->createBlock('Magento_Product_Rule')->setData(['rule_model' => $ruleModel]);
+        $ruleBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule::class)
+                                       ->setData(['rule_model' => $ruleModel]);
 
         $fieldset->addField(
             'advanced_filter',

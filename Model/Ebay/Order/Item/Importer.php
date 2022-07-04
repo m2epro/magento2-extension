@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Ebay\Order\Item;
  */
 class Importer extends \Ess\M2ePro\Model\AbstractModel
 {
-    /** @var $item \Ess\M2ePro\Model\Ebay\Order\Item */
+    /** @var \Ess\M2ePro\Model\Ebay\Order\Item $item */
     private $item = null;
 
     protected $fileDriver;

@@ -48,7 +48,10 @@ class Edit extends Template
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
         $this->setPageHelpLink('x/cv1IB');
-        $this->addContent($this->createBlock('Walmart_Template_SellingFormat_Edit'));
+        $this->addContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit::class)
+        );
 
         return $this->getResultPage();
     }

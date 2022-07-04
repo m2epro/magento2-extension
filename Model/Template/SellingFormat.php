@@ -35,7 +35,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abst
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Template\SellingFormat');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Template\SellingFormat::class);
     }
 
     //########################################

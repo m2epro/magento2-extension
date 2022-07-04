@@ -12,12 +12,17 @@ use Ess\M2ePro\Block\Adminhtml\Account\Grid as AccountGrid;
 
 class Grid extends AccountGrid
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
     private $componentEbayPickupStore;
+
     /** @var \Ess\M2ePro\Helper\View\Ebay */
     protected $ebayViewHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
@@ -26,13 +31,14 @@ class Grid extends AccountGrid
         \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($viewHelper, $context, $backendHelper, $data);
-
         $this->ebayFactory              = $ebayFactory;
         $this->componentEbayPickupStore = $componentEbayPickupStore;
         $this->ebayViewHelper           = $ebayViewHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($viewHelper, $context, $backendHelper, $data);
     }
 
     protected function _prepareCollection()
@@ -140,7 +146,7 @@ HTML;
 HTML;
         }
 
-        $additionalData = $this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+        $additionalData = $this->dataHelper->jsonDecode($row->getData('additional_data'));
 
         if (!empty($additionalData) && (int)$additionalData['bopis']) {
             $url = $this->getUrl('*/ebay_account_pickupStore/index', ['account_id' => $row->getData('id')]);

@@ -21,7 +21,7 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Other');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Other::class);
     }
 
     //########################################

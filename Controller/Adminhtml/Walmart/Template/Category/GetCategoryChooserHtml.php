@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
-
+use Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Edit;
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category\GetCategoryChooserHtml
  */
@@ -20,7 +20,7 @@ class GetCategoryChooserHtml extends Category
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Edit $editBlock */
-        $editBlock = $this->createBlock('Walmart_Template_Category_Categories_Chooser_Edit');
+        $editBlock = $this->getLayout()->createBlock(Edit::class);
 
         $editBlock->setMarketplaceId($this->getRequest()->getPost('marketplace_id'));
 

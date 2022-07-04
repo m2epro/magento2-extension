@@ -33,7 +33,7 @@ class Manage extends Main
             return $this->getResult();
         }
 
-        /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+        /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $listingProductId);
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager $variationManager */

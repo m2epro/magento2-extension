@@ -8,12 +8,24 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Log;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Log\Order
- */
 class Order extends \Ess\M2ePro\Block\Adminhtml\Log\Order\AbstractContainer
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $data);
+    }
 
     protected function getComponentMode()
     {
@@ -22,23 +34,23 @@ class Order extends \Ess\M2ePro\Block\Adminhtml\Log\Order\AbstractContainer
 
     protected function createAccountSwitcherBlock()
     {
-        return $this->createBlock('Amazon_Account_Switcher')->setData([
+        return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Switcher::class)->setData([
             'component_mode' => $this->getComponentMode(),
         ]);
     }
 
     protected function createMarketplaceSwitcherBlock()
     {
-        return $this->createBlock('Amazon_Marketplace_Switcher')->setData([
+        return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Marketplace\Switcher::class)
+                                 ->setData([
             'component_mode' => $this->getComponentMode(),
         ]);
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function _toHtml()
     {
-        $supportHelper = $this->helperFactory->getObject('Module_Support');
         if ($this->getRequest()->getParam('magento_order_failed')) {
             $message = <<<TEXT
 This Log contains information about your recent Amazon orders for which Magento orders were not created.<br/><br/>
@@ -50,15 +62,13 @@ This Log contains information about Order processing.<br/><br/>
 Find detailed info in <a href="%url%" target="_blank">the article</a>.
 TEXT;
         }
-        $helpBlock = $this->createBlock('HelpBlock')->setData([
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
             'content' => $this->__(
                 $message,
-                $supportHelper->getDocumentationArticleUrl('x/PZFCB#Logs&Events-Orderlogs')
-            )
+                $this->supportHelper->getDocumentationArticleUrl('x/PZFCB#Logs&Events-Orderlogs')
+            ),
         ]);
 
         return $helpBlock->toHtml() . parent::_toHtml();
     }
-
-    //########################################
 }

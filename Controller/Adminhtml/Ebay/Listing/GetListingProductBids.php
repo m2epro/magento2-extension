@@ -25,7 +25,7 @@ class GetListingProductBids extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listin
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $productId);
 
-        /** @var $dispatcherObject \Ess\M2ePro\Model\Ebay\Connector\Dispatcher */
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
         $connectorObj = $dispatcherObject->getVirtualConnector(
             'item',
@@ -44,7 +44,7 @@ class GetListingProductBids extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listin
             return $this->getResponse()->setBody($this->__('Bids not found.'));
         }
 
-        $grid = $this->createBlock('Ebay_Listing_View_Ebay_Bids_Grid');
+        $grid = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Bids\Grid::class);
         $grid->setBidsData($bidsData['items']);
         $grid->setListingProduct($listingProduct);
 

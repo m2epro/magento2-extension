@@ -8,13 +8,22 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\GlobalMode
- */
 class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\AbstractGlobalMode
 {
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $registry, $formFactory, $dataHelper, $data);
+    }
 
     public function _construct()
     {
@@ -44,7 +53,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Listing::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Ebay\Listing::class)
         );
 
         return parent::_afterToHtml($html);
@@ -52,7 +61,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
 
     protected function _toHtml()
     {
-        $helpBlock = $this->createBlock('HelpBlock')->setData(
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData(
             [
                 'content' => $this->__(
                     '<p>These Rules of the automatic product adding and removal act globally for all Magento Catalog.
@@ -65,7 +74,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                     Catalog, the Item will be removed from the Listing and its sale will be stopped on Channel.</p><br>
                     <p>More detailed information you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/uv8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/uv8UB')
                 )
             ]
         );
@@ -74,6 +83,4 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
             parent::_toHtml() .
             '<div id="ebay_category_chooser"></div>';
     }
-
-    //########################################
 }

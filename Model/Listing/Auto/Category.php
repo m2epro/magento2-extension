@@ -21,7 +21,7 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category::class);
     }
 
     //########################################

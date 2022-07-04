@@ -71,8 +71,8 @@ class Variations extends AbstractModel
         $variationMetaData = [];
 
         foreach ($this->getListingProduct()->getVariations(true) as $variation) {
-            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
-            /** @var $ebayVariation \Ess\M2ePro\Model\Ebay\Listing\Product\Variation */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation $ebayVariation */
 
             $ebayVariation = $variation->getChildObject();
 
@@ -111,7 +111,7 @@ class Variations extends AbstractModel
             }
 
             foreach ($variation->getOptions(true) as $option) {
-                /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+                /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
 
                 $item['specifics'][$option->getAttribute()] = $option->getOption();
             }
@@ -442,7 +442,7 @@ class Variations extends AbstractModel
                 $options = $variation->getOptions(true);
             }
 
-            /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
             $option = reset($options);
 
             $this->searchNotFoundAttributes();

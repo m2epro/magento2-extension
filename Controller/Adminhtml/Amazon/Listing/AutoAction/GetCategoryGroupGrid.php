@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction;
 
+use Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode\Category\Group\Grid;
+
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction\GetCategoryGroupGrid
  */
@@ -17,7 +19,7 @@ class GetCategoryGroupGrid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listi
 
     public function execute()
     {
-        $grid = $this->createBlock('Amazon_Listing_AutoAction_Mode_Category_Group_Grid');
+        $grid = $this->getLayout()->createBlock(Grid::class);
         $this->setAjaxContent($grid);
         return $this->getResult();
     }

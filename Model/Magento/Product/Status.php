@@ -57,7 +57,7 @@ class Status extends \Ess\M2ePro\Model\AbstractModel
             $productIds = [$productIds];
         }
 
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->addFieldToFilter([
             ['attribute' => 'entity_id', 'in' => $productIds]

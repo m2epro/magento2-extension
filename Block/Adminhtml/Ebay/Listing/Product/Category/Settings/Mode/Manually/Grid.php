@@ -25,17 +25,21 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
     private $componentEbayCategory;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $backendHelper, $data);
-
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->componentEbayCategory           = $componentEbayCategory;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $backendHelper, $data);
     }
 
     //########################################
@@ -62,7 +66,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareCollection()
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create()
             ->addAttributeToSelect('name');
 
@@ -108,7 +112,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ]
         );
 
-        $productAddIds = (array)$this->getHelper('Data')->jsonDecode(
+        $productAddIds = (array)$this->dataHelper->jsonDecode(
             $this->listing->getChildObject()->getData('product_add_ids')
         );
 
@@ -128,7 +132,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'    => 'entity_id',
             'filter_index' => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
         ]);
 
         $this->addColumn('name', [
@@ -150,7 +154,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'width'     => '*',
             'index'     => 'category',
             'type'      => 'options',
-            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\CategoryMode',
+            'filter'    => CategoryModeFilter::class,
             'category_type' => eBayCategory::TYPE_EBAY_MAIN,
             'options'   => [
                 //Primary Category Selected
@@ -173,7 +177,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'sortable'  => false,
             'filter'    => false,
             'field'     => 'listing_product_id',
-            'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
             'group_order' => $this->getGroupOrder(),
             'actions'   => $this->getColumnActionsItems()
         ]);
@@ -243,7 +247,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\CategoryInfo $renderer */
         $renderer = $this->getLayout()->getBlockSingleton(
-            'Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\CategoryInfo'
+            \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\CategoryInfo::class
         );
 
         $renderer->setColumn($column);
@@ -393,12 +397,12 @@ JS
         }
 
         // ---------------------------------------
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions(
             'Ebay_Listing_Product_Category_Settings',
             ['_current' => true]
         ));
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay_Category', ['_current' => true]));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay_Category', ['_current' => true]));
 
         $this->jsUrl->add(
             $this->getUrl('*/ebay_listing_product_category_settings', ['step' => 3, '_current' => true]),

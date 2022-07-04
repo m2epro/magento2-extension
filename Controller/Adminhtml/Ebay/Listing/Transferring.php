@@ -81,11 +81,15 @@ class Transferring extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
     protected function destinationStep()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Transferring\Destination $block */
-        $block = $this->createBlock('Ebay_Listing_Transferring_Destination', '', [
-            'data' => [
-                'listing' => $this->listing
-            ]
-        ]);
+        $block = $this->getLayout()
+                      ->createBlock(
+                          \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Transferring\Destination::class,
+                          '',
+                          ['data' => [
+                              'listing' => $this->listing
+                              ]
+                          ]
+                      );
 
         $this->setAjaxContent($block);
 
@@ -150,8 +154,8 @@ class Transferring extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
         );
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Transferring\Products $block */
-        $block = $this->createBlock(
-            'Ebay_Listing_Transferring_Products',
+        $block = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Transferring\Products::class,
             '',
             [
                 'data' => [

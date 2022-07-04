@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add\RemoveSessionProductsByCategory
- */
 class RemoveSessionProductsByCategory extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
-    //########################################
-
     public function execute()
     {
         $categoriesIds = $this->getRequestIds();
@@ -23,8 +18,9 @@ class RemoveSessionProductsByCategory extends \Ess\M2ePro\Controller\Adminhtml\W
         if (!isset($tempSession['products_ids'])) {
             return $this->getResult();
         }
-        /** @var $treeBlock \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Category\Tree */
-        $treeBlock = $this->createBlock('Walmart_Listing_Product_Add_SourceMode_Category_Tree');
+        /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Category\Tree $treeBlock */
+        $treeBlock = $this->getLayout()
+              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Category\Tree::class);
         $treeBlock->setSelectedIds($tempSession['products_ids']);
 
         $productsForEachCategory = $treeBlock->getProductsForEachCategory();
@@ -38,6 +34,4 @@ class RemoveSessionProductsByCategory extends \Ess\M2ePro\Controller\Adminhtml\W
 
         $this->setSessionValue('source_categories', $tempSession);
     }
-
-    //########################################
 }

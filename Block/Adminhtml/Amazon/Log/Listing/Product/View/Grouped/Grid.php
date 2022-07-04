@@ -9,7 +9,6 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Log\Listing\Product\View\Grouped;
 
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\View\Grouped\AbstractGrid;
-use Ess\M2ePro\Block\Adminhtml\Amazon\Log\Listing\Product\GridTrait;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Log\Listing\Product\View\Grouped\Grid

@@ -67,7 +67,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing
             $this->getResult()->getConfig()->getTitle()->prepend($this->__('Listings Logs & Events'));
         }
 
-        $this->addContent($this->createBlock('Ebay_Log_Listing_Product_View'));
+        $this->addContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Log\Listing\Product\View::class)
+        );
 
         return $this->getResult();
     }

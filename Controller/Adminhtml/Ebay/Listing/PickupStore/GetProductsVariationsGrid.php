@@ -17,7 +17,10 @@ class GetProductsVariationsGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Li
 
     public function execute()
     {
-        $this->setAjaxContent($this->createBlock('Ebay_Listing_PickupStore_Variation_Product_View_Grid'));
+        $this->setAjaxContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Variation\Product\View\Grid::class)
+        );
         return $this->getResult();
     }
 

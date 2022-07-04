@@ -84,7 +84,8 @@ class ValidateProductsForAssign extends Description
             return $this->getResult();
         }
 
-        $block = $this->createBlock('Amazon_Listing_Product_Template_Description');
+        $block = $this->getLayout()
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Description::class);
         if (!empty($messages)) {
             $block->setMessages($messages);
         }

@@ -134,7 +134,7 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 
             $preparedOrders[$accountAccessToken] = [];
 
-            /** @var $marketplace \Ess\M2ePro\Model\Marketplace */
+            /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
             $marketplace = $accounts[$accountAccessToken]->getChildObject()->getMarketplace();
 
             foreach ($ordersData as $orderData) {
@@ -154,15 +154,15 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
                 $order['purchase_create_date'] = $orderData['purchase_date'];
                 $order['purchase_update_date'] = $orderData['update_date'];
 
-                $order['buyer_name'] = trim($orderData['buyer']['name']);
-                $order['buyer_email'] = trim($orderData['buyer']['email']);
+                $order['buyer_name'] = trim((string)$orderData['buyer']['name']);
+                $order['buyer_email'] = trim((string)$orderData['buyer']['email']);
 
                 $order['qty_shipped'] = (int)$orderData['qty']['shipped'];
                 $order['qty_unshipped'] = (int)$orderData['qty']['unshipped'];
 
                 $shipping = $orderData['shipping'];
 
-                $order['shipping_service'] = trim($shipping['level']);
+                $order['shipping_service'] = trim((string)$shipping['level']);
                 $order['shipping_price'] = isset($orderData['price']['shipping'])
                     ? (float)$orderData['price']['shipping'] : 0;
 
@@ -171,7 +171,7 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
                 $order['shipping_date_to'] = $shipping['ship_date']['to'];
                 $order['delivery_date_to'] = $shipping['delivery_date']['to'];
 
-                $order['currency'] = isset($orderData['currency']) ? trim($orderData['currency']) : '';
+                $order['currency'] = isset($orderData['currency']) ? trim((string)$orderData['currency']) : '';
                 $order['paid_amount'] = isset($orderData['amount_paid']) ? (float)$orderData['amount_paid'] : 0;
                 $order['tax_details'] = isset($orderData['price']['taxes']) ? $orderData['price']['taxes'] : [];
                 $order['tax_registration_details'] = isset($orderData['tax_registration_details']) ?
@@ -189,17 +189,17 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 
                 foreach ($orderData['items'] as $item) {
                     $order['items'][] = [
-                        'amazon_order_item_id' => trim($item['id']),
-                        'sku'                  => trim($item['identifiers']['sku']),
-                        'general_id'           => trim($item['identifiers']['general_id']),
+                        'amazon_order_item_id' => trim((string)$item['id']),
+                        'sku'                  => trim((string)$item['identifiers']['sku']),
+                        'general_id'           => trim((string)$item['identifiers']['general_id']),
                         'is_isbn_general_id'   => (int)$item['identifiers']['is_isbn'],
-                        'title'                => trim($item['title']),
+                        'title'                => trim((string)$item['title']),
                         'price'                => (float)$item['prices']['product']['value'],
                         'shipping_price'       => (float)$item['prices']['shipping']['value'],
                         'gift_price'           => (float)$item['prices']['gift']['value'],
-                        'gift_type'            => trim($item['gift_type'] ?? ''),
-                        'gift_message'         => trim($item['gift_message'] ?? ''),
-                        'currency'             => trim($item['prices']['product']['currency']),
+                        'gift_type'            => trim((string)($item['gift_type'] ?? '')),
+                        'gift_message'         => trim((string)($item['gift_message'] ?? '')),
+                        'currency'             => trim((string)$item['prices']['product']['currency']),
                         'tax_details'          => $item['taxes'],
                         'ioss_number'          => $item['ioss_number'],
                         'discount_details'     => $item['discounts'],
@@ -235,12 +235,12 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
         $address  = isset($shippingData['address']) ? $shippingData['address'] : [];
 
         $parsedAddress = [
-            'county'         => isset($location['county']) ? trim($location['county']) : '',
-            'country_code'   => isset($location['country_code']) ? trim($location['country_code']) : '',
-            'state'          => isset($location['state']) ? trim($location['state']) : '',
-            'city'           => isset($location['city']) ? trim($location['city']) : '',
+            'county'         => isset($location['county']) ? trim((string)$location['county']) : '',
+            'country_code'   => isset($location['country_code']) ? trim((string)$location['country_code']) : '',
+            'state'          => isset($location['state']) ? trim((string)$location['state']) : '',
+            'city'           => isset($location['city']) ? trim((string)$location['city']) : '',
             'postal_code'    => isset($location['postal_code']) ? $location['postal_code'] : '',
-            'recipient_name' => isset($shippingData['buyer']) ? trim($shippingData['buyer']) : '',
+            'recipient_name' => isset($shippingData['buyer']) ? trim((string)$shippingData['buyer']) : '',
             'phone'          => isset($shippingData['phone']) ? $shippingData['phone'] : '',
             'company'        => '',
             'street'         => [

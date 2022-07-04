@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction\DeleteCategory
- */
 class DeleteCategory extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
 {
-    //########################################
-
     public function execute()
     {
         $groupId = $this->getRequest()->getParam('group_id');
@@ -36,6 +31,4 @@ class DeleteCategory extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Au
             $this->activeRecordFactory->getObject('Listing_Auto_Category_Group')->load($groupId)->delete();
         }
     }
-
-    //########################################
 }

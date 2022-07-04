@@ -8,12 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Manage;
 
-use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Manage\SaveAutoActionSettings
- */
 class SaveAutoActionSettings extends Main
 {
     /** @var \Ess\M2ePro\Helper\Component\Walmart\Vocabulary */
@@ -22,7 +18,7 @@ class SaveAutoActionSettings extends Main
     public function __construct(
         \Ess\M2ePro\Helper\Component\Walmart\Vocabulary $vocabularyHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
-        Context $context
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($walmartFactory, $context);
 

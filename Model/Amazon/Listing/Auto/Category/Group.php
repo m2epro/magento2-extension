@@ -18,7 +18,7 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Auto\Category\Group');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Auto\Category\Group::class);
     }
 
     //########################################

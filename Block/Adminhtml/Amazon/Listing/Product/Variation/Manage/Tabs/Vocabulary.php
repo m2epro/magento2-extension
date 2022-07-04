@@ -111,7 +111,8 @@ class Vocabulary extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     protected function _beforeToHtml()
     {
-        $form = $this->createBlock('Amazon_Listing_Product_Variation_Manage_Tabs_Vocabulary_Form');
+        $form = $this->getLayout()
+         ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Vocabulary\Form::class);
         $this->setChild('variation_Vocabulary_form', $form);
 
         return parent::_beforeToHtml();

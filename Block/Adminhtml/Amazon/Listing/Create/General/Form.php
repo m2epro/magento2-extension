@@ -11,23 +11,23 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\General;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Block\Adminhtml\StoreSwitcher;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\General\Form
- */
 class Form extends AbstractForm
 {
     protected $amazonFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->amazonFactory = $amazonFactory;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -146,7 +146,9 @@ class Form extends AbstractForm
     {$accountSelect->toHtml()}
 HTML
                 ,
-                'after_element_html' => $this->createBlock('Magento\Button')->setData(
+                'after_element_html' => $this->getLayout()
+                                             ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                             ->setData(
                     [
                         'id'      => 'add_account_button',
                         'label'   => $this->__('Add Another'),
@@ -215,15 +217,15 @@ HTML
     protected function _prepareLayout()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')
+            $this->dataHelper
                 ->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class)
         );
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Account'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Marketplace'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon\Account'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon\Marketplace'));
 
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Amazon_Listing_Create', ['_current' => true])
+            $this->dataHelper->getControllerActions('Amazon_Listing_Create', ['_current' => true])
         );
 
         $this->jsUrl->add(

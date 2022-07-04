@@ -21,7 +21,7 @@ class EditItem extends Order
     public function execute()
     {
         $itemId = $this->getRequest()->getParam('item_id');
-        /** @var $item \Ess\M2ePro\Model\Order\Item */
+        /** @var \Ess\M2ePro\Model\Order\Item $item */
         $item = $this->activeRecordFactory->getObjectLoaded('Order\Item', $itemId);
 
         if ($item->getId() === null) {
@@ -35,7 +35,7 @@ class EditItem extends Order
         $this->getHelper('Data\GlobalData')->setValue('order_item', $item);
 
         if ($item->getProductId() === null || !$item->getMagentoProduct()->exists()) {
-            $block = $this->createBlock('Order_Item_Product_Mapping');
+            $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Mapping::class);
 
             $this->setJsonContent([
                 'title' => $this->__('Linking Product "%title%"', $item->getChildObject()->getTitle()),
@@ -47,7 +47,9 @@ class EditItem extends Order
         }
 
         if ($item->getMagentoProduct()->isProductWithVariations()) {
-            $block = $this->createBlock('Order_Item_Product_Options_Mapping')->setData([
+            $block = $this->getLayout()
+                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Options\Mapping::class)
+                          ->setData([
                 'order_id' => $item->getOrderId(),
                 'product_id' => $item->getProductId()
             ]);

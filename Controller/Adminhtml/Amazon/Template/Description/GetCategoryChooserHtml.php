@@ -9,19 +9,25 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
+use Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Edit;
 
 class GetCategoryChooserHtml extends Description
 {
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Category */
     protected $categoryHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $helperDataGlobalData;
+
     public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $helperDataGlobalData,
         \Ess\M2ePro\Helper\Component\Amazon\Category $categoryHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($amazonFactory, $context);
 
+        $this->helperDataGlobalData = $helperDataGlobalData;
         $this->categoryHelper = $categoryHelper;
     }
 
@@ -30,7 +36,7 @@ class GetCategoryChooserHtml extends Description
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Edit $editBlock */
-        $editBlock = $this->createBlock('Amazon_Template_Description_Category_Chooser_Edit');
+        $editBlock = $this->getLayout()->createBlock(Edit::class);
 
         $editBlock->setMarketplaceId($this->getRequest()->getPost('marketplace_id'));
 
@@ -43,7 +49,7 @@ class GetCategoryChooserHtml extends Description
         );
 
         if (empty($recentlySelectedCategories)) {
-            $this->getHelper('Data\GlobalData')->setValue('category_chooser_hide_recent', true);
+            $this->helperDataGlobalData->setValue('category_chooser_hide_recent', true);
         }
 
         if ($browseNodeId && $categoryPath) {

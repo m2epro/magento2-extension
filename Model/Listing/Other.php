@@ -41,7 +41,7 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Listing\Other');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Listing\Other::class);
     }
 
     //########################################
@@ -325,7 +325,7 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
                 $actionId,
                 \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_FROM_OTHER_LISTING,
                 'Item was Moved.',
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
             );
         }
 

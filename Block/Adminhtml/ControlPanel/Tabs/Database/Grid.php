@@ -10,22 +10,23 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database;
 
 use Ess\M2ePro\Model\ResourceModel\Collection\Custom;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
+    /** @var \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory */
     private $customCollectionFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         array $data = []
     ) {
         $this->customCollectionFactory = $customCollectionFactory;
+        $this->databaseHelper = $databaseHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -57,7 +58,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareCollection()
     {
         $magentoHelper   = $this->helperFactory->getObject('Magento');
-        $structureHelper = $this->helperFactory->getObject('Module_Database_Structure');
+        $structureHelper = $this->databaseHelper;
 
         $tablesList = $magentoHelper->getMySqlTables();
         foreach ($tablesList as &$tableName) {

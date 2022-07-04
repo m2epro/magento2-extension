@@ -10,17 +10,26 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\PickupStore
- */
 class PickupStore extends AbstractForm
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     protected function _prepareForm()
     {
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
-        $additionalData = $this->getHelper('Data')->jsonDecode($account->getData('additional_data'));
+        $additionalData = $this->dataHelper->jsonDecode($account->getData('additional_data'));
 
         $form = $this->_formFactory->create();
 

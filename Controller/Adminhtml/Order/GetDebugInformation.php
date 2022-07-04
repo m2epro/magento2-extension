@@ -33,7 +33,7 @@ class GetDebugInformation extends Order
 
         $this->getHelper('Data\GlobalData')->setValue('order', $order);
 
-        $debugBlock = $this->createBlock('Order\Debug');
+        $debugBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Debug::class);
 
         $this->setAjaxContent($debugBlock->toHtml());
 

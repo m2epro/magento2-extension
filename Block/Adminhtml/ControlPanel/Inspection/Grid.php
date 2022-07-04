@@ -30,14 +30,13 @@ class Grid extends WidgetAbstractGrid
         \Magento\Backend\Helper\Data $backendHelper,
         ObjectManagerInterface $objectManager
     ) {
-        parent::__construct($context, $backendHelper);
 
         $this->customCollectionFactory = $customCollectionFactory;
         $this->objectManager = $objectManager;
         $this->repository = $repository;
+        parent::__construct($context, $backendHelper);
 
         $this->setId('controlPanelInspectionsGrid');
-
         $this->setSaveParametersInSession(true);
         $this->setUseAjax(true);
     }
@@ -102,7 +101,7 @@ class Grid extends WidgetAbstractGrid
                 'filter'   => false,
                 'sortable' => false,
                 'getter'   => 'getId',
-                'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+                'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
                 'actions'  => [
                     'checkAction' => [
                         'caption' => $this->__('Check'),

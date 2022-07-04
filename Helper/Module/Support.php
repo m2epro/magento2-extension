@@ -8,54 +8,60 @@
 
 namespace Ess\M2ePro\Helper\Module;
 
-/**
- * Class \Ess\M2ePro\Helper\Module\Support
- */
-class Support extends \Ess\M2ePro\Helper\AbstractHelper
+class Support
 {
-    protected $urlBuilder;
-    protected $modelFactory;
+    /** @var \Ess\M2ePro\Model\Config\Manager */
+    private $config;
 
-    //########################################
-
+    /**
+     * @param \Ess\M2ePro\Model\Config\Manager $config
+     */
     public function __construct(
-        \Magento\Backend\Model\UrlInterface $urlBuilder,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Model\Config\Manager $config
     ) {
-        $this->urlBuilder = $urlBuilder;
-        $this->modelFactory = $modelFactory;
-        parent::__construct($helperFactory, $context);
+        $this->config = $config;
     }
 
-    //########################################
-
-    public function getPageRoute()
+    /**
+     * @return string
+     */
+    public function getPageRoute(): string
     {
-        return 'm2epro/'.$this->getPageControllerName().'/index';
+        return 'm2epro/' . $this->getPageControllerName() . '/index';
     }
 
-    public function getPageControllerName()
+    /**
+     * @return string
+     */
+    public function getPageControllerName(): string
     {
         return 'support';
     }
 
-    //########################################
-
+    /**
+     * @return mixed|null
+     */
     public function getWebsiteUrl()
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue('/support/', 'website_url');
+        return $this->config->getGroupValue('/support/', 'website_url');
     }
 
+    /**
+     * @return mixed|null
+     */
     public function getClientsPortalUrl()
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue('/support/', 'clients_portal_url');
+        return $this->config->getGroupValue('/support/', 'clients_portal_url');
     }
 
-    public function getHowToGuideUrl($articleUrl)
+    /**
+     * @param string $articleUrl
+     *
+     * @return string
+     */
+    public function getHowToGuideUrl(string $articleUrl): string
     {
-        $urlParts[] = $this->getSupportUrl()  . '/how-to-guide';
+        $urlParts[] = $this->getSupportUrl() . '/how-to-guide';
 
         if ($articleUrl) {
             $urlParts[] = trim($articleUrl, '/');
@@ -64,33 +70,47 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
         return implode('/', $urlParts);
     }
 
-    public function getSupportUrl($urlPart = null)
+    /**
+     * @param string $urlPart
+     *
+     * @return string
+     */
+    public function getSupportUrl(string $urlPart = ''): string
     {
-        $urlParts[] = trim(
-            $this->getHelper('Module')->getConfig()->getGroupValue('/support/', 'support_url'),
-            '/'
-        );
+        $baseSupportUrl = $this->config->getGroupValue('/support/', 'support_url');
 
-        if ($urlPart) {
+        $urlParts[] = trim($baseSupportUrl, '/');
+
+        if ($urlPart !== '') {
             $urlParts[] = trim($urlPart, '/');
         }
 
         return implode('/', $urlParts);
     }
 
+    /**
+     * @return mixed|null
+     */
     public function getMagentoMarketplaceUrl()
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue('/support/', 'magento_marketplace_url');
+        return $this->config->getGroupValue('/support/', 'magento_marketplace_url');
     }
 
-    //########################################
-
+    /**
+     * @return mixed|null
+     */
     public function getDocumentationUrl()
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue('/support/', 'documentation_url');
+        return $this->config->getGroupValue('/support/', 'documentation_url');
     }
 
-    public function getDocumentationComponentUrl($component)
+    /**
+     * @param string $component
+     *
+     * @return string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getDocumentationComponentUrl(string $component): string
     {
         switch ($component) {
             case \Ess\M2ePro\Helper\Component\Ebay::NICK:
@@ -104,25 +124,39 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
         }
     }
 
-    public function getDocumentationArticleUrl($tinyLink)
+    /**
+     * @param string $tinyLink
+     *
+     * @return string
+     */
+    public function getDocumentationArticleUrl(string $tinyLink): string
     {
         return $this->getDocumentationUrl() . $tinyLink;
     }
 
-    //----------------------------------------
-
-    public function getKnowledgebaseUrl($articleUrl = null)
+    /**
+     * @param string $articleUrl
+     *
+     * @return string
+     */
+    public function getKnowledgebaseUrl(string $articleUrl = ''): string
     {
         $urlParts[] = $this->getSupportUrl('knowledgebase');
 
-        if ($articleUrl) {
+        if ($articleUrl !== '') {
             $urlParts[] = trim($articleUrl, '/');
         }
 
         return implode('/', $urlParts);
     }
 
-    public function getKnowledgebaseComponentUrl($component)
+    /**
+     * @param string $component
+     *
+     * @return string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getKnowledgebaseComponentUrl(string $component): string
     {
         switch ($component) {
             case \Ess\M2ePro\Helper\Component\Ebay::NICK:
@@ -136,17 +170,21 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
         }
     }
 
-    public function getKnowledgebaseArticleUrl($articleLink)
+    /**
+     * @param string $articleLink
+     *
+     * @return string
+     */
+    public function getKnowledgebaseArticleUrl(string $articleLink): string
     {
         return $this->getKnowledgebaseUrl() . trim($articleLink, '/') . '/';
     }
 
-    //########################################
-
+    /**
+     * @return mixed|null
+     */
     public function getContactEmail()
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue('/support/', 'contact_email');
+        return $this->config->getGroupValue('/support/', 'contact_email');
     }
-
-    //########################################
 }

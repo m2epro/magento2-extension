@@ -77,7 +77,7 @@ class Edit extends AbstractContainer
                 'class' => 'add',
                 'button_class' => '',
                 'onclick'   => 'EbayAccountObj.saveAndEditClick(\'\', \'ebayAccountEditTabs\')',
-                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => $saveButtonsProps
             ];
 

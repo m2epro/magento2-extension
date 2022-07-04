@@ -8,12 +8,18 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\Category;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\Category\Form
- */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\AbstractForm
 {
-    //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $formFactory, $dataHelper, $data);
+    }
 
     public function _construct()
     {
@@ -45,7 +51,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Listing::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Ebay\Listing::class)
         );
 
         $this->js->add(<<<JS

@@ -8,19 +8,19 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Settings;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Settings\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
     /** @var  \Ess\M2ePro\Model\Listing */
     protected $listing;
 
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     protected $magentoProductCollectionFactory;
-    protected $amazonFactory;
-    protected $resourceConnection;
 
-    //########################################
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
+    protected $amazonFactory;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
+    protected $resourceConnection;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
@@ -28,13 +28,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->amazonFactory = $amazonFactory;
         $this->resourceConnection = $resourceConnection;
-
-        parent::__construct($context, $backendHelper, $data);
+        parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
 
     //########################################
@@ -54,7 +54,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareCollection()
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->setListingProductModeOn();
@@ -176,7 +176,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'     => 'number',
             'index'    => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
         ]);
 
         $this->addColumn('name', [
@@ -198,7 +198,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'index'                  => 'amazon_sku',
             'show_defected_messages' => false,
             'filter_index'           => 'amazon_sku',
-            'renderer'               => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Sku'
+            'renderer'               => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Sku::class
         ]);
 
         $this->addColumn('general_id', [
@@ -208,7 +208,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'           => 'text',
             'index'          => 'general_id',
             'filter_index'   => 'general_id',
-            'filter'         => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\GeneralId',
+            'filter'         => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\GeneralId::class,
             'frame_callback' => [$this, 'callbackColumnGeneralId'],
             'filter_condition_callback' => [$this, 'callbackFilterGeneralId']
         ]);
@@ -219,7 +219,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'width'          => '170px',
             'type'           => 'text',
             'index'          => 'template_description_title',
-            'filter'         => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\PolicySettings',
+            'filter'         => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\PolicySettings::class,
             'filter_index'   => 'template_description_title',
             'filter_condition_callback' => [$this, 'callbackFilterDescriptionSettings'],
             'frame_callback' => [$this, 'callbackColumnTemplateDescription']
@@ -231,7 +231,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'width'          => '170px',
             'type'           => 'text',
             'index'          => 'template_shipping_title',
-            'filter'         => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\PolicySettings',
+            'filter'         => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\PolicySettings::class,
             'filter_index'   => 'template_shipping_title',
             'filter_condition_callback' => [$this, 'callbackFilterShippingSettings'],
             'frame_callback' => [$this, 'callbackColumnTemplateShipping']
@@ -259,7 +259,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'index'     => 'actions',
             'filter'    => false,
             'sortable'  => false,
-            'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
             'field'     => 'id',
             'group_order' => $this->getGroupOrder(),
             'actions'     => $this->getColumnActionsItems()
@@ -427,7 +427,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     public function callbackColumnProductTitle($productTitle, $row, $column, $isExport)
     {
-        $productTitle = $this->getHelper('Data')->escapeHtml($productTitle);
+        $productTitle = $this->dataHelper->escapeHtml($productTitle);
 
         $value = '<span>'.$productTitle.'</span>';
 
@@ -436,7 +436,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             ->getSku();
 
         $value .= '<br/><strong>'.$this->__('SKU') .
-            ':</strong> '.$this->getHelper('Data')->escapeHtml($sku) . '<br/>';
+            ':</strong> '.$this->dataHelper->escapeHtml($sku) . '<br/>';
 
         $listingProductId = (int)$row->getData('id');
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -486,8 +486,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 if ($option === '' || $option === null) {
                     $option = '--';
                 }
-                $value .= '<strong>' . $this->getHelper('Data')->escapeHtml($attribute) .
-                    '</strong>:&nbsp;' . $this->getHelper('Data')->escapeHtml($option) . '<br/>';
+                $value .= '<strong>' . $this->dataHelper->escapeHtml($attribute) .
+                    '</strong>:&nbsp;' . $this->dataHelper->escapeHtml($option) . '<br/>';
             }
             $value .= '</div>';
         }
@@ -557,7 +557,7 @@ HTML;
         $generalIdSearchInfo = $row->getData('general_id_search_info');
 
         if (!empty($generalIdSearchInfo)) {
-            $generalIdSearchInfo = $this->getHelper('Data')->jsonDecode($generalIdSearchInfo);
+            $generalIdSearchInfo = $this->dataHelper->jsonDecode($generalIdSearchInfo);
         }
 
         if (!empty($generalIdSearchInfo['is_set_automatic'])) {
@@ -587,7 +587,7 @@ HTML;
                 'close_on_save' => true
             ]);
 
-            $templateTitle = $this->getHelper('Data')->escapeHtml($row->getData('template_description_title'));
+            $templateTitle = $this->dataHelper->escapeHtml($row->getData('template_description_title'));
 
             return <<<HTML
 <a target="_blank" href="{$url}">{$templateTitle}</a>
@@ -608,7 +608,7 @@ HTML;
                 'close_on_save' => true
             ]);
 
-            $templateTitle = $this->getHelper('Data')->escapeHtml($row->getData('template_shipping_title'));
+            $templateTitle = $this->dataHelper->escapeHtml($row->getData('template_shipping_title'));
 
             return <<<HTML
 <a target="_blank" href="{$url}">{$templateTitle}</a>
@@ -634,7 +634,7 @@ HTML;
                 'id' => $row->getData('template_product_tax_code_id')
             ]);
 
-            $templateTitle = $this->getHelper('Data')->escapeHtml($row->getData('template_product_tax_code_title'));
+            $templateTitle = $this->dataHelper->escapeHtml($row->getData('template_product_tax_code_title'));
 
             return <<<HTML
 <a target="_blank" href="{$url}">{$templateTitle}</a>
@@ -687,7 +687,7 @@ HTML;
         }
 
         if ($inputValue !== null) {
-            /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+            /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
             $collection->addAttributeToFilter('template_shipping_title',  ['like' => '%' . $inputValue . '%']);
         }
 
@@ -715,7 +715,7 @@ HTML;
         }
 
         if ($inputValue !== null) {
-            /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+            /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
             $collection->addAttributeToFilter(
                 'template_description_title',
                 ['like' => '%' . $inputValue . '%']

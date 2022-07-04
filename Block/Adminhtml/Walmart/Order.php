@@ -10,12 +10,19 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Order
- */
 class Order extends AbstractContainer
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -68,14 +75,14 @@ HTML
 
     public function getGridHtml()
     {
-        return $this->createBlock('Order_Item_Edit')->toHtml() .
+        return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Item\Edit::class)->toHtml() .
             parent::getGridHtml();
     }
 
     protected function _beforeToHtml()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Controller\Adminhtml\Order\EditItem::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Controller\Adminhtml\Order\EditItem::class)
         );
 
         $this->js->addRequireJs(
@@ -86,7 +93,7 @@ JS
         );
 
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Order_UploadByUser')
+            $this->dataHelper->getControllerActions('Order_UploadByUser')
         );
 
         $this->jsTranslator->addTranslations(

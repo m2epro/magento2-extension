@@ -94,7 +94,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->setAjaxContent(
-                $this->createBlock('Ebay_Listing_Product_Add_Product_Grid')->toHtml()
+                $this->getLayout()
+                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Product\Grid::class)
+                     ->toHtml()
             );
             return $this->getResult();
         }
@@ -102,7 +104,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
         $this->setPageHelpLink('x/tv8UB');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Select Magento Products'));
-        $this->addContent($this->createBlock('Ebay_Listing_Product_Add'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add::class));
 
         return $this->getResult();
     }
@@ -136,8 +138,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
                 $this->setSessionValue('current_category_id', $this->getRequest()->getParam('current_category_id'));
             }
 
-            /** @var $grid \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Grid */
-            $grid = $this->createBlock('Ebay_Listing_Product_Add_Category_Grid');
+            /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Grid $grid */
+            $grid = $this->getLayout()
+                         ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Grid::class);
 
             $grid->setSelectedIds($selectedProductsIds);
             $grid->setCurrentCategoryId($this->getSessionValue('current_category_id'));
@@ -151,11 +154,12 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Select Magento Products'));
 
-        $gridContainer = $this->createBlock('Ebay_Listing_Product_Add');
+        $gridContainer = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add::class);
         $this->addContent($gridContainer);
 
-        /** @var $treeBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree */
-        $treeBlock = $this->createBlock('Ebay_Listing_Product_Add_Category_Tree');
+        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree $treeBlock */
+        $treeBlock = $this->getLayout()
+                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree::class);
 
         if ($this->getSessionValue('current_category_id') === null) {
             $currentNode = $treeBlock->getRoot()->getChildren()->getIterator()->current();

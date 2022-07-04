@@ -29,7 +29,7 @@ class InspectProducts extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 continue;
             }
 
-            /** @var $repricingSynchronization \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General   */
+            /** @var \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General $repricingSynchronization */
             $repricingSynchronization = $this->modelFactory->getObject('Amazon_Repricing_Synchronization_General');
             $repricingSynchronization->setAccount($permittedAccount);
             $repricingSynchronization->run($skus);
@@ -64,7 +64,8 @@ class InspectProducts extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     }
 
     /**
-     * @param $account \Ess\M2ePro\Model\Account
+     * @param \Ess\M2ePro\Model\Account $account
+     *
      * @return array
      */
     protected function getNewNoneSyncSkus(\Ess\M2ePro\Model\Account $account)
@@ -104,7 +105,8 @@ class InspectProducts extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     }
 
     /**
-     * @param $account \Ess\M2ePro\Model\Account
+     * @param \Ess\M2ePro\Model\Account $account
+     *
      * @return string
      */
     protected function getLastUpdateDate(\Ess\M2ePro\Model\Account $account)
@@ -127,14 +129,14 @@ class InspectProducts extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     }
 
     /**
-     * @param $account \Ess\M2ePro\Model\Account
-     * @param $syncDate \Datetime|String
+     * @param \Ess\M2ePro\Model\Account $account
+     * @param \Datetime|String          $syncDate
      */
     protected function setLastUpdateDate(\Ess\M2ePro\Model\Account $account, $syncDate)
     {
         $accountId = $account->getId();
 
-        /** @var $accountRepricingModel \Ess\M2ePro\Model\Amazon\Account\Repricing */
+        /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing$accountRepricingModel  */
         $accountRepricingModel = $this->activeRecordFactory->getObjectLoaded('Amazon_Account_Repricing', $accountId);
         $accountRepricingModel->setData(
             'last_checked_listing_product_update_date',

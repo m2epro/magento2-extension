@@ -8,11 +8,29 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs\ReviseRules
- */
 class ReviseRules extends AbstractTab
 {
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     protected function _prepareForm()
     {
         $default = $this->modelFactory->getObject('Ebay_Template_Synchronization_Builder')->getDefaultData();
@@ -37,7 +55,7 @@ Policy Templates.</p><br>
 <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Z-8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/Z-8UB')
                 )
             ]
         );
@@ -286,7 +304,7 @@ HTML
                 'text' => $this->__(
                     '<br/>Disabling this option might affect synchronization performance. Please read
              <a href="%url%" target="_blank">this article</a> before using the option.',
-                    $this->getHelper('Module_Support')->getSupportUrl('knowledgebase/1579746/')
+                    $this->supportHelper->getSupportUrl('knowledgebase/1579746/')
                 ),
                 'style' => 'display: none;'
             ]

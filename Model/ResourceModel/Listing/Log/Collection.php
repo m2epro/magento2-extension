@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Listing\Log',
-            'Ess\M2ePro\Model\ResourceModel\Listing\Log'
+            \Ess\M2ePro\Model\Listing\Log::class,
+            \Ess\M2ePro\Model\ResourceModel\Listing\Log::class
         );
     }
 

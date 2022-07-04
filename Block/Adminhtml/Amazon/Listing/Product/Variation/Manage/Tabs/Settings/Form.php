@@ -32,15 +32,20 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     protected $messages = [];
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $registry, $formFactory, $data);
         $this->variationHelper = $variationHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
     }
 
     //########################################
@@ -250,14 +255,16 @@ HTML;
                 }
 
                 if (!$this->isInAction()) {
-                    $html .= $this->createBlock('Magento\Button')->setData([
+                    $html .= $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                               ->setData([
                         'class' => 'action primary',
                         'style' => '    margin-left: 60px;',
                         'label' => $this->hasChannelTheme() ? $this->__('Change') : $this->__('Set Theme'),
                         'onclick' => 'ListingGridObj.variationProductManageHandler.changeVariationTheme(this)'
                     ])->toHtml();
 
-                    $confirmBtn = $this->createBlock('Magento\Button')->setData([
+                    $confirmBtn = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                                    ->setData([
                         'class' => 'action primary',
                         'label' => $this->__('Confirm'),
                         'onclick' => 'ListingGridObj.variationProductManageHandler.setVariationTheme()'
@@ -386,9 +393,9 @@ HTML;
 
                 if ($this->getMatcherAttributes()->isSourceAmountGreater()) {
                     $matchedAttriutes = json_encode($this->getMatchedAttributes(), JSON_FORCE_OBJECT);
-                    $productAttributes = $this->getHelper('Data')->jsonEncode($this->getProductAttributes());
-                    $destinationAttributes = $this->getHelper('Data')->jsonEncode($this->getDestinationAttributes());
-                    $magentoVariationSet = $this->getHelper('Data')->jsonEncode($magentoProductVariations['set']);
+                    $productAttributes = $this->dataHelper->jsonEncode($this->getProductAttributes());
+                    $destinationAttributes = $this->dataHelper->jsonEncode($this->getDestinationAttributes());
+                    $magentoVariationSet = $this->dataHelper->jsonEncode($magentoProductVariations['set']);
 
                     $this->js->add(
                         <<<JS
@@ -404,8 +411,8 @@ JS
                     );
                 } elseif ($this->getMatcherAttributes()->isDestinationAmountGreater()) {
                     $matchedAttriutes = json_encode($this->getMatchedAttributes(), JSON_FORCE_OBJECT);
-                    $destinationAttributes = $this->getHelper('Data')->jsonEncode($this->getDestinationAttributes());
-                    $amazonVariationSet = $this->getHelper('Data')->jsonEncode($this->getAmazonVariationsSet());
+                    $destinationAttributes = $this->dataHelper->jsonEncode($this->getDestinationAttributes());
+                    $amazonVariationSet = $this->dataHelper->jsonEncode($this->getAmazonVariationsSet());
 
                     $this->js->add(
                         <<<JS
@@ -469,7 +476,7 @@ HTML;
                     $html .= <<<HTML
         </td><td class="value">
         <input type="hidden"
-               value="{$this->getHelper('Data')->escapeHtml($magentoAttr)}"
+               value="{$this->dataHelper->escapeHtml($magentoAttr)}"
                name="variation_attributes[magento_attributes][]">
 
 HTML;
@@ -533,13 +540,15 @@ HTML;
 
                 $style = $this->isChangeMatchedAttributesAllowed() ? '' : 'display: none;';
 
-                $changeButton = $this->createBlock('Magento\Button')->setData([
+                $changeButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                                  ->setData([
                     'class' => 'action primary',
                     'label' => $this->hasMatchedAttributes() ? $this->__('Change') : $this->__('Set Attributes'),
                     'onclick' => 'ListingGridObj.variationProductManageHandler.changeMatchedAttributes(this)'
                 ])->toHtml();
 
-                $confirmButton = $this->createBlock('Magento\Button')->setData([
+                $confirmButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                                   ->setData([
                     'class' => 'action primary',
                     'style' => 'display: none;',
                     'label' => $this->__('Confirm'),

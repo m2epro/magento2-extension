@@ -30,9 +30,10 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
             [
                 'label'   => $this->__('Selling Settings'),
                 'title'   => $this->__('Selling Settings'),
-                'content' => $this->createBlock('Amazon_Listing_Create_Selling_Form')
-                    ->setUseFormContainer(false)
-                    ->toHtml()
+                'content' => $this->getLayout()
+                                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling\Form::class)
+                                  ->setUseFormContainer(false)
+                                  ->toHtml()
             ]
         );
 
@@ -41,9 +42,10 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
             [
                 'label'   => $this->__('Search Settings'),
                 'title'   => $this->__('Search Settings'),
-                'content' => $this->createBlock('Amazon_Listing_Create_Search_Form')
-                    ->setUseFormContainer(false)
-                    ->toHtml()
+                'content' => $this->getLayout()
+                                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Search\Form::class)
+                                  ->setUseFormContainer(false)
+                                  ->toHtml()
             ]
         );
 

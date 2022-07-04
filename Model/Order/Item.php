@@ -30,7 +30,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Order\Item');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Order\Item::class);
     }
 
     //########################################
@@ -314,7 +314,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
             $matchingCollection->addFieldToFilter('component', $this->getComponentMode());
             $matchingCollection->addFieldToFilter('hash', $matchingHash);
 
-            /** @var $matching \Ess\M2ePro\Model\Order\Matching */
+            /** @var \Ess\M2ePro\Model\Order\Matching $matching */
             $matching = $matchingCollection->getFirstItem();
 
             if ($matching->getId()) {
@@ -372,7 +372,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
         $storedItemOptions = (array)$this->getChildObject()->getVariationProductOptions();
         $orderItemOptions  = (array)$this->getChildObject()->getVariationOptions();
 
-        /** @var $optionsFinder \Ess\M2ePro\Model\Order\Item\OptionsFinder */
+        /** @var \Ess\M2ePro\Model\Order\Item\OptionsFinder $optionsFinder */
         $optionsFinder = $this->modelFactory->getObject('Order_Item_OptionsFinder');
         $optionsFinder->setProduct($magentoProduct)
                       ->setMagentoOptions($magentoOptions)
@@ -404,7 +404,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 
     public function assignProduct($productId)
     {
-        /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
+        /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
         $magentoProduct = $this->modelFactory->getObject('Magento\Product');
         $magentoProduct->setProductId($productId);
 
@@ -426,7 +426,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 
     public function assignProductDetails(array $associatedOptions, array $associatedProducts)
     {
-        /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
+        /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
         $magentoProduct = $this->modelFactory->getObject('Magento\Product');
         $magentoProduct->setProductId($this->getProductId());
 
@@ -508,7 +508,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
      */
     public function isMagentoProductExists()
     {
-        /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
+        /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
         $magentoProduct = $this->modelFactory->getObject('Magento\Product');
         $magentoProduct->setProductId($this->getProductId());
 

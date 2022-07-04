@@ -93,7 +93,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 
         foreach (array_chunk(array_keys($changesPerEbayItemId), 500) as $ebayItemIds) {
 
-            /** @var $collection \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection */
+            /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
             $collection = $this->ebayFactory->getObject('Listing_Product')->getCollection();
             $collection->getSelect()->join(
                 ['mei' => $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable()],

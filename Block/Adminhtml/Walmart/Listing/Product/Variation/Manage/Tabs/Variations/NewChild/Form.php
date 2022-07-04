@@ -21,7 +21,19 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     protected function _prepareForm()
     {
@@ -83,7 +95,7 @@ HTML;
         </td>
         <td class="value">
             <input type="hidden"
-                   value="{$this->getHelper('Data')->escapeHtml($magentoAttr)}"
+                   value="{$this->dataHelper->escapeHtml($magentoAttr)}"
                    name="new_child_product[product][attributes][]" class="new-child-product-attribute">
             <select name="new_child_product[product][options][]"
                 class="new-child-product-option select admin__control-select"
@@ -97,7 +109,7 @@ HTML;
             $i++;
         }
 
-        $productVariationsTree = $this->getHelper('Data')->jsonEncode($this->getProductVariationsTree());
+        $productVariationsTree = $this->dataHelper->jsonEncode($this->getProductVariationsTree());
 
         $html .= <<<HTML
     <tr id="new_child_product_product_options_error_row">
@@ -140,7 +152,7 @@ HTML;
         </td>
         <td class="value">
             <input type="hidden"
-                   value="{$this->getHelper('Data')->escapeHtml($walmartAttr)}"
+                   value="{$this->dataHelper->escapeHtml($walmartAttr)}"
                    name="new_child_product[channel][attributes][]" class="new-child-channel-attribute">
             <select id="new_child_product_channel_option_{$i}"
                     name="new_child_product[channel][options][]"
@@ -213,7 +225,7 @@ CSS
 
     protected function _toHtml()
     {
-        $helpBlock = $this->createBlock('HelpBlock')->setData([
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
             'content' => $this->__(
                 'To sell Walmart Child Products it is necessary to set correspondence between Magento Variations and
                 Walmart Variations. <br/><br/>

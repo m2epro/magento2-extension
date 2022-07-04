@@ -8,23 +8,47 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Switcher
- */
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
 {
-    const VIEW_MODE_AMAZON          = 'amazon';
-    const VIEW_MODE_MAGENTO         = 'magento';
-    const VIEW_MODE_SELLERCENTRAL   = 'sellercentral';
-    const VIEW_MODE_SETTINGS        = 'settings';
+    public const VIEW_MODE_AMAZON          = 'amazon';
+    public const VIEW_MODE_MAGENTO         = 'magento';
+    public const VIEW_MODE_SELLERCENTRAL   = 'sellercentral';
+    public const VIEW_MODE_SETTINGS        = 'settings';
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
 
-    public function getDefaultViewMode()
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    private $componentAmazonHelper;
+
+    /**
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Helper\Component\Amazon $componentAmazonHelper
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Component\Amazon $componentAmazonHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+        $this->supportHelper = $supportHelper;
+        $this->componentAmazonHelper = $componentAmazonHelper;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultViewMode(): string
     {
         return self::VIEW_MODE_AMAZON;
     }
 
+    /**
+     * @return string
+     */
     public function getTooltip()
     {
         return $this->__(
@@ -47,19 +71,21 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
 <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
             ,
-            $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/xAMVB')
+            $this->supportHelper->getDocumentationArticleUrl('x/xAMVB')
         );
     }
 
-    //---------------------------------------
-
-    protected function getComponentMode()
+    /**
+     * @return string
+     */
+    protected function getComponentMode(): string
     {
         return \Ess\M2ePro\Helper\Component\Amazon::NICK;
     }
 
-    //---------------------------------------
-
+    /**
+     * @return void
+     */
     protected function loadItems()
     {
         $this->items = [
@@ -67,7 +93,7 @@ HTML
                 'value' => [
                     [
                         'value' => self::VIEW_MODE_AMAZON,
-                        'label' => $this->getHelper('Component\Amazon')->getTitle()
+                        'label' => $this->componentAmazonHelper->getTitle()
                     ],
                     [
                         'value' => self::VIEW_MODE_SETTINGS,
@@ -85,6 +111,4 @@ HTML
             ]
         ];
     }
-
-    //########################################
 }

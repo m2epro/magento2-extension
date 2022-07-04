@@ -8,12 +8,36 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\Product;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\Product\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
+        \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->databaseHelper = $databaseHelper;
+        parent::__construct(
+            $magentoProductCollectionFactory,
+            $localeCurrency,
+            $ebayFactory,
+            $resourceConnection,
+            $ebayViewHelper,
+            $context,
+            $backendHelper,
+            $dataHelper,
+            $data
+        );
+    }
 
     public function _construct()
     {
@@ -30,7 +54,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
 
     protected function _prepareCollection()
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->getSelect()->distinct();
@@ -118,7 +142,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
         $listingWord  = $this->__('Listing');
         $listingUrl   = $this->getUrl('*/ebay_listing/view', ['id' => $row->getData('listing_id')]);
 
-        $listingTitle = $this->getHelper('Data')->escapeHtml($row->getData('listing_title'));
+        $listingTitle = $this->dataHelper->escapeHtml($row->getData('listing_title'));
         $listingTitle = $this->filterManager->truncate($listingTitle, ['length' => 50]);
 
         $html = <<<HTML
@@ -138,7 +162,7 @@ HTML;
         $onlineSku = $row->getData('online_sku');
 
         !empty($onlineSku) && $sku = $onlineSku;
-        $sku = $this->getHelper('Data')->escapeHtml($sku);
+        $sku = $this->dataHelper->escapeHtml($sku);
 
         $skuWord = $this->__('SKU');
         $html .= <<<HTML
@@ -150,7 +174,7 @@ HTML;
         $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $listingProductId);
 
         if ($listingProduct->getChildObject()->isVariationsReady()) {
-            $additionalData    = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+            $additionalData    = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
             $productAttributes = array_keys($additionalData['variations_sets']);
             $productAttributes = implode(', ', $productAttributes);
 
@@ -239,7 +263,7 @@ HTML;
 
         $childCollection = $this->getMagentoChildProductsCollection();
         $childCollection->getSelect()->joinLeft(
-            ['cpe' => $this->getHelper('Module_Database_Structure')
+            ['cpe' => $this->databaseHelper
                 ->getTableNameWithPrefix('catalog_product_entity')],
             'cpe.entity_id=main_table.product_id',
             []

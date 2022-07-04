@@ -7,12 +7,19 @@
  */
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Manual
- */
 class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -60,8 +67,8 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
     {
         $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
 
-        $viewHeaderBlock = $this->createBlock(
-            'Listing_View_Header',
+        $viewHeaderBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
             '',
             ['data' => ['listing' => $listing]]
         );
@@ -80,9 +87,9 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
 
         // URL
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon_Listing_Product'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon_Listing_Product'));
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Amazon_Listing_Product_Template_Description')
+            $this->dataHelper->getControllerActions('Amazon_Listing_Product_Template_Description')
         );
 
         $this->jsUrl->add($this->getUrl('*/amazon_listing_product_template_description/viewGrid', [

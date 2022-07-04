@@ -57,7 +57,7 @@ class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         foreach ($accounts as $account) {
-            /** @var $account \Ess\M2ePro\Model\Account **/
+            /** @var \Ess\M2ePro\Model\Account $account **/
 
             $this->getOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
 

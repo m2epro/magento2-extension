@@ -8,6 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\ItemSpecific\Edit;
 
+use Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Renderer\Custom;
 use Ess\M2ePro\Model\Ebay\Template\Category\Specific;
 use \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Renderer\Dictionary;
 
@@ -16,16 +17,20 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
     private $componentEbayCategoryEbay;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $registry, $formFactory, $data);
-
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
     }
 
     protected function _prepareForm()
@@ -86,7 +91,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
             /** @var Dictionary $renderer
              */
-            $renderer = $this->createBlock('Ebay_Template_Category_Chooser_Specific_Form_Renderer_Dictionary');
+            $renderer = $this->getLayout()->createBlock(Dictionary::class);
             $fieldset->addField(
                 'dictionary_specifics',
                 \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Element\Dictionary::class,
@@ -112,7 +117,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         );
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Renderer\Custom $renderer */
-        $renderer = $this->createBlock('Ebay_Template_Category_Chooser_Specific_Form_Renderer_Custom');
+        $renderer = $this->getLayout()->createBlock(Custom::class);
         $fieldset->addField(
             'custom_specifics',
             \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Element\Custom::class,
@@ -137,7 +142,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(Specific::class)
+            $this->dataHelper->getClassConstants(Specific::class)
         );
 
         $this->js->addRequireJs([

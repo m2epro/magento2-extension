@@ -36,7 +36,7 @@ class AutoMap extends Listing
         $productsForMapping = [];
         foreach ($productIds as $productId) {
 
-            /** @var $listingOther \Ess\M2ePro\Model\Listing\Other */
+            /** @var \Ess\M2ePro\Model\Listing\Other $listingOther */
             $listingOther = $this->parentFactory
                 ->getObjectLoaded($componentMode, 'Listing\Other', $productId);
 

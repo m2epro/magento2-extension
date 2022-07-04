@@ -10,11 +10,26 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Voca
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Vocabulary\AddAttributes
- */
 class AddAttributes extends Main
 {
+    /** @var \Ess\M2ePro\Helper\Component\Walmart\Vocabulary */
+    private $vocabularyHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Component\Walmart\Vocabulary $vocabularyHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->dataHelper = $dataHelper;
+        $this->vocabularyHelper = $vocabularyHelper;
+    }
+
     public function execute()
     {
         $attributes           = $this->getRequest()->getParam('attributes');
@@ -22,17 +37,15 @@ class AddAttributes extends Main
         $needAddToVocabulary  = (bool)$this->getRequest()->getParam('need_add', false);
 
         if (!empty($attributes)) {
-            $attributes = $this->getHelper('Data')->jsonDecode($attributes);
+            $attributes = $this->dataHelper->jsonDecode($attributes);
         }
 
         if (!$isRememberAutoAction && !$needAddToVocabulary) {
             return;
         }
 
-        $vocabularyHelper = $this->getHelper('Component_Walmart_Vocabulary');
-
         if ($isRememberAutoAction && !$needAddToVocabulary) {
-            $vocabularyHelper->disableAttributeAutoAction();
+            $this->vocabularyHelper->disableAttributeAutoAction();
             return;
         }
 
@@ -41,7 +54,7 @@ class AddAttributes extends Main
         }
 
         if ($isRememberAutoAction) {
-            $vocabularyHelper->enableAttributeAutoAction();
+            $this->vocabularyHelper->enableAttributeAutoAction();
         }
 
         if (empty($attributes)) {
@@ -49,7 +62,7 @@ class AddAttributes extends Main
         }
 
         foreach ($attributes as $productAttribute => $channelAttribute) {
-            $vocabularyHelper->addAttribute($productAttribute, $channelAttribute);
+            $this->vocabularyHelper->addAttribute($productAttribute, $channelAttribute);
         }
     }
 }

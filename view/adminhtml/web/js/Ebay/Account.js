@@ -340,11 +340,6 @@ define([
 
         // ---------------------------------------
 
-        ebayStoreUpdate: function() {
-            var self = EbayAccountObj;
-            self.submitForm(M2ePro.url.get('formSubmit', {'update_ebay_store': 1, 'back': Base64.encode('edit')}));
-        },
-
         ebayStoreSelectCategory: function(id) {
             $('ebay_store_categories_selected_container').show();
             $('ebay_store_categories_selected').value = id;
@@ -656,6 +651,50 @@ define([
             if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Account::OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_CUSTOM_ATTRIBUTE')) {
                 self.updateHiddenValue(this, attributeEl);
             }
+        },
+
+        refreshStoreCategories: function()
+        {
+            new Ajax.Request(M2ePro.url.get('ebay_account_store_category/refresh'), {
+                method: 'post',
+                parameters: {
+                    account_id: M2ePro.formData.id
+                },
+                onSuccess: function()
+                {
+                    EbayAccountObj.renderCategories();
+                }
+            });
+        },
+
+        renderCategories: function()
+        {
+            new Ajax.Request(M2ePro.url.get('ebay_account_store_category/getTree'), {
+                method: 'post',
+                parameters: {
+                    account_id: M2ePro.formData.id
+                },
+                onSuccess: function(transport)
+                {
+                    var categories = JSON.parse(transport.responseText);
+
+                    if (categories.length !== 0) {
+                        if (document.getElementById('ebay_store_categories_not_found')) {
+                            document.getElementById('ebay_store_categories_not_found').hide();
+                        }
+
+                        if (document.getElementById('ebay_store_categories_no_subscription_message')) {
+                            document.getElementById('ebay_store_categories_no_subscription_message').hide();
+                        }
+
+                        if (document.getElementById('tree-div')) {
+                            document.getElementById('tree-div').innerHTML = "";
+                        }
+
+                        EbayAccountObj.ebayStoreInitExtTree(categories);
+                    }
+                }
+            });
         }
 
         // ---------------------------------------

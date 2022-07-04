@@ -36,7 +36,8 @@ class Edit extends Description
 
         $this->getHelper('Data\GlobalData')->setValue('tmp_template', $templateModel);
 
-        $this->addContent($this->createBlock('Amazon_Template_Description_Edit'));
+        $this->addContent($this->getLayout()
+                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit::class));
 
         if ($templateModel->getId()) {
             $headerText = $this->__("Edit Description Policy");

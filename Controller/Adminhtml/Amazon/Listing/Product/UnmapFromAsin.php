@@ -53,7 +53,7 @@ class UnmapFromAsin extends Main
 
         foreach ($productsIds as $productId) {
 
-            /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $productId);
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */

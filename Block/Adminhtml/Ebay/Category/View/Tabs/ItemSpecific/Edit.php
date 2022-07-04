@@ -19,7 +19,6 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         array $data = []
     ) {
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
-
         parent::__construct($context, $data);
     }
 
@@ -56,7 +55,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                     ]
                 ],
             ],
-            'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+            'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
             'options' => [
                 'save' => [
                     'label' => $this->__('Save And Back'),

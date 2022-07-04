@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\ReturnPolicy\Edit\Form;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\ReturnPolicy\Edit\Form\Data
- */
 class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected $returnPolicyTemplate;
@@ -18,16 +15,19 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     public $formData = [];
     public $marketplaceData = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy $returnPolicyTemplate,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->returnPolicyTemplate = $returnPolicyTemplate;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -240,7 +240,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         $optionsData = [];
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
         foreach ($this->marketplaceData['info'][$key] as $value) {
             $optionsData[] = [
                 'value' => $value['ebay_id'],
@@ -385,7 +385,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected function _toHtml()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\ReturnPolicy::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\ReturnPolicy::class)
         );
 
         $this->js->addRequireJs([

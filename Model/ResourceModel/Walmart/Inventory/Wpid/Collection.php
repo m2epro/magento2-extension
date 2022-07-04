@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Walmart\Inventory\Wpid',
-            'Ess\M2ePro\Model\ResourceModel\Walmart\Inventory\Wpid'
+            \Ess\M2ePro\Model\Walmart\Inventory\Wpid::class,
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Inventory\Wpid::class
         );
     }
 

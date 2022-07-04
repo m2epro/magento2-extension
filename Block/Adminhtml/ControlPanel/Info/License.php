@@ -15,7 +15,42 @@ use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
  */
 class License extends AbstractBlock
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Client */
+    private $clientHelper;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Module */
+    private $moduleHelper;
+    /** @var \Ess\M2ePro\Helper\Module\License */
+    private $licenseHelper;
+    /** @var array */
+    public $licenseData;
+    /** @var array */
+    public $locationData;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Client $clientHelper
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param \Ess\M2ePro\Helper\Module $moduleHelper
+     * @param \Ess\M2ePro\Helper\Module\License $licenseHelper
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Client $clientHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Module $moduleHelper,
+        \Ess\M2ePro\Helper\Module\License $licenseHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+
+        $this->clientHelper = $clientHelper;
+        $this->dataHelper = $dataHelper;
+        $this->moduleHelper = $moduleHelper;
+        $this->licenseHelper = $licenseHelper;
+    }
 
     public function _construct()
     {
@@ -25,32 +60,27 @@ class License extends AbstractBlock
         $this->setTemplate('control_panel/info/license.phtml');
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function _beforeToHtml()
     {
-        /** @var \Ess\M2ePro\Helper\Module\License $licenseHelper */
-        $licenseHelper = $this->getHelper('Module_License');
-
         $this->licenseData = [
-            'key'    => $this->getHelper('Data')->escapeHtml($licenseHelper->getKey()),
-            'domain' => $this->getHelper('Data')->escapeHtml($licenseHelper->getDomain()),
-            'ip'     => $this->getHelper('Data')->escapeHtml($licenseHelper->getIp()),
+            'key'    => $this->dataHelper->escapeHtml($this->licenseHelper->getKey()),
+            'domain' => $this->dataHelper->escapeHtml($this->licenseHelper->getDomain()),
+            'ip'     => $this->dataHelper->escapeHtml($this->licenseHelper->getIp()),
             'valid'  => [
-                'domain' => $licenseHelper->isValidDomain(),
-                'ip'     => $licenseHelper->isValidIp()
-            ]
+                'domain' => $this->licenseHelper->isValidDomain(),
+                'ip'     => $this->licenseHelper->isValidIp(),
+            ],
         ];
 
         $this->locationData = [
-            'domain'             => $this->getHelper('Client')->getDomain(),
-            'ip'                 => $this->getHelper('Client')->getIp(),
-            'directory'          => $this->getHelper('Client')->getBaseDirectory(),
-            'relative_directory' => $this->getHelper('Module')->getBaseRelativeDirectory()
+            'domain'             => $this->clientHelper->getDomain(),
+            'ip'                 => $this->clientHelper->getIp(),
+            'directory'          => $this->clientHelper->getBaseDirectory(),
+            'relative_directory' => $this->moduleHelper->getBaseRelativeDirectory(),
         ];
 
         return parent::_beforeToHtml();
     }
-
-    //########################################
 }

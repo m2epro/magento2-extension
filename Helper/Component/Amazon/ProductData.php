@@ -8,38 +8,27 @@
 
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
-class ProductData extends \Ess\M2ePro\Helper\AbstractHelper
+class ProductData
 {
-    const RECENT_MAX_COUNT = 5;
+    private const RECENT_MAX_COUNT = 5;
 
-    /** @var \Ess\M2ePro\Helper\Module */
-    protected $helperModule;
+    /** @var \Ess\M2ePro\Model\Registry\Manager */
+    private $registry;
 
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
-    protected $activeRecordFactory;
-
-    /** @var \Magento\Framework\App\ResourceConnection */
-    protected $resourceConnection;
-
+    /**
+     * @param \Ess\M2ePro\Model\Registry\Manager $registry
+     */
     public function __construct(
-        \Ess\M2ePro\Helper\Module $helperModule,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Model\Registry\Manager $registry
     ) {
-        parent::__construct($helperFactory, $context);
-
-        $this->helperModule = $helperModule;
-        $this->activeRecordFactory = $activeRecordFactory;
-        $this->resourceConnection = $resourceConnection;
+        $this->registry = $registry;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function getRecent($marketplaceId, $excludedProductDataNick = null)
     {
-        $allRecent = $this->helperModule->getRegistry()->getValueFromJson($this->getConfigGroup());
+        $allRecent = $this->registry->getValueFromJson($this->getConfigGroup());
 
         if (!isset($allRecent[$marketplaceId])) {
             return [];
@@ -58,7 +47,7 @@ class ProductData extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function addRecent($marketplaceId, $productDataNick)
     {
-        $allRecent = $this->helperModule->getRegistry()->getValueFromJson($this->getConfigGroup());
+        $allRecent = $this->registry->getValueFromJson($this->getConfigGroup());
 
         !isset($allRecent[$marketplaceId]) && $allRecent[$marketplaceId] = [];
 
@@ -76,15 +65,16 @@ class ProductData extends \Ess\M2ePro\Helper\AbstractHelper
         $recent[] = $productDataNick;
         $allRecent[$marketplaceId] = $recent;
 
-        $this->helperModule->getRegistry()->setValue($this->getConfigGroup(), $allRecent);
+        $this->registry->setValue($this->getConfigGroup(), $allRecent);
     }
 
-    //########################################
+    // ----------------------------------------
 
-    private function getConfigGroup()
+    /**
+     * @return string
+     */
+    private function getConfigGroup(): string
     {
-        return "/amazon/product_data/recent/";
+        return '/amazon/product_data/recent/';
     }
-
-    //########################################
 }

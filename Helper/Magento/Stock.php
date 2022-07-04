@@ -8,26 +8,21 @@
 
 namespace Ess\M2ePro\Helper\Magento;
 
-/**
- * Class \Ess\M2ePro\Helper\Magento\Stock
- */
-class Stock extends \Ess\M2ePro\Helper\AbstractHelper
+class Stock
 {
     /** @var \Magento\CatalogInventory\Api\StockConfigurationInterface */
-    protected $stockConfiguration;
+    private $stockConfiguration;
 
-    //########################################
-
+    /**
+     * @param \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration
+     */
     public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration,
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration
     ) {
         $this->stockConfiguration = $stockConfiguration;
-        parent::__construct($helperFactory, $context);
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * Multi Stock is not supported by core Magento functionality.
@@ -61,8 +56,6 @@ class Stock extends \Ess\M2ePro\Helper\AbstractHelper
         return $this->stockConfiguration->getDefaultScopeId();
     }
 
-    //########################################
-
     /**
      * @return bool
      */
@@ -70,6 +63,4 @@ class Stock extends \Ess\M2ePro\Helper\AbstractHelper
     {
         return $this->stockConfiguration->canSubtractQty();
     }
-
-    //########################################
 }

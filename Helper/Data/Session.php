@@ -8,37 +8,53 @@
 
 namespace Ess\M2ePro\Helper\Data;
 
-class Session extends \Ess\M2ePro\Helper\AbstractHelper
+class Session
 {
-    protected $session;
+    /** @var \Magento\Framework\Session\SessionManager */
+    private $session;
 
+    /**
+     * @param \Magento\Framework\Session\SessionManager $session
+     */
     public function __construct(
-        \Magento\Framework\Session\SessionManager $session,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Framework\Session\SessionManager $session
     ) {
         $this->session = $session;
-        parent::__construct($helperFactory, $context);
     }
 
-    //########################################
+    // ----------------------------------------
 
+    /**
+     * @param string $key
+     * @param bool $clear
+     *
+     * @return mixed
+     */
     public function getValue($key, $clear = false)
     {
         return $this->session->getData(
-            \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$key,
+            \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER . '_' . $key,
             $clear
         );
     }
 
-    public function setValue($key, $value)
+    /**
+     * @param string $key
+     * @param mixed $value
+     *
+     * @return void
+     */
+    public function setValue($key, $value): void
     {
-        $this->session->setData(\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$key, $value);
+        $this->session->setData(\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER . '_' . $key, $value);
     }
 
     // ---------------------------------------
 
-    public function getAllValues()
+    /**
+     * @return array
+     */
+    public function getAllValues(): array
     {
         $return = [];
         $session = $this->session->getData();
@@ -53,14 +69,20 @@ class Session extends \Ess\M2ePro\Helper\AbstractHelper
         return $return;
     }
 
-    //########################################
-
-    public function removeValue($key)
+    /**
+     * @param string $key
+     *
+     * @return void
+     */
+    public function removeValue($key): void
     {
-        $this->session->getData(\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$key, true);
+        $this->session->getData(\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER . '_' . $key, true);
     }
 
-    public function removeAllValues()
+    /**
+     * @return void
+     */
+    public function removeAllValues(): void
     {
         $session = $this->session->getData();
 
@@ -70,6 +92,4 @@ class Session extends \Ess\M2ePro\Helper\AbstractHelper
             }
         }
     }
-
-    //########################################
 }

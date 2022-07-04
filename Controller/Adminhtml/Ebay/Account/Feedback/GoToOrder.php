@@ -24,7 +24,7 @@ class GoToOrder extends Account
             return $this->_redirect('*/ebay_order/index');
         }
 
-        /** @var $feedback \Ess\M2ePro\Model\Ebay\Feedback */
+        /** @var \Ess\M2ePro\Model\Ebay\Feedback $feedback */
         $feedback = $this->activeRecordFactory->getObjectLoaded('Ebay\Feedback', $feedbackId);
         $order = $feedback->getOrder();
 

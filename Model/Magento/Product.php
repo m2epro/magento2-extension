@@ -511,7 +511,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $storeIds = [(int)$storeId, \Magento\Store\Model\Store::DEFAULT_STORE_ID];
         $storeIds = array_unique($storeIds);
 
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->addFieldToFilter('entity_id', (int)$productId);
         $collection->joinTable(
@@ -1259,7 +1259,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     {
         $productObject = $this->getProduct();
 
-        /** @var $attribute \Magento\Eav\Model\Entity\Attribute\AbstractAttribute */
+        /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $attribute */
         $attribute = $productObject->getResource()->getAttribute($attributeCode);
 
         if (!$attribute) {
@@ -1281,7 +1281,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     {
         $productObject = $this->getProduct();
 
-        /** @var $attribute \Magento\Eav\Model\Entity\Attribute\AbstractAttribute */
+        /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $attribute */
         $attribute = $productObject->getResource()->getAttribute($attributeCode);
 
         if (!$attribute) {
@@ -1415,7 +1415,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $storeIds = [(int)$this->getStoreId(), \Magento\Store\Model\Store::DEFAULT_STORE_ID];
         $storeIds = array_unique($storeIds);
 
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->addFieldToFilter('entity_id', (int)$this->getProductId());
         $collection->joinTable(

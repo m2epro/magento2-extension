@@ -69,7 +69,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::class);
     }
 
     //########################################
@@ -87,7 +87,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
 
         if ($this->getVariationManager()->isRelationParentType()) {
             foreach ($this->getVariationManager()->getTypeModel()->getChildListingsProducts() as $child) {
-                /** @var $child \Ess\M2ePro\Model\Listing\Product */
+                /** @var \Ess\M2ePro\Model\Listing\Product $child */
                 if ($child->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED) {
                     return true;
                 }
@@ -110,7 +110,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
 
         if ($this->getVariationManager()->isRelationParentType()) {
             foreach ($this->getVariationManager()->getTypeModel()->getChildListingsProducts() as $child) {
-                /** @var $child \Ess\M2ePro\Model\Listing\Product */
+                /** @var \Ess\M2ePro\Model\Listing\Product $child */
                 $child->delete();
             }
         }
@@ -625,13 +625,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
                     ]
                 );
             }
-            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
             $variation = reset($variations);
 
             return $variation->getChildObject()->getQty($magentoMode);
         }
 
-        /** @var $calculator \Ess\M2ePro\Model\Walmart\Listing\Product\QtyCalculator */
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\QtyCalculator $calculator */
         $calculator = $this->modelFactory->getObject('Walmart_Listing_Product_QtyCalculator');
         $calculator->setProduct($this->getParentObject());
         $calculator->setIsMagentoMode($magentoMode);
@@ -659,7 +659,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
                     ]
                 );
             }
-            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
             $variation = reset($variations);
 
             return $variation->getChildObject()->getPrice();
@@ -667,7 +667,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
 
         $src = $this->getWalmartSellingFormatTemplate()->getPriceSource();
 
-        /** @var $calculator \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator */
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator $calculator */
         $calculator = $this->modelFactory->getObject('Walmart_Listing_Product_PriceCalculator');
         $calculator->setSource($src)->setProduct($this->getParentObject());
         $calculator->setCoefficient($this->getWalmartSellingFormatTemplate()->getPriceCoefficient());
@@ -695,7 +695,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
                 );
             }
 
-            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
             $variation = reset($variations);
 
             return $variation->getChildObject()->getMapPrice();
@@ -703,7 +703,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
 
         $src = $this->getWalmartSellingFormatTemplate()->getMapPriceSource();
 
-        /** @var $calculator \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator */
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator $calculator */
         $calculator = $this->modelFactory->getObject('Walmart_Listing_Product_PriceCalculator');
         $calculator->setSource($src)->setProduct($this->getParentObject());
 
@@ -732,7 +732,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
                     ]
                 );
             }
-            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
             $variation = reset($variations);
 
             return $variation->getChildObject()->getPromotions();
@@ -748,7 +748,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
 
         foreach ($promotions as $promotion) {
 
-            /** @var $priceCalculator \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator */
+            /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator $priceCalculator */
             $priceCalculator = $this->modelFactory->getObject('Walmart_Listing_Product_PriceCalculator');
             $priceCalculator->setSource($promotion->getPriceSource())->setProduct($this->getParentObject());
             $priceCalculator->setSourceModeMapping([
@@ -759,7 +759,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             $priceCalculator->setCoefficient($promotion->getPriceCoefficient());
             $priceCalculator->setVatPercent($this->getWalmartSellingFormatTemplate()->getPriceVatPercent());
 
-            /** @var $comparisonPriceCalculator \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator */
+            /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator $comparisonPriceCalculator */
             $comparisonPriceCalculator = $this->modelFactory->getObject('Walmart_Listing_Product_PriceCalculator');
             $comparisonPriceCalculator->setSource($promotion->getComparisonPriceSource())
                 ->setProduct($this->getParentObject());

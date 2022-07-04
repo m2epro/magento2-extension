@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated',
-            'Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping\Calculated'
+            \Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated::class,
+            \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping\Calculated::class
         );
     }
 

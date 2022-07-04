@@ -19,7 +19,18 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
     protected $showAdvancedFilterProductsOption = true;
     protected $useAdvancedFilter = true;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $backendHelper, $data);
+    }
 
     public function _construct()
     {
@@ -33,7 +44,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
         $this->setUseAjax(true);
         // ---------------------------------------
 
-        $this->isAjax = $this->getHelper('Data')->jsonEncode($this->getRequest()->isXmlHttpRequest());
+        $this->isAjax = $this->dataHelper->jsonEncode($this->getRequest()->isXmlHttpRequest());
     }
 
     //########################################
@@ -56,7 +67,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
             $collection->setStoreId(\Magento\Store\Model\Store::DEFAULT_STORE_ID);
         }
 
-        /** @var $ruleModel \Ess\M2ePro\Model\Magento\Product\Rule */
+        /** @var \Ess\M2ePro\Model\Magento\Product\Rule $ruleModel */
         $ruleModel = $this->getHelper('Data\GlobalData')->getValue('rule_model');
 
         if ($ruleModel !== null && $this->useAdvancedFilter) {
@@ -121,7 +132,7 @@ CSS
             return $this->hideMassactionColumn ? '' :  parent::getMassactionBlockHtml();
         }
 
-        $advancedFilterBlock = $this->createBlock('Listing_Product_Rule');
+        $advancedFilterBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\Product\Rule::class);
         $advancedFilterBlock->setShowHideProductsOption($this->showAdvancedFilterProductsOption);
         $advancedFilterBlock->setGridJsObjectName($this->getJsObjectName());
 
@@ -133,7 +144,7 @@ CSS
 
     public function callbackColumnProductTitle($value, $row, $column, $isExport)
     {
-        return $this->getHelper('Data')->escapeHtml($value);
+        return $this->dataHelper->escapeHtml($value);
     }
 
     public function callbackColumnIsInStock($value, $row, $column, $isExport)
@@ -213,7 +224,7 @@ CSS
                                            . ' advanced-filter-button-active';
             }
 
-            $buttonBlock = $this->createBlock('Magento\Button');
+            $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class);
             $buttonBlock->setData($buttonSettings);
             $this->setChild('advanced_filter_button', $buttonBlock);
         }
@@ -258,7 +269,7 @@ CSS
         // ---------------------------------------
 
         // ---------------------------------------
-        $isShowRuleBlock = $this->getHelper('Data')->jsonEncode($this->isShowRuleBlock());
+        $isShowRuleBlock = $this->dataHelper->jsonEncode($this->isShowRuleBlock());
 
         $this->js->add(<<<JS
         jQuery(function()
@@ -298,7 +309,7 @@ JS
         }
 
         // ---------------------------------------
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
 
         $this->jsTranslator->addTranslations([
             'Please select the Products you want to perform the Action on.' => $helper->escapeJs(
@@ -373,7 +384,7 @@ JS
             }
         }
 
-        /** @var $ruleModel \Ess\M2ePro\Model\Magento\Product\Rule */
+        /** @var \Ess\M2ePro\Model\Magento\Product\Rule $ruleModel */
         $ruleModel = $this->getHelper('Data\GlobalData')->getValue('rule_model');
 
         if ($advancedFilterName && $ruleModel) {

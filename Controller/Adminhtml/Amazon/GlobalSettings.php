@@ -17,7 +17,7 @@ class GlobalSettings extends Main
 
     public function execute()
     {
-        $this->addContent($this->createBlock('System_Config_Tabs'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\System\Config\Tabs::class));
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Global Settings'));
 
         return $this->getResult();

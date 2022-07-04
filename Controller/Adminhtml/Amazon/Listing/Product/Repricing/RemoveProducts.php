@@ -31,7 +31,7 @@ class RemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             return $this->_redirect($this->getUrl('*/amazon_listing/view', ['id' => $listingId]));
         }
 
-        /** @var $repricingAction \Ess\M2ePro\Model\Amazon\Repricing\Action\Product */
+        /** @var \Ess\M2ePro\Model\Amazon\Repricing\Action\Product $repricingAction */
         $repricingAction = $this->modelFactory->getObject('Amazon_Repricing_Action_Product');
         $repricingAction->setAccount($account);
         $response = $repricingAction->getActionResponseData($responseToken);
@@ -65,7 +65,7 @@ class RemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             $skus[] = $offer['sku'];
         }
 
-        /** @var $repricingSynchronization \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General */
+        /** @var \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General $repricingSynchronization */
         $repricingSynchronization = $this->modelFactory->getObject('Amazon_Repricing_Synchronization_General');
         $repricingSynchronization->setAccount($account);
         $repricingSynchronization->run($skus);

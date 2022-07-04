@@ -53,7 +53,7 @@ class AccessTokens extends \Ess\M2ePro\Model\Issue\Locator\AbstractModel
 
         $messagesData = $this->getHelper('Data_Cache_Permanent')->getValue(self::CACHE_KEY);
         if (empty($messagesData)) {
-            /** @var $accounts \Ess\M2ePro\Model\ResourceModel\Account\Collection */
+            /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accounts */
             $accounts = $this->ebayFactory->getObject('Account')->getCollection();
             $accounts->addFieldToFilter('token_session', ['notnull' => true]);
 

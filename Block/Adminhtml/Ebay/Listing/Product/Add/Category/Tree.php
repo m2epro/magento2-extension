@@ -8,23 +8,27 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree
- */
 class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
 {
     protected $selectedIds = [];
 
     /** @var string */
-    protected $gridId = null;
+    protected $gridId;
 
     /** @var \Magento\Framework\Data\Tree\Node */
-    protected $currentNode = null;
+    protected $currentNode;
 
+    /** @var \Magento\Framework\App\ResourceConnection  */
     protected $resourceConnection;
+
+    /** @var \Magento\Catalog\Model\ResourceModel\Category\TreeFactory  */
     protected $categoryTreeFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -34,6 +38,8 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
         \Magento\Catalog\Model\ResourceModel\Category\Tree $categoryTree,
         \Magento\Framework\Registry $registry,
         \Magento\Catalog\Model\CategoryFactory $categoryFactory,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->resourceConnection = $resourceConnection;
@@ -46,6 +52,8 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
             $categoryFactory,
             $data
         );
+        $this->databaseHelper = $databaseHelper;
+        $this->dataHelper = $dataHelper;
     }
 
     //########################################
@@ -242,7 +250,7 @@ HTML;
 
         $dbSelect = $collection->getConnection()->select()
              ->from(
-                 $this->getHelper('Module_Database_Structure')
+                 $this->databaseHelper
                      ->getTableNameWithPrefix('catalog_category_product'),
                  'category_id'
              )
@@ -274,7 +282,7 @@ HTML;
         $select = $collection->getSelect();
         $select->joinLeft(
             [
-                'ccp' => $this->getHelper('Module_Database_Structure')
+                'ccp' => $this->databaseHelper
                     ->getTableNameWithPrefix('catalog_category_product')
             ],
             "e.entity_id = ccp.category_id AND ccp.product_id IN ({$ids})",
@@ -312,7 +320,7 @@ HTML;
 
     public function getInfoJson()
     {
-        return $this->getHelper('Data')->jsonEncode([
+        return $this->dataHelper->jsonEncode([
             'category_products' => $this->getProductsCountForEachCategory(),
             'total_products_count' => count($this->getSelectedIds()),
             'total_categories_count' => $this->getAffectedCategoriesCount()
@@ -345,7 +353,7 @@ HTML;
         $select = $collection->getConnection()->select();
         $select->from(
             [
-                    'main_table' => $this->getHelper('Module_Database_Structure')
+                    'main_table' => $this->databaseHelper
                         ->getTableNameWithPrefix('catalog_category_product')
                 ],
             ['category_id', new \Zend_Db_Expr('COUNT(main_table.product_id)')]

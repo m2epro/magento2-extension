@@ -77,8 +77,8 @@ class Specific extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             return parent::getGridHtml();
         }
 
-        $viewHeaderBlock = $this->createBlock(
-            'Listing_View_Header',
+        $viewHeaderBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
             '',
             [
                 'data' => ['listing' => $this->listing]
@@ -106,7 +106,9 @@ HTML;
 
     private function getPopupsHtml()
     {
-        return $this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_WarningPopup')->toHtml();
+        return $this->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\WarningPopup::class)
+            ->toHtml();
     }
 
     //########################################

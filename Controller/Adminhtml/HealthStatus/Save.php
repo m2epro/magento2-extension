@@ -11,12 +11,22 @@ namespace Ess\M2ePro\Controller\Adminhtml\HealthStatus;
 use Ess\M2ePro\Controller\Adminhtml\HealthStatus;
 use Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\HealthStatus\Save
- */
 class Save extends HealthStatus
 {
-    //########################################
+    /** @var \Ess\M2ePro\Model\Config\Manager */
+    private $config;
+
+    /**
+     * @param \Ess\M2ePro\Model\Config\Manager $config
+     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
+     */
+    public function __construct(
+        \Ess\M2ePro\Model\Config\Manager $config,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+        $this->config = $config;
+    }
 
     public function execute()
     {
@@ -24,7 +34,7 @@ class Save extends HealthStatus
         $postData = $this->getRequest()->getPost()->toArray();
 
         if (isset($postData['notification_mode'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->config->setGroupValue(
                 '/health_status/notification/',
                 'mode',
                 (int)$postData['notification_mode']
@@ -32,7 +42,7 @@ class Save extends HealthStatus
         }
 
         if (isset($postData['notification_email'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->config->setGroupValue(
                 '/health_status/notification/',
                 'email',
                 $postData['notification_email']
@@ -40,7 +50,7 @@ class Save extends HealthStatus
         }
 
         if (isset($postData['notification_level'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->config->setGroupValue(
                 '/health_status/notification/',
                 'level',
                 (int)$postData['notification_level']
@@ -55,6 +65,4 @@ class Save extends HealthStatus
 
         $this->_redirect('*/*/index', $params);
     }
-
-    //########################################
 }

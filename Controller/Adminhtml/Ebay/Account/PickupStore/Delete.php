@@ -13,6 +13,21 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore;
  */
 class Delete extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 {
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $helperException;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Exception $helperException,
+        \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update $storeCategoryUpdate,
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($storeCategoryUpdate, $componentEbayCategoryStore, $ebayFactory, $context);
+
+        $this->helperException = $helperException;
+    }
+
     //########################################
 
     public function execute()
@@ -56,7 +71,7 @@ class Delete extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 
             $dispatcherObject->process($connectorObj);
         } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
+            $this->helperException->process($exception);
 
             $this->getMessageManager()->addErrorMessage($this->__(
                 'The Store has not been deleted. Reason: %error_message%',

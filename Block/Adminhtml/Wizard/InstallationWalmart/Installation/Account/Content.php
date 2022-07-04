@@ -12,21 +12,31 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Helper\Component\Walmart;
 use Ess\M2ePro\Model\Walmart\Account as WalmartAccount;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Wizard\InstallationWalmart\Installation\Account\Content
- */
 class Content extends AbstractForm
 {
     protected $walmartFactory;
 
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Component\Walmart */
+    private $walmartHelper;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         array $data = []
     ) {
         $this->walmartFactory = $walmartFactory;
+        $this->supportHelper = $supportHelper;
+        $this->walmartHelper = $walmartHelper;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -45,7 +55,7 @@ class Content extends AbstractForm
 </div>
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/hv1IB')
+                $this->supportHelper->getDocumentationArticleUrl('x/hv1IB')
             )
         );
 
@@ -103,7 +113,7 @@ HTML
             'link',
             [
                 'label'     => '',
-                'href'      => $this->getHelper('Component\Walmart')->getRegisterUrl($marketplaceCA),
+                'href'      => $this->walmartHelper->getRegisterUrl($marketplaceCA),
                 'target'    => '_blank',
                 'value'     => $this->__('Get Access Data'),
                 'class'     => "external-link",
@@ -115,7 +125,7 @@ HTML
             'link',
             [
                 'label'     => '',
-                'href'      => $this->getHelper('Component\Walmart')->getRegisterUrl($marketplaceUS),
+                'href'      => $this->walmartHelper->getRegisterUrl($marketplaceUS),
                 'target'    => '_blank',
                 'value'     => $this->__('Get Access Data'),
                 'class'     => "external-link",
@@ -178,11 +188,11 @@ HTML
             ]
         );
 
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(WalmartAccount::class));
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(Walmart::class));
+        $this->jsPhp->addConstants($this->dataHelper->getClassConstants(WalmartAccount::class));
+        $this->jsPhp->addConstants($this->dataHelper->getClassConstants(Walmart::class));
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Wizard\InstallationWalmart'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Account'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Wizard\InstallationWalmart'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart\Account'));
 
         $this->js->addRequireJs(
             [

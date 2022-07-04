@@ -8,47 +8,55 @@
 
 namespace Ess\M2ePro\Helper;
 
-/**
- * Class \Ess\M2ePro\Helper\Server
- */
-class Server extends \Ess\M2ePro\Helper\AbstractHelper
+class Server
 {
-    const MAX_INTERVAL_OF_RETURNING_TO_DEFAULT_BASEURL = 600;
+    private const MAX_INTERVAL_OF_RETURNING_TO_DEFAULT_BASEURL = 600;
 
-    protected $activeRecordFactory;
+    /** @var \Ess\M2ePro\Helper\Module */
+    protected $helperModule;
+    /** @var \Ess\M2ePro\Model\Registry\Manager */
+    private $registry;
+    /** @var \Ess\M2ePro\Model\Config\Manager */
+    private $config;
+    /** @var \Ess\M2ePro\Helper\Date */
+    private $dateHelper;
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    protected $helperData;
-
-    //########################################
-
+    /**
+     * @param \Ess\M2ePro\Helper\Date $dateHelper
+     * @param \Ess\M2ePro\Helper\Module $helperModule
+     * @param \Ess\M2ePro\Model\Registry\Manager $registry
+     * @param \Ess\M2ePro\Model\Config\Manager $config
+     */
     public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Data $helperData,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Helper\Date $dateHelper,
+        \Ess\M2ePro\Helper\Module $helperModule,
+        \Ess\M2ePro\Model\Registry\Manager $registry,
+        \Ess\M2ePro\Model\Config\Manager $config
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
-        $this->helperData = $helperData;
-        parent::__construct($helperFactory, $context);
+        $this->helperModule = $helperModule;
+        $this->registry = $registry;
+        $this->config = $config;
+        $this->dateHelper = $dateHelper;
     }
 
-    //########################################
-
-    public function getEndpoint()
+    /**
+     * @return string
+     */
+    public function getEndpoint(): string
     {
-        if ($this->getCurrentIndex() != $this->getDefaultIndex()) {
-            $currentTimeStamp = $this->helperData->getCurrentGmtDate(true);
+        if ($this->getCurrentIndex() !== $this->getDefaultIndex()) {
+            $currentTimeStamp = $this->dateHelper->getCurrentGmtDate(true);
 
             $interval = self::MAX_INTERVAL_OF_RETURNING_TO_DEFAULT_BASEURL;
 
-            $switchingDateTime = $this->getHelper('Module')->getRegistry()->getValue(
+            $switchingDateTime = $this->registry->getValue(
                 '/server/location/datetime_of_last_switching'
             );
 
-            if ($switchingDateTime === null ||
-                (int)$this->helperData->createGmtDateTime($switchingDateTime)->format('U') + $interval
-                    <= $currentTimeStamp
+            if (
+                $switchingDateTime === null
+                || (int)$this->dateHelper->createGmtDateTime($switchingDateTime)->format('U') + $interval
+                <= $currentTimeStamp
             ) {
                 $this->setCurrentIndex($this->getDefaultIndex());
             }
@@ -57,7 +65,10 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
         return $this->getCurrentBaseUrl() . '/index.php';
     }
 
-    public function switchEndpoint()
+    /**
+     * @return bool
+     */
+    public function switchEndpoint(): bool
     {
         $previousIndex = $this->getCurrentIndex();
         $nextIndex = $previousIndex + 1;
@@ -66,37 +77,40 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
             $nextIndex = 1;
         }
 
-        if ($nextIndex == $previousIndex) {
+        if ($nextIndex === $previousIndex) {
             return false;
         }
 
         $this->setCurrentIndex($nextIndex);
 
-        $this->getHelper('Module')->getRegistry()->setValue(
+        $this->registry->setValue(
             '/server/location/datetime_of_last_switching',
-            $this->helperData->getCurrentGmtDate()
+            $this->dateHelper->getCurrentGmtDate()
         );
 
         return true;
     }
 
-    //########################################
-
-    public function getApplicationKey()
+    /**
+     * @return string
+     */
+    public function getApplicationKey(): string
     {
-        return (string)$this->getHelper('Module')->getConfig()->getGroupValue('/server/', 'application_key');
+        return (string)$this->config->getGroupValue('/server/', 'application_key');
     }
 
-    //########################################
-
-    public function getCurrentHostName()
+    /**
+     * @return string|null
+     */
+    public function getCurrentHostName(): ?string
     {
         return $this->getHostNameByIndex($this->getCurrentIndex());
     }
 
-    // ---------------------------------------
-
-    private function getCurrentBaseUrl()
+    /**
+     * @return string
+     */
+    private function getCurrentBaseUrl(): string
     {
         $dbBaseUrl = $this->getBaseUrlByIndex($this->getCurrentIndex());
         $dbBaseUrl = str_replace('index.php', '', $dbBaseUrl);
@@ -104,9 +118,12 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
         return rtrim($dbBaseUrl, '/');
     }
 
-    private function getDefaultIndex()
+    /**
+     * @return int
+     */
+    private function getDefaultIndex(): int
     {
-        $index = (int)$this->getHelper('Module')->getConfig()->getGroupValue('/server/location/', 'default_index');
+        $index = (int)$this->config->getGroupValue('/server/location/', 'default_index');
 
         if ($index <= 0 || $index > $this->getMaxBaseUrlIndex()) {
             $this->setDefaultIndex($index = 1);
@@ -115,9 +132,12 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
         return $index;
     }
 
-    private function getCurrentIndex()
+    /**
+     * @return int
+     */
+    private function getCurrentIndex(): int
     {
-        $index = (int)$this->getHelper('Module')->getConfig()->getGroupValue('/server/location/', 'current_index');
+        $index = (int)$this->config->getGroupValue('/server/location/', 'current_index');
 
         if ($index <= 0 || $index > $this->getMaxBaseUrlIndex()) {
             $this->setCurrentIndex($index = $this->getDefaultIndex());
@@ -126,25 +146,34 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
         return $index;
     }
 
-    // ---------------------------------------
-
-    private function setDefaultIndex($index)
+    /**
+     * @param int $index
+     *
+     * @return void
+     */
+    private function setDefaultIndex(int $index): void
     {
-        $this->getHelper('Module')->getConfig()->setGroupValue('/server/location/', 'default_index', $index);
+        $this->config->setGroupValue('/server/location/', 'default_index', $index);
     }
 
-    private function setCurrentIndex($index)
+    /**
+     * @param int $index
+     *
+     * @return void
+     */
+    private function setCurrentIndex(int $index): void
     {
-        $this->getHelper('Module')->getConfig()->setGroupValue('/server/location/', 'current_index', $index);
+        $this->config->setGroupValue('/server/location/', 'current_index', $index);
     }
 
-    //########################################
-
-    private function getMaxBaseUrlIndex()
+    /**
+     * @return int
+     */
+    private function getMaxBaseUrlIndex(): int
     {
         $index = 1;
 
-        for ($tempIndex=2; $tempIndex<100; $tempIndex++) {
+        for ($tempIndex = 2; $tempIndex < 100; $tempIndex++) {
             $tempBaseUrl = $this->getBaseUrlByIndex($tempIndex);
 
             if ($tempBaseUrl !== null) {
@@ -157,15 +186,23 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
         return $index;
     }
 
-    private function getBaseUrlByIndex($index)
+    /**
+     * @param int $index
+     *
+     * @return string|null
+     */
+    private function getBaseUrlByIndex(int $index): ?string
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue('/server/location/'.$index.'/', 'baseurl');
+        return $this->config->getGroupValue('/server/location/' . $index . '/', 'baseurl');
     }
 
-    private function getHostNameByIndex($index)
+    /**
+     * @param int $index
+     *
+     * @return string|null
+     */
+    private function getHostNameByIndex(int $index): ?string
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue('/server/location/'.$index.'/', 'hostname');
+        return $this->config->getGroupValue('/server/location/' . $index . '/', 'hostname');
     }
-
-    //########################################
 }

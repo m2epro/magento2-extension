@@ -117,8 +117,7 @@ HTML;
 
     public function callbackActionDelete($value, $row, $column, $isExport)
     {
-        return $this
-            ->createBlock('Magento\Button')
+        return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
             ->setData([
                 'onclick' => 'EbayAccountObj.feedbacksDeleteAction(\''.$row->getData('id').'\');',
                 'label' => $this->__('Delete'),

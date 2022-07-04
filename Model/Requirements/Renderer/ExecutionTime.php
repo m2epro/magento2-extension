@@ -92,7 +92,7 @@ HTML;
         $testResultUrl = $this->urlBuilder->getUrl('*/support/testExecutionTimeResult');
         $knowledgeBaseUrl = $this->getHelper('Module\Support')->getKnowledgeBaseUrl('1535371');
 
-        $button = $this->layout->createBlock('Ess\M2ePro\Block\Adminhtml\Magento\Button')->setData([
+        $button = $this->layout->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->setData([
             'label'   => $helper->__('Check'),
             'class'   => 'delete',
             'onclick' => "openExecutionTimeTestPopup();"
@@ -107,28 +107,28 @@ function executionTimeTest(seconds)
     if (isNaN(seconds) || seconds <= 0) {
         return false;
     }
-    
+
     jQuery('#execution_time_modal').modal('closeModal');
-    
+
     new Ajax.Request('{$testUrl}', {
         method: 'post',
         asynchronous: true,
         parameters: { seconds: seconds },
         onComplete: function(transport) {
-            
+
             new Ajax.Request('{$testResultUrl}', {
                 method: 'post',
                 asynchronous: true,
                 onComplete: function(transport) {
                     require(['M2ePro/Plugin/Messages'], function (MessageObj) {
-                        
+
                         MessageObj.clearAll();
                         var response = transport.responseText.evalJSON();
                         if (typeof response['result'] === 'undefined') {
                             MessageObj.addError('{$helper->__('Something went wrong. Please try again later.')}');
                             return;
                         }
-                        
+
                         if (response['result'] < {$this->getCheckObject()->getMin()}) {
                             MessageObj.addWarning(
                                 '{$this->getTestWarningMessage()}'
@@ -167,7 +167,7 @@ function openExecutionTimeTestPopup()
             }
         ]
     });
-    
+
     popup.modal('openModal');
 }
 
@@ -191,13 +191,13 @@ HTML;
 <div style="margin-top: 10px;">
     {$helper->__(
         'Enter the time you want to test. The minimum required value is %min% sec.<br><br>
-        <strong>Note:</strong> Module interface will be unavailable during the check. 
+        <strong>Note:</strong> Module interface will be unavailable during the check.
         Synchronization processes won’t be affected.\'',
         $this->getCheckObject()->getMin()
     )}
     <br><br>
     <label>{$helper->__('Seconds')}</label>:&nbsp;
-    <input type="text" id="execution_time_value" value="{$this->getCheckObject()->getMin()}" 
+    <input type="text" id="execution_time_value" value="{$this->getCheckObject()->getMin()}"
     onchange="return checkExecutionTimeValue(this);" />
 </div>
 HTML
@@ -208,8 +208,8 @@ HTML
     {
         return $this->getHelper('Data')->escapeJs(
             $this->getHelper('Module\Translation')->__(
-                'Actual max execution time is %value% sec. 
-                The value must be increased on your server for the proper synchronization work. 
+                'Actual max execution time is %value% sec.
+                The value must be increased on your server for the proper synchronization work.
                 Read <a href="%url%" target="_blank">here</a> how to do it.'
             )
         );

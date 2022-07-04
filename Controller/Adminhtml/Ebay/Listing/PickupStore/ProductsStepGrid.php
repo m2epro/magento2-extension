@@ -18,7 +18,10 @@ class ProductsStepGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Pic
     public function execute()
     {
         $this->initListing();
-        $this->setAjaxContent($this->createBlock('Ebay_Listing_PickupStore_Step_Products_Grid'));
+        $this->setAjaxContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Step\Products\Grid::class)
+        );
         return $this->getResult();
     }
 

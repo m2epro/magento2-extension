@@ -57,7 +57,8 @@ class Order extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 
         // ---------------------------------------
 
-        $summary = $this->createBlock('Order_Log_Grid_LastActions')->setData([
+        $summary = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Log\Grid\LastActions::class)
+                                     ->setData([
             'entity_id' => $orderId,
             'logs'      => $orderLogsCollection->getItems(),
             'view_help_handler' => 'OrderObj.viewOrderHelp',

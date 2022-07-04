@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Amazon\Template\Synchronization',
-            'Ess\M2ePro\Model\ResourceModel\Amazon\Template\Synchronization'
+            \Ess\M2ePro\Model\Amazon\Template\Synchronization::class,
+            \Ess\M2ePro\Model\ResourceModel\Amazon\Template\Synchronization::class
         );
     }
 

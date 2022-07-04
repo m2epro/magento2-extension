@@ -18,8 +18,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     protected function _construct()
     {
         $this->_init(
-            'Ess\M2ePro\Model\Registry',
-            'Ess\M2ePro\Model\ResourceModel\Registry'
+            \Ess\M2ePro\Model\Registry::class,
+            \Ess\M2ePro\Model\ResourceModel\Registry::class
         );
     }
 

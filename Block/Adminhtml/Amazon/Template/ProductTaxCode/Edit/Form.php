@@ -10,12 +10,26 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductTaxCode\Edit;
 
 use Ess\M2ePro\Model\Amazon\Template\ProductTaxCode;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductTaxCode\Edit\Form
- */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    protected $magentoAttributeHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     protected function _prepareForm()
     {
@@ -31,13 +45,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $formData = array_merge($default, $formData);
 
-        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
-        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
-
-        $attributes = $magentoAttributeHelper->getAll();
-
+        $attributes = $this->magentoAttributeHelper->getAll();
         $attributesByInputTypes = [
-            'text_select' => $magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'select'])
+            'text_select' => $this->magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'select'])
         ];
 
         $form = $this->_formFactory->create([
@@ -155,10 +165,10 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class)
         );
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\ProductTaxCode::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\ProductTaxCode::class)
         );
 
         $this->jsUrl->addUrls([
@@ -179,7 +189,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 $this->__('The specified Title is already used for other Policy. Policy Title must be unique.'),
         ]);
 
-        $title = $this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeHtml($formData['title']));
+        $title = $this->dataHelper->escapeJs($this->dataHelper->escapeHtml($formData['title']));
 
         $this->js->add(<<<JS
     require([

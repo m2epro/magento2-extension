@@ -70,7 +70,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
             return $temp;
         }
 
-        /** @var $resource \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel */
+        /** @var \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel $resource */
         $resource = $this->getResource();
 
         $componentTable = $resource->getChildTable($this->childMode);
@@ -89,7 +89,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
 
     public function addItem(\Magento\Framework\DataObject $item)
     {
-        /** @var $item \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel */
+        /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel $item */
 
         if ($this->childMode === null) {
             return parent::addItem($item);
@@ -108,7 +108,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
 
     public function getFirstItem()
     {
-        /** @var $item \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel */
+        /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel $item */
         $item = parent::getFirstItem();
 
         if ($this->childMode === null) {
@@ -122,7 +122,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
 
     public function getLastItem()
     {
-        /** @var $item \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel */
+        /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel $item */
         $item = parent::getLastItem();
 
         if ($this->childMode === null) {
@@ -145,7 +145,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
         $modelName = str_replace('Ess\M2ePro\Model', ucwords($this->childMode), $this->_model);
         $childObject = $this->activeRecordFactory->getObject($modelName);
 
-        /** @var $resource \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel */
+        /** @var \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel $resource */
         $resource = $this->getResource();
 
         $childColumnsData = $this->getConnection()->describeTable($resource->getChildTable($this->childMode));

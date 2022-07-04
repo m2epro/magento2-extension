@@ -12,11 +12,29 @@ use Ess\M2ePro\Model\Ebay\Template\Synchronization;
 use Ess\M2ePro\Model\Template\Synchronization as TemplateSynchronization;
 use Magento\Framework\Message\MessageInterface;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs\RelistRules
- */
 class RelistRules extends AbstractTab
 {
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     protected function _prepareForm()
     {
         $default = $this->modelFactory->getObject('Ebay_Template_Synchronization_Builder')->getDefaultData();
@@ -44,8 +62,8 @@ class RelistRules extends AbstractTab
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/af8UB')
-                )
+                    $this->supportHelper->getDocumentationArticleUrl('x/af8UB')
+                ),
             ]
         );
 
@@ -53,7 +71,7 @@ HTML
             'magento_block_ebay_template_synchronization_form_data_relist_filters',
             [
                 'legend'      => $this->__('General'),
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -71,7 +89,7 @@ HTML
                 'tooltip' => $this->__(
                     'Choose whether you want to Relist Items covered by M2E Pro Listings using this
                     Policy if the Relist Conditions are met.'
-                )
+                ),
             ]
         );
 
@@ -90,7 +108,7 @@ HTML
                 'tooltip'      => $this->__(
                     'Choose whether you want the Automatic Relist Rules to Relist Items even
                     if they\'ve been Stopped manually.'
-                )
+                ),
             ]
         );
 
@@ -98,7 +116,7 @@ HTML
             'magento_block_ebay_template_synchronization_form_data_relist_rules',
             [
                 'legend'      => $this->__('Relist Conditions'),
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -116,9 +134,9 @@ HTML
                             will be <strong>Revised instead of  being Relisted</strong>
                             based on the Relist Conditions specifed below.
                         '
-                        )
+                        ),
                     ],
-                ]
+                ],
             ]
         );
 
@@ -139,7 +157,7 @@ HTML
                     Enabled in Magento Product. (Recommended)</p>
                     <p><strong>Any:</strong> Relist Items on eBay automatically with any
                     Magento Product status.</p>'
-                )
+                ),
             ]
         );
 
@@ -159,7 +177,7 @@ HTML
                     '<p><strong>In Stock:</strong> Relist Items automatically if Products are in Stock.
                     (Recommended)</p>
                     <p><strong>Any:</strong> Relist Items automatically regardless of Stock availability.</p>'
-                )
+                ),
             ]
         );
 
@@ -173,9 +191,9 @@ Disabling this option might affect actual product data updates.
 Please read <a href="%url%" target="_blank">this article</a> before disabling the option.
 HTML
                     ,
-                    $this->getHelper('Module_Support')->getKnowledgebaseUrl('1606824')
+                    $this->supportHelper->getKnowledgebaseUrl('1606824')
                 ),
-                'style' => 'display: none;'
+                'style' => 'display: none;',
             ]
         );
 
@@ -195,7 +213,7 @@ HTML
                     '<p><strong>Any:</strong> Relist Items automatically with any Quantity available.</p>
                     <p><strong>More or Equal:</strong> Relist Items automatically if the Quantity is at least equal
                     to the number you set, according to the Selling Policy. (Recommended)</p>'
-                )
+                ),
             ]
         )->setAfterElementHtml(
             <<<HTML
@@ -215,7 +233,7 @@ HTML
                 'tooltip'     => $this->__(
                     '<p>Define Magento Attribute value(s) based on which a product must be relisted on the Channel.<br>
                     Once both Relist Conditions and Advanced Conditions are met, the product will be relisted.</p>'
-                )
+                ),
             ]
         );
 
@@ -231,9 +249,9 @@ HTML
                         can have a negative impact on the Performance of your system.<br> It can decrease the
                         speed of running in case you have a lot of Products with the high number
                         of changes made to them.'
-                        )
-                    ]
-                ]
+                        ),
+                    ],
+                ],
             ]
         );
 
@@ -259,7 +277,8 @@ HTML
             $ruleModel->loadFromSerialized($formData['relist_advanced_rules_filters']);
         }
 
-        $ruleBlock = $this->createBlock('Magento_Product_Rule')->setData(['rule_model' => $ruleModel]);
+        $ruleBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule::class)
+                                       ->setData(['rule_model' => $ruleModel]);
 
         $fieldset->addField(
             'advanced_filter',

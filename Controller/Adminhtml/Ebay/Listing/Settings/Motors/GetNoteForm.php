@@ -18,7 +18,8 @@ class GetNoteForm extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\NoteForm $block */
-        $block = $this->createBlock('Ebay_Listing_View_Settings_Motors_Add_NoteForm');
+        $block = $this->getLayout()
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\NoteForm::class);
 
         $this->setAjaxContent($block);
 

@@ -30,7 +30,8 @@ class DescriptionTemplateAssignManually extends \Ess\M2ePro\Controller\Adminhtml
         $this->getHelper('Data\GlobalData')->setValue('listing_for_products_add', $listing);
 
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $grid = $this->createBlock('Amazon_Listing_Product_Add_NewAsin_Manual_Grid');
+            $grid = $this->getLayout()
+                    ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Manual\Grid::class);
             $this->setAjaxContent($grid);
 
             return $this->getResult();
@@ -41,7 +42,10 @@ class DescriptionTemplateAssignManually extends \Ess\M2ePro\Controller\Adminhtml
             $this->__('Set Description Policy for New ASIN/ISBN Creation')
         );
 
-        $this->addContent($this->createBlock('Amazon_Listing_Product_Add_NewAsin_Manual'));
+        $this->addContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Manual::class)
+        );
 
         return $this->getResult();
     }

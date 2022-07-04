@@ -8,17 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Log;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Order
- */
 abstract class Order extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 {
-    //########################################
-
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::walmart_sales_logs');
     }
-
-    //########################################
 }

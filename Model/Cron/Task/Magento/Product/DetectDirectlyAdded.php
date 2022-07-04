@@ -118,7 +118,7 @@ class DetectDirectlyAdded extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function getLastProductId()
     {
-        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /* @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->getSelect()->order('entity_id DESC')->limit(1);
@@ -127,7 +127,7 @@ class DetectDirectlyAdded extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function getProducts()
     {
-        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /* @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->addFieldToFilter('entity_id', ['gt' => (int)$this->getLastProcessedProductId()]);

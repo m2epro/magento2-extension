@@ -22,7 +22,7 @@ class GetCreateAttributeHtmlPopup extends General
         $post = $this->getRequest()->getPostValue();
 
         /** @var \Ess\M2ePro\Block\Adminhtml\General\CreateAttribute $block */
-        $block = $this->createBlock('General\CreateAttribute');
+        $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\General\CreateAttribute::class);
         $block->setData('handler_id', $post['handler_id']);
 
         if (isset($post['allowed_attribute_types'])) {

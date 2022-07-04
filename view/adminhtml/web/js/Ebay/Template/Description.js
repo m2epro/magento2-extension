@@ -80,6 +80,10 @@ define([
                 .observe('change', EbayTemplateDescriptionObj.watermark_mode_change)
                 .simulate('change');
 
+            $('watermark_transparent')
+                    .observe('change', EbayTemplateDescriptionObj.watermark_transparent_mode_change)
+                    .simulate('change');
+
             $('description_mode')
                 .observe('change', EbayTemplateDescriptionObj.description_mode_change)
                 .simulate('change');
@@ -250,6 +254,19 @@ define([
 
             self.setTextVisibilityMode(this, 'watermark_scale_container');
             self.setTextVisibilityMode(this, 'watermark_transparent_container');
+
+            if ($('watermark_transparent').value != M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::WATERMARK_TRANSPARENT_MODE_NO')) {
+                self.setTextVisibilityMode(this, 'watermark_opacity_level_container');
+            }
+        },
+
+        watermark_transparent_mode_change: function() {
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::WATERMARK_TRANSPARENT_MODE_NO')) {
+                $('watermark_opacity_level_container').hide();
+            }
+            else {
+                $('watermark_opacity_level_container').show();
+            }
         },
 
         watermark_scale_mode_change: function() {

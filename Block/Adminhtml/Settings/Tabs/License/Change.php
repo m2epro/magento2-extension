@@ -13,7 +13,24 @@ namespace Ess\M2ePro\Block\Adminhtml\Settings\Tabs\License;
  */
 class Change extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\License */
+    private $helperModuleLicense;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\License $helperModuleLicense,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->helperModuleLicense = $helperModuleLicense;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     protected function _prepareForm()
     {
@@ -27,7 +44,7 @@ class Change extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $fieldSet = $form->addFieldset('change_license', ['legend' => '', 'collapsable' => false]);
 
-        $key = $this->getHelper('Data')->escapeHtml($this->getHelper('Module\License')->getKey());
+        $key = $this->dataHelper->escapeHtml($this->helperModuleLicense->getKey());
         $fieldSet->addField(
             'new_license_key',
             'text',

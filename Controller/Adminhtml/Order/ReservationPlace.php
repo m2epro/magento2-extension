@@ -25,7 +25,7 @@ class ReservationPlace extends Order
             return;
         }
 
-        /** @var $orders \Ess\M2ePro\Model\Order[] */
+        /** @var \Ess\M2ePro\Model\Order[] $orders */
         $orders = $this->activeRecordFactory->getObject('Order')
             ->getCollection()
             ->addFieldToFilter('id', ['in' => $ids])

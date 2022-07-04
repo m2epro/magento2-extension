@@ -242,7 +242,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     {
         $sortedProducts = [];
 
-        /** @var $product \Ess\M2ePro\Model\Listing\Product */
+        /** @var \Ess\M2ePro\Model\Listing\Product $product */
         foreach ($products as $product) {
             $accountId = $product->getListing()->getAccountId();
             $sortedProducts[$accountId][] = $product;

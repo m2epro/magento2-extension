@@ -53,7 +53,7 @@ class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Requester
 
     protected function getValidatorObject()
     {
-        /** @var $obj \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction\Validator */
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction\Validator $obj */
         $obj = parent::getValidatorObject();
         $obj->setIsVerifyCall(true);
 
@@ -62,7 +62,7 @@ class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Requester
 
     protected function makeRequestObject()
     {
-        /** @var $obj \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction\Request */
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction\Request $obj */
         $obj = parent::makeRequestObject();
         $obj->setIsVerifyCall(true);
 

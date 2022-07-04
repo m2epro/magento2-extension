@@ -156,7 +156,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'width'        => '180px',
             'align'        => 'right',
             'type'         => 'datetime',
-            'filter'       => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+            'filter'       => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
             'index'        => 'time',
             'sortable'     => false,
             'format'       => \IntlDateFormatter::MEDIUM,
@@ -193,7 +193,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _toHtml()
     {
-        $help = $this->createBlock('HelpBlock');
+        $help = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class);
         $help->setData([
             'content' => $this->__(
                 'In this section you can see the list of all Bids for your Product sorted by

@@ -8,26 +8,27 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Group;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Group\Filters
- */
 class Filters extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     private $group;
     private $groupId;
 
+    /** @var \Magento\Framework\App\ResourceConnection  */
     private $resourceConnection;
 
-    //#########################################
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         array $data = []
     ) {
         $this->resourceConnection = $resourceConnection;
 
         parent::__construct($context, $data);
+        $this->databaseHelper = $databaseHelper;
     }
 
     //########################################
@@ -83,7 +84,7 @@ class Filters extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
         $collection->getSelect()->join(
             [
-                'ftg' => $this->getHelper('Module_Database_Structure')
+                'ftg' => $this->databaseHelper
                     ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group')
             ],
             'ftg.filter_id=main_table.id',

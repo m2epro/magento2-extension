@@ -13,7 +13,17 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Account;
  */
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Account\Switcher
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+        $this->dataHelper = $dataHelper;
+    }
 
     public function getSwitchCallback()
     {
@@ -26,10 +36,12 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Account\Switcher
             $marketplaces[$account->getId()] = $account->getChildObject()->getMarketplaceId();
         }
 
-        $encodedMarketplaces = $this->getHelper('Data')->jsonEncode($marketplaces);
+        $encodedMarketplaces = $this->dataHelper->jsonEncode($marketplaces);
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Marketplace\Switcher $marketplaceSwitcher */
-        $marketplaceSwitcher = $this->createBlock('Walmart_Marketplace_Switcher')->setData([
+        $marketplaceSwitcher = $this->getLayout()
+                                    ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Marketplace\Switcher::class)
+                                    ->setData([
             'component_mode' => $this->getData('component_mode')
         ]);
 

@@ -17,32 +17,35 @@ use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
  */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
-    const SPECIFICS_MODE_NOT_SET_REQUIRED     = 'not-set-required';
-    const SPECIFICS_MODE_NOT_SET_NOT_REQUIRED = 'not-set-not-required';
-    const SPECIFICS_MODE_DEFAULT              = 'default';
-    const SPECIFICS_MODE_CUSTOM               = 'custom';
+    public const SPECIFICS_MODE_NOT_SET_REQUIRED = 'not-set-required';
+    public const SPECIFICS_MODE_NOT_SET_NOT_REQUIRED = 'not-set-not-required';
+    public const SPECIFICS_MODE_DEFAULT = 'default';
+    public const SPECIFICS_MODE_CUSTOM = 'custom';
 
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
 
+    /** @var \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory */
     protected $customCollectionFactory;
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
     private $componentEbayCategoryEbay;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $backendHelper, $data);
-
         $this->customCollectionFactory = $customCollectionFactory;
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $backendHelper, $data);
     }
 
     //########################################
@@ -133,7 +136,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'width'     => '150px',
             'type'      => 'action',
             'index'     => 'actions',
-            'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
             'sortable'  => false,
             'filter'    => false,
             'no_link'   => true,
@@ -227,7 +230,7 @@ HTML;
         $isAllSelected = (int)!$this->isAllSpecificsSelected();
         $showErrorMessage = (int)!empty($categoriesData);
 
-        $categoriesData = $this->getHelper('Data')->jsonEncode($categoriesData);
+        $categoriesData = $this->dataHelper->jsonEncode($categoriesData);
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
                 <<<JS
@@ -244,12 +247,12 @@ JS
         }
 
         // ---------------------------------------
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions(
             'Ebay_Listing_Product_Category_Settings',
             ['_current' => true]
         ));
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay_Category', ['_current' => true]));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay_Category', ['_current' => true]));
 
         $this->jsUrl->add(
             $this->getUrl('*/ebay_listing_product_category_settings/save', ['_current' => true]),
@@ -265,7 +268,7 @@ JS
         ));
         // ---------------------------------------
 
-        $this->jsPhp->addConstants($this->getHelper('Data')
+        $this->jsPhp->addConstants($this->dataHelper
             ->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay\Category::class));
 
         if (!$this->getRequest()->isXmlHttpRequest()) {

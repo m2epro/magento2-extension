@@ -22,7 +22,11 @@ class GetErrorsSummary extends Listing
             'table_name' => $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getMainTable(),
             'type_log'   => 'listing'
         ];
-        $block = $this->createBlock('Listing_Log_ErrorsSummary', '', ['data' => $blockParams]);
+        $block = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Listing\Log\ErrorsSummary::class,
+            '',
+            ['data' => $blockParams]
+        );
         $this->setAjaxContent($block);
 
         return $this->getResult();

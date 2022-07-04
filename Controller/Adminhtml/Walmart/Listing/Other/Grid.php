@@ -8,14 +8,13 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other\Grid
- */
 class Grid extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other
 {
     public function execute()
     {
-        $this->setAjaxContent($this->createBlock('Walmart_Listing_Other_View_Grid'));
+        $this->setAjaxContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Other\View\Grid::class)
+        );
         return $this->getResult();
     }
 }

@@ -66,7 +66,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping::class);
     }
 
     //########################################
@@ -267,7 +267,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         );
 
         if ($asObjects) {
-            /** @var $service \Ess\M2ePro\Model\Ebay\Template\Shipping\Service */
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Shipping\Service $service */
             foreach ($services as $service) {
                 $service->setShippingTemplate($this);
             }
@@ -583,8 +583,8 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
         throw new \Ess\M2ePro\Model\Exception\Logic(
             $this->getHelper('Module\Translation')->__(
-                'Domestic or International Shipping Rate Table data is not found for this account. 
-                Make sure to <a href="%url%" target="_blank">download Rate Tables from eBay</a> 
+                'Domestic or International Shipping Rate Table data is not found for this account.
+                Make sure to <a href="%url%" target="_blank">download Rate Tables from eBay</a>
                 in the M2E Pro Shipping Policy.',
                 $this->getHelper('Module\Support')->getDocumentationArticleUrl(
                     "x/94FkB#eBayGuaranteedDelivery-HowtodownloadeBayShippingRateTablestoM2EPro?"
@@ -819,7 +819,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         $services = $this->getServices(true);
         foreach ($services as $service) {
 
-            /** @var $service \Ess\M2ePro\Model\Ebay\Template\Shipping\Service */
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Shipping\Service $service */
 
             if ($service->isShippingTypeLocal()) {
                 $returns[] = $service;
@@ -839,7 +839,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         $services = $this->getServices(true);
         foreach ($services as $service) {
 
-            /** @var $service \Ess\M2ePro\Model\Ebay\Template\Shipping\Service */
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Shipping\Service $service */
 
             if ($service->isShippingTypeInternational()) {
                 $returns[] = $service;

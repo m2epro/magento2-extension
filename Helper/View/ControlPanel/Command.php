@@ -8,42 +8,41 @@
 
 namespace Ess\M2ePro\Helper\View\ControlPanel;
 
-use Ess\M2ePro\Helper\Factory;
 use Ess\M2ePro\Helper\Module;
 
-/**
- * Class \Ess\M2ePro\Helper\View\ControlPanel\Command
- */
-class Command extends \Ess\M2ePro\Helper\AbstractHelper
+class Command
 {
-    //########################################
+    public const CONTROLLER_MODULE_INTEGRATION = 'controlPanel_module/integration';
+    public const CONTROLLER_MODULE_INTEGRATION_EBAY = 'controlPanel_module_integration/ebay';
+    public const CONTROLLER_MODULE_INTEGRATION_AMAZON = 'controlPanel_module_integration/amazon';
+    public const CONTROLLER_MODULE_INTEGRATION_WALMART = 'controlPanel_module_integration/walmart';
 
-    const CONTROLLER_MODULE_INTEGRATION         = 'controlPanel_module/integration';
-    const CONTROLLER_MODULE_INTEGRATION_EBAY    = 'controlPanel_module_integration/ebay';
-    const CONTROLLER_MODULE_INTEGRATION_AMAZON  = 'controlPanel_module_integration/amazon';
-    const CONTROLLER_MODULE_INTEGRATION_WALMART = 'controlPanel_module_integration/walmart';
+    public const CONTROLLER_TOOLS_M2EPRO_GENERAL = 'controlPanel_tools_m2ePro/general';
+    public const CONTROLLER_TOOLS_M2EPRO_INSTALL = 'controlPanel_tools_m2ePro/install';
+    public const CONTROLLER_TOOLS_MAGENTO = 'controlPanel_tools/magento';
+    public const CONTROLLER_TOOLS_ADDITIONAL = 'controlPanel_tools/additional';
 
-    const CONTROLLER_TOOLS_M2EPRO_GENERAL   = 'controlPanel_tools_m2ePro/general';
-    const CONTROLLER_TOOLS_M2EPRO_INSTALL   = 'controlPanel_tools_m2ePro/install';
-    const CONTROLLER_TOOLS_MAGENTO          = 'controlPanel_tools/magento';
-    const CONTROLLER_TOOLS_ADDITIONAL       = 'controlPanel_tools/additional';
-
+    /** @var \Magento\Backend\Model\Url */
     private $backendUrlBuilder;
 
-    //########################################
-
+    /**
+     * @param \Magento\Backend\Model\Url $backendUrlBuilder
+     */
     public function __construct(
-        \Magento\Backend\Model\Url $backendUrlBuilder,
-        Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Backend\Model\Url $backendUrlBuilder
     ) {
         $this->backendUrlBuilder = $backendUrlBuilder;
-        parent::__construct($helperFactory, $context);
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function parseGeneralCommandsData($controller)
+    /**
+     * @param string $controller
+     *
+     * @return array
+     * @throws \ReflectionException
+     */
+    public function parseGeneralCommandsData($controller): array
     {
         $tempClass = $this->getControllerClassName($controller);
 
@@ -56,11 +55,11 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
         foreach ($reflectionMethods as $reflectionMethod) {
             $methodName = $reflectionMethod->name;
 
-            if (substr($methodName, strlen($methodName)-6) != 'Action') {
+            if (substr($methodName, strlen($methodName) - 6) !== 'Action') {
                 continue;
             }
 
-            $methodName = substr($methodName, 0, strlen($methodName)-6);
+            $methodName = substr($methodName, 0, strlen($methodName) - 6);
 
             $actions[] = $methodName;
         }
@@ -71,7 +70,7 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
         $methods = [];
         foreach ($actions as $action) {
             $controllerName = $this->getControllerClassName($controller);
-            $reflectionMethod = new \ReflectionMethod($controllerName, $action.'Action');
+            $reflectionMethod = new \ReflectionMethod($controllerName, $action . 'Action');
 
             $commentsString = $this->getMethodComments($reflectionMethod);
 
@@ -95,7 +94,7 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
             $methodContent = '';
             $fileContent = file($reflectionMethod->getFileName());
             for ($i = $reflectionMethod->getStartLine() + 2; $i < $reflectionMethod->getEndLine(); $i++) {
-                $methodContent .= $fileContent[$i-1];
+                $methodContent .= $fileContent[$i - 1];
             }
 
             $methodNewLine = false;
@@ -124,29 +123,31 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
             isset($matches[0]) && $methodNewWindow = true;
 
             $methods[] = [
-                'invisible'      => $methodInvisible,
-                'title'          => $methodTitle,
-                'description'    => $methodDescription,
-                'url'            => $this->backendUrlBuilder->getUrl('*/'.$controller, ['action' => $action]),
-                'content'        => $methodContent,
-                'new_line'       => $methodNewLine,
-                'confirm'        => $methodConfirm,
+                'invisible'   => $methodInvisible,
+                'title'       => $methodTitle,
+                'description' => $methodDescription,
+                'url'         => $this->backendUrlBuilder->getUrl('*/' . $controller, ['action' => $action]),
+                'content'     => $methodContent,
+                'new_line'    => $methodNewLine,
+                'confirm'     => $methodConfirm,
                 'prompt'      => [
                     'text' => $methodPrompt,
-                    'var'  => $methodPromptVar
+                    'var'  => $methodPromptVar,
                 ],
                 'components'  => $methodComponents,
-                'new_window'  => $methodNewWindow
+                'new_window'  => $methodNewWindow,
             ];
         }
-        // ---------------------------------------
 
         return $methods;
     }
 
-    //########################################
-
-    public function getControllerClassName($controller)
+    /**
+     * @param string $controller
+     *
+     * @return string
+     */
+    public function getControllerClassName($controller): string
     {
         $controller = str_replace(['_', '/'], '\\', $controller);
 
@@ -154,20 +155,33 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
             return ucfirst($part);
         }, explode('\\', $controller));
 
-        return '\\'.str_replace('_', '\\', Module::IDENTIFIER).'\\Controller\\Adminhtml\\'.implode('\\', $controller);
+        return '\\'
+            . str_replace('_', '\\', Module::IDENTIFIER)
+            . '\\Controller\\Adminhtml\\'
+            . implode(
+                '\\',
+                $controller
+            );
     }
 
-    private function getMethodComments(\ReflectionMethod $reflectionMethod)
+    /**
+     * @param \ReflectionMethod $reflectionMethod
+     *
+     * @return string
+     */
+    private function getMethodComments(\ReflectionMethod $reflectionMethod): string
     {
         $contentPhpFile = file_get_contents($reflectionMethod->getFileName());
         $contentPhpFile = explode(chr(10), $contentPhpFile);
 
         $commentsArray = [];
-        for ($i=$reflectionMethod->getStartLine()-2; $i>0; $i--) {
+        for ($i = $reflectionMethod->getStartLine() - 2; $i > 0; $i--) {
             $contentPhpFile[$i] = trim($contentPhpFile[$i]);
             $commentsArray[] = $contentPhpFile[$i];
-            if ($contentPhpFile[$i] == '/**' ||
-                $contentPhpFile[$i] == '}') {
+            if (
+                $contentPhpFile[$i] === '/**' ||
+                $contentPhpFile[$i] === '}'
+            ) {
                 break;
             }
         }
@@ -177,6 +191,4 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
 
         return $commentsString;
     }
-
-    //########################################
 }

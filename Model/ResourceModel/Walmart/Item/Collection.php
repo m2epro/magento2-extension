@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Walmart\Item',
-            'Ess\M2ePro\Model\ResourceModel\Walmart\Item'
+            \Ess\M2ePro\Model\Walmart\Item::class,
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Item::class
         );
     }
 

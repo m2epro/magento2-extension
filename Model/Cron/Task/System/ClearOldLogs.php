@@ -27,7 +27,7 @@ class ClearOldLogs extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function performActions()
     {
-        /** @var $tempModel \Ess\M2ePro\Model\Log\Clearing */
+        /** @var \Ess\M2ePro\Model\Log\Clearing $tempModel */
         $tempModel = $this->modelFactory->getObject('Log\Clearing');
 
         $tempModel->clearOldRecords(\Ess\M2ePro\Model\Log\Clearing::LOG_LISTINGS);

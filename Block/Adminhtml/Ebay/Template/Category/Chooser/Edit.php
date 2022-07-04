@@ -46,8 +46,8 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
     protected function _toHtml()
     {
-        $tabsContainer = $this->createBlock(
-            'Ebay_Template_Category_Chooser_Tabs',
+        $tabsContainer = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Tabs::class,
             '',
             ['category_type' => $this->getCategoryType()]
         );

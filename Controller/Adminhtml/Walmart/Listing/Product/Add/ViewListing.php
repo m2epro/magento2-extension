@@ -8,12 +8,20 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add\ViewListing
- */
 class ViewListing extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->sessionHelper = $sessionHelper;
+    }
 
     public function execute()
     {
@@ -23,12 +31,10 @@ class ViewListing extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Produ
             return $this->_redirect('*/walmart_listing/index');
         }
 
-        $this->getHelper('Data\Session')->setValue('temp_products', []);
+        $this->sessionHelper->setValue('temp_products', []);
 
         return $this->_redirect('*/walmart_listing/view', [
             'id' => $listingId
         ]);
     }
-
-    //########################################
 }

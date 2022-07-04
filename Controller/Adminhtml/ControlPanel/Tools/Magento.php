@@ -16,19 +16,30 @@ class Magento extends Command
     protected $fullModuleList;
     protected $moduleList;
     protected $packageInfo;
+    /** @var \Ess\M2ePro\Helper\Magento\Plugin */
+    protected $magentoPluginHelper;
+    /** @var \Ess\M2ePro\Helper\Client\Cache */
+    private $clientCacheHelper;
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\View\ControlPanel $controlPanelHelper,
+        \Ess\M2ePro\Helper\Client\Cache $clientCacheHelper,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
         Context $context,
         \Magento\Framework\Module\FullModuleList $fullModuleList,
         \Magento\Framework\Module\ModuleList $moduleList,
         \Magento\Framework\Module\PackageInfo $packageInfo,
-        \Magento\Framework\Interception\PluginListInterface $pluginList
+        \Ess\M2ePro\Helper\Magento\Plugin $magentoPluginHelper
     ) {
         parent::__construct($controlPanelHelper, $context);
         $this->fullModuleList = $fullModuleList;
-        $this->moduleList     = $moduleList;
-        $this->packageInfo    = $packageInfo;
+        $this->moduleList = $moduleList;
+        $this->packageInfo = $packageInfo;
+        $this->magentoPluginHelper = $magentoPluginHelper;
+        $this->clientCacheHelper = $clientCacheHelper;
+        $this->magentoHelper = $magentoHelper;
     }
 
     /**
@@ -37,7 +48,7 @@ class Magento extends Command
      */
     public function showEventObserversAction()
     {
-        $eventObservers = $this->getHelper('Magento')->getAllEventObservers();
+        $eventObservers = $this->magentoHelper->getAllEventObservers();
 
         $html = $this->getStyleHtml();
 
@@ -63,7 +74,7 @@ HTML;
             $areaRowSpan = count($areaEvents, COUNT_RECURSIVE) - count($areaEvents);
 
             $html .= '<tr>';
-            $html .= '<td valign="top" rowspan="'.$areaRowSpan.'">'.$area.'</td>';
+            $html .= '<td valign="top" rowspan="' . $areaRowSpan . '">' . $area . '</td>';
 
             foreach ($areaEvents as $eventName => $eventData) {
                 if (empty($eventData)) {
@@ -72,7 +83,7 @@ HTML;
 
                 $eventRowSpan = count($eventData);
 
-                $html .= '<td rowspan="'.$eventRowSpan.'">'.$eventName.'</td>';
+                $html .= '<td rowspan="' . $eventRowSpan . '">' . $eventName . '</td>';
 
                 $isFirstObserver = true;
                 foreach ($eventData as $observer) {
@@ -80,7 +91,7 @@ HTML;
                         $html .= '<tr>';
                     }
 
-                    $html .= '<td>'.$observer.'</td>';
+                    $html .= '<td>' . $observer . '</td>';
                     $html .= '</tr>';
 
                     $isFirstObserver = false;
@@ -164,7 +175,7 @@ HTML;
     </tr>
 
 HTML;
-        $fullPluginsList = $this->getHelper('Magento\Plugin')->getAll();
+        $fullPluginsList = $this->magentoPluginHelper->getAll();
         ksort($fullPluginsList);
 
         foreach ($fullPluginsList as $targetModel => $pluginsList) {
@@ -173,7 +184,7 @@ HTML;
             foreach ($pluginsList as $pluginIndex => $plugin) {
                 $methods = implode(', ', $plugin['methods']);
                 $status = $plugin['disabled'] ? '<span style="color: orangered">Disabled</span>'
-                                              : '<span style="color: forestgreen">Enabled</span>';
+                    : '<span style="color: forestgreen">Enabled</span>';
 
                 if ($pluginIndex == 0) {
                     $html .= <<<HTML
@@ -200,6 +211,7 @@ HTML;
 
         return str_replace('#count#', count($fullPluginsList), $html);
     }
+
     /**
      * @title "Clear Cache"
      * @description "Clear magento cache"
@@ -207,7 +219,7 @@ HTML;
      */
     public function clearMagentoCacheAction()
     {
-        $this->getHelper('Magento')->clearCache();
+        $this->magentoHelper->clearCache();
         $this->getMessageManager()->addSuccess('Magento cache was cleared.');
         $this->_redirect($this->controlPanelHelper->getPageModuleTabUrl());
     }
@@ -220,27 +232,31 @@ HTML;
     {
         $messages = [];
 
-        if (!$this->getHelper('Client\Cache')->isApcAvailable() &&
-            !$this->getHelper('Client\Cache')->isZendOpcacheAvailable()) {
+        if (
+            !$this->clientCacheHelper->isApcAvailable()
+            && !$this->clientCacheHelper->isZendOpcacheAvailable()
+        ) {
             $this->getMessageManager()->addError('Opcode extensions are not installed.');
+
             return $this->_redirect($this->controlPanelHelper->getPageModuleTabUrl());
         }
 
-        if ($this->getHelper('Client\Cache')->isApcAvailable()) {
+        if ($this->clientCacheHelper->isApcAvailable()) {
             $messages[] = 'APC opcode';
             apc_clear_cache('system');
         }
 
-        if ($this->getHelper('Client\Cache')->isZendOpcacheAvailable()) {
+        if ($this->clientCacheHelper->isZendOpcacheAvailable()) {
             $messages[] = 'Zend Optcache';
             opcache_reset();
         }
 
         $this->getMessageManager()->addSuccess(implode(' and ', $messages) . ' caches are cleared.');
+
         return $this->_redirect($this->controlPanelHelper->getPageModuleTabUrl());
     }
 
-    //########################################
+    // ----------------------------------------
 
     private function getEmptyResultsHtml($messageText)
     {
@@ -253,6 +269,4 @@ HTML;
 </h2>
 HTML;
     }
-
-    //########################################
 }

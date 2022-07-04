@@ -8,12 +8,19 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Create
- */
 class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -63,7 +70,7 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
     protected function _toHtml()
     {
-        $helpBlock = $this->createBlock('HelpBlock')->setData(
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData(
             [
                 'content' => $this->__(
                     'On this page, you can configure the basic Listing settings. Specify the meaningful Listing Title for
@@ -71,7 +78,7 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 Select Account under which you want to manage this Listing. Assign the Policy Templates and
                 Magento Store View.<br/><br/>
                 <p>The detailed information can be found <a href="%url%" target="_blank">here</a></p>',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Xf1IB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/Xf1IB')
                 )
             ]
         );

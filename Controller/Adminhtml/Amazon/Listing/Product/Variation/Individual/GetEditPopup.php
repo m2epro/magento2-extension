@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Individual;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
-
+use Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Individual\Edit;
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Individual\GetEditPopup
  */
@@ -28,8 +28,9 @@ class GetEditPopup extends Main
             return $this->getResult();
         }
 
-        $variationEditBlock = $this->createBlock('Amazon_Listing_Product_Variation_Individual_Edit')
-            ->setData('listing_product_id', $listingProductId);
+        $variationEditBlock = $this->getLayout()
+                                   ->createBlock(Edit::class)
+                                   ->setData('listing_product_id', $listingProductId);
 
         $this->setJsonContent([
             'type' => 'success',

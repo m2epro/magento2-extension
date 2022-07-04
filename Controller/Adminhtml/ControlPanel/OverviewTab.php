@@ -19,7 +19,7 @@ class OverviewTab extends Main
 {
     public function execute()
     {
-        $block = $this->createBlock('ControlPanel_Tabs_Overview', '');
+        $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Overview::class, '');
         $this->setAjaxContent($block);
 
         return $this->getResult();

@@ -8,14 +8,19 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode\Category;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode\Category\Form
- */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\AbstractForm
 {
     public $showCreateNewAsin = 0;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $formFactory, $dataHelper, $data);
+    }
 
     public function _construct()
     {
@@ -70,7 +75,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
 
         $fieldSet->addField(
             'adding_mode',
-            'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select',
+            \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select::class,
             [
                 'name' => 'adding_mode',
                 'label' => $this->__('Product Assigned to Categories'),
@@ -87,7 +92,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
 
         $fieldSet->addField(
             'adding_add_not_visible',
-            'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select',
+            \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select::class,
             [
                 'name' => 'adding_add_not_visible',
                 'label' => $this->__('Add not Visible Individually Products'),
@@ -198,7 +203,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
 
         $fieldSet->addField(
             'deleting_mode',
-            'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select',
+            \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select::class,
             [
                 'name' => 'deleting_mode',
                 'label' => $this->__('Product Deleted from Categories'),
@@ -238,7 +243,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Amazon\Listing::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Amazon\Listing::class)
         );
 
         $this->js->add(<<<JS

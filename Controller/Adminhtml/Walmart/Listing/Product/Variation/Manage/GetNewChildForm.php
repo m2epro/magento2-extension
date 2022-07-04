@@ -8,11 +8,9 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Manage;
 
+use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Variations\NewChild\Form;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Manage\GetNewChildForm
- */
 class GetNewChildForm extends Main
 {
     public function execute()
@@ -23,7 +21,7 @@ class GetNewChildForm extends Main
             return $this->getResponse()->setBody('You should provide correct parameters.');
         }
 
-        $form = $this->createBlock('Walmart_Listing_Product_Variation_Manage_Tabs_Variations_NewChild_Form');
+        $form = $this->getLayout()->createBlock(Form::class);
         $form->setListingProduct($this->walmartFactory->getObjectLoaded('Listing\Product', $productId));
 
         $this->setAjaxContent($form);

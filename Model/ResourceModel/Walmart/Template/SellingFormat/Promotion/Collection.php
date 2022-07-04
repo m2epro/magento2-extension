@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion',
-            'Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat\Promotion'
+            \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion::class,
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat\Promotion::class
         );
     }
 

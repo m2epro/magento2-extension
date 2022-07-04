@@ -65,7 +65,7 @@ class SellerOrderId extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function performActions()
     {
-        /** @var $accounts \Ess\M2ePro\Model\ResourceModel\Amazon\Account\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Account\Collection $accounts */
         $accounts = $this->parentFactory->getObject(
             \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'Account'
@@ -76,7 +76,7 @@ class SellerOrderId extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $enabledMerchantIds = [];
 
         foreach ($accounts->getItems() as $account) {
-            /** @var $account \Ess\M2ePro\Model\Account */
+            /** @var \Ess\M2ePro\Model\Account $account */
 
             if ($account->getChildObject()->isMagentoOrdersNumberApplyToAmazonOrderEnable()) {
                 $enabledAccountIds[] = $account->getId();
@@ -98,7 +98,7 @@ class SellerOrderId extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $enabledMerchantIds = array_unique($enabledMerchantIds);
 
         foreach ($enabledMerchantIds as $enabledMerchantId) {
-            /** @var $ordersCollection \Ess\M2ePro\Model\ResourceModel\Order\Collection */
+            /** @var \Ess\M2ePro\Model\ResourceModel\Order\Collection $ordersCollection */
             $ordersCollection = $this->parentFactory->getObject(
                 \Ess\M2ePro\Helper\Component\Amazon::NICK,
                 'Order'
@@ -194,7 +194,7 @@ class SellerOrderId extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                         $this->getHelper('Module\Translation')->__(
                             'Magento Order number has been set as Your Seller Order ID in Amazon Order details.'
                         ),
-                        \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
+                        \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
                     );
                 }
             }

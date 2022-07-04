@@ -8,12 +8,19 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Category
- */
 class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $data);
+    }
 
     protected function _construct()
     {
@@ -47,7 +54,7 @@ Any changes you make on this page will affect M2E Pro Listings where these Categ
 Read the <a href="%url%" target="_blank">article</a> to learn how to manage eBay Categories.
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/c4FkB')
+                $this->supportHelper->getDocumentationArticleUrl('x/c4FkB')
             )
         ]);
 

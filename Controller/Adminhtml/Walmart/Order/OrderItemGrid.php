@@ -26,7 +26,9 @@ class OrderItemGrid extends Order
 
         $this->getHelper('Data\GlobalData')->setValue('order', $order);
 
-        $this->setAjaxContent($this->createBlock('Walmart_Order_View_Item'));
+        $this->setAjaxContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Order\View\Item::class)
+        );
 
         return $this->getResult();
     }

@@ -31,9 +31,13 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs $tabsBlock */
-        $tabsBlock = $this->createBlock('Ebay_Settings_Tabs', '', ['data' => [
+        $tabsBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs::class,
+            '',
+            ['data' => [
             'active_tab' => $activeTab
-        ]]);
+            ]]
+        );
 
         if ($this->isAjax()) {
             $this->setAjaxContent(
@@ -44,7 +48,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
         }
 
         $this->addLeft($tabsBlock);
-        $this->addContent($this->createBlock('Ebay\Settings'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Settings::class));
 
         $this->setPageHelpLink('x/3AY3B');
 

@@ -8,12 +8,29 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\Cron
- */
 class Cron extends AbstractInspection
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Cron */
+    protected $cronHelper;
+
+    /** @var \Ess\M2ePro\Model\Config\Manager */
+    private $config;
+
+    /**
+     * @param \Ess\M2ePro\Model\Config\Manager $config
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Cron $cronHelper,
+        \Ess\M2ePro\Model\Config\Manager $config,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        array $data = []
+    ) {
+        $this->cronHelper = $cronHelper;
+        $this->config = $config;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -23,26 +40,24 @@ class Cron extends AbstractInspection
         $this->setTemplate('control_panel/inspection/cron.phtml');
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function _beforeToHtml()
     {
-        $modConfig = $this->getHelper('Module')->getConfig();
-
         $this->cronLastRunTime = 'N/A';
         $this->cronIsNotWorking = false;
-        $this->cronCurrentRunner = ucwords(str_replace('_', ' ', $this->getHelper('Module\Cron')->getRunner()));
-        $this->cronServiceAuthKey = $modConfig->getGroupValue('/cron/service/', 'auth_key');
+        $this->cronCurrentRunner = ucwords(str_replace('_', ' ', $this->cronHelper->getRunner()));
+        $this->cronServiceAuthKey = $this->config->getGroupValue('/cron/service/', 'auth_key');
 
-        $cronLastRunTime = $this->getHelper('Module\Cron')->getLastRun();
+        $cronLastRunTime = $this->cronHelper->getLastRun();
         if ($cronLastRunTime !== null) {
             $this->cronLastRunTime = $cronLastRunTime;
-            $this->cronIsNotWorking = $this->getHelper('Module\Cron')->isLastRunMoreThan(1, true);
+            $this->cronIsNotWorking = $this->cronHelper->isLastRunMoreThan(1, true);
         }
 
-        $this->isMagentoCronDisabled    = (bool)(int)$modConfig->getGroupValue('/cron/magento/', 'disabled');
-        $this->isControllerCronDisabled = (bool)(int)$modConfig->getGroupValue('/cron/service_controller/', 'disabled');
-        $this->isPubCronDisabled        = (bool)(int)$modConfig->getGroupValue('/cron/service_pub/', 'disabled');
+        $this->isMagentoCronDisabled    = (bool)(int)$this->config->getGroupValue('/cron/magento/', 'disabled');
+        $this->isControllerCronDisabled = (bool)(int)$this->config->getGroupValue('/cron/service_controller/', 'disabled');
+        $this->isPubCronDisabled        = (bool)(int)$this->config->getGroupValue('/cron/service_pub/', 'disabled');
 
         return parent::_beforeToHtml();
     }
@@ -55,7 +70,7 @@ class Cron extends AbstractInspection
             return false;
         }
 
-        if ($this->getHelper('Module\Cron')->isRunnerService() && !$this->cronIsNotWorking) {
+        if ($this->cronHelper->isRunnerService() && !$this->cronIsNotWorking) {
             return true;
         }
 

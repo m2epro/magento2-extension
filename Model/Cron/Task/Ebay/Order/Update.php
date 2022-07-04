@@ -58,7 +58,7 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         foreach ($permittedAccounts as $account) {
-            /** @var $account \Ess\M2ePro\Model\Account **/
+            /** @var \Ess\M2ePro\Model\Account $account **/
 
             $this->getOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
 
@@ -80,7 +80,7 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function getPermittedAccounts()
     {
-        /** @var $accountsCollection \Ess\M2ePro\Model\ResourceModel\Account\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
         $accountsCollection = $this->parentFactory->getObject(
             \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'Account'

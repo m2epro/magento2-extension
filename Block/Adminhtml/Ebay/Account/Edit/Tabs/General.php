@@ -16,28 +16,58 @@ use Ess\M2ePro\Model\Ebay\Account;
  */
 class General extends AbstractForm
 {
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay */
+    private $ebayHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Component\Ebay $ebayHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->sessionHelper = $sessionHelper;
+        $this->dataHelper = $dataHelper;
+        $this->ebayHelper = $ebayHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     protected function _prepareForm()
     {
-        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
+        $account = $this->globalDataHelper->getValue('edit_account');
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         $ebayUserId = null;
         if (empty($formData['user_id']) && isset($formData['info']) &&
-            $ebayInfo = $this->getHelper('Data')->jsonDecode($formData['info'])
+            $ebayInfo = $this->dataHelper->jsonDecode($formData['info'])
         ) {
             !empty($ebayInfo['UserID']) && $formData['user_id'] = (string)$ebayInfo['UserID'];
         }
 
-        $temp = $this->getHelper('Data\Session')->getValue('get_token_account_title', true);
+        $temp = $this->sessionHelper->getValue('get_token_account_title', true);
         $temp !== null && $formData['title'] = $temp;
 
-        $temp = $this->getHelper('Data\Session')->getValue('get_token_account_mode', true);
+        $temp = $this->sessionHelper->getValue('get_token_account_mode', true);
         $temp !== null && $formData['mode'] = $temp;
 
-        $temp = $this->getHelper('Data\Session')->getValue('get_token_account_token_session', true);
+        $temp = $this->sessionHelper->getValue('get_token_account_token_session', true);
         $temp !== null && $formData['token_session'] = $temp;
 
-        $temp = $this->getHelper('Data\Session')->getValue('get_sell_api_token_account_token_session', true);
+        $temp = $this->sessionHelper->getValue('get_sell_api_token_account_token_session', true);
         $temp !== null && $formData['sell_api_token_session'] = $temp;
 
         $defaults = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
@@ -72,7 +102,7 @@ If your token has expired or is not activated, click <b>Get Token</b>.<br/><br/>
 More detailed information about ability to work with this Page you can find
 <a href="%url%" target="_blank" class="external-link">here</a>.
 HTML
-                , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Uv8UB'));
+                , $this->supportHelper->getDocumentationArticleUrl('x/Uv8UB'));
         }
 
         $form->addField(
@@ -120,7 +150,7 @@ HTML
                     [
                         'label' => $this->__('eBay User ID'),
                         'value' => $formData['user_id'],
-                        'href' => $this->getHelper('Component\Ebay')->getMemberUrl(
+                        'href' => $this->ebayHelper->getMemberUrl(
                             $formData['user_id'],
                             $formData['mode']
                         ),
@@ -314,23 +344,23 @@ HTML
 
         $this->setForm($form);
 
-        $this->js->add("M2ePro.formData.mode = '" . $this->getHelper('Data')->escapeJs($formData['mode']) . "';");
+        $this->js->add("M2ePro.formData.mode = '" . $this->dataHelper->escapeJs($formData['mode']) . "';");
         $this->js->add(
             "M2ePro.formData.token_session
-             = '" . $this->getHelper('Data')->escapeJs($formData['token_session']) . "';"
+             = '" . $this->dataHelper->escapeJs($formData['token_session']) . "';"
         );
         $this->js->add(
             "M2ePro.formData.token_expired_date
-            = '" . $this->getHelper('Data')->escapeJs($formData['token_expired_date']) . "';"
+            = '" . $this->dataHelper->escapeJs($formData['token_expired_date']) . "';"
         );
 
         $this->js->add(
             "M2ePro.formData.sell_api_token_session
-             = '" . $this->getHelper('Data')->escapeJs($formData['sell_api_token_session']) . "';"
+             = '" . $this->dataHelper->escapeJs($formData['sell_api_token_session']) . "';"
         );
         $this->js->add(
             "M2ePro.formData.sell_api_token_expired_date
-            = '" . $this->getHelper('Data')->escapeJs($formData['sell_api_token_expired_date']) . "';"
+            = '" . $this->dataHelper->escapeJs($formData['sell_api_token_expired_date']) . "';"
         );
 
         $id = $this->getRequest()->getParam('id');
@@ -354,7 +384,7 @@ JS
     public function isSellApiMode()
     {
         /** @var \Ess\M2ePro\Model\Account $account */
-        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
+        $account = $this->globalDataHelper->getValue('edit_account');
 
         if (empty($account) || !$account->getId()) {
             return $this->getRequest()->getParam('sell_api', false);

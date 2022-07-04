@@ -215,7 +215,7 @@ class PhysicalUnit extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Ma
     private function removeStructure()
     {
         foreach ($this->getListingProduct()->getVariations(true) as $variation) {
-            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
             $variation->delete();
         }
     }
@@ -252,7 +252,7 @@ class PhysicalUnit extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Ma
                             ->getItems();
 
         foreach ($items as $item) {
-            /** @var $item \Ess\M2ePro\Model\Amazon\Item */
+            /** @var \Ess\M2ePro\Model\Amazon\Item $item */
             $item->delete();
         }
     }

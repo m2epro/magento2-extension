@@ -10,20 +10,25 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors;
 
 class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
-    private $motorsType = null;
-    private $productGridId = null;
+    private $motorsType;
+    private $productGridId;
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
     private $componentEbayMotors;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
 
         $this->componentEbayMotors = $componentEbayMotors;
+        $this->dataHelper = $dataHelper;
     }
 
     public function _construct()
@@ -40,7 +45,8 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
         //------------------------------
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Tabs $tabsBlock */
-        $tabsBlock = $this->createBlock('Ebay_Listing_View_Settings_Motors_Add_Tabs');
+        $tabsBlock = $this->getLayout()
+                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Tabs::class);
         $tabsBlock->setMotorsType($this->getMotorsType());
         $this->setChild('motor_add_tabs', $tabsBlock);
         //------------------------------
@@ -53,7 +59,7 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
             'class' => 'action-primary disabled',
             'onclick' => 'EbayListingViewSettingsMotorsObj.updateMotorsData(0);'
         ];
-        $closeBtn = $this->createBlock('Magento\Button')->setData($data);
+        $closeBtn = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->setData($data);
         $this->setChild('motor_add_btn', $closeBtn);
         //------------------------------
 
@@ -64,16 +70,16 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
             'class' => 'action-primary disabled',
             'onclick' => 'EbayListingViewSettingsMotorsObj.updateMotorsData(1);'
         ];
-        $closeBtn = $this->createBlock('Magento\Button')->setData($data);
+        $closeBtn = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->setData($data);
         $this->setChild('motor_override_btn', $closeBtn);
         //------------------------------
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay\Motors::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay\Motors::class)
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Motor\Group::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Ebay\Motor\Group::class)
         );
 
         $this->jsTranslator->addTranslations([

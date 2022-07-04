@@ -13,9 +13,6 @@ use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Par
 use Ess\M2ePro\Model\Walmart\Template\ChangeProcessor\ChangeProcessorAbstract;
 use Ess\M2ePro\Model\Walmart\Template\Description\ChangeProcessor;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Manage\SetSwatchImagesAttribute
- */
 class SetSwatchImagesAttribute extends Main
 {
     public function execute()

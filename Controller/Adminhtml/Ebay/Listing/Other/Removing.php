@@ -30,7 +30,7 @@ class Removing extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
         }
 
         foreach ($productArray as $productId) {
-            /** @var $listingOther \Ess\M2ePro\Model\Listing\Other */
+            /** @var \Ess\M2ePro\Model\Listing\Other $listingOther */
             $listingOther = $this->ebayFactory->getObjectLoaded(
                 'Listing\Other',
                 $productId

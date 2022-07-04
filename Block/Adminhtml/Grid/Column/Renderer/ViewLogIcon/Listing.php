@@ -11,9 +11,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewLogIcon;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Model\Listing\Log;
 
-/**
- * Class  \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewLogIcon\Listing
- */
 class Listing extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 {
     use Traits\BlockTrait;
@@ -27,13 +24,15 @@ class Listing extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    protected $translationHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Backend\Block\Context $context,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -41,13 +40,14 @@ class Listing extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         $this->helperFactory = $helperFactory;
         $this->resourceConnection = $resourceConnection;
         $this->activeRecordFactory = $activeRecordFactory;
+        $this->translationHelper = $translationHelper;
     }
 
     //########################################
 
     protected function getAvailableActions()
     {
-        $translator = $this->getHelper('Module\Translation');
+        $translator = $this->translationHelper;
 
         return [
             Log::ACTION_LIST_PRODUCT_ON_COMPONENT   => $translator->__('List'),
@@ -100,7 +100,8 @@ class Listing extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 
     protected function getLastActions($listingProductId, $logs)
     {
-        $summary = $this->createBlock('Listing_Log_Grid_LastActions')->setData([
+        $summary = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\Log\Grid\LastActions::class)
+                                     ->setData([
             'entity_id'           => $listingProductId,
             'logs'                => $logs,
             'available_actions'   => $this->getAvailableActions(),

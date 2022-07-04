@@ -22,7 +22,7 @@ class Update extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Magento\Product\Websites\Update');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Magento\Product\Websites\Update::class);
     }
 
     //########################################

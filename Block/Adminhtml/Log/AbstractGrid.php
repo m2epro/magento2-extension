@@ -36,9 +36,9 @@ abstract class AbstractGrid extends WidgetAbstractGrid
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        parent::__construct($context, $backendHelper, $data);
         $this->resourceConnection = $resourceConnection;
         $this->viewHelper = $viewHelper;
+        parent::__construct($context, $backendHelper, $data);
     }
 
     protected function _construct()
@@ -144,7 +144,7 @@ abstract class AbstractGrid extends WidgetAbstractGrid
     protected function _getLogTypeList()
     {
         return [
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE  => $this->__('Notice'),
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO    => $this->__('Info'),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => $this->__('Success'),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => $this->__('Warning'),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR   => $this->__('Error')
@@ -165,9 +165,6 @@ abstract class AbstractGrid extends WidgetAbstractGrid
     public function callbackColumnType($value, $row, $column, $isExport)
     {
         switch ($row->getData('type')) {
-            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE:
-                break;
-
             case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS:
                 $value = '<span style="color: green;">'.$value.'</span>';
                 break;
@@ -235,7 +232,7 @@ HTML;
 
         if (isset($this->messageCount[$row[$this->entityIdFieldName]])) {
             $colorMap = [
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE  => 'gray',
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO    => 'gray',
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'green',
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 'orange',
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR   => 'red',

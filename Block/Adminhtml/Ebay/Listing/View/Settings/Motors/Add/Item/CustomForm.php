@@ -20,9 +20,8 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
-        parent::__construct($context, $registry, $formFactory, $data);
-
         $this->componentEbayMotors = $componentEbayMotors;
+        parent::__construct($context, $registry, $formFactory, $data);
     }
 
     protected function _prepareForm()

@@ -8,34 +8,49 @@
 
 namespace Ess\M2ePro\Helper\Component\Ebay\Template\Switcher;
 
-/**
- * Class \Ess\M2ePro\Helper\Component\Ebay\Template\Switcher\DataLoader
- */
-class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
+class DataLoader
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     private $ebayFactory;
+    /** @var \Magento\Store\Model\StoreManagerInterface */
     private $storeManager;
+    /** @var \Ess\M2ePro\Model\Ebay\Template\Manager */
     private $templateManager;
+    /** @var \Ess\M2ePro\Model\Ebay\Template\ManagerFactory */
     private $templateManagerFactory;
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    private $magentoAttributeHelper;
+    /** @var \Ess\M2ePro\Helper\Magento\AttributeSet */
+    private $magentoAttributeSetHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalData;
 
-    //########################################
-
+    /**
+     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalData
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Ess\M2ePro\Model\Ebay\Template\Manager $templateManager
+     * @param \Ess\M2ePro\Model\Ebay\Template\ManagerFactory $templateManagerFactory
+     * @param \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper
+     * @param \Ess\M2ePro\Helper\Magento\AttributeSet $magentoAttributeSetHelper
+     */
     public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalData,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Ess\M2ePro\Model\Ebay\Template\Manager $templateManager,
         \Ess\M2ePro\Model\Ebay\Template\ManagerFactory $templateManagerFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
+        \Ess\M2ePro\Helper\Magento\AttributeSet $magentoAttributeSetHelper
     ) {
         $this->ebayFactory = $ebayFactory;
         $this->storeManager = $storeManager;
         $this->templateManager = $templateManager;
         $this->templateManagerFactory = $templateManagerFactory;
-        parent::__construct($helperFactory, $context);
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->magentoAttributeSetHelper = $magentoAttributeSetHelper;
+        $this->globalData = $globalData;
     }
-
-    //########################################
 
     public function load($source, array $params = [])
     {
@@ -74,11 +89,11 @@ class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
         $storeId = (int)$data['store_id'];
 
         $attributeSets = $data['attribute_sets'];
-        $attributes = $this->getHelper('Magento\Attribute')->getAll();
+        $attributes = $this->magentoAttributeHelper->getAll();
 
         $displayUseDefaultOption = $data['display_use_default_option'];
 
-        $global = $this->getHelper('Data\GlobalData');
+        $global = $this->globalData;
 
         $global->setValue('ebay_account', $account);
         $global->setValue('ebay_marketplace', $marketplace);
@@ -113,7 +128,7 @@ class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
         $accountId = isset($sessionData['account_id']) ? $sessionData['account_id'] : null;
         $marketplaceId = isset($sessionData['marketplace_id']) ? $sessionData['marketplace_id'] : null;
         $storeId = isset($sessionData['store_id']) ? $sessionData['store_id'] : null;
-        $attributeSets = $this->getHelper('Magento\AttributeSet')
+        $attributeSets = $this->magentoAttributeSetHelper
             ->getAll(\Ess\M2ePro\Helper\Magento\AbstractHelper::RETURN_TYPE_IDS);
 
         $templates = [];
@@ -127,9 +142,9 @@ class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
             }
 
             $templates[$nick] = [
-                'id' => $templateId,
-                'mode' => $templateMode,
-                'force_parent' => false
+                'id'           => $templateId,
+                'mode'         => $templateMode,
+                'force_parent' => false,
             ];
         }
 
@@ -139,7 +154,7 @@ class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
             'store_id'                   => $storeId,
             'attribute_sets'             => $attributeSets,
             'display_use_default_option' => false,
-            'templates'                  => $templates
+            'templates'                  => $templates,
         ];
     }
 
@@ -148,23 +163,23 @@ class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
         $accountId = $source->getAccountId();
         $marketplaceId = $source->getMarketplaceId();
         $storeId = $source->getStoreId();
-        $attributeSets = $this->getHelper('Magento\AttributeSet')
+        $attributeSets = $this->magentoAttributeSetHelper
             ->getAll(\Ess\M2ePro\Helper\Magento\AbstractHelper::RETURN_TYPE_IDS);
 
         $templates = [];
 
         foreach ($this->templateManager->getAllTemplates() as $nick) {
             $manager = $this->templateManagerFactory->create()
-                ->setTemplate($nick)
-                ->setOwnerObject($source->getChildObject());
+                                                    ->setTemplate($nick)
+                                                    ->setOwnerObject($source->getChildObject());
 
             $templateId = $manager->getIdColumnValue();
             $templateMode = $manager->getModeValue();
 
             $templates[$nick] = [
-                'id' => $templateId,
-                'mode' => $templateMode,
-                'force_parent' => false
+                'id'           => $templateId,
+                'mode'         => $templateMode,
+                'force_parent' => false,
             ];
         }
 
@@ -174,7 +189,7 @@ class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
             'store_id'                   => $storeId,
             'attribute_sets'             => $attributeSets,
             'display_use_default_option' => false,
-            'templates'                  => $templates
+            'templates'                  => $templates,
         ];
     }
 
@@ -191,7 +206,7 @@ class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
         $accountId = $listingProductFirst->getListing()->getAccountId();
         $marketplaceId = $listingProductFirst->getListing()->getMarketplaceId();
         $storeId = $listingProductFirst->getListing()->getStoreId();
-        $attributeSets = $this->getHelper('Magento\AttributeSet')
+        $attributeSets = $this->magentoAttributeSetHelper
             ->getFromProducts($productIds, \Ess\M2ePro\Helper\Magento\AbstractHelper::RETURN_TYPE_IDS);
 
         $templates = [];
@@ -204,8 +219,8 @@ class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
             if ($source->getSize() <= 200) {
                 foreach ($source->getItems() as $listingProduct) {
                     $manager = $this->templateManagerFactory->create()
-                        ->setTemplate($nick)
-                        ->setOwnerObject($listingProduct->getChildObject());
+                                                            ->setTemplate($nick)
+                                                            ->setOwnerObject($listingProduct->getChildObject());
 
                     $currentProductTemplateId = $manager->getIdColumnValue();
                     $currentProductTemplateMode = $manager->getModeValue();
@@ -232,9 +247,9 @@ class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
             }
 
             $templates[$nick] = [
-                'id' => $templateId,
-                'mode' => $templateMode,
-                'force_parent' => $forceParent
+                'id'           => $templateId,
+                'mode'         => $templateMode,
+                'force_parent' => $forceParent,
             ];
         }
 
@@ -244,13 +259,13 @@ class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
             'store_id'                   => $storeId,
             'attribute_sets'             => $attributeSets,
             'display_use_default_option' => true,
-            'templates'                  => $templates
+            'templates'                  => $templates,
         ];
     }
 
     private function getDataFromTemplate($source, array $params = [])
     {
-        $attributeSets = $this->getHelper('Magento\AttributeSet')
+        $attributeSets = $this->magentoAttributeSetHelper
             ->getAll(\Ess\M2ePro\Helper\Magento\AbstractHelper::RETURN_TYPE_IDS);
 
         $marketplaceId = null;
@@ -268,17 +283,17 @@ class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
             'display_use_default_option' => true,
             'templates'                  => [
                 $nick => [
-                    'id' => $source->getId(),
-                    'mode' => \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE,
-                    'force_parent' => false
-                ]
-            ]
+                    'id'           => $source->getId(),
+                    'mode'         => \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE,
+                    'force_parent' => false,
+                ],
+            ],
         ];
     }
 
     private function getDataFromRequest(\Magento\Framework\App\RequestInterface $source, array $params = [])
     {
-        $id   = $source->getParam('id');
+        $id = $source->getParam('id');
         $nick = $source->getParam('nick');
         $mode = $source->getParam('mode', \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_CUSTOM);
 
@@ -286,7 +301,7 @@ class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
         $attributeSets = array_filter(explode(',', $attributeSets));
 
         if (empty($attributeSets)) {
-            $attributeSets = $this->getHelper('Magento\AttributeSet')
+            $attributeSets = $this->magentoAttributeSetHelper
                 ->getAll(\Ess\M2ePro\Helper\Magento\AbstractHelper::RETURN_TYPE_IDS);
         }
 
@@ -298,15 +313,15 @@ class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
             'display_use_default_option' => (bool)$source->getParam('display_use_default_option'),
             'templates'                  => [
                 $nick => [
-                    'id' => $id,
-                    'mode' => $mode,
-                    'force_parent' => false
-                ]
-            ]
+                    'id'           => $id,
+                    'mode'         => $mode,
+                    'force_parent' => false,
+                ],
+            ],
         ];
     }
 
-    //########################################
+    // ----------------------------------------
 
     private function getTemplateNick($source)
     {
@@ -327,9 +342,15 @@ class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
         return $nick;
     }
 
-    private function isTemplateInstance($source)
+    /**
+     * @param $source
+     *
+     * @return bool
+     */
+    private function isTemplateInstance($source): bool
     {
-        if ($source instanceof \Ess\M2ePro\Model\Ebay\Template\Shipping
+        if (
+            $source instanceof \Ess\M2ePro\Model\Ebay\Template\Shipping
             || $source instanceof \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy
             || $source instanceof \Ess\M2ePro\Model\Template\SellingFormat
             || $source instanceof \Ess\M2ePro\Model\Template\Description
@@ -341,16 +362,21 @@ class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
         return false;
     }
 
-    private function isHorizontalTemplate($source)
+    /**
+     * @param $source
+     *
+     * @return bool
+     */
+    private function isHorizontalTemplate($source): bool
     {
-        if ($source instanceof \Ess\M2ePro\Model\Template\SellingFormat ||
+        if (
+            $source instanceof \Ess\M2ePro\Model\Template\SellingFormat ||
             $source instanceof \Ess\M2ePro\Model\Template\Synchronization ||
-            $source instanceof \Ess\M2ePro\Model\Template\Description) {
+            $source instanceof \Ess\M2ePro\Model\Template\Description
+        ) {
             return true;
         }
 
         return false;
     }
-
-    //########################################
 }

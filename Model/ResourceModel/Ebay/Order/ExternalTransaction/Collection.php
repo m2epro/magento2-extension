@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Ebay\Order\ExternalTransaction',
-            'Ess\M2ePro\Model\ResourceModel\Ebay\Order\ExternalTransaction'
+            \Ess\M2ePro\Model\Ebay\Order\ExternalTransaction::class,
+            \Ess\M2ePro\Model\ResourceModel\Ebay\Order\ExternalTransaction::class
         );
     }
 

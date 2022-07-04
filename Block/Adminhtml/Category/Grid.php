@@ -7,22 +7,22 @@
  */
 namespace Ess\M2ePro\Block\Adminhtml\Category;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Category\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $categoryCollectionFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Category\CollectionFactory $categoryCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->categoryCollectionFactory = $categoryCollectionFactory;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -103,7 +103,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $path .= $categoriesCache[$id];
         }
 
-        return $this->getHelper('Data')->escapeHtml($path);
+        return $this->dataHelper->escapeHtml($path);
     }
 
     //########################################

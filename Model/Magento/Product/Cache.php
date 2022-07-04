@@ -47,7 +47,9 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
             'magento_product_'.$this->getProductId().'_'.$this->getStoreId()
         ];
 
-        return $this->getHelper('Data_Cache_Runtime')->setValue($key, $value, $tags);
+        $this->getHelper('Data_Cache_Runtime')->setValue($key, $value, $tags);
+
+        return $value;
     }
 
     public function clearCache()

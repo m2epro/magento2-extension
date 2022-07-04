@@ -128,7 +128,7 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
 
         // Create tax rule according to channel tax rate
         // ---------------------------------------
-        /** @var $taxRuleBuilder \Ess\M2ePro\Model\Magento\Tax\Rule\Builder */
+        /** @var \Ess\M2ePro\Model\Magento\Tax\Rule\Builder $taxRuleBuilder */
         $taxRuleBuilder = $this->modelFactory->getObject('Magento_Tax_Rule_Builder');
         $taxRuleBuilder->buildProductTaxRule(
             $itemTaxRate,
@@ -145,7 +145,7 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
 
     private function getProductTaxRate($productTaxClassId)
     {
-        /** @var $taxCalculator \Magento\Tax\Model\Calculation */
+        /** @var \Magento\Tax\Model\Calculation $taxCalculator */
         $taxCalculator = $this->calculation;
 
         $request = $taxCalculator->getRateRequest(
@@ -172,7 +172,7 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
             return $request;
         }
 
-        /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
+        /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
         $magentoProduct = $this->modelFactory->getObject('Magento\Product')->setProduct($this->getProduct());
         $options = $this->proxyItem->getOptions();
 
@@ -215,7 +215,7 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $giftMessageData['customer_id'] = (int)$this->quote->getCustomerId();
-        /** @var $giftMessage \Magento\GiftMessage\Model\Message */
+        /** @var \Magento\GiftMessage\Model\Message $giftMessage */
         $giftMessage = $this->messageFactory->create()->addData($giftMessageData);
 
         if ($giftMessage->isMessageEmpty()) {

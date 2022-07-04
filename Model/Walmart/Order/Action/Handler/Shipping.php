@@ -10,12 +10,8 @@ namespace Ess\M2ePro\Model\Walmart\Order\Action\Handler;
 
 use Ess\M2ePro\Model\Walmart\Order\Item as OrderItem;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Order\Action\Handler\Shipping
- */
 class Shipping extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractModel
 {
-    //########################################
 
     public function isNeedProcess()
     {
@@ -28,8 +24,6 @@ class Shipping extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMo
         return true;
     }
 
-    //########################################
-
     protected function getServerCommand()
     {
         return ['orders', 'update', 'shipping'];
@@ -40,12 +34,45 @@ class Shipping extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMo
         $resultItems = [];
         $params = $this->orderChange->getParams();
 
+        $itemsToCheckCancellation = [];
         foreach ($params['items'] as $itemData) {
+            $itemsToCheckCancellation[] = $itemData['walmart_order_item_id'];
             $resultItems[] = [
                 'number'           => $itemData['walmart_order_item_id'],
                 'qty'              => $itemData['qty'],
                 'tracking_details' => $itemData['tracking_details'],
             ];
+        }
+
+        /** @var \Ess\M2ePro\Model\ResourceModel\Order\Item\Collection $collection */
+        $collection = $this->walmartFactory
+            ->getObject('Order_Item')
+            ->getCollection()
+            ->addFieldToFilter('order_id', $this->getOrder()->getId())
+            ->addFieldToFilter('walmart_order_item_id', ['in' => $itemsToCheckCancellation]);
+
+        $walmartOrderItems = [];
+        /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
+        foreach ($collection->getItems() as $orderItem) {
+            $walmartOrderItemId = $orderItem->getChildObject()->getWalmartOrderItemId();
+            $walmartOrderItems[$walmartOrderItemId] = $orderItem->getChildObject();
+
+            /**
+             * Walmart returns the same Order Item more than one time with single QTY. That data was merged
+             */
+            $mergedWalmartOrderItemIds = $orderItem->getChildObject()->getMergedWalmartOrderItemIds();
+            foreach ($mergedWalmartOrderItemIds as $mergedWalmartOrderItemId) {
+                $walmartOrderItems[$mergedWalmartOrderItemId] = $orderItem->getChildObject();
+            }
+        }
+
+        foreach ($resultItems as &$item) {
+            $walmartOrderItem = $walmartOrderItems[$item['number']];
+            if ($walmartOrderItem->isBuyerCancellationRequested()
+                && $walmartOrderItem->isBuyerCancellationPossible()
+            ) {
+                $item['is_buyer_cancellation_ignored'] = true;
+            }
         }
 
         return [
@@ -125,6 +152,4 @@ class Shipping extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMo
             $this->getOrder()->getLog()->addServerResponseMessage($this->getOrder(), $message);
         }
     }
-
-    //########################################
 }

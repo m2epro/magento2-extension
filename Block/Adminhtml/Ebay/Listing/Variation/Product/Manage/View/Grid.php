@@ -10,13 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage\View;
 
 use Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty as OnlineQty;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage\View\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
-    const VARIATION_STATUS_ADD     = 1;
-    const VARIATION_STATUS_DELETE  = 2;
+    public const VARIATION_STATUS_ADD = 1;
+    public const VARIATION_STATUS_DELETE = 2;
 
     protected $localeCurrency;
 
@@ -38,7 +35,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         'epid' => 'ePID'
     ];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
@@ -47,12 +45,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->localeCurrency     = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         $this->wrapperCollection  = $wrapperCollection;
         $this->ebayFactory        = $ebayFactory;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -177,7 +177,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'          => 'attributes',
             'filter_index'   => 'attributes',
             'frame_callback' => [$this, 'callbackColumnVariations'],
-            'filter'         => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions',
+            'filter'         => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions::class,
             'options'        => $this->getVariationsAttributes(),
             'filter_condition_callback' => [$this, 'callbackFilterVariations']
         ]);
@@ -198,7 +198,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'type'     => 'number',
             'index'    => 'available_qty',
             'filter'   => false,
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty',
+            'renderer' => OnlineQty::class,
             'render_online_qty' => OnlineQty::ONLINE_AVAILABLE_QTY,
         ]);
 
@@ -208,7 +208,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'width'    => '40px',
             'type'     => 'number',
             'index'    => 'online_qty_sold',
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty'
+            'renderer' => OnlineQty::class
         ]);
 
         $this->addColumn('price', [
@@ -228,7 +228,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'sortable'       => false,
             'index'          => 'additional_data',
             'filter_index'   => 'additional_data',
-            'filter'         => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions',
+            'filter'         => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions::class,
             'options'        => $this->identifiers,
             'frame_callback' => [$this, 'callbackColumnIdentifiers'],
             'filter_condition_callback' => [$this, 'callbackFilterIdentifiers']
@@ -270,8 +270,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $html .= '<a href="' . $url . '" target="_blank" style="color: grey;">';
         }
         foreach ($attributes as $attribute => $option) {
-            $optionHtml = '<b>' . $this->getHelper('Data')->escapeHtml($attribute) .
-                '</b>:&nbsp;' . $this->getHelper('Data')->escapeHtml($option);
+            $optionHtml = '<b>' . $this->dataHelper->escapeHtml($attribute) .
+                '</b>:&nbsp;' . $this->dataHelper->escapeHtml($option);
 
             if ($uniqueProductsIds) {
                 $url = $this->getUrl('catalog/product/edit', ['id' => $productsIds[$attribute]]);
@@ -330,7 +330,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $formHtml = '';
 
         $variationId = $row->getData('id');
-        $additionalData = $this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+        $additionalData = $this->dataHelper->jsonDecode($row->getData('additional_data'));
 
         $linkTitle = $this->__('Change');
         $linkContent = $this->__('Change');
@@ -341,10 +341,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         if (!empty($additionalData['product_details'])) {
             foreach ($additionalData['product_details'] as $identifier => $identifierValue) {
                 $identifier = isset($this->identifiers[$identifier])
-                    ? $this->getHelper('Data')->escapeHtml($this->identifiers[$identifier])
-                    : $this->getHelper('Data')->escapeHtml($identifier);
+                    ? $this->dataHelper->escapeHtml($this->identifiers[$identifier])
+                    : $this->dataHelper->escapeHtml($identifier);
 
-                $identifierValue = $identifierValue ? $this->getHelper('Data')->escapeHtml($identifierValue)
+                $identifierValue = $identifierValue ? $this->dataHelper->escapeHtml($identifierValue)
                                                     : '--';
 
                 $html .= <<<HTML
@@ -540,7 +540,7 @@ JS
 JS
             );
         }
-        $urls = $this->getHelper('Data')->jsonEncode($urls);
+        $urls = $this->dataHelper->jsonEncode($urls);
 
         $this->js->addRequireJs([
             'vpmvg' => 'M2ePro/Ebay/Listing/VariationProductManageVariationsGrid'

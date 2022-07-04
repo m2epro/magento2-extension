@@ -11,33 +11,44 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Ebay\Account;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\ListingOther
- */
 class ListingOther extends AbstractForm
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    protected $magentoAttributeHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         array $data = []
     ) {
         $this->ebayFactory = $ebayFactory;
-
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->supportHelper = $supportHelper;
+        $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
     protected function _prepareForm()
     {
-        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
-        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
+        $allAttributes = $this->magentoAttributeHelper->getAll();
 
-        $allAttributes = $magentoAttributeHelper->getAll();
-
-        $attributes = $magentoAttributeHelper->filterByInputTypes(
+        $attributes = $this->magentoAttributeHelper->filterByInputTypes(
             $allAttributes,
             [
                 'text',
@@ -49,15 +60,15 @@ class ListingOther extends AbstractForm
         // ---------------------------------------
 
         // ---------------------------------------
-        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account')
-            ? $this->getHelper('Data\GlobalData')->getValue('edit_account') : null;
+        $account = $this->globalDataHelper->getValue('edit_account')
+            ? $this->globalDataHelper->getValue('edit_account') : null;
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         $marketplacesData = [];
         if (isset($formData['marketplaces_data'])) {
             $marketplacesData = $formData['marketplaces_data'];
             $marketplacesData = !empty($marketplacesData)
-                ? $this->getHelper('Data')->jsonDecode($marketplacesData) : [];
+                ? $this->dataHelper->jsonDecode($marketplacesData) : [];
         }
 
         $marketplaces = $this->ebayFactory->getObject('Marketplace')
@@ -77,7 +88,7 @@ class ListingOther extends AbstractForm
 
         $key = 'other_listings_mapping_settings';
         if (isset($formData[$key])) {
-            $formData[$key] = (array)$this->getHelper('Data')->jsonDecode($formData[$key]);
+            $formData[$key] = (array)$this->dataHelper->jsonDecode($formData[$key]);
         }
 
         $defaults = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
@@ -98,7 +109,7 @@ automatically link them to Magento Product, etc.</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/VP8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/VP8UB')
                 )
             ]
         );
@@ -123,7 +134,7 @@ HTML
                 ],
                 'value'   => $formData['other_listings_synchronization'],
                 'tooltip' => $this->__(
-                    'Choose whether to import items that have been listed on eBay either directly or using a tool 
+                    'Choose whether to import items that have been listed on eBay either directly or using a tool
                     other than M2E Pro. M2E Pro will import only active eBay items.'
                 )
             ]

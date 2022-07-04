@@ -19,7 +19,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
     const DISPUTE_EXPLANATION_BUYER_HAS_NOT_PAID = 'BuyerNotPaid';
     const DISPUTE_REASON_BUYER_HAS_NOT_PAID = 'BuyerHasNotPaid';
 
-    /** @var $channelItem \Ess\M2ePro\Model\Ebay\Item */
+    /** @var \Ess\M2ePro\Model\Ebay\Item $channelItem */
     private $channelItem = null;
 
     protected $productBuilderFactory;
@@ -60,7 +60,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Order\Item');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Order\Item::class);
     }
 
     //########################################
@@ -413,7 +413,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
 
         $order = $this->getParentObject()->getOrder();
 
-        /** @var $itemImporter \Ess\M2ePro\Model\Ebay\Order\Item\Importer */
+        /** @var \Ess\M2ePro\Model\Ebay\Order\Item\Importer $itemImporter */
         $itemImporter = $this->modelFactory->getObject('Ebay_Order_Item_Importer', [
             'item' => $this
         ]);
@@ -451,7 +451,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
 
         // Create product in magento
         // ---------------------------------------
-        /** @var $productBuilder \Ess\M2ePro\Model\Magento\Product\Builder */
+        /** @var \Ess\M2ePro\Model\Magento\Product\Builder $productBuilder */
         $productBuilder = $this->productBuilderFactory->create()->setData($productData);
         $productBuilder->buildProduct();
         // ---------------------------------------

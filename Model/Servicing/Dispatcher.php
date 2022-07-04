@@ -151,7 +151,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             return ucfirst($matches[1]);
         }, $taskName);
 
-        /** @var $taskModel \Ess\M2ePro\Model\Servicing\Task */
+        /** @var \Ess\M2ePro\Model\Servicing\Task $taskModel */
         $taskModel = $this->modelFactory->getObject('Servicing\Task\\'.ucfirst($taskName));
         $taskModel->setParams($this->getParams());
         $taskModel->setInitiator($this->getInitiator());

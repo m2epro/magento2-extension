@@ -28,7 +28,8 @@ class ViewGrid extends ProductTaxCode
             $productsIds = explode(',', $productsIds);
         }
 
-        $grid = $this->createBlock('Amazon_Listing_Product_Template_ProductTaxCode_Grid');
+        $grid = $this->getLayout()
+                ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode\Grid::class);
         $grid->setProductsIds($productsIds);
 
         $this->setAjaxContent($grid->toHtml());

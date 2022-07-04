@@ -8,12 +8,20 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Magento\Renderer\JsTranslatorRenderer
- */
 class JsTranslatorRenderer extends AbstractRenderer
 {
     protected $jsTranslations = [];
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper
+    ) {
+        parent::__construct($helperFactory);
+        $this->dataHelper = $dataHelper;
+    }
 
     public function add($alias, $translation)
     {
@@ -33,7 +41,7 @@ class JsTranslatorRenderer extends AbstractRenderer
             return '';
         }
 
-        $translations = $this->helperFactory->getObject('Data')->jsonEncode($this->jsTranslations);
+        $translations = $this->dataHelper->jsonEncode($this->jsTranslations);
 
         return "M2ePro.translator.add({$translations});";
     }

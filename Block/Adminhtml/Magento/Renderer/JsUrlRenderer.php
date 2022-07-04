@@ -15,6 +15,17 @@ class JsUrlRenderer extends AbstractRenderer
 {
     protected $jsUrls = [];
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper
+    ) {
+        parent::__construct($helperFactory);
+        $this->dataHelper = $dataHelper;
+    }
+
     public function add($url, $alias = null)
     {
         if ($alias === null) {
@@ -37,7 +48,7 @@ class JsUrlRenderer extends AbstractRenderer
             return '';
         }
 
-        $urls = $this->helperFactory->getObject('Data')->jsonEncode($this->jsUrls);
+        $urls = $this->dataHelper->jsonEncode($this->jsUrls);
 
         return "M2ePro.url.add({$urls});";
     }

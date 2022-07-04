@@ -10,9 +10,6 @@ namespace  Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer;
 
 use Ess\M2ePro\Block\Adminhtml\Traits;
 
-/**
- * Class  \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Sku
- */
 class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 {
     use Traits\BlockTrait;
@@ -20,16 +17,24 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
     /** @var \Ess\M2ePro\Helper\Factory  */
     protected $helperFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Backend\Block\Context $context,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
 
         $this->helperFactory = $helperFactory;
+        $this->translationHelper = $translationHelper;
+        $this->dataHelper = $dataHelper;
     }
 
     //########################################
@@ -41,11 +46,11 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         if ((!$row->getData('is_variation_parent') &&
                 $row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) ||
             ($row->getData('is_variation_parent') && $row->getData('general_id') == '')) {
-            return '<span style="color: gray;">' . $this->getHelper('Module\Translation')->__('Not Listed') . '</span>';
+            return '<span style="color: gray;">' . $this->translationHelper->__('Not Listed') . '</span>';
         }
 
         if ($value === null || $value === '') {
-            $value = $this->getHelper('Module\Translation')->__('N/A');
+            $value = $this->translationHelper->__('N/A');
         }
 
         $showDefectedMessages = ($this->getColumn()->getData('show_defected_messages') !== null)
@@ -57,7 +62,7 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         }
 
         if (!$row->getData('is_variation_parent') && $row->getData('defected_messages')) {
-            $defectedMessages = $this->getHelper('Data')->jsonDecode($row->getData('defected_messages'));
+            $defectedMessages = $this->dataHelper->jsonDecode($row->getData('defected_messages'));
             if (empty($defectedMessages)) {
                 $defectedMessages = [];
             }
@@ -70,7 +75,7 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 
                 $msg .= '<p>'.$message['message'] . '&nbsp;';
                 if (!empty($message['value'])) {
-                    $msg .= $this->getHelper('Module\Translation')->__('Current Value') .': "' . $message['value'] .'"';
+                    $msg .= $this->translationHelper->__('Current Value') .': "' . $message['value'] .'"';
                 }
                 $msg .= '</p>';
             }

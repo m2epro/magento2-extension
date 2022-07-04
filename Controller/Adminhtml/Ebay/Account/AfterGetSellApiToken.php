@@ -15,6 +15,22 @@ use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
  */
 class AfterGetSellApiToken extends Account
 {
+
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $helperDataSession;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $helperDataSession,
+        \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update $storeCategoryUpdate,
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($storeCategoryUpdate, $componentEbayCategoryStore, $ebayFactory, $context);
+
+        $this->helperDataSession = $helperDataSession;
+    }
+
     public function execute()
     {
         // Get eBay session id
@@ -25,12 +41,12 @@ class AfterGetSellApiToken extends Account
 
         // Get account form data
         // ---------------------------------------
-        $this->getHelper('Data\Session')->setValue('get_sell_api_token_account_token_session', $sessionId);
+        $this->helperDataSession->setValue('get_sell_api_token_account_token_session', $sessionId);
         // ---------------------------------------
 
         // Goto account add or edit page
         // ---------------------------------------
-        $accountId = (int)$this->getHelper('Data\Session')->getValue('get_sell_api_token_account_id', true);
+        $accountId = (int)$this->helperDataSession->getValue('get_sell_api_token_account_id', true);
 
         if ($accountId == 0) {
             $this->_redirect('*/*/index');

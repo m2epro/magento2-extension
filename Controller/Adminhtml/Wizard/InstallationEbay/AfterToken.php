@@ -8,16 +8,27 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay;
 
+use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay;
 use Ess\M2ePro\Model\Ebay\Account as EbayAccount;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay\AfterToken
- */
 class AfterToken extends InstallationEbay
 {
-    //########################################
-    
+    /** @var \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update */
+    private $storeCategoryUpdate;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update $storeCategoryUpdate,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
+        \Magento\Framework\Code\NameBuilder $nameBuilder,
+        Context $context
+    ) {
+        parent::__construct($ebayFactory, $ebayViewHelper, $nameBuilder, $context);
+
+        $this->storeCategoryUpdate = $storeCategoryUpdate;
+    }
+
     public function execute()
     {
         $tokenSessionId = $this->getHelper('Data\Session')->getValue('token_session_id', true);
@@ -77,7 +88,8 @@ class AfterToken extends InstallationEbay
         /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->ebayFactory->getObject('Account');
         $this->modelFactory->getObject('Ebay_Account_Builder')->build($account, $data);
-        $account->getChildObject()->updateEbayStoreInfo();
+
+        $this->storeCategoryUpdate->process($account->getChildObject());
 
         $this->setStep($this->getNextStep());
 

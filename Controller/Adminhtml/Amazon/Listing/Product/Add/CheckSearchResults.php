@@ -53,7 +53,8 @@ class CheckSearchResults extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
             return $this->getResult();
         }
 
-        $newAsinPopup = $this->createBlock('Amazon_Listing_Product_Add_SearchAsin_NewAsinPopup');
+        $newAsinPopup = $this->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SearchAsin\NewAsinPopup::class);
 
         $this->setJsonContent(['html' => $newAsinPopup->toHtml()]);
 

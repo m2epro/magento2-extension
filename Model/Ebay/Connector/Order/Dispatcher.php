@@ -72,7 +72,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
-        /** @var $orders \Ess\M2ePro\Model\Order[] */
+        /** @var \Ess\M2ePro\Model\Order[] $orders */
 
         foreach ($orders as $order) {
             try {

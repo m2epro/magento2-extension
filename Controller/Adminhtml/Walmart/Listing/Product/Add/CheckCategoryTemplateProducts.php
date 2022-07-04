@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add\CheckCategoryTemplateProducts
- */
 class CheckCategoryTemplateProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
     public function execute()
@@ -30,7 +27,8 @@ class CheckCategoryTemplateProducts extends \Ess\M2ePro\Controller\Adminhtml\Wal
 
         $failedProductsIds = $collection->getColumnValues('id');
 
-        $popup = $this->createBlock('Walmart_Listing_Product_Add_CategoryTemplate_WarningPopup');
+        $popup = $this->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate\WarningPopup::class);
 
         $this->setJsonContent([
             'validation'      => count($failedProductsIds) == 0,

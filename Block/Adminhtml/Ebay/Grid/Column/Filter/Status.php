@@ -8,31 +8,31 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\Status
- */
 class Status extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
 {
     protected $helperFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Backend\Block\Context $context,
         \Magento\Framework\DB\Helper $resourceHelper,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         array $data = []
     ) {
         $this->helperFactory = $helperFactory;
 
         parent::__construct($context, $resourceHelper, $data);
+        $this->translationHelper = $translationHelper;
     }
 
     //########################################
 
     public function getHtml()
     {
-        $duplicateWord = $this->helperFactory->getObject('Module\Translation')->__('Duplicates');
+        $duplicateWord = $this->translationHelper->__('Duplicates');
 
         $value = $this->getValue();
         $isChecked = (!empty($value['is_duplicate']) && $value['is_duplicate'] == 1) ? 'checked="checked"' : '';

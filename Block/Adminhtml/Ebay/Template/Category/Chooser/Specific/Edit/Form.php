@@ -8,6 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Edit;
 
+use Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Renderer\Custom;
 use \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Renderer\Dictionary as RendererDictionary;
 use \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Element\Dictionary as ElementDictionary;
 use \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Element\Custom as ElementCustom;
@@ -51,7 +52,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             );
 
             /** @var RendererDictionary $renderer */
-            $renderer = $this->createBlock('Ebay_Template_Category_Chooser_Specific_Form_Renderer_Dictionary');
+            $renderer = $this->getLayout()->createBlock(RendererDictionary::class);
             $fieldset->addField(
                 'dictionary_specifics',
                 ElementDictionary::class,
@@ -70,7 +71,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         );
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Renderer\Custom $renderer */
-        $renderer = $this->createBlock('Ebay_Template_Category_Chooser_Specific_Form_Renderer_Custom');
+        $renderer = $this->getLayout()->createBlock(Custom::class);
         $fieldset->addField(
             'custom_specifics',
             ElementCustom::class,

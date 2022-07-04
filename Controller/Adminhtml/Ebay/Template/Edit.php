@@ -56,8 +56,8 @@ class Edit extends Template
         $dataLoader->load($template);
         // ---------------------------------------
 
-        $content = $this->createBlock(
-            'Ebay_Template_Edit',
+        $content = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Edit::class,
             '',
             ['data' => [
                 'template_nick' => $nick

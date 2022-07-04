@@ -12,9 +12,12 @@ class Info extends \Ess\M2ePro\Block\Adminhtml\Widget\Info
 {
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
     private $componentEbayCategoryEbay;
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    private $magentoAttributeHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Magento\Framework\Math\Random $random,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
@@ -22,6 +25,7 @@ class Info extends \Ess\M2ePro\Block\Adminhtml\Widget\Info
         parent::__construct($random, $context, $data);
 
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
     }
 
     protected function _prepareLayout()
@@ -40,7 +44,7 @@ class Info extends \Ess\M2ePro\Block\Adminhtml\Widget\Info
 
         if ($template->getCategoryMode() == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE) {
             $category = $this->__('Magento Attribute') .' > '.
-                $this->getHelper('Magento\Attribute')->getAttributeLabel($template->getData('category_attribute'));
+                $this->magentoAttributeHelper->getAttributeLabel($template->getData('category_attribute'));
         }
 
         $this->setInfo(

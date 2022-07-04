@@ -63,7 +63,7 @@ class Marketplaces extends \Ess\M2ePro\Model\Servicing\Task
         $dictionaryTable = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_marketplace');
 
-        /** @var $marketplace \Ess\M2ePro\Model\Marketplace */
+        /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
         foreach ($enabledMarketplaces as $marketplace) {
             if (!isset($lastUpdateDates[$marketplace->getNativeId()])) {
                 continue;
@@ -107,7 +107,7 @@ class Marketplaces extends \Ess\M2ePro\Model\Servicing\Task
         $dictionaryTable = $this->getHelper('Module_Database_Structure')
             ->getTableNameWithPrefix('m2epro_amazon_dictionary_marketplace');
 
-        /** @var $marketplace \Ess\M2ePro\Model\Marketplace */
+        /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
         foreach ($enabledMarketplaces as $marketplace) {
             if (!isset($lastUpdateDates[$marketplace->getNativeId()])) {
                 continue;

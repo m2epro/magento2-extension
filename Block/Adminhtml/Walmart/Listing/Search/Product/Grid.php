@@ -8,14 +8,39 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\Product;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\Product\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGrid
 {
     private $parentAndChildReviseScheduledCache = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
+        \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->databaseHelper = $databaseHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct(
+            $magentoProductCollectionFactory,
+            $localeCurrency,
+            $walmartFactory,
+            $resourceConnection,
+            $context,
+            $backendHelper,
+            $data
+        );
+    }
 
     public function _construct()
     {
@@ -32,7 +57,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGr
 
     protected function _prepareCollection()
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->getSelect()->distinct();
@@ -140,10 +165,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGr
     public function callbackColumnProductTitle($value, $row, $column, $isExport)
     {
         $title = $row->getData('name');
-        $title = $this->getHelper('Data')->escapeHtml($title);
+        $title = $this->dataHelper->escapeHtml($title);
 
         $listingWord  = $this->__('Listing');
-        $listingTitle = $this->getHelper('Data')->escapeHtml($row->getData('listing_title'));
+        $listingTitle = $this->dataHelper->escapeHtml($row->getData('listing_title'));
         $listingTitle = $this->filterManager->truncate($listingTitle, ['length' => 50]);
 
         $listingUrl = $this->getUrl(
@@ -165,7 +190,7 @@ HTML;
             .'<strong>' . $this->__('Marketplace') . ':</strong>'
             . '&nbsp;' . $marketplace->getTitle();
 
-        $sku     = $this->getHelper('Data')->escapeHtml($row->getData('sku'));
+        $sku     = $this->dataHelper->escapeHtml($row->getData('sku'));
         $skuWord = $this->__('SKU');
 
         $value .= <<<HTML
@@ -219,11 +244,11 @@ HTML;
             $productOptions = $variationManager->getTypeModel()->getProductOptions();
 
             foreach ($productOptions as $attribute => $option) {
-                $attribute = $this->getHelper('Data')->escapeHtml($attribute);
+                $attribute = $this->dataHelper->escapeHtml($attribute);
                 if ($option === '' || $option === null) {
                     $option = '--';
                 }
-                $option = $this->getHelper('Data')->escapeHtml($option);
+                $option = $this->dataHelper->escapeHtml($option);
 
                 $optionsStr .= <<<HTML
 <strong>{$attribute}</strong>:&nbsp;{$option}<br/>
@@ -276,7 +301,7 @@ HTML;
         }
 
         $sortedStatuses     = [];
-        $variationsStatuses = $this->getHelper('Data')->jsonDecode($variationsStatuses);
+        $variationsStatuses = $this->dataHelper->jsonDecode($variationsStatuses);
 
         isset($variationsStatuses[$sNotListed]) && $sortedStatuses[$sNotListed] = $variationsStatuses[$sNotListed];
         isset($variationsStatuses[$sListed]) && $sortedStatuses[$sListed]    = $variationsStatuses[$sListed];
@@ -575,7 +600,7 @@ HTML;
 
         $childCollection = $this->getMagentoChildProductsCollection();
         $childCollection->getSelect()->joinLeft(
-            ['cpe' => $this->getHelper('Module_Database_Structure')
+            ['cpe' => $this->databaseHelper
                 ->getTableNameWithPrefix('catalog_product_entity')],
             'cpe.entity_id=main_table.product_id',
             []

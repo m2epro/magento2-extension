@@ -38,7 +38,7 @@ class Remap extends Listing
             return $this->getResult();
         }
 
-        /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
+        /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
         $magentoProduct = $this->modelFactory->getObject('Magento\Product');
         $magentoProduct->setProductId($productId);
 

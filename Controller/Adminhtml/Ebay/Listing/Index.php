@@ -17,12 +17,12 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
     {
         if ($this->getRequest()->getQuery('ajax')) {
             $this->setAjaxContent(
-                $this->createBlock('Ebay_Listing_Grid')
+                $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid::class)
             );
             return $this->getResult();
         }
 
-        $this->addContent($this->createBlock('Ebay\Listing'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing::class));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('M2E Pro Listings'));
         $this->setPageHelpLink('x/Fv8UB');
 

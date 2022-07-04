@@ -10,14 +10,42 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs\ReviseRules
- */
 class ReviseRules extends AbstractForm
 {
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     protected function _prepareForm()
     {
-        $template = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
+        $template = $this->globalDataHelper->getValue('tmp_template');
         $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
@@ -42,16 +70,16 @@ Policy Templates.</p><br>
 <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/b-8UB')
-                )
+                    $this->supportHelper->getDocumentationArticleUrl('x/b-8UB')
+                ),
             ]
         );
 
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_synchronization_form_data_revise_products',
             [
-                'legend' => $this->__('Revise Conditions'),
-                'collapsable' => true
+                'legend'      => $this->__('Revise Conditions'),
+                'collapsable' => true,
             ]
         );
 
@@ -59,17 +87,17 @@ HTML
             'revise_update_qty',
             self::SELECT,
             [
-                'name' => 'revise_update_qty',
-                'label' => $this->__('Quantity'),
-                'value' => $formData['revise_update_qty'],
-                'values' => [
+                'name'     => 'revise_update_qty',
+                'label'    => $this->__('Quantity'),
+                'value'    => $formData['revise_update_qty'],
+                'values'   => [
                     1 => $this->__('Yes'),
                 ],
                 'disabled' => true,
-                'tooltip' => $this->__(
+                'tooltip'  => $this->__(
                     'Automatically revises Item Quantity, Production Time and Restock Date in Amazon Listing
                     when there are changes made in Magento to at least one mentioned parameter.'
-                )
+                ),
             ]
         );
 
@@ -78,19 +106,20 @@ HTML
             self::SELECT,
             [
                 'container_id' => 'revise_update_qty_max_applied_value_mode_tr',
-                'name' => 'revise_update_qty_max_applied_value_mode',
-                'label' => $this->__('Conditional Revise'),
-                'value' => $formData['revise_update_qty_max_applied_value_mode'],
-                'values' => [
+                'name'         => 'revise_update_qty_max_applied_value_mode',
+                'label'        => $this->__('Conditional Revise'),
+                'value'        => $formData['revise_update_qty_max_applied_value_mode'],
+                'values'       => [
                     0 => $this->__('Disabled'),
                     1 => $this->__('Revise When Less or Equal to'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip'      => $this->__(
                     'Set the Item Quantity limit at which the Revise Action should be triggered.
                     It is recommended to keep this value relatively low, between 10 and 20 Items.'
-                )
+                ),
             ]
-        )->setAfterElementHtml(<<<HTML
+        )->setAfterElementHtml(
+            <<<HTML
 <input name="revise_update_qty_max_applied_value" id="revise_update_qty_max_applied_value"
        value="{$formData['revise_update_qty_max_applied_value']}" type="text"
        style="width: 72px; margin-left: 10px;"
@@ -108,17 +137,17 @@ HTML
             'revise_update_price',
             self::SELECT,
             [
-                'name' => 'revise_update_price',
-                'label' => $this->__('Price'),
-                'value' => $formData['revise_update_price'],
-                'values' => [
+                'name'    => 'revise_update_price',
+                'label'   => $this->__('Price'),
+                'value'   => $formData['revise_update_price'],
+                'values'  => [
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
                     'Automatically revises Item Price, Minimum Advertised Price, Sale Price and Business Price
                     in Amazon Listing when there are changes made in Magento to at least one mentioned parameter.'
-                )
+                ),
             ]
         );
 
@@ -126,10 +155,10 @@ HTML
             'revise_update_details',
             self::SELECT,
             [
-                'name' => 'revise_update_details',
-                'label' => $this->__('Details'),
-                'value' => $formData['revise_update_details'],
-                'values' => [
+                'name'    => 'revise_update_details',
+                'label'   => $this->__('Details'),
+                'value'   => $formData['revise_update_details'],
+                'values'  => [
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
@@ -138,7 +167,7 @@ HTML
                     data from Description Policy, Shipping Template Policy and Product Tax Code Policy
                     in Amazon Listing when there are changes made to Magento Attribute
                     of at least one mentioned parameter.'
-                )
+                ),
             ]
         );
 
@@ -146,17 +175,17 @@ HTML
             'revise_update_images',
             self::SELECT,
             [
-                'name' => 'revise_update_images',
-                'label' => $this->__('Images'),
-                'value' => $formData['revise_update_images'],
-                'values' => [
+                'name'    => 'revise_update_images',
+                'label'   => $this->__('Images'),
+                'value'   => $formData['revise_update_images'],
+                'values'  => [
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
                     'Automatically revises Item Image in Amazon Listing if Product Image or Magento
                     Attribute value used for Product Image is changed in Magento.'
-                )
+                ),
             ]
         );
 
@@ -164,12 +193,12 @@ HTML
             'revise_qty_max_applied_value_confirmation_popup_template',
             self::CUSTOM_CONTAINER,
             [
-                'text' => $this->__(
+                'text'  => $this->__(
                     '<br/>Disabling this option might affect synchronization performance. Please read
              <a href="%url%" target="_blank">this article</a> before using the option.',
-                    $this->getHelper('Module_Support')->getSupportUrl('knowledgebase/1579746/')
+                    $this->supportHelper->getSupportUrl('knowledgebase/1579746/')
                 ),
-                'style' => 'display: none;'
+                'style' => 'display: none;',
             ]
         );
 
@@ -177,12 +206,12 @@ HTML
             'revise_update_details_or_images_confirmation_popup_template',
             self::CUSTOM_CONTAINER,
             [
-                'text' => $this->__(
+                'text'  => $this->__(
                     '<br/>Enabling this option might affect synchronization performance. Please read
              <a href="%url%" target="_blank">this article</a> before using the option.',
-                    $this->getHelper('Module_Support')->getSupportUrl('knowledgebase/1580145/')
+                    $this->supportHelper->getSupportUrl('knowledgebase/1580145/')
                 ),
-                'style' => 'display: none;'
+                'style' => 'display: none;',
             ]
         );
 
@@ -195,7 +224,7 @@ HTML
         ];
 
         foreach ($jsFormData as $item) {
-            $this->js->add("M2ePro.formData.$item = '{$this->getHelper('Data')->escapeJs($formData[$item])}';");
+            $this->js->add("M2ePro.formData.$item = '{$this->dataHelper->escapeJs($formData[$item])}';");
         }
 
         $this->setForm($form);

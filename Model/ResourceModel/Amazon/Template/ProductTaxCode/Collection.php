@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Amazon\Template\ProductTaxCode',
-            'Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductTaxCode'
+            \Ess\M2ePro\Model\Amazon\Template\ProductTaxCode::class,
+            \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductTaxCode::class
         );
     }
 

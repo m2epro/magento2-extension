@@ -10,12 +10,24 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon;
 
 use Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template
- */
 class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    /**
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -33,8 +45,6 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         $this->buttonList->update('add', 'label', $this->__('Add Policy'));
         $this->buttonList->update('add', 'onclick', '');
     }
-
-    //########################################
 
     protected function _prepareLayout()
     {
@@ -61,12 +71,12 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
 
             More detailed information about Policy configuration can be found
             <a href="%url%" target="_blank" class="external-link">here</a>.',
-            $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Gv8UB')
+            $this->supportHelper->getDocumentationArticleUrl('x/Gv8UB')
         );
 
         $this->appendHelpBlock(
             [
-                'content' => $content
+                'content' => $content,
             ]
         );
 
@@ -75,7 +85,7 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             'label'        => __('Add Policy'),
             'class'        => 'add',
             'button_class' => '',
-            'class_name'   => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
+            'class_name'   => \Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown::class,
             'options'      => $this->_getAddTemplateButtonOptions(),
         ];
         $this->addButton('add', $addButtonProps);
@@ -83,11 +93,9 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         return parent::_prepareLayout();
     }
 
-    //########################################
-
     protected function _getAddTemplateButtonOptions()
     {
-        $data = [
+        return [
             Grid::TEMPLATE_SELLING_FORMAT   => [
                 'label'   => $this->__('Selling'),
                 'id'      => 'selling',
@@ -112,10 +120,8 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
                 'label'   => $this->__('Product Tax Code'),
                 'id'      => 'product_tax_code',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_PRODUCT_TAX_CODE) . "')",
-            ]
+            ],
         ];
-
-        return $data;
     }
 
     protected function getTemplateUrl($type)

@@ -8,40 +8,48 @@
 
 namespace Ess\M2ePro\Helper\Component\Ebay;
 
-class Category extends \Ess\M2ePro\Helper\AbstractHelper
+class Category
 {
-    const TYPE_EBAY_MAIN       = 0;
-    const TYPE_EBAY_SECONDARY  = 1;
-    const TYPE_STORE_MAIN      = 2;
-    const TYPE_STORE_SECONDARY = 3;
+    public const TYPE_EBAY_MAIN = 0;
+    public const TYPE_EBAY_SECONDARY = 1;
+    public const TYPE_STORE_MAIN = 2;
+    public const TYPE_STORE_SECONDARY = 3;
 
-    const RECENT_MAX_COUNT = 20;
-
-    protected $activeRecordFactory;
-    protected $resourceConnection;
+    public const RECENT_MAX_COUNT = 20;
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Store */
     private $componentEbayCategoryStore;
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
     private $componentEbayCategoryEbay;
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    private $magentoAttributeHelper;
+    /** @var \Ess\M2ePro\Model\Registry\Manager */
+    private $registry;
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translation;
 
+    /**
+     * @param \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper
+     * @param \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay
+     * @param \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore
+     * @param \Ess\M2ePro\Model\Registry\Manager $registry
+     * @param \Ess\M2ePro\Helper\Module\Translation $translation
+     */
     public function __construct(
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Model\Registry\Manager $registry,
+        \Ess\M2ePro\Helper\Module\Translation $translation
     ) {
-        parent::__construct($helperFactory, $context);
-
-        $this->activeRecordFactory        = $activeRecordFactory;
-        $this->resourceConnection         = $resourceConnection;
         $this->componentEbayCategoryStore = $componentEbayCategoryStore;
-        $this->componentEbayCategoryEbay  = $componentEbayCategoryEbay;
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->registry = $registry;
+        $this->translation = $translation;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function isEbayCategoryType($type)
     {
@@ -65,6 +73,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
         if ((strlen($type) !== 1)) {
             return false;
         }
+
         return in_array((int)$type, $this->getStoreCategoryTypes());
     }
 
@@ -80,7 +89,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
     {
         return [
             self::TYPE_EBAY_MAIN,
-            self::TYPE_EBAY_SECONDARY
+            self::TYPE_EBAY_SECONDARY,
         ];
     }
 
@@ -88,19 +97,21 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
     {
         return [
             self::TYPE_STORE_MAIN,
-            self::TYPE_STORE_SECONDARY
+            self::TYPE_STORE_SECONDARY,
         ];
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function getRecent($marketplaceOrAccountId, $categoryType, $excludeCategory = null)
     {
-        $allRecentCategories = $this->getHelper('Module')->getRegistry()->getValueFromJson($this->getConfigGroup());
+        $allRecentCategories = $this->registry->getValueFromJson($this->getConfigGroup());
         $configPath = $this->getRecentConfigPath($categoryType);
 
-        if (!isset($allRecentCategories[$configPath]) ||
-            !isset($allRecentCategories[$configPath][$marketplaceOrAccountId])) {
+        if (
+            !isset($allRecentCategories[$configPath]) ||
+            !isset($allRecentCategories[$configPath][$marketplaceOrAccountId])
+        ) {
             return [];
         }
 
@@ -125,7 +136,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
             }
 
             $result[] = [
-                'id' => $categoryId,
+                'id'   => $categoryId,
                 'path' => $path . ' (' . $categoryId . ')',
             ];
         }
@@ -135,7 +146,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function addRecent($categoryId, $marketplaceOrAccountId, $categoryType)
     {
-        $allRecentCategories = $this->getHelper('Module')->getRegistry()->getValueFromJson($this->getConfigGroup());
+        $allRecentCategories = $this->registry->getValueFromJson($this->getConfigGroup());
         $configPath = $this->getRecentConfigPath($categoryType);
 
         $categories = [];
@@ -152,29 +163,29 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
 
         $allRecentCategories[$configPath][$marketplaceOrAccountId] = implode(',', $categories);
 
-        $this->getHelper('Module')->getRegistry()->setValue($this->getConfigGroup(), $allRecentCategories);
+        $this->registry->setValue($this->getConfigGroup(), $allRecentCategories);
     }
 
     public function removeEbayRecent()
     {
-        $allRecentCategories = $this->getHelper('Module')->getRegistry()->getValueFromJson($this->getConfigGroup());
+        $allRecentCategories = $this->registry->getValueFromJson($this->getConfigGroup());
 
         foreach ($this->getEbayCategoryTypes() as $categoryType) {
             unset($allRecentCategories[$this->getRecentConfigPath($categoryType)]);
         }
 
-        $this->getHelper('Module')->getRegistry()->setValue($this->getConfigGroup(), $allRecentCategories);
+        $this->registry->setValue($this->getConfigGroup(), $allRecentCategories);
     }
 
     public function removeStoreRecent()
     {
-        $allRecentCategories = $this->getHelper('Module')->getRegistry()->getValueFromJson($this->getConfigGroup());
+        $allRecentCategories = $this->registry->getValueFromJson($this->getConfigGroup());
 
         foreach ($this->getStoreCategoryTypes() as $categoryType) {
             unset($allRecentCategories[$this->getRecentConfigPath($categoryType)]);
         }
 
-        $this->getHelper('Module')->getRegistry()->setValue($this->getConfigGroup(), $allRecentCategories);
+        $this->registry->setValue($this->getConfigGroup(), $allRecentCategories);
     }
 
     // ---------------------------------------
@@ -200,52 +211,58 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
         $ebayStoreCategoryHelper = $this->componentEbayCategoryStore;
 
         $temp = [
-            'category_main'            => ['call' => [$ebayCategoryHelper,'getPath'],
-                                                'arg'  => $listing->getMarketplaceId()],
-            'category_secondary'       => ['call' => [$ebayCategoryHelper,'getPath'],
-                                                'arg'  => $listing->getMarketplaceId()],
-            'store_category_main'      => ['call' => [$ebayStoreCategoryHelper,'getPath'],
-                                                'arg'  => $listing->getAccountId()],
-            'store_category_secondary' => ['call' => [$ebayStoreCategoryHelper,'getPath'],
-                                                'arg'  => $listing->getAccountId()],
+            'category_main'            => [
+                'call' => [$ebayCategoryHelper, 'getPath'],
+                'arg'  => $listing->getMarketplaceId(),
+            ],
+            'category_secondary'       => [
+                'call' => [$ebayCategoryHelper, 'getPath'],
+                'arg'  => $listing->getMarketplaceId(),
+            ],
+            'store_category_main'      => [
+                'call' => [$ebayStoreCategoryHelper, 'getPath'],
+                'arg'  => $listing->getAccountId(),
+            ],
+            'store_category_secondary' => [
+                'call' => [$ebayStoreCategoryHelper, 'getPath'],
+                'arg'  => $listing->getAccountId(),
+            ],
         ];
 
         foreach ($temp as $key => $value) {
-            if (!isset($data[$key.'_mode']) || !empty($data[$key.'_path'])) {
+            if (!isset($data[$key . '_mode']) || !empty($data[$key . '_path'])) {
                 continue;
             }
 
-            if ($data[$key.'_mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY) {
-                $data[$key.'_path'] = call_user_func($value['call'], $data[$key.'_id'], $value['arg']);
+            if ($data[$key . '_mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY) {
+                $data[$key . '_path'] = call_user_func($value['call'], $data[$key . '_id'], $value['arg']);
             }
 
-            if ($data[$key.'_mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE) {
-                $attributeLabel = $this->getHelper('Magento\Attribute')->getAttributeLabel(
-                    $data[$key.'_attribute'],
+            if ($data[$key . '_mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE) {
+                $attributeLabel = $this->magentoAttributeHelper->getAttributeLabel(
+                    $data[$key . '_attribute'],
                     $listing->getStoreId()
                 );
-                $data[$key.'_path'] = 'Magento Attribute' . ' > ' . $attributeLabel;
+                $data[$key . '_path'] = 'Magento Attribute' . ' > ' . $attributeLabel;
             }
         }
     }
-
-    //########################################
 
     public function getCategoryTitles()
     {
         $titles = [];
 
         $type = self::TYPE_EBAY_MAIN;
-        $titles[$type] = $this->getHelper('Module\Translation')->__('Primary Category');
+        $titles[$type] = $this->translation->__('Primary Category');
 
         $type = self::TYPE_EBAY_SECONDARY;
-        $titles[$type] = $this->getHelper('Module\Translation')->__('Secondary Category');
+        $titles[$type] = $this->translation->__('Secondary Category');
 
         $type = self::TYPE_STORE_MAIN;
-        $titles[$type] = $this->getHelper('Module\Translation')->__('Store Primary Category');
+        $titles[$type] = $this->translation->__('Store Primary Category');
 
         $type = self::TYPE_STORE_SECONDARY;
-        $titles[$type] = $this->getHelper('Module\Translation')->__('Store Secondary Category');
+        $titles[$type] = $this->translation->__('Store Secondary Category');
 
         return $titles;
     }
@@ -261,12 +278,13 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
         return '';
     }
 
-    //########################################
+    // ----------------------------------------
 
-    private function getConfigGroup()
+    /**
+     * @return string
+     */
+    private function getConfigGroup(): string
     {
         return '/ebay/category/recent/';
     }
-
-    //########################################
 }

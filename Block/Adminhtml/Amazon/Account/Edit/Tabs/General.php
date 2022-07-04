@@ -8,16 +8,39 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs;
 
-use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
-
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\General
- */
-class General extends AbstractForm
+class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    private $amazonHelper;
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
 
+    /**
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param \Ess\M2ePro\Helper\Data\Session $sessionHelper
+     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
+     * @param \Ess\M2ePro\Helper\Component\Amazon $amazonHelper
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param array $data
+     */
     public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
@@ -25,18 +48,22 @@ class General extends AbstractForm
         array $data = []
     ) {
         $this->amazonFactory = $amazonFactory;
-
+        $this->globalDataHelper = $globalDataHelper;
+        $this->dataHelper = $dataHelper;
+        $this->sessionHelper = $sessionHelper;
+        $this->amazonHelper = $amazonHelper;
+        $this->supportHelper = $supportHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
     protected function _prepareForm()
     {
-        /** @var $account \Ess\M2ePro\Model\Account */
-        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
+        /** @var \Ess\M2ePro\Model\Account $account */
+        $account = $this->globalDataHelper->getValue('edit_account');
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         if (isset($formData['other_listings_mapping_settings'])) {
-            $formData['other_listings_mapping_settings'] = (array)$this->getHelper('Data')->jsonDecode(
+            $formData['other_listings_mapping_settings'] = (array)$this->dataHelper->jsonDecode(
                 $formData['other_listings_mapping_settings'],
                 true
             );
@@ -48,19 +75,19 @@ class General extends AbstractForm
 
         $isEdit = !!$this->getRequest()->getParam('id');
 
-        $marketplacesCollection = $this->getHelper('Component\Amazon')->getMarketplacesAvailableForApiCreation();
+        $marketplacesCollection = $this->amazonHelper->getMarketplacesAvailableForApiCreation();
         $marketplaces = [];
         foreach ($marketplacesCollection->getItems() as $item) {
             $marketplaces[] = array_merge($item->getData(), $item->getChildObject()->getData());
         }
 
-        $accountTitle = $this->getHelper('Data\Session')->getValue('account_title', true);
-        $merchantId = $this->getHelper('Data\Session')->getValue('merchant_id', true);
-        $mwsToken   = $this->getHelper('Data\Session')->getValue('mws_token', true);
+        $accountTitle = $this->sessionHelper->getValue('account_title', true);
+        $merchantId = $this->sessionHelper->getValue('merchant_id', true);
+        $mwsToken   = $this->sessionHelper->getValue('mws_token', true);
 
         $isAuthMode = !empty($merchantId) && !empty($mwsToken);
 
-        $authMarketplaceId = $this->getHelper('Data\Session')->getValue('marketplace_id', true);
+        $authMarketplaceId = $this->sessionHelper->getValue('marketplace_id', true);
 
         $form = $this->_formFactory->create();
 
@@ -84,7 +111,7 @@ following steps to grant M2E Pro access to your Amazon data:</p>
 Configuration page, click <strong>Save</strong> to apply the changes.</p><br>
 <p>More detailed information on how to work with this page can be found <a href="%url%" target="_blank">here</a>.</p>
 HTML
-                , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Wv8UB'))
+                , $this->supportHelper->getDocumentationArticleUrl('x/Wv8UB'))
             ]
         );
 
@@ -178,7 +205,7 @@ HTML
             [
                 'container_id' => 'marketplaces_application_name_container',
                 'label' => $this->__('Application Name'),
-                'value' => $this->getHelper('Component\Amazon')->getApplicationName(),
+                'value' => $this->amazonHelper->getApplicationName(),
                 'display' => false,
             ]
         )->setFieldExtraAttributes('style="display: none"');
@@ -205,9 +232,7 @@ HTML
             if ($marketplace['is_automatic_token_retrieving_available']) {
                 $accessDataFieldConfig['onclick'] = 'return AmazonAccountObj.getToken('.$marketplace['id'].')';
             } else {
-                $accessDataFieldConfig['href'] = $this->getHelper('Component\Amazon')->getRegisterUrl(
-                    $marketplace['id']
-                );
+                $accessDataFieldConfig['href'] = $this->amazonHelper->getRegisterUrl($marketplace['id']);
             }
 
             $fieldset->addField(
@@ -236,7 +261,7 @@ HTML
             $field->setFieldExtraAttributes('style="display: none"');
         }
 
-        $button = $this->createBlock('Magento\Button')->addData(
+        $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->addData(
             [
                 'label'   => $this->__('Check Token Validity'),
                 'onclick' => 'AmazonAccountObj.checkClick()',
@@ -265,12 +290,10 @@ HTML
             $field->setFieldExtraAttributes('style="display: none"');
         }
 
-        $this->jsPhp->addConstants($this->getHelper('Data')
-            ->getClassConstants(\Ess\M2ePro\Model\Amazon\Account::class));
-        $this->jsPhp->addConstants($this->getHelper('Data')
-            ->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class));
+        $this->jsPhp->addConstants($this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Amazon\Account::class));
+        $this->jsPhp->addConstants($this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class));
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Account', ['_current' => true]));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon\Account', ['_current' => true]));
         $this->jsUrl->addUrls([
             'formSubmit' => $this->getUrl(
                 '*/amazon_account/save',
@@ -336,7 +359,7 @@ JS
             )
         ]);
 
-        $title = $this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeHtml($formData['title']));
+        $title = $this->dataHelper->escapeJs($this->dataHelper->escapeHtml($formData['title']));
         $this->js->add("M2ePro.formData.title = '$title';");
 
         $this->setForm($form);

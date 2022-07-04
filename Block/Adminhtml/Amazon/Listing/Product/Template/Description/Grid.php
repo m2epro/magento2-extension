@@ -8,14 +8,11 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Description;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Description\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
-    const ACTION_STATUS_NEW_ASIN_NOT_ACCEPTED = 1;
-    const ACTION_STATUS_VARIATIONS_NOT_SUPPORTED = 2;
-    const ACTION_STATUS_READY_TO_BE_ASSIGNED = 3;
+    public const ACTION_STATUS_NEW_ASIN_NOT_ACCEPTED = 1;
+    public const ACTION_STATUS_VARIATIONS_NOT_SUPPORTED = 2;
+    public const ACTION_STATUS_READY_TO_BE_ASSIGNED = 3;
 
     protected $attributesSetsIds;
     protected $marketplaceId;
@@ -32,15 +29,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected $cacheData = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->resourceConnection = $resourceConnection;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -248,7 +248,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $this->setChild(
             'refresh_button',
-            $this->createBlock('Magento\Button')
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
                 ->setData([
                     'id' => 'description_template_refresh_btn',
                     'label'     => $this->__('Refresh'),
@@ -321,7 +321,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'close_on_save' => true
         ]);
 
-        $title = $this->getHelper('Data')->escapeHtml($row->getData('title'));
+        $title = $this->dataHelper->escapeHtml($row->getData('title'));
 
         $categoryWord = $this->__('Category');
         $categoryPath = $row->getChildObject()->getData('category_path');

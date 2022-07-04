@@ -41,7 +41,7 @@ class Filter extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Motor\Filter');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Motor\Filter::class);
     }
 
     //########################################

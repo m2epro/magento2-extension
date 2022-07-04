@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction\IsCategoryGroupTitleUnique
- */
 class IsCategoryGroupTitleUnique extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
 {
-    //########################################
-
     public function execute()
     {
         $listingId = $this->getRequest()->getParam('id');
@@ -38,6 +33,4 @@ class IsCategoryGroupTitleUnique extends \Ess\M2ePro\Controller\Adminhtml\Walmar
         $this->setJsonContent(['unique' => !(bool)$collection->getSize()]);
         return $this->getResult();
     }
-
-    //########################################
 }

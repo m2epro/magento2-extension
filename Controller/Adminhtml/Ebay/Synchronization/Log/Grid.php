@@ -17,7 +17,8 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
 
     public function execute()
     {
-        $response = $this->createBlock('Ebay_Synchronization_Log_Grid')->toHtml();
+        $response = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Synchronization\Log\Grid::class)
+                                      ->toHtml();
         $this->setAjaxContent($response);
 
         return $this->getResult();

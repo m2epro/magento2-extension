@@ -30,7 +30,7 @@ class BlockedProductsHandler extends AbstractBlockedHandler
         $borderDate = new \DateTime('now', new \DateTimeZone('UTC'));
         $borderDate->modify('- 24 hours');
 
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->parentFactory->getObject($this->getComponentMode(), 'Listing\Product')->getCollection();
         $collection->joinListingTable();
         $collection->getSelect()->joinLeft(

@@ -13,13 +13,26 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction;
  */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
 {
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $helperDataGlobalData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $helperDataGlobalData,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+
+        $this->helperDataGlobalData = $helperDataGlobalData;
+    }
+
     public function execute()
     {
         $listing = $this->amazonFactory->getCachedObjectLoaded(
             'Listing',
             $this->getRequest()->getParam('listing_id')
         );
-        $this->getHelper('Data\GlobalData')->setValue('listing', $listing);
+        $this->helperDataGlobalData->setValue('listing', $listing);
 
         $autoMode  = $this->getRequest()->getParam('auto_mode');
         empty($autoMode) && $autoMode = $listing->getAutoMode();

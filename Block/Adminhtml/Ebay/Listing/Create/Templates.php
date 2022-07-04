@@ -8,12 +8,19 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create\Templates
- */
 class Templates extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -75,10 +82,11 @@ class Templates extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContain
 
     protected function _toHtml()
     {
-        $breadcrumb = $this->createBlock('Ebay_Listing_Create_Breadcrumb');
+        $breadcrumb = $this->getLayout()
+                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create\Breadcrumb::class);
         $breadcrumb->setSelectedStep(2);
 
-        $helpBlock = $this->createBlock('HelpBlock');
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class);
         $helpBlock->addData(
             [
                 'content' => $this->__(
@@ -93,7 +101,7 @@ Policies for the Listing.</p>
 <p>More details in <a href="%url%" target="_blank">our documentation</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/FQAVB ')
+                    $this->supportHelper->getDocumentationArticleUrl('x/FQAVB ')
                 ),
                 'style'   => 'margin-top: 30px'
             ]

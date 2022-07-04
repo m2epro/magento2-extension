@@ -36,12 +36,12 @@ class CreateFailed extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function performActions()
     {
-        /** @var $accountsCollection \Ess\M2ePro\Model\ResourceModel\Account\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
         $accountsCollection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Account')
                                                   ->getCollection();
 
         foreach ($accountsCollection->getItems() as $account) {
-            /** @var $account \Ess\M2ePro\Model\Account **/
+            /** @var \Ess\M2ePro\Model\Account $account **/
 
             try {
                 $amazonOrders = $this->getAmazonOrders($account);
@@ -67,7 +67,7 @@ class CreateFailed extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $ordersCreator->setSynchronizationLog($this->getSynchronizationLog());
 
         foreach ($amazonOrders as $order) {
-            /** @var $order \Ess\M2ePro\Model\Order */
+            /** @var \Ess\M2ePro\Model\Order $order */
 
             if ($ordersCreator->isOrderChangedInParallelProcess($order)) {
                 continue;

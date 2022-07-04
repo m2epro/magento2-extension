@@ -13,16 +13,21 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
  */
 class ResetSpecificsToDefault extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $helperException;
+
     /** @var \Magento\Framework\DB\TransactionFactory  */
     protected $transactionFactory = null;
 
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Exception $helperException,
         \Magento\Framework\DB\TransactionFactory $transactionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
+        $this->helperException = $helperException;
         $this->transactionFactory = $transactionFactory;
         parent::__construct($ebayFactory, $context);
     }
@@ -50,7 +55,7 @@ class ResetSpecificsToDefault extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
 
             $transaction->save();
         } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
+            $this->helperException->process($exception);
             $transaction->rollback();
 
             $this->setAjaxContent('0', false);

@@ -31,7 +31,9 @@ class ManageTable extends Table
             return $this->_redirect($this->controlPanelHelper->getPageDatabaseTabUrl());
         }
 
-        $this->addContent($this->createBlock('ControlPanel_Tabs_Database_Table'));
+        $this->addContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table::class)
+        );
         return $this->getResultPage();
     }
 }

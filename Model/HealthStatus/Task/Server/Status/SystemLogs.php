@@ -56,7 +56,7 @@ class SystemLogs extends IssueType
             $result->setTaskResult(TaskResult::STATE_WARNING);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
             <<<HTML
-M2E Pro has recorded <b>%exceptions%</b> 
+M2E Pro has recorded <b>%exceptions%</b>
 messages to the System Log during the last hour. <a target="_blank" href="%url%">Click here</a> for the details.
 HTML
                 ,
@@ -69,8 +69,8 @@ HTML
             $result->setTaskResult(TaskResult::STATE_CRITICAL);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
             <<<HTML
-M2E Pro has recorded <b>%exceptions%</b> messages to the System Log during the last hour. 
-<a href="%url%">Click here</a> for the details. 
+M2E Pro has recorded <b>%exceptions%</b> messages to the System Log during the last hour.
+<a href="%url%">Click here</a> for the details.
 HTML
                 ,
                 $exceptionsCount,
@@ -89,7 +89,7 @@ HTML
         $date->modify("- {$inSeconds} seconds");
 
         $collection = $this->activeRecordFactory->getObject('Log\System')->getCollection();
-        $collection->addFieldToFilter('type', ['neq' => '\Ess\M2ePro\Model\Exception\Connection']);
+        $collection->addFieldToFilter('type', ['neq' => '\\' . \Ess\M2ePro\Model\Exception\Connection::class]);
         $collection->addFieldToFilter('type', ['nlike' => '%Logging%']);
         $collection->addFieldToFilter('create_date', ['gt' => $date->format('Y-m-d H:i:s')]);
 

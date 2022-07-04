@@ -18,22 +18,30 @@ class PageActions extends AbstractBlock
     protected function _toHtml()
     {
         // ---------------------------------------
-        $marketplaceSwitcherBlock = $this->createBlock('Amazon_Marketplace_Switcher')->setData([
+        $marketplaceSwitcherBlock = $this->getLayout()
+                                         ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Marketplace\Switcher::class)
+                                         ->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'controller_name' => 'amazon_order'
         ]);
 
-        $accountSwitcherBlock = $this->createBlock('Amazon_Account_Switcher')->setData([
+        $accountSwitcherBlock = $this->getLayout()
+                                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Switcher::class)
+                                     ->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'controller_name' => 'amazon_order'
         ]);
 
-        $orderStateSwitcherBlock = $this->createBlock('Order\NotCreatedFilter')->setData([
+        $orderStateSwitcherBlock = $this->getLayout()
+                                        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\NotCreatedFilter::class)
+                                        ->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'controller' => 'amazon_order'
         ]);
 
-        $invoiceCreditmemoFilterBlock = $this->createBlock('Amazon_Order_Grid_InvoiceCreditmemoFilter')->setData([
+        $invoiceCreditmemoFilterBlock = $this->getLayout()
+                         ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order\Grid\InvoiceCreditmemoFilter::class)
+                         ->setData([
             'controller' => 'amazon_order'
         ]);
         // ---------------------------------------

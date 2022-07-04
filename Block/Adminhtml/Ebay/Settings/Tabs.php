@@ -35,7 +35,9 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
         $tab = [
             'label' => __('Main'),
             'title' => __('Main'),
-            'content' => $this->createBlock('Ebay_Settings_Tabs_Main')->toHtml()
+            'content' => $this->getLayout()
+                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Main::class)
+                              ->toHtml()
         ];
 
         $this->addTab(self::TAB_ID_MAIN, $tab);
@@ -45,7 +47,9 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
         $tab = [
             'label' => __('Synchronization'),
             'title' => __('Synchronization'),
-            'content' => $this->createBlock('Ebay_Settings_Tabs_Synchronization')->toHtml()
+            'content' => $this->getLayout()
+                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Synchronization::class)
+                              ->toHtml()
         ];
 
         $this->addTab(self::TAB_ID_SYNCHRONIZATION, $tab);
@@ -60,12 +64,16 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
             $tab = [
                 'label' => __('Parts Compatibility'),
                 'title' => __('Parts Compatibility'),
-                'content' => $this->createBlock('Ebay_Settings_Tabs_Motors', '', [
+                'content' => $this->getLayout()->createBlock(
+                    \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Motors::class,
+                    '',
+                    [
                     'data' => [
                         'epids_enabled'  => $isMotorsEpidsMarketplaceEnabled,
                         'ktypes_enabled' => $isMotorsKtypesMarketplaceEnabled
                     ]
-                ])->toHtml()
+                    ]
+                )->toHtml()
             ];
 
             $this->addTab(self::TAB_ID_MOTORS, $tab);

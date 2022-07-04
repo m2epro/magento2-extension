@@ -18,21 +18,27 @@ class PageActions extends AbstractBlock
     protected function _toHtml()
     {
         // ---------------------------------------
-        $marketplaceSwitcherBlock = $this->createBlock('Marketplace\Switcher')->setData([
+        $marketplaceSwitcherBlock = $this->getLayout()
+                                         ->createBlock(\Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher::class)
+                                         ->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'controller_name' => 'ebay_order'
         ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $accountSwitcherBlock = $this->createBlock('Account\Switcher')->setData([
+        $accountSwitcherBlock = $this->getLayout()
+                                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Account\Switcher::class)
+                                     ->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'controller_name' => 'ebay_order'
         ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $orderStateSwitcherBlock = $this->createBlock('Order\NotCreatedFilter')->setData([
+        $orderStateSwitcherBlock = $this->getLayout()
+                                        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\NotCreatedFilter::class)
+                                        ->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'controller' => 'ebay_order'
         ]);

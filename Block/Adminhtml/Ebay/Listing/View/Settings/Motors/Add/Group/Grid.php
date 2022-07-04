@@ -11,18 +11,23 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Group
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     private $motorsType;
+
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
     private $componentEbayMotors;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $backendHelper, $data);
-
         $this->componentEbayMotors = $componentEbayMotors;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $backendHelper, $data);
     }
 
     public function _construct()
@@ -140,12 +145,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         if ($row->isModeItem()) {
             $itemsCount = count($row->getItems());
-            $title = $this->getHelper('Data')->escapeHtml(
+            $title = $this->dataHelper->escapeHtml(
                 $this->__('View Group '.$this->getItemsColumnTitle())
             );
         } else {
             $itemsCount = count($row->getFiltersIds());
-            $title = $this->getHelper('Data')->escapeHtml(
+            $title = $this->dataHelper->escapeHtml(
                 $this->__('View Group Filters')
             );
         }

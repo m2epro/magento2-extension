@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Manage
- */
 class Manage extends Main
 {
     public function execute()
@@ -28,7 +25,8 @@ class Manage extends Main
         $listingProduct = $this->walmartFactory->getObjectLoaded('Listing\Product', $productId);
         $listingProduct->getChildObject()->getVariationManager()->getTypeModel()->getProcessor()->process();
 
-        $tabs = $this->createBlock('Walmart_Listing_Product_Variation_Manage_Tabs');
+        $tabs = $this->getLayout()
+                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs::class);
         $tabs->setListingProduct($listingProduct);
 
         $this->setAjaxContent($tabs);

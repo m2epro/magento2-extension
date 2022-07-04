@@ -28,8 +28,14 @@ class Preview extends AbstractBlock
     private $componentEbayCategoryStore;
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
     private $componentEbayCategoryEbay;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -43,6 +49,8 @@ class Preview extends AbstractBlock
         $this->componentEbayCategoryEbay  = $componentEbayCategoryEbay;
 
         parent::__construct($context, $data);
+        $this->dataHelper = $dataHelper;
+        $this->magentoHelper = $magentoHelper;
     }
 
     public function _construct()
@@ -64,8 +72,8 @@ class Preview extends AbstractBlock
     {
         $this->jsTranslator->add('This is Item Preview Mode', $this->__('This is Item Preview Mode'));
 
-        $variations = $this->getHelper('Data')->jsonEncode($this->getVariations());
-        $images = $this->getHelper('Data')->jsonEncode($this->getImages());
+        $variations = $this->dataHelper->jsonEncode($this->getVariations());
+        $images = $this->dataHelper->jsonEncode($this->getImages());
 
         $this->js->add(
             <<<JS
@@ -135,13 +143,13 @@ JS
 
     public function getTitle()
     {
-        return $this->getHelper('Data')
+        return $this->dataHelper
             ->escapeHtml($this->ebayListingProduct->getDescriptionTemplateSource()->getTitle());
     }
 
     public function getSubtitle()
     {
-        return $this->getHelper('Data')
+        return $this->dataHelper
             ->escapeHtml($this->ebayListingProduct->getDescriptionTemplateSource()->getSubTitle());
     }
 
@@ -159,7 +167,7 @@ JS
 
     public function getConditionNote()
     {
-        return $this->getHelper('Data')
+        return $this->dataHelper
             ->escapeHtml($this->ebayListingProduct->getDescriptionTemplateSource()->getConditionNote());
     }
 
@@ -261,8 +269,8 @@ JS
 
         foreach ($variations as $variation) {
 
-            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
-            /** @var $productVariation \Ess\M2ePro\Model\Ebay\Listing\Product\Variation */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation $productVariation */
 
             $productVariation = $variation->getChildObject();
 
@@ -271,7 +279,7 @@ JS
                 continue;
             }
 
-            /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
 
             $options = $productVariation->getOptions(true);
 
@@ -333,7 +341,7 @@ JS
         $attributes = [];
 
         foreach ($attributeCodes as $attributeCode) {
-            /** @var $attribute \Magento\Catalog\Model\ResourceModel\Eav\Attribute */
+            /** @var \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attribute */
             $attribute = $product->getResource()->getAttribute($attributeCode);
 
             if (!$attribute) {
@@ -350,12 +358,12 @@ JS
 
         $attributeLabels = [];
 
-        /** @var $productTypeInstance \Magento\ConfigurableProduct\Model\Product\Type\Configurable */
+        /** @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable $productTypeInstance */
         $productTypeInstance = $this->ebayListingProduct->getMagentoProduct()->getTypeInstance();
 
         foreach ($productTypeInstance->getConfigurableAttributes($product) as $configurableAttribute) {
 
-            /** @var $configurableAttribute \Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute */
+            /** @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute $configurableAttribute */
             $configurableAttribute->setStoteId($product->getStoreId());
 
             foreach ($attributes as $attribute) {
@@ -398,7 +406,7 @@ JS
 
         foreach ($this->ebayListingProduct->getVariations(true) as $variation) {
 
-            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
 
             if ($variation->getChildObject()->isDelete() || !$variation->getChildObject()->getQty()) {
                 continue;
@@ -406,7 +414,7 @@ JS
 
             foreach ($variation->getOptions(true) as $option) {
 
-                /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+                /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
 
                 $optionLabel = trim($option->getAttribute());
                 $optionValue = trim($option->getOption());
@@ -565,7 +573,7 @@ JS
         }
 
         foreach ($categoriesTitles as $categoryType => &$categoryData) {
-            list($id, $title) = $categoryData;
+            [$id, $title] = $categoryData;
             $categoryData = '<a>' . str_replace('>', '</a> > <a>', $title) . '</a> (' . $id . ')';
         }
 
@@ -584,7 +592,7 @@ JS
 
         foreach ($this->ebayListingProduct->getCategoryTemplate()->getSpecifics(true) as $specific) {
 
-            /** @var $specific \Ess\M2ePro\Model\Ebay\Template\Category\Specific */
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Specific $specific */
 
             $tempAttributeLabel = $specific->getSource($this->ebayListingProduct->getMagentoProduct())
                 ->getLabel();
@@ -656,7 +664,7 @@ JS
 
     private function getCountryHumanTitle($countryId)
     {
-        $countries = $this->getHelper('Magento')->getCountries();
+        $countries = $this->magentoHelper->getCountries();
 
         foreach ($countries as $country) {
             if ($countryId === $country['value']) {
@@ -820,7 +828,7 @@ JS
 
         foreach ($this->ebayListingProduct->getShippingTemplate()->getServices(true) as $service) {
 
-            /** @var $service \Ess\M2ePro\Model\Ebay\Template\Shipping\Service */
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Shipping\Service $service */
 
             if (!$service->isShippingTypeLocal()) {
                 continue;
@@ -855,7 +863,7 @@ JS
 
         foreach ($this->ebayListingProduct->getShippingTemplate()->getServices(true) as $service) {
 
-            /** @var $service \Ess\M2ePro\Model\Ebay\Template\Shipping\Service */
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Shipping\Service $service */
 
             if (!$service->isShippingTypeInternational()) {
                 continue;

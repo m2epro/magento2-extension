@@ -11,21 +11,28 @@ namespace Ess\M2ePro\Block\Adminhtml;
 class General extends Magento\AbstractBlock
 {
     protected $_template = 'general.phtml';
+
     /** @var \Magento\Framework\ObjectManagerInterface */
     private $objectManager;
+
     /** @var \Ess\M2ePro\Helper\View */
     public $viewHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
 
         $this->objectManager = $objectManager;
         $this->viewHelper = $viewHelper;
+        $this->dataHelper = $dataHelper;
     }
 
     protected function _prepareLayout()
@@ -34,7 +41,7 @@ class General extends Magento\AbstractBlock
             return parent::_prepareLayout();
         }
 
-        $actions = $this->getHelper('Data')->getControllerActions(
+        $actions = $this->dataHelper->getControllerActions(
             'General',
             [],
             !$this->helperFactory->getObject('Module')->areImportantTablesExist()
@@ -87,7 +94,7 @@ class General extends Magento\AbstractBlock
             'Show Tips'     => $this->__('Show Tips'),
             'Hide Tips'     => $this->__('Hide Tips'),
             'Back'          => $this->__('Back'),
-            'Notice'        => $this->__('Notice'),
+            'Info'          => $this->__('Info'),
             'Warning'       => $this->__('Warning'),
             'Error'         => $this->__('Error'),
             'Close'         => $this->__('Close'),

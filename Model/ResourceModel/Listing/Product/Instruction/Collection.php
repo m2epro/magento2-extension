@@ -18,8 +18,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     public function _construct()
     {
         $this->_init(
-            'Ess\M2ePro\Model\Listing\Product\Instruction',
-            'Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction'
+            \Ess\M2ePro\Model\Listing\Product\Instruction::class,
+            \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction::class
         );
     }
 

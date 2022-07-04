@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Magento;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Magento\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
     protected $websiteFactory;
@@ -19,8 +16,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected $visibility;
     protected $magentoProductCollectionFactory;
     protected $resourceConnection;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Product */
+    protected $magentoProductHelper;
 
     public function __construct(
         \Magento\Store\Model\WebsiteFactory $websiteFactory,
@@ -29,8 +26,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Magento\Catalog\Model\Product\Visibility $visibility,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\Magento\Product $magentoProductHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->websiteFactory = $websiteFactory;
@@ -39,7 +38,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->visibility = $visibility;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->resourceConnection = $resourceConnection;
-        parent::__construct($context, $backendHelper, $data);
+        $this->magentoProductHelper = $magentoProductHelper;
+        parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
 
     public function _construct()
@@ -60,7 +60,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareCollection()
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->getSelect()->group('e.entity_id');
@@ -179,7 +179,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'index'        => 'entity_id',
             'filter_index' => 'entity_id',
             'store_id'     => $this->listing->getStoreId(),
-            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
+            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
         ]);
 
         $this->addColumn('name', [
@@ -239,7 +239,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'align'          => 'right',
             'width'          => '100px',
             'type'           => 'price',
-            'filter'         => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Price',
+            'filter'         => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Price::class,
             'currency_code'  => $store->getBaseCurrency()->getCode(),
             'index'          => $priceAttributeAlias,
             'filter_index'   => $priceAttributeAlias,
@@ -384,7 +384,7 @@ JS
     protected function getProductTypes()
     {
         $magentoProductTypes = $this->type->getOptionArray();
-        $knownTypes = $this->getHelper('Magento\Product')->getOriginKnownTypes();
+        $knownTypes = $this->magentoProductHelper->getOriginKnownTypes();
 
         foreach ($magentoProductTypes as $type => $magentoProductTypeLabel) {
             if (in_array($type, $knownTypes)) {

@@ -100,7 +100,7 @@ class Categories extends AbstractModel
 
         foreach ($this->getCategoryTemplate()->getSpecifics(true) as $specific) {
 
-            /** @var $specific \Ess\M2ePro\Model\Ebay\Template\Category\Specific */
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Specific $specific */
 
             $this->searchNotFoundAttributes();
 

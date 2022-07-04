@@ -10,14 +10,42 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs\ReviseRules
- */
 class ReviseRules extends AbstractForm
 {
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     protected function _prepareForm()
     {
-        $template = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
+        $template = $this->globalDataHelper->getValue('tmp_template');
         $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
@@ -42,7 +70,7 @@ Policy Templates.</p><br>
 <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/eP1IB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/eP1IB')
                 )
             ]
         );
@@ -168,7 +196,7 @@ HTML
                 'text' => $this->__(
                     '<br/>Disabling this option might affect synchronization performance. Please read
              <a href="%url%" target="_blank">this article</a> before using the option.',
-                    $this->getHelper('Module_Support')->getSupportUrl('knowledgebase/1579746/')
+                    $this->supportHelper->getSupportUrl('knowledgebase/1579746/')
                 ),
                 'style' => 'display: none;'
             ]
@@ -183,7 +211,7 @@ HTML
         ];
 
         foreach ($jsFormData as $item) {
-            $this->js->add("M2ePro.formData.$item = '{$this->getHelper('Data')->escapeJs($formData[$item])}';");
+            $this->js->add("M2ePro.formData.$item = '{$this->dataHelper->escapeJs($formData[$item])}';");
         }
 
         $this->setForm($form);

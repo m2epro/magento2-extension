@@ -50,7 +50,7 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
                 break;
 
             case \Ess\M2ePro\Helper\Component\Amazon::NICK . '::Template_SellingFormat':
-                /**@var $item \Ess\M2ePro\Model\Template\SellingFormat */
+                /**@var \Ess\M2ePro\Model\Template\SellingFormat $item */
                 $data['business_discounts'] = $this->unsetDataInRelatedItems(
                     $item->getChildObject()->getBusinessDiscounts(),
                     'template_selling_format_id'
@@ -58,7 +58,7 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
                 break;
 
             case \Ess\M2ePro\Helper\Component\Amazon::NICK . '::Template_Description':
-                /**@var $item \Ess\M2ePro\Model\Template\Description */
+                /**@var \Ess\M2ePro\Model\Template\Description $item */
                 $data['specifics'] = $this->unsetDataInRelatedItems(
                     $item->getChildObject()->getSpecifics(),
                     'template_description_id'
@@ -83,7 +83,7 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
                 break;
 
             case \Ess\M2ePro\Helper\Component\Ebay::NICK . '::Ebay_Template_Shipping':
-                /**@var $item \Ess\M2ePro\Model\Ebay\Template\Shipping */
+                /**@var \Ess\M2ePro\Model\Ebay\Template\Shipping $item */
                 if ($calculated = $item->getCalculatedShipping()) {
                     $data['calculated'] = $calculated->getData();
                 }
@@ -96,7 +96,7 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
                 break;
 
             case \Ess\M2ePro\Helper\Component\Ebay::NICK . '::Ebay_Template_Category':
-                /**@var $item \Ess\M2ePro\Model\Ebay\Template\Category */
+                /**@var \Ess\M2ePro\Model\Ebay\Template\Category $item */
                 $data['specifics'] = $this->unsetDataInRelatedItems($item->getSpecifics(), 'template_category_id');
                 break;
 
@@ -107,7 +107,7 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
                 break;
 
             case \Ess\M2ePro\Helper\Component\Walmart::NICK . '::Template_SellingFormat':
-                /**@var $item \Ess\M2ePro\Model\Template\SellingFormat */
+                /**@var \Ess\M2ePro\Model\Template\SellingFormat $item */
                 $data['shipping_overrides'] = $this->unsetDataInRelatedItems(
                     $item->getChildObject()->getShippingOverrides(),
                     'template_selling_format_id'
@@ -123,7 +123,7 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
                 break;
 
             case \Ess\M2ePro\Helper\Component\Walmart::NICK . '::Template_Category':
-                /**@var $item \Ess\M2ePro\Model\Walmart\Template\Category */
+                /**@var \Ess\M2ePro\Model\Walmart\Template\Category $item */
                 $data['specifics'] = $this->unsetDataInRelatedItems($item->getSpecifics(), 'template_category_id');
                 break;
         }

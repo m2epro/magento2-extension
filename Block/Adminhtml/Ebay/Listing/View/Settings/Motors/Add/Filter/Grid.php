@@ -14,18 +14,21 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     private $resourceConnection;
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
     private $componentEbayMotors;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $backendHelper, $data);
-
         $this->resourceConnection  = $resourceConnection;
         $this->componentEbayMotors = $componentEbayMotors;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $backendHelper, $data);
     }
 
     public function _construct()
@@ -194,7 +197,7 @@ HTML;
 
     public function callbackColumnConditions($value, $row, $column, $isExport)
     {
-        $conditions = $this->getHelper('Data')->jsonDecode($row->getData('conditions'));
+        $conditions = $this->dataHelper->jsonDecode($row->getData('conditions'));
 
         if ($this->componentEbayMotors->isTypeBasedOnEpids($this->getMotorsType())) {
             if (!empty($conditions['year'])) {
@@ -236,18 +239,18 @@ HTML;
 
         foreach ($conditions as $key => $value) {
             if ($key == 'epid') {
-                $key = $this->getHelper('Data')->escapeHtml('ePID');
+                $key = $this->dataHelper->escapeHtml('ePID');
             } elseif ($key == 'ktype') {
-                $key = $this->getHelper('Data')->escapeHtml('kType');
+                $key = $this->dataHelper->escapeHtml('kType');
             } elseif ($key == 'body_style') {
-                $key = $this->getHelper('Data')->escapeHtml('Body Style');
+                $key = $this->dataHelper->escapeHtml('Body Style');
             } elseif ($key == 'product_type') {
-                $key = $this->getHelper('Data')->escapeHtml('Type');
+                $key = $this->dataHelper->escapeHtml('Type');
             } else {
-                $key = $this->getHelper('Data')->escapeHtml(ucfirst($key));
+                $key = $this->dataHelper->escapeHtml(ucfirst($key));
             }
 
-            $value = $this->getHelper('Data')->escapeHtml($value);
+            $value = $this->dataHelper->escapeHtml($value);
 
             $html .= <<<HTML
 <span class="attribute-row">

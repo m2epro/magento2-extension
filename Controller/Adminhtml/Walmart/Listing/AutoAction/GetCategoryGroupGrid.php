@@ -8,19 +8,14 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction\GetCategoryGroupGrid
- */
+use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\AutoAction\Mode\Category\Group\Grid;
+
 class GetCategoryGroupGrid extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
 {
-    //########################################
-
     public function execute()
     {
-        $grid = $this->createBlock('Walmart_Listing_AutoAction_Mode_Category_Group_Grid');
+        $grid = $this->getLayout()->createBlock(Grid::class);
         $this->setAjaxContent($grid);
         return $this->getResult();
     }
-
-    //########################################
 }

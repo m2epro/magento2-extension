@@ -10,21 +10,14 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace\Index
- */
 class Index extends Marketplace
 {
-    //########################################
-
     public function execute()
     {
-        $this->addContent($this->createBlock('Walmart\Marketplace'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Marketplace::class));
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Marketplaces'));
         $this->setPageHelpLink('x/Tf1IB');
 
         return $this->getResult();
     }
-
-    //########################################
 }

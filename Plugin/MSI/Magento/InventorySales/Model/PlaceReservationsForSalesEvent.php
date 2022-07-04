@@ -179,7 +179,7 @@ class PlaceReservationsForSalesEvent extends \Ess\M2ePro\Plugin\AbstractPlugin
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_QTY,
             $this->getHelper('Module\Log')->encodeDescription($resultMessage),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
         );
     }
 

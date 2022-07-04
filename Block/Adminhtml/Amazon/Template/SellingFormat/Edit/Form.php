@@ -8,6 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit;
 
+use Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit\Form\DiscountTable;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Template\SellingFormat;
 
@@ -19,21 +20,33 @@ class Form extends AbstractForm
     /** @var \Magento\Customer\Model\Group */
     protected $customerGroup;
 
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    protected $magentoAttributeHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Component\Amazon\Configuration $configuration,
         \Magento\Customer\Model\Group $customerGroup,
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $registry, $formFactory, $data);
-
         $this->configuration = $configuration;
         $this->customerGroup = $customerGroup;
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->supportHelper = $supportHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
@@ -42,7 +55,7 @@ class Form extends AbstractForm
         $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
-        $attributes = $this->getHelper('Magento\Attribute')->getAll();
+        $attributes = $this->magentoAttributeHelper->getAll();
 
         $formData['discount_rules'] = $template && $template->getId() ?
             $template->getChildObject()->getBusinessDiscounts() : [];
@@ -74,14 +87,11 @@ class Form extends AbstractForm
             $formData['regular_sale_price_end_date_value'] = $dateTime;
         }
 
-        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
-        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
-
         $attributesByInputTypes = [
-            'text' => $magentoAttributeHelper->filterByInputTypes($attributes, ['text']),
-            'text_select' => $magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'select']),
-            'text_price' => $magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'price']),
-            'text_date' => $magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'date']),
+            'text' => $this->magentoAttributeHelper->filterByInputTypes($attributes, ['text']),
+            'text_select' => $this->magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'select']),
+            'text_price' => $this->magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'price']),
+            'text_date' => $this->magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'date']),
         ];
 
         $groups = $this->customerGroup->getCollection()->toArray();
@@ -197,7 +207,8 @@ class Form extends AbstractForm
         ];
 
         if ($formData['qty_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE
-            && !$magentoAttributeHelper->isExistInAttributesArray($formData['qty_custom_attribute'], $attributes)
+            && !$this->magentoAttributeHelper
+                ->isExistInAttributesArray($formData['qty_custom_attribute'], $attributes)
             && $formData['qty_custom_attribute'] != ''
         ) {
             $preparedAttributes[] = [
@@ -206,7 +217,7 @@ class Form extends AbstractForm
                     'selected' => 'selected',
                 ],
                 'value' => \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE,
-                'label' => $magentoAttributeHelper->getAttributeLabel($formData['qty_custom_attribute']),
+                'label' => $this->magentoAttributeHelper->getAttributeLabel($formData['qty_custom_attribute']),
             ];
         }
 
@@ -923,7 +934,7 @@ HTML
                     ‘Request a quantity discount’: QTY >= 5, price 4,75 £, where: QTY <= 5 is the number of
                     purchased Products to which the Discount will be applied, price 4,75 £ is the final Price
                     per Product with the Discount applied (7£ - 2,25).',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/8oZP')
+                    $this->supportHelper->getDocumentationArticleUrl('x/8oZP')
                 )
                 . '</span>'
             );
@@ -972,7 +983,7 @@ HTML
                 ]
             );
 
-            $discountTableBlock = $this->createBlock('Amazon_Template_SellingFormat_Edit_Form_DiscountTable')->setData([
+            $discountTableBlock = $this->getLayout()->createBlock(DiscountTable::class)->setData([
                 'attributes' => $attributesByInputTypes['text_price']
             ]);
 
@@ -987,13 +998,13 @@ HTML
         }
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Template\SellingFormat::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Template\SellingFormat::class)
         );
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\SellingFormat::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\SellingFormat::class)
         );
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class)
         );
 
         $this->jsUrl->addUrls([
@@ -1064,7 +1075,7 @@ HTML
         $this->js->add("M2ePro.formData.id = '{$this->getRequest()->getParam('id')}';");
         $this->js->add(
             "M2ePro.formData.title
-             = '{$this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeJs($formData['title']))}';"
+             = '{$this->dataHelper->escapeJs($this->dataHelper->escapeJs($formData['title']))}';"
         );
 
         $jsFormData = [
@@ -1080,11 +1091,11 @@ HTML
         ];
 
         foreach ($jsFormData as $item) {
-            $this->js->add("M2ePro.formData.$item = '{$this->getHelper('Data')->escapeJs($formData[$item])}';");
+            $this->js->add("M2ePro.formData.$item = '{$this->dataHelper->escapeJs($formData[$item])}';");
         }
 
         $this->js->add(
-            "M2ePro.formData.discount_rules = {$this->getHelper('Data')->jsonEncode($formData['discount_rules'])};"
+            "M2ePro.formData.discount_rules = {$this->dataHelper->jsonEncode($formData['discount_rules'])};"
         );
 
         $this->js->add(<<<JS

@@ -89,7 +89,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Amazon\Order');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Order::class);
     }
 
     //########################################
@@ -659,7 +659,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
         // Create invoice
         // ---------------------------------------
-        /** @var $invoiceBuilder \Ess\M2ePro\Model\Magento\Order\Invoice */
+        /** @var \Ess\M2ePro\Model\Magento\Order\Invoice $invoiceBuilder */
         $invoiceBuilder = $this->modelFactory->getObject('Magento_Order_Invoice');
         $invoiceBuilder->setMagentoOrder($magentoOrder);
         $invoiceBuilder->buildInvoice();
@@ -714,7 +714,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             return null;
         }
 
-        /** @var $shipmentBuilder \Ess\M2ePro\Model\Magento\Order\Shipment */
+        /** @var \Ess\M2ePro\Model\Magento\Order\Shipment $shipmentBuilder */
         $shipmentBuilder = $this->shipmentFactory->create($this->getParentObject()->getMagentoOrder());
         $shipmentBuilder->setMagentoOrder($this->getParentObject()->getMagentoOrder());
         $shipmentBuilder->buildShipments();

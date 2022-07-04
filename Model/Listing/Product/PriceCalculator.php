@@ -51,10 +51,12 @@ abstract class PriceCalculator extends AbstractModel
      */
     private $product = null;
 
-    /**
-     * @var null|string
-     */
+    /** @var null|string */
     private $coefficient = null;
+    /** @var array */
+    private $modifier = [];
+    /** @var \Ess\M2ePro\Model\Magento\Product\Cache|null */
+    private $attributeSourceProduct;
 
     /**
      * @var null|float
@@ -172,6 +174,43 @@ abstract class PriceCalculator extends AbstractModel
     protected function getCoefficient()
     {
         return $this->coefficient;
+    }
+
+    /**
+     * @param array $value
+     * @return PriceCalculator
+     */
+    public function setModifier(array $value): PriceCalculator
+    {
+        $this->modifier = $value;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getModifier(): array
+    {
+        return $this->modifier;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Magento\Product\Cache|null $attributeSourceProduct
+     *
+     * @return \Ess\M2ePro\Model\Listing\Product\PriceCalculator
+     */
+    public function setAttributeSourceProduct(?Cache $attributeSourceProduct): PriceCalculator
+    {
+        $this->attributeSourceProduct = $attributeSourceProduct;
+        return $this;
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Magento\Product\Cache|null
+     */
+    public function getAttributeSourceProduct(): ?Cache
+    {
+        return $this->attributeSourceProduct;
     }
 
     // ---------------------------------------
@@ -785,12 +824,12 @@ abstract class PriceCalculator extends AbstractModel
     {
         $value = 0;
 
-        /** @var $productTypeInstance \Magento\ConfigurableProduct\Model\Product\Type\Configurable */
+        /** @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable $productTypeInstance */
         $productTypeInstance = $product->getTypeInstance();
 
         foreach ($productTypeInstance->getUsedProducts($product->getProduct()) as $childProduct) {
 
-            /** @var $childProduct Product */
+            /** @var Product $childProduct */
             $childProduct = $this->modelFactory->getObject('Magento\Product')->setProduct($childProduct);
 
             $variationValue = (float)$childProduct->getSpecialPrice();
@@ -859,7 +898,7 @@ abstract class PriceCalculator extends AbstractModel
 
             foreach ($variation as $option) {
 
-                /** @var $childProduct Product */
+                /** @var Product $childProduct */
                 $childProduct = $this->modelFactory->getObject('Magento\Product')->setProductId($option['product_id']);
 
                 $optionValue = (float)$childProduct->getSpecialPrice();
@@ -901,7 +940,7 @@ abstract class PriceCalculator extends AbstractModel
 
     protected function getGroupedTierValue(\Ess\M2ePro\Model\Magento\Product $product)
     {
-        /** @var $productTypeInstance \Magento\GroupedProduct\Model\Product\Type\Grouped */
+        /** @var \Magento\GroupedProduct\Model\Product\Type\Grouped $productTypeInstance */
         $productTypeInstance = $product->getTypeInstance();
 
         $lowestVariationValue = null;
@@ -909,7 +948,7 @@ abstract class PriceCalculator extends AbstractModel
 
         foreach ($productTypeInstance->getAssociatedProducts($product->getProduct()) as $childProduct) {
 
-            /** @var $childProduct \Ess\M2ePro\Model\Magento\Product */
+            /** @var \Ess\M2ePro\Model\Magento\Product $childProduct */
             $childProduct = $this->modelFactory->getObject('Magento\Product')->setProduct($childProduct);
 
             $variationValue = (float)$childProduct->getSpecialPrice();
@@ -948,6 +987,16 @@ abstract class PriceCalculator extends AbstractModel
             } else {
                 foreach ($value as $qty => $price) {
                     $value[$qty] = $this->modifyValueByCoefficient($price);
+                }
+            }
+        }
+
+        if ($this->getModifier() !== null) {
+            if (!$this->isSourceModeTier()) {
+                $value = $this->modifyValueByModifier($value);
+            } else {
+                foreach ($value as $qty => $price) {
+                    $value[$qty] = $this->modifyValueByModifier($price);
                 }
             }
         }
@@ -1008,6 +1057,50 @@ abstract class PriceCalculator extends AbstractModel
         }
 
         return $value * (float)$coefficient;
+    }
+
+    /**
+     * @param $value
+     *
+     * @return float
+     */
+    protected function modifyValueByModifier($value)
+    {
+        if ($value <= 0) {
+            return $value;
+        }
+
+        $result = $value;
+        $modifier = $this->getModifier();
+        $magentoProduct = $this->getAttributeSourceProduct();
+        foreach ($modifier as $modification) {
+            switch ($modification['mode']) {
+                case \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_INCREASE:
+                    $result += (float)$modification['value'];
+                    break;
+                case \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_DECREASE:
+                    $result -= (float)$modification['value'];
+                    break;
+                case \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_INCREASE:
+                    $result *= 1 + (float)$modification['value'] / 100;
+                    break;
+                case \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_DECREASE:
+                    $result *= 1 - (float)$modification['value'] / 100;
+                    break;
+                case \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ATTRIBUTE:
+                    if (!$magentoProduct) {
+                        break;
+                    }
+
+                    $attributeValue = $magentoProduct
+                        ->getAttributeValue($modification['attribute_code']);
+                    if (is_numeric($attributeValue)) {
+                        $result += (float)$attributeValue;
+                    }
+            }
+        }
+
+        return $result;
     }
 
     protected function increaseValueByVatPercent($value)

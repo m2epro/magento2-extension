@@ -14,12 +14,12 @@ namespace Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion;
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
-     * @var $magentoProduct \Ess\M2ePro\Model\Magento\Product
+     * @var \Ess\M2ePro\Model\Magento\Product $magentoProduct
      */
     private $magentoProduct = null;
 
     /**
-     * @var $sellingFormatPromotionModel \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion
+     * @var \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion $sellingFormatPromotionModel
      */
     private $sellingFormatPromotionModel = null;
 

@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Processing\Lock',
-            'Ess\M2ePro\Model\ResourceModel\Processing\Lock'
+            \Ess\M2ePro\Model\Processing\Lock::class,
+            \Ess\M2ePro\Model\ResourceModel\Processing\Lock::class
         );
     }
 

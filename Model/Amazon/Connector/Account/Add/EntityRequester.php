@@ -36,7 +36,7 @@ class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTim
      */
     protected function getRequestData()
     {
-        /** @var $marketplaceObject \Ess\M2ePro\Model\Marketplace */
+        /** @var \Ess\M2ePro\Model\Marketplace $marketplaceObject */
 
         $marketplaceObject = $this->amazonFactory->getCachedObjectLoaded(
             'Marketplace',

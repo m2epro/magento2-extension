@@ -21,7 +21,7 @@ class PreviewItems extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
     public function execute()
     {
         $this->addContent(
-            $this->createBlock('Ebay_Listing_Preview')
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Preview::class)
         );
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(

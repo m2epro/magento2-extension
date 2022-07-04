@@ -55,8 +55,8 @@ class SearchCharity extends Template
         $charities = empty($responseData['Charities']) ? [] : $responseData['Charities'];
         $totalCount = empty($responseData['total_count']) ? 0 : $responseData['total_count'];
 
-        $grid = $this->createBlock(
-            'Ebay_Template_SellingFormat_Edit_Form_Charity_Search_Grid',
+        $grid = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Charity\Search\Grid::class,
             '',
             [
                 'data' => [

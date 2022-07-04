@@ -527,14 +527,13 @@ define([
                 return;
             }
 
-            new Ajax.Request(M2ePro.url.get('ebay_category/refreshStoreCategories'), {
+            new Ajax.Request(M2ePro.url.get('ebay_account_store_category/refresh'), {
                 method: 'post',
                 parameters: {
                     account_id: self.accountId
                 },
                 onSuccess: function(transport)
                 {
-
                     EbayTemplateCategoryChooserTabsBrowseObj.renderTopLevelCategories('chooser_browser');
 
                     if ($('query').value.length != 0) {

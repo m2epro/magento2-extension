@@ -70,7 +70,7 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
                     continue;
                 }
 
-                /** @var $orderBuilder \Ess\M2ePro\Model\Walmart\Order\Builder */
+                /** @var \Ess\M2ePro\Model\Walmart\Order\Builder $orderBuilder */
                 $orderBuilder = $this->modelFactory->getObject('Walmart_Order_Builder');
                 $orderBuilder->initialize($account, $orderData);
 
@@ -114,7 +114,7 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
         if ($order->canCreateMagentoOrder()) {
             try {
                 $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
-                $order->addNoticeLog(
+                $order->addInfoLog(
                     'Magento order creation rules are met. M2E Pro will attempt to create Magento order.'
                 );
 

@@ -8,19 +8,12 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\EditIdentifier
- */
 class EditIdentifier extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\ActionAbstract
 {
-    //########################################
-
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::walmart_listings_m2epro');
     }
-
-    //########################################
 
     public function execute()
     {
@@ -131,6 +124,4 @@ class EditIdentifier extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Ac
 
         return $this->getResult();
     }
-
-    //########################################
 }

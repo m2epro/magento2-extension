@@ -45,7 +45,7 @@ class ResolveTitle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function performActions()
     {
-        /** @var $accountsCollection \Ess\M2ePro\Model\ResourceModel\Account\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
         $accountsCollection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Account')
             ->getCollection();
         $accountsCollection->addFieldToFilter('other_listings_synchronization', 1);
@@ -58,7 +58,7 @@ class ResolveTitle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         foreach ($accounts as $account) {
 
-            /** @var $account \Ess\M2ePro\Model\Account **/
+            /** @var \Ess\M2ePro\Model\Account $account **/
 
             $this->getOperationHistory()->addTimePoint(
                 __METHOD__.'process'.$account->getId(),
@@ -87,7 +87,7 @@ class ResolveTitle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     {
         for ($i = 0; $i <= 5; $i++) {
 
-            /** @var $listingOtherCollection \Ess\M2ePro\Model\ResourceModel\Listing\Other */
+            /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other $listingOtherCollection */
             $listingOtherCollection = $this->parentFactory->getObject(
                 \Ess\M2ePro\Helper\Component\Amazon::NICK,
                 'Listing\Other'
@@ -145,7 +145,7 @@ class ResolveTitle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $aloTable = $this->activeRecordFactory->getObject('Amazon_Listing_Other')->getResource()->getMainTable();
 
-        /** @var $mappingModel \Ess\M2ePro\Model\Amazon\Listing\Other\Mapping */
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Other\Mapping $mappingModel */
         $mappingModel = $this->modelFactory->getObject('Amazon_Listing_Other_Mapping');
 
         $receivedItems = [];
@@ -166,7 +166,7 @@ class ResolveTitle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $listingsOthersWithEmptyTitles = [];
             if ($account->getChildObject()->isOtherListingsMappingEnabled()) {
 
-                /** @var $listingOtherCollection \Ess\M2ePro\Model\ResourceModel\Listing\Other */
+                /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other $listingOtherCollection */
                 $listingOtherCollection = $this->parentFactory->getObject(
                     \Ess\M2ePro\Helper\Component\Amazon::NICK,
                     'Listing\Other'

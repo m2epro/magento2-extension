@@ -8,30 +8,28 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Manual;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Manual\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
     /** @var \Ess\M2ePro\Model\Listing */
-    protected $listing = null;
+    protected $listing;
 
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     protected $magentoProductCollectionFactory;
-    protected $amazonFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
+    protected $amazonFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->amazonFactory = $amazonFactory;
-
-        parent::__construct($context, $backendHelper, $data);
+        parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
 
     //########################################
@@ -63,7 +61,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     {
         // Get collection
         // ---------------------------------------
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->setListingProductModeOn();
 
@@ -121,7 +119,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'index'    => 'entity_id',
             'filter_index' => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
         ]);
 
         $this->addColumn('name', [
@@ -154,7 +152,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
         $actionsColumn = [
             'header'    => $this->__('Actions'),
-            'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
             'align'     => 'center',
             'width'     => '130px',
             'type'      => 'text',
@@ -212,14 +210,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             $productTitle = substr($productTitle, 0, 60) . '...';
         }
 
-        $productTitle = $this->getHelper('Data')->escapeHtml($productTitle);
+        $productTitle = $this->dataHelper->escapeHtml($productTitle);
 
         $value = '<span>'.$productTitle.'</span>';
 
         $sku = $row->getData('sku');
 
         $value .= '<br/><strong>'.$this->__('SKU') .
-            ':</strong> '.$this->getHelper('Data')->escapeHtml($sku) . '<br/>';
+            ':</strong> '.$this->dataHelper->escapeHtml($sku) . '<br/>';
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
@@ -271,7 +269,7 @@ HTML;
             $descriptionTemplateId
         );
 
-        $title = $this->getHelper('Data')->escapeHtml($descriptionTemplate->getData('title'));
+        $title = $this->dataHelper->escapeHtml($descriptionTemplate->getData('title'));
 
         return <<<HTML
 <a target="_blank" href="{$templateDescriptionEditUrl}">{$title}</a>

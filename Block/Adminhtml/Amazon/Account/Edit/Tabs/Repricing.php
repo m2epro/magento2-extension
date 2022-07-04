@@ -11,15 +11,48 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Magento\Framework\Message\MessageInterface;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\Repricing
- */
 class Repricing extends AbstractForm
 {
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    protected $magentoAttributeHelper;
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->supportHelper = $supportHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     protected function _prepareForm()
     {
         /** @var \Ess\M2ePro\Model\Account $account */
-        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
+        $account = $this->globalDataHelper->getValue('edit_account');
 
         $isRepricingLinked = $account->getChildObject()->isRepricing();
 
@@ -29,14 +62,10 @@ class Repricing extends AbstractForm
             $repricing = $account->getChildObject()->getRepricing();
         }
 
-        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
-        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
-
-        $allAttributes = $magentoAttributeHelper->getAll();
-
+        $allAttributes = $this->magentoAttributeHelper->getAll();
         $attributesByInputTypes = [
-            'text_price' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'price']),
-            'boolean' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['boolean']),
+            'text_price' => $this->magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'price']),
+            'boolean' => $this->magentoAttributeHelper->filterByInputTypes($allAttributes, ['boolean']),
         ];
 
         $form = $this->_formFactory->create();
@@ -68,7 +97,7 @@ The Product Prices will be updated via M2E Pro again.
 More details about the Repricing Tool can be found
 <a href="%url%" target="_blank" class="external-link">here</a>
 HTML
-                , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Df4kB'))
+                , $this->supportHelper->getDocumentationArticleUrl('x/CP4kB'))
             ]
         );
 
@@ -209,7 +238,7 @@ HTML
             $priceModeAttribute = \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_ATTRIBUTE;
 
             if ($repricing->getRegularPriceMode() == $priceModeAttribute &&
-                !$magentoAttributeHelper->isExistInAttributesArray(
+                !$this->magentoAttributeHelper->isExistInAttributesArray(
                     $repricing->getData('regular_price_attribute'),
                     $attributesByInputTypes['text_price']
                 ) && $repricing->getData('regular_price_attribute') != ''
@@ -222,7 +251,7 @@ HTML
                 $preparedAttributes[] = [
                     'attrs' => $attrs,
                     'value' => \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_ATTRIBUTE,
-                    'label' => $magentoAttributeHelper->getAttributeLabel(
+                    'label' => $this->magentoAttributeHelper->getAttributeLabel(
                         $repricing->getData('regular_price_attribute')
                     ),
                 ];
@@ -282,8 +311,8 @@ HTML
     <br /><br />
     More detailed information on how to work with this option can be found
     <a href="%url2%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/AAAZD'),
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Df4kB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/AAAZD'),
+                    $this->supportHelper->getDocumentationArticleUrl('x/CP4kB')
                 )
             ) .
             '</div>';
@@ -360,7 +389,7 @@ HTML
             );
 
             if ($repricing->getMinPriceMode() == \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_ATTRIBUTE &&
-                !$magentoAttributeHelper->isExistInAttributesArray(
+                !$this->magentoAttributeHelper->isExistInAttributesArray(
                     $repricing->getData('min_price_attribute'),
                     $attributesByInputTypes['text_price']
                 ) && $repricing->getData('min_price_attribute') != '') {
@@ -372,7 +401,7 @@ HTML
                 $preparedAttributes[] = [
                     'attrs' => $attrs,
                     'value' => \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_ATTRIBUTE,
-                    'label' => $magentoAttributeHelper->getAttributeLabel(
+                    'label' => $this->magentoAttributeHelper->getAttributeLabel(
                         $repricing->getData('min_price_attribute')
                     ),
                 ];
@@ -429,8 +458,8 @@ Text or Price field Attributes are available for the selection.
 <br /><br />
 More detailed information on how to work with this option can be found
 <a href="%url2%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/AAAZD'),
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Df4kB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/AAAZD'),
+                    $this->supportHelper->getDocumentationArticleUrl('x/CP4kB')
                 )
             ) .
             '</div>';
@@ -571,7 +600,7 @@ More detailed information on how to work with this option can be found
             );
 
             if ($repricing->getMaxPriceMode() == \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_ATTRIBUTE &&
-                !$magentoAttributeHelper->isExistInAttributesArray(
+                !$this->magentoAttributeHelper->isExistInAttributesArray(
                     $repricing->getData('max_price_attribute'),
                     $attributesByInputTypes['text_price']
                 ) && $repricing->getData('max_price_attribute') != ''
@@ -584,7 +613,7 @@ More detailed information on how to work with this option can be found
                 $preparedAttributes[] = [
                     'attrs' => $attrs,
                     'value' => \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_ATTRIBUTE,
-                    'label' => $magentoAttributeHelper->getAttributeLabel(
+                    'label' => $this->magentoAttributeHelper->getAttributeLabel(
                         $repricing->getData('max_price_attribute')
                     ),
                 ];
@@ -641,8 +670,8 @@ Text or Price field Attributes are available for the selection.
 <br /><br />
 More detailed information on how to work with this option can be found
 <a href="%url2%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/AAAZD'),
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Df4kB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/AAAZD'),
+                    $this->supportHelper->getDocumentationArticleUrl('x/CP4kB')
                 )
             ) .
             '</div>';
@@ -784,7 +813,7 @@ More detailed information on how to work with this option can be found
             $priceModeAttribute = \Ess\M2ePro\Model\Amazon\Account\Repricing::DISABLE_MODE_ATTRIBUTE;
 
             if ($repricing->getDisableMode() == $priceModeAttribute &&
-                !$magentoAttributeHelper->isExistInAttributesArray(
+                !$this->magentoAttributeHelper->isExistInAttributesArray(
                     $repricing->getData('disable_mode_attribute'),
                     $attributesByInputTypes['boolean']
                 ) && $repricing->getData('disable_mode_attribute') != ''
@@ -797,7 +826,7 @@ More detailed information on how to work with this option can be found
                 $preparedAttributes[] = [
                     'attrs' => $attrs,
                     'value' => \Ess\M2ePro\Model\Amazon\Account\Repricing::DISABLE_MODE_ATTRIBUTE,
-                    'label' => $magentoAttributeHelper->getAttributeLabel(
+                    'label' => $this->magentoAttributeHelper->getAttributeLabel(
                         $repricing->getData('disable_mode_attribute')
                     ),
                 ];
@@ -861,8 +890,8 @@ Text or Price field Attributes are available for the selection.
 <br /><br />
 More detailed information on how to work with this option can be found
 <a href="%url2%" target="_blank" class="external-link">here</a>.',
-                        $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/AAAZD'),
-                        $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Df4kB')
+                        $this->supportHelper->getDocumentationArticleUrl('x/AAAZD'),
+                        $this->supportHelper->getDocumentationArticleUrl('x/CP4kB')
                     )).'</div>'
             ]
         )->addCustomAttribute('allowed_attribute_types', 'boolean');
@@ -904,10 +933,10 @@ CSS
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Account\Repricing')
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Amazon\Account\Repricing::class)
         );
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon_Account_Repricing', [
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon_Account_Repricing', [
             'id' => $account->getId()
         ]));
 
@@ -918,7 +947,7 @@ CSS
 
     protected function getRepricingProductsCount()
     {
-        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
+        $account = $this->globalDataHelper->getValue('edit_account');
 
         $listingProductObject = $this->parentFactory->getObject(
             \Ess\M2ePro\Helper\Component\Amazon::NICK,

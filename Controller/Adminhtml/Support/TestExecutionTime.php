@@ -10,20 +10,30 @@ namespace Ess\M2ePro\Controller\Adminhtml\Support;
 
 use Ess\M2ePro\Controller\Adminhtml\Support;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Support\TestExecutionTime
- */
 class TestExecutionTime extends Support
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Client */
+    private $clientHelper;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Client $clientHelper
+     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Client $clientHelper,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+
+        $this->clientHelper = $clientHelper;
+    }
 
     public function execute()
     {
-        $this->getHelper('Client')->testExecutionTime((int)$this->getRequest()->getParam('seconds'));
+        $this->clientHelper->testExecutionTime((int)$this->getRequest()->getParam('seconds'));
 
         $this->setJsonContent(['result' => true]);
+
         return $this->getResult();
     }
-
-    //########################################
 }

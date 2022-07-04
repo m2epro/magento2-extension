@@ -190,7 +190,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
 
         if (isset($data['variation']) && is_array($data['variation'])) {
             foreach ($data['variation'] as &$variation) {
-                /** @var $ebayVariation \Ess\M2ePro\Model\Ebay\Listing\Product\Variation */
+                /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation $ebayVariation */
                 $ebayVariation = $variation['_instance_']->getChildObject();
 
                 if ($ebayVariation->isAdd()) {

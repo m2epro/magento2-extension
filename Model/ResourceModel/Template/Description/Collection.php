@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Template\Description',
-            'Ess\M2ePro\Model\ResourceModel\Template\Description'
+            \Ess\M2ePro\Model\Template\Description::class,
+            \Ess\M2ePro\Model\ResourceModel\Template\Description::class
         );
     }
 

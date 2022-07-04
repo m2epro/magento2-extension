@@ -8,41 +8,45 @@
 
 namespace Ess\M2ePro\Helper\Client;
 
-use Ess\M2ePro\Helper\AbstractHelper;
-
-class Cache extends AbstractHelper
+class Cache
 {
-    const BACKEND_TYPE_APC       = 'apc';
-    const BACKEND_TYPE_MEMCACHED = 'memcached';
-    const BACKEND_TYPE_REDIS     = 'cm_cache_backend_redis';
-    const BACKEND_TYPE_FILE      = 'file';
-    const BACKEND_TYPE_SQLITE    = 'sqlite';
-    const BACKEND_TYPE_DB        = 'database';
+    public const BACKEND_TYPE_APC       = 'apc';
+    public const BACKEND_TYPE_MEMCACHED = 'memcached';
+    public const BACKEND_TYPE_REDIS     = 'cm_cache_backend_redis';
+    public const BACKEND_TYPE_FILE      = 'file';
+    public const BACKEND_TYPE_SQLITE    = 'sqlite';
+    public const BACKEND_TYPE_DB        = 'database';
 
-    //########################################
-
-    public function isApcAvailable()
+    /**
+     * @return bool
+     */
+    public function isApcAvailable(): bool
     {
         return extension_loaded('apc') && ini_get('apc.enabled');
     }
 
-    public function isMemchachedAvailable()
+    /**
+     * @return bool
+     */
+    public function isMemchachedAvailable(): bool
     {
         return (extension_loaded('memcache') || extension_loaded('memcached')) &&
                (class_exists('Memcache', false) || class_exists('Memcached', false));
     }
 
-    public function isRedisAvailable()
+    /**
+     * @return bool
+     */
+    public function isRedisAvailable(): bool
     {
         return extension_loaded('redis') && class_exists('Redis', false);
     }
 
-    // ---------------------------------------
-
-    public function isZendOpcacheAvailable()
+    /**
+     * @return bool
+     */
+    public function isZendOpcacheAvailable(): bool
     {
         return function_exists('opcache_get_status');
     }
-
-    //########################################
 }

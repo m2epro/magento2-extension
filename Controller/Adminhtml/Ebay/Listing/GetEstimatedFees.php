@@ -68,7 +68,8 @@ class GetEstimatedFees extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
             if (empty($errors)) {
                 $this->setJsonContent(['error' => true]);
             } else {
-                $errorsBlock = $this->createBlock('Ebay_Listing_View_Ebay_Fee_Errors');
+                $errorsBlock = $this->getLayout()
+                                    ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Fee\Errors::class);
                 $errorsBlock->setData('errors', $errors);
 
                 $this->setJsonContent([
@@ -83,7 +84,8 @@ class GetEstimatedFees extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
         }
         // ---------------------------------------
 
-        $details = $this->createBlock('Ebay_Listing_View_Ebay_Fee_Details');
+        $details = $this->getLayout()
+                        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Fee\Details::class);
         $details->setData('fees', $fees);
         $details->setData('product_name', $listingProduct->getMagentoProduct()->getName());
 

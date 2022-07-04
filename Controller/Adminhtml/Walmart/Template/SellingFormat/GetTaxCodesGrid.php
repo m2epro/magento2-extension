@@ -20,7 +20,8 @@ class GetTaxCodesGrid extends Template
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\TaxCodes\Grid $grid */
-        $grid = $this->createBlock('Walmart_Template_SellingFormat_TaxCodes_Grid');
+        $grid = $this->getLayout()
+                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\TaxCodes\Grid::class);
         $grid->setNoSelection($this->getRequest()->getParam('no_selection'));
         $grid->setMarketplaceId($this->getRequest()->getParam('marketplace_id'));
 

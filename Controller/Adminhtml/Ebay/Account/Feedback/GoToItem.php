@@ -15,6 +15,21 @@ use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
  */
 class GoToItem extends Account
 {
+    /** @var \Ess\M2ePro\Helper\Component\Ebay */
+    private $helperEbay;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay $helperEbay,
+        \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update $storeCategoryUpdate,
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($storeCategoryUpdate, $componentEbayCategoryStore, $ebayFactory, $context);
+
+        $this->helperEbay = $helperEbay;
+    }
+
     public function execute()
     {
         $feedbackId = $this->getRequest()->getParam('feedback_id');
@@ -24,17 +39,17 @@ class GoToItem extends Account
             return $this->_redirect('*/ebay_account/index');
         }
 
-        /** @var $feedback \Ess\M2ePro\Model\Ebay\Feedback */
+        /** @var \Ess\M2ePro\Model\Ebay\Feedback $feedback */
         $feedback = $this->activeRecordFactory->getObjectLoaded('Ebay\Feedback', $feedbackId);
         $itemId = $feedback->getData('ebay_item_id');
 
-        $listingProduct = $this->getHelper('Component\Ebay')->getListingProductByEbayItem(
+        $listingProduct = $this->helperEbay->getListingProductByEbayItem(
             $feedback->getData('ebay_item_id'),
             $feedback->getData('account_id')
         );
 
         if ($listingProduct !== null) {
-            $itemUrl = $this->getHelper('Component\Ebay')->getItemUrl(
+            $itemUrl = $this->helperEbay->getItemUrl(
                 $itemId,
                 $listingProduct->getListing()->getAccount()->getChildObject()->getMode(),
                 $listingProduct->getListing()->getMarketplaceId()
@@ -46,7 +61,7 @@ class GoToItem extends Account
         $order = $feedback->getOrder();
 
         if ($order !== null && $order->getMarketplaceId() !== null) {
-            $itemUrl = $this->getHelper('Component\Ebay')->getItemUrl(
+            $itemUrl = $this->helperEbay->getItemUrl(
                 $itemId,
                 $order->getAccount()->getChildObject()->getMode(),
                 $order->getMarketplaceId()

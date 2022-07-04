@@ -21,7 +21,7 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
     protected $_canRefund               = true;
     protected $_canRefundInvoicePartial = true;
 
-    protected $_infoBlockType = 'Ess\M2ePro\Block\Adminhtml\Magento\Payment\Info';
+    protected $_infoBlockType = \Ess\M2ePro\Block\Adminhtml\Magento\Payment\Info::class;
 
     //########################################
 

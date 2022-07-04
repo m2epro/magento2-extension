@@ -31,9 +31,13 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Settings
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs $tabsBlock */
-        $tabsBlock = $this->createBlock('Amazon_Settings_Tabs', '', ['data' => [
+        $tabsBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs::class,
+            '',
+            ['data' => [
             'active_tab' => $activeTab
-        ]]);
+            ]]
+        );
 
         if ($this->isAjax()) {
             $this->setAjaxContent(
@@ -44,7 +48,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Settings
         }
 
         $this->addLeft($tabsBlock);
-        $this->addContent($this->createBlock('Amazon\Settings'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Settings::class));
 
         $this->setPageHelpLink('x/uQ03B');
 

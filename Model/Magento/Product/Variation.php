@@ -222,7 +222,7 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
 
         $product = $this->getMagentoProduct()->getProduct();
 
-        /** @var $productTypeInstance \Magento\ConfigurableProduct\Model\Product\Type\Configurable */
+        /** @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable $productTypeInstance */
         $productTypeInstance = $this->getMagentoProduct()->getTypeInstance();
 
         $attributes = [];
@@ -703,7 +703,7 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
 
         $product = $this->getMagentoProduct()->getProduct();
 
-        /** @var $productTypeInstance \Magento\ConfigurableProduct\Model\Product\Type\Configurable */
+        /** @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable $productTypeInstance */
         $productTypeInstance = $this->getMagentoProduct()->getTypeInstance();
 
         $configurableOptions = [];
@@ -846,7 +846,7 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
     protected function getConfigurableAttributeValues($attribute)
     {
         $product = $this->getMagentoProduct()->getProduct();
-        /** @var $productTypeInstance \Magento\ConfigurableProduct\Model\Product\Type\Configurable */
+        /** @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable $productTypeInstance */
         $productTypeInstance = $this->getMagentoProduct()->getTypeInstance();
 
         $productAttribute = $attribute->getProductAttribute();

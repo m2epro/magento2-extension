@@ -8,34 +8,36 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SearchAsin;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SearchAsin\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
-    const SEARCH_SETTINGS_STATUS_NONE = 'none';
-    const SEARCH_SETTINGS_STATUS_COMPLETED = 'completed';
+    public const SEARCH_SETTINGS_STATUS_NONE = 'none';
+    public const SEARCH_SETTINGS_STATUS_COMPLETED = 'completed';
 
     /** @var \Ess\M2ePro\Model\Listing */
-    private $listing = null;
+    private $listing;
 
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     protected $magentoProductCollectionFactory;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
 
     protected $lockedDataCache = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->amazonFactory = $amazonFactory;
-
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -68,7 +70,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         // Get collection
         // ---------------------------------------
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection
@@ -134,7 +136,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'    => 'entity_id',
             'filter_index' => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
         ]);
 
         $this->addColumn('name', [
@@ -220,7 +222,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnProductTitle($productTitle, $row, $column, $isExport)
     {
-        $productTitle = $this->getHelper('Data')->escapeHtml($productTitle);
+        $productTitle = $this->dataHelper->escapeHtml($productTitle);
 
         $value = '<span>'.$productTitle.'</span>';
 
@@ -231,7 +233,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ->getSku();
 
         $value .= '<br/><strong>'.$this->__('SKU') .
-            ':</strong> '.$this->getHelper('Data')->escapeHtml($tempSku) . '<br/>';
+            ':</strong> '.$this->dataHelper->escapeHtml($tempSku) . '<br/>';
 
         $listingProductId = (int)$row->getData('id');
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -274,7 +276,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             if (empty($attrValue)) {
                 $attrValue = $this->__('Not set');
             } elseif (!$this->getHelper('Component\Amazon')->isASIN($attrValue) &&
-                        !$this->getHelper('Data')->isISBN($attrValue)) {
+                        !$this->dataHelper->isISBN($attrValue)) {
                 $attrValue = $this->__('Inappropriate value');
             }
 
@@ -286,7 +288,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
             if (empty($attrValue)) {
                 $attrValue = $this->__('Not Set');
-            } elseif (!$this->getHelper('Data')->isUPC($attrValue) && !$this->getHelper('Data')->isEAN($attrValue)) {
+            } elseif (!$this->dataHelper->isUPC($attrValue) && !$this->dataHelper->isEAN($attrValue)) {
                 $attrValue = $this->__('Inappropriate value');
             }
 
@@ -314,7 +316,7 @@ HTML;
 
         switch ($searchSettingsStatus) {
             case \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_IN_PROGRESS:
-                $searchData = $this->getHelper('Data')->jsonDecode($row->getData('search_settings_data'));
+                $searchData = $this->dataHelper->jsonDecode($row->getData('search_settings_data'));
 
                 $msg = $this->__('In Progress');
                 $tip = $this->__(
@@ -338,7 +340,7 @@ HTML;
 {$this->getTooltipHtml($tip)}
 HTML;
             case \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_ACTION_REQUIRED:
-                $searchData = $this->getHelper('Data')->jsonDecode($row->getData('search_settings_data'));
+                $searchData = $this->dataHelper->jsonDecode($row->getData('search_settings_data'));
 
                 $lpId = $row->getData('id');
 
@@ -346,13 +348,13 @@ HTML;
                 if (strlen($productTitle) > 60) {
                     $productTitle = substr($productTitle, 0, 60) . '...';
                 }
-                $productTitle = $this->getHelper('Data')->escapeHtml($productTitle);
+                $productTitle = $this->dataHelper->escapeHtml($productTitle);
 
                 $productTitle = $this->__(
                     'Search ASIN/ISBN For &quot;%product_title%&quot;',
                     $productTitle
                 );
-                $productTitle = $this->getHelper('Data')->escapeJs($productTitle);
+                $productTitle = $this->dataHelper->escapeJs($productTitle);
 
                 $linkTxt = $this->__('choose one of the Results');
 
@@ -375,7 +377,7 @@ HTML;
 HTML;
         }
 
-        $searchInfo = $this->getHelper('Data')->jsonDecode($row->getData('general_id_search_info'));
+        $searchInfo = $this->dataHelper->jsonDecode($row->getData('general_id_search_info'));
 
         $msg = $this->__('Completed');
         $tip = $this->__(
@@ -410,10 +412,10 @@ HTML;
         if (strlen($productTitle) > 60) {
             $productTitle = substr($productTitle, 0, 60) . '...';
         }
-        $productTitle = $this->getHelper('Data')->escapeHtml($productTitle);
+        $productTitle = $this->dataHelper->escapeHtml($productTitle);
 
         $productTitle = $this->__('Search ASIN/ISBN For &quot;%product_title%&quot;', $productTitle);
-        $productTitle = $this->getHelper('Data')->escapeJs($productTitle);
+        $productTitle = $this->dataHelper->escapeJs($productTitle);
         // ---------------------------------------
 
         // ---------------------------------------
@@ -469,7 +471,7 @@ HTML;
         $generalIdSearchInfo = $row->getData('general_id_search_info');
 
         if (!empty($generalIdSearchInfo)) {
-            $generalIdSearchInfo = $this->getHelper('Data')->jsonDecode($generalIdSearchInfo);
+            $generalIdSearchInfo = $this->dataHelper->jsonDecode($generalIdSearchInfo);
         }
 
         if (!empty($generalIdSearchInfo['is_set_automatic'])) {

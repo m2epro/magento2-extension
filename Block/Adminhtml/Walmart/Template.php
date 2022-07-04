@@ -64,7 +64,7 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             'label'        => __('Add Policy'),
             'class'        => 'add',
             'button_class' => '',
-            'class_name'   => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
+            'class_name'   => \Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown::class,
             'options'      => $this->_getAddTemplateButtonOptions(),
         ];
         $this->addButton('add', $addButtonProps);

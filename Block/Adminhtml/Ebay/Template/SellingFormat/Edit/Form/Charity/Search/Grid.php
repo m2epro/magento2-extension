@@ -8,26 +8,26 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Charity\Search;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Charity\Search\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $customCollectionFactory;
     protected $resourceConnection;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->customCollectionFactory = $customCollectionFactory;
         $this->resourceConnection = $resourceConnection;
         parent::__construct($context, $backendHelper, $data);
+        $this->dataHelper = $dataHelper;
     }
 
     //########################################
@@ -123,7 +123,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $id = $row->getData('id');
         $name = $row->getData('name');
-        $name = $this->getHelper('Data')->escapeJs($name);
+        $name = $this->dataHelper->escapeJs($name);
 
         $actions = reset($actions);
 

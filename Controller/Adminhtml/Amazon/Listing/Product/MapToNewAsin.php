@@ -163,7 +163,8 @@ class MapToNewAsin extends Main
             $badDescriptionProductsIds = $this->variationHelper
                 ->filterProductsByMagentoProductType($badDescriptionProductsIds);
 
-            $descriptionTemplatesBlock = $this->createBlock('Amazon_Listing_Product_Template_Description');
+            $descriptionTemplatesBlock = $this->getLayout()
+                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Description::class);
             $descriptionTemplatesBlock->setNewAsin(true);
             $descriptionTemplatesBlock->setMessages($messages);
             $descriptionTemplatesBlock = $descriptionTemplatesBlock->toHtml();

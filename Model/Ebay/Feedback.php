@@ -58,7 +58,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Feedback');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Feedback::class);
     }
 
     //########################################
@@ -187,7 +187,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function getOrder()
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Order\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Order\Collection $collection */
         $collection = $this->ebayFactory->getObject('Order')->getCollection();
         $collection->getSelect()
             ->join(

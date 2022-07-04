@@ -14,12 +14,12 @@ namespace Ess\M2ePro\Model\Ebay\Template\Category;
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
-     * @var $magentoProduct \Ess\M2ePro\Model\Magento\Product
+     * @var \Ess\M2ePro\Model\Magento\Product $magentoProduct
      */
     private $magentoProduct = null;
 
     /**
-     * @var $categoryTemplateModel \Ess\M2ePro\Model\Ebay\Template\Category
+     * @var \Ess\M2ePro\Model\Ebay\Template\Category $categoryTemplateModel
      */
     private $categoryTemplateModel = null;
 

@@ -18,11 +18,23 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Walmart\Vocabulary */
+    private $walmartVocabularyHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Component\Walmart\Vocabulary $walmartVocabularyHelper,
+        array $data = []
+    ) {
+        $this->walmartVocabularyHelper = $walmartVocabularyHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     protected function _prepareForm()
     {
-        $vocabularyHelper = $this->getHelper('Component_Walmart_Vocabulary');
+        $vocabularyHelper = $this->walmartVocabularyHelper;
 
         $form = $this->_formFactory->create(
             [

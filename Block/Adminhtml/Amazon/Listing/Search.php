@@ -75,17 +75,23 @@ HTML
 
     protected function _toHtml()
     {
-        $marketplaceSwitcherBlock = $this->createBlock('Amazon_Marketplace_Switcher')->setData([
+        $marketplaceSwitcherBlock = $this->getLayout()
+                                         ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Marketplace\Switcher::class)
+                                         ->setData([
             'component_mode' => \Ess\M2ePro\Helper\View\Amazon::NICK,
             'controller_name' => $this->getRequest()->getControllerName()
         ]);
 
-        $accountSwitcherBlock = $this->createBlock('Amazon_Account_Switcher')->setData([
+        $accountSwitcherBlock = $this->getLayout()
+                                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Switcher::class)
+                                     ->setData([
             'component_mode' => \Ess\M2ePro\Helper\View\Amazon::NICK,
             'controller_name' => $this->getRequest()->getControllerName()
         ]);
 
-        $listingTypeSwitcherBlock = $this->createBlock('Listing_Search_TypeSwitcher')->setData([
+        $listingTypeSwitcherBlock = $this->getLayout()
+                                         ->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::class)
+                                         ->setData([
             'controller_name' => $this->getRequest()->getControllerName()
         ]);
 

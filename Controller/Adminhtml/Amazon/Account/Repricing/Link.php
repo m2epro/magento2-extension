@@ -58,7 +58,7 @@ class Link extends Account
                 ]
             );
 
-            /** @var $repricing \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General */
+            /** @var \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General $repricing */
             $repricing = $this->modelFactory->getObject('Amazon_Repricing_Synchronization_General');
             $repricing->setAccount($account);
             $repricing->run();

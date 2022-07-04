@@ -46,7 +46,8 @@ require([
 JS
         );
 
-        $block = $this->createBlock('ControlPanel_Inspection_Requirements');
+        $block = $this->getLayout()
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\Requirements::class);
         $this->setChild('requirements', $block);
     }
 

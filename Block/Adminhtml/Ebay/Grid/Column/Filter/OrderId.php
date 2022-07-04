@@ -15,17 +15,22 @@ class OrderId extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Text
     /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
     private $componentEbayPickupStore;
 
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Backend\Block\Context $context,
         \Magento\Framework\DB\Helper $resourceHelper,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         array $data = []
     ) {
         parent::__construct($context, $resourceHelper, $data);
 
         $this->helperFactory = $helperFactory;
         $this->componentEbayPickupStore = $componentEbayPickupStore;
+        $this->translationHelper = $translationHelper;
     }
 
     public function getHelper($helper, array $arguments = [])
@@ -86,7 +91,7 @@ class OrderId extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Text
         <div style="padding: 5px 0; text-align: right; font-weight: normal; position: relative;">
             <label for="{$this->_getHtmlId()}_checkbox"
                    style="width: 60%; text-align: right; display: inline-block; margin-right: 50%;">
-                {$this->getHelper('Module\Translation')->translate(['In-Store Pickup'])}
+                {$this->translationHelper->translate(['In-Store Pickup'])}
             </label>
             <div style="display: inline-block; position: absolute; top: 1em; right: 0;">
                 <input name="{$this->_getHtmlName()}[is_in_store_pickup]"

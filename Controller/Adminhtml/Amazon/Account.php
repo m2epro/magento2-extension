@@ -38,7 +38,7 @@ abstract class Account extends Main
         try {
             $params = $this->getDataForServer($account);
 
-            /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
+            /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
 
             /** @var \Ess\M2ePro\Model\Amazon\Connector\Account\Add\EntityRequester $connectorObj */
@@ -84,7 +84,7 @@ abstract class Account extends Main
                 return $account;
             }
 
-            /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
+            /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
 
             /** @var \Ess\M2ePro\Model\Amazon\Connector\Account\Update\EntityRequester $connectorObj */

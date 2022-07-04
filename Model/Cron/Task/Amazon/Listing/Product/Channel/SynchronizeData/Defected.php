@@ -61,7 +61,7 @@ class Defected extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         foreach ($accounts as $account) {
 
-            /** @var $account \Ess\M2ePro\Model\Account **/
+            /** @var \Ess\M2ePro\Model\Account $account **/
 
             $this->getOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
 
@@ -91,7 +91,7 @@ class Defected extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function processAccount(\Ess\M2ePro\Model\Account $account)
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel */
+        /** @var \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel $collection */
         $collection = $this->activeRecordFactory->getObject('Listing')->getCollection();
         $collection->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Amazon::NICK);
         $collection->addFieldToFilter('account_id', (int)$account->getId());
@@ -112,7 +112,7 @@ class Defected extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     {
         $lockItemNick = Runner::LOCK_ITEM_PREFIX.'_'.$account->getId();
 
-        /** @var $lockItemManager \Ess\M2ePro\Model\Lock\Item\Manager */
+        /** @var \Ess\M2ePro\Model\Lock\Item\Manager $lockItemManager */
         $lockItemManager = $this->modelFactory->getObject('Lock_Item_Manager', [
             'nick' => $lockItemNick
         ]);

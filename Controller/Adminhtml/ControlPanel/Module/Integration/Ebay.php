@@ -60,7 +60,7 @@ class Ebay extends Command
 
             foreach (array_chunk($items, 10, true) as $itemsPart) {
 
-                /** @var $dispatcherObject \Ess\M2ePro\Model\Ebay\Connector\Dispatcher */
+                /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
                 $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
                 $connectorObj = $dispatcherObject->getVirtualConnector(
                     'item',

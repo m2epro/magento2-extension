@@ -19,11 +19,20 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct;
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
     protected $walmartFactory;
+
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
+
     /** @var \Ess\M2ePro\Helper\View\Walmart */
     protected $walmartViewHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
@@ -32,13 +41,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Helper\View\Walmart $walmartViewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $backendHelper, $data);
         $this->walmartFactory = $walmartFactory;
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         $this->walmartViewHelper = $walmartViewHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $backendHelper, $data);
     }
 
     public function _construct()
@@ -141,7 +152,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'     => 'additional_data',
             'filter_index' => 'additional_data',
             'frame_callback' => [$this, 'callbackColumnProductOptions'],
-            'filter' => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions::class,
             'options' => $productAttributes,
             'filter_condition_callback' => [$this, 'callbackProductOptions']
         ]);
@@ -154,7 +165,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'     => 'additional_data',
             'filter_index' => 'additional_data',
             'frame_callback' => [$this, 'callbackColumnChannelOptions'],
-            'filter' => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions::class,
             'options' => $channelAttributes,
             'filter_condition_callback' => [$this, 'callbackChannelOptions']
         ]);
@@ -166,7 +177,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index' => 'sku',
             'filter_index' => 'sku',
             'is_variation_grid' => true,
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Sku'
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Sku::class
         ]);
 
         $this->addColumn('gtin', [
@@ -178,7 +189,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_index' => 'gtin',
             'is_variation_grid' => true,
             'marketplace_id' => $this->getListingProduct()->getListing()->getMarketplaceId(),
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Gtin'
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Gtin::class
         ]);
 
         $this->addColumn('online_qty', [
@@ -188,7 +199,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'type' => 'number',
             'index' => 'online_qty',
             'filter_index' => 'online_qty',
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Qty',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Qty::class,
             'filter_condition_callback' => [$this, 'callbackFilterQty']
         ]);
 
@@ -219,7 +230,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Incomplete')
             ],
             'is_variation_grid' => true,
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Status',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Status::class,
             'filter_condition_callback' => [$this, 'callbackFilterStatus']
         ];
 
@@ -228,7 +239,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $this->getListingProduct()->getId()
         );
 
-        $isShouldBeShown && $statusColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Filter\Status';
+        $isShouldBeShown && $statusColumn['filter'] = \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Filter\Status::class;
 
         $this->addColumn('status', $statusColumn);
 
@@ -328,8 +339,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                     $option = '--';
                 }
                 $optionHtml = '<span class="attribute-row" style="' . $style . '"><span class="attribute"><strong>' .
-                    $this->getHelper('Data')->escapeHtml($attribute) .
-                    '</strong></span>:&nbsp;<span class="value">' . $this->getHelper('Data')->escapeHtml($option) .
+                    $this->dataHelper->escapeHtml($attribute) .
+                    '</strong></span>:&nbsp;<span class="value">' . $this->dataHelper->escapeHtml($option) .
                     '</span></span>';
 
                 if ($uniqueProductsIds && $option !== '--' && !in_array($attribute, $virtualProductAttributes, true)) {
@@ -353,9 +364,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $linkTitle = $this->__('Change Variation');
             $linkContent = $this->__('Change Variation');
 
-            $attributes = $this->getHelper('Data')->escapeHtml($this->getHelper('Data')->jsonEncode($attributes));
-            $variationsTree = $this->getHelper('Data')->escapeHtml(
-                $this->getHelper('Data')->jsonEncode($variationsTree)
+            $attributes = $this->dataHelper->escapeHtml($this->dataHelper->jsonEncode($attributes));
+            $variationsTree = $this->dataHelper->escapeHtml(
+                $this->dataHelper->jsonEncode($variationsTree)
             );
 
             $html .= <<<HTML
@@ -431,8 +442,8 @@ HTML;
                 $option = '--';
             }
 
-            $attrName = $this->getHelper('Data')->escapeHtml($attribute);
-            $optionName = $this->getHelper('Data')->escapeHtml($option);
+            $attrName = $this->dataHelper->escapeHtml($attribute);
+            $optionName = $this->dataHelper->escapeHtml($option);
 
             $html .= <<<HTML
 <span style="{$style}"><b>{$attrName}</b>:&nbsp;{$optionName}</span><br/>
@@ -619,7 +630,8 @@ HTML;
                 'style'   => 'float: right;',
                 'id'      => 'add_new_child_button'
             ];
-            $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
+            $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                             ->setData($data);
             $this->setChild('add_new_child_button', $buttonBlock);
             // ---------------------------------------
         }

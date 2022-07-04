@@ -10,8 +10,9 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 {
-    const MASS_ACTION_ID_EDIT_PARTS_COMPATIBILITY = 'editPartsCompatibilityMode';
+    public const MASS_ACTION_ID_EDIT_PARTS_COMPATIBILITY = 'editPartsCompatibilityMode';
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory  */
     protected $ebayFactory;
 
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
@@ -23,12 +24,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
         \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($viewHelper, $context, $backendHelper, $data);
-
         $this->ebayFactory             = $ebayFactory;
         $this->moduleDatabaseStructure = $moduleDatabaseStructure;
+        parent::__construct($viewHelper, $context, $backendHelper, $dataHelper,$data);
     }
 
     public function _construct()
@@ -122,7 +123,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 
     protected function getColumnActionsItems()
     {
-        $backUrl = $this->getHelper('Data')->makeBackUrlParam('*/ebay_listing/index');
+        $backUrl = $this->dataHelper->makeBackUrlParam('*/ebay_listing/index');
 
         return [
             'manageProducts' => [
@@ -229,7 +230,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 
         $this->getColumn('actions')->setData(
             'renderer',
-            '\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid\Column\Renderer\Action'
+            \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid\Column\Renderer\Action::class
         );
 
         return $result;
@@ -239,7 +240,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
-        $title = $this->getHelper('Data')->escapeHtml($value);
+        $title = $this->dataHelper->escapeHtml($value);
         $compatibilityMode = $row->getChildObject()->getData('parts_compatibility_mode');
 
         $value = <<<HTML
@@ -251,7 +252,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 </span>
 HTML;
 
-        /** @var $row \Ess\M2ePro\Model\Listing */
+        /** @var \Ess\M2ePro\Model\Listing $row */
         $accountTitle = $row->getData('account_title');
         $marketplaceTitle = $row->getData('marketplace_title');
 
@@ -317,10 +318,10 @@ HTML;
 
         $this->jsUrl->addUrls(
             array_merge(
-                $this->getHelper('Data')->getControllerActions('Ebay\Listing'),
-                $this->getHelper('Data')->getControllerActions('Ebay_Listing_Product_Add'),
-                $this->getHelper('Data')->getControllerActions('Ebay_Log_Listing_Product'),
-                $this->getHelper('Data')->getControllerActions('Ebay\Template')
+                $this->dataHelper->getControllerActions('Ebay\Listing'),
+                $this->dataHelper->getControllerActions('Ebay_Listing_Product_Add'),
+                $this->dataHelper->getControllerActions('Ebay_Log_Listing_Product'),
+                $this->dataHelper->getControllerActions('Ebay\Template')
             )
         );
 
@@ -337,7 +338,7 @@ HTML;
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay::class)
         );
 
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;

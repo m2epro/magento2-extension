@@ -161,7 +161,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
             do {
                 $countTriedTemp != 0 && sleep(3);
 
-                /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
+                /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
                 $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
                 $connectorObj = $dispatcherObject->getVirtualConnector(
                     'product',
@@ -277,7 +277,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
     {
         if ($this->generalValidatorObject === null) {
 
-            /** @var $validator \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\General */
+            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\General $validator */
             $validator = $this->modelFactory->getObject(
                 'Amazon_Listing_Product_Action_Type_ListAction_Validator_General'
             );
@@ -301,7 +301,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
     {
         if ($this->skuGeneralValidatorObject === null) {
 
-            /** @var $validator \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\General */
+            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\General $validator */
             $validator = $this->modelFactory->getObject(
                 'Amazon_Listing_Product_Action_Type_ListAction_Validator_Sku_General'
             );
@@ -325,7 +325,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
     {
         if ($this->skuSearchValidatorObject === null) {
 
-            /** @var $validator \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\Search */
+            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\Search $validator */
             $validator = $this->modelFactory->getObject(
                 'Amazon_Listing_Product_Action_Type_ListAction_Validator_Sku_Search'
             );
@@ -374,7 +374,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
     {
         if ($this->listTypeValidatorObject === null) {
 
-            /** @var $validator \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\ListType */
+            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\ListType $validator */
             $validator = $this->modelFactory->getObject(
                 'Amazon_Listing_Product_Action_Type_ListAction_Validator_ListType'
             );
@@ -399,7 +399,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
     protected function getRequestObject()
     {
         if ($this->requestObject === null) {
-            /** @var $request \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Request */
+            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Request $request */
             $request = $this->modelFactory->getObject(
                 'Amazon_Listing_Product_Action_Type_ListAction_Request'
             );

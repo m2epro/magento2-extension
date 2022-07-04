@@ -47,7 +47,8 @@ class ViewPopup extends ProductTaxCode
             return $this->getResult();
         }
 
-        $mainBlock = $this->createBlock('Amazon_Listing_Product_Template_ProductTaxCode');
+        $mainBlock = $this->getLayout()
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode::class);
 
         if (!empty($messages)) {
             $mainBlock->setMessages($messages);

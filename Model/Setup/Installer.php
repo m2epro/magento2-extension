@@ -5815,10 +5815,10 @@ class Installer
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'fixed_price_coefficient',
+                'fixed_price_modifier',
                 Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
+                null,
+                ['nullable' => true]
             )
             ->addColumn(
                 'fixed_price_custom_attribute',
@@ -12301,6 +12301,12 @@ class Installer
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'buyer_cancellation_requested',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false]
             )
             ->addIndex('sku', 'sku')
             ->addIndex('title', 'title')

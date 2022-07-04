@@ -15,7 +15,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other
 {
     public function execute()
     {
-        $this->addContent($this->createBlock('Amazon_Listing_Other'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Other::class));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Unmanaged Listings'));
         $this->setPageHelpLink('x/KP8UB');
 

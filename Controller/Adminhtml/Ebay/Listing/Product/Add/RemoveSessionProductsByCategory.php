@@ -22,8 +22,9 @@ class RemoveSessionProductsByCategory extends \Ess\M2ePro\Controller\Adminhtml\E
         if (!isset($tempSession['products_ids'])) {
             return;
         }
-        /** @var $treeBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree */
-        $treeBlock = $this->createBlock('Ebay_Listing_Product_Add_Category_Tree');
+        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree $treeBlock */
+        $treeBlock = $this->getLayout()
+                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree::class);
         $treeBlock->setSelectedIds($tempSession['products_ids']);
 
         $productsForEachCategory = $treeBlock->getProductsForEachCategory();

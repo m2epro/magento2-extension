@@ -10,20 +10,35 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\View
- */
 class View extends Main
 {
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalData;
+
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalData,
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->globalData = $globalData;
+        $this->sessionHelper = $sessionHelper;
+    }
+
     public function execute()
     {
         if ($this->getRequest()->getQuery('ajax')) {
             $id = $this->getRequest()->getParam('id');
             $listing = $this->walmartFactory->getCachedObjectLoaded('Listing', $id);
 
-            $this->getHelper('Data\GlobalData')->setValue('view_listing', $listing);
+            $this->globalData->setValue('view_listing', $listing);
 
-            $listingView = $this->createBlock('Walmart_Listing_View');
+            $listingView = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View::class);
 
             // Set rule model
             // ---------------------------------------
@@ -35,9 +50,9 @@ class View extends Main
         }
 
         if ((bool)$this->getRequest()->getParam('do_list', false)) {
-            $this->getHelper('Data\Session')->setValue(
+            $this->sessionHelper->setValue(
                 'products_ids_for_list',
-                implode(',', $this->getHelper('Data\Session')->getValue('added_products_ids'))
+                implode(',', $this->sessionHelper->getValue('added_products_ids'))
             );
 
             return $this->_redirect('*/*/*', [
@@ -74,7 +89,7 @@ class View extends Main
         }
         // ---------------------------------------
 
-        $this->getHelper('Data\GlobalData')->setValue('view_listing', $listing);
+        $this->globalData->setValue('view_listing', $listing);
 
         $this->setPageHelpLink('x/Y-1IB');
 
@@ -82,7 +97,7 @@ class View extends Main
             $this->__('M2E Pro Listing "%listing_title%"', $listing->getTitle())
         );
 
-        $this->addContent($this->createBlock('Walmart_Listing_View'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View::class));
 
         // Set rule model
         // ---------------------------------------
@@ -94,11 +109,11 @@ class View extends Main
 
     protected function setRuleData($prefix)
     {
-        $listingData = $this->getHelper('Data\GlobalData')->getValue('view_listing')->getData();
+        $listingData = $this->globalData->getValue('view_listing')->getData();
 
         $storeId = isset($listingData['store_id']) ? (int)$listingData['store_id'] : 0;
         $prefix .= isset($listingData['id']) ? '_'.$listingData['id'] : '';
-        $this->getHelper('Data\GlobalData')->setValue('rule_prefix', $prefix);
+        $this->globalData->setValue('rule_prefix', $prefix);
 
         // ---------------------------------------
         $useCustomOptions = true;
@@ -106,12 +121,12 @@ class View extends Main
         $sessionParamName = 'walmartListingView' . $listingData['id'] . 'view_mode';
 
         if (($this->getRequest()->getParam('view_mode') == $magentoViewMode) ||
-            $magentoViewMode == $this->getHelper('Data\Session')->getValue($sessionParamName)) {
+            $magentoViewMode == $this->sessionHelper->getValue($sessionParamName)) {
             $useCustomOptions = false;
         }
         // ---------------------------------------
 
-        /** @var $ruleModel \Ess\M2ePro\Model\Magento\Product\Rule */
+        /** @var \Ess\M2ePro\Model\Magento\Product\Rule $ruleModel */
         $ruleModel = $this->activeRecordFactory->getObject('Walmart_Magento_Product_Rule')->setData(
             [
                 'prefix' => $prefix,
@@ -122,19 +137,19 @@ class View extends Main
 
         $ruleParam = $this->getRequest()->getPost('rule');
         if (!empty($ruleParam)) {
-            $this->getHelper('Data\Session')->setValue(
+            $this->sessionHelper->setValue(
                 $prefix,
                 $ruleModel->getSerializedFromPost($this->getRequest()->getPostValue())
             );
         } elseif ($ruleParam !== null) {
-            $this->getHelper('Data\Session')->setValue($prefix, []);
+            $this->sessionHelper->setValue($prefix, []);
         }
 
-        $sessionRuleData = $this->getHelper('Data\Session')->getValue($prefix);
+        $sessionRuleData = $this->sessionHelper->getValue($prefix);
         if (!empty($sessionRuleData)) {
             $ruleModel->loadFromSerialized($sessionRuleData);
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('rule_model', $ruleModel);
+        $this->globalData->setValue('rule_model', $ruleModel);
     }
 }

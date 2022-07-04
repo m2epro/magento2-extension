@@ -28,13 +28,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->walmartFactory = $walmartFactory;
         $this->resourceConnection = $resourceConnection;
-
-        parent::__construct($context, $backendHelper, $data);
+        parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
 
     //########################################
@@ -57,7 +57,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareCollection()
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->setListingProductModeOn();
@@ -137,7 +137,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'     => 'number',
             'index'    => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
         ]);
 
         $this->addColumn('name', [
@@ -159,7 +159,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'index' => 'walmart_sku',
             'filter_index' => 'walmart_sku',
             'show_edit_sku' => false,
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Sku'
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Sku::class
         ]);
 
         $this->addColumn('gtin', [
@@ -170,7 +170,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'index' => 'gtin',
             'show_edit_identifier' => false,
             'marketplace_id'  => $this->listing->getMarketplaceId(),
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Gtin',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Gtin::class,
             'filter_index' => 'gtin',
             'filter_condition_callback' => [$this, 'callbackFilterGtin']
         ]);
@@ -193,7 +193,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'index'     => 'actions',
             'filter'    => false,
             'sortable'  => false,
-            'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
             'field' => 'id',
             'no_link'  => true,
             'group_order' => $this->getGroupOrder(),
@@ -280,7 +280,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     public function callbackColumnProductTitle($productTitle, $row, $column, $isExport)
     {
-        $productTitle = $this->getHelper('Data')->escapeHtml($productTitle);
+        $productTitle = $this->dataHelper->escapeHtml($productTitle);
 
         $value = '<span>'.$productTitle.'</span>';
 
@@ -293,7 +293,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
 
         $value .= '<br/><strong>'.$this->__('SKU') .
-            ':</strong> '.$this->getHelper('Data')->escapeHtml($sku) . '<br/>';
+            ':</strong> '.$this->dataHelper->escapeHtml($sku) . '<br/>';
 
         $listingProductId = (int)$row->getData('id');
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -343,8 +343,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 if ($option === '' || $option === null) {
                     $option = '--';
                 }
-                $value .= '<strong>' . $this->getHelper('Data')->escapeHtml($attribute) .
-                    '</strong>:&nbsp;' . $this->getHelper('Data')->escapeHtml($option) . '<br/>';
+                $value .= '<strong>' . $this->dataHelper->escapeHtml($attribute) .
+                    '</strong>:&nbsp;' . $this->dataHelper->escapeHtml($option) . '<br/>';
             }
             $value .= '</div>';
         }
@@ -364,7 +364,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'close_on_save' => true
             ]);
 
-            $templateTitle = $this->getHelper('Data')->escapeHtml($row->getData('template_category_title'));
+            $templateTitle = $this->dataHelper->escapeHtml($row->getData('template_category_title'));
 
             return <<<HTML
 <a target="_blank" href="{$url}">{$templateTitle}</a>

@@ -16,7 +16,17 @@ class Variations extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
     /** @var  \Ess\M2ePro\Model\Listing\Product */
     protected $listingProduct;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -110,7 +120,7 @@ JS
     {
         $items = [];
 
-        $backUrl = $this->getHelper('Data')->makeBackUrlParam('*/walmart_listing/view', [
+        $backUrl = $this->dataHelper->makeBackUrlParam('*/walmart_listing/view', [
             'id' => $this->getListingProduct()->getListingId()
         ]);
 
@@ -155,7 +165,7 @@ JS
     {
         $items = [];
 
-        $backUrl = $this->getHelper('Data')->makeBackUrlParam('*/walmart_listing/view', [
+        $backUrl = $this->dataHelper->makeBackUrlParam('*/walmart_listing/view', [
             'id' => $this->getListingProduct()->getListingId()
         ]);
 

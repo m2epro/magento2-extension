@@ -47,7 +47,7 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function performActions()
     {
-        /** @var $accountsCollection \Ess\M2ePro\Model\ResourceModel\Account\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
         $accountsCollection = $this->parentFactory->getObject(Walmart::NICK, 'Account')->getCollection();
 
         /** @var \Ess\M2ePro\Model\Cron\Task\Walmart\Order\Creator $ordersCreator */
@@ -56,7 +56,7 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $ordersCreator->setValidateAccountCreateDate(false);
 
         foreach ($accountsCollection->getItems() as $account) {
-            /** @var $account \Ess\M2ePro\Model\Account **/
+            /** @var \Ess\M2ePro\Model\Account $account **/
 
             /** @var \Ess\M2ePro\Model\Cron\Task\Walmart\Order\UploadByUser\Manager $manager */
             $manager = $this->modelFactory->getObject('Cron_Task_Walmart_Order_UploadByUser_Manager');

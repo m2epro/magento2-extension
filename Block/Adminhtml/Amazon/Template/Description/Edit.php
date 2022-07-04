@@ -68,7 +68,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                     . '\'' . $this->getSaveConfirmationText() . '\','
                     . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_DESCRIPTION . '\''
                     . ')',
-                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
                         'label' => $this->__('Save And Continue Edit'),
@@ -93,7 +93,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                     . '\'' . $this->getSaveConfirmationText() . '\','
                     . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_DESCRIPTION . '\''
                     . ')',
-                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
                         'label'     => $this->__('Save And Back'),

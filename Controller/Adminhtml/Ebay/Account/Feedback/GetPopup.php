@@ -26,7 +26,8 @@ class GetPopup extends Account
         }
 
         $this->setJsonContent([
-            'html' => $this->createBlock('Ebay_Account_Feedback')->toHtml(),
+            'html' => $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Feedback::class)
+                                        ->toHtml(),
             'title' => $this->__('Feedback for account "%account_title%"', $account->getTitle())
         ]);
 

@@ -126,7 +126,7 @@ CSS
         );
 
         $ruleModel = $this->getHelper('Data\GlobalData')->getValue('rule_model');
-        $ruleBlock = $this->createBlock('Magento_Product_Rule')
+        $ruleBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule::class)
             ->setData(['rule_model' => $ruleModel]);
 
         $fieldset->addField(

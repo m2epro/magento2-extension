@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Variation\Product\
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Variation\Product\View\Grid
- */
 class Grid extends AbstractGrid
 {
     protected $listingProductId;
@@ -21,11 +18,18 @@ class Grid extends AbstractGrid
 
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
+
+    /** @var \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory */
     protected $wrapperCollectionFactory;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -33,11 +37,13 @@ class Grid extends AbstractGrid
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->resourceConnection       = $resourceConnection;
         $this->wrapperCollectionFactory = $wrapperCollectionFactory;
         $this->ebayFactory              = $ebayFactory;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -165,7 +171,7 @@ class Grid extends AbstractGrid
             'index' => 'attributes',
             'filter_index' => 'attributes',
             'frame_callback' => [$this, 'callbackColumnVariations'],
-            'filter' => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions::class,
             'options' => $this->getVariationsAttributes(),
             'filter_condition_callback' => [$this, 'callbackFilterVariations']
         ]);
@@ -231,8 +237,8 @@ class Grid extends AbstractGrid
             $html .= '<a href="' . $url . '" target="_blank">';
         }
         foreach ($attributes as $attribute => $option) {
-            $optionHtml = '<b>' . $this->getHelper('Data')->escapeHtml($attribute) .
-                '</b>:&nbsp;' . $this->getHelper('Data')->escapeHtml($option);
+            $optionHtml = '<b>' . $this->dataHelper->escapeHtml($attribute) .
+                '</b>:&nbsp;' . $this->dataHelper->escapeHtml($option);
 
             if ($uniqueProductsIds) {
                 $url = $this->getUrl('catalog/product/edit', ['id' => $productsIds[$attribute]]);
@@ -304,7 +310,8 @@ class Grid extends AbstractGrid
     public function callbackColumnLog($value, $row, $column, $isExport)
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ViewLogIcon\PickupStore $viewLogIcon */
-        $viewLogIcon = $this->createBlock('Ebay_Grid_Column_Renderer_ViewLogIcon_PickupStore');
+        $viewLogIcon = $this->getLayout()
+                    ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ViewLogIcon\PickupStore::class);
         $logIcon = $viewLogIcon->render($row);
 
         if (!empty($logIcon)) {

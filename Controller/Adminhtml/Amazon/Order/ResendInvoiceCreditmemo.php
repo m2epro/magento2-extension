@@ -24,7 +24,7 @@ class ResendInvoiceCreditmemo extends Order
 
         foreach ($ids as $id) {
 
-            /** @var $order \Ess\M2ePro\Model\Order */
+            /** @var \Ess\M2ePro\Model\Order $order */
             $order = $this->amazonFactory->getObjectLoaded('Order', (int)$id);
             $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_USER);
 

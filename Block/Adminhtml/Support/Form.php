@@ -10,11 +10,22 @@ namespace Ess\M2ePro\Block\Adminhtml\Support;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Support\Form
- */
 class Form extends AbstractForm
 {
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     protected function _prepareLayout()
     {
         $this->appendHelpBlock([
@@ -42,8 +53,8 @@ class Form extends AbstractForm
                 terms and conditions will be sent to your request.</p>
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('spaces/m2/overview'),
-                $this->getHelper('Module\Support')->getKnowledgebaseUrl()
+                $this->supportHelper->getDocumentationArticleUrl('spaces/m2/overview'),
+                $this->supportHelper->getKnowledgebaseUrl()
             )
         ]);
 

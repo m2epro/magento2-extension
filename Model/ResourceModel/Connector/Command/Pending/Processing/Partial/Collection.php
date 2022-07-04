@@ -16,8 +16,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Connector\Command\Pending\Processing\Partial',
-            'Ess\M2ePro\Model\ResourceModel\Connector\Command\Pending\Processing\Partial'
+            \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Partial::class,
+            \Ess\M2ePro\Model\ResourceModel\Connector\Command\Pending\Processing\Partial::class
         );
     }
 

@@ -12,28 +12,38 @@ use \Ess\M2ePro\Model\Ebay\Template\Category as Template;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory  */
     protected $ebayFactory;
+
+    /** @var \Magento\Framework\App\ResourceConnection  */
     protected $resourceConnection;
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
     private $componentEbayCategoryEbay;
 
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    private $magentoAttributeHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
+
     public function __construct(
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         array $data = []
     ) {
-        parent::__construct($context, $backendHelper, $data);
-
         $this->ebayFactory               = $ebayFactory;
         $this->resourceConnection        = $resourceConnection;
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+        $this->magentoAttributeHelper    = $magentoAttributeHelper;
+        $this->databaseHelper = $databaseHelper;
+        parent::__construct($context, $backendHelper, $data);
     }
-
-    //########################################
 
     protected function _construct()
     {
@@ -43,8 +53,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setSaveParametersInSession(true);
         $this->setUseAjax(true);
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -64,7 +72,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $collection->getSelect()->joinLeft(
             [
-                'edc' => $this->getHelper('Module_Database_Structure')
+                'edc' => $this->databaseHelper
                     ->getTableNameWithPrefix('m2epro_ebay_dictionary_category')
             ],
             'edc.category_id = main_table.category_id AND edc.marketplace_id = main_table.marketplace_id',
@@ -269,7 +277,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'index'     => 'actions',
                 'filter'    => false,
                 'sortable'  => false,
-                'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+                'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
                 'getter'    => 'getTemplateId',
                 'actions'   => [
                     [
@@ -319,7 +327,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         if ($mode == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE) {
             $value = $this->__('Magento Attribute') .' > '.
-                $this->getHelper('Magento\Attribute')->getAttributeLabel($row->getData('category_attribute'));
+                $this->magentoAttributeHelper->getAttributeLabel($row->getData('category_attribute'));
         }
 
         return $value;

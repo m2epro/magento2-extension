@@ -8,18 +8,23 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\AutoAction;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\AutoAction\Mode
- */
 class Mode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\AbstractMode
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    public function __construct(
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        parent::__construct($formFactory, $context, $data);
+        $this->supportHelper = $supportHelper;
+    }
 
     public function getHelpPageUrl()
     {
-        return $this->getHelper('Module\Support')
-            ->getDocumentationArticleUrl('x/af1IB');
+        return $this->supportHelper->getDocumentationArticleUrl('x/af1IB');
     }
-
-    //########################################
 }

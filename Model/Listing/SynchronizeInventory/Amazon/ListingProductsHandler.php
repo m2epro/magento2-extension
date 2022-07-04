@@ -247,7 +247,7 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
             return $this->preparedListingProductsCollection;
         }
 
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->parentFactory->getObject($this->getComponentMode(), 'Listing\Product')->getCollection();
         $collection->joinListingTable();
 

@@ -10,26 +10,31 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\Registration;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\Registration\CreateLicense
- */
 class CreateLicense extends \Ess\M2ePro\Controller\Adminhtml\Wizard\Registration
 {
     /** @var \Ess\M2ePro\Model\Registration\Manager */
     private $manager;
-
-    /** @var \Ess\M2ePro\Model\Registration\Info\Factory */
+    /** @var \Ess\M2ePro\Model\Registration\InfoFactory */
     private $infoFactory;
+    /** @var \Ess\M2ePro\Helper\Module\License */
+    private $licenseHelper;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\License $licenseHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Model\Registration\Manager $manager,
         \Ess\M2ePro\Model\Registration\InfoFactory $infoFactory,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
         Context $context
     ) {
+        parent::__construct($nameBuilder, $context);
+
         $this->manager = $manager;
         $this->infoFactory = $infoFactory;
-        parent::__construct($nameBuilder, $context);
+        $this->licenseHelper = $licenseHelper;
+        $this->dataHelper = $dataHelper;
     }
 
     public function execute()
@@ -59,8 +64,8 @@ class CreateLicense extends \Ess\M2ePro\Controller\Adminhtml\Wizard\Registration
         $licenseData = [];
         foreach ($requiredKeys as $key) {
             if ($tempValue = $this->getRequest()->getParam($key)) {
-                $licenseData[$key] = $this->getHelper('Data')->escapeJs(
-                    $this->getHelper('Data')->escapeHtml($tempValue)
+                $licenseData[$key] = $this->dataHelper->escapeJs(
+                    $this->dataHelper->escapeHtml($tempValue)
                 );
                 continue;
             }
@@ -81,12 +86,12 @@ class CreateLicense extends \Ess\M2ePro\Controller\Adminhtml\Wizard\Registration
             'phone'       => $licenseData['phone'],
             'country'     => $licenseData['country'],
             'city'        => $licenseData['city'],
-            'postal_code' => $licenseData['postal_code']
+            'postal_code' => $licenseData['postal_code'],
         ]);
 
         $this->manager->saveInfo($info);
 
-        if ($this->getHelper('Module\License')->getKey()) {
+        if ($this->licenseHelper->getKey()) {
             $this->setJsonContent(['status' => true]);
 
             return $this->getResult();
@@ -95,11 +100,11 @@ class CreateLicense extends \Ess\M2ePro\Controller\Adminhtml\Wizard\Registration
         $message = null;
 
         try {
-            $licenseResult = $this->getHelper('Module\License')->obtainRecord($info);
+            $licenseResult = $this->licenseHelper->obtainRecord($info);
         } catch (\Exception $e) {
             $this->getHelper('Module\Exception')->process($e);
             $licenseResult = false;
-            $message       = $this->__($e->getMessage());
+            $message = $this->__($e->getMessage());
         }
 
         if (!$licenseResult) {
@@ -119,7 +124,8 @@ class CreateLicense extends \Ess\M2ePro\Controller\Adminhtml\Wizard\Registration
             $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
                 $this->modelFactory->getObject('Servicing_Task_License')->getPublicNick()
             );
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         $this->setJsonContent(['status' => $licenseResult]);
 

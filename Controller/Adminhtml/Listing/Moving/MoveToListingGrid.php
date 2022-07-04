@@ -39,8 +39,8 @@ class MoveToListingGrid extends Listing
             $movingHandlerJs = 'EbayListingViewSettingsGridObj.movingHandler';
         }
 
-        $block = $this->createBlock(
-            'Listing_Moving_Grid',
+        $block = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Listing\Moving\Grid::class,
             '',
             ['data' => [
                 'grid_url' => $this->getUrl(

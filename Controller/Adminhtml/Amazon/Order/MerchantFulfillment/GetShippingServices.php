@@ -193,7 +193,8 @@ class GetShippingServices extends Order
 
         $this->getHelper('Data_Session')->setValue('fulfillment_request_data', $requestData);
 
-        $popup = $this->createBlock('Amazon_Order_MerchantFulfillment_ShippingServices');
+        $popup = $this->getLayout()
+                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment\ShippingServices::class);
 
         try {
             $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');

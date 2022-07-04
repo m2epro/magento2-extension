@@ -194,8 +194,8 @@ abstract class Base extends Action
                 'error' => 'true'
             ];
 
-            if ($this->getHelper('View')->getCurrentView() !== null) {
-                $params['referrer'] = $this->getHelper('View')->getCurrentView();
+            if ($this->getViewHelper()->getCurrentView() !== null) {
+                $params['referrer'] = $this->getViewHelper()->getCurrentView();
             }
 
             return $this->_redirect($this->getHelper('Module\Support')->getPageRoute(), $params);
@@ -501,7 +501,7 @@ abstract class Base extends Action
         /** @var \Magento\Theme\Block\Html\Title $pageTitleBlock */
         $pageTitleBlock = $this->getLayout()->getBlock('page.title');
 
-        $helpLinkBlock = $this->createBlock('PageHelpLink')->setData([
+        $helpLinkBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\PageHelpLink::class)->setData([
             'page_help_link' => $this->getHelper('Module\Support')->getDocumentationArticleUrl(
                 $tinyLink
             )
@@ -512,6 +512,14 @@ abstract class Base extends Action
     }
 
     //########################################
+
+    /**
+     * @return \Ess\M2ePro\Helper\View
+     */
+    protected function getViewHelper(): \Ess\M2ePro\Helper\View
+    {
+        return $this->_objectManager->get(\Ess\M2ePro\Helper\View::class);
+    }
 
     /**
      * Clears global messages session to prevent duplicate

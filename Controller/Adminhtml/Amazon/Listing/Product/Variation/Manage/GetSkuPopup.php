@@ -8,6 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Manage;
 
+use Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Settings\SkuPopup\Form;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 /**
@@ -18,7 +19,7 @@ class GetSkuPopup extends Main
     public function execute()
     {
         $this->setAjaxContent(
-            $this->createBlock('Amazon_Listing_Product_Variation_Manage_Tabs_Settings_SkuPopup_Form')
+            $this->getLayout()->createBlock(Form::class)
         );
 
         return $this->getResult();

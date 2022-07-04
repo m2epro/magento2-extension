@@ -208,7 +208,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             throw new \Ess\M2ePro\Model\Exception('This Product is not a Variation Product.');
         }
 
-        /** @var $model \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\AbstractModel */
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\AbstractModel $model */
         $model->setVariationManager($this);
 
         return $model;

@@ -20,7 +20,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
 
     private $productFactory;
 
-    /** @var $channelItem \Ess\M2ePro\Model\Amazon\Item */
+    /** @var \Ess\M2ePro\Model\Amazon\Item $channelItem */
     private $channelItem = null;
 
     //########################################
@@ -58,7 +58,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Amazon\Order\Item');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Order\Item::class);
     }
 
     //########################################
@@ -440,7 +440,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
 
         // Create product in magento
         // ---------------------------------------
-        /** @var $productBuilder \Ess\M2ePro\Model\Magento\Product\Builder */
+        /** @var \Ess\M2ePro\Model\Magento\Product\Builder $productBuilder */
         $productBuilder = $this->productBuilderFactory->create()->setData($productData);
         $productBuilder->buildProduct();
         // ---------------------------------------

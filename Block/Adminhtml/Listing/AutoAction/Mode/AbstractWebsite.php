@@ -17,7 +17,19 @@ abstract class AbstractWebsite extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\
 
     protected $listing;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     public function _construct()
     {
@@ -161,7 +173,7 @@ abstract class AbstractWebsite extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Listing::class)
         );
 
         $hasFormData = $this->hasFormData() ? 'true' : 'false';

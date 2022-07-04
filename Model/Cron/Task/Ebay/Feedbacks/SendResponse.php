@@ -65,7 +65,7 @@ class SendResponse extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         foreach ($feedbacks as $feedback) {
 
-            /** @var $feedback \Ess\M2ePro\Model\Ebay\Feedback **/
+            /** @var \Ess\M2ePro\Model\Ebay\Feedback $feedback **/
             $lastResponseAttemptDate = $feedback->getData('last_response_attempt_date');
             $currentGmtDate = $this->helperData->getCurrentGmtDate(true);
 
@@ -104,7 +104,7 @@ class SendResponse extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function processFeedback(\Ess\M2ePro\Model\Ebay\Feedback $feedback)
     {
-        /** @var $feedback \Ess\M2ePro\Model\Ebay\Feedback */
+        /** @var \Ess\M2ePro\Model\Ebay\Feedback $feedback */
         $account = $feedback->getAccount();
 
         if ($account->getChildObject()->isFeedbacksAutoResponseCycled()) {

@@ -8,28 +8,42 @@
 
 namespace Ess\M2ePro\Helper\Component\Ebay;
 
-/**
- * Class \Ess\M2ePro\Helper\Component\Ebay\Configuration
- */
-class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
+class Configuration
 {
-    const UPLOAD_IMAGES_MODE_AUTO = 1;
-    const UPLOAD_IMAGES_MODE_SELF = 2;
-    const UPLOAD_IMAGES_MODE_EPS  = 3;
+    public const UPLOAD_IMAGES_MODE_AUTO = 1;
+    public const UPLOAD_IMAGES_MODE_SELF = 2;
+    public const UPLOAD_IMAGES_MODE_EPS  = 3;
 
-    const CONFIG_GROUP = '/ebay/configuration/';
+    private const CONFIG_GROUP = '/ebay/configuration/';
 
-    //########################################
+    /** @var \Ess\M2ePro\Model\Config\Manager */
+    private $config;
 
-    public function getFeedbackNotificationMode()
+    /**
+     * @param \Ess\M2ePro\Model\Config\Manager $config
+     */
+    public function __construct(\Ess\M2ePro\Model\Config\Manager $config)
     {
-        return (int)$this->getHelper('Module')->getConfig()->getGroupValue(
+        $this->config = $config;
+    }
+
+    // ----------------------------------------
+
+    /**
+     * @return int
+     */
+    public function getFeedbackNotificationMode(): int
+    {
+        return (int)$this->config->getGroupValue(
             self::CONFIG_GROUP,
             'feedback_notification_mode'
         );
     }
 
-    public function isEnableFeedbackNotificationMode()
+    /**
+     * @return bool
+     */
+    public function isEnableFeedbackNotificationMode(): bool
     {
         return $this->getFeedbackNotificationMode() == 1;
     }
@@ -38,11 +52,10 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
      * @param string $value
      *
      * @return $this
-     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function setFeedbackNotificationLastCheck($value)
     {
-        $this->getHelper('Module')->getConfig()->setGroupValue(
+        $this->config->setGroupValue(
             self::CONFIG_GROUP,
             'feedback_notification_last_check',
             $value
@@ -51,119 +64,161 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         return $this;
     }
 
+    /**
+     * @return mixed|null
+     */
     public function getFeedbackNotificationLastCheck()
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue(
+        return $this->config->getGroupValue(
             self::CONFIG_GROUP,
             'feedback_notification_last_check'
         );
     }
 
-    public function getPreventItemDuplicatesMode()
+    /**
+     * @return int
+     */
+    public function getPreventItemDuplicatesMode(): int
     {
-        return (int)$this->getHelper('Module')->getConfig()->getGroupValue(
+        return (int)$this->config->getGroupValue(
             self::CONFIG_GROUP,
             'prevent_item_duplicates_mode'
         );
     }
 
-    public function isEnablePreventItemDuplicatesMode()
+    /**
+     * @return bool
+     */
+    public function isEnablePreventItemDuplicatesMode(): bool
     {
         return $this->getPreventItemDuplicatesMode() == 1;
     }
 
-    public function getUploadImagesMode()
+    /**
+     * @return int
+     */
+    public function getUploadImagesMode(): int
     {
-        return (int)$this->getHelper('Module')->getConfig()->getGroupValue(
+        return (int)$this->config->getGroupValue(
             self::CONFIG_GROUP,
             'upload_images_mode'
         );
     }
 
-    public function isAutoUploadImagesMode()
+    /**
+     * @return bool
+     */
+    public function isAutoUploadImagesMode(): bool
     {
         return $this->getUploadImagesMode() == self::UPLOAD_IMAGES_MODE_AUTO;
     }
 
-    public function isSelfUploadImagesMode()
+    /**
+     * @return bool
+     */
+    public function isSelfUploadImagesMode(): bool
     {
         return $this->getUploadImagesMode() == self::UPLOAD_IMAGES_MODE_SELF;
     }
 
-    public function isEpsUploadImagesMode()
+    /**
+     * @return bool
+     */
+    public function isEpsUploadImagesMode(): bool
     {
         return $this->getUploadImagesMode() == self::UPLOAD_IMAGES_MODE_EPS;
     }
 
+    /**
+     * @return mixed|null
+     */
     public function getUkEpidsAttribute()
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue(
+        return $this->config->getGroupValue(
             self::CONFIG_GROUP,
             'uk_epids_attribute'
         );
     }
 
+    /**
+     * @return mixed|null
+     */
     public function getDeEpidsAttribute()
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue(
+        return $this->config->getGroupValue(
             self::CONFIG_GROUP,
             'de_epids_attribute'
         );
     }
 
+    /**
+     * @return mixed|null
+     */
     public function getAuEpidsAttribute()
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue(
+        return $this->config->getGroupValue(
             self::CONFIG_GROUP,
             'au_epids_attribute'
         );
     }
 
+    /**
+     * @return mixed|null
+     */
     public function getMotorsEpidsAttribute()
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue(
+        return $this->config->getGroupValue(
             self::CONFIG_GROUP,
             'motors_epids_attribute'
         );
     }
 
+    /**
+     * @return mixed|null
+     */
     public function getKTypesAttribute()
     {
-        return $this->getHelper('Module')->getConfig()->getGroupValue(
+        return $this->config->getGroupValue(
             self::CONFIG_GROUP,
             'ktypes_attribute'
         );
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getViewTemplateSellingFormatShowTaxCategory()
+    /**
+     * @return int
+     */
+    public function getViewTemplateSellingFormatShowTaxCategory(): int
     {
-        return (int)$this->getHelper('Module')->getConfig()->getGroupValue(
+        return (int)$this->config->getGroupValue(
             self::CONFIG_GROUP,
             'view_template_selling_format_show_tax_category'
         );
     }
 
-    public function getVariationMpnCanBeChanged()
+    /**
+     * @return int
+     */
+    public function getVariationMpnCanBeChanged(): int
     {
-        return (int)$this->getHelper('Module')->getConfig()->getGroupValue(
+        return (int)$this->config->getGroupValue(
             self::CONFIG_GROUP,
             'variation_mpn_can_be_changed'
         );
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param array $values
      *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function setConfigValues(array $values)
+    public function setConfigValues(array $values): void
     {
         if (isset($values['feedback_notification_mode'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->config->setGroupValue(
                 self::CONFIG_GROUP,
                 'feedback_notification_mode',
                 $values['feedback_notification_mode']
@@ -175,7 +230,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['prevent_item_duplicates_mode'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->config->setGroupValue(
                 self::CONFIG_GROUP,
                 'prevent_item_duplicates_mode',
                 $values['prevent_item_duplicates_mode']
@@ -183,7 +238,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['upload_images_mode'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->config->setGroupValue(
                 self::CONFIG_GROUP,
                 'upload_images_mode',
                 $values['upload_images_mode']
@@ -214,12 +269,12 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
             $motorsAttributes[] = $values['ktypes_attribute'];
         }
 
-        if (count(array_filter($motorsAttributes)) != count(array_unique(array_filter($motorsAttributes)))) {
+        if (count(array_filter($motorsAttributes)) !== count(array_unique(array_filter($motorsAttributes)))) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Motors Attributes can not be the same.');
         }
 
         if (isset($values['uk_epids_attribute'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->config->setGroupValue(
                 self::CONFIG_GROUP,
                 'uk_epids_attribute',
                 $values['uk_epids_attribute']
@@ -227,7 +282,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['de_epids_attribute'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->config->setGroupValue(
                 self::CONFIG_GROUP,
                 'de_epids_attribute',
                 $values['de_epids_attribute']
@@ -235,7 +290,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['au_epids_attribute'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->config->setGroupValue(
                 self::CONFIG_GROUP,
                 'au_epids_attribute',
                 $values['au_epids_attribute']
@@ -243,7 +298,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['motors_epids_attribute'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->config->setGroupValue(
                 self::CONFIG_GROUP,
                 'motors_epids_attribute',
                 $values['motors_epids_attribute']
@@ -251,13 +306,11 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if (isset($values['ktypes_attribute'])) {
-            $this->getHelper('Module')->getConfig()->setGroupValue(
+            $this->config->setGroupValue(
                 self::CONFIG_GROUP,
                 'ktypes_attribute',
                 $values['ktypes_attribute']
             );
         }
     }
-
-    //########################################
 }

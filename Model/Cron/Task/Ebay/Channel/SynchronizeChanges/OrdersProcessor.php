@@ -53,11 +53,11 @@ class OrdersProcessor extends \Ess\M2ePro\Model\AbstractModel
 
     public function process()
     {
-        /** @var $accountsCollection \Ess\M2ePro\Model\ResourceModel\Account\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
         $accountsCollection = $this->ebayFactory->getObject('Account')->getCollection();
 
         foreach ($accountsCollection->getItems() as $account) {
-            /** @var $account \Ess\M2ePro\Model\Account **/
+            /** @var \Ess\M2ePro\Model\Account $account **/
 
             try {
                 $this->processAccount($account);

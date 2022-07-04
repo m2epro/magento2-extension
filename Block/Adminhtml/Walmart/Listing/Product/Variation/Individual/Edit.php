@@ -48,10 +48,10 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation
             ]);
         }
 
-        /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+        /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
         $variation = reset($variations);
 
-        /** @var $optionInstance \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+        /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $optionInstance */
         foreach ($variation->getOptions(true) as $optionInstance) {
             $option = $optionInstance->getOption();
             $attribute = $optionInstance->getAttribute();

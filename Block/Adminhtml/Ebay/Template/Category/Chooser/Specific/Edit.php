@@ -15,14 +15,18 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
     private $componentEbayCategoryEbay;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $data);
-
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $data);
     }
 
     public function _construct()
@@ -49,7 +53,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $templateSpecifics = [];
         $dictionarySpecifics = $this->getDictionarySpecifics();
 
-        $selectedSpecs =  $this->getHelper('Data')->jsonDecode($this->getData('selected_specifics'));
+        $selectedSpecs =  $this->dataHelper->jsonDecode($this->getData('selected_specifics'));
 
         if ($this->getData('template_id')) {
             /** @var \Ess\M2ePro\Model\Ebay\Template\Category $template */
@@ -121,8 +125,8 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
     protected function _toHtml()
     {
-        $infoBlock = $this->createBlock(
-            'Ebay_Template_Category_Chooser_Specific_Info',
+        $infoBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Info::class,
             '',
             [
                 'data' => [
@@ -141,7 +145,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             ]
         );
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\Category\Specific::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\Category\Specific::class)
         );
 
         $this->js->add(<<<JS

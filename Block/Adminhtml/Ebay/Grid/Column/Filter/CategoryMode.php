@@ -11,9 +11,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter;
 use \Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\CategoryMode
- */
 class CategoryMode extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
 {
     use Traits\BlockTrait;
@@ -28,7 +25,11 @@ class CategoryMode extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Sele
     /** @var \Ess\M2ePro\Helper\Factory  */
     protected $helperFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         Renderer\CssRenderer $css,
@@ -39,6 +40,8 @@ class CategoryMode extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Sele
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Backend\Block\Context $context,
         \Magento\Framework\DB\Helper $resourceHelper,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         parent::__construct($context, $resourceHelper, $data);
@@ -49,6 +52,8 @@ class CategoryMode extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Sele
         $this->js = $js;
         $this->jsTranslator = $jsTranslatorRenderer;
         $this->jsUrl = $jsUrlRenderer;
+        $this->translationHelper = $translationHelper;
+        $this->dataHelper = $dataHelper;
     }
 
     //########################################
@@ -58,7 +63,7 @@ class CategoryMode extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Sele
         $value = $this->getValue();
 
         $titleValue = !empty($value['title']) ? $value['title'] : '';
-        $isAjax = $this->getHelper('Data')->jsonEncode($this->getRequest()->isAjax());
+        $isAjax = $this->dataHelper->jsonEncode($this->getRequest()->isAjax());
         $modeTitle = self::MODE_TITLE;
 
         $this->js->add(<<<JS
@@ -91,7 +96,7 @@ JS
         $html = <<<HTML
 <div id="{$this->_getHtmlId()}_title_container" style="display: none;">
     <div style="width: auto; padding-top: 5px;">
-        <span>{$this->getHelper('Module\Translation')->__('Category Path / Category ID')}: </span><br>
+        <span>{$this->translationHelper->__('Category Path / Category ID')}: </span><br>
         <input style="width: 300px;" type="text" value="{$titleValue}" name="{$this->getColumn()->getId()}[title]">
     </div>
 </div>

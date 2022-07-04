@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\Congratulation;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
+use Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\Congratulation\Content\Form;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\Congratulation\Content
@@ -21,7 +22,8 @@ class Content extends AbstractBlock
 
     protected function _beforeToHtml()
     {
-        $form = $this->createBlock('Wizard_MigrationFromMagento1_Installation_Congratulation_Content_Form');
+        $form = $this->getLayout()->createBlock(Form::class);
+
         $this->setChild('enable_synchronization_form', $form);
 
         return parent::_beforeToHtml();

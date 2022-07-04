@@ -8,12 +8,39 @@
 
 namespace Ess\M2ePro\Helper\Server;
 
-/**
- * Class \Ess\M2ePro\Helper\Server\Request
- */
-class Request extends \Ess\M2ePro\Helper\AbstractHelper
+class Request
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Server\Maintenance */
+    private $helperServerMaintenance;
+    /** @var \Ess\M2ePro\Helper\Server */
+    private $helperServer;
+    /** @var \Ess\M2ePro\Helper\Module\Logger */
+    private $helperModuleLogger;
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $helperModuleTranslation;
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $helperModuleSupport;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Server\Maintenance $helperServerMaintenance
+     * @param \Ess\M2ePro\Helper\Server $helperServer
+     * @param \Ess\M2ePro\Helper\Module\Logger $helperModuleLogger
+     * @param \Ess\M2ePro\Helper\Module\Translation $helperModuleTranslation
+     * @param \Ess\M2ePro\Helper\Module\Support $helperModuleSupport
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Server\Maintenance $helperServerMaintenance,
+        \Ess\M2ePro\Helper\Server $helperServer,
+        \Ess\M2ePro\Helper\Module\Logger $helperModuleLogger,
+        \Ess\M2ePro\Helper\Module\Translation $helperModuleTranslation,
+        \Ess\M2ePro\Helper\Module\Support $helperModuleSupport
+    ) {
+        $this->helperServerMaintenance = $helperServerMaintenance;
+        $this->helperServer = $helperServer;
+        $this->helperModuleLogger = $helperModuleLogger;
+        $this->helperModuleTranslation = $helperModuleTranslation;
+        $this->helperModuleSupport = $helperModuleSupport;
+    }
 
     public function single(
         array $package,
@@ -22,15 +49,15 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
         $tryToResendOnError = true,
         $tryToSwitchEndpointOnError = true,
         $canIgnoreMaintenance = false
-    ) {
-        if (!$canIgnoreMaintenance && $this->getHelper('Server_Maintenance')->isNow()) {
+    ): array {
+        if (!$canIgnoreMaintenance && $this->helperServerMaintenance->isNow()) {
             throw new \Ess\M2ePro\Model\Exception\Connection(
                 'The action is temporarily unavailable. M2E Pro Server is under maintenance. Please try again later.'
             );
         }
 
-        !$serverBaseUrl && $serverBaseUrl  = $this->getServerHelper()->getEndpoint();
-        !$serverHostName && $serverHostName = $this->getServerHelper()->getCurrentHostName();
+        !$serverBaseUrl && $serverBaseUrl = $this->helperServer->getEndpoint();
+        !$serverHostName && $serverHostName = $this->helperServer->getCurrentHostName();
 
         $curlObject = $this->buildCurlObject($package, $serverBaseUrl, $serverHostName);
         // @codingStandardsIgnoreLine
@@ -41,7 +68,7 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
             'body'               => $responseBody,
             'curl_error_number'  => curl_errno($curlObject),
             'curl_error_message' => curl_error($curlObject),
-            'curl_info'          => curl_getinfo($curlObject)
+            'curl_info'          => curl_getinfo($curlObject),
         ];
         // @codingStandardsIgnoreEnd
 
@@ -50,27 +77,29 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
 
         if ($response['body'] === false) {
             $switchingResult = false;
-            $tryToSwitchEndpointOnError && $switchingResult = $this->getServerHelper()->switchEndpoint();
+            $tryToSwitchEndpointOnError && $switchingResult = $this->helperServer->switchEndpoint();
 
-            $this->helperFactory->getObject('Module\Logger')->process(
+            $this->helperModuleLogger->process(
                 [
-                    'curl_error_number' => $response['curl_error_number'],
+                    'curl_error_number'  => $response['curl_error_number'],
                     'curl_error_message' => $response['curl_error_message'],
-                    'curl_info' => $response['curl_info']
+                    'curl_info'          => $response['curl_info'],
                 ],
                 'Curl Empty Response'
             );
 
-            if ($this->canRepeatRequest(
-                $response['curl_error_number'],
-                $tryToResendOnError,
-                $tryToSwitchEndpointOnError,
-                $switchingResult
-            )) {
+            if (
+                $this->canRepeatRequest(
+                    $response['curl_error_number'],
+                    $tryToResendOnError,
+                    $tryToSwitchEndpointOnError,
+                    $switchingResult
+                )
+            ) {
                 return $this->single(
                     $package,
-                    $tryToSwitchEndpointOnError ? $this->getServerHelper()->getEndpoint() : $serverBaseUrl,
-                    $tryToSwitchEndpointOnError ? $this->getServerHelper()->getCurrentHostName() : $serverHostName,
+                    $tryToSwitchEndpointOnError ? $this->helperServer->getEndpoint() : $serverBaseUrl,
+                    $tryToSwitchEndpointOnError ? $this->helperServer->getCurrentHostName() : $serverHostName,
                     false,
                     $tryToSwitchEndpointOnError,
                     $canIgnoreMaintenance
@@ -78,14 +107,14 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
             }
 
             throw new \Ess\M2ePro\Model\Exception\Connection(
-                $this->helperFactory->getObject('Module_Translation')->__(
+                $this->helperModuleTranslation->__(
                     'M2E Pro Server connection failed. Find the solution <a target="_blank" href="%url%">here</a>',
-                    $this->helperFactory->getObject('Module_Support')->getKnowledgebaseArticleUrl('664870')
+                    $this->helperModuleSupport->getKnowledgebaseArticleUrl('664870')
                 ),
                 [
                     'curl_error_number'  => $response['curl_error_number'],
                     'curl_error_message' => $response['curl_error_message'],
-                    'curl_info'          => $response['curl_info']
+                    'curl_info'          => $response['curl_info'],
                 ]
             );
         }
@@ -101,23 +130,23 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
         $tryToSwitchEndpointOnError = true,
         $asynchronous = false,
         $canIgnoreMaintenance = false
-    ) {
-        if (!$canIgnoreMaintenance && $this->getHelper('Server_Maintenance')->isNow()) {
+    ): array {
+        if (!$canIgnoreMaintenance && $this->helperServerMaintenance->isNow()) {
             throw new \Ess\M2ePro\Model\Exception\Connection(
                 'The action is temporarily unavailable. M2E Pro Server is under maintenance. Please try again later.'
             );
         }
 
         if (empty($packages)) {
-            throw new \Ess\M2ePro\Model\Exception\Logic("Packages is empty.");
+            throw new \Ess\M2ePro\Model\Exception\Logic('Packages is empty.');
         }
 
-        !$serverBaseUrl && $serverBaseUrl  = $this->getServerHelper()->getEndpoint();
-        !$serverHostName && $serverHostName = $this->getServerHelper()->getCurrentHostName();
+        !$serverBaseUrl && $serverBaseUrl = $this->helperServer->getEndpoint();
+        !$serverHostName && $serverHostName = $this->helperServer->getCurrentHostName();
 
         $responses = [];
 
-        if (count($packages) == 1 || !$asynchronous) {
+        if (count($packages) === 1 || !$asynchronous) {
             foreach ($packages as $key => $package) {
                 $curlObject = $this->buildCurlObject($package, $serverBaseUrl, $serverHostName);
                 // @codingStandardsIgnoreLine
@@ -128,7 +157,7 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
                     'body'               => $responseBody,
                     'curl_error_number'  => curl_errno($curlObject),
                     'curl_error_message' => curl_error($curlObject),
-                    'curl_info'          => curl_getinfo($curlObject)
+                    'curl_info'          => curl_getinfo($curlObject),
                 ];
                 // @codingStandardsIgnoreEnd
 
@@ -162,7 +191,7 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
                     'body'               => curl_multi_getcontent($curlObject),
                     'curl_error_number'  => curl_errno($curlObject),
                     'curl_error_message' => curl_error($curlObject),
-                    'curl_info'          => curl_getinfo($curlObject)
+                    'curl_info'          => curl_getinfo($curlObject),
                 ];
 
                 curl_multi_remove_handle($multiCurlObject, $curlObject);
@@ -179,13 +208,13 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
         foreach ($responses as $key => $response) {
             if ($response['body'] === false) {
                 $isResponseFailed = true;
-                $tryToSwitchEndpointOnError && $switchingResult = $this->getServerHelper()->switchEndpoint();
+                $tryToSwitchEndpointOnError && $switchingResult = $this->helperServer->switchEndpoint();
 
-                $this->helperFactory->getObject('Module\Logger')->process(
+                $this->helperModuleLogger->process(
                     [
                         'curl_error_number'  => $response['curl_error_number'],
                         'curl_error_message' => $response['curl_error_message'],
-                        'curl_info'          => $response['curl_info']
+                        'curl_info'          => $response['curl_info'],
                     ],
                     'Curl Empty Response'
                 );
@@ -198,12 +227,14 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
 
             foreach ($responses as $key => $response) {
                 if ($response['body'] === false) {
-                    if ($this->canRepeatRequest(
-                        $response['curl_error_number'],
-                        $tryToResendOnError,
-                        $tryToSwitchEndpointOnError,
-                        $switchingResult
-                    )) {
+                    if (
+                        $this->canRepeatRequest(
+                            $response['curl_error_number'],
+                            $tryToResendOnError,
+                            $tryToSwitchEndpointOnError,
+                            $switchingResult
+                        )
+                    ) {
                         $failedRequests[$key] = $packages[$key];
                     }
                 }
@@ -212,8 +243,8 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
             if (!empty($failedRequests)) {
                 $secondAttemptResponses = $this->multiple(
                     $failedRequests,
-                    $tryToSwitchEndpointOnError ? $this->getServerHelper()->getEndpoint() : $serverBaseUrl,
-                    $tryToSwitchEndpointOnError ? $this->getServerHelper()->getCurrentHostName() : $serverHostName,
+                    $tryToSwitchEndpointOnError ? $this->helperServer->getEndpoint() : $serverBaseUrl,
+                    $tryToSwitchEndpointOnError ? $this->helperServer->getCurrentHostName() : $serverHostName,
                     false,
                     $tryToSwitchEndpointOnError,
                     $asynchronous,
@@ -226,8 +257,6 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
 
         return $responses;
     }
-
-    // ----------------------------------------
 
     private function buildCurlObject(
         $package,
@@ -242,7 +271,7 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
 
         if (!empty($package['headers'])) {
             foreach ($package['headers'] as $headerName => $headerValue) {
-                $preparedHeaders[] = $headerName.':'.$headerValue;
+                $preparedHeaders[] = $headerName . ':' . $headerValue;
             }
         }
 
@@ -253,7 +282,7 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
 
         $timeout = 300;
         if (isset($package['timeout'])) {
-            $timeout = (int) $package['timeout'];
+            $timeout = (int)$package['timeout'];
         }
 
         $sslVerifyPeer = true;
@@ -269,26 +298,26 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
             $curlObject,
             [
                 // set the server we are using
-                CURLOPT_URL => $serverBaseUrl,
+                CURLOPT_URL            => $serverBaseUrl,
 
                 // stop CURL from verifying the peer's certificate
                 CURLOPT_SSL_VERIFYPEER => $sslVerifyPeer,
                 CURLOPT_SSL_VERIFYHOST => $sslVerifyHost,
 
                 // disable http headers
-                CURLOPT_HEADER => false,
+                CURLOPT_HEADER         => false,
 
                 // set the headers using the array of headers
-                CURLOPT_HTTPHEADER => $preparedHeaders,
+                CURLOPT_HTTPHEADER     => $preparedHeaders,
 
                 // set the data body of the request
-                CURLOPT_POST => true,
-                CURLOPT_POSTFIELDS => http_build_query($postData, '', '&'),
+                CURLOPT_POST           => true,
+                CURLOPT_POSTFIELDS     => http_build_query($postData, '', '&'),
 
                 // set it to return the transfer as a string from curl_exec
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_CONNECTTIMEOUT => 15,
-                CURLOPT_TIMEOUT => $timeout
+                CURLOPT_TIMEOUT        => $timeout,
             ]
         );
 
@@ -300,20 +329,8 @@ class Request extends \Ess\M2ePro\Helper\AbstractHelper
         $tryToResendOnError,
         $tryToSwitchEndpointOnError,
         $switchingResult
-    ) {
+    ): bool {
         return $curlErrorNumber !== CURLE_OPERATION_TIMEOUTED && $tryToResendOnError &&
-               (!$tryToSwitchEndpointOnError || ($tryToSwitchEndpointOnError && $switchingResult));
+            (!$tryToSwitchEndpointOnError || ($tryToSwitchEndpointOnError && $switchingResult));
     }
-
-    //########################################
-
-    /**
-     * @return \Ess\M2ePro\Helper\Server
-     */
-    private function getServerHelper()
-    {
-        return $this->helperFactory->getObject('Server');
-    }
-
-    //########################################
 }

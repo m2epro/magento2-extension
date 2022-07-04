@@ -8,26 +8,21 @@
 
 namespace Ess\M2ePro\Helper\View\Walmart;
 
-/**
- * Class \Ess\M2ePro\Helper\View\Walmart\Controller
- */
-class Controller extends \Ess\M2ePro\Helper\AbstractHelper
+class Controller
 {
-    //########################################
+    /** @var \Ess\M2ePro\Model\Factory */
+    private $modelFactory;
 
-    protected $modelFactory;
-
+    /**
+     * @param \Ess\M2ePro\Model\Factory $modelFactory
+     */
     public function __construct(
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Model\Factory $modelFactory
     ) {
         $this->modelFactory = $modelFactory;
-
-        parent::__construct($helperFactory, $context);
     }
 
-    public function addMessages()
+    public function addMessages(): void
     {
         /** @var \Ess\M2ePro\Model\Issue\Notification\Channel\Magento\Session $notificationChannel */
         $notificationChannel = $this->modelFactory->getObject('Issue_Notification_Channel_Magento_Session');
@@ -44,6 +39,4 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
             }
         }
     }
-
-    //########################################
 }

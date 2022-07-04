@@ -8,16 +8,19 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Other\View;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Other\View\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
@@ -25,11 +28,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         $this->amazonFactory = $amazonFactory;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -98,7 +103,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'  => 'product_id',
             'filter_index' => 'product_id',
             'frame_callback' => [$this, 'callbackColumnProductId'],
-            'filter' => 'Ess\M2ePro\Block\Adminhtml\Grid\Column\Filter\ProductId',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Grid\Column\Filter\ProductId::class,
             'filter_condition_callback' => [$this, 'callbackFilterProductId']
         ]);
 
@@ -131,7 +136,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index' => 'online_qty',
             'filter_index' => 'online_qty',
             'frame_callback' => [$this, 'callbackColumnAvailableQty'],
-            'filter'   => 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty',
+            'filter'   => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty::class,
             'filter_condition_callback' => [$this, 'callbackFilterQty']
         ]);
 
@@ -150,7 +155,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
             $account->getChildObject()->isRepricing()) {
-            $priceColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price';
+            $priceColumn['filter'] = \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price::class;
         }
 
         $this->addColumn('online_price', $priceColumn);
@@ -226,8 +231,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             if (strlen($productTitle) > 60) {
                 $productTitle = substr($productTitle, 0, 60) . '...';
             }
-            $productTitle = $this->getHelper('Data')->escapeHtml($productTitle);
-            $productTitle = $this->getHelper('Data')->escapeJs($productTitle);
+            $productTitle = $this->dataHelper->escapeHtml($productTitle);
+            $productTitle = $this->dataHelper->escapeJs($productTitle);
             $htmlValue = '&nbsp;<a href="javascript:void(0);"
                                     onclick="ListingOtherMappingObj.openPopUp(
                                     '. (int)$row->getId(). ',
@@ -247,7 +252,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $htmlValue .= '&nbsp&nbsp&nbsp<a href="javascript:void(0);"'
                       .' onclick="AmazonListingOtherGridObj.movingHandler.getGridHtml('
-                      .$this->getHelper('Data')->jsonEncode([(int)$row->getData('id')])
+                      .$this->dataHelper->jsonEncode([(int)$row->getData('id')])
                       .')">'
                       .$this->__('Move')
                       .'</a>';
@@ -262,7 +267,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         if ($title === null) {
             $title = '<i style="color:gray;">' . $this->__('receiving') . '...</i>';
         } else {
-            $title = '<span>' . $this->getHelper('Data')->escapeHtml($title) . '</span>';
+            $title = '<span>' . $this->dataHelper->escapeHtml($title) . '</span>';
         }
 
         $tempSku = $row->getChildObject()->getData('sku');
@@ -271,7 +276,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $title .= '<br/><strong>'
                   .$this->__('SKU')
                   .':</strong> '
-                  .$this->getHelper('Data')->escapeHtml($tempSku);
+                  .$this->dataHelper->escapeHtml($tempSku);
 
         return $title;
     }

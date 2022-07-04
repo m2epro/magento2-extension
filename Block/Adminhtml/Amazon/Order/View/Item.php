@@ -27,6 +27,12 @@ class Item extends AbstractGrid
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
 
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         \Magento\Catalog\Model\Product $productModel,
@@ -34,14 +40,17 @@ class Item extends AbstractGrid
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $backendHelper, $data);
-
         $this->amazonHelper = $amazonHelper;
         $this->productModel = $productModel;
         $this->resourceConnection = $resourceConnection;
         $this->amazonFactory = $amazonFactory;
+        $this->translationHelper = $translationHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $backendHelper, $data);
     }
 
     public function _construct()
@@ -187,10 +196,9 @@ class Item extends AbstractGrid
     public function callbackColumnProduct($value, $row, $column, $isExport)
     {
         /** @var \Ess\M2ePro\Helper\Data $dataHelper */
-        $dataHelper = $this->getHelper('Data');
+        $dataHelper = $this->dataHelper;
 
-        /** @var \Ess\M2ePro\Helper\Module\Translation $translationHelper */
-        $translationHelper = $this->getHelper('Module_Translation');
+        $translationHelper = $this->translationHelper;
 
         $amazonOrderItem = $row->getChildObject();
         $skuHtml = '';
@@ -403,7 +411,7 @@ HTML;
             return $this->modelFactory->getObject('Currency')->formatPrice($currency, 0);
         }
 
-        $discountDetails = $this->getHelper('Data')->jsonDecode($row->getChildObject()->getData('discount_details'));
+        $discountDetails = $this->dataHelper->jsonDecode($row->getChildObject()->getData('discount_details'));
         if (empty($discountDetails['promotion']['value'])) {
             return $this->modelFactory->getObject('Currency')->formatPrice($currency, 0);
         }
@@ -431,10 +439,10 @@ HTML;
             return $this->__('N/A');
         }
 
-        $giftType = $this->getHelper('Data')->escapeHtml($row->getChildObject()->getData('gift_type'));
+        $giftType = $this->dataHelper->escapeHtml($row->getChildObject()->getData('gift_type'));
         $giftTypeLabel = $this->__('Gift Wrap Type');
 
-        $giftMessage = $this->getHelper('Data')->escapeHtml($row->getChildObject()->getData('gift_message'));
+        $giftMessage = $this->dataHelper->escapeHtml($row->getChildObject()->getData('gift_message'));
         $giftMessageLabel = $this->__('Gift Message');
 
         $resultHtml = '';

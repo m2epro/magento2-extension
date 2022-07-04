@@ -13,6 +13,26 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
  */
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 {
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $helperException;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $helperData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Exception $helperException,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update $storeCategoryUpdate,
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($storeCategoryUpdate, $componentEbayCategoryStore, $ebayFactory, $context);
+
+        $this->helperException = $helperException;
+        $this->helperData = $helperData;
+    }
+
     public function execute()
     {
         $post = $this->getRequest()->getPost();
@@ -27,7 +47,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
         try {
             $account = $id ? $this->updateAccount($id, $data) : $this->addAccount($data);
         } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
+            $this->helperException->process($exception);
 
             $message = $this->__(
                 'The Ebay access obtaining is currently unavailable.<br/>Reason: %error_message%',
@@ -58,13 +78,12 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 
         $this->messageManager->addSuccess($this->__('Account was saved'));
 
-        return $this->_redirect($this->getHelper('Data')->getBackUrl(
+        return $this->_redirect($this->helperData->getBackUrl(
             'list',
             [],
             [
                 'edit' => [
                     'id'                => $account->getId(),
-                    'update_ebay_store' => null,
                     '_current'          => true
                 ]
             ]

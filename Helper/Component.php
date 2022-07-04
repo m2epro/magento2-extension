@@ -8,52 +8,62 @@
 
 namespace Ess\M2ePro\Helper;
 
-class Component extends AbstractHelper
+class Component
 {
     /** @var \Ess\M2ePro\Helper\Component\Ebay */
-    protected $ebayHelper;
-
+    private $ebayHelper;
     /** @var \Ess\M2ePro\Helper\Component\Amazon */
-    protected $amazonHelper;
-
+    private $amazonHelper;
     /** @var \Ess\M2ePro\Helper\Component\Walmart */
-    protected $walmartHelper;
+    private $walmartHelper;
 
+    /**
+     * @param \Ess\M2ePro\Helper\Component\Ebay $ebayHelper
+     * @param \Ess\M2ePro\Helper\Component\Amazon $amazonHelper
+     * @param \Ess\M2ePro\Helper\Component\Walmart $walmartHelper
+     */
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay $ebayHelper,
         \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
-        \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
-    )
-    {
-        parent::__construct($helperFactory, $context);
-
+        \Ess\M2ePro\Helper\Component\Walmart $walmartHelper
+    ) {
         $this->ebayHelper = $ebayHelper;
         $this->amazonHelper = $amazonHelper;
         $this->walmartHelper = $walmartHelper;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getEbayComponentHelper()
+    /**
+     * @return \Ess\M2ePro\Helper\Component\Ebay
+     */
+    public function getEbayComponentHelper(): Component\Ebay
     {
         return $this->ebayHelper;
     }
 
-    public function getAmazonComponentHelper()
+    /**
+     * @return \Ess\M2ePro\Helper\Component\Amazon
+     */
+    public function getAmazonComponentHelper(): Component\Amazon
     {
         return $this->amazonHelper;
     }
 
-    public function getWalmartComponentHelper()
+    /**
+     * @return \Ess\M2ePro\Helper\Component\Walmart
+     */
+    public function getWalmartComponentHelper(): Component\Walmart
     {
         return $this->walmartHelper;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getComponents()
+    /**
+     * @return string[]
+     */
+    public function getComponents(): array
     {
         return [
             Component\Ebay::NICK,
@@ -64,7 +74,10 @@ class Component extends AbstractHelper
 
     // ---------------------------------------
 
-    public function getComponentsTitles()
+    /**
+     * @return array
+     */
+    public function getComponentsTitles(): array
     {
         return [
             Component\Ebay::NICK    => $this->ebayHelper->getTitle(),
@@ -73,9 +86,12 @@ class Component extends AbstractHelper
         ];
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getEnabledComponents()
+    /**
+     * @return string[]
+     */
+    public function getEnabledComponents(): array
     {
         $components = [];
 
@@ -92,23 +108,31 @@ class Component extends AbstractHelper
         return $components;
     }
 
+    /**
+     * @param $viewNick
+     *
+     * @return string|void
+     */
     public function getEnabledComponentByView($viewNick)
     {
         $enabledComponents = $this->getEnabledComponents();
 
-        if ($viewNick == \Ess\M2ePro\Helper\View\Ebay::NICK &&
+        if (
+            $viewNick === \Ess\M2ePro\Helper\View\Ebay::NICK &&
             in_array(Component\Ebay::NICK, $enabledComponents)
         ) {
             return Component\Ebay::NICK;
         }
 
-        if ($viewNick == \Ess\M2ePro\Helper\View\Amazon::NICK &&
+        if (
+            $viewNick === \Ess\M2ePro\Helper\View\Amazon::NICK &&
             in_array(Component\Amazon::NICK, $enabledComponents)
         ) {
             return Component\Amazon::NICK;
         }
 
-        if ($viewNick == \Ess\M2ePro\Helper\View\Walmart::NICK &&
+        if (
+            $viewNick === \Ess\M2ePro\Helper\View\Walmart::NICK &&
             in_array(Component\Walmart::NICK, $enabledComponents)
         ) {
             return Component\Walmart::NICK;
@@ -117,7 +141,10 @@ class Component extends AbstractHelper
 
     // ---------------------------------------
 
-    public function getEnabledComponentsTitles()
+    /**
+     * @return array
+     */
+    public function getEnabledComponentsTitles(): array
     {
         $components = [];
 
@@ -134,9 +161,10 @@ class Component extends AbstractHelper
         return $components;
     }
 
-    //########################################
-
-    public function getDisabledComponents()
+    /**
+     * @return array
+     */
+    public function getDisabledComponents(): array
     {
         $components = [];
 
@@ -155,7 +183,10 @@ class Component extends AbstractHelper
 
     // ---------------------------------------
 
-    public function getDisabledComponentsTitles()
+    /**
+     * @return array
+     */
+    public function getDisabledComponentsTitles(): array
     {
         $components = [];
 
@@ -172,9 +203,14 @@ class Component extends AbstractHelper
         return $components;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getComponentTitle($component)
+    /**
+     * @param string $component
+     *
+     * @return string|null
+     */
+    public function getComponentTitle(string $component): ?string
     {
         $title = null;
 
@@ -192,6 +228,4 @@ class Component extends AbstractHelper
 
         return $title;
     }
-
-    //########################################
 }

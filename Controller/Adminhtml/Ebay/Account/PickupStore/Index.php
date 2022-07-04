@@ -22,7 +22,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
         }
 
         if ($this->isAjax()) {
-            $this->setAjaxContent($this->createBlock('Ebay_Account_PickupStore_Grid'));
+            $this->setAjaxContent(
+                $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Grid::class)
+            );
             return $this->getResult();
         }
 
@@ -30,7 +32,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
             'Account',
             (int)$this->getRequest()->getParam('account_id')
         );
-        $this->addContent($this->createBlock('Ebay_Account_PickupStore'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore::class));
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('My Stores for account "%s%"', $account->getTitle())
         );

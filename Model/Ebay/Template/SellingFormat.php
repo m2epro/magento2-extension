@@ -46,6 +46,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
     const PRICE_COEFFICIENT_ABSOLUTE_DECREASE = 2;
     const PRICE_COEFFICIENT_PERCENTAGE_INCREASE = 3;
     const PRICE_COEFFICIENT_PERCENTAGE_DECREASE = 4;
+    const PRICE_COEFFICIENT_ATTRIBUTE = 5;
 
     const PRICE_VARIATION_MODE_PARENT = 1;
     const PRICE_VARIATION_MODE_CHILDREN = 2;
@@ -114,7 +115,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Template\SellingFormat');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Template\SellingFormat::class);
     }
 
     //########################################
@@ -650,9 +651,17 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
         return $this->getFixedPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE;
     }
 
-    public function getFixedPriceCoefficient()
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getFixedPriceModifier()
     {
-        return $this->getData('fixed_price_coefficient');
+        if (empty($this->getData('fixed_price_modifier'))) {
+            return [];
+        }
+
+        return $this->getHelper('Data')->jsonDecode($this->getData('fixed_price_modifier')) ?: [];
     }
 
     /**
@@ -662,7 +671,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
     {
         return [
             'mode' => $this->getFixedPriceMode(),
-            'coefficient' => $this->getFixedPriceCoefficient(),
+            'modifier' => $this->getFixedPriceModifier(),
             'attribute' => $this->getData('fixed_price_custom_attribute')
         ];
     }

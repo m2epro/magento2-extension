@@ -12,15 +12,15 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Model\Listing\Product as Listing_Product;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action
- */
 class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
 {
     use Traits\RendererTrait;
 
     /** @var \Ess\M2ePro\Helper\Factory  */
     protected $helperFactory;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -31,6 +31,7 @@ class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
         Renderer\JsUrlRenderer $jsUrlRenderer,
         \Magento\Backend\Block\Context $context,
         \Magento\Framework\Json\EncoderInterface $jsonEncoder,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->css = $css;
@@ -41,6 +42,7 @@ class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
         $this->helperFactory = $helperFactory;
 
         parent::__construct($context, $jsonEncoder, $data);
+        $this->dataHelper = $dataHelper;
     }
 
     protected function _prepareLayout()
@@ -94,7 +96,7 @@ JS
         $style = '';
         foreach ($actions as $columnName => $value) {
             if (array_key_exists('only_remap_product', $value) && $value['only_remap_product']) {
-                $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+                $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
                 $style = isset($value['style']) ? $value['style'] : '';
                 if (!isset($additionalData[Listing_Product::MOVING_LISTING_OTHER_SOURCE_KEY])) {
                     unset($actions[$columnName]);

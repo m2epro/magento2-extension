@@ -51,7 +51,7 @@ class StoreSwitcher extends AbstractElement
                 '</label>';
         }
 
-        $html .= $this->layout->createBlock('Ess\M2ePro\Block\Adminhtml\StoreSwitcher')->addData([
+        $html .= $this->layout->createBlock(\Ess\M2ePro\Block\Adminhtml\StoreSwitcher::class)->addData([
             'id' => $this->getHtmlId(),
             'selected' => $this->getData('value'),
             'name' => $this->getName(),

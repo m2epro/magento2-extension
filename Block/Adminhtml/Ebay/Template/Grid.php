@@ -226,7 +226,7 @@ class Grid extends AbstractGrid
             'align'     => 'left',
             'width'     => '150px',
             'type'      => 'datetime',
-            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+            'filter'    => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
             'filter_time' => true,
             'format'    => \IntlDateFormatter::MEDIUM,
             'index'     => 'create_date',
@@ -238,7 +238,7 @@ class Grid extends AbstractGrid
             'align'     => 'left',
             'width'     => '150px',
             'type'      => 'datetime',
-            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+            'filter'    => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
             'filter_time' => true,
             'format'    => \IntlDateFormatter::MEDIUM,
             'index'     => 'update_date',
@@ -253,7 +253,7 @@ class Grid extends AbstractGrid
             'index'     => 'actions',
             'filter'    => false,
             'sortable'  => false,
-            'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
             'getter'    => 'getTemplateId',
             'actions'   => [
                 [

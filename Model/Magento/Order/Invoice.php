@@ -16,10 +16,10 @@ class Invoice extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Magento\Framework\DB\TransactionFactory  */
     protected $transactionFactory = null;
 
-    /** @var $magentoOrder \Magento\Sales\Model\Order */
+    /** @var \Magento\Sales\Model\Order $magentoOrder */
     protected $magentoOrder       = null;
 
-    /** @var $invoice \Magento\Sales\Model\Order\Invoice */
+    /** @var \Magento\Sales\Model\Order\Invoice $invoice */
     protected $invoice            = null;
 
     //########################################

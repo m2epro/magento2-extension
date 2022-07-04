@@ -8,32 +8,35 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Grid
- */
+
 abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
 
-    protected $magentoProductCollectionFactory;
-    protected $type;
+    /** @var \Ess\M2ePro\Helper\Magento\Product */
+    protected $magentoProductHelper;
 
-    //########################################
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
+    protected $magentoProductCollectionFactory;
+
+    /** @var \Magento\Catalog\Model\Product\Type */
+    protected $type;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Catalog\Model\Product\Type $type,
+        \Ess\M2ePro\Helper\Magento\Product $magentoProductHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->type = $type;
-        parent::__construct($context, $backendHelper, $data);
+        $this->magentoProductHelper = $magentoProductHelper;
+        parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -50,11 +53,9 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         $this->showAdvancedFilterProductsOption = false;
     }
 
-    //########################################
-
     protected function _prepareCollection()
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create()
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('name')
@@ -149,7 +150,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         $collection->addFieldToFilter(
             [[
                 'attribute' => 'type_id',
-                'in' => $this->getHelper('Magento\Product')->getOriginKnownTypes()
+                'in' => $this->magentoProductHelper->getOriginKnownTypes()
             ]]
         );
 
@@ -170,7 +171,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'index'     => 'entity_id',
             'filter_index' => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
         ]);
 
         $this->addColumn('name', [
@@ -225,7 +226,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'align'     => 'right',
             'width'     => '100px',
             'type'      => 'price',
-            'filter' => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Price',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Price::class,
             'currency_code' => $store->getBaseCurrency()->getCode(),
             'index'     => 'price',
             'filter_index' => 'price',
@@ -314,12 +315,12 @@ JS
         }
 
         // ---------------------------------------
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions(
             'Ebay_Listing_AutoAction',
             ['listing_id' => $this->listing->getId()]
         ));
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions(
             'Ebay_Listing_Product_Add',
             ['_current' => true]
         ));
@@ -350,7 +351,7 @@ JS
         // ---------------------------------------
 
         // ---------------------------------------
-        $showAutoActionPopup = $this->getHelper('Data')->jsonEncode(
+        $showAutoActionPopup = $this->dataHelper->jsonEncode(
             !$this->getHelper('Module')->getRegistry()->getValue('/ebay/listing/autoaction_popup/is_shown/')
         );
 
@@ -393,7 +394,7 @@ JS
     protected function getProductTypes()
     {
         $magentoProductTypes = $this->type->getOptionArray();
-        $knownTypes = $this->getHelper('Magento\Product')->getOriginKnownTypes();
+        $knownTypes = $this->magentoProductHelper->getOriginKnownTypes();
 
         foreach ($magentoProductTypes as $type => $magentoProductTypeLabel) {
             if (in_array($type, $knownTypes)) {

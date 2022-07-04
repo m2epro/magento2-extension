@@ -19,7 +19,27 @@ class Index extends Settings
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Category */
+    protected $magentoCategoryHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\Category $magentoCategoryHelper,
+        eBayCategory\Ebay $componentEbayCategoryEbay,
+        eBayCategory $componentEbayCategory,
+        eBayCategory\Store $componentEbayCategoryStore,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct(
+            $magentoCategoryHelper,
+            $componentEbayCategoryEbay,
+            $componentEbayCategory,
+            $componentEbayCategoryStore,
+            $ebayFactory,
+            $context
+        );
+        $this->magentoCategoryHelper = $magentoCategoryHelper;
+    }
 
     public function execute()
     {
@@ -164,7 +184,8 @@ class Index extends Settings
 
         $this->clearSession();
 
-        $block = $this->createBlock('Ebay_Listing_Product_Category_Settings_Mode');
+        $block = $this->getLayout()
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode::class);
         $block->setData('mode', $mode);
 
         $this->addContent($block);
@@ -288,9 +309,13 @@ class Index extends Settings
 
         !empty($sessionData['mode_same']['category']) && $categoriesData = $sessionData['mode_same']['category'];
 
-        $block = $this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_Same_Chooser', '', [
+        $block = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Same\Chooser::class,
+            '',
+            [
             'data' => ['categories_data' => $categoriesData]
-        ]);
+            ]
+        );
         $this->addContent($block);
 
         $this->getResultPage()->getConfig()->getTitle()
@@ -320,7 +345,8 @@ class Index extends Settings
 
         $this->setWizardStep('categoryStepTwo');
 
-        $block = $this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_Category');
+        $block = $this->getLayout()
+              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Category::class);
         $block->getChildBlock('grid')->setStoreId($this->listing->getStoreId());
         $block->getChildBlock('grid')->setCategoriesData($categoriesData);
 
@@ -356,12 +382,14 @@ class Index extends Settings
         );
 
         if ($getSuggested) {
-            $block = $this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_Product');
+            $block = $this->getLayout()
+                ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Product::class);
             $this->getResultPage()->getConfig()->getTitle()->prepend(
                 $this->__('Set Category (Suggested Categories)')
             );
         } else {
-            $block = $this->createBlock('Ebay_Listing_Product_Category_Settings_Mode_Manually');
+            $block = $this->getLayout()
+                ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Manually::class);
             $this->getResultPage()->getConfig()->getTitle()->prepend(
                 $this->__('Set Category (Manually for each Product)')
             );
@@ -480,7 +508,8 @@ class Index extends Settings
             $this->_forward('save');
         }
 
-        $block = $this->createBlock('Ebay_Listing_Product_Category_Settings_Specific');
+        $block = $this->getLayout()
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Specific::class);
         $block->getChildBlock('grid')->setCategoriesData($primaryData);
 
         if ($this->getRequest()->isXmlHttpRequest()) {
@@ -511,7 +540,7 @@ class Index extends Settings
 
         $productsIds = array_unique($productsIds);
 
-        return $this->getHelper('Magento\Category')->getLimitedCategoriesByProducts(
+        return $this->magentoCategoryHelper->getLimitedCategoriesByProducts(
             $productsIds,
             $this->listing->getStoreId()
         );

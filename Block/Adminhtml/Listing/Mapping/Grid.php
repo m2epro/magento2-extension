@@ -8,30 +8,35 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\Mapping;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Listing\Mapping\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     protected $magentoProductCollectionFactory;
+
+    /** @var \Magento\Catalog\Model\Product\Type */
     protected $type;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Product */
+    protected $magentoProductHelper;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Catalog\Model\Product\Type $type,
+        \Ess\M2ePro\Helper\Magento\Product $magentoProductHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->type = $type;
+        $this->magentoProductHelper = $magentoProductHelper;
 
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -46,7 +51,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareCollection()
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create()
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('name')
@@ -58,7 +63,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             [
                 [
                     'attribute' => 'type_id',
-                    'in'        => $this->getHelper('Magento\Product')->getOriginKnownTypes()
+                    'in'        => $this->magentoProductHelper->getOriginKnownTypes()
                 ]
             ]
         );
@@ -79,7 +84,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'width'        => '100px',
                 'index'        => 'entity_id',
                 'filter_index' => 'entity_id',
-                'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
+                'renderer'     => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
             ]
         );
 
@@ -147,7 +152,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
-        $value = '<div style="margin-left: 3px">' . $this->getHelper('Data')->escapeHtml($value);
+        $value = '<div style="margin-left: 3px">' . $this->dataHelper->escapeHtml($value);
 
         $tempSku = $row->getData('sku');
         if ($tempSku === null) {
@@ -156,14 +161,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
 
         $value .= '<br/><strong>' . $this->__('SKU') . ':</strong> ';
-        $value .= $this->getHelper('Data')->escapeHtml($tempSku) . '</div>';
+        $value .= $this->dataHelper->escapeHtml($tempSku) . '</div>';
 
         return $value;
     }
 
     public function callbackColumnType($value, $row, $column, $isExport)
     {
-        return '<div style="margin-left: 3px">' . $this->getHelper('Data')->escapeHtml($value) . '</div>';
+        return '<div style="margin-left: 3px">' . $this->dataHelper->escapeHtml($value) . '</div>';
     }
 
     public function callbackColumnIsInStock($value, $row, $column, $isExport)
@@ -253,7 +258,7 @@ JS
     protected function getProductTypes()
     {
         $magentoProductTypes = $this->type->getOptionArray();
-        $knownTypes = $this->getHelper('Magento\Product')->getOriginKnownTypes();
+        $knownTypes = $this->magentoProductHelper->getOriginKnownTypes();
 
         foreach ($magentoProductTypes as $type => $magentoProductTypeLabel) {
             if (in_array($type, $knownTypes)) {

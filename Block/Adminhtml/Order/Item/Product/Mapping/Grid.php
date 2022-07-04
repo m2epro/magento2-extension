@@ -10,28 +10,32 @@ namespace Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Mapping;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Mapping\Grid
- */
 class Grid extends AbstractGrid
 {
     //########################################
 
     protected $storeId = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
 
+    /** @var \Magento\Catalog\Model\Product\Type */
     protected $productTypeModel;
+
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     protected $magentoProductCollectionFactory;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Catalog\Model\Product\Type $productTypeModel,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->productTypeModel = $productTypeModel;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
-
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -55,7 +59,7 @@ class Grid extends AbstractGrid
 
     protected function _prepareCollection()
     {
-        /** @var $orderItem \Ess\M2ePro\Model\Order\Item */
+        /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
         $itemId = $this->getRequest()->getParam('item_id');
         $orderItem = $this->activeRecordFactory->getObjectLoaded('Order\Item', $itemId);
 
@@ -63,7 +67,7 @@ class Grid extends AbstractGrid
             $this->storeId = $orderItem->getStoreId();
         }
 
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->setStoreId($this->storeId);
 
@@ -88,7 +92,7 @@ class Grid extends AbstractGrid
             'index'        => 'entity_id',
             'filter_index' => 'entity_id',
             'store_id'     => $this->storeId,
-            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
+            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
         ]);
 
         $this->addColumn('title', [
@@ -141,7 +145,7 @@ class Grid extends AbstractGrid
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
-        $value = '<div style="margin-left: 3px">'.$this->getHelper('Data')->escapeHtml($value);
+        $value = '<div style="margin-left: 3px">'.$this->dataHelper->escapeHtml($value);
 
         $sku = $row->getData('sku');
         if ($sku === null) {
@@ -150,14 +154,14 @@ class Grid extends AbstractGrid
         }
 
         $value .= '<br/><strong>'.$this->__('SKU').':</strong> ';
-        $value .= $this->getHelper('Data')->escapeHtml($sku).'</div>';
+        $value .= $this->dataHelper->escapeHtml($sku).'</div>';
 
         return $value;
     }
 
     public function callbackColumnType($value, $row, $column, $isExport)
     {
-        return '<div style="margin-left: 3px">'.$this->getHelper('Data')->escapeHtml($value).'</div>';
+        return '<div style="margin-left: 3px">'.$this->dataHelper->escapeHtml($value).'</div>';
     }
 
     public function callbackColumnIsInStock($value, $row, $column, $isExport)

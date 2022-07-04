@@ -33,7 +33,9 @@ class ToolsModule extends AbstractBlock
 
     protected function _beforeToHtml()
     {
-        $this->setChild('tabs', $this->createBlock('ControlPanel_Tabs_ToolsModule_Tabs'));
+        $this->setChild('tabs',
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\ToolsModule\Tabs::class)
+        );
         return parent::_beforeToHtml();
     }
 

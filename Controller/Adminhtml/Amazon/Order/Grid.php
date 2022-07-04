@@ -17,7 +17,7 @@ class Grid extends Order
 {
     public function execute()
     {
-        $this->setAjaxContent($this->createBlock('Amazon_Order_Grid'));
+        $this->setAjaxContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order\Grid::class));
 
         return $this->getResult();
     }

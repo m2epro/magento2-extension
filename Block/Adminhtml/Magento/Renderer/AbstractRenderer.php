@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
 /**
- * Class \Ess\M2ePro\Block\Adminhtml\Magento\Renderer\AbstractRenderer
+ * @deprecated
  */
 abstract class AbstractRenderer
 {

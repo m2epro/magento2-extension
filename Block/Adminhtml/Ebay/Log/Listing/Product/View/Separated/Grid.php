@@ -9,7 +9,6 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Log\Listing\Product\View\Separated;
 
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\View\Separated\AbstractGrid;
-use Ess\M2ePro\Block\Adminhtml\Ebay\Log\Listing\Product\GridTrait;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Log\Listing\Product\View\Separated\Grid

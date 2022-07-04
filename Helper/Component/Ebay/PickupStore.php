@@ -8,31 +8,30 @@
 
 namespace Ess\M2ePro\Helper\Component\Ebay;
 
-/**
- * Class \Ess\M2ePro\Helper\Component\Ebay\PickupStore
- */
-class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
+class PickupStore
 {
-    protected $modelFactory;
-    protected $activeRecordFactory;
-    protected $messageManager;
-
-    //########################################
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
+    private $activeRecordFactory;
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magento;
+    /** @var \Ess\M2ePro\Helper\Data\Cache\Runtime */
+    private $runtimeCache;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
-        \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Magento\Framework\Message\ManagerInterface $messageManager,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Helper\Magento $magento,
+        \Ess\M2ePro\Helper\Data\Cache\Runtime $runtimeCache,
+        \Ess\M2ePro\Helper\Data $dataHelper
     ) {
-        $this->modelFactory = $modelFactory;
         $this->activeRecordFactory = $activeRecordFactory;
-        $this->messageManager = $messageManager;
-        parent::__construct($helperFactory, $context);
+        $this->magento = $magento;
+        $this->runtimeCache = $runtimeCache;
+        $this->dataHelper = $dataHelper;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function isFeatureEnabled()
     {
@@ -46,7 +45,7 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
     public function getEnabledAccounts()
     {
         $cacheKey = 'ebay_pickup_store_enabled_accounts';
-        $enabledAccounts = $this->helperFactory->getObject('Data_Cache_Runtime')->getValue($cacheKey);
+        $enabledAccounts = $this->runtimeCache->getValue($cacheKey);
 
         if ($enabledAccounts === null) {
             $enabledAccounts = [];
@@ -61,20 +60,21 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
                 }
             }
 
-            $this->helperFactory->getObject('Data_Cache_Runtime')->setValue($cacheKey, $enabledAccounts);
+            $this->runtimeCache->setValue($cacheKey, $enabledAccounts);
         }
 
         return $enabledAccounts;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function convertMarketplaceToCountry($marketplace)
     {
-        $countries = $this->getHelper('Magento')->getCountries();
+        $countries = $this->magento->getCountries();
 
         foreach ($countries as $country) {
-            if (!empty($country['value']) &&
+            if (
+                !empty($country['value']) &&
                 $country['value'] == strtoupper($marketplace['origin_country'])
             ) {
                 return $country;
@@ -89,10 +89,18 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
     public function validateRequiredFields(array $data)
     {
         $requiredFields = [
-            'name', 'location_id', 'account_id', 'marketplace_id',
-            'phone', 'postal_code', 'utc_offset',
-            'country', 'region', 'city', 'address_1',
-            'business_hours'
+            'name',
+            'location_id',
+            'account_id',
+            'marketplace_id',
+            'phone',
+            'postal_code',
+            'utc_offset',
+            'country',
+            'region',
+            'city',
+            'address_1',
+            'business_hours',
         ];
 
         foreach ($requiredFields as $requiredField) {
@@ -120,11 +128,11 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
     protected function getLocationData(array $data)
     {
         $physical = [
-            'country' => $data['country'],
-            'city' => $data['city'],
-            'region' => $data['region'],
+            'country'     => $data['country'],
+            'city'        => $data['city'],
+            'region'      => $data['region'],
             'postal_code' => $data['postal_code'],
-            'address_1' => $data['address_1']
+            'address_1'   => $data['address_1'],
         ];
 
         if (!empty($data['address_second'])) {
@@ -132,9 +140,9 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $geoData = [
-            'latitude' => $data['latitude'],
-            'longitude' => $data['longitude'],
-            'utc_offset' => $data['utc_offset']
+            'latitude'   => $data['latitude'],
+            'longitude'  => $data['longitude'],
+            'utc_offset' => $data['utc_offset'],
         ];
 
         return ['physical' => $physical, 'geo_data' => $geoData];
@@ -156,7 +164,7 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
 
     protected function getWorkingHoursData(array $data)
     {
-        $weekHours = $this->getHelper('Data')->jsonDecode($data['business_hours']);
+        $weekHours = $this->dataHelper->jsonDecode($data['business_hours']);
         $weekValues = [
             'monday'    => 1,
             'tuesday'   => 2,
@@ -164,7 +172,7 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
             'thursday'  => 4,
             'friday'    => 5,
             'saturday'  => 6,
-            'sunday'    => 7
+            'sunday'    => 7,
         ];
 
         $parsedWeekHours = [];
@@ -176,12 +184,11 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
             $parsedWeekHours[$weekValues[$weekDay]] = $weekHours['week_settings'][$weekDay];
         }
 
-        $holidaysHours = $this->getHelper('Data')->jsonDecode($data['special_hours']);
+        $holidaysHours = $this->dataHelper->jsonDecode($data['special_hours']);
+
         return [
-            'week' => $parsedWeekHours,
-            'holidays' => $holidaysHours['date_settings']
+            'week'     => $parsedWeekHours,
+            'holidays' => $holidaysHours['date_settings'] ?? null,
         ];
     }
-
-    //########################################
 }

@@ -8,12 +8,19 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create\General
- */
 class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = [])
+    {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -45,22 +52,23 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
     protected function _toHtml()
     {
-        $breadcrumb = $this->createBlock('Ebay_Listing_Create_Breadcrumb');
+        $breadcrumb = $this->getLayout()
+                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create\Breadcrumb::class);
         $breadcrumb->setSelectedStep(1);
 
-        $helpBlock = $this->createBlock('HelpBlock');
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class);
         $helpBlock->addData(
             [
                 'content' => $this->__(
                     <<<HTML
-<p>It is necessary to select an eBay Account (existing or create a new one) as well as choose a Marketplace that you 
+<p>It is necessary to select an eBay Account (existing or create a new one) as well as choose a Marketplace that you
 are going to sell Magento Products on.</p><br>
-<p>It is also important to specify a Store View in accordance with which Magento Attribute values will be used in the 
+<p>It is also important to specify a Store View in accordance with which Magento Attribute values will be used in the
 Listing settings.</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/EwAVB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/EwAVB')
                 ),
                 'style'   => 'margin-top: 30px'
             ]

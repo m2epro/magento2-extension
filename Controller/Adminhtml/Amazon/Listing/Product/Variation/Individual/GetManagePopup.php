@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Individual;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
-
+use Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Individual\Manage;
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Individual\GetManagePopup
  */
@@ -28,8 +28,8 @@ class GetManagePopup extends Main
             return $this->getResult();
         }
 
-        $variationManageBlock = $this->createBlock('Amazon_Listing_Product_Variation_Individual_Manage')
-            ->setData('listing_product_id', $listingProductId);
+        $variationManageBlock = $this->getLayout()->createBlock(Manage::class)
+                                                  ->setData('listing_product_id', $listingProductId);
 
         $this->setJsonContent([
             'type' => 'success',

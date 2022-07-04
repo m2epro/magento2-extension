@@ -8,13 +8,21 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Edit\Policy;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Edit\Policy\Form
- */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     protected function _prepareLayout()
     {
@@ -27,8 +35,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $templateNick = $this->getRequest()->getParam('templateNick');
 
-        $switcherBlock = $this->createBlock(
-            'Ebay_Listing_Template_Switcher',
+        $switcherBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher::class,
             '',
             ['data' => [
                 'template_nick' => $templateNick,
@@ -73,8 +81,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             return '';
         }
 
-        $helpLinkBlock = $this->createBlock('PageHelpLink')->setData([
-            'page_help_link' => $this->getHelper('Module\Support')->getDocumentationArticleUrl(
+        $helpLinkBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\PageHelpLink::class)->setData([
+            'page_help_link' => $this->supportHelper->getDocumentationArticleUrl(
                 $articles[$templateNick]
             )
         ]);
@@ -83,6 +91,4 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         . $helpLinkBlock->toHtml()
         . '</div>' ;
     }
-
-    //########################################
 }

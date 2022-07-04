@@ -8,19 +8,25 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Delete
- */
 class Delete extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->dataHelper = $dataHelper;
+    }
 
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::walmart_listings_m2epro');
     }
-
-    //########################################
 
     public function execute()
     {
@@ -52,8 +58,6 @@ class Delete extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
         );
         $locked && $this->getMessageManager()->addError($tempString);
 
-        $this->_redirect($this->getHelper('Data')->getBackUrl());
+        $this->_redirect($this->dataHelper->getBackUrl());
     }
-
-    //########################################
 }

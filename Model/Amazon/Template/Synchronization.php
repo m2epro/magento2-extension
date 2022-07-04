@@ -25,7 +25,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ama
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Amazon\Template\Synchronization');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Template\Synchronization::class);
     }
 
     //########################################

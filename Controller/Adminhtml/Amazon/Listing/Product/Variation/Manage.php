@@ -28,7 +28,8 @@ class Manage extends Main
         $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $productId);
         $listingProduct->getChildObject()->getVariationManager()->getTypeModel()->getProcessor()->process();
 
-        $tabs = $this->createBlock('Amazon_Listing_Product_Variation_Manage_Tabs');
+        $tabs = $this->getLayout()
+                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs::class);
         $tabs->setListingProduct($listingProduct);
 
         $this->setAjaxContent($tabs);

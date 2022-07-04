@@ -57,7 +57,7 @@ class Processing extends AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Action\Processing');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Action\Processing::class);
     }
 
     //####################################

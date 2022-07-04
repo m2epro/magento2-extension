@@ -26,7 +26,7 @@ class View extends AbstractContainer
 
     protected function _toHtml()
     {
-        $block = $this->createBlock('HelpBlock')->setData([
+        $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
             'content' => $this->__(
                 'In this Section you can find all Item Variations with possibility to search, filter,
                 sort etc.<br/><br/>

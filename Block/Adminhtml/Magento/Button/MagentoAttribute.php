@@ -13,7 +13,18 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Button;
  */
 class MagentoAttribute extends \Ess\M2ePro\Block\Adminhtml\Magento\Button
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Backend\Block\Template\Context $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        parent::__construct($helperFactory, $context, $data);
+        $this->dataHelper = $dataHelper;
+    }
 
     protected function _prepareAttributes($title, $classes, $disabled)
     {
@@ -41,7 +52,7 @@ class MagentoAttribute extends \Ess\M2ePro\Block\Adminhtml\Magento\Button
         if ($this->getDataAttribute()) {
             foreach ($this->getDataAttribute() as $key => $attr) {
                 $attributes['data-' . $key] = is_scalar($attr)
-                    ? $attr : $this->helperFactory->getObject('Data')->jsonEncode($attr);
+                    ? $attr : $this->dataHelper->jsonEncode($attr);
             }
         }
 

@@ -12,21 +12,40 @@ use Ess\M2ePro\Model\Ebay\Template\Manager;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
+
+    /** @var \Magento\Catalog\Model\ProductFactory */
     protected $productFactory;
+
+    /** @var \Ess\M2ePro\Model\Ebay\Template\Manager */
     protected $templateManager;
+
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     protected $magentoProductCollectionFactory;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory  */
     protected $ebayFactory;
 
     /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute */
     private $motorsAttribute = null;
+
     private $productsMotorsData = [];
+
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
     private $componentEbayCategory;
+
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
     private $componentEbayMotors;
 
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    protected $magentoAttributeHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
+
     public function __construct(
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
         \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -36,6 +55,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->resourceConnection              = $resourceConnection;
@@ -45,8 +66,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->ebayFactory                     = $ebayFactory;
         $this->componentEbayCategory           = $componentEbayCategory;
         $this->componentEbayMotors             = $componentEbayMotors;
-
-        parent::__construct($context, $backendHelper, $data);
+        $this->magentoAttributeHelper          = $magentoAttributeHelper;
+        $this->databaseHelper = $databaseHelper;
+        parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
 
     public function _construct()
@@ -71,7 +93,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareCollection()
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->setListingProductModeOn();
@@ -206,7 +228,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
             $collection->joinTable(
                 [
-                    'eea' => $this->getHelper('Module_Database_Structure')
+                    'eea' => $this->databaseHelper
                         ->getTableNameWithPrefix('eav_entity_attribute')
                 ],
                 'attribute_set_id=attribute_set_id',
@@ -283,7 +305,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'     => 'number',
             'index'    => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
         ]);
 
         $this->addColumn('name', [
@@ -318,7 +340,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'align'  => 'left',
             'type'   => 'text',
             'index'  => 'name',
-            'filter' => '\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Grid\Column\Filter\Category',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Grid\Column\Filter\Category::class,
             'frame_callback'            => [$this, 'callbackColumnCategory'],
             'filter_condition_callback' => [$this, 'callbackFilterCategory']
         ]);
@@ -329,7 +351,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'align'   => 'left',
             'type'    => 'text',
             'sortable'                  => false,
-            'filter' => '\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Grid\Column\Filter\PolicySettings',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Grid\Column\Filter\PolicySettings::class,
             'frame_callback'            => [$this, 'callbackColumnSetting'],
             'filter_condition_callback' => [$this, 'callbackFilterSetting'],
             'column_css_class' => 'ebay-listing-grid-column-setting'
@@ -342,7 +364,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'index'       => 'actions',
             'filter'      => false,
             'sortable'    => false,
-            'renderer'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+            'renderer'    => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
             'field'       => 'id',
             'group_order' => $this->getGroupOrder(),
             'actions'     => $this->getColumnActionsItems()
@@ -455,7 +477,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
-        $value = '<span>' . $this->getHelper('Data')->escapeHtml($value) . '</span>';
+        $value = '<span>' . $this->dataHelper->escapeHtml($value) . '</span>';
 
         $sku = $row->getData('sku');
         if ($sku === null) {
@@ -465,13 +487,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
 
         $value .= '<br/><strong>' . $this->__('SKU') . ':</strong>&nbsp;';
-        $value .= $this->getHelper('Data')->escapeHtml($sku);
+        $value .= $this->dataHelper->escapeHtml($sku);
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $row->getData('listing_product_id'));
 
         if ($listingProduct->getChildObject()->isVariationsReady()) {
-            $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+            $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
 
             $productAttributes = isset($additionalData['variations_sets'])
                 ? array_keys($additionalData['variations_sets']) : [];
@@ -717,7 +739,7 @@ HTML;
         }
 
         if ($inputValue !== null) {
-            /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+            /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
             $collection->addAttributeToFilter(
                 [
                     ['attribute' => 'description_policy_title', 'like' => '%' . $inputValue . '%'],
@@ -834,7 +856,7 @@ HTML;
 
     private function getEbayCategoryInfoHtml($row, $modeNick, $modeTitle)
     {
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
         $mode = $row->getData($modeNick . '_mode');
 
         if ($mode === null || $mode == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE) {
@@ -844,7 +866,7 @@ HTML;
         if ($mode == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE) {
             $category = $this->__('Magento Attribute') . ' > ';
             $category .= $helper->escapeHtml(
-                $this->getHelper('Magento\Attribute')->getAttributeLabel(
+                $this->magentoAttributeHelper->getAttributeLabel(
                     $row->getData($modeNick . '_attribute'),
                     $this->listing->getStoreId()
                 )
@@ -858,7 +880,7 @@ HTML;
 
     private function getStoreCategoryInfoHtml($row, $modeNick, $modeTitle)
     {
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
         $mode = $row->getData('store_' . $modeNick . '_mode');
 
         if ($mode == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE) {
@@ -868,7 +890,7 @@ HTML;
         if ($mode == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE) {
             $category = $this->__('Magento Attribute') . ' > ';
             $category .= $helper->escapeHtml(
-                $this->getHelper('Magento\Attribute')->getAttributeLabel(
+                $this->magentoAttributeHelper->getAttributeLabel(
                     $row->getData('store_' . $modeNick . '_attribute'),
                     $this->listing->getStoreId()
                 )
@@ -1029,8 +1051,8 @@ JS
             return parent::_toHtml();
         }
 
-        /** @var $helper \Ess\M2ePro\Helper\Data */
-        $helper = $this->getHelper('Data');
+        /** @var \Ess\M2ePro\Helper\Data $helper */
+        $helper = $this->dataHelper;
 
         // ---------------------------------------
         $this->jsPhp->addConstants($helper->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay\Category::class));
@@ -1141,7 +1163,7 @@ JS
         $productsIdsForList = empty($temp) ? '' : $temp;
 
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
-        $ignoreListings = $this->getHelper('Data')->jsonEncode([$this->listing->getId()]);
+        $ignoreListings = $this->dataHelper->jsonEncode([$this->listing->getId()]);
 
         $motorsType = '';
         if ($this->isMotorsAvailable() && $this->motorsAttribute) {
@@ -1254,7 +1276,7 @@ JS
         //-------------------------------
 
         //-------------------------------
-        $filtersTable = $this->getHelper('Module_Database_Structure')
+        $filtersTable = $this->databaseHelper
             ->getTableNameWithPrefix('m2epro_ebay_motor_filter');
         $select = $this->resourceConnection->getConnection()
             ->select()
@@ -1268,7 +1290,7 @@ JS
         //-------------------------------
 
         //-------------------------------
-        $groupsTable = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_ebay_motor_group');
+        $groupsTable = $this->databaseHelper->getTableNameWithPrefix('m2epro_ebay_motor_group');
         $select = $this->resourceConnection->getConnection()
             ->select()
             ->from(

@@ -100,7 +100,7 @@ class InvoiceDataReport extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $accountsByMerchantId = [];
         foreach ($accountsCollection->getItems() as $account) {
-            /** @var $account \Ess\M2ePro\Model\Account */
+            /** @var \Ess\M2ePro\Model\Account $account */
 
             $merchantId = $account->getChildObject()->getMerchantId();
             if (!isset($accountsByMerchantId[$merchantId])) {

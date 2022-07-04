@@ -8,11 +8,22 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\NewTemplate;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\NewTemplate\Form
- */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     protected function _prepareForm()
     {
         if ($this->getData('nick') == '') {
@@ -36,7 +47,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     it in case you need to use it in a different M2E Pro Listing in the future.</p><br>
                     <p>More detailed information you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/GwAVB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/GwAVB')
                 )
             ]
         );

@@ -18,7 +18,7 @@ class InspectionTab extends Main
 {
     public function execute()
     {
-        $block = $this->createBlock('ControlPanel_Tabs_Inspection', '');
+        $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Inspection::class, '');
         $this->setAjaxContent($block);
 
         return $this->getResult();

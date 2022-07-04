@@ -69,7 +69,7 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
         $isMappingEnabled = $this->getAccount()->getChildObject()->isOtherListingsMappingEnabled();
 
         if ($isMappingEnabled) {
-            /** @var $mappingModel \Ess\M2ePro\Model\Ebay\Listing\Other\Mapping */
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Other\Mapping $mappingModel */
             $mappingModel = $this->modelFactory->getObject('Ebay_Listing_Other_Mapping');
             $mappingModel->initialize($this->getAccount());
         }

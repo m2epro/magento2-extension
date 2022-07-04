@@ -51,7 +51,7 @@ class Save extends Description
 
         // Saving definition info
         // ---------------------------------------
-        /** @var $descriptionDefinition \Ess\M2ePro\Model\Amazon\Template\Description\Definition */
+        /** @var \Ess\M2ePro\Model\Amazon\Template\Description\Definition $descriptionDefinition */
         $descriptionDefinition = $this->activeRecordFactory->getObjectLoaded(
             'Amazon_Template_Description_Definition',
             $id,

@@ -8,43 +8,37 @@
 
 namespace Ess\M2ePro\Helper\Component\Walmart;
 
-class Category extends \Ess\M2ePro\Helper\AbstractHelper
+class Category
 {
-    const RECENT_MAX_COUNT = 20;
-
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
-    protected $activeRecordFactory;
+    public const RECENT_MAX_COUNT = 20;
 
     /** @var \Magento\Framework\App\ResourceConnection  */
-    protected $resourceConnection;
-
-    /** @var \Ess\M2ePro\Helper\Module */
-    protected $helperModule;
-
+    private $resourceConnection;
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
-    protected $databaseStructure;
+    private $databaseStructure;
+    /** @var \Ess\M2ePro\Model\Registry\Manager */
+    private $registry;
 
+    /**
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     * @param \Ess\M2ePro\Helper\Module\Database\Structure $databaseStructure
+     * @param \Ess\M2ePro\Model\Registry\Manager $registry
+     */
     public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context,
-        \Ess\M2ePro\Helper\Module $helperModule,
-        \Ess\M2ePro\Helper\Module\Database\Structure $databaseStructure
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseStructure,
+        \Ess\M2ePro\Model\Registry\Manager $registry
     ) {
-        parent::__construct($helperFactory, $context);
-
-        $this->activeRecordFactory = $activeRecordFactory;
         $this->resourceConnection = $resourceConnection;
-        $this->helperModule = $helperModule;
         $this->databaseStructure = $databaseStructure;
+        $this->registry = $registry;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function getRecent($marketplaceId, array $excludedCategory = [])
     {
-        $allRecentCategories = $this->helperModule->getRegistry()->getValueFromJson($this->getConfigGroup());
+        $allRecentCategories = $this->registry->getValueFromJson($this->getConfigGroup());
 
         if (!isset($allRecentCategories[$marketplaceId])) {
             return [];
@@ -72,7 +66,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function addRecent($marketplaceId, $browseNodeId, $categoryPath)
     {
-        $allRecentCategories = $this->helperModule->getRegistry()->getValueFromJson($this->getConfigGroup());
+        $allRecentCategories = $this->registry->getValueFromJson($this->getConfigGroup());
 
         !isset($allRecentCategories[$marketplaceId]) && $allRecentCategories[$marketplaceId] = [];
 
@@ -100,7 +94,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
         $recentCategories[] = $categoryInfo;
         $allRecentCategories[$marketplaceId] = $recentCategories;
 
-        $this->helperModule->getRegistry()->setValue($this->getConfigGroup(), $allRecentCategories);
+        $this->registry->setValue($this->getConfigGroup(), $allRecentCategories);
     }
 
     private function removeNotAccessibleCategories($marketplaceId, array &$recentCategories)
@@ -144,7 +138,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function removeRecentCategory(array $category, $marketplaceId)
     {
-        $allRecentCategories = $this->helperModule->getRegistry()->getValueFromJson($this->getConfigGroup());
+        $allRecentCategories = $this->registry->getValueFromJson($this->getConfigGroup());
 
         if (!isset($allRecentCategories[$marketplaceId])) {
             return;
@@ -160,7 +154,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
             }
         }
 
-        $this->helperModule->getRegistry()->setValue($this->getConfigGroup(), $allRecentCategories);
+        $this->registry->setValue($this->getConfigGroup(), $allRecentCategories);
     }
 
     //########################################

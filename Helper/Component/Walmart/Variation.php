@@ -8,54 +8,42 @@
 
 namespace Ess\M2ePro\Helper\Component\Walmart;
 
-class Variation extends \Ess\M2ePro\Helper\AbstractHelper
+class Variation
 {
-    const DATA_REGISTRY_KEY  = 'walmart_variation_themes_usage';
-
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
-    protected $activeRecordFactory;
-
-    /** @var \Ess\M2ePro\Model\Factory */
-    protected $modelFactory;
+    public const DATA_REGISTRY_KEY = 'walmart_variation_themes_usage';
 
     /** @var \Magento\Framework\App\ResourceConnection */
-    protected $resourceConnection;
-
-    /** @var \Ess\M2ePro\Helper\Module */
-    protected $helperModule;
-
+    private $resourceConnection;
     /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
-    protected $permanentCache;
-
+    private $permanentCache;
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
-    protected $databaseStructure;
-
+    private $databaseStructure;
     /** @var \Ess\M2ePro\Helper\Magento\Product */
-    protected $helperMagentoProduct;
+    private $helperMagentoProduct;
+    /** @var \Ess\M2ePro\Model\Registry\Manager */
+    private $registry;
 
+    /**
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     * @param \Ess\M2ePro\Helper\Module\Database\Structure $databaseStructure
+     * @param \Ess\M2ePro\Helper\Magento\Product $helperMagentoProduct
+     * @param \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCache
+     */
     public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Ess\M2ePro\Helper\Module $helperModule,
+        \Ess\M2ePro\Model\Registry\Manager $registry,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseStructure,
         \Ess\M2ePro\Helper\Magento\Product $helperMagentoProduct,
-        \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCache,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCache
     ) {
-        parent::__construct($helperFactory, $context);
-
-        $this->helperModule = $helperModule;
         $this->databaseStructure = $databaseStructure;
         $this->helperMagentoProduct = $helperMagentoProduct;
         $this->permanentCache = $permanentCache;
-        $this->activeRecordFactory = $activeRecordFactory;
-        $this->modelFactory = $modelFactory;
         $this->resourceConnection = $resourceConnection;
+        $this->registry = $registry;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function filterProductsNotMatchingForNewAsin($productsIds)
     {
@@ -77,11 +65,11 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
         $select = $connRead->select();
         $select->from(['alp' => $table], ['listing_product_id'])
-            ->where('listing_product_id IN (?)', $productsIds)
-            ->where('general_id IS NULL');
+               ->where('listing_product_id IN (?)', $productsIds)
+               ->where('general_id IS NULL');
 
         return $this->resourceConnection->getConnection()
-            ->fetchCol($select);
+                                        ->fetchCol($select);
     }
 
     public function filterProductsByGeneralIdOwner($productsIds)
@@ -91,11 +79,11 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
         $select = $connRead->select();
         $select->from(['alp' => $table], ['listing_product_id'])
-            ->where('listing_product_id IN (?)', $productsIds)
-            ->where('is_general_id_owner = 0');
+               ->where('listing_product_id IN (?)', $productsIds)
+               ->where('is_general_id_owner = 0');
 
         return $this->resourceConnection->getConnection()
-            ->fetchCol($select);
+                                        ->fetchCol($select);
     }
 
     public function filterProductsByStatus($productsIds)
@@ -105,11 +93,11 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
         $select = $connRead->select();
         $select->from(['lp' => $table], ['id'])
-            ->where('id IN (?)', $productsIds)
-            ->where('status = ?', \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED);
+               ->where('id IN (?)', $productsIds)
+               ->where('status = ?', \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED);
 
         return $this->resourceConnection->getConnection()
-            ->fetchCol($select);
+                                        ->fetchCol($select);
     }
 
     public function filterLockedProducts($productsIds)
@@ -119,9 +107,9 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
         $select = $connRead->select();
         $select->from(['lo' => $table], ['object_id'])
-            ->where('model_name = "Listing_Product"')
-            ->where('object_id IN (?)', $productsIds)
-            ->where('tag IS NULL');
+               ->where('model_name = "Listing_Product"')
+               ->where('object_id IN (?)', $productsIds)
+               ->where('tag IS NULL');
 
         $lockedProducts = $this->resourceConnection->getConnection()->fetchCol($select);
 
@@ -148,14 +136,14 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
         foreach ($productsIdsChunks as $productsIdsChunk) {
             $select = $connRead->select();
             $select->from(['alp' => $tableListingProduct], ['id', 'product_id'])
-                ->where('id IN (?)', $productsIdsChunk);
+                   ->where('id IN (?)', $productsIdsChunk);
 
             $listingProductToProductIds = $this->resourceConnection->getConnection()
-                                                                               ->fetchPairs($select);
+                                                                   ->fetchPairs($select);
 
             $select = $connRead->select();
             $select->from(['cpe' => $tableProductEntity], ['entity_id', 'type_id'])
-                ->where('entity_id IN (?)', $listingProductToProductIds);
+                   ->where('entity_id IN (?)', $listingProductToProductIds);
 
             $select->joinLeft(
                 ['cpo' => $tableProductOption],
@@ -178,8 +166,10 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
                     unset($productToListingProductIds[$product['entity_id']]);
                 }
 
-                if ($this->helperMagentoProduct->isSimpleType($product['type_id']) &&
-                    !empty($product['option_id'])) {
+                if (
+                    $this->helperMagentoProduct->isSimpleType($product['type_id']) &&
+                    !empty($product['option_id'])
+                ) {
                     unset($productToListingProductIds[$product['entity_id']]);
                 }
             }
@@ -205,7 +195,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function increaseThemeUsageCount($theme, $marketplaceId)
     {
-        $data = $this->helperModule->getRegistry()->getValueFromJson(self::DATA_REGISTRY_KEY);
+        $data = $this->registry->getValueFromJson(self::DATA_REGISTRY_KEY);
 
         if (empty($data[$marketplaceId][$theme])) {
             $data[$marketplaceId][$theme] = 0;
@@ -214,7 +204,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
         arsort($data[$marketplaceId]);
 
-        $this->helperModule->getRegistry()->setValue(self::DATA_REGISTRY_KEY, $data);
+        $this->registry->setValue(self::DATA_REGISTRY_KEY, $data);
 
         $this->removeThemeUsageDataCache();
     }
@@ -228,18 +218,19 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
             return $cacheData;
         }
 
-        $data = $this->helperModule->getRegistry()->getValueFromJson(self::DATA_REGISTRY_KEY);
+        $data = $this->registry->getValueFromJson(self::DATA_REGISTRY_KEY);
 
         $this->setThemeUsageDataCache($data);
 
         return $data;
     }
 
-    //########################################
+    // ----------------------------------------
 
     private function getThemeUsageDataCache()
     {
-        $cacheKey = __CLASS__.self::DATA_REGISTRY_KEY;
+        $cacheKey = __CLASS__ . self::DATA_REGISTRY_KEY;
+
         return $this->permanentCache->getValue($cacheKey);
     }
 
@@ -247,7 +238,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function setThemeUsageDataCache(array $data)
     {
-        $cacheKey = __CLASS__.self::DATA_REGISTRY_KEY;
+        $cacheKey = __CLASS__ . self::DATA_REGISTRY_KEY;
         $this->permanentCache->setValue($cacheKey, $data);
     }
 
@@ -255,9 +246,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function removeThemeUsageDataCache()
     {
-        $cacheKey = __CLASS__.self::DATA_REGISTRY_KEY;
+        $cacheKey = __CLASS__ . self::DATA_REGISTRY_KEY;
         $this->permanentCache->removeValue($cacheKey);
     }
-
-    //########################################
 }

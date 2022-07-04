@@ -22,7 +22,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Account');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Account::class);
     }
 
     //########################################
@@ -101,7 +101,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
         if ($asObjects) {
             foreach ($otherListings as $otherListing) {
-                /** @var $otherListing \Ess\M2ePro\Model\Listing\Other */
+                /** @var \Ess\M2ePro\Model\Listing\Other $otherListing */
                 $otherListing->setAccount($this);
             }
         }
@@ -121,7 +121,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
         if ($asObjects) {
             foreach ($orders as $order) {
-                /** @var $order \Ess\M2ePro\Model\Order */
+                /** @var \Ess\M2ePro\Model\Order $order */
                 $order->setAccount($this);
             }
         }

@@ -12,33 +12,50 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 use Ess\M2ePro\Model\Walmart\Account;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\ListingOther
- */
 class ListingOther extends AbstractForm
 {
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    protected $magentoAttributeHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->supportHelper = $supportHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create();
 
-        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
-        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
-
-        $allAttributes = $magentoAttributeHelper->getAll();
-
-        $attributes = $magentoAttributeHelper->filterByInputTypes(
+        $allAttributes = $this->magentoAttributeHelper->getAll();
+        $attributes = $this->magentoAttributeHelper->filterByInputTypes(
             $allAttributes,
             [
                 'text', 'textarea', 'select'
             ]
         );
 
-        /** @var $account \Ess\M2ePro\Model\Account */
+        /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         if (isset($formData['other_listings_mapping_settings'])) {
-            $formData['other_listings_mapping_settings'] = (array)$this->getHelper('Data')->jsonDecode(
+            $formData['other_listings_mapping_settings'] = (array)$this->dataHelper->jsonDecode(
                 $formData['other_listings_mapping_settings']
             );
         }
@@ -70,7 +87,7 @@ class ListingOther extends AbstractForm
         The detailed information can be found <a href="%url%" target="_blank">here</a>.
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/ev1IB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/ev1IB')
                 )
             ]
         );

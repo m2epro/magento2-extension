@@ -33,7 +33,7 @@ class StoreCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Template\StoreCategory');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Template\StoreCategory::class);
     }
 
     //########################################

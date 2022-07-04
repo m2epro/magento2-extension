@@ -56,7 +56,8 @@ class Form extends AbstractForm
             ]
         );
 
-        $dataBlock = $this->createBlock('Walmart_Template_Synchronization_Edit_Data');
+        $dataBlock = $this->getLayout()
+                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Data::class);
         $form->addField(
             'container_html',
             self::CUSTOM_CONTAINER,

@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\View;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
- */
 abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
     /**
@@ -18,7 +15,14 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
      */
     protected $listing;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $backendHelper, $dataHelper, $data);
+    }
 
     public function _construct()
     {
@@ -65,7 +69,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         }
 
         // ---------------------------------------
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
 
         $this->jsTranslator->addTranslations([
             'Are you sure you want to create empty Listing?' => $helper->escapeJs(

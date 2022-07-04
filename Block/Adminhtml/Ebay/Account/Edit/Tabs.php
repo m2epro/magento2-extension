@@ -12,27 +12,32 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
 
 class Tabs extends AbstractTabs
 {
-    const TAB_ID_GENERAL                = 'general';
-    const TAB_ID_LISTING_OTHER          = 'listingOther';
-    const TAB_ID_STORE                  = 'store';
-    const TAB_ID_ORDER                  = 'order';
-    const TAB_ID_INVOICES_AND_SHIPMENTS = 'invoices_and_shipments';
-    const TAB_ID_FEEDBACK               = 'feedback';
-    const TAB_ID_MY_STORES              = 'my_stores';
+    public const TAB_ID_GENERAL = 'general';
+    public const TAB_ID_LISTING_OTHER = 'listingOther';
+    public const TAB_ID_STORE = 'store';
+    public const TAB_ID_ORDER = 'order';
+    public const TAB_ID_INVOICES_AND_SHIPMENTS = 'invoices_and_shipments';
+    public const TAB_ID_FEEDBACK = 'feedback';
+    public const TAB_ID_MY_STORES = 'my_stores';
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
     private $componentEbayPickupStore;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Json\EncoderInterface $jsonEncoder,
         \Magento\Backend\Model\Auth\Session $authSession,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         parent::__construct($context, $jsonEncoder, $authSession, $data);
 
         $this->componentEbayPickupStore = $componentEbayPickupStore;
+        $this->dataHelper = $dataHelper;
     }
 
     protected function _construct()
@@ -50,7 +55,9 @@ class Tabs extends AbstractTabs
             [
                 'label'   => __('General'),
                 'title'   => __('General'),
-                'content' => $this->createBlock('Ebay_Account_Edit_Tabs_General')->toHtml()
+                'content' => $this->getLayout()
+                                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\General::class)
+                                  ->toHtml()
             ]
         );
 
@@ -64,7 +71,9 @@ class Tabs extends AbstractTabs
                 [
                     'label'   => $this->__('Unmanaged Listings'),
                     'title'   => $this->__('Unmanaged Listings'),
-                    'content' => $this->createBlock('Ebay_Account_Edit_Tabs_ListingOther')->toHtml()
+                    'content' => $this->getLayout()
+                                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\ListingOther::class)
+                                  ->toHtml()
                 ]
             );
         }
@@ -75,7 +84,9 @@ class Tabs extends AbstractTabs
                 [
                     'label'   => $this->__('eBay Store'),
                     'title'   => $this->__('eBay Store'),
-                    'content' => $this->createBlock('Ebay_Account_Edit_Tabs_Store')->toHtml()
+                    'content' => $this->getLayout()
+                                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Store::class)
+                                      ->toHtml()
                 ]
             );
         }
@@ -86,7 +97,9 @@ class Tabs extends AbstractTabs
                 [
                     'label'   => $this->__('Orders'),
                     'title'   => $this->__('Orders'),
-                    'content' => $this->createBlock('Ebay_Account_Edit_Tabs_Order')->toHtml()
+                    'content' => $this->getLayout()
+                                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Order::class)
+                                      ->toHtml()
                 ]
             );
         }
@@ -97,7 +110,9 @@ class Tabs extends AbstractTabs
                 [
                     'label'   => $this->__('Invoices & Shipments'),
                     'title'   => $this->__('Invoices & Shipments'),
-                    'content' => $this->createBlock('Ebay_Account_Edit_Tabs_InvoicesAndShipments')->toHtml(),
+                    'content' => $this->getLayout()
+                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\InvoicesAndShipments::class)
+                          ->toHtml(),
                 ]
             );
         }
@@ -108,7 +123,9 @@ class Tabs extends AbstractTabs
                 [
                     'label'   => $this->__('Feedback'),
                     'title'   => $this->__('Feedback'),
-                    'content' => $this->createBlock('Ebay_Account_Edit_Tabs_Feedback')->toHtml()
+                    'content' => $this->getLayout()
+                                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Feedback::class)
+                                      ->toHtml()
                 ]
             );
         }
@@ -119,17 +136,19 @@ class Tabs extends AbstractTabs
                 [
                     'label'   => $this->__('In-Store Pickup'),
                     'title'   => $this->__('In-Store Pickup'),
-                    'content' => $this->createBlock('Ebay_Account_Edit_Tabs_PickupStore')->toHtml()
+                    'content' => $this->getLayout()
+                                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\PickupStore::class)
+                                  ->toHtml()
                 ]
             );
         }
 
         $this->setActiveTab($this->getRequest()->getParam('tab', self::TAB_ID_GENERAL));
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Account'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay_Account_Feedback'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay\Account'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay_Account_Feedback'));
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions(
+            $this->dataHelper->getControllerActions(
                 'Ebay_Account_Feedback_Template',
                 [
                     'account_id' => $this->getRequest()->getParam('id')
@@ -155,11 +174,11 @@ class Tabs extends AbstractTabs
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')
+            $this->dataHelper
                 ->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay::class)
         );
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')
+            $this->dataHelper
                 ->getClassConstants(\Ess\M2ePro\Model\Ebay\Account::class)
         );
 

@@ -15,8 +15,17 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     /** @var  \Ess\M2ePro\Model\Listing */
     protected $listing;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -25,7 +34,8 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->listing = $this->getHelper('Data\GlobalData')->getValue('view_listing');
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Switcher $viewModeSwitcher */
-        $viewModeSwitcher = $this->createBlock('Walmart_Listing_View_Switcher');
+        $viewModeSwitcher = $this->getLayout()
+                                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Switcher::class);
 
         // Initialization block
         // ---------------------------------------
@@ -98,7 +108,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
                 'label'      => $this->__('Edit Settings'),
                 'onclick'    => '',
                 'class'      => 'drop_down edit_default_settings_drop_down primary',
-                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
+                'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown::class,
                 'options'    => $this->getSettingsButtonDropDownItems()
             ]
         );
@@ -112,7 +122,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
                 'label'        => $this->__('Add Products'),
                 'class'        => 'add',
                 'button_class' => '',
-                'class_name'   => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
+                'class_name'   => \Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown::class,
                 'options'      => $this->getAddProductsDropDownItems(),
             ]
         );
@@ -142,23 +152,23 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         }
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Listing::class)
         );
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(
+            $this->dataHelper->getClassConstants(
                 \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::class
             )
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Walmart\Account::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Walmart\Account::class)
         );
 
-        $showAutoAction = $this->getHelper('Data')->jsonEncode((bool)$this->getRequest()->getParam('auto_actions'));
+        $showAutoAction = $this->dataHelper->jsonEncode((bool)$this->getRequest()->getParam('auto_actions'));
 
         // ---------------------------------------
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions(
+            $this->dataHelper->getControllerActions(
                 'Walmart_Listing_AutoAction',
                 ['listing_id' => $this->getRequest()->getParam('id')]
             )
@@ -190,7 +200,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $this->jsUrl->add($this->getUrl('*/listing/getErrorsSummary'), 'getErrorsSummary');
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Listing'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart\Listing'));
 
         $this->jsUrl->addUrls(
             [
@@ -204,19 +214,19 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             ]
         );
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart_Listing_Product'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart_Listing_Product'));
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Walmart_Listing_Product_Template_Category')
+            $this->dataHelper->getControllerActions('Walmart_Listing_Product_Template_Category')
         );
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart_Listing_Product_Variation'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart_Listing_Product_Variation'));
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Walmart_Listing_Product_Variation_Manage')
-        );
-        $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Walmart_Listing_Product_Variation_Vocabulary')
+            $this->dataHelper->getControllerActions('Walmart_Listing_Product_Variation_Manage')
         );
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Walmart_Listing_Product_Variation_Individual')
+            $this->dataHelper->getControllerActions('Walmart_Listing_Product_Variation_Vocabulary')
+        );
+        $this->jsUrl->addUrls(
+            $this->dataHelper->getControllerActions('Walmart_Listing_Product_Variation_Individual')
         );
 
         $this->jsUrl->add($this->getUrl('*/listing_moving/moveToListingGrid'), 'moveToListingGridHtml');
@@ -248,8 +258,8 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $component = \Ess\M2ePro\Helper\Component\Walmart::NICK;
         $gridId = $this->getChildBlock('grid')->getId();
-        $ignoreListings = $this->getHelper('Data')->jsonEncode([$this->listing['id']]);
-        $marketplace = $this->getHelper('Data')->jsonEncode(
+        $ignoreListings = $this->dataHelper->jsonEncode([$this->listing['id']]);
+        $marketplace = $this->dataHelper->jsonEncode(
             array_merge(
                 $this->listing->getMarketplace()->getData(),
                 $this->listing->getMarketplace()->getChildObject()->getData()
@@ -449,8 +459,8 @@ JS
         );
 
         // ---------------------------------------
-        $viewHeaderBlock = $this->createBlock(
-            'Listing_View_Header',
+        $viewHeaderBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
             '',
             [
                 'data' => ['listing' => $this->listing]
@@ -468,7 +478,7 @@ JS
     {
         $items = [];
 
-        $backUrl = $this->getHelper('Data')->makeBackUrlParam(
+        $backUrl = $this->dataHelper->makeBackUrlParam(
             '*/walmart_listing/view',
             [
                 'id' => $this->listing['id']
@@ -502,7 +512,7 @@ JS
     {
         $items = [];
 
-        $backUrl = $this->getHelper('Data')->makeBackUrlParam(
+        $backUrl = $this->dataHelper->makeBackUrlParam(
             '*/walmart_listing/view',
             [
                 'id' => $this->listing['id']

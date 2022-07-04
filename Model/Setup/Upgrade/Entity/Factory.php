@@ -26,9 +26,10 @@ class Factory
     //########################################
 
     /**
-     * @param $featureName string
-     * @param $fromVersion string|null
-     * @param $toVersion string|null
+     * @param string      $featureName
+     * @param string|null $fromVersion
+     * @param string|null $toVersion
+     *
      * @return \Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

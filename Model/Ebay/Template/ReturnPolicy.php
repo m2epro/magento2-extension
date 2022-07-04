@@ -61,7 +61,7 @@ class ReturnPolicy extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMode
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Template\ReturnPolicy');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Template\ReturnPolicy::class);
     }
 
     /**

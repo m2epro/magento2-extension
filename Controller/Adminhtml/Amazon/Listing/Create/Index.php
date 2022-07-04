@@ -13,22 +13,32 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Create;
  */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
+    /** @var \Ess\M2ePro\Helper\Module\Wizard */
+    private $helperWizard;
+
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Transferring $transferring */
     protected $transferring;
 
     /** @var \Ess\M2ePro\Helper\Data */
     protected $helperData;
 
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $helperDataSession;
+
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Wizard $helperWizard,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\Amazon\Listing\Transferring $transferring,
         \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Helper\Data\Session $helperDataSession,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
+        $this->helperWizard = $helperWizard;
         $this->transferring = $transferring;
         $this->helperData = $helperData;
+        $this->helperDataSession = $helperDataSession;
 
         parent::__construct($amazonFactory, $context);
     }
@@ -106,7 +116,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 
         $this->setWizardStep('listingGeneral');
 
-        $this->addContent($this->createBlock('Amazon_Listing_Create_General'));
+        $this->addContent($this->getLayout()
+                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\General::class));
     }
 
     // ---------------------------------------
@@ -123,7 +134,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             $this->setSessionValue('marketplace_id', $this->getMarketplaceId());
 
             $dataKeys = array_keys(
-                $this->createBlock('Amazon_Listing_Create_Selling_Form')->getDefaultFieldsValues()
+                $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling\Form::class)
+                                  ->getDefaultFieldsValues()
             );
 
             $post = $this->getRequest()->getPost();
@@ -137,7 +149,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 
         $this->setWizardStep('listingSelling');
 
-        $this->addContent($this->createBlock('Amazon_Listing_Create_Selling'));
+        $this->addContent($this->getLayout()
+                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling::class));
     }
 
     // ---------------------------------------
@@ -151,7 +164,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 
         if ($this->getRequest()->isPost()) {
             $dataKeys = array_keys(
-                $this->createBlock('Amazon_Listing_Create_Search_Form')->getDefaultFieldsValues()
+                $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Search\Form::class)
+                                  ->getDefaultFieldsValues()
             );
 
             $post = $this->getRequest()->getPost();
@@ -199,7 +213,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 
         $this->setWizardStep('listingSearch');
 
-        $this->addContent($this->createBlock('Amazon_Listing_Create_Search'));
+        $this->addContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Search::class)
+        );
     }
 
     //########################################
@@ -232,7 +248,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             $tempLog->getResource()->getNextActionId(),
             \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_LISTING,
             'Listing was Added',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
         );
         // ---------------------------------------
 
@@ -254,7 +270,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         $sessionData = $this->getSessionValue();
         $sessionData[$key] = $value;
 
-        $this->getHelper('Data\Session')->setValue(
+        $this->helperDataSession->setValue(
             \Ess\M2ePro\Model\Amazon\Listing::CREATE_LISTING_SESSION_DATA,
             $sessionData
         );
@@ -264,7 +280,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 
     protected function getSessionValue($key = null)
     {
-        $sessionData = $this->getHelper('Data\Session')->getValue(
+        $sessionData = $this->helperDataSession->getValue(
             \Ess\M2ePro\Model\Amazon\Listing::CREATE_LISTING_SESSION_DATA
         );
 
@@ -283,7 +299,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 
     private function clearSession()
     {
-        $this->getHelper('Data\Session')->setValue(
+        $this->helperDataSession->setValue(
             \Ess\M2ePro\Model\Amazon\Listing::CREATE_LISTING_SESSION_DATA,
             null
         );
@@ -300,12 +316,11 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 
     private function setWizardStep($step)
     {
-        $wizardHelper = $this->getHelper('Module\Wizard');
-        if (!$wizardHelper->isActive(\Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK)) {
+        if (!$this->helperWizard->isActive(\Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK)) {
             return;
         }
 
-        $wizardHelper->setStep(\Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK, $step);
+        $this->helperWizard->setStep(\Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK, $step);
     }
 
     //########################################

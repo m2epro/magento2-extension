@@ -17,12 +17,12 @@ use Ess\M2ePro\Model\Magento\Product\Image;
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
-     * @var $magentoProduct \Ess\M2ePro\Model\Magento\Product
+     * @var \Ess\M2ePro\Model\Magento\Product $magentoProduct
      */
     private $magentoProduct = null;
 
     /**
-     * @var $listing \Ess\M2ePro\Model\Listing
+     * @var \Ess\M2ePro\Model\Listing $listing
      */
     private $listing = null;
 

@@ -56,8 +56,12 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
     private $componentEbayCategoryEbay;
 
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\PriceCalculatorFactory */
+    private $priceCalculatorFactory;
+
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Ess\M2ePro\Model\Ebay\Listing\Product\PriceCalculatorFactory $priceCalculatorFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -81,12 +85,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         );
 
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+        $this->priceCalculatorFactory = $priceCalculatorFactory;
     }
 
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::class);
     }
 
     //########################################
@@ -985,10 +990,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
-        return $this->getCalculatedPrice(
+        return $this->getCalculatedPriceWithModifier(
             $src,
-            $vatPercent,
-            $this->getEbaySellingFormatTemplate()->getFixedPriceCoefficient()
+            $this->getEbaySellingFormatTemplate()->getFixedPriceModifier(),
+            $vatPercent
         );
     }
 
@@ -1012,7 +1017,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
-        return $this->getCalculatedPrice(
+        return $this->getCalculatedPriceWithCoefficient(
             $src,
             $vatPercent,
             $this->getEbaySellingFormatTemplate()->getStartPriceCoefficient()
@@ -1037,7 +1042,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
-        return $this->getCalculatedPrice(
+        return $this->getCalculatedPriceWithCoefficient(
             $src,
             $vatPercent,
             $this->getEbaySellingFormatTemplate()->getReservePriceCoefficient()
@@ -1062,7 +1067,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
-        return $this->getCalculatedPrice(
+        return $this->getCalculatedPriceWithCoefficient(
             $src,
             $vatPercent,
             $this->getEbaySellingFormatTemplate()->getBuyItNowPriceCoefficient()
@@ -1083,7 +1088,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
-        return $this->getCalculatedPrice($src, $vatPercent);
+        return $this->getCalculatedPriceWithCoefficient($src, $vatPercent);
     }
 
     /**
@@ -1098,15 +1103,15 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
-        return $this->getCalculatedPrice($src, $vatPercent);
+        return $this->getCalculatedPriceWithCoefficient($src, $vatPercent);
     }
 
     // ---------------------------------------
 
-    private function getCalculatedPrice($src, $vatPercent = null, $coefficient = null)
+    private function getCalculatedPriceWithCoefficient($src, $vatPercent = null, $coefficient = null)
     {
         /** @var $calculator \Ess\M2ePro\Model\Ebay\Listing\Product\PriceCalculator */
-        $calculator = $this->modelFactory->getObject('Ebay_Listing_Product_PriceCalculator');
+        $calculator = $this->priceCalculatorFactory->create();
         $calculator->setSource($src)->setProduct($this->getParentObject());
         $calculator->setVatPercent($vatPercent);
         $calculator->setCoefficient($coefficient);
@@ -1114,7 +1119,16 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $calculator->getProductValue();
     }
 
-    //########################################
+    private function getCalculatedPriceWithModifier($src, $modifier, $vatPercent = null)
+    {
+        /** @var $calculator \Ess\M2ePro\Model\Ebay\Listing\Product\PriceCalculator */
+        $calculator = $this->priceCalculatorFactory->create();
+        $calculator->setSource($src)->setProduct($this->getParentObject());
+        $calculator->setModifier($modifier);
+        $calculator->setVatPercent($vatPercent);
+
+        return $calculator->getProductValue();
+    }
 
     /**
      * @param false $magentoMode
@@ -1131,14 +1145,14 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             $qty = 0;
 
             foreach ($this->getVariations(true) as $variation) {
-                /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+                /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
                 $qty += $variation->getChildObject()->getQty($magentoMode);
             }
 
             return $qty;
         }
 
-        /** @var $calculator \Ess\M2ePro\Model\Ebay\Listing\Product\QtyCalculator */
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\QtyCalculator $calculator */
         $calculator = $this->modelFactory->getObject('Ebay_Listing_Product_QtyCalculator');
         $calculator->setProduct($this->getParentObject());
         $calculator->setIsMagentoMode($magentoMode);

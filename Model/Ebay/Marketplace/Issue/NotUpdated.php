@@ -68,7 +68,7 @@ class NotUpdated extends \Ess\M2ePro\Model\Issue\Locator\AbstractModel
 
             $outdatedMarketplaces = [];
             foreach ($marketplacesCollection as $marketplace) {
-                /** @var $marketplace \Ess\M2ePro\Model\Marketplace */
+                /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
                 $outdatedMarketplaces[$marketplace->getTitle()] = $dictionaryData[$marketplace->getId()];
             }
 

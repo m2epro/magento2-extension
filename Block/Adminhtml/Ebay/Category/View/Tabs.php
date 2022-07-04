@@ -51,7 +51,9 @@ class Tabs extends AbstractHorizontalTabs
             'title' => $this->__('Item Specific (Default)')
         ];
         if ($this->getActiveTab() == self::TAB_ID_ITEM_SPECIFICS) {
-            $tab['content'] = $this->createBlock('Ebay_Category_View_Tabs_ItemSpecific_Edit')->toHtml();
+            $tab['content'] = $this->getLayout()
+                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\ItemSpecific\Edit::class)
+                           ->toHtml();
         } else {
             $tab['url'] = $this->getUrl(
                 '*/ebay_category/view',
@@ -72,7 +74,9 @@ class Tabs extends AbstractHorizontalTabs
             'title' => $this->__('Products with Primary Category')
         ];
         if ($this->getActiveTab() == self::TAB_ID_PRODUCTS_PRIMARY) {
-            $tab['content'] = $this->createBlock('Ebay_Category_View_Tabs_ProductsPrimary')->toHtml();
+            $tab['content'] = $this->getLayout()
+                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\ProductsPrimary::class)
+                               ->toHtml();
         } else {
             $tab['url'] = $this->getUrl(
                 '*/ebay_category/view',
@@ -93,7 +97,9 @@ class Tabs extends AbstractHorizontalTabs
             'title' => $this->__('Products with Secondary Category')
         ];
         if ($this->getActiveTab() == self::TAB_ID_PRODUCTS_SECONDARY) {
-            $tab['content'] = $this->createBlock('Ebay_Category_View_Tabs_ProductsSecondary')->toHtml();
+            $tab['content'] = $this->getLayout()
+                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\ProductsSecondary::class)
+                           ->toHtml();
         } else {
             $tab['url'] = $this->getUrl(
                 '*/ebay_category/view',

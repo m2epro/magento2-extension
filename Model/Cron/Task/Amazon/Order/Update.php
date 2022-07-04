@@ -83,7 +83,7 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function getPermittedAccounts()
     {
-        /** @var $accountsCollection \Ess\M2ePro\Model\ResourceModel\Account\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
         $accountsCollection = $this->parentFactory->getObject(
             \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'Account'
@@ -103,7 +103,7 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->activeRecordFactory->getObject('Order\Change')
             ->getResource()->incrementAttemptCount(array_keys($relatedChanges));
 
-        /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
+        /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
 
         foreach ($relatedChanges as $change) {

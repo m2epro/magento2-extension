@@ -10,6 +10,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
 
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
@@ -21,12 +22,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
         \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($viewHelper, $context, $backendHelper, $data);
-
         $this->amazonFactory           = $amazonFactory;
         $this->moduleDatabaseStructure = $moduleDatabaseStructure;
+        parent::__construct($viewHelper, $context, $backendHelper, $dataHelper, $data);
     }
 
     public function _construct()
@@ -112,7 +113,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 
     protected function getColumnActionsItems()
     {
-        $backUrl = $this->getHelper('Data')->makeBackUrlParam(
+        $backUrl = $this->dataHelper->makeBackUrlParam(
             '*/amazon_listing/index'
         );
 
@@ -246,10 +247,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
         $value = '<span id="listing_title_'.$row->getId().'">' .
-            $this->getHelper('Data')->escapeHtml($value) .
+            $this->dataHelper->escapeHtml($value) .
             '</span>';
 
-        /** @var $row \Ess\M2ePro\Model\Listing */
+        /** @var \Ess\M2ePro\Model\Listing $row */
         $accountTitle = $row->getData('account_title');
         $marketplaceTitle = $row->getData('marketplace_title');
 
@@ -297,7 +298,7 @@ HTML;
 
     public function getRowUrl($row)
     {
-        $backUrl = $this->getHelper('Data')->makeBackUrlParam(
+        $backUrl = $this->dataHelper->makeBackUrlParam(
             '*/amazon_listing/index'
         );
 

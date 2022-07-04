@@ -217,7 +217,8 @@ class Config extends AbstractConfig
                 'AddFeeColumnForEbayOrder'
             ],
             'y22_m06' => [
-                'FixMistakenConfigs'
+                'FixMistakenConfigs',
+                'EbayFixedPriceModifier'
             ]
         ];
     }
@@ -229,6 +230,9 @@ class Config extends AbstractConfig
         return [
             'y20_m07' => [
                 'WalmartOrderItemQty'
+            ],
+            'y22_m06' => [
+                'WalmartOrderItemBuyerCancellation'
             ],
         ];
     }

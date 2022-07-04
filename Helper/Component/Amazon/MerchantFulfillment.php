@@ -8,42 +8,40 @@
 
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
-class MerchantFulfillment extends \Ess\M2ePro\Helper\AbstractHelper
+class MerchantFulfillment
 {
-    const STATUS_PURCHASED       = 'Purchased';
-    const STATUS_REFUND_PENDING  = 'RefundPending';
-    const STATUS_REFUND_REJECTED = 'RefundRejected';
-    const STATUS_REFUND_APPLIED  = 'RefundApplied';
+    public const STATUS_PURCHASED       = 'Purchased';
+    public const STATUS_REFUND_PENDING  = 'RefundPending';
+    public const STATUS_REFUND_REJECTED = 'RefundRejected';
+    public const STATUS_REFUND_APPLIED  = 'RefundApplied';
 
-    const DIMENSION_SOURCE_NONE             = 0;
-    const DIMENSION_SOURCE_CUSTOM           = 1;
-    const DIMENSION_SOURCE_PREDEFINED       = 2;
-    const DIMENSION_SOURCE_CUSTOM_ATTRIBUTE = 3;
+    public const DIMENSION_SOURCE_NONE             = 0;
+    public const DIMENSION_SOURCE_CUSTOM           = 1;
+    public const DIMENSION_SOURCE_PREDEFINED       = 2;
+    public const DIMENSION_SOURCE_CUSTOM_ATTRIBUTE = 3;
 
-    const DIMENSION_MEASURE_INCHES      = 'inches';
-    const DIMENSION_MEASURE_CENTIMETERS = 'centimeters';
+    public const DIMENSION_MEASURE_INCHES      = 'inches';
+    public const DIMENSION_MEASURE_CENTIMETERS = 'centimeters';
 
-    const WEIGHT_SOURCE_NONE             = 0;
-    const WEIGHT_SOURCE_CUSTOM_VALUE     = 1;
-    const WEIGHT_SOURCE_CUSTOM_ATTRIBUTE = 2;
+    public const WEIGHT_SOURCE_NONE             = 0;
+    public const WEIGHT_SOURCE_CUSTOM_VALUE     = 1;
+    public const WEIGHT_SOURCE_CUSTOM_ATTRIBUTE = 2;
 
-    const WEIGHT_MEASURE_OUNCES = 'ounces';
-    const WEIGHT_MEASURE_GRAMS  = 'grams';
+    public const WEIGHT_MEASURE_OUNCES = 'ounces';
+    public const WEIGHT_MEASURE_GRAMS  = 'grams';
 
-    const DELIVERY_EXPERIENCE_NO_TRACKING          = 0;
-    const DELIVERY_EXPERIENCE_WITHOUT_SIGNATURE    = 1;
-    const DELIVERY_EXPERIENCE_WITH_SIGNATURE       = 2;
-    const DELIVERY_EXPERIENCE_WITH_ADULT_SIGNATURE = 3;
+    public const DELIVERY_EXPERIENCE_NO_TRACKING          = 0;
+    public const DELIVERY_EXPERIENCE_WITHOUT_SIGNATURE    = 1;
+    public const DELIVERY_EXPERIENCE_WITH_SIGNATURE       = 2;
+    public const DELIVERY_EXPERIENCE_WITH_ADULT_SIGNATURE = 3;
 
-    const VIRTUAL_PREDEFINED_PACKAGE = 'virtual-type';
-
-    //########################################
+    public const VIRTUAL_PREDEFINED_PACKAGE = 'virtual-type';
 
     /**
      * https://docs.developer.amazonservices.com/en_UK/merch_fulfill/MerchFulfill_PrePackDimenEnum.html
      * @return array
      */
-    public function getPredefinedPackageDimensions()
+    public function getPredefinedPackageDimensions(): array
     {
         return [
             'FedEx'      => [
@@ -134,6 +132,4 @@ class MerchantFulfillment extends \Ess\M2ePro\Helper\AbstractHelper
             ]
         ];
     }
-
-    //########################################
 }

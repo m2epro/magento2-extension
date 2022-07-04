@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction\GetCategoryTemplatesList
- */
 class GetCategoryTemplatesList extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
 {
-    //########################################
-
     public function execute()
     {
         $marketplaceId = $this->getRequest()->getParam('marketplace_id', '');
@@ -26,6 +21,4 @@ class GetCategoryTemplatesList extends \Ess\M2ePro\Controller\Adminhtml\Walmart\
         $this->setJsonContent($collection->getData());
         return $this->getResult();
     }
-
-    //########################################
 }

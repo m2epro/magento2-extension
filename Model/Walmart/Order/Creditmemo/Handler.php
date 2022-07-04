@@ -8,27 +8,24 @@
 
 namespace Ess\M2ePro\Model\Walmart\Order\Creditmemo;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Order\Creditmemo\Handler
- */
 class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
 {
     protected $activeRecordFactory = null;
-
-    //########################################
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
+    private $walmartFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
+        $this->walmartFactory = $walmartFactory;
 
         parent::__construct($helperFactory, $modelFactory, $data);
     }
-
-    //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Order $order
@@ -68,15 +65,20 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
                     continue;
                 }
 
-                /** @var \Ess\M2ePro\Model\Walmart\Order\Item $item */
-                $item = $this->activeRecordFactory->getObjectLoaded(
-                    'Walmart_Order_Item',
-                    $orderItemId,
-                    'walmart_order_item_id'
-                );
-                if ($item === null) {
+                /** @var \Ess\M2ePro\Model\Order\Item $parentObject */
+                $parentObject = $this->walmartFactory
+                    ->getObject('Order_Item')
+                    ->getCollection()
+                    ->addFieldToFilter('order_id', $order->getId())
+                    ->addFieldToFilter('walmart_order_item_id', $orderItemId)
+                    ->getFirstItem();
+
+                if (!$parentObject->getId()) {
                     continue;
                 }
+
+                /** @var \Ess\M2ePro\Model\Walmart\Order\Item $item */
+                $item = $parentObject->getChildObject();
 
                 /**
                  * Walmart returns the same Order Item more than one time with single QTY. That data was merged
@@ -108,7 +110,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
                 $price = $creditmemoItem->getPriceInclTax();
                 $tax = $creditmemoItem->getTaxAmount();
 
-                $itemsForCancel[] = [
+                $entry = [
                     'item_id' => $orderItemId,
                     'qty'     => $itemQty,
                     'prices'  => [
@@ -118,6 +120,14 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
                         'product' => $tax,
                     ],
                 ];
+
+                if ($item->isBuyerCancellationRequested()
+                    && $item->isBuyerCancellationPossible()
+                ) {
+                    $entry['is_buyer_cancellation'] = true;
+                }
+
+                $itemsForCancel[] = $entry;
 
                 $qtyAvailable -= $itemQty;
                 $data['refunded_qty'][$orderItemId] = $itemQty;

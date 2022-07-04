@@ -69,7 +69,7 @@ class Solve extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             return false;
         }
 
-        /** @var $dispatcherObject \Ess\M2ePro\Model\Ebay\Connector\Dispatcher */
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
         $connectorObj = $dispatcherObject->getVirtualConnector(
             'item',

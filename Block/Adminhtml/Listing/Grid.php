@@ -16,14 +16,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Helper\View */
     protected $viewHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $dataHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $backendHelper, $data);
         $this->viewHelper = $viewHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $backendHelper, $data);
     }
 
     public function _construct()
@@ -66,7 +71,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'url' => $this->getUrl(
                     '*/listing/clearLog',
                     [
-                        'back' => $this->getHelper('Data')->makeBackUrlParam("*/{$currentView}_listing/index")
+                        'back' => $this->dataHelper->makeBackUrlParam("*/{$currentView}_listing/index")
                     ]
                 ),
                 'confirm' => $this->__('Are you sure?')
@@ -153,7 +158,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter'    => false,
             'sortable'  => false,
             'getter'    => 'getId',
-            'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
             'group_order' => $this->getGroupOrder(),
             'actions'     => $this->getColumnActionsItems()
         ]);

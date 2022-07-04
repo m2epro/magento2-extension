@@ -223,7 +223,7 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
         // Create tax rule according to channel tax rate
         // ---------------------------------------
-        /** @var $taxRuleBuilder \Ess\M2ePro\Model\Magento\Tax\Rule\Builder */
+        /** @var \Ess\M2ePro\Model\Magento\Tax\Rule\Builder $taxRuleBuilder */
         $taxRuleBuilder = $this->modelFactory->getObject('Magento_Tax_Rule_Builder');
         $taxRuleBuilder->buildShippingTaxRule(
             $shippingPriceTaxRate,

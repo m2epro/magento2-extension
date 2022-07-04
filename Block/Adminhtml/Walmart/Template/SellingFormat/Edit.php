@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit
- */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
 {
     //########################################
@@ -30,7 +27,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getHelper('Data')->getBackUrl('list');
+        $url = $this->dataHelper->getBackUrl('list');
         $this->addButton('back', [
             'label'     => $this->__('Back'),
             'onclick'   => 'WalmartTemplateSellingFormatObj.backClick(\'' . $url . '\')',
@@ -75,7 +72,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
                     . '\'' . $this->getSaveConfirmationText() . '\','
                     . '\'' . \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_SELLING_FORMAT . '\''
                     . ')',
-                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
                         'label' => $this->__('Save And Continue Edit'),
@@ -99,7 +96,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
                     . '\'' . $this->getSaveConfirmationText() . '\','
                     . '\'' . \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_SELLING_FORMAT . '\''
                     . ')',
-                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
                         'label'     => $this->__('Save And Back'),

@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Sellercentral;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Sellercentral\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
     private $lockedDataCache = [];
@@ -20,14 +17,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     /** @var  \Ess\M2ePro\Model\Listing */
     protected $listing;
 
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     protected $magentoProductCollectionFactory;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
+
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
     private $parentAndChildReviseScheduledCache = [];
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
@@ -36,14 +38,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->amazonFactory = $amazonFactory;
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
-
-        parent::__construct($context, $backendHelper, $data);
+        parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
 
     //########################################
@@ -68,7 +70,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         // Get collection
         // ---------------------------------------
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->setListingProductModeOn();
@@ -213,7 +215,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'     => 'number',
             'index'    => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
         ]);
 
         $this->addColumn('name', [
@@ -234,7 +236,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'         => 'text',
             'index'        => 'amazon_sku',
             'filter_index' => 'amazon_sku',
-            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Sku'
+            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Sku::class
         ]);
 
         $this->addColumn('general_id', [
@@ -244,7 +246,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'           => 'text',
             'index'          => 'general_id',
             'filter_index'   => 'general_id',
-            'filter'         => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\GeneralId',
+            'filter'         => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\GeneralId::class,
             'frame_callback' => [$this, 'callbackColumnGeneralId'],
             'filter_condition_callback' => [$this, 'callbackFilterGeneralId']
         ]);
@@ -256,8 +258,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'         => 'number',
             'index'        => 'online_qty',
             'filter_index' => 'online_qty',
-            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Qty',
-            'filter'       => 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty',
+            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Qty::class,
+            'filter'       => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty::class,
             'filter_condition_callback' => [$this, 'callbackFilterQty']
         ]);
 
@@ -269,14 +271,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'index'          => 'min_online_price',
             'marketplace_id' => $this->listing->getMarketplaceId(),
             'account_id'     => $this->listing->getAccountId(),
-            'renderer'       => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Price',
+            'renderer'       => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Price::class,
             'filter_index'   => 'min_online_price',
             'filter_condition_callback' => [$this, 'callbackFilterPrice']
         ];
 
         if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
             $this->listing->getAccount()->getChildObject()->isRepricing()) {
-            $priceColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price';
+            $priceColumn['filter'] = \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price::class;
         }
 
         $this->addColumn('online_price', $priceColumn);
@@ -394,7 +396,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     public function callbackColumnProductTitle($productTitle, $row, $column, $isExport)
     {
-        $productTitle = $this->getHelper('Data')->escapeHtml($productTitle);
+        $productTitle = $this->dataHelper->escapeHtml($productTitle);
 
         $value = '<span>'.$productTitle.'</span>';
 
@@ -403,7 +405,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             ->getSku();
 
         $value .= '<br/><strong>'.$this->__('SKU') .
-            ':</strong> '.$this->getHelper('Data')->escapeHtml($sku) . '<br/>';
+            ':</strong> '.$this->dataHelper->escapeHtml($sku) . '<br/>';
 
         $listingProductId = (int)$row->getData('id');
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -455,8 +457,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 if ($option === '' || $option === null) {
                     $option = '--';
                 }
-                $value .= '<span style="' . $style . '"><b>' . $this->getHelper('Data')->escapeHtml($attribute) .
-                    '</b>:&nbsp;' . $this->getHelper('Data')->escapeHtml($option) . '</span><br/>';
+                $value .= '<span style="' . $style . '"><b>' . $this->dataHelper->escapeHtml($attribute) .
+                    '</b>:&nbsp;' . $this->dataHelper->escapeHtml($option) . '</span><br/>';
             }
             $value .= '</div>';
 
@@ -472,8 +474,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 if ($option === '' || $option === null) {
                     $option = '--';
                 }
-                $value .= '<span style="' . $style . '"><b>' . $this->getHelper('Data')->escapeHtml($attribute) .
-                    '</b>:&nbsp;' . $this->getHelper('Data')->escapeHtml($option) . '</span><br/>';
+                $value .= '<span style="' . $style . '"><b>' . $this->dataHelper->escapeHtml($attribute) .
+                    '</b>:&nbsp;' . $this->dataHelper->escapeHtml($option) . '</span><br/>';
             }
             $value .= '</div>';
 
@@ -491,8 +493,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             if ($option === '' || $option === null) {
                 $option = '--';
             }
-            $value .= '<b>' . $this->getHelper('Data')->escapeHtml($attribute) .
-                '</b>:&nbsp;' . $this->getHelper('Data')->escapeHtml($option) . '<br/>';
+            $value .= '<b>' . $this->dataHelper->escapeHtml($attribute) .
+                '</b>:&nbsp;' . $this->dataHelper->escapeHtml($option) . '<br/>';
         }
         $value .= '</div>';
 
@@ -555,7 +557,8 @@ HTML;
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\ViewLogIcon\Listing $viewLogIcon */
-        $viewLogIcon = $this->createBlock('Amazon_Grid_Column_Renderer_ViewLogIcon_Listing');
+        $viewLogIcon = $this->getLayout()
+                    ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\ViewLogIcon\Listing::class);
         $value .= $viewLogIcon->render($row);
 
         $scheduledActionsCollection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')

@@ -22,7 +22,7 @@ class UpdateDiscountProfiles extends Template
         $accountId = $this->getRequest()->getParam('account_id');
         $marketplaceId = $this->getRequest()->getParam('marketplace_id');
 
-        /** @var $account \Ess\M2ePro\Model\Ebay\Account */
+        /** @var \Ess\M2ePro\Model\Ebay\Account $account */
         $account = $this->ebayFactory->getCachedObjectLoaded('Account', $accountId)->getChildObject();
         $account->updateShippingDiscountProfiles($marketplaceId);
 

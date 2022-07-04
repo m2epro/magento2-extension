@@ -33,17 +33,21 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     private $componentEbayCategoryEbay;
     /** @var \Ess\M2ePro\Helper\View\Ebay */
     public $ebayViewHelper;
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    private $magentoAttributeHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         array $data = []
     ) {
         $this->ebayFactory               = $ebayFactory;
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
         $this->ebayViewHelper            = $ebayViewHelper;
+        $this->magentoAttributeHelper    = $magentoAttributeHelper;
         parent::__construct($context, $data);
     }
 
@@ -54,8 +58,8 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         $this->setId('ebayTemplateCategoryChooser_');
         $this->setTemplate('ebay/template/category/chooser.phtml');
 
-        $this->_attributes = $this->getHelper('Magento\Attribute')->filterByInputTypes(
-            $this->getHelper('Magento\Attribute')->getAll(),
+        $this->_attributes = $this->magentoAttributeHelper->filterByInputTypes(
+            $this->magentoAttributeHelper->getAll(),
             ['text', 'select']
         );
     }

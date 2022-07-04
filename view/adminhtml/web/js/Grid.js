@@ -274,8 +274,8 @@ define([
                 classContainer += ' hl_container_warning';
             } else if (action.type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractModel::TYPE_ERROR')) {
                 classContainer += ' hl_container_error';
-            } else {
-                classContainer += ' hl_container_notice';
+            } else { // Ess_M2ePro_Model_Log_AbstractModel::TYPE_INFO
+                classContainer += ' hl_container_info';
             }
 
             var html = '<div class="'+classContainer+'">';
@@ -330,14 +330,14 @@ define([
                             M2ePro.translator.translate('Error') +
                         '</span>';
                     }
-                } else {
+                } else { // Ess_M2ePro_Model_Log_AbstractModel::TYPE_INFO
                     if (action.items[i].count) {
                         type = '<span style="color: #444;"> ' + action.items[i].count + ' ' +
                             M2ePro.translator.translate('Product(s)') +
                             '</span>';
                     } else {
                         type = '<span style="color: #444;">' +
-                            M2ePro.translator.translate('Notice') +
+                            M2ePro.translator.translate('Info') +
                             '</span>';
                     }
                 }

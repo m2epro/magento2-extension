@@ -8,8 +8,6 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart;
 
-use Ess\M2ePro\Controller\Adminhtml\Context;
-
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
  */
@@ -21,7 +19,7 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Main
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
-        Context $context
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         $this->walmartFactory = $walmartFactory;
 

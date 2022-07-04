@@ -8,17 +8,12 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction\Reset
- */
 class Reset extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
 {
     public function execute()
     {
-        // ---------------------------------------
         $listingId = $this->getRequest()->getParam('listing_id');
         $listing = $this->walmartFactory->getCachedObjectLoaded('Listing', $listingId);
-        // ---------------------------------------
 
         $data = [
             'auto_mode' => \Ess\M2ePro\Model\Listing::AUTO_MODE_NONE,

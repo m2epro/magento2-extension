@@ -158,8 +158,15 @@ table#price_table:after {
 }
 .price_coefficient_container {
     position: absolute;
-    left: 250px;
+    left: 55%;
     top: 0;
+}
+.price_change_remove {
+    position: absolute;
+    right: 0;
+}
+.fixed-price-change-row {
+    margin-bottom: 20px;
 }
 .coef {
     text-align: right;

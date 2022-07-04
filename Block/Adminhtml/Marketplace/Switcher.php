@@ -46,7 +46,7 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Component\Switcher
         $items = [];
 
         foreach ($collection->getItems() as $marketplace) {
-            /** @var $marketplace \Ess\M2ePro\Model\Marketplace */
+            /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
             $items[$marketplace->getComponentMode()]['value'][] = [
                 'value' => $marketplace->getId(),
                 'label' => $marketplace->getTitle()

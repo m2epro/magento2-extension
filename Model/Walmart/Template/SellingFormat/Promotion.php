@@ -45,7 +45,7 @@ class Promotion extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat\Promotion');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat\Promotion::class);
     }
 
     //########################################

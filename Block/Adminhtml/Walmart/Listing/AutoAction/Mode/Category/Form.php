@@ -68,7 +68,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
 
         $fieldSet->addField(
             'adding_mode',
-            'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select',
+            \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select::class,
             [
                 'name' => 'adding_mode',
                 'label' => $this->__('Product Assigned to Categories'),
@@ -85,7 +85,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
 
         $fieldSet->addField(
             'adding_add_not_visible',
-            'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select',
+            \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select::class,
             [
                 'name' => 'adding_add_not_visible',
                 'label' => $this->__('Add not Visible Individually Products'),
@@ -152,7 +152,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
 
         $fieldSet->addField(
             'deleting_mode',
-            'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select',
+            \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select::class,
             [
                 'name' => 'deleting_mode',
                 'label' => $this->__('Product Deleted from Categories'),
@@ -195,7 +195,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Walmart\Listing::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Walmart\Listing::class)
         );
 
         $this->js->add(<<<JS

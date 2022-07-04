@@ -8,15 +8,22 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate
- */
 class CategoryTemplate extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
     /** @var  \Ess\M2ePro\Model\Listing */
     protected $listing;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -71,7 +78,7 @@ class CategoryTemplate extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
 
                 <p>The detailed information can be found
                  <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/bf1IB')
+                $this->supportHelper->getDocumentationArticleUrl('x/bf1IB')
             ),
         ]);
 
@@ -82,8 +89,8 @@ class CategoryTemplate extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
 
     protected function _toHtml()
     {
-        $viewHeaderBlock = $this->createBlock(
-            'Listing_View_Header',
+        $viewHeaderBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
             '',
             ['data' => ['listing' => $this->listing]]
         );

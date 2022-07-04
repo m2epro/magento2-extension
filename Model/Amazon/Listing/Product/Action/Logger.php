@@ -154,7 +154,7 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
 
         if ($message->isNotice()) {
             $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_SUCCESS);
-            return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE;
+            return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO;
         }
 
         $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_ERROR);

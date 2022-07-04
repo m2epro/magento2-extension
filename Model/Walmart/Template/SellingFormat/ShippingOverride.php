@@ -35,7 +35,7 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat\ShippingOverride');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat\ShippingOverride::class);
     }
 
     //########################################

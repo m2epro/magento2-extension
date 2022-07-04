@@ -51,7 +51,7 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         foreach ($permittedAccounts as $merchantId => $accounts) {
-            /** @var $account \Ess\M2ePro\Model\Account **/
+            /** @var \Ess\M2ePro\Model\Account $account **/
 
             try {
                 $this->processAccounts($merchantId, $accounts);
@@ -71,7 +71,7 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function getPermittedAccounts()
     {
-        /** @var $accountsCollection \Ess\M2ePro\Model\ResourceModel\Account\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
         $accountsCollection = $this->parentFactory->getObject(
             \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'Account'
@@ -79,7 +79,7 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $accounts = [];
         foreach ($accountsCollection->getItems() as $accountItem) {
-            /** @var $accountItem \Ess\M2ePro\Model\Account */
+            /** @var \Ess\M2ePro\Model\Account $accountItem */
 
             $merchantId = $accountItem->getChildObject()->getMerchantId();
             if (!isset($accounts[$merchantId])) {

@@ -8,12 +8,22 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\AutoAction\Mode;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\AutoAction\Mode\Website
- */
 class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\AbstractWebsite
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $registry, $formFactory, $dataHelper, $data);
+    }
 
     protected function _prepareForm()
     {
@@ -35,7 +45,7 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstra
                     the Item will be removed from the Listing and its sale will be stopped on Channel.</p><br>
                     <p>More detailed information you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/af1IB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/af1IB')
                 )
             ]
         );
@@ -169,7 +179,7 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstra
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Walmart\Listing::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Walmart\Listing::class)
         );
 
         $this->js->add(<<<JS

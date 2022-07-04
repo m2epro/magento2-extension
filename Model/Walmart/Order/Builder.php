@@ -23,13 +23,13 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    /** @var $helper \Ess\M2ePro\Model\Walmart\Order\Helper */
+    /** @var \Ess\M2ePro\Model\Walmart\Order\Helper $helper */
     private $helper = null;
 
-    /** @var $order \Ess\M2ePro\Model\Account */
+    /** @var \Ess\M2ePro\Model\Account $order */
     private $account = null;
 
-    /** @var $order \Ess\M2ePro\Model\Order */
+    /** @var \Ess\M2ePro\Model\Order $order */
     private $order = null;
 
     private $status = self::STATUS_NOT_MODIFIED;
@@ -43,8 +43,6 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     /** @var \Ess\M2ePro\Helper\Data */
     protected $helperData;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
@@ -218,12 +216,26 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         foreach ($this->items as $itemData) {
             $itemData['order_id'] = $this->order->getId();
 
-            /** @var $itemBuilder \Ess\M2ePro\Model\Walmart\Order\Item\Builder */
+            /** @var \Ess\M2ePro\Model\Walmart\Order\Item\Builder $itemBuilder */
             $itemBuilder = $this->modelFactory->getObject('Walmart_Order_Item_Builder');
             $itemBuilder->initialize($itemData);
 
             $item = $itemBuilder->process();
             $item->setOrder($this->order);
+            if ($item->getChildObject()->isBuyerCancellationRequested()
+                && !$itemBuilder->getPreviousBuyerCancellationRequested()
+            ) {
+                $description = 'A buyer requested to cancel the item(s) "%item_name%"'
+                    . ' from the order #%order_number%.';
+
+                $this->order->addWarningLog(
+                    $description,
+                    [
+                        '!order_number' => $this->order->getChildObject()->getWalmartOrderId(),
+                        '!item_name'    => $item->getChildObject()->getTitle()
+                    ]
+                );
+            }
 
             $itemsCollection->removeItemByKey($item->getId());
             $itemsCollection->addItem($item);
@@ -322,7 +334,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             return;
         }
 
-        /** @var $magentoOrderUpdater \Ess\M2ePro\Model\Magento\Order\Updater */
+        /** @var \Ess\M2ePro\Model\Magento\Order\Updater $magentoOrderUpdater */
         $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
         $magentoOrderUpdater->setMagentoOrder($this->order->getMagentoOrder());
 
@@ -355,7 +367,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             $magentoOrderComments[] = 'Order cannot be canceled in Magento. Reason: ' . $e->getMessage();
         }
 
-        /** @var $magentoOrderUpdater \Ess\M2ePro\Model\Magento\Order\Updater */
+        /** @var \Ess\M2ePro\Model\Magento\Order\Updater $magentoOrderUpdater */
         $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
         $magentoOrderUpdater->setMagentoOrder($this->order->getMagentoOrder());
         $magentoOrderUpdater->updateComments($magentoOrderComments);

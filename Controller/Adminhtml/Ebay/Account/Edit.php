@@ -15,6 +15,26 @@ use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
  */
 class Edit extends Account
 {
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $helperData;
+
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $helperDataGlobalData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Helper\Data\GlobalData $helperDataGlobalData,
+        \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update $storeCategoryUpdate,
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($storeCategoryUpdate, $componentEbayCategoryStore, $ebayFactory, $context);
+
+        $this->helperData = $helperData;
+        $this->helperDataGlobalData = $helperDataGlobalData;
+    }
+
     protected function getLayoutType()
     {
         return self::LAYOUT_TWO_COLUMNS;
@@ -36,7 +56,7 @@ class Edit extends Account
             $this->addLicenseMessage($account);
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('edit_account', $account);
+        $this->helperDataGlobalData->setValue('edit_account', $account);
 
         $headerTextEdit = $this->__('Edit Account');
         $headerTextAdd = $this->__('Add Account');
@@ -44,15 +64,15 @@ class Edit extends Account
         if ($account &&
             $account->getId()) {
             $headerText = $headerTextEdit;
-            $headerText .= ' "'.$this->getHelper('Data')->escapeHtml($account->getTitle()).'"';
+            $headerText .= ' "'.$this->helperData->escapeHtml($account->getTitle()).'"';
         } else {
             $headerText = $headerTextAdd;
         }
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
-        $this->addLeft($this->createBlock('Ebay_Account_Edit_Tabs'));
-        $this->addContent($this->createBlock('Ebay_Account_Edit'));
+        $this->addLeft($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs::class));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit::class));
         $this->setPageHelpLink('x/Cv8UB');
 
         return $this->getResultPage();

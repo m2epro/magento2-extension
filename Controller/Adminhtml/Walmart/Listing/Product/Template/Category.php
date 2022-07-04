@@ -10,14 +10,9 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category
- */
 abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template
 {
     protected $transactionFactory;
-
-    //########################################
 
     public function __construct(
         \Magento\Framework\DB\TransactionFactory $transactionFactory,
@@ -28,8 +23,6 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
         parent::__construct($walmartFactory, $context);
     }
 
-    //########################################
-
     protected function setCategoryTemplateForProducts($productsIds, $templateId)
     {
         if (empty($productsIds)) {
@@ -38,7 +31,6 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
 
         $collection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
         $collection->addFieldToFilter('id', ['in' => $productsIds]);
-        // ---------------------------------------
 
         if ($collection->getSize() == 0) {
             return;
@@ -117,6 +109,4 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
             );
         }
     }
-
-    //########################################
 }

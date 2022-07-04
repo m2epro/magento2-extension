@@ -22,7 +22,7 @@ class ViewLogGrid extends Order
 
         $this->getHelper('Data\GlobalData')->setValue('order', $order);
 
-        $grid = $this->createBlock('Order_View_Log_Grid');
+        $grid = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\View\Log\Grid::class);
 
         $this->setAjaxContent($grid->toHtml());
         return $this->getResult();

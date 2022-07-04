@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\Moving\FailedProducts;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Listing\Moving\FailedProducts\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $magentoProductCollectionFactory;
@@ -19,17 +16,21 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $backendHelper, $data);
-
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->moduleConfiguration             = $moduleConfiguration;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $backendHelper, $data);
     }
 
     public function _construct()
@@ -52,9 +53,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareCollection()
     {
-        $failedProducts = $this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('failed_products'));
+        $failedProducts = $this->dataHelper->jsonDecode($this->getRequest()->getParam('failed_products'));
 
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create()
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('name')
@@ -103,7 +104,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             return $withoutImageHtml;
         }
 
-        /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
+        /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
         $magentoProduct = $this->modelFactory->getObject('Magento\Product');
         $magentoProduct->setProduct($product);
 
@@ -123,7 +124,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
-        $value = '<div style="margin-left: 3px">'.$this->getHelper('Data')->escapeHtml($value);
+        $value = '<div style="margin-left: 3px">'.$this->dataHelper->escapeHtml($value);
 
         $tempSku = $row->getData('sku');
         if ($tempSku === null) {
@@ -133,14 +134,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
 
         $value .= '<br/><strong>'.$this->__('SKU').':</strong> ';
-        $value .= $this->getHelper('Data')->escapeHtml($tempSku).'</div>';
+        $value .= $this->dataHelper->escapeHtml($tempSku).'</div>';
 
         return $value;
     }
 
     public function callbackColumnType($value, $row, $column, $isExport)
     {
-        return '<div style="margin-left: 3px">'.$this->getHelper('Data')->escapeHtml($value).'</div>';
+        return '<div style="margin-left: 3px">'.$this->dataHelper->escapeHtml($value).'</div>';
     }
 
     protected function callbackFilterTitle($collection, $column)

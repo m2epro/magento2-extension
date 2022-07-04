@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Helper\Module;
 
-/**
- * Class \Ess\M2ePro\Helper\Module\Configuration
- */
 class Configuration
 {
     private const CONFIG_GROUP = '/general/configuration/';

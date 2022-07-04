@@ -68,7 +68,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'type'     => 'number',
             'index'    => 'entity_id',
             'filter_index' => 'entity_id',
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
             'filter_condition_callback' => [$this, 'callbackFilterProductId']
         ]);
 
@@ -90,7 +90,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'type'         => 'text',
             'index'        => 'online_sku',
             'filter_index' => 'online_sku',
-            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Sku',
+            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Sku::class,
             'show_defected_messages'    => false,
             'filter_condition_callback' => [$this, 'callbackFilterOnlineSku']
         ]);
@@ -114,7 +114,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'index'          => 'online_qty',
             'filter_index'   => 'online_qty',
             'frame_callback' => [$this, 'callbackColumnAvailableQty'],
-            'filter'         => 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty',
+            'filter'         => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty::class,
             'filter_condition_callback' => [$this, 'callbackFilterQty']
         ]);
 
@@ -131,7 +131,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
 
         if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
             $this->activeRecordFactory->getObject('Amazon_Account_Repricing')->getCollection()->getSize() > 0) {
-            $priceColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price';
+            $priceColumn['filter'] = \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price::class;
         }
 
         $this->addColumn('online_price', $priceColumn);

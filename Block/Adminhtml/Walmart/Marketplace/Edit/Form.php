@@ -10,12 +10,21 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Marketplace\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Marketplace\Edit\Form
- */
 class Form extends AbstractForm
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     public function _construct()
     {
@@ -65,10 +74,10 @@ class Form extends AbstractForm
 
                     <div id="synch_info_complete_{$marketplace['instance']->getId()}"
                         class="value" style="display: none; color: green;">{$this->__('Completed')}</div>
-                    
+
                     <div id="synch_info_error_{$marketplace['instance']->getId()}"
                         class="value" style="display: none; color: red;">{$this->__('Error')}</div>
-                        
+
                     <div id="synch_info_skip_{$marketplace['instance']->getId()}"
                         class="value" style="display: none; color: gray;">{$this->__('Skipped')}</div>
 
@@ -165,7 +174,7 @@ HTML;
                     'status'         => $tempMarketplace->getStatus()
                 ];
 
-                /** @var $tempMarketplace \Ess\M2ePro\Model\Marketplace */
+                /** @var \Ess\M2ePro\Model\Marketplace $tempMarketplace */
                 $marketplace = [
                     'instance' => $tempMarketplace,
                     'params'   => ['locked' => $isLocked]
@@ -188,14 +197,14 @@ HTML;
             'formSubmit' => $this->getUrl('m2epro/walmart_marketplace/save'),
             'logViewUrl' => $this->getUrl(
                 '*/walmart_synchronization_log/index',
-                ['back'=>$this->getHelper('Data')->makeBackUrlParam('*/walmart_synchronization/index')]
+                ['back'=>$this->dataHelper->makeBackUrlParam('*/walmart_synchronization/index')]
             ),
             'runSynchNow' => $this->getUrl('*/walmart_marketplace/runSynchNow'),
         ]);
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Marketplace'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart\Marketplace'));
 
-        $storedStatuses = $this->getHelper('Data')->jsonEncode($this->storedStatuses);
+        $storedStatuses = $this->dataHelper->jsonEncode($this->storedStatuses);
         $this->js->addOnReadyJs(<<<JS
             require([
                 'M2ePro/Marketplace',

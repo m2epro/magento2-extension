@@ -8,16 +8,14 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Vocabulary;
 
+use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\VocabularyOptionsPopup;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Vocabulary\GetOptionsPopup
- */
 class GetOptionsPopup extends Main
 {
     public function execute()
     {
-        $block = $this->createBlock('Walmart_Listing_Product_Variation_VocabularyOptionsPopup');
+        $block = $this->getLayout()->createBlock(VocabularyOptionsPopup::class);
 
         $this->setAjaxContent($block);
 

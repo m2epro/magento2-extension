@@ -12,18 +12,25 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
 class Table extends AbstractContainer
 {
+    /** @var \Magento\Framework\Stdlib\CookieManagerInterface  */
     private $cookieManager;
+
     /** @var \Ess\M2ePro\Helper\View\ControlPanel */
     protected $controlPanelHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
 
     public function __construct(
         \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
         \Ess\M2ePro\Helper\View\ControlPanel $controlPanelHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         array $data = []
     ) {
         $this->cookieManager = $cookieManager;
         $this->controlPanelHelper = $controlPanelHelper;
+        $this->databaseHelper = $databaseHelper;
         parent::__construct($context, $data);
     }
 
@@ -44,7 +51,7 @@ class Table extends AbstractContainer
 
         $title = $this->__('Manage Table "%table_name%"', $tableName);
         if ($this->isMergeModeEnabled() && $component &&
-            $this->getHelper('Module_Database_Structure')->isTableHorizontalParent($tableName)) {
+            $this->databaseHelper->isTableHorizontalParent($tableName)) {
             $title .= " [merged {$component} data]";
         }
 
@@ -78,7 +85,7 @@ class Table extends AbstractContainer
             'onclick'    => '',
             'class'      => 'action-secondary',
             'sort_order' => 100,
-            'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
+            'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown::class,
             'options'    => [
                 'clear-cache' => [
                     'label'   => $this->__('Flush Cache'),
@@ -108,7 +115,7 @@ class Table extends AbstractContainer
         // ---------------------------------------
 
         // ---------------------------------------
-        $helper = $this->getHelper('Module_Database_Structure');
+        $helper = $this->databaseHelper;
 
         if ($helper->isTableHorizontalChild($tableName) ||
             ($helper->isTableHorizontalParent($tableName) && $this->isMergeModeEnabled() && $component)) {

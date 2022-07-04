@@ -8,27 +8,44 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Description
- */
 class Description extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template
 {
+    /** @var bool */
     protected $newAsin = false;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
 
+    /**
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+        $this->supportHelper = $supportHelper;
+    }
+
+    /**
+     * @return void
+     */
     public function _construct()
     {
         parent::_construct();
         $this->setTemplate('amazon/listing/product/template/description.phtml');
     }
 
-    //########################################
-
+    /**
+     * @return \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Description
+     */
     protected function _beforeToHtml()
     {
         if ($this->isNewAsin()) {
-            $helpBlock = $this->createBlock('HelpBlock')->setData([
+            $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
 //                'title' => $this->__('Assign Description Policy for New ASIN/ISBN Creation'),
                 'content' => $this->__(
                     '
@@ -41,11 +58,11 @@ class Description extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Tem
     Description Policy Button.<br/><br/>
     More detailed information about ability to work with this Page you can find
     <a href="%url%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/zmYtAg')
+                    $this->supportHelper->getDocumentationArticleUrl('x/zmYtAg')
                 )
             ]);
         } else {
-            $helpBlock = $this->createBlock('HelpBlock')->setData([
+            $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
 //                'title' => $this->__('Description Policy Assigning'),
                 'content' => $this->__('
     Description Policy is using to update Amazon Product Information, such as Title, Images, etc.
@@ -68,23 +85,19 @@ class Description extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Tem
         return parent::_beforeToHtml();
     }
 
-    //########################################
-
     /**
-     * @return boolean
+     * @return bool
      */
-    public function isNewAsin()
+    public function isNewAsin(): bool
     {
         return $this->newAsin;
     }
 
     /**
-     * @param boolean $newAsin
+     * @param bool $newAsin
      */
-    public function setNewAsin($newAsin)
+    public function setNewAsin(bool $newAsin): void
     {
         $this->newAsin = $newAsin;
     }
-
-    //########################################
 }

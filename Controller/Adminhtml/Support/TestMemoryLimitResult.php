@@ -10,20 +10,32 @@ namespace Ess\M2ePro\Controller\Adminhtml\Support;
 
 use Ess\M2ePro\Controller\Adminhtml\Support;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Support\TestMemoryLimitResult
- */
 class TestMemoryLimitResult extends Support
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Client */
+    private $clientHelper;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Client $clientHelper
+     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Client $clientHelper,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+
+        $this->clientHelper = $clientHelper;
+    }
 
     public function execute()
     {
         $this->setJsonContent(
-            ['result' => (int)($this->getHelper('Client')->getTestedMemoryLimit() / 1024 / 1024)]
+            [
+                'result' => (int)($this->clientHelper->getTestedMemoryLimit() / 1024 / 1024),
+            ]
         );
+
         return $this->getResult();
     }
-
-    //########################################
 }

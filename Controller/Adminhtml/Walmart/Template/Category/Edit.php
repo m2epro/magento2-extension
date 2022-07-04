@@ -36,7 +36,10 @@ class Edit extends Category
 
         $this->getHelper('Data\GlobalData')->setValue('tmp_template', $templateModel);
 
-        $this->addContent($this->createBlock('Walmart_Template_Category_Edit'));
+        $this->addContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Edit::class)
+        );
 
         if ($templateModel->getId()) {
             $headerText = $this->__("Edit Category Policy");

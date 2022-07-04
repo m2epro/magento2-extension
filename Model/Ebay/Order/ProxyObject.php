@@ -105,7 +105,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
                 self::USER_ID_ATTRIBUTE_CODE
             );
 
-            /** @var $customerBuilder \Ess\M2ePro\Model\Magento\Customer */
+            /** @var \Ess\M2ePro\Model\Magento\Customer $customerBuilder */
             $customerBuilder = $this->modelFactory->getObject('Magento\Customer');
 
             if (!$userIdAttribute->getId()) {

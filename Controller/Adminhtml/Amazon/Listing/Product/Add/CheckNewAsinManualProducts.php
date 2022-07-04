@@ -33,7 +33,8 @@ class CheckNewAsinManualProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon
             return $this->getResult();
         }
 
-        $popup = $this->createBlock('Amazon_Listing_Product_Add_NewAsin_Manual_SkipPopup');
+        $popup = $this->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Manual\SkipPopup::class);
 
         $this->setJsonContent([
             'total_count' => count($listingProductsIds),

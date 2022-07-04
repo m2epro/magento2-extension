@@ -25,7 +25,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Wal
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Walmart\Template\Synchronization');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Template\Synchronization::class);
     }
 
     //########################################

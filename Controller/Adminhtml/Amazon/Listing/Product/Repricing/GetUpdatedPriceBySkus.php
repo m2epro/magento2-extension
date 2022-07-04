@@ -17,11 +17,16 @@ class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
     protected $localeCurrency;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $helperData;
+
     public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         Context $context
     ) {
+        $this->helperData = $helperData;
         $this->localeCurrency = $localeCurrency;
         parent::__construct($amazonFactory, $context);
     }
@@ -34,11 +39,11 @@ class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             return $this->getResponse()->setBody('You should provide correct parameters.');
         }
 
-        $groupedSkus = $this->getHelper('Data')->jsonDecode($groupedSkus);
+        $groupedSkus = $this->helperData->jsonDecode($groupedSkus);
         $resultPrices = [];
 
         foreach ($groupedSkus as $accountId => $skus) {
-            /** @var $account \Ess\M2ePro\Model\Account */
+            /** @var \Ess\M2ePro\Model\Account $account */
             $account = $this->amazonFactory->getCachedObjectLoaded('Account', $accountId);
 
             /** @var \Ess\M2ePro\Model\Amazon\Account $amazonAccount */
@@ -46,7 +51,7 @@ class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 
             $currency = $amazonAccount->getMarketplace()->getChildObject()->getDefaultCurrency();
 
-            /** @var $repricingSynchronization \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\ActualPrice */
+            /** @var \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\ActualPrice $repricingSynchronization */
             $repricingSynchronization = $this->modelFactory->getObject('Amazon_Repricing_Synchronization_ActualPrice');
             $repricingSynchronization->setAccount($account);
             $repricingSynchronization->run($skus);

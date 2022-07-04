@@ -20,16 +20,19 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
     /** @var \Ess\M2ePro\Helper\Factory  */
     protected $helperFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Backend\Block\Context $context,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
 
         $this->helperFactory = $helperFactory;
+        $this->translationHelper = $translationHelper;
     }
 
     //########################################
@@ -47,7 +50,7 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         }
 
         if ($value === null || $value === '') {
-            $value = $this->getHelper('Module\Translation')->__('N/A');
+            $value = $this->translationHelper->__('N/A');
         }
 
         $showEditSku = ($this->getColumn()->getData('show_edit_sku') !== null)
@@ -76,7 +79,7 @@ HTML;
 Item Price violates Walmart pricing rules. Please adjust the Item Price to comply with the Walmart requirements.<br>
 Once the changes are applied, Walmart Item will become Active automatically.
 HTML;
-            $msg = '<p>' . $this->getHelper('Module\Translation')->__($message) . '</p>';
+            $msg = '<p>' . $this->translationHelper->__($message) . '</p>';
             if (empty($msg)) {
                 return $value;
             }

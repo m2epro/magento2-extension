@@ -8,21 +8,15 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category\ViewTemplateCategoryPopup
- */
 class ViewTemplateCategoryPopup extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
-    //########################################
-
     public function execute()
     {
         $this->setAjaxContent(
-            $this->createBlock('Walmart_Listing_Product_Template_Category')
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Template\Category::class)
         );
 
         return $this->getResult();
     }
-
-    //########################################
 }

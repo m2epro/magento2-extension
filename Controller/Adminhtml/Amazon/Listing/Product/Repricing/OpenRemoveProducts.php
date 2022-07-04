@@ -13,6 +13,19 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing;
  */
 class OpenRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Repricing */
+    private $helperAmazonRepricing;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Repricing $helperAmazonRepricing,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+
+        $this->helperAmazonRepricing = $helperAmazonRepricing;
+    }
+
     public function execute()
     {
         $listingId   = $this->getRequest()->getParam('id');
@@ -41,7 +54,7 @@ class OpenRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             ['id' => $listingId, 'account_id' => $accountId]
         );
 
-        /** @var $repricingAction \Ess\M2ePro\Model\Amazon\Repricing\Action\Product */
+        /** @var \Ess\M2ePro\Model\Amazon\Repricing\Action\Product $repricingAction */
         $repricingAction = $this->modelFactory->getObject('Amazon_Repricing_Action_Product');
         $repricingAction->setAccount($account);
         $serverRequestToken = $repricingAction->sendRemoveProductsActionData($productsIds, $backUrl);
@@ -54,7 +67,7 @@ class OpenRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         }
 
         return $this->_redirect(
-            $this->getHelper('Component_Amazon_Repricing')->prepareActionUrl(
+            $this->helperAmazonRepricing->prepareActionUrl(
                 \Ess\M2ePro\Helper\Component\Amazon\Repricing::COMMAND_OFFERS_REMOVE,
                 $serverRequestToken
             )

@@ -205,7 +205,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             }
         }
 
-        /** @var $model \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\AbstractModel */
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\AbstractModel $model */
         $model->setVariationManager($this);
 
         return $model;

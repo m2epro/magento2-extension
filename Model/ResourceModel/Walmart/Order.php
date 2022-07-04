@@ -44,7 +44,7 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 
     public function getItemsTotal($orderId)
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Walmart\Order\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Order\Collection $collection */
         $collection = $this->walmartFactory->getObject('Order\Item')->getCollection();
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->addFieldToFilter('order_id', (int)$orderId);

@@ -40,7 +40,7 @@ class Manage extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variati
 
     protected function _prepareButtons()
     {
-        $buttonBlock = $this->createBlock('Magento\Button')->setData([
+        $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->setData([
             'label' => $this->__('Add Another Variation'),
             'onclick' => '',
             'class' => 'action primary',
@@ -51,7 +51,7 @@ class Manage extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variati
         // ---------------------------------------
 
         $onClick = 'WalmartListingProductVariationObj.manageGenerateAction(false);';
-        $buttonBlock = $this->createBlock('Magento\Button')->setData([
+        $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->setData([
             'label' => $this->__('Generate All Variations'),
             'onclick' => $onClick,
             'class' => 'action primary',
@@ -60,7 +60,7 @@ class Manage extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variati
         $this->setChild('variation_manage_generate_all', $buttonBlock);
 
         $onClick = 'WalmartListingProductVariationObj.manageGenerateAction(true);';
-        $buttonBlock = $this->createBlock('Magento\Button')->setData([
+        $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->setData([
             'label' => $this->__('Generate Non-Existing Variations'),
             'onclick' => $onClick,
             'class' => 'action primary',

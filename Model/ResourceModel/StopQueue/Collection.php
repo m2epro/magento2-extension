@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\StopQueue',
-            'Ess\M2ePro\Model\ResourceModel\StopQueue'
+            \Ess\M2ePro\Model\StopQueue::class,
+            \Ess\M2ePro\Model\ResourceModel\StopQueue::class
         );
     }
 

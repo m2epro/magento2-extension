@@ -8,36 +8,30 @@
 
 namespace Ess\M2ePro\Helper\Module;
 
-/**
- * Class \Ess\M2ePro\Helper\Module\Logger
- */
-class Logger extends \Ess\M2ePro\Helper\AbstractHelper
+class Logger
 {
-    protected $modelFactory;
-    protected $logSystemFactory;
-    protected $phpEnvironmentRequest;
+    /** @var \Ess\M2ePro\Model\Log\SystemFactory */
+    private $logSystemFactory;
 
-    //########################################
-
+    /**
+     * @param \Ess\M2ePro\Model\Log\SystemFactory $logSystemFactory
+     */
     public function __construct(
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\Log\SystemFactory $logSystemFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context,
-        \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest
+        \Ess\M2ePro\Model\Log\SystemFactory $logSystemFactory
     ) {
-        $this->modelFactory = $modelFactory;
         $this->logSystemFactory = $logSystemFactory;
-        $this->phpEnvironmentRequest = $phpEnvironmentRequest;
-        parent::__construct($helperFactory, $context);
     }
 
-    //########################################
-
-    public function process($logData, $class = 'undefined')
+    /**
+     * @param mixed $logData
+     * @param string $class
+     *
+     * @return void
+     */
+    public function process($logData, string $class = 'undefined'): void
     {
         try {
-            $info  = $this->getLogMessage($logData, $class);
+            $info = $this->getLogMessage($logData, $class);
             $info .= $this->getStackTraceInfo();
 
             $this->systemLog($class, null, $info);
@@ -45,11 +39,15 @@ class Logger extends \Ess\M2ePro\Helper\AbstractHelper
         }
     }
 
-    //########################################
-
-    private function systemLog($class, $message, $description)
+    /**
+     * @param string $class
+     * @param string|null $message
+     * @param string $description
+     *
+     * @return void
+     */
+    private function systemLog(string $class, ?string $message, string $description): void
     {
-        /** @var \Ess\M2ePro\Model\Log\System $log */
         $log = $this->logSystemFactory->create();
         $log->setData(
             [
@@ -62,31 +60,35 @@ class Logger extends \Ess\M2ePro\Helper\AbstractHelper
         $log->save();
     }
 
-    private function getLogMessage($logData, $type)
+    /**
+     * @param mixed $logData
+     * @param string $type
+     *
+     * @return string
+     */
+    private function getLogMessage($logData, string $type): string
     {
         // @codingStandardsIgnoreLine
         !is_string($logData) && $logData = print_r($logData, true);
 
         // @codingStandardsIgnoreLine
-        $logData = '[DATE] '.date('Y-m-d H:i:s', (int)gmdate('U')).PHP_EOL.
-            '[TYPE] '.$type.PHP_EOL.
-            '[MESSAGE] '.$logData.PHP_EOL.
-            str_repeat('#', 80).PHP_EOL.PHP_EOL;
-
-        return $logData;
+        return '[DATE] ' . date('Y-m-d H:i:s', (int)gmdate('U')) . PHP_EOL .
+            '[TYPE] ' . $type . PHP_EOL .
+            '[MESSAGE] ' . $logData . PHP_EOL .
+            str_repeat('#', 80) . PHP_EOL . PHP_EOL;
     }
 
-    private function getStackTraceInfo()
+    /**
+     * @return string
+     */
+    private function getStackTraceInfo(): string
     {
         $exception = new \Exception('');
-        $stackTraceInfo = <<<TRACE
+
+        return <<<TRACE
 -------------------------------- STACK TRACE INFO --------------------------------
 {$exception->getTraceAsString()}
 
 TRACE;
-
-        return $stackTraceInfo;
     }
-
-    //########################################
 }

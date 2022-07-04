@@ -46,7 +46,10 @@ class Edit extends Template
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
         $this->setPageHelpLink('x/eP1IB');
-        $this->addContent($this->createBlock('Walmart_Template_Synchronization_Edit'));
+        $this->addContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit::class)
+        );
 
         return $this->getResultPage();
     }

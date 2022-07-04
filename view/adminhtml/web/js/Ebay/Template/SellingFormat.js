@@ -7,6 +7,24 @@ define([
 
         charityIndex: 0,
         charityTpl: '',
+        priceChangeIndex: 0,
+        priceChangeTpl: '',
+
+        constAbsoluteIncrease: M2ePro.php.constant(
+                '\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_INCREASE'
+        ),
+        constAbsoluteDecrease: M2ePro.php.constant(
+                '\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_DECREASE'
+        ),
+        constPercentageIncrease: M2ePro.php.constant(
+                '\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_INCREASE'
+        ),
+        constPercentageDecrease: M2ePro.php.constant(
+                '\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_DECREASE'
+        ),
+        constAttribute: M2ePro.php.constant(
+                '\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::PRICE_COEFFICIENT_ATTRIBUTE'
+        ),
 
         // ---------------------------------------
 
@@ -26,6 +44,32 @@ define([
                 coefficient.removeClassName('price_unvalidated');
 
                 if (!coefficient.up('div').visible()) {
+                    return true;
+                }
+
+                if (coefficient.value == '') {
+                    return false;
+                }
+
+                var floatValidator = Validation.get('M2ePro-validation-float');
+                if (floatValidator.test($F(coefficient), coefficient) && parseFloat(coefficient.value) <= 0) {
+                    coefficient.addClassName('price_unvalidated');
+                    return false;
+                }
+
+                return true;
+            }, M2ePro.translator.translate('Price Change is not valid.'));
+
+            jQuery.validator.addMethod('M2ePro-validate-price-modifier', function (value, el) {
+                if (self.isElementHiddenFromPage(el)) {
+                    return true;
+                }
+
+                var coefficient = el.up().next().down('input');
+
+                coefficient.removeClassName('price_unvalidated');
+
+                if (!coefficient.visible()) {
                     return true;
                 }
 
@@ -101,9 +145,16 @@ define([
                 return true;
             }, M2ePro.translator.translate('Please select a percentage of donation'));
 
-            if ($('charity_row_template')) {
-                this.charityTpl = $('charity_row_template').down('tbody').innerHTML;
-                $('charity_row_template').remove();
+            var charityRowTemplate = $('charity_row_template');
+            if (charityRowTemplate) {
+                this.charityTpl = charityRowTemplate.down('tbody').innerHTML;
+                charityRowTemplate.remove();
+            }
+
+            var priceChangeRowTemplate = $('fixed_price_change_row_template');
+            if (priceChangeRowTemplate) {
+                this.priceChangeTpl = priceChangeRowTemplate.innerHTML;
+                priceChangeRowTemplate.remove();
             }
         },
 
@@ -909,6 +960,77 @@ define([
             });
         },
 
+        renderFixedPriceChangeRows: function (data) {
+            var self = this;
+            for (var i = 0; i < data.length; i++) {
+                self.addFixedPriceChangeRow(data[i]);
+            }
+
+            this.priceChangeCalculationUpdate();
+        },
+
+        addFixedPriceChangeRow: function (priceChangeData) {
+            var priceChangeContainer = $('fixed_price_change_container');
+
+            priceChangeData = priceChangeData || {};
+            this.priceChangeIndex++;
+
+            var tpl = this.priceChangeTpl;
+            tpl = tpl.replace(/%i%/g, this.priceChangeIndex);
+            priceChangeContainer.insert(tpl);
+            var modeElement = $('fixed_price_modifier_mode_' + this.priceChangeIndex),
+                valueElement = $('fixed_price_modifier_value_' + this.priceChangeIndex),
+                removeButtonElement = $('fixed_price_modifier_row_remove_button_' + this.priceChangeIndex);
+
+            var handlerObj = new AttributeCreator('fixed_price_modifier_mode_' + this.priceChangeIndex);
+            handlerObj.setSelectObj(modeElement);
+            handlerObj.injectAddOption();
+
+            if (priceChangeData.mode) {
+                for (var i = 0; i < modeElement.options.length; i++) {
+                    if (modeElement.options[i].value != priceChangeData.mode) {
+                        continue;
+                    }
+
+                    if (modeElement.options[i].value < this.constAttribute) {
+                        modeElement.selectedIndex = i;
+                        valueElement.value = priceChangeData['value'];
+                        break;
+                    } else {
+                        if (modeElement.options[i].getAttribute('attribute_code') == priceChangeData['attribute_code']) {
+                            modeElement.selectedIndex = i;
+                            valueElement.hide();
+                            break;
+                        }
+                    }
+                }
+
+                this.priceChangeCalculationUpdate();
+            }
+
+            var selectOnChangeHandler = function () {
+                this.priceChangeSelectUpdate(modeElement)
+            }.bind(this);
+            modeElement
+                .observe('change', selectOnChangeHandler)
+                .simulate('change');
+
+            var inputOnKeyUpHandler = function () {
+                this.priceChangeCalculationUpdate();
+            }.bind(this);
+            valueElement.observe('keyup', inputOnKeyUpHandler);
+
+            var buttonOnClickHandler = function () {
+                this.removeFixedPriceChangeRow(removeButtonElement);
+            }.bind(this);
+            removeButtonElement.observe('click', buttonOnClickHandler);
+        },
+
+        removeFixedPriceChangeRow: function (element) {
+            element.up('.fixed-price-change-row').remove();
+            this.priceChangeCalculationUpdate();
+        },
+
         // ---------------------------------------
 
         charityMarketplaceChange: function(marketplaceEl, charityData) {
@@ -1060,6 +1182,101 @@ define([
 
             if (charityData.percentage) {
                 percentageEl.value = charityData.percentage;
+            }
+        },
+
+        priceChangeSelectUpdate: function (element) {
+            var valueElement = $('fixed_price_modifier_value_' + element.dataset.priceChangeIndex),
+                attributeElement = $('fixed_price_modifier_attribute_' + element.dataset.priceChangeIndex);
+
+            if (element.options[element.selectedIndex].value == this.constAttribute) {
+                valueElement.hide();
+                this.selectMagentoAttribute(element, attributeElement);
+            } else {
+                valueElement.show();
+                attributeElement.value = '';
+            }
+
+            this.priceChangeCalculationUpdate();
+        },
+
+        priceChangeCalculationUpdate: function () {
+            var select, input, selectedOption, currentValue, result = 100, operations = ['$100'];
+
+            $$('#fixed_price_change_container > *').each(function (element) {
+                select = element.select('select').first();
+                input = element.select('input').first();
+
+                if (select.selectedIndex == -1) {
+                    return;
+                }
+
+                selectedOption = select.options[select.selectedIndex];
+                if (selectedOption.value == this.constAttribute) {
+                    result += 7.5;
+                    operations.push('+ $7.5');
+                    return;
+                }
+
+                currentValue = Number.parseFloat(input.value);
+                if (isNaN(currentValue) || currentValue < 0) {
+                    return;
+                }
+
+                switch (Number.parseInt(selectedOption.value)) {
+                    case this.constAbsoluteIncrease:
+                        if (!isNaN(input.value)) {
+                            result += currentValue;
+                            operations.push(`+ $${currentValue}`);
+                        }
+                        break;
+                    case this.constAbsoluteDecrease:
+                        if (!isNaN(input.value)) {
+                            result -= currentValue;
+                            operations.push(`- $${currentValue}`);
+                        }
+                        break;
+                    case this.constPercentageIncrease:
+                        if (!isNaN(input.value)) {
+                            result *= 1 + currentValue / 100;
+                            operations.push(`+ ${currentValue}%`);
+                        }
+                        break;
+                    case this.constPercentageDecrease:
+                        if (!isNaN(input.value)) {
+                            result *= 1 - currentValue / 100;
+                            operations.push(`- ${currentValue}%`);
+                        }
+                        break;
+                }
+            }.bind(this));
+
+            const calculationExampleElement = $('fixed_price_calculation_example');
+            if (operations.length <= 1) {
+                calculationExampleElement.hide();
+                return;
+            }
+
+            calculationExampleElement.show();
+            calculationExampleElement.innerHTML = 'Ex. ' + operations.join(' ') + ' = '
+                + this.formatPrice(Math.round(result * 100) / 100, '$');
+
+            if (result <= 0) {
+                calculationExampleElement.style.color = 'red';
+            } else {
+                calculationExampleElement.style.color = 'black';
+            }
+        },
+
+        formatPrice: function (price, currency) {
+            if (isNaN(price)) {
+                return currency + 0;
+            }
+
+            if (price >= 0) {
+                return currency + price;
+            } else {
+                return '-' + currency + -price;
             }
         },
 

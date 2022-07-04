@@ -8,50 +8,60 @@
 
 namespace Ess\M2ePro\Helper\Magento;
 
-/**
- * Class \Ess\M2ePro\Helper\Magento\Attribute
- */
 class Attribute extends AbstractHelper
 {
-    const PRICE_CODE = 'price';
-    const SPECIAL_PRICE_CODE = 'special_price';
+    public const PRICE_CODE = 'price';
+    public const SPECIAL_PRICE_CODE = 'special_price';
 
+    /** @var \Ess\M2ePro\Model\Factory */
     private $modelFactory;
+    /** @var \Magento\Catalog\Model\ResourceModel\Product */
     private $productResource;
+    /** @var \Magento\Framework\App\ResourceConnection */
     private $resourceConnection;
+    /** @var \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory */
     private $attributeColFactory;
+    /** @var \Magento\Eav\Model\ResourceModel\Entity\Attribute\CollectionFactory */
     private $eavEntityAttributeColFactory;
+    /** @var \Magento\Eav\Model\Config */
     private $eavConfig;
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
+    /** @var \Ess\M2ePro\Helper\Magento\AttributeSet */
+    private $magentoAttributeSetHelper;
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $dbStructureHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
+        \Ess\M2ePro\Helper\Magento\AttributeSet $magentoAttributeSetHelper,
         \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $dbStructureHelper,
         \Magento\Catalog\Model\ResourceModel\Product $productResource,
         \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $attributeColFactory,
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\CollectionFactory $eavEntityAttributeColFactory,
         \Magento\Eav\Model\Config $eavConfig,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Framework\ObjectManagerInterface $objectManager
     ) {
+        parent::__construct($objectManager);
         $this->modelFactory = $modelFactory;
         $this->productResource = $productResource;
         $this->attributeColFactory = $attributeColFactory;
         $this->eavEntityAttributeColFactory = $eavEntityAttributeColFactory;
         $this->eavConfig = $eavConfig;
         $this->resourceConnection = $resourceConnection;
-        parent::__construct($objectManager, $helperFactory, $context);
         $this->moduleConfiguration = $moduleConfiguration;
+        $this->magentoAttributeSetHelper = $magentoAttributeSetHelper;
+        $this->magentoHelper = $magentoHelper;
+        $this->dbStructureHelper = $dbStructureHelper;
     }
-
-    //########################################
 
     public function getAll()
     {
-        /** @var \Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection $attributeCollection */
         $attributeCollection = $this->getPreparedAttributeCollection();
         $attributeCollection->addVisibleFilter();
 
@@ -191,7 +201,7 @@ class Attribute extends AbstractHelper
 
     public function getGeneralFromAllAttributeSets()
     {
-        $allAttributeSets = $this->getHelper('Magento\AttributeSet')->getAll(self::RETURN_TYPE_IDS);
+        $allAttributeSets = $this->magentoAttributeSetHelper->getAll(self::RETURN_TYPE_IDS);
         return $this->getGeneralFromAttributeSets($allAttributeSets);
     }
 
@@ -222,7 +232,7 @@ class Attribute extends AbstractHelper
         /**
          * Magento >= 2.2.4 uses HAVING on COUNT so we need to add COUNT after resetting columns
          */
-        if (version_compare($this->getHelper('Magento')->getVersion(), '2.2.4', '>=')) {
+        if (version_compare($this->magentoHelper->getVersion(), '2.2.4', '>=')) {
             $idsSelect->columns(
                 ['count' => new \Zend_Db_Expr('COUNT(*)')],
                 'main_table'
@@ -239,7 +249,7 @@ class Attribute extends AbstractHelper
 
     public function getGeneralFromProducts(array $products)
     {
-        $productsAttributeSetIds = $this->getHelper('Magento\AttributeSet')->getFromProducts(
+        $productsAttributeSetIds = $this->magentoAttributeSetHelper->getFromProducts(
             $products,
             self::RETURN_TYPE_IDS
         );
@@ -267,13 +277,12 @@ class Attribute extends AbstractHelper
 
     private function getConfigurable(array $attributeSetIds = [])
     {
-        /** @var $connection \Magento\Framework\DB\Adapter\AdapterInterface */
         $connection = $this->resourceConnection->getConnection();
 
-        $cpTable  = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('catalog_product_entity');
-        $saTable  = $this->getHelper('Module_Database_Structure')
+        $cpTable  = $this->dbStructureHelper->getTableNameWithPrefix('catalog_product_entity');
+        $saTable  = $this->dbStructureHelper
             ->getTableNameWithPrefix('catalog_product_super_attribute');
-        $aTable   = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('eav_attribute');
+        $aTable   = $this->dbStructureHelper->getTableNameWithPrefix('eav_attribute');
 
         $select = $connection->select()
             ->distinct(true)
@@ -301,7 +310,7 @@ class Attribute extends AbstractHelper
 
     public function getAttributeLabel($attributeCode, $storeId = \Magento\Store\Model\Store::DEFAULT_STORE_ID)
     {
-        /** @var $attribute \Magento\Eav\Model\Entity\Attribute\AbstractAttribute */
+        /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $attribute */
         $attribute = $this->productResource->getAttribute($attributeCode);
 
         if (!$attribute) {
@@ -320,9 +329,8 @@ class Attribute extends AbstractHelper
             return [];
         }
 
-        /** @var $connection \Magento\Framework\DB\Adapter\AdapterInterface */
         $connection = $this->resourceConnection->getConnection();
-        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('eav_attribute');
+        $tableName = $this->dbStructureHelper->getTableNameWithPrefix('eav_attribute');
 
         $entityTypeId = $this->eavConfig->getEntityType(\Magento\Catalog\Model\Product::ENTITY)->getId();
         $dbSelect = $connection->select();
@@ -404,7 +412,7 @@ class Attribute extends AbstractHelper
             return [];
         }
 
-        $scopeAttributesOptionArray = $this->getHelper('Magento\Attribute')->getGeneralFromProducts($productIds);
+        $scopeAttributesOptionArray = $this->getGeneralFromProducts($productIds);
         $scopeAttributes = [];
         foreach ($scopeAttributesOptionArray as $scopeAttributesOption) {
             $scopeAttributes[] = $scopeAttributesOption['code'];
@@ -421,7 +429,7 @@ class Attribute extends AbstractHelper
             ->addFieldToFilter('attribute_code', ['in' => $missingAttributes])
             ->addSetInfo(true);
 
-        $attributeSets = $this->getHelper('Magento\AttributeSet')
+        $attributeSets = $this->magentoAttributeSetHelper
             ->getFromProducts(
                 $productIds,
                 \Ess\M2ePro\Helper\Magento\AbstractHelper::RETURN_TYPE_IDS

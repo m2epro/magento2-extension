@@ -24,7 +24,9 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
         $tab = [
             'label' => __('Main'),
             'title' => __('Main'),
-            'content' => $this->createBlock('Walmart_Settings_Tabs_Main')->toHtml()
+            'content' => $this->getLayout()
+                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs\Main::class)
+                              ->toHtml()
         ];
 
         $this->addTab(self::TAB_ID_MAIN, $tab);
@@ -36,7 +38,9 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
         $tab = [
             'label' => __('Synchronization'),
             'title' => __('Synchronization'),
-            'content' => $this->createBlock('Walmart_Settings_Tabs_Synchronization')->toHtml()
+            'content' => $this->getLayout()
+                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs\Synchronization::class)
+                              ->toHtml()
         ];
 
         $this->addTab(self::TAB_ID_SYNCHRONIZATION, $tab);

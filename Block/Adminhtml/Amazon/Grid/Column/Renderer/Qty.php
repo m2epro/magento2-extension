@@ -10,9 +10,6 @@ namespace  Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer;
 
 use Ess\M2ePro\Block\Adminhtml\Traits;
 
-/**
- * Class  \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Qty
- */
 class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
 {
     use Traits\BlockTrait;
@@ -23,18 +20,26 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Backend\Block\Context $context,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
 
         $this->helperFactory = $helperFactory;
         $this->amazonFactory = $amazonFactory;
+        $this->translationHelper = $translationHelper;
+        $this->dataHelper = $dataHelper;
     }
 
     //########################################
@@ -43,7 +48,7 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
     {
         $rowObject = $row;
         $value = $this->_getValue($row);
-        $translator = $this->getHelper('Module\Translation');
+        $translator = $this->translationHelper;
         $isVariationGrid = ($this->getColumn()->getData('is_variation_grid') !== null)
             ? $this->getColumn()->getData('is_variation_grid')
             : false;
@@ -115,7 +120,7 @@ HTML;
             return '<span style="color: gray;">' . $translator->__('Not Listed') . '</span>';
         }
 
-        $variationChildStatuses = $this->getHelper('Data')->jsonDecode($row->getData('variation_child_statuses'));
+        $variationChildStatuses = $this->dataHelper->jsonDecode($row->getData('variation_child_statuses'));
 
         if (empty($variationChildStatuses)) {
             return $translator->__('N/A');
@@ -143,11 +148,11 @@ HTML;
         }
 
         $resultValue = $translator->__('AFN');
-        $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+        $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
 
         $filter = base64_encode('online_qty[afn]=1');
 
-        $productTitle = $this->getHelper('Data')->escapeHtml($row->getData('name'));
+        $productTitle = $this->dataHelper->escapeHtml($row->getData('name'));
         $vpmt = $translator->__('Manage Variations of &quot;%s%&quot; ', $productTitle);
         // @codingStandardsIgnoreLine
         $vpmt = addslashes($vpmt);

@@ -8,6 +8,9 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
+use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Group\Filters;
+use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Group\Items;
+
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors\GetGroupContentView
  */
@@ -23,9 +26,9 @@ class GetGroupContentView extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $model = $this->activeRecordFactory->getObjectLoaded('Ebay_Motor_Group', $groupId);
 
         if ($model->isModeItem()) {
-            $block = $this->createBlock('Ebay_Listing_View_Settings_Motors_View_Group_Items');
+            $block = $this->getLayout()->createBlock(Items::class);
         } else {
-            $block = $this->createBlock('Ebay_Listing_View_Settings_Motors_View_Group_Filters');
+            $block = $this->getLayout()->createBlock(Filters::class);
         }
 
         $block->setGroupId($groupId);

@@ -8,34 +8,37 @@
 
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
-class Variation extends \Ess\M2ePro\Helper\AbstractHelper
+class Variation
 {
-    const DATA_REGISTRY_KEY  = 'amazon_variation_themes_usage';
+    private const DATA_REGISTRY_KEY = 'amazon_variation_themes_usage';
 
     /** @var \Ess\M2ePro\Model\Factory */
-    protected $modelFactory;
-
+    private $modelFactory;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
-    protected $activeRecordFactory;
-
+    private $activeRecordFactory;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
-    protected $amazonParentFactory;
-
+    private $amazonParentFactory;
     /** @var \Magento\Framework\App\ResourceConnection */
-    protected $resourceConnection;
-
+    private $resourceConnection;
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
-    protected $databaseStructure;
-
+    private $databaseStructure;
     /** @var \Ess\M2ePro\Helper\Magento\Product */
-    protected $helperMagentoProduct;
-
-    /** @var \Ess\M2ePro\Helper\Module */
-    protected $helperModule;
-
+    private $helperMagentoProduct;
     /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
-    protected $cachePermanent;
+    private $cachePermanent;
+    /** @var \Ess\M2ePro\Model\Registry\Manager */
+    private $registry;
 
+    /**
+     * @param \Ess\M2ePro\Model\Factory $modelFactory
+     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonParentFactory
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     * @param \Ess\M2ePro\Helper\Module\Database\Structure $databaseStructure
+     * @param \Ess\M2ePro\Helper\Magento\Product $helperMagentoProduct
+     * @param \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent
+     * @param \Ess\M2ePro\Model\Registry\Manager $registry
+     */
     public function __construct(
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -43,24 +46,20 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseStructure,
         \Ess\M2ePro\Helper\Magento\Product $helperMagentoProduct,
-        \Ess\M2ePro\Helper\Module $helperModule,
         \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Model\Registry\Manager $registry
     ) {
-        parent::__construct($helperFactory, $context);
-
         $this->modelFactory = $modelFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->amazonParentFactory = $amazonParentFactory;
         $this->resourceConnection = $resourceConnection;
         $this->databaseStructure = $databaseStructure;
         $this->helperMagentoProduct = $helperMagentoProduct;
-        $this->helperModule = $helperModule;
         $this->cachePermanent = $cachePermanent;
+        $this->registry = $registry;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function filterProductsNotMatchingForNewAsin($productsIds)
     {
@@ -73,8 +72,6 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
         return $productsIds;
     }
 
-    //########################################
-
     public function filterProductsByGeneralId($productsIds)
     {
         $connRead = $this->resourceConnection->getConnection();
@@ -82,8 +79,8 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
         $select = $connRead->select();
         $select->from(['alp' => $table], ['listing_product_id'])
-            ->where('listing_product_id IN (?)', $productsIds)
-            ->where('general_id IS NULL');
+               ->where('listing_product_id IN (?)', $productsIds)
+               ->where('general_id IS NULL');
 
         return $connRead->fetchCol($select);
     }
@@ -95,8 +92,8 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
         $select = $connRead->select();
         $select->from(['alp' => $table], ['listing_product_id'])
-            ->where('listing_product_id IN (?)', $productsIds)
-            ->where('is_general_id_owner = 0');
+               ->where('listing_product_id IN (?)', $productsIds)
+               ->where('is_general_id_owner = 0');
 
         return $connRead->fetchCol($select);
     }
@@ -108,8 +105,8 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
         $select = $connRead->select();
         $select->from(['lp' => $table], ['id'])
-            ->where('id IN (?)', $productsIds)
-            ->where('status = ?', \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED);
+               ->where('id IN (?)', $productsIds)
+               ->where('status = ?', \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED);
 
         return $connRead->fetchCol($select);
     }
@@ -121,9 +118,9 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
         $select = $connRead->select();
         $select->from(['pl' => $table], ['object_id'])
-            ->where('model_name = "Listing_Product"')
-            ->where('object_id IN (?)', $productsIds)
-            ->where('tag IS NULL');
+               ->where('model_name = "Listing_Product"')
+               ->where('object_id IN (?)', $productsIds)
+               ->where('tag IS NULL');
 
         $lockedProducts = $connRead->fetchCol($select);
 
@@ -150,21 +147,21 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
         foreach ($productsIdsChunks as $productsIdsChunk) {
             $select = $connRead->select();
             $select->from(['alp' => $tableListingProduct], ['id', 'product_id'])
-                ->where('id IN (?)', $productsIdsChunk);
+                   ->where('id IN (?)', $productsIdsChunk);
 
             $listingProductToProductIds = $connRead->fetchPairs($select);
 
             $select = $connRead->select();
             $select->from(['cpe' => $tableProductEntity], ['entity_id', 'type_id'])
-                ->where('entity_id IN (?)', $listingProductToProductIds);
+                   ->where('entity_id IN (?)', $listingProductToProductIds);
 
             $select->joinLeft(
                 ['cpo' => $tableProductOption],
                 'cpe.entity_id=cpo.product_id',
                 [
-                    'option_id'         => 'option_id',
+                    'option_id' => 'option_id',
                     'option_is_require' => 'is_require',
-                    'option_type'       => 'type'
+                    'option_type' => 'type',
                 ]
             );
 
@@ -183,9 +180,11 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
                     unset($productToListingProductIds[$product['entity_id']]);
                 }
 
-                if ($this->helperMagentoProduct->isSimpleType($product['type_id']) &&
+                if (
+                    $this->helperMagentoProduct->isSimpleType($product['type_id']) &&
                     !empty($product['option_id']) && $product['option_is_require'] == 1 &&
-                    in_array($product['option_type'], ['drop_down', 'radio', 'multiple', 'checkbox'])) {
+                    in_array($product['option_type'], ['drop_down', 'radio', 'multiple', 'checkbox'])
+                ) {
                     unset($productToListingProductIds[$product['entity_id']]);
                 }
             }
@@ -222,7 +221,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
         foreach ($productsIdsChunks as $productsIdsChunk) {
             $select = $connRead->select();
             $select->from(['alp' => $tableAmazonListingProduct], ['listing_product_id'])
-                ->where('listing_product_id IN (?)', $productsIdsChunk);
+                   ->where('listing_product_id IN (?)', $productsIdsChunk);
 
             $select->join(
                 ['atd' => $tableAmazonTemplateDescription],
@@ -277,7 +276,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
             return $cacheData;
         }
 
-        $data = $this->helperModule->getRegistry()->getValueFromJson(self::DATA_REGISTRY_KEY);
+        $data = $this->registry->getValueFromJson(self::DATA_REGISTRY_KEY);
 
         $this->setThemeUsageDataCache($data);
 
@@ -286,7 +285,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function increaseThemeUsageCount($theme, $marketplaceId)
     {
-        $data = $this->helperModule->getRegistry()->getValueFromJson(self::DATA_REGISTRY_KEY);
+        $data = $this->registry->getValueFromJson(self::DATA_REGISTRY_KEY);
 
         if (empty($data[$marketplaceId][$theme])) {
             $data[$marketplaceId][$theme] = 0;
@@ -295,7 +294,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
         arsort($data[$marketplaceId]);
 
-        $this->helperModule->getRegistry()->setValue(self::DATA_REGISTRY_KEY, $data);
+        $this->registry->setValue(self::DATA_REGISTRY_KEY, $data);
 
         $this->removeThemeUsageDataCache();
     }
@@ -304,19 +303,20 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function getThemeUsageDataCache()
     {
-        $cacheKey = __CLASS__.self::DATA_REGISTRY_KEY;
+        $cacheKey = __CLASS__ . self::DATA_REGISTRY_KEY;
+
         return $this->cachePermanent->getValue($cacheKey);
     }
 
     private function setThemeUsageDataCache(array $data)
     {
-        $cacheKey = __CLASS__.self::DATA_REGISTRY_KEY;
+        $cacheKey = __CLASS__ . self::DATA_REGISTRY_KEY;
         $this->cachePermanent->setValue($cacheKey, $data);
     }
 
     private function removeThemeUsageDataCache()
     {
-        $cacheKey = __CLASS__.self::DATA_REGISTRY_KEY;
+        $cacheKey = __CLASS__ . self::DATA_REGISTRY_KEY;
         $this->cachePermanent->removeValue($cacheKey);
     }
 

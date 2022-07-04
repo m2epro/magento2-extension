@@ -28,7 +28,8 @@ class ViewGrid extends Main
             return $this->getResult();
         }
 
-        $grid = $this->createBlock('Amazon_Listing_Product_Template_Description_Grid');
+        $grid = $this->getLayout()
+                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Description\Grid::class);
         $grid->setCheckNewAsinAccepted($checkNewAsinAccepted);
         $grid->setProductsIds($productsIds);
         if ($mapToTemplateJsFn !== false) {

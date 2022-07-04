@@ -8,15 +8,22 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SearchAsin
- */
 class SearchAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     /** @var  \Ess\M2ePro\Model\Listing */
     protected $listing;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -102,13 +109,14 @@ HTML
 
     public function getGridHtml()
     {
-        $viewHeaderBlock = $this->createBlock(
-            'Listing_View_Header',
+        $viewHeaderBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
             '',
             ['data' => ['listing' => $this->listing]]
         );
 
-        $productSearchBlock = $this->createBlock('Amazon_Listing_Product_Search_Main');
+        $productSearchBlock = $this->getLayout()
+                                   ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Search\Main::class);
 
         return $viewHeaderBlock->toHtml()
                . $productSearchBlock->toHtml()
@@ -192,14 +200,14 @@ HTML
             'Clear Search Results' => $this->__('Clear Search Results')
         ]);
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Listing'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon_Listing_Product'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon_Listing_Product_Add', [
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon\Listing'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon_Listing_Product'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon_Listing_Product_Add', [
             'wizard' => $this->getRequest()->getParam('wizard')
         ]));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon_Listing_Product_Search'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon_Listing_Product_Search'));
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Amazon_Listing_Product_Variation_Vocabulary')
+            $this->dataHelper->getControllerActions('Amazon_Listing_Product_Variation_Vocabulary')
         );
 
         $this->jsUrl->addUrls([

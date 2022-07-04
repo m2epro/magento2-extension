@@ -24,7 +24,8 @@ class ViewVocabularyAjax extends Main
             return $this->getResult();
         }
 
-        $vocabulary = $this->createBlock('Amazon_Listing_Product_Variation_Manage_Tabs_Vocabulary')
+        $vocabulary = $this->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Vocabulary::class)
             ->setListingProduct($this->amazonFactory->getObjectLoaded('Listing\Product', $productId));
 
         $this->setAjaxContent($vocabulary);

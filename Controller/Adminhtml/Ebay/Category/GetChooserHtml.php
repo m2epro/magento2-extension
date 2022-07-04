@@ -37,8 +37,9 @@ class GetChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
             $selectedCategories = $this->getHelper('Data')->jsonDecode($categoriesJson);
         }
 
-        /** @var $chooserBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser */
-        $chooserBlock = $this->createBlock('Ebay_Template_Category_Chooser');
+        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser $chooserBlock */
+        $chooserBlock = $this->getLayout()
+                             ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser::class);
         $marketplaceId && $chooserBlock->setMarketplaceId($marketplaceId);
         $accountId && $chooserBlock->setAccountId($accountId);
         $chooserBlock->setCategoryMode($categoryMode);

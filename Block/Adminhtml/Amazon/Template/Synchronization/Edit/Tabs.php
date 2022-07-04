@@ -30,9 +30,9 @@ class Tabs extends AbstractTabs
             [
                 'label' => __('List Rules'),
                 'title' => __('List Rules'),
-                'content' => $this->createBlock(
-                    'Amazon_Template_Synchronization_Edit_Tabs_ListRules'
-                )->toHtml(),
+                'content' => $this->getLayout()
+                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs\ListRules::class)
+                  ->toHtml(),
             ]
         );
 
@@ -41,9 +41,9 @@ class Tabs extends AbstractTabs
             [
                 'label' => __('Revise Rules'),
                 'title' => __('Revise Rules'),
-                'content' => $this->createBlock(
-                    'Amazon_Template_Synchronization_Edit_Tabs_ReviseRules'
-                )->toHtml(),
+                'content' => $this->getLayout()
+              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs\ReviseRules::class)
+              ->toHtml(),
             ]
         );
 
@@ -52,9 +52,9 @@ class Tabs extends AbstractTabs
             [
                 'label' => __('Relist Rules'),
                 'title' => __('Relist Rules'),
-                'content' => $this->createBlock(
-                    'Amazon_Template_Synchronization_Edit_Tabs_RelistRules'
-                )->toHtml(),
+                'content' => $this->getLayout()
+              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs\RelistRules::class)
+              ->toHtml(),
             ]
         );
 
@@ -63,9 +63,9 @@ class Tabs extends AbstractTabs
             [
                 'label' => __('Stop Rules'),
                 'title' => __('Stop Rules'),
-                'content' => $this->createBlock(
-                    'Amazon_Template_Synchronization_Edit_Tabs_StopRules'
-                )->toHtml(),
+                'content' => $this->getLayout()
+                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit\Tabs\StopRules::class)
+                  ->toHtml(),
             ]
         );
 

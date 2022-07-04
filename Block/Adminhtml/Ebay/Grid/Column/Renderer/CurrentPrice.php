@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer;
 
 use \Ess\M2ePro\Block\Adminhtml\Traits;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\CurrentPrice
- */
 class CurrentPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
 {
     use Traits\BlockTrait;
@@ -29,7 +26,8 @@ class CurrentPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Nu
     /** @var \Ess\M2ePro\Helper\Factory  */
     protected $helperFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -37,6 +35,7 @@ class CurrentPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Nu
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Backend\Block\Context $context,
         \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -45,13 +44,14 @@ class CurrentPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Nu
         $this->modelFactory = $modelFactory;
         $this->ebayFactory = $ebayFactory;
         $this->localeCurrency = $localeCurrency;
+        $this->translationHelper = $translationHelper;
     }
 
     //########################################
 
     public function render(\Magento\Framework\DataObject $row)
     {
-        $translator = $this->getHelper('Module\Translation');
+        $translator = $this->translationHelper;
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
             return '<span style="color: gray;">' . $translator->__('Not Listed') . '</span>';
         }

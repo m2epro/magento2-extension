@@ -37,7 +37,7 @@ class Edit extends Listing
         $global->setValue('edit_listing', $listing);
 
         $this->setAjaxContent(
-            $this->createBlock('Listing\Edit')
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\Edit::class)
         );
         return $this->getResult();
     }

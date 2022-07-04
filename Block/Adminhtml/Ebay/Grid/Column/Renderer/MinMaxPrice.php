@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer;
 
 use \Ess\M2ePro\Block\Adminhtml\Traits;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\MinMaxPrice
- */
 class MinMaxPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
 {
     use Traits\BlockTrait;
@@ -29,7 +26,11 @@ class MinMaxPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Num
     /** @var \Ess\M2ePro\Helper\Factory  */
     protected $helperFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -37,6 +38,8 @@ class MinMaxPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Num
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Magento\Backend\Block\Context $context,
         \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -44,13 +47,15 @@ class MinMaxPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Num
         $this->modelFactory = $modelFactory;
         $this->localeCurrency = $localeCurrency;
         $this->ebayFactory = $ebayFactory;
+        $this->translationHelper = $translationHelper;
+        $this->dataHelper = $dataHelper;
     }
 
     //########################################
 
     public function render(\Magento\Framework\DataObject $row)
     {
-        $translator = $this->getHelper('Module\Translation');
+        $translator = $this->translationHelper;
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
             return '<span style="color: gray;">' . $translator->__('Not Listed') . '</span>';
         }
@@ -139,7 +144,7 @@ HTML;
             $onlineTitle = $row->getData('online_title');
             !empty($onlineTitle) && $title = $onlineTitle;
 
-            $title = $this->getHelper('Data')->escapeHtml($title);
+            $title = $this->dataHelper->escapeHtml($title);
 
             $bidsPopupTitle = $translator->__('Bids of &quot;%s&quot;', $title);
             $bidsPopupTitle = addslashes($bidsPopupTitle);

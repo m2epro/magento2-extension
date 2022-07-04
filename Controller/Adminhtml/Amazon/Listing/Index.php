@@ -26,12 +26,12 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
     {
         if ($this->getRequest()->getQuery('ajax')) {
             $this->setAjaxContent(
-                $this->createBlock('Amazon_Listing_Grid')
+                $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Grid::class)
             );
             return $this->getResult();
         }
 
-        $this->addContent($this->createBlock('Amazon\Listing'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing::class));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('M2E Pro Listings'));
         $this->setPageHelpLink('x/Kv8UB');
 

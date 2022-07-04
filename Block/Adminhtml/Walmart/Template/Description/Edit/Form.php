@@ -10,16 +10,30 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Description\Edit;
 
 use Ess\M2ePro\Model\Walmart\Template\Description as Description;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Description\Edit\Form
- */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     public $templateModel;
     public $formData = [];
     public $allAttributesByInputTypes     = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    protected $magentoAttributeHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     public function _construct()
     {
@@ -30,23 +44,20 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $this->templateModel = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
         $this->formData      = $this->getFormData();
 
-        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
-        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
-        $allAttributes          = $magentoAttributeHelper->getAll();
-
+        $allAttributes = $this->magentoAttributeHelper->getAll();
         $this->allAttributesByInputTypes = [
-            'text_select' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'select']),
-            'text' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text']),
-            'text_weight' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'weight']),
-            'text_keywords' => $magentoAttributeHelper->filterByInputTypes(
+            'text_select' => $this->magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'select']),
+            'text' => $this->magentoAttributeHelper->filterByInputTypes($allAttributes, ['text']),
+            'text_weight' => $this->magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'weight']),
+            'text_keywords' => $this->magentoAttributeHelper->filterByInputTypes(
                 $allAttributes,
                 ['text', 'select', 'textarea']
             ),
-            'text_images' => $magentoAttributeHelper->filterByInputTypes(
+            'text_images' => $this->magentoAttributeHelper->filterByInputTypes(
                 $allAttributes,
                 ['text', 'image', 'media_image', 'gallery', 'multiline', 'textarea', 'select', 'multiselect']
             ),
-            'text_price' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'price']),
+            'text_price' => $this->magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'price']),
         ];
     }
 
@@ -138,7 +149,8 @@ HTML
         $selectAttrBlock->setId('selectAttr_title_template');
         $selectAttrBlock->setForm($this->_form);
 
-        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
+        $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
+                                    ->addData([
             'label' => $this->__('Insert'),
             'destination_id' => 'title_template',
             'class' => 'select_attributes_for_title_button primary',
@@ -554,7 +566,8 @@ HTML
             ]
         );
 
-        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
+        $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
+                                    ->addData([
             'label' => $this->__('Insert'),
             'destination_id' => 'description_template',
             'class' => 'primary',
@@ -852,7 +865,7 @@ HTML
                 'tooltip' => $this->__('Specify up to 5 additional features that describe your Item.<br>
                     To add Attributes, you can either:<br>
                     - Enter both the name and the value manually<br>
-                    - Enter the name manually, then select a Magento Attribute with the relevant value and 
+                    - Enter the name manually, then select a Magento Attribute with the relevant value and
                         click <strong>Insert</strong>.
                     ')
             ]
@@ -1084,14 +1097,14 @@ HTML
     protected function _beforeToHtml()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\Description::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\Description::class)
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class)
         );
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart_Template_Description'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart_Template_Description'));
         $this->jsUrl->addUrls([
             'formSubmit'    => $this->getUrl(
                 '*/walmart_template_description/save',
@@ -1125,9 +1138,9 @@ HTML
             'Recent'      => $this->__('Recent'),
         ]);
 
-        $formData = $this->getHelper('Data')->jsonEncode($this->formData);
+        $formData = $this->dataHelper->jsonEncode($this->formData);
         $isEdit = $this->templateModel->getId() ? 'true' : 'false';
-        $allAttributes = $this->getHelper('Data')->jsonEncode($this->getHelper('Magento\Attribute')->getAll());
+        $allAttributes = $this->dataHelper->jsonEncode($this->magentoAttributeHelper->getAll());
 
         $this->js->addRequireJs(
             [
@@ -1174,7 +1187,7 @@ JS
             $this->templateModel->getData(),
             $this->templateModel->getChildObject()->getData()
         );
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
 
         if (!empty($data['key_features'])) {
             $data['key_features'] = $helper->jsonDecode($data['key_features'], true);
@@ -1199,7 +1212,7 @@ JS
         $name,
         $fieldTitle
     ) {
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
         for ($i = 0; $i < $fieldCount; $i++) {
             $button = $this->getMultiElementButton($name, $i);
 
@@ -1234,7 +1247,7 @@ JS
                     'css_class' => $name . '_tr no-margin-bottom',
                     'field_extra_attributes' => 'style="display: none;"',
                     'after_element_html' =>$selectAttrBlock->toHtml() . $button->toHtml(),
-                    'tooltip' => $this->__('Either enter the value manually or select a Magento Attribute with the 
+                    'tooltip' => $this->__('Either enter the value manually or select a Magento Attribute with the
                         relevant value and click <strong>Insert</strong>. Max. 50 characters allowed.')
                 ]
             );
@@ -1269,7 +1282,7 @@ HTML
         $fieldCount,
         $name
     ) {
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
         for ($i = 0; $i < $fieldCount; $i++) {
             $value = '';
             if (!empty($this->formData[$name][$i]['name'])) {
@@ -1313,7 +1326,9 @@ HTML
             $valueBlock->setId($name . '_value_' . $i);
             $valueBlock->setForm($fieldSet->getForm());
 
-            $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
+            $button = $this->getLayout()
+                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
+                           ->addData([
                 'label' => $this->__('Insert'),
                 'destination_id' => $name . '_value_' . $i,
                 'magento_attributes' => $this->getClearAttributesByInputTypesOptions(),
@@ -1376,7 +1391,8 @@ HTML
 
     private function getMultiElementButton($type, $index)
     {
-        return $this->createBlock('Magento_Button_MagentoAttribute')->addData([
+        return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
+                                 ->addData([
             'label' => $this->__('Insert'),
             'destination_id' => $type . '_' . $index,
             'on_click_callback' => "WalmartTemplateDescriptionObj.multi_element_keyup
@@ -1420,12 +1436,12 @@ HTML
     public function getForceAddedAttributeOption($attributeCode, $availableValues, $value = null)
     {
         if (empty($attributeCode) ||
-            $this->getHelper('Magento\Attribute')->isExistInAttributesArray($attributeCode, $availableValues)) {
+            $this->magentoAttributeHelper->isExistInAttributesArray($attributeCode, $availableValues)) {
             return '';
         }
 
-        $attributeLabel = $this->getHelper('Data')
-                               ->escapeHtml($this->getHelper('Magento\Attribute')->getAttributeLabel($attributeCode));
+        $attributeLabel = $this->dataHelper
+                               ->escapeHtml($this->magentoAttributeHelper->getAttributeLabel($attributeCode));
 
         $result = ['value' => $value, 'label' => $attributeLabel];
 
@@ -1440,7 +1456,7 @@ HTML
     public function getClearAttributesByInputTypesOptions()
     {
         $optionsResult = [];
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
 
         foreach ($this->allAttributesByInputTypes['text_select'] as $attribute) {
             $optionsResult[] = [
@@ -1459,7 +1475,7 @@ HTML
         }
 
         $optionsResult = [];
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
 
         foreach ($this->allAttributesByInputTypes[$attributeType] as $attribute) {
             $tmpOption = [

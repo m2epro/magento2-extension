@@ -31,9 +31,14 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Settings
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs $tabsBlock */
-        $tabsBlock = $this->createBlock('Walmart_Settings_Tabs', '', ['data' => [
-            'active_tab' => $activeTab
-        ]]);
+        $tabsBlock = $this->getLayout()
+                          ->createBlock(
+                              \Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs::class,
+                              '',
+                              ['data' => [
+                              'active_tab' => $activeTab
+                              ]]
+                          );
 
         if ($this->isAjax()) {
             $this->setAjaxContent(
@@ -44,7 +49,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Settings
         }
 
         $this->addLeft($tabsBlock);
-        $this->addContent($this->createBlock('Walmart\Settings'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Settings::class));
 
         $this->setPageHelpLink('x/jf1IB');
 

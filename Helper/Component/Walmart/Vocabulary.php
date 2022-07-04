@@ -11,20 +11,41 @@ namespace Ess\M2ePro\Helper\Component\Walmart;
 class Vocabulary extends \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary
 {
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
-    protected $walmartParentFactory;
+    private $walmartParentFactory;
+    /** @var \Ess\M2ePro\Model\Factory */
+    private $modelFactory;
 
+    /**
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartParentFactory
+     * @param \Ess\M2ePro\Model\Factory $modelFactory
+     * @param \Ess\M2ePro\Helper\Module $moduleHelper
+     * @param \Ess\M2ePro\Helper\Module\Exception $exceptionHelper
+     * @param \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCacheHelper
+     * @param \Ess\M2ePro\Model\Config\Manager $config
+     * @param \Ess\M2ePro\Model\Registry\Manager $registry
+     */
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartParentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Helper\Module $moduleHelper,
+        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
+        \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCacheHelper,
+        \Ess\M2ePro\Model\Config\Manager $config,
+        \Ess\M2ePro\Model\Registry\Manager $registry
     ) {
         $this->walmartParentFactory = $walmartParentFactory;
-        parent::__construct($modelFactory, $activeRecordFactory, $helperFactory, $context);
+        parent::__construct(
+            $modelFactory,
+            $moduleHelper,
+            $exceptionHelper,
+            $permanentCacheHelper,
+            $config,
+            $registry
+        );
+        $this->modelFactory = $modelFactory;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function addAttribute($productAttribute, $channelAttribute)
     {
@@ -80,7 +101,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary
 
         $collection->addFieldToFilter(
             'additional_data',
-            ['regexp' => '"variation_channel_attributes":.*"'.$channelAttribute.'"']
+            ['regexp' => '"variation_channel_attributes":.*"' . $channelAttribute . '"']
         );
 
         return $collection->getItems();
@@ -93,11 +114,12 @@ class Vocabulary extends \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary
         $collection->addFieldToFilter('variation_parent_id', ['notnull' => true]);
 
         $collection->addFieldToFilter('additional_data', [
-            'regexp'=> '"variation_channel_options":.*"'.$channelAttribute.'":"'.$channelOption.'"}']);
+            'regexp' => '"variation_channel_options":.*"' . $channelAttribute . '":"' . $channelOption . '"}',
+        ]);
 
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns([
-            'second_table.variation_parent_id'
+            'second_table.variation_parent_id',
         ]);
 
         $parentIds = $collection->getColumnValues('variation_parent_id');
@@ -112,6 +134,4 @@ class Vocabulary extends \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary
 
         return $collection->getItems();
     }
-
-    //########################################
 }

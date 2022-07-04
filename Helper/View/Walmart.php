@@ -8,73 +8,79 @@
 
 namespace Ess\M2ePro\Helper\View;
 
-/**
- * Class \Ess\M2ePro\Helper\View\Walmart
- */
-class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
+class Walmart
 {
-    const NICK  = 'walmart';
+    public const NICK = 'walmart';
 
-    const WIZARD_INSTALLATION_NICK = 'installationWalmart';
-    const MENU_ROOT_NODE_NICK = 'Ess_M2ePro::walmart';
+    public const WIZARD_INSTALLATION_NICK = 'installationWalmart';
+    public const MENU_ROOT_NODE_NICK = 'Ess_M2ePro::walmart';
 
-    protected $walmartFactory;
-    protected $urlBuilder;
-    protected $activeRecordFactory;
-    protected $authSession;
-
-    //########################################
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
+    private $walmartFactory;
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translation;
+    /** @var \Ess\M2ePro\Helper\Module\Wizard */
+    private $wizard;
+    /** @var \Ess\M2ePro\Helper\Data\Cache\Runtime */
+    private $runtimeCache;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
-        \Magento\Backend\Model\UrlInterface $urlBuilder,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Magento\Backend\Model\Auth\Session $authSession,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Helper\Module\Translation $translation,
+        \Ess\M2ePro\Helper\Module\Wizard $wizard,
+        \Ess\M2ePro\Helper\Data\Cache\Runtime $runtimeCache
     ) {
         $this->walmartFactory = $walmartFactory;
-        $this->urlBuilder = $urlBuilder;
-        $this->activeRecordFactory = $activeRecordFactory;
-        $this->authSession = $authSession;
-        parent::__construct($helperFactory, $context);
+        $this->translation = $translation;
+        $this->wizard = $wizard;
+        $this->runtimeCache = $runtimeCache;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getTitle()
+    /**
+     * @return string
+     */
+    public function getTitle(): string
     {
-        return $this->getHelper('Module\Translation')->__('Walmart Integration');
+        return $this->translation->__('Walmart Integration');
     }
 
-    //########################################
-
-    public function getMenuRootNodeLabel()
+    /**
+     * @return string
+     */
+    public function getMenuRootNodeLabel(): string
     {
         return $this->getTitle();
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getWizardInstallationNick()
+    /**
+     * @return string
+     */
+    public function getWizardInstallationNick(): string
     {
         return self::WIZARD_INSTALLATION_NICK;
     }
 
-    public function isInstallationWizardFinished()
+    /**
+     * @return bool
+     */
+    public function isInstallationWizardFinished(): bool
     {
-        return $this->getHelper('Module\Wizard')->isFinished(
+        return $this->wizard->isFinished(
             $this->getWizardInstallationNick()
         );
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function isResetFilterShouldBeShown($key, $id)
     {
         $sessionKey = "is_reset_filter_should_be_shown_{$key}_" . (int)$id;
 
-        $sessionCache = $this->getHelper('Data_Cache_Runtime');
+        $sessionCache = $this->runtimeCache;
         if ($sessionCache->getValue($sessionKey) !== null) {
             return $sessionCache->getValue($sessionKey);
         }
@@ -82,11 +88,11 @@ class Walmart extends \Ess\M2ePro\Helper\AbstractHelper
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
         $collection->addFieldToFilter($key, $id)
-            ->addFieldToFilter('status', \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED)
-            ->addFieldToFilter('is_online_price_invalid', 0);
+                   ->addFieldToFilter('status', \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED)
+                   ->addFieldToFilter('is_online_price_invalid', 0);
 
-        return $sessionCache->setValue($sessionKey, (bool)$collection->getSize());
+        $sessionCache->setValue($sessionKey, (bool)$collection->getSize());
+
+        return (bool)$collection->getSize();
     }
-
-    //########################################
 }

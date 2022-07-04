@@ -15,10 +15,10 @@ use Ess\M2ePro\Model\AbstractModel;
  */
 class PaymentTransaction extends AbstractModel
 {
-    /** @var $magentoOrder \Magento\Sales\Model\Order */
+    /** @var \Magento\Sales\Model\Order $magentoOrder */
     protected $magentoOrder = null;
 
-    /** @var $transaction \Magento\Sales\Model\Order\Payment\Transaction */
+    /** @var \Magento\Sales\Model\Order\Payment\Transaction $transaction */
     protected $transaction = null;
 
     //########################################

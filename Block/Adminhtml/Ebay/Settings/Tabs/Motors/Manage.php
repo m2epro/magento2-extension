@@ -37,7 +37,7 @@ class Manage extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $fieldset = $form->addFieldset('general', []);
 
-        $clearButton = $this->createBlock('Magento\Button')->addData([
+        $clearButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->addData([
             'label' => $this->__('Clear'),
             'class' => 'action-primary',
             'onclick' => 'EbaySettingsMotorsObj.clearAddedMotorsRecords()',
@@ -56,7 +56,7 @@ HTML
             ]
         );
 
-        $importButton = $this->createBlock('Magento\Button')->addData([
+        $importButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->addData([
             'label' => $this->__('Import'),
             'class' => 'action-primary',
             'onclick' => 'EbaySettingsMotorsObj.importMotorsRecords()',
@@ -100,7 +100,7 @@ HTML
 CSS
         );
 
-        $helpBlock = $this->createBlock('HelpBlock');
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class);
         $helpBlock->setData([
             'content' => $this->__(<<<HTML
     In this Section you can <strong>Add/Update</strong> Custom Compatible Vehicles information using prepared file.

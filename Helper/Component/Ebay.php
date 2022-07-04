@@ -8,111 +8,158 @@
 
 namespace Ess\M2ePro\Helper\Component;
 
-use \Ess\M2ePro\Model\Listing\Product as ListingProduct;
+use Ess\M2ePro\Model\Listing\Product as ListingProduct;
 
-class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
+class Ebay
 {
-    const NICK = 'ebay';
+    public const NICK = 'ebay';
 
-    const MARKETPLACE_SYNCHRONIZATION_LOCK_ITEM_NICK = 'ebay_marketplace_synchronization';
+    public const MARKETPLACE_SYNCHRONIZATION_LOCK_ITEM_NICK = 'ebay_marketplace_synchronization';
 
-    const MARKETPLACE_US     = 1;
-    const MARKETPLACE_CA     = 2;
-    const MARKETPLACE_UK     = 3;
-    const MARKETPLACE_AU     = 4;
-    const MARKETPLACE_BE_FR  = 6;
-    const MARKETPLACE_FR     = 7;
-    const MARKETPLACE_DE     = 8;
-    const MARKETPLACE_MOTORS = 9;
-    const MARKETPLACE_IT     = 10;
-    const MARKETPLACE_BE_NL  = 11;
-    const MARKETPLACE_ES     = 13;
+    public const MARKETPLACE_US = 1;
+    public const MARKETPLACE_CA = 2;
+    public const MARKETPLACE_UK = 3;
+    public const MARKETPLACE_AU = 4;
+    public const MARKETPLACE_BE_FR = 6;
+    public const MARKETPLACE_FR = 7;
+    public const MARKETPLACE_DE = 8;
+    public const MARKETPLACE_MOTORS = 9;
+    public const MARKETPLACE_IT = 10;
+    public const MARKETPLACE_BE_NL = 11;
+    public const MARKETPLACE_ES = 13;
 
-    const LISTING_DURATION_GTC = 100;
-    const MAX_LENGTH_FOR_OPTION_VALUE = 50;
-    const VARIATION_SKU_MAX_LENGTH = 80;
-    const ITEM_SKU_MAX_LENGTH = 50;
+    public const LISTING_DURATION_GTC = 100;
+    public const MAX_LENGTH_FOR_OPTION_VALUE = 50;
+    public const VARIATION_SKU_MAX_LENGTH = 80;
+    public const ITEM_SKU_MAX_LENGTH = 50;
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     private $ebayFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     private $activeRecordFactory;
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Configuration */
     private $componentEbayConfiguration;
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $moduleTranslation;
+    /** @var \Ess\M2ePro\Model\Config\Manager */
+    private $config;
+    /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
+    private $cachePermanent;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
+    /**
+     * @param \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory
+     * @param \Ess\M2ePro\Helper\Module\Translation $moduleTranslation
+     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
+     * @param \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent
+     * @param \Ess\M2ePro\Model\Config\Manager $config
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     */
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Helper\Module\Translation $moduleTranslation,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
+        \Ess\M2ePro\Model\Config\Manager $config,
+        \Ess\M2ePro\Helper\Data $dataHelper
     ) {
-        parent::__construct($helperFactory, $context);
-
-        $this->ebayFactory                = $ebayFactory;
-        $this->activeRecordFactory        = $activeRecordFactory;
+        $this->ebayFactory = $ebayFactory;
+        $this->activeRecordFactory = $activeRecordFactory;
         $this->componentEbayConfiguration = $componentEbayConfiguration;
+        $this->moduleTranslation = $moduleTranslation;
+        $this->config = $config;
+        $this->cachePermanent = $cachePermanent;
+        $this->dataHelper = $dataHelper;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getTitle()
+    /**
+     * @return string
+     */
+    public function getTitle(): string
     {
-        return $this->getHelper('Module\Translation')->__('eBay');
+        return $this->moduleTranslation->__('eBay');
     }
 
-    public function getChannelTitle()
+    /**
+     * @return string
+     */
+    public function getChannelTitle(): string
     {
-        return $this->getHelper('Module\Translation')->__('eBay');
+        return $this->moduleTranslation->__('eBay');
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getHumanTitleByListingProductStatus($status)
+    /**
+     * @param string $status
+     *
+     * @return string|null
+     */
+    public function getHumanTitleByListingProductStatus($status): ?string
     {
         $statuses = [
-            ListingProduct::STATUS_NOT_LISTED => $this->getHelper('Module\Translation')->__('Not Listed'),
-            ListingProduct::STATUS_LISTED => $this->getHelper('Module\Translation')->__('Listed'),
-            ListingProduct::STATUS_HIDDEN => $this->getHelper('Module\Translation')->__('Listed (Hidden)'),
-            ListingProduct::STATUS_SOLD => $this->getHelper('Module\Translation')->__('Sold'),
-            ListingProduct::STATUS_STOPPED => $this->getHelper('Module\Translation')->__('Stopped'),
-            ListingProduct::STATUS_FINISHED => $this->getHelper('Module\Translation')->__('Finished'),
-            ListingProduct::STATUS_BLOCKED => $this->getHelper('Module\Translation')->__('Pending')
+            ListingProduct::STATUS_NOT_LISTED => $this->moduleTranslation->__('Not Listed'),
+            ListingProduct::STATUS_LISTED     => $this->moduleTranslation->__('Listed'),
+            ListingProduct::STATUS_HIDDEN     => $this->moduleTranslation->__('Listed (Hidden)'),
+            ListingProduct::STATUS_SOLD       => $this->moduleTranslation->__('Sold'),
+            ListingProduct::STATUS_STOPPED    => $this->moduleTranslation->__('Stopped'),
+            ListingProduct::STATUS_FINISHED   => $this->moduleTranslation->__('Finished'),
+            ListingProduct::STATUS_BLOCKED    => $this->moduleTranslation->__('Pending'),
         ];
 
-        if (!isset($statuses[$status])) {
-            return null;
-        }
-
-        return $statuses[$status];
+        return $statuses[$status] ?? null;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function isEnabled()
+    /**
+     * @return bool
+     */
+    public function isEnabled(): bool
     {
-        return (bool)$this->getHelper('Module')->getConfig()->getGroupValue('/component/' . self::NICK . '/', 'mode');
+        return (bool)$this->config->getGroupValue('/component/' . self::NICK . '/', 'mode');
     }
 
-    //########################################
+    // ----------------------------------------
 
+    /**
+     * @param string $ebayItemId
+     * @param string $accountMode
+     * @param int $marketplaceId
+     *
+     * @return string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function getItemUrl(
         $ebayItemId,
         $accountMode = \Ess\M2ePro\Model\Ebay\Account::MODE_PRODUCTION,
         $marketplaceId = null
-    ) {
+    ): string {
         $marketplaceId = (int)$marketplaceId;
-        if ($marketplaceId <= 0 || $marketplaceId == self::MARKETPLACE_MOTORS) {
+        if ($marketplaceId <= 0 || $marketplaceId === self::MARKETPLACE_MOTORS) {
             $marketplaceId = self::MARKETPLACE_US;
         }
 
         /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
         $marketplace = $this->activeRecordFactory->getCachedObjectLoaded('Marketplace', $marketplaceId);
 
-        return $accountMode == \Ess\M2ePro\Model\Ebay\Account::MODE_SANDBOX
+        return $accountMode === \Ess\M2ePro\Model\Ebay\Account::MODE_SANDBOX
             ? $this->getSandboxItemUrl($ebayItemId, $marketplace)
             : 'http://www.' . $marketplace->getUrl() . '/itm/' . (double)$ebayItemId;
     }
 
-    protected function getSandboxItemUrl($ebayItemId, \Ess\M2ePro\Model\Marketplace $marketplace)
+    /**
+     * @param string $ebayItemId
+     * @param \Ess\M2ePro\Model\Marketplace $marketplace
+     *
+     * @return string
+     */
+    private function getSandboxItemUrl($ebayItemId, \Ess\M2ePro\Model\Marketplace $marketplace): string
     {
         $domainParts = explode('.', $marketplace->getUrl());
 
@@ -131,38 +178,59 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
         return 'https://www.' . $subDomain . 'sandbox.ebay.com/itm/' . (double)$ebayItemId;
     }
 
-    public function getMemberUrl($ebayMemberId, $accountMode = \Ess\M2ePro\Model\Ebay\Account::MODE_PRODUCTION)
+    /**
+     * @param string $ebayMemberId
+     * @param string $accountMode
+     *
+     * @return string
+     */
+    public function getMemberUrl($ebayMemberId, $accountMode = \Ess\M2ePro\Model\Ebay\Account::MODE_PRODUCTION): string
     {
         $domain = 'ebay.com';
-        if ($accountMode == \Ess\M2ePro\Model\Ebay\Account::MODE_SANDBOX) {
+        if ($accountMode === \Ess\M2ePro\Model\Ebay\Account::MODE_SANDBOX) {
             $domain = 'sandbox.' . $domain;
         }
-        return 'http://myworld.' . $domain . '/' . (string)$ebayMemberId;
+
+        return 'http://myworld.' . $domain . '/' . $ebayMemberId;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function isShowTaxCategory()
+    /**
+     * @return bool
+     */
+    public function isShowTaxCategory(): bool
     {
         return (bool)$this->componentEbayConfiguration->getViewTemplateSellingFormatShowTaxCategory();
     }
 
-    public function getAvailableDurations()
+    /**
+     * @return array
+     */
+    public function getAvailableDurations(): array
     {
         return [
-            '1' => $this->getHelper('Module\Translation')->__('1 day'),
-            '3' => $this->getHelper('Module\Translation')->__('3 days'),
-            '5' => $this->getHelper('Module\Translation')->__('5 days'),
-            '7' => $this->getHelper('Module\Translation')->__('7 days'),
-            '10' => $this->getHelper('Module\Translation')->__('10 days'),
-            '30' => $this->getHelper('Module\Translation')->__('30 days'),
-            self::LISTING_DURATION_GTC => $this->getHelper('Module\Translation')->__('Good Till Cancelled'),
+            '1'                        => $this->moduleTranslation->__('1 day'),
+            '3'                        => $this->moduleTranslation->__('3 days'),
+            '5'                        => $this->moduleTranslation->__('5 days'),
+            '7'                        => $this->moduleTranslation->__('7 days'),
+            '10'                       => $this->moduleTranslation->__('10 days'),
+            '30'                       => $this->moduleTranslation->__('30 days'),
+            self::LISTING_DURATION_GTC => $this->moduleTranslation->__('Good Till Cancelled'),
         ];
     }
 
+    /**
+     * @param string $ebayItem
+     * @param int $accountId
+     *
+     * @return \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel|null
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
     public function getListingProductByEbayItem($ebayItem, $accountId)
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
 
         $ebayItem = $collection->getConnection()->quoteInto('?', $ebayItem);
@@ -175,16 +243,19 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
             []
         );
 
-        if ($collection->getSize() == 0) {
+        if ($collection->getSize() === 0) {
             return null;
         }
 
         return $collection->getFirstItem();
     }
 
-    // ---------------------------------------
+    // ----------------------------------------
 
-    public function getCurrencies()
+    /**
+     * @return string[]
+     */
+    public function getCurrencies(): array
     {
         return [
             'AUD' => 'Australian Dollar',
@@ -205,17 +276,26 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
         ];
     }
 
-    public function getCarriers()
+    /**
+     * @return string[]
+     */
+    public function getCarriers(): array
     {
         return [
-            'dhl' => 'DHL',
+            'dhl'   => 'DHL',
             'fedex' => 'FedEx',
-            'ups' => 'UPS',
-            'usps' => 'USPS'
+            'ups'   => 'UPS',
+            'usps'  => 'USPS',
         ];
     }
 
-    public function getCarrierTitle($carrierCode, $title = null)
+    /**
+     * @param string $carrierCode
+     * @param string|null $title
+     *
+     * @return string
+     */
+    public function getCarrierTitle($carrierCode, $title = null): string
     {
         $carriers = $this->getCarriers();
         $carrierCode = strtolower($carrierCode);
@@ -224,51 +304,66 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
             return $carriers[$carrierCode];
         }
 
-        if ($title == '' || filter_var($title, FILTER_VALIDATE_URL) !== false) {
+        if ($title === '' || filter_var($title, FILTER_VALIDATE_URL) !== false) {
             return 'Other';
         }
 
         return $title;
     }
 
-    // ---------------------------------------
+    // ----------------------------------------
 
-    public function prepareOptionsForVariations(array $options)
+    /**
+     * @param array $options
+     *
+     * @return array
+     */
+    public function prepareOptionsForVariations(array $options): array
     {
         $set = [];
         foreach ($options['set'] as $optionTitle => $optionsSet) {
             foreach ($optionsSet as $singleOptionKey => $singleOption) {
-                $set[trim($optionTitle)][$singleOptionKey] = trim($this->getHelper('Data')->reduceWordsInString(
-                    $singleOption,
-                    self::MAX_LENGTH_FOR_OPTION_VALUE
-                ));
+                $set[trim($optionTitle)][$singleOptionKey] = trim(
+                    $this->dataHelper->reduceWordsInString(
+                        $singleOption,
+                        self::MAX_LENGTH_FOR_OPTION_VALUE
+                    )
+                );
             }
         }
         $options['set'] = $set;
 
         foreach ($options['variations'] as &$variation) {
             foreach ($variation as &$singleOption) {
-                $singleOption['option'] = trim($this->getHelper('Data')->reduceWordsInString(
-                    $singleOption['option'],
-                    self::MAX_LENGTH_FOR_OPTION_VALUE
-                ));
+                $singleOption['option'] = trim(
+                    $this->dataHelper->reduceWordsInString(
+                        $singleOption['option'],
+                        self::MAX_LENGTH_FOR_OPTION_VALUE
+                    )
+                );
                 $singleOption['attribute'] = trim($singleOption['attribute']);
             }
         }
-        unset($singleOption);
-        unset($variation);
+        unset($singleOption, $variation);
 
         return $options;
     }
 
-    public function prepareOptionsForOrders(array $options)
+    /**
+     * @param array $options
+     *
+     * @return array
+     */
+    public function prepareOptionsForOrders(array $options): array
     {
         foreach ($options as &$singleOption) {
             if ($singleOption instanceof \Magento\Catalog\Model\Product) {
-                $reducedName = trim($this->getHelper('Data')->reduceWordsInString(
-                    $singleOption->getName(),
-                    self::MAX_LENGTH_FOR_OPTION_VALUE
-                ));
+                $reducedName = trim(
+                    $this->dataHelper->reduceWordsInString(
+                        $singleOption->getName(),
+                        self::MAX_LENGTH_FOR_OPTION_VALUE
+                    )
+                );
                 $singleOption->setData('name', $reducedName);
 
                 continue;
@@ -276,10 +371,12 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
             foreach ($singleOption['values'] as &$singleOptionValue) {
                 foreach ($singleOptionValue['labels'] as &$singleOptionLabel) {
-                    $singleOptionLabel = trim($this->getHelper('Data')->reduceWordsInString(
-                        $singleOptionLabel,
-                        self::MAX_LENGTH_FOR_OPTION_VALUE
-                    ));
+                    $singleOptionLabel = trim(
+                        $this->dataHelper->reduceWordsInString(
+                            $singleOptionLabel,
+                            self::MAX_LENGTH_FOR_OPTION_VALUE
+                        )
+                    );
                 }
             }
         }
@@ -294,41 +391,45 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
         return $options;
     }
 
-    //########################################
-
-    public function clearCache()
-    {
-        $this->getHelper('Data_Cache_Permanent')->removeTagsValues(self::NICK);
-    }
-
-    //########################################
+    // ----------------------------------------
 
     /**
-     * @param $time
+     * @return void
+     */
+    public function clearCache(): void
+    {
+        $this->cachePermanent->removeTagValues(self::NICK);
+    }
+
+    // ----------------------------------------
+
+    /**
+     * @param \DateTime|int|string $time
+     *
      * @return string
      */
-    public function timeToString($time)
+    public function timeToString($time): string
     {
-        return (string)$this->getEbayDateTimeObject($time)->format('Y-m-d H:i:s');
+        return $this->getEbayDateTimeObject($time)->format('Y-m-d H:i:s');
     }
 
     /**
-     * @param $time
+     * @param \DateTime|int|string $time
+     *
      * @return int
      */
-    public function timeToTimeStamp($time)
+    public function timeToTimeStamp($time): int
     {
         return (int)$this->getEbayDateTimeObject($time)->format('U');
     }
 
-    // -----------------------------------------
-
     /**
-     * @param $time
-     * @return \DateTime|null
+     * @param \DateTime|int|string $time
+     *
+     * @return \DateTime
      * @throws \Ess\M2ePro\Model\Exception
      */
-    private function getEbayDateTimeObject($time)
+    private function getEbayDateTimeObject($time): \DateTime
     {
         $dateTime = null;
 
@@ -346,6 +447,4 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
         return $dateTime;
     }
-
-    //########################################
 }

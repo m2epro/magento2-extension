@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add\AssignByMagentoCategorySaveCategory
- */
 class AssignByMagentoCategorySaveCategory extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
-    //########################################
-
     public function execute()
     {
         $templateId = $this->getRequest()->getParam('template_id');
@@ -37,6 +32,4 @@ class AssignByMagentoCategorySaveCategory extends \Ess\M2ePro\Controller\Adminht
         $this->setJsonContent(['result' => true]);
         return $this->getResult();
     }
-
-    //########################################
 }

@@ -21,13 +21,14 @@ class Index extends Settings
     {
         // Remove when Mageto fix Horizontal Tabs bug
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $block = $this->createBlock('Amazon\Synchronization')->toHtml();
+            $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Synchronization::class)
+                                       ->toHtml();
             $this->setAjaxContent($block);
 
             return $this->getResult();
         }
 
-        $block = $this->createBlock('Synchronization\Tabs');
+        $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Synchronization\Tabs::class);
         $block->setData('active_tab', \Ess\M2ePro\Block\Adminhtml\Amazon\Synchronization\Tabs::TAB_ID_GENERAL);
 
         $this->addContent($block);

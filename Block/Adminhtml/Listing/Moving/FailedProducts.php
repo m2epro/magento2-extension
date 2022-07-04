@@ -23,8 +23,8 @@ class FailedProducts extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContain
 
         $this->setChild(
             'failedProducts_grid',
-            $this->createBlock(
-                'Listing_Moving_FailedProducts_Grid',
+            $this->getLayout()->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\Listing\Moving\FailedProducts\Grid::class,
                 '',
                 ['data' => ['grid_url' => $this->getData('grid_url')]]
             )

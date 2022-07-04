@@ -8,79 +8,95 @@
 
 namespace Ess\M2ePro\Helper\Data\Cache;
 
-use Ess\M2ePro\Model\Exception;
-
-class Permanent extends \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
+class Permanent implements \Ess\M2ePro\Helper\Data\Cache\BaseInterface
 {
     /** @var \Magento\Framework\App\Cache */
     protected $cache;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
+    /**
+     * @param \Magento\Framework\App\CacheInterface $cache
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     */
     public function __construct(
         \Magento\Framework\App\CacheInterface $cache,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Helper\Data $dataHelper
     ) {
-        parent::__construct($helperFactory, $context);
-
         $this->cache = $cache;
+        $this->dataHelper = $dataHelper;
     }
 
-    //########################################
+    // ----------------------------------------
 
+    /**
+     * @inheritDoc
+     */
     public function getValue($key)
     {
-        $cacheKey = \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$key;
+        $cacheKey = \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER . '_' . $key;
         $value = $this->cache->load($cacheKey);
-        return $value === false ? null : $this->getHelper('Data')->unserialize($value);
+
+        return $value === false ? null : $this->dataHelper->unserialize($value);
     }
 
-    public function setValue($key, $value, array $tags = [], $lifeTime = null)
+    /**
+     * @inheritDoc
+     */
+    public function setValue($key, $value, array $tags = [], $lifeTime = null): void
     {
         if ($value === null) {
-            throw new Exception('Can\'t store NULL value');
+            throw new \Ess\M2ePro\Model\Exception('Can\'t store NULL value');
         }
 
         if (is_object($value)) {
-            throw new Exception('Can\'t store a php object');
+            throw new \Ess\M2ePro\Model\Exception('Can\'t store a php object');
         }
 
         if ($lifeTime === null || (int)$lifeTime <= 0) {
-            $lifeTime = 60*60*24;
+            $lifeTime = 60 * 60 * 24;
         }
 
-        $cacheKey = \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$key;
+        $cacheKey = \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER . '_' . $key;
 
-        $preparedTags = [\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_main'];
+        $preparedTags = [\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER . '_main'];
         foreach ($tags as $tag) {
-            $preparedTags[] = \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$tag;
+            $preparedTags[] = \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER . '_' . $tag;
         }
 
         $this->cache->save(
-            $this->getHelper('Data')->serialize($value),
+            $this->dataHelper->serialize($value),
             $cacheKey,
             $preparedTags,
             (int)$lifeTime
         );
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function removeValue($key)
+    /**
+     * @inheritDoc
+     */
+    public function removeValue($key): void
     {
-        $cacheKey = \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$key;
+        $cacheKey = \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER . '_' . $key;
         $this->cache->remove($cacheKey);
     }
 
-    public function removeTagValues($tag)
+    /**
+     * @inheritDoc
+     */
+    public function removeTagValues($tag): void
     {
-        $tags = [\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$tag];
+        $tags = [\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER . '_' . $tag];
         $this->cache->clean($tags);
     }
 
-    public function removeAllValues()
+    /**
+     * @inheritDoc
+     */
+    public function removeAllValues(): void
     {
         $this->removeTagValues('main');
     }
-
-    //########################################
 }

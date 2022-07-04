@@ -18,7 +18,7 @@ class Index extends Order
     public function execute()
     {
         $this->init();
-        $this->addContent($this->createBlock('Ebay\Order'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Order::class));
         $this->setPageHelpLink('x/xv4UB');
 
         return $this->getResultPage();

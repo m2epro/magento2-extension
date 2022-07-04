@@ -12,14 +12,20 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Ebay\Account;
 use Magento\Framework\Message\MessageInterface;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Order
- */
 class Order extends AbstractForm
 {
     protected $orderConfig;
     protected $customerGroup;
     protected $taxClass;
+
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    /** @var \Ess\M2ePro\Helper\Magento\Store\Website */
+    private $storeWebsite;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Tax\Model\ClassModel $taxClass,
@@ -28,11 +34,17 @@ class Order extends AbstractForm
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsite,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->orderConfig = $orderConfig;
         $this->customerGroup = $customerGroup;
         $this->taxClass = $taxClass;
+        $this->supportHelper = $supportHelper;
+        $this->storeWebsite = $storeWebsite;
+        $this->dataHelper = $dataHelper;
 
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -41,7 +53,7 @@ class Order extends AbstractForm
     {
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
 
-        $websites = $this->getHelper('Magento_Store_Website')->getWebsites(true);
+        $websites = $this->storeWebsite->getWebsites(true);
 
         // ---------------------------------------
 
@@ -61,7 +73,7 @@ class Order extends AbstractForm
 
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
         $formData['magento_orders_settings'] = !empty($formData['magento_orders_settings'])
-            ? $this->getHelper('Data')->jsonDecode($formData['magento_orders_settings']) : [];
+            ? $this->dataHelper->jsonDecode($formData['magento_orders_settings']) : [];
 
         $defaults = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
 
@@ -85,7 +97,7 @@ for your Magento Orders as well as specify the automatic creation of invoices an
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/Vv8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/Vv8UB')
                 )
             ]
         );
@@ -214,7 +226,7 @@ HTML
                         Please note that the Create Product and Order option is not meant
                         for the creation of full-fledged products in your Magento catalog.
                         <a href="%url%" target="_blank">See why</a>',
-                        $this->getHelper('Module\Support')->getDocumentationArticleUrl('spaces/m2/pages/68484950/Order+Import#Product-Is-Listed-by-Any-Other-Software')
+                        $this->supportHelper->getDocumentationArticleUrl('spaces/m2/pages/68484950/Order+Import#Product-Is-Listed-by-Any-Other-Software')
                     )
                     . '</span>'
             ]
@@ -583,7 +595,7 @@ HTML
                 'tooltip'      => $this->__(
                     'Enable to cancel or refund eBay orders and automatically update their statuses on the Channel.
                     Find more details <a href="%url%" target="_blank">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/kP-kB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/kP-kB')
                 )
             ]
         );

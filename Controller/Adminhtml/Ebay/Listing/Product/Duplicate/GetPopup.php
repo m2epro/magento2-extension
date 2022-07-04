@@ -29,7 +29,8 @@ class GetPopup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\ItemDuplicate $block */
-        $block = $this->createBlock('Ebay_Listing_View_Ebay_ItemDuplicate');
+        $block = $this->getLayout()
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\ItemDuplicate::class);
         $block->setListingProduct($listingProduct);
 
         $this->setJsonContent([

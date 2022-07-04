@@ -12,9 +12,16 @@ use Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty as OnlineQty;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     protected $magentoProductCollectionFactory;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
+
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
     /** @var \Ess\M2ePro\Helper\View\Ebay */
@@ -28,14 +35,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $backendHelper, $data);
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->ebayFactory = $ebayFactory;
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         $this->ebayViewHelper = $ebayViewHelper;
+        parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
 
     public function _construct()
@@ -65,7 +73,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         $listingData = $this->listing->getData();
 
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->setListingProductModeOn();
@@ -144,7 +152,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'     => 'number',
             'index'    => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
         ]);
 
         $this->addColumn('name', [
@@ -165,7 +173,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'index'          => 'item_id',
             'account_id'     => $this->listing->getAccountId(),
             'marketplace_id' => $this->listing->getMarketplaceId(),
-            'renderer'       => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ItemId'
+            'renderer'       => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ItemId::class
         ]);
 
         $this->addColumn('available_qty', [
@@ -176,7 +184,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'index'             => 'available_qty',
             'sortable'          => true,
             'filter_index'      => 'online_qty',
-            'renderer'          => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty',
+            'renderer'          => OnlineQty::class,
             'render_online_qty' => OnlineQty::ONLINE_AVAILABLE_QTY,
             'filter_condition_callback' => [$this, 'callbackFilterAvailableQty']
         ]);
@@ -187,7 +195,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'width'    => '50px',
             'type'     => 'number',
             'index'    => 'online_qty_sold',
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty'
+            'renderer' => OnlineQty::class
         ]);
 
         $dir = $this->getParam($this->getVarNameDir(), $this->_defaultDir);
@@ -206,7 +214,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'currency'     => $this->listing->getMarketplace()->getChildObject()->getCurrency(),
             'index'        => $priceSortField,
             'filter_index' => $priceSortField,
-            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\MinMaxPrice',
+            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\MinMaxPrice::class,
             'filter_condition_callback' => [$this, 'callbackFilterPrice']
         ]);
 
@@ -215,11 +223,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'align'       => 'right',
             'width'       => '150px',
             'type'        => 'datetime',
-            'filter'      => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+            'filter'      => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
             'format'      => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
             'index'       => 'end_date',
-            'renderer'    => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\DateTime'
+            'renderer'    => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\DateTime::class
         ]);
 
         $statusColumn = [
@@ -239,12 +247,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Pending')
             ],
             'showLogIcon' => true,
-            'renderer'    => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Status',
+            'renderer'    => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Status::class,
             'filter_condition_callback' => [$this, 'callbackFilterStatus']
         ];
 
         if ($this->ebayViewHelper->isDuplicatesFilterShouldBeShown($this->listing->getId())) {
-            $statusColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\Status';
+            $statusColumn['filter'] = \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\Status::class;
         }
         $this->addColumn('status', $statusColumn);
 
@@ -312,7 +320,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $onlineTitle = $row->getData('online_title');
         !empty($onlineTitle) && $title = $onlineTitle;
 
-        $title = $this->getHelper('Data')->escapeHtml($title);
+        $title = $this->dataHelper->escapeHtml($title);
 
         $valueHtml = '<span class="product-title-value">' . $title . '</span>';
 
@@ -329,12 +337,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $valueHtml .= '<br/>' .
             '<strong>' . $this->__('SKU') . ':</strong>&nbsp;' .
-            $this->getHelper('Data')->escapeHtml($sku);
+            $this->dataHelper->escapeHtml($sku);
 
         if ($category = $row->getData('online_main_category')) {
             $valueHtml .= '<br/><br/>' .
                 '<strong>' . $this->__('Category') . ':</strong>&nbsp;' .
-                $this->getHelper('Data')->escapeHtml($category);
+                $this->dataHelper->escapeHtml($category);
         }
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -344,7 +352,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             return $valueHtml;
         }
 
-        $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+        $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
 
         $productAttributes = isset($additionalData['variations_sets'])
             ? array_keys($additionalData['variations_sets']) : [];
@@ -354,7 +362,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $valueHtml .= '</div>';
 
         $linkContent = $this->__('Manage Variations');
-        $vpmt = $this->getHelper('Data')->escapeJs(
+        $vpmt = $this->dataHelper->escapeJs(
             $this->__('Manage Variations of "'. $title . '" ')
         );
         $itemId = $this->getData('item_id');
@@ -370,7 +378,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 <div style="float: left; margin: 0 0 0 7px">
 <a href="javascript:"
 onclick="EbayListingViewEbayGridObj.variationProductManageHandler.openPopUp(
-        {$listingProductId}, '{$this->getHelper('Data')->escapeHtml($vpmt)}'
+        {$listingProductId}, '{$this->dataHelper->escapeHtml($vpmt)}'
     )"
 title="{$linkTitle}">{$linkContent}</a>&nbsp;
 </div>
@@ -397,7 +405,7 @@ JS
     {
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED ||
             $row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN) {
-            $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+            $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
 
             if (empty($additionalData['ebay_item_fees']['listing_fee']['fee'])) {
                 $price = $this->modelFactory->getObject('Currency')->formatPrice(
@@ -410,7 +418,8 @@ JS
 HTML;
             }
 
-            $fee = $this->createBlock('Ebay_Listing_View_Ebay_Fee_Product');
+            $fee = $this->getLayout()
+                        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay\Fee\Product::class);
             $fee->setData('fees', $additionalData['ebay_item_fees']);
             $fee->setData('product_name', $row->getData('name'));
 
@@ -593,7 +602,7 @@ JS
         $productsIdsForList = empty($temp) ? '' : $temp;
 
         $gridId = $component . 'ListingViewGrid' . $this->listing['id'];
-        $ignoreListings = $this->getHelper('Data')->jsonEncode([$this->listing['id']]);
+        $ignoreListings = $this->dataHelper->jsonEncode([$this->listing['id']]);
 
         $this->jsUrl->addUrls([
             'runListProducts' => $this->getUrl('*/ebay_listing/runListProducts'),
@@ -604,7 +613,7 @@ JS
             'previewItems' => $this->getUrl('*/ebay_listing/previewItems'),
         ]);
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay_Listing_Product_Duplicate'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay_Listing_Product_Duplicate'));
 
         $this->jsUrl->add($this->getUrl('*/ebay_listing/getEstimatedFees'), 'ebay_listing/getEstimatedFees');
         $this->jsUrl->add(
@@ -626,7 +635,7 @@ JS
             $this->getUrl('*/ebay_log_listing_product/index', [
                 \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD =>
                     $this->listing['id'],
-                'back' => $this->getHelper('Data')->makeBackUrlParam(
+                'back' => $this->dataHelper->makeBackUrlParam(
                     '*/ebay_listing/view',
                     ['id' => $this->listing['id']]
                 )
@@ -635,7 +644,7 @@ JS
         );
         $this->jsUrl->add($this->getUrl('*/listing/getErrorsSummary'), 'getErrorsSummary');
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Listing\Moving'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Listing\Moving'));
         $this->jsUrl->add(
             $this->getUrl('*/ebay_listing_moving/moveToListingGrid'),
             'ebay_listing_moving/moveToListingGrid'
@@ -687,7 +696,7 @@ JS
             'Ebay Item Duplicate' => $this->__('eBay Item Duplicate')
         ]);
 
-        $showAutoAction = $this->getHelper('Data')->jsonEncode((bool)$this->getRequest()->getParam('auto_actions'));
+        $showAutoAction = $this->dataHelper->jsonEncode((bool)$this->getRequest()->getParam('auto_actions'));
 
         $this->js->add(
             <<<JS

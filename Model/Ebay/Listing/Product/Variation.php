@@ -11,17 +11,42 @@
  */
 namespace Ess\M2ePro\Model\Ebay\Listing\Product;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Variation
- */
 class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
-    //########################################
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\PriceCalculatorFactory */
+    private $priceCalculatorFactory;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Ebay\Listing\Product\PriceCalculatorFactory $priceCalculatorFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        $this->priceCalculatorFactory = $priceCalculatorFactory;
+
+        parent::__construct(
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
+    }
 
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Variation');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Variation::class);
     }
 
     //########################################
@@ -432,7 +457,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
         if ($this->getListingProduct()->getMagentoProduct()->isConfigurableType() ||
             $this->getListingProduct()->getMagentoProduct()->isGroupedType()) {
             foreach ($options as $option) {
-                /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+                /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
                 $sku = $option->getChildObject()->getSku();
                 break;
             }
@@ -440,7 +465,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
         // Bundle product
         } elseif ($this->getListingProduct()->getMagentoProduct()->isBundleType()) {
             foreach ($options as $option) {
-                /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+                /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
                 $sku != '' && $sku .= '-';
                 $sku .= $option->getChildObject()->getSku();
             }
@@ -448,7 +473,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
         // Simple with options product
         } elseif ($this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions()) {
             foreach ($options as $option) {
-                /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+                /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
                 $sku != '' && $sku .= '-';
                 $tempSku = $option->getChildObject()->getSku();
                 if ($tempSku == '') {
@@ -461,7 +486,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
             // Downloadable with separated links product
         } elseif ($this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()) {
 
-            /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
 
             $option = reset($options);
             $sku = $option->getMagentoProduct()->getSku().'-'
@@ -480,7 +505,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
      */
     public function getQty($magentoMode = false)
     {
-        /** @var $calculator \Ess\M2ePro\Model\Ebay\Listing\Product\QtyCalculator */
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\QtyCalculator $calculator */
         $calculator = $this->modelFactory->getObject('Ebay_Listing_Product_QtyCalculator');
         $calculator->setProduct($this->getListingProduct());
         $calculator->setIsMagentoMode($magentoMode);
@@ -502,10 +527,10 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
-        return $this->getCalculatedPrice(
+        return $this->getCalculatedPriceWithModifier(
             $src,
-            $vatPercent,
-            $this->getEbaySellingFormatTemplate()->getFixedPriceCoefficient()
+            $this->getEbaySellingFormatTemplate()->getFixedPriceModifier(),
+            $vatPercent
         );
     }
 
@@ -523,7 +548,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
-        return $this->getCalculatedPrice($src, $vatPercent);
+        return $this->getCalculatedPriceWithCoefficient($src, $vatPercent);
     }
 
     /**
@@ -538,15 +563,15 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
-        return $this->getCalculatedPrice($src, $vatPercent);
+        return $this->getCalculatedPriceWithCoefficient($src, $vatPercent);
     }
 
     // ---------------------------------------
 
-    private function getCalculatedPrice($src, $vatPercent = null, $coefficient = null)
+    private function getCalculatedPriceWithCoefficient($src, $vatPercent = null, $coefficient = null)
     {
         /** @var $calculator \Ess\M2ePro\Model\Ebay\Listing\Product\PriceCalculator */
-        $calculator = $this->modelFactory->getObject('Ebay_Listing_Product_PriceCalculator');
+        $calculator = $this->priceCalculatorFactory->create();
         $calculator->setSource($src)->setProduct($this->getListingProduct());
         $calculator->setVatPercent($vatPercent);
         $calculator->setCoefficient($coefficient);
@@ -555,7 +580,17 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
         return $calculator->getVariationValue($this->getParentObject());
     }
 
-    //########################################
+    private function getCalculatedPriceWithModifier($src, $modifier, $vatPercent = null)
+    {
+        /** @var $calculator \Ess\M2ePro\Model\Ebay\Listing\Product\PriceCalculator */
+        $calculator = $this->priceCalculatorFactory->create();
+        $calculator->setSource($src)->setProduct($this->getListingProduct());
+        $calculator->setModifier($modifier);
+        $calculator->setVatPercent($vatPercent);
+        $calculator->setPriceVariationMode($this->getEbaySellingFormatTemplate()->getPriceVariationMode());
+
+        return $calculator->getVariationValue($this->getParentObject());
+    }
 
     /**
      * @return bool
@@ -566,7 +601,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
 
         $options = $this->getOptions(true);
         foreach ($options as $option) {
-            /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
             $currentSpecifics[$option->getAttribute()] = $option->getOption();
         }
 

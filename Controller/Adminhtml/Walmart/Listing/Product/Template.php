@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template
- */
 abstract class Template extends Main
 {
-    //########################################
-
     protected function filterLockedProducts($productsIdsParam)
     {
         $connection = $this->resourceConnection->getConnection();
@@ -46,8 +41,6 @@ abstract class Template extends Main
         return $productsIds;
     }
 
-    //########################################
-
     protected function runProcessorForParents($productsIds)
     {
         $connection = $this->resourceConnection->getConnection();
@@ -66,6 +59,4 @@ abstract class Template extends Main
             $listingProduct->getChildObject()->getVariationManager()->getTypeModel()->getProcessor()->process();
         }
     }
-
-    //########################################
 }

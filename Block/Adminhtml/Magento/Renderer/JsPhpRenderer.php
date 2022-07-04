@@ -8,12 +8,20 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Magento\Renderer\JsPhpRenderer
- */
 class JsPhpRenderer extends AbstractRenderer
 {
     protected $jsPhp = [];
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper
+    ) {
+        parent::__construct($helperFactory);
+        $this->dataHelper = $dataHelper;
+    }
 
     public function addConstants($constants)
     {
@@ -27,7 +35,7 @@ class JsPhpRenderer extends AbstractRenderer
             return '';
         }
 
-        $constants = $this->helperFactory->getObject('Data')->jsonEncode($this->jsPhp);
+        $constants = $this->dataHelper->jsonEncode($this->jsPhp);
 
         return "M2ePro.php.add({$constants});";
     }

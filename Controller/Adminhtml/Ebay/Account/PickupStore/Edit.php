@@ -13,6 +13,26 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\PickupStore;
  */
 class Edit extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 {
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $helperDataSession;
+
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $helperDataGlobalData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $helperDataSession,
+        \Ess\M2ePro\Helper\Data\GlobalData $helperDataGlobalData,
+        \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update $storeCategoryUpdate,
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($storeCategoryUpdate, $componentEbayCategoryStore, $ebayFactory, $context);
+
+        $this->helperDataSession = $helperDataSession;
+        $this->helperDataGlobalData = $helperDataGlobalData;
+    }
+
     //########################################
 
     protected function getLayoutType()
@@ -41,13 +61,13 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
             return $this->_redirect('*/*/index');
         }
 
-        $formData = $this->getHelper('Data\Session')->getValue('pickup_store_form_data', true);
+        $formData = $this->helperDataSession->getValue('pickup_store_form_data', true);
 
         if (!empty($formData) && is_array($formData)) {
             $model->addData($formData);
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('temp_data', $model);
+        $this->helperDataGlobalData->setValue('temp_data', $model);
 
         $account = $this->ebayFactory->getObjectLoaded(
             'Account',
@@ -64,8 +84,14 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
             );
         }
 
-        $this->addLeft($this->createBlock('Ebay_Account_PickupStore_Edit_Tabs'));
-        $this->addContent($this->createBlock('Ebay_Account_PickupStore_Edit'));
+        $this->addLeft(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs::class)
+        );
+        $this->addContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit::class)
+        );
         return $this->getResult();
     }
 

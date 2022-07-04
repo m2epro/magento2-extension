@@ -121,7 +121,7 @@ class StatusResolver extends \Ess\M2ePro\Model\AbstractModel
 
     protected function setProductStatusSold()
     {
-        if ($this->listingProduct->isHidden() && $this->channelQty == $this->channelQtySold) {
+        if (!$this->listingProduct->isHidden() && $this->channelQty == $this->channelQtySold) {
             $this->productStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD;
             return true;
         }

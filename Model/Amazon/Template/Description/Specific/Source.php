@@ -14,12 +14,12 @@ namespace Ess\M2ePro\Model\Amazon\Template\Description\Specific;
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
-     * @var $magentoProduct \Ess\M2ePro\Model\Magento\Product
+     * @var \Ess\M2ePro\Model\Magento\Product $magentoProduct
      */
     private $magentoProduct = null;
 
     /**
-     * @var $descriptionSpecificTemplateModel \Ess\M2ePro\Model\Amazon\Template\Description\Specific
+     * @var \Ess\M2ePro\Model\Amazon\Template\Description\Specific $descriptionSpecificTemplateModel
      */
     private $descriptionSpecificTemplateModel = null;
 
@@ -77,7 +77,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $isFirst = true;
 
         foreach ($xpathParts as $part) {
-            list($tag,$index) = explode('-', $part);
+            [$tag,$index] = explode('-', $part);
 
             if (!$tag) {
                 continue;
@@ -140,7 +140,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $attributes = [];
 
         foreach ($templateObj->getAttributes() as $index => $attribute) {
-            list($attributeName) = array_keys($attribute);
+            [$attributeName] = array_keys($attribute);
 
             $attributeData = $attribute[$attributeName];
 

@@ -46,9 +46,8 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     protected function _toHtml()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs $tabsBlock */
-        $tabsBlock = $this->createBlock(
-            'Amazon_Template_Description_Category_Chooser_Tabs'
-        );
+        $tabsBlock = $this->getLayout()
+                    ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs::class);
 
         return parent::_toHtml() .
                $tabsBlock->toHtml() .

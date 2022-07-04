@@ -30,7 +30,7 @@ class SearchAsinAuto extends Main
         $productsToSearch = [];
         foreach ($productsIds as $productId) {
 
-            /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $productId);
 
             $searchStatusInProgress = \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_IN_PROGRESS;
@@ -44,7 +44,7 @@ class SearchAsinAuto extends Main
         }
 
         if (!empty($productsToSearch)) {
-            /** @var $dispatcher \Ess\M2ePro\Model\Amazon\Search\Dispatcher */
+            /** @var \Ess\M2ePro\Model\Amazon\Search\Dispatcher $dispatcher */
             $dispatcher = $this->modelFactory->getObject('Amazon_Search_Dispatcher');
             $result = $dispatcher->runSettings($productsToSearch);
 

@@ -60,7 +60,7 @@ class EbayItemIdStructure implements InspectorInterface, FixerInterface
     {
         $issues = [];
 
-        /** @var $collection \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection */
+        /** @var \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection $collection */
         $collection = $this->parentFactory->getObject(Ebay::NICK, 'Listing\Product')->getCollection();
         $collection->getSelect()->joinLeft(
             ['ei' => $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable()],
@@ -129,7 +129,7 @@ HTML;
 
     public function fix($ids)
     {
-        /** @var $collection \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection */
+        /** @var \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection $collection */
         $collection = $this->parentFactory->getObject(Ebay::NICK, 'Listing\Product')->getCollection();
         $collection->addFieldToFilter('id', ['in' => $ids]);
 

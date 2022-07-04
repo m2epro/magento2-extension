@@ -13,6 +13,17 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template;
  */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -38,7 +49,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
         // ---------------------------------------
         if ($template->getId() && !$isSaveAndClose) {
-            $duplicateHeaderText = $this->getHelper('Data')->escapeJs(
+            $duplicateHeaderText = $this->dataHelper->escapeJs(
                 $this->__('Add %template_name% Policy', $this->getTemplateName())
             );
 
@@ -65,7 +76,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
         $saveConfirmation = '';
         if ($template->getId()) {
-            $saveConfirmation = $this->getHelper('Data')->escapeJs(
+            $saveConfirmation = $this->dataHelper->escapeJs(
                 $this->__(
                     '<br/><b>Note:</b> All changes you have made will be automatically
                     applied to all M2E Pro Listings where this Policy is used.'
@@ -75,7 +86,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
         // ---------------------------------------
 
-        $backUrl = $this->getHelper('Data')->makeBackUrlParam('edit');
+        $backUrl = $this->dataHelper->makeBackUrlParam('edit');
         $url = $this->getUrl('*/ebay_template/save', [
             'back' => $backUrl,
             'wizard' => $this->getRequest()->getParam('wizard'),
@@ -83,7 +94,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         ]);
 
         $saveAndBackUrl = $this->getUrl('*/ebay_template/save', [
-            'back' => $this->getHelper('Data')->makeBackUrlParam('list')
+            'back' => $this->dataHelper->makeBackUrlParam('list')
         ]);
 
         if ($isSaveAndClose) {
@@ -95,7 +106,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 'class' => 'add',
                 'button_class' => '',
                 'onclick' => "EbayTemplateEditObj.saveAndCloseClick('{$saveAndBackUrl}', '{$saveConfirmation}')",
-                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
                         'label' => $this->__('Save And Continue Edit'),
@@ -113,7 +124,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 'button_class' => '',
                 'onclick' =>
                     "EbayTemplateEditObj.saveAndEditClick('{$url}', '', '{$saveConfirmation}', '{$nick}');",
-                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
                         'label' => $this->__('Save And Back'),

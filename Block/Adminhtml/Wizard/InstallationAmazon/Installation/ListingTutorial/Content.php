@@ -24,8 +24,7 @@ class Content extends \Ess\M2ePro\Block\Adminhtml\Wizard\Installation\ListingTut
 
         $this->jsUrl->add($newListingsUrl, 'amazon_listing_create');
 
-        $buttonBlock = $this
-            ->createBlock('Magento\Button')
+        $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
             ->setData([
                 'label'   => $this->__('Create First Listing'),
                 'onclick' => 'InstallationAmazonWizardObj.createListing()',

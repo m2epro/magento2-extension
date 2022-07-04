@@ -12,24 +12,20 @@ use \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty as OnlineQty;
 use \Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs as CategoryViewTabs;
 use \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser as Chooser;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\AbstractGrid
- */
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     protected $magentoProductCollectionFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $backendHelper, $data);
-
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
+        parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
 
     //########################################
@@ -56,7 +52,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
                 'width'     => '100px',
                 'type'      => 'number',
                 'index'     => 'entity_id',
-                'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
+                'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
 
             ]
         );
@@ -98,7 +94,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
                 'width'     => '100px',
                 'type'      => 'text',
                 'index'     => 'item_id',
-                'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ItemId'
+                'renderer'  => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ItemId::class
             ]
         );
 
@@ -111,7 +107,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
                 'type'      => 'number',
                 'index'     => 'available_qty',
                 'filter_index'      => 'available_qty',
-                'renderer'          => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty',
+                'renderer'          => OnlineQty::class,
                 'render_online_qty' => OnlineQty::ONLINE_AVAILABLE_QTY,
                 'filter_condition_callback' => [$this, 'callbackFilterOnlineQty']
             ]
@@ -125,7 +121,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
                 'width'    => '100px',
                 'type'     => 'number',
                 'index'    => 'online_qty_sold',
-                'renderer' => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty'
+                'renderer' => OnlineQty::class
             ]
         );
 
@@ -138,7 +134,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
                 'type'      => 'number',
                 'index'     => 'online_current_price',
                 'filter_index' => 'online_current_price',
-                'renderer' => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\CurrentPrice',
+                'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\CurrentPrice::class,
                 'filter_condition_callback' => [$this, 'callbackFilterPrice']
             ]
         );
@@ -152,7 +148,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
                 'type'     => 'datetime',
                 'format'   => \IntlDateFormatter::MEDIUM,
                 'index'    => 'end_date',
-                'renderer' => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\DateTime'
+                'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\DateTime::class
             ]
         );
 
@@ -172,7 +168,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
                 \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED   => $this->__('Finished'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED    => $this->__('Pending')
             ],
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Status',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Status::class,
             'filter_condition_callback' => [$this, 'callbackFilterStatus']
         ];
 
@@ -320,8 +316,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
             $this->getRequest()->getParam('template_id')
         );
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Listing'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Category'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay\Listing'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay\Category'));
 
         $categoryMode = $this->getRequest()->getParam('active_tab') == CategoryViewTabs::TAB_ID_PRODUCTS_SECONDARY
             ? Chooser::MODE_EBAY_SECONDARY

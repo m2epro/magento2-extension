@@ -8,16 +8,23 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Switcher
- */
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
 {
-    const VIEW_MODE_EBAY        = 'ebay';
-    const VIEW_MODE_MAGENTO     = 'magento';
-    const VIEW_MODE_SETTINGS    = 'settings';
+    public const VIEW_MODE_EBAY        = 'ebay';
+    public const VIEW_MODE_MAGENTO     = 'magento';
+    public const VIEW_MODE_SETTINGS    = 'settings';
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+        $this->supportHelper = $supportHelper;
+    }
 
     public function getDefaultViewMode()
     {
@@ -44,7 +51,7 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
             <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
             ,
-            $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/wP8UB')
+            $this->supportHelper->getDocumentationArticleUrl('x/wP8UB')
         );
     }
 

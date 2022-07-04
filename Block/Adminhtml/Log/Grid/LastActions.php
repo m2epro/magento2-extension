@@ -11,16 +11,13 @@ namespace Ess\M2ePro\Block\Adminhtml\Log\Grid;
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 use Ess\M2ePro\Model\Log\AbstractModel as LogModel;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions
- */
 abstract class LastActions extends AbstractBlock
 {
-    const VIEW_LOG_LINK_SHOW = 0;
-    const VIEW_LOG_LINK_HIDE = 1;
+    public const VIEW_LOG_LINK_SHOW = 0;
+    public const VIEW_LOG_LINK_HIDE = 1;
 
-    const ACTIONS_COUNT  = 3;
-    const PRODUCTS_LIMIT = 100;
+    public const ACTIONS_COUNT = 3;
+    public const PRODUCTS_LIMIT = 100;
 
     protected $_template = 'log/last_actions.phtml';
     protected $tip = null;
@@ -28,13 +25,23 @@ abstract class LastActions extends AbstractBlock
     protected $rows = [];
 
     public static $actionsSortOrder = [
-        LogModel::TYPE_SUCCESS  => 1,
-        LogModel::TYPE_ERROR    => 2,
-        LogModel::TYPE_WARNING  => 3,
-        LogModel::TYPE_NOTICE   => 4,
+        LogModel::TYPE_SUCCESS => 1,
+        LogModel::TYPE_ERROR   => 2,
+        LogModel::TYPE_WARNING => 3,
+        LogModel::TYPE_INFO    => 4,
     ];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+        $this->dataHelper = $dataHelper;
+    }
 
     public function getTip()
     {
@@ -48,7 +55,7 @@ abstract class LastActions extends AbstractBlock
 
     public function getEncodedRows()
     {
-        return base64_encode($this->getHelper('Data')->jsonEncode($this->rows));
+        return base64_encode($this->dataHelper->jsonEncode($this->rows));
     }
 
     public function getEntityId()
@@ -210,7 +217,7 @@ abstract class LastActions extends AbstractBlock
                 LogModel::TYPE_SUCCESS  => 'Last Action was completed.',
                 LogModel::TYPE_ERROR    => 'Last Action was completed with error(s).',
                 LogModel::TYPE_WARNING  => 'Last Action was completed with warning(s).',
-                LogModel::TYPE_NOTICE   => 'Last Action was completed with notice(s).'
+                LogModel::TYPE_INFO => 'Last Action was completed with info(s).'
             ];
         }
 
@@ -221,10 +228,10 @@ abstract class LastActions extends AbstractBlock
     {
         if (!$this->hasData('icons') || !is_array($this->getData('icons'))) {
             return [
-                LogModel::TYPE_SUCCESS  => 'success',
-                LogModel::TYPE_ERROR    => 'error',
-                LogModel::TYPE_WARNING  => 'warning',
-                LogModel::TYPE_NOTICE   => 'notice',
+                LogModel::TYPE_SUCCESS => 'success',
+                LogModel::TYPE_ERROR   => 'error',
+                LogModel::TYPE_WARNING => 'warning',
+                LogModel::TYPE_INFO    => 'info',
             ];
         }
 
@@ -286,12 +293,12 @@ abstract class LastActions extends AbstractBlock
             $icon = $this->getIconByType($lastActionRow['type']);
         }
 
-        $this->tip = $this->getHelper('Data')->escapeHtml($tip);
+        $this->tip = $this->dataHelper->escapeHtml($tip);
         $this->iconSrc = $this->getViewFileUrl('Ess_M2ePro::images/log_statuses/'.$icon.'.png');
         $this->rows = $rows;
         // ---------------------------------------
 
-        $this->jsPhp->addConstants($this->getHelper('Data')
+        $this->jsPhp->addConstants($this->dataHelper
             ->getClassConstants(\Ess\M2ePro\Model\Log\AbstractModel::class));
 
         // ---------------------------------------

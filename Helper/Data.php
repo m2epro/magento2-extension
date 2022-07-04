@@ -8,78 +8,56 @@
 
 namespace Ess\M2ePro\Helper;
 
-class Data extends AbstractHelper
+class Data
 {
-    const STATUS_ERROR      = 1;
-    const STATUS_WARNING    = 2;
-    const STATUS_SUCCESS    = 3;
+    public const STATUS_ERROR = 1;
+    public const STATUS_WARNING = 2;
+    public const STATUS_SUCCESS = 3;
 
-    const INITIATOR_UNKNOWN   = 0;
-    const INITIATOR_USER      = 1;
-    const INITIATOR_EXTENSION = 2;
-    const INITIATOR_DEVELOPER = 3;
+    public const INITIATOR_UNKNOWN = 0;
+    public const INITIATOR_USER = 1;
+    public const INITIATOR_EXTENSION = 2;
+    public const INITIATOR_DEVELOPER = 3;
 
-    const CUSTOM_IDENTIFIER = 'm2epro_extension';
+    public const CUSTOM_IDENTIFIER = 'm2epro_extension';
 
     /** @var \Magento\Framework\Module\Dir */
-    protected $dir;
-
+    private $dir;
     /** @var \Magento\Backend\Model\UrlInterface */
-    protected $urlBuilder;
-
-    /** @var \Magento\Framework\Stdlib\DateTime\DateTime */
-    protected $localeDate;
-
-    /** @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface */
-    protected $timezone;
-
+    private $urlBuilder;
     /** @var \Magento\Framework\ObjectManagerInterface */
-    protected $objectManager;
-
+    private $objectManager;
     /** @var \Magento\Framework\Serialize\SerializerInterface */
-    protected $serializerInterface;
-    protected $phpSerialize;
+    private $serializerInterface;
+    /** @var \Magento\Framework\App\RequestInterface */
+    private $httpRequest;
+    private $phpSerialize;
+    /** @var \Ess\M2ePro\Helper\Date */
+    private $dateHelper;
 
-    /** @var \Magento\Framework\Locale\ResolverInterface */
-    protected $localeResolverInterface;
-
-    /** @var \Ess\M2ePro\Helper\Module\Exception */
-    protected $exceptionHelper;
-
-    /** @var \Ess\M2ePro\Helper\Module */
-    protected $helperModule;
-
-    /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
-    protected $permanentCache;
-
+    /**
+     * @param \Magento\Framework\Module\Dir $dir
+     * @param \Magento\Backend\Model\UrlInterface $urlBuilder
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager
+     * @param \Ess\M2ePro\Helper\Magento $magentoHelper
+     * @param \Magento\Framework\App\RequestInterface $httpRequest
+     */
     public function __construct(
         \Magento\Framework\Module\Dir $dir,
         \Magento\Backend\Model\UrlInterface $urlBuilder,
-        \Magento\Framework\Stdlib\DateTime\DateTime $localeDate,
-        \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timezone,
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Magento\Framework\Locale\ResolverInterface $localeResolverInterface,
         \Ess\M2ePro\Helper\Magento $magentoHelper,
-        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
-        \Ess\M2ePro\Helper\Module $helperModule,
-        \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCache,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Helper\Date $dateHelper,
+        \Magento\Framework\App\RequestInterface $httpRequest
     ) {
-        parent::__construct($helperFactory, $context);
-
         $this->dir = $dir;
         $this->urlBuilder = $urlBuilder;
-        $this->localeDate = $localeDate;
-        $this->timezone = $timezone;
         $this->objectManager = $objectManager;
-        $this->localeResolverInterface = $localeResolverInterface;
-        $this->exceptionHelper = $exceptionHelper;
-        $this->helperModule = $helperModule;
-        $this->permanentCache = $permanentCache;
+        $this->httpRequest = $httpRequest;
+        $this->dateHelper = $dateHelper;
 
         if (version_compare($magentoHelper->getVersion(), '2.4.3', '<')) {
-            $this->phpSerialize  = version_compare($magentoHelper->getVersion(), '2.3.5', '>=')
+            $this->phpSerialize = version_compare($magentoHelper->getVersion(), '2.3.5', '>=')
                 ? \Laminas\Serializer\Serializer::getDefaultAdapter()
                 : \Zend\Serializer\Serializer::getDefaultAdapter();
         }
@@ -91,122 +69,119 @@ class Data extends AbstractHelper
         }
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getConfigTimezone()
+    /**
+     * @return string
+     */
+    public function getConfigTimezone(): string
     {
-        return $this->timezone->getConfigTimezone();
+        return $this->dateHelper->getConfigTimezone();
     }
 
-    public function getDefaultTimezone()
+    /**
+     * @return string
+     */
+    public function getDefaultTimezone(): string
     {
-        return $this->timezone->getDefaultTimezone();
+        return $this->dateHelper->getDefaultTimezone();
     }
 
     // ---------------------------------------
 
     /**
-     * @param $timeString
+     * @param string $timeString
      *
      * @return \DateTime
-     * @throws \Exception
      */
-    public function createGmtDateTime($timeString)
+    public function createGmtDateTime($timeString): \DateTime
     {
-        return new \DateTime($timeString, new \DateTimeZone($this->getDefaultTimezone()));
+        return $this->dateHelper->createGmtDateTime($timeString);
     }
 
     /**
      * @return \DateTime
-     * @throws \Exception
      */
-    public function createCurrentGmtDateTime()
+    public function createCurrentGmtDateTime(): \DateTime
     {
-        return $this->createGmtDateTime('now');
+        return $this->dateHelper->createGmtDateTime('now');
     }
 
     // ---------------------------------------
 
+    /**
+     * @param bool $returnTimestamp
+     * @param string $format
+     *
+     * @return int|string
+     */
     public function getCurrentGmtDate($returnTimestamp = false, $format = 'Y-m-d H:i:s')
     {
-        $dateObject = $this->createCurrentGmtDateTime();
-
-        if ($returnTimestamp) {
-            return (int)$dateObject->getTimestamp();
-        }
-
-        return $dateObject->format($format);
+        return $this->dateHelper->getCurrentGmtDate($returnTimestamp, $format);
     }
 
+    /**
+     * @param bool $returnTimestamp
+     * @param string $format
+     *
+     * @return int|string
+     */
     public function getCurrentTimezoneDate($returnTimestamp = false, $format = 'Y-m-d H:i:s')
     {
-        $dateObject = new \DateTime('now', new \DateTimeZone($this->getConfigTimezone()));
-
-        if ($returnTimestamp) {
-            return (int)$dateObject->getTimestamp();
-        }
-
-        return $dateObject->format($format);
+        return $this->dateHelper->getCurrentTimezoneDate($returnTimestamp, $format);
     }
 
     // ---------------------------------------
 
+    /**
+     * @param string $date
+     * @param bool $returnTimestamp
+     * @param string $format
+     *
+     * @return int|string
+     */
     public function gmtDateToTimezone($date, $returnTimestamp = false, $format = 'Y-m-d H:i:s')
     {
-        $dateObject = $this->createGmtDateTime($date);
-        $dateObject->setTimezone(new \DateTimeZone($this->getConfigTimezone()));
-
-        if ($returnTimestamp) {
-            return (int)$dateObject->getTimestamp();
-        }
-
-        return $dateObject->format($format);
+        return $this->dateHelper->gmtDateToTimezone($date, $returnTimestamp, $format);
     }
 
+    /**
+     * @param string $date
+     * @param bool $returnTimestamp
+     * @param string $format
+     *
+     * @return int|string
+     */
     public function timezoneDateToGmt($date, $returnTimestamp = false, $format = 'Y-m-d H:i:s')
     {
-        $dateObject = new \DateTime($date, new \DateTimeZone($this->getConfigTimezone()));
-        $dateObject->setTimezone(new \DateTimeZone($this->getDefaultTimezone()));
-
-        if ($returnTimestamp) {
-            return (int)$dateObject->getTimestamp();
-        }
-
-        return $dateObject->format($format);
+        return $this->dateHelper->timezoneDateToGmt($date, $returnTimestamp, $format);
     }
 
     // ---------------------------------------
 
+    /**
+     * @param string $localDate
+     * @param int $localIntlDateFormat
+     * @param int $localIntlTimeFormat
+     * @param string|null $localTimezone
+     *
+     * @return false|float|int
+     */
     public function parseTimestampFromLocalizedFormat(
         $localDate,
         $localIntlDateFormat = \IntlDateFormatter::SHORT,
         $localIntlTimeFormat = \IntlDateFormatter::SHORT,
         $localTimezone = null
     ) {
-        $localTimezone === null && $localTimezone = $this->timezone->getConfigTimezone();
-
-        $pattern = '';
-        if ($localIntlDateFormat != \IntlDateFormatter::NONE) {
-            $pattern = $this->timezone->getDateFormat($localIntlDateFormat);
-        }
-        if ($localIntlTimeFormat != \IntlDateFormatter::NONE) {
-            $timeFormat = $this->timezone->getTimeFormat($localIntlTimeFormat);
-            $pattern = empty($pattern) ? $timeFormat : $pattern .' '. $timeFormat;
-        }
-
-        $formatter = new \IntlDateFormatter(
-            $this->localeResolverInterface->getLocale(),
+        return $this->dateHelper->parseTimestampFromLocalizedFormat(
+            $localDate,
             $localIntlDateFormat,
             $localIntlTimeFormat,
-            new \DateTimeZone($localTimezone),
-            null,
-            $pattern
+            $localTimezone
         );
-
-        return $formatter->parse($localDate);
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function escapeJs($string)
     {
@@ -215,8 +190,8 @@ class Data extends AbstractHelper
         }
 
         return str_replace(
-            ["\\"  , "\n"  , "\r" , "\""  , "'"],
-            ["\\\\", "\\n" , "\\r", "\\\"", "\\'"],
+            ["\\", "\n", "\r", "\"", "'"],
+            ["\\\\", "\\n", "\\r", "\\\"", "\\'"],
             $string
         );
     }
@@ -234,13 +209,13 @@ class Data extends AbstractHelper
                 if (is_array($allowedTags) && !empty($allowedTags)) {
                     $allowed = implode('|', $allowedTags);
 
-                    $pattern = '/<([\/\s\r\n]*)(' . $allowed . ')'.
+                    $pattern = '/<([\/\s\r\n]*)(' . $allowed . ')' .
                         '((\s+\w+=["\'][\w\s\%\?=\&#\/\.,;:_\-\(\)]*["\'])*[\/\s\r\n]*)>/si';
                     $result = preg_replace($pattern, '##$1$2$3##', $data);
 
                     $result = htmlspecialchars($result, $flags);
 
-                    $pattern = '/##([\/\s\r\n]*)(' . $allowed . ')'.
+                    $pattern = '/##([\/\s\r\n]*)(' . $allowed . ')' .
                         '((\s+\w+=["\'][\w\s\%\?=\&#\/\.,;:_\-\(\)]*["\'])*[\/\s\r\n]*)##/si';
                     $result = preg_replace($pattern, '<$1$2$3>', $result);
                 } else {
@@ -250,10 +225,11 @@ class Data extends AbstractHelper
                 $result = $data;
             }
         }
+
         return $result;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function deEscapeHtml($data, $flags = ENT_COMPAT)
     {
@@ -270,16 +246,40 @@ class Data extends AbstractHelper
                 $result = $data;
             }
         }
+
         return $result;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function convertStringToSku($title)
     {
         $skuVal = strtolower($title);
-        $skuVal = str_replace([" ", ":", ",", ".", "?", "*", "+", "(", ")", "&", "%", "$", "#", "@",
-                                    "!", '"', "'", ";", "\\", "|", "/", "<", ">"], "-", $skuVal);
+        $skuVal = str_replace([
+            " ",
+            ":",
+            ",",
+            ".",
+            "?",
+            "*",
+            "+",
+            "(",
+            ")",
+            "&",
+            "%",
+            "$",
+            "#",
+            "@",
+            "!",
+            '"',
+            "'",
+            ";",
+            "\\",
+            "|",
+            "/",
+            "<",
+            ">",
+        ], "-", $skuVal);
 
         return $skuVal;
     }
@@ -310,9 +310,23 @@ class Data extends AbstractHelper
                 '/<\/?((frameset)|(frame)|(iframe))/iu',
             ],
             [
-                ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-                "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0",
-                "\n\$0", "\n\$0",
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                ' ',
+                "\n\$0",
+                "\n\$0",
+                "\n\$0",
+                "\n\$0",
+                "\n\$0",
+                "\n\$0",
+                "\n\$0",
+                "\n\$0",
             ],
             $text
         );
@@ -355,6 +369,7 @@ class Data extends AbstractHelper
         $string = (string)$string;
         if (mb_strlen($string) <= $neededLength) {
             mb_internal_encoding($oldEncoding);
+
             return $string;
         }
 
@@ -374,6 +389,7 @@ class Data extends AbstractHelper
 
         if ($canBeReduced < $needToBeReduced) {
             mb_internal_encoding($oldEncoding);
+
             return $string;
         }
 
@@ -390,6 +406,7 @@ class Data extends AbstractHelper
         }
 
         mb_internal_encoding($oldEncoding);
+
         return $string;
     }
 
@@ -424,6 +441,7 @@ class Data extends AbstractHelper
 
     /**
      * @param array $data
+     *
      * @return array
      */
     public function toLowerCaseRecursive(array $data = [])
@@ -446,7 +464,7 @@ class Data extends AbstractHelper
         return $lowerCasedData;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param $string
@@ -463,7 +481,8 @@ class Data extends AbstractHelper
         }
 
         $hash = call_user_func($hashFunction, $string);
-        return !empty($prefix) ? $prefix.$hash : $hash;
+
+        return !empty($prefix) ? $prefix . $hash : $hash;
     }
 
     //########################################
@@ -474,6 +493,7 @@ class Data extends AbstractHelper
      *
      * @param $data
      * @param bool $throwError
+     *
      * @return null|string
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -518,6 +538,7 @@ class Data extends AbstractHelper
      *
      * @param $data
      * @param bool $throwError
+     *
      * @return null|array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -551,10 +572,11 @@ class Data extends AbstractHelper
         return $decoded;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param array|string $data
+     *
      * @return string
      * The return value can be json (in version > 2.2.0) or serialized string
      */
@@ -569,9 +591,9 @@ class Data extends AbstractHelper
 
     /**
      * @param string $data
+     *
      * @return array|string|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
-     *
      * $data can be json (in version > 2.2.0) or serialized string
      */
     public function unserialize($data)
@@ -584,9 +606,10 @@ class Data extends AbstractHelper
             return $this->phpSerialize !== null && preg_match('/^((s|i|d|b|a|O|C):|N;)/', $data)
                 ? $this->phpSerialize->unserialize($data)
                 : $this->serializerInterface->unserialize($data);
-
         } catch (\Exception $e) {
-            $this->exceptionHelper->process($e);
+            // Circular dependency
+            $this->objectManager->get(\Ess\M2ePro\Helper\Module\Exception::class)->process($e);
+
             return [];
         }
     }
@@ -601,9 +624,16 @@ class Data extends AbstractHelper
         return $this->phpSerialize->serialize($data);
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getClassConstants($class)
+    /**
+     * @param string $class
+     *
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \ReflectionException
+     */
+    public function getClassConstants($class): array
     {
         $class = '\\' . ltrim($class, '\\');
 
@@ -616,7 +646,7 @@ class Data extends AbstractHelper
 
         $constants = [];
         foreach ($tempConstants as $key => $value) {
-            $constants[$class.'::'.strtoupper($key)] = $value;
+            $constants[$class . '::' . strtoupper($key)] = $value;
         }
 
         return $constants;
@@ -639,8 +669,10 @@ class Data extends AbstractHelper
         $classRoute = str_replace('\\', '_', $controllerClass);
         $classRoute = implode('_', array_map('lcfirst', explode('_', $classRoute)));
 
-        if ($skipEnvironmentCheck || !$this->helperModule->isDevelopmentEnvironment()) {
-            $cachedActions = $this->permanentCache->getValue('controller_actions_' . $classRoute);
+        $moduleHelper = $this->objectManager->get(\Ess\M2ePro\Helper\Module::class);
+        if ($skipEnvironmentCheck || !$moduleHelper->isDevelopmentEnvironment()) {
+            $cachedActions = $this->objectManager->get(\Ess\M2ePro\Helper\Data\Cache\Permanent::class)
+                                                 ->getValue('controller_actions_' . $classRoute);
 
             if ($cachedActions !== null) {
                 return $this->getActionsUrlsWithParameters($cachedActions, $params);
@@ -667,14 +699,21 @@ class Data extends AbstractHelper
             }
         }
 
-        if ($skipEnvironmentCheck || !$this->helperModule->isDevelopmentEnvironment()) {
-            $this->permanentCache->setValue('controller_actions_' . $classRoute, $actions);
+        if ($skipEnvironmentCheck || !$moduleHelper->isDevelopmentEnvironment()) {
+            $this->objectManager->get(\Ess\M2ePro\Helper\Data\Cache\Permanent::class)
+                                ->setValue('controller_actions_' . $classRoute, $actions);
         }
 
         return $this->getActionsUrlsWithParameters($actions, $params);
     }
 
-    private function getActionsUrlsWithParameters(array $actions, array $parameters = [])
+    /**
+     * @param array $actions
+     * @param array $parameters
+     *
+     * @return array
+     */
+    private function getActionsUrlsWithParameters(array $actions, array $parameters = []): array
     {
         $actionsUrls = [];
         foreach ($actions as $route) {
@@ -685,16 +724,29 @@ class Data extends AbstractHelper
         return $actionsUrls;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function generateUniqueHash($strParam = null, $maxLength = null)
+    /**
+     * @param string|null $strParam
+     * @param int|null $maxLength
+     *
+     * @return string
+     */
+    public function generateUniqueHash($strParam = null, $maxLength = null): string
     {
-        $hash = sha1(rand(1, 1000000).microtime(true).(string)$strParam);
+        $hash = sha1(rand(1, 1000000) . microtime(true) . (string)$strParam);
         (int)$maxLength > 0 && $hash = substr($hash, 0, (int)$maxLength);
+
         return $hash;
     }
 
-    public function theSameItemsInData($data, $keysToCheck)
+    /**
+     * @param array $data
+     * @param array $keysToCheck
+     *
+     * @return bool
+     */
+    public function theSameItemsInData($data, $keysToCheck): bool
     {
         if (count($data) > 200) {
             return false;
@@ -722,7 +774,12 @@ class Data extends AbstractHelper
         return true;
     }
 
-    public function getMainStatus($statuses)
+    /**
+     * @param array $statuses
+     *
+     * @return int
+     */
+    public function getMainStatus($statuses): int
     {
         foreach ([self::STATUS_ERROR, self::STATUS_WARNING] as $status) {
             if (in_array($status, $statuses)) {
@@ -733,25 +790,45 @@ class Data extends AbstractHelper
         return self::STATUS_SUCCESS;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function makeBackUrlParam($backIdOrRoute, array $backParams = [])
+    /**
+     * @param string $backIdOrRoute
+     * @param array $backParams
+     *
+     * @return string
+     */
+    public function makeBackUrlParam($backIdOrRoute, array $backParams = []): string
     {
-        $paramsString = !empty($backParams) ? '|'.http_build_query($backParams, '', '&') : '';
-        return base64_encode($backIdOrRoute.$paramsString);
+        $paramsString = !empty($backParams) ? '|' . http_build_query($backParams, '', '&') : '';
+
+        return base64_encode($backIdOrRoute . $paramsString);
     }
 
+    /**
+     * @param string $defaultBackIdOrRoute
+     * @param array $defaultBackParams
+     *
+     * @return string
+     */
     public function getBackUrlParam(
         $defaultBackIdOrRoute = 'index',
         array $defaultBackParams = []
     ) {
-        $requestParams = $this->_getRequest()->getParams();
-        return isset($requestParams['back']) ? $requestParams['back']
-                                             : $this->makeBackUrlParam($defaultBackIdOrRoute, $defaultBackParams);
+        $requestParams = $this->httpRequest->getParams();
+
+        return $requestParams['back'] ?? $this->makeBackUrlParam($defaultBackIdOrRoute, $defaultBackParams);
     }
 
     // ---------------------------------------
 
+    /**
+     * @param string $defaultBackIdOrRoute
+     * @param array $defaultBackParams
+     * @param array $extendedRoutersParams
+     *
+     * @return string
+     */
     public function getBackUrl(
         $defaultBackIdOrRoute = 'index',
         array $defaultBackParams = [],
@@ -764,7 +841,7 @@ class Data extends AbstractHelper
 
         if (strpos($back, '|') !== false) {
             $route = substr($back, 0, strpos($back, '|'));
-            parse_str(substr($back, strpos($back, '|')+1), $params);
+            parse_str(substr($back, strpos($back, '|') + 1), $params);
         } else {
             $route = $back;
         }
@@ -791,17 +868,18 @@ class Data extends AbstractHelper
         }
 
         $params['_escape_params'] = false;
+
         return $this->urlBuilder->getUrl($route, $params);
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param string $string
      *
      * @return bool
      */
-    public function isISBN($string)
+    public function isISBN($string): bool
     {
         return $this->isISBN10($string) || $this->isISBN13($string);
     }
@@ -813,7 +891,7 @@ class Data extends AbstractHelper
      *
      * @return bool
      */
-    public function isISBN10($string)
+    public function isISBN10($string): bool
     {
         $string = (string)$string;
         if (strlen($string) !== 10) {
@@ -830,6 +908,7 @@ class Data extends AbstractHelper
                 return false;
             }
         }
+
         return $a % 11 === 0;
     }
 
@@ -838,7 +917,7 @@ class Data extends AbstractHelper
      *
      * @return bool
      */
-    public function isISBN13($string)
+    public function isISBN13($string): bool
     {
         $string = (string)$string;
         if (strlen($string) !== 13) {
@@ -860,14 +939,14 @@ class Data extends AbstractHelper
         return $check % 10 === 0;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param string $gtin
      *
      * @return bool
      */
-    public function isGTIN($gtin)
+    public function isGTIN($gtin): bool
     {
         return $this->isWorldWideId($gtin, 'GTIN');
     }
@@ -877,7 +956,7 @@ class Data extends AbstractHelper
      *
      * @return bool
      */
-    public function isUPC($upc)
+    public function isUPC($upc): bool
     {
         return $this->isWorldWideId($upc, 'UPC');
     }
@@ -887,7 +966,7 @@ class Data extends AbstractHelper
      *
      * @return bool
      */
-    public function isEAN($ean)
+    public function isEAN($ean): bool
     {
         return $this->isWorldWideId($ean, 'EAN');
     }
@@ -900,19 +979,19 @@ class Data extends AbstractHelper
      *
      * @return bool
      */
-    private function isWorldWideId($worldWideId, $type)
+    private function isWorldWideId($worldWideId, $type): bool
     {
         $adapters = [
             'UPC' => [
-                12 => 'Upca'
+                12 => 'Upca',
             ],
             'EAN' => [
-                13 => 'Ean13'
+                13 => 'Ean13',
             ],
             'GTIN' => [
                 12 => 'Gtin12',
                 13 => 'Gtin13',
-                14 => 'Gtin14'
+                14 => 'Gtin14',
             ]
         ];
 
@@ -931,6 +1010,4 @@ class Data extends AbstractHelper
 
         return $result;
     }
-
-    //########################################
 }

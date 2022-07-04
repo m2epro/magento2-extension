@@ -28,7 +28,6 @@ class Other extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         array $data = []
     ) {
         $this->ebayFactory = $ebayFactory;
-
         parent::__construct($context, $data);
     }
 

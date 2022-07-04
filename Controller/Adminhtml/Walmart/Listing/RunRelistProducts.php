@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\RunRelistProducts
- */
 class RunRelistProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\ActionAbstract
 {
     public function execute()

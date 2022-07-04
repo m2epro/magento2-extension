@@ -104,7 +104,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Listing\Product');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Listing\Product::class);
     }
 
     //########################################
@@ -185,7 +185,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             'Product was Deleted',
             \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
             \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_PRODUCT_FROM_LISTING,
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
         );
 
         $this->listingModel = null;
@@ -305,7 +305,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
         if ($asObjects) {
             foreach ($variations as $variation) {
-                /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+                /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
                 $variation->setListingProduct($this);
             }
         }

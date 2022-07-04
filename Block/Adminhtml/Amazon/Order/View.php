@@ -10,15 +10,22 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Order;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Order\View
- */
 class View extends AbstractContainer
 {
-    /** @var $order \Ess\M2ePro\Model\Order */
-    protected $order = null;
+    /** @var \Ess\M2ePro\Model\Order $order */
+    protected $order;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -44,7 +51,7 @@ class View extends AbstractContainer
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getHelper('Data')->getBackUrl('*/*/index');
+        $url = $this->dataHelper->getBackUrl('*/*/index');
         $this->addButton('back', [
             'label'     => $this->__('Back'),
             'onclick'   => 'CommonObj.backClick(\''.$url.'\')',
@@ -95,7 +102,7 @@ class View extends AbstractContainer
         } elseif ($this->order->getMagentoOrder() === null || $this->order->getMagentoOrder()->isCanceled()) {
             // ---------------------------------------
             $url = $this->getUrl('*/*/createMagentoOrder', ['id' => $this->order->getId(), 'force' => 'yes']);
-            $confirm = $this->getHelper('Data')->escapeJs(
+            $confirm = $this->dataHelper->escapeJs(
                 $this->__('Are you sure that you want to create new Magento Order?')
             );
 

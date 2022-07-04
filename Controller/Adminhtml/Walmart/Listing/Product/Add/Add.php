@@ -8,12 +8,20 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add\Add
- */
 class Add extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->sessionHelper = $sessionHelper;
+    }
 
     public function execute()
     {
@@ -39,9 +47,9 @@ class Add extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
             }
         }
 
-        $tempProducts = $this->getHelper('Data\Session')->getValue('temp_products');
+        $tempProducts = $this->sessionHelper->getValue('temp_products');
         $tempProducts = array_merge((array)$tempProducts, $listingProductIds);
-        $this->getHelper('Data\Session')->setValue('temp_products', $tempProducts);
+        $this->sessionHelper->setValue('temp_products', $tempProducts);
 
         $isLastPart = $this->getRequest()->getParam('is_last_part');
         if ($isLastPart == 'yes') {
@@ -66,6 +74,4 @@ class Add extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 
         return $this->getResult();
     }
-
-    //########################################
 }

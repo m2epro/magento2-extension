@@ -17,7 +17,7 @@ class GlobalSettings extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 
     public function execute()
     {
-        $block = $this->createBlock('System_Config_Tabs');
+        $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\System\Config\Tabs::class);
 
         $this->addContent($block);
 

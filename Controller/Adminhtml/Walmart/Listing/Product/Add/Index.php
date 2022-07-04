@@ -11,24 +11,30 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode as SourceModeBlock;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add\Index
- */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
-    protected $listingProductCollectionFactory;
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalData;
+
+    /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\CollectionFactory */
+    private $listingProductCollectionFactory;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalData,
         \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\CollectionFactory $listingProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         Context $context
     ) {
         parent::__construct($walmartFactory, $context);
 
+        $this->sessionHelper = $sessionHelper;
+        $this->globalData = $globalData;
         $this->listingProductCollectionFactory = $listingProductCollectionFactory;
     }
-
-    //########################################
 
     public function execute()
     {
@@ -48,7 +54,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
             $listing->setSetting('additional_data', 'source', $source)->save();
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('listing_for_products_add', $listing);
+        $this->globalData->setValue('listing_for_products_add', $listing);
 
         $step = (int)$this->getRequest()->getParam('step');
 
@@ -78,15 +84,12 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
             case 4:
                 $this->review();
                 break;
-            // ....
             default:
                 return $this->_redirect('*/*/index', ['_current' => true,'step' => 1]);
         }
 
         return $this->getResult();
     }
-
-    //########################################
 
     public function sourceMode()
     {
@@ -100,7 +103,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
             return $this->_redirect('*/*/index', ['clear'=>'yes']);
         }
 
-        $this->addContent($this->createBlock('Walmart_Listing_Product_Add_SourceMode'));
+        $this->addContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::class)
+        );
         $this->setPageHelpLink('x/PQBhAQ');
     }
 
@@ -118,8 +123,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
             return $this->_redirect('*/*/*', ['_current' => true]);
         }
 
-        $this->getHelper('Data\Session')->setValue('temp_products', []);
-        $this->getHelper('Data\Session')->setValue(
+        $this->sessionHelper->setValue('temp_products', []);
+        $this->sessionHelper->setValue(
             'products_source',
             SourceModeBlock::MODE_PRODUCT
         );
@@ -130,13 +135,14 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 
         if ($this->getRequest()->isPost()) {
             $hideProductsOtherParam = $this->getRequest()->getPost('hide_products_others_listings', 1);
-            $this->getHelper('Data\Session')->setValue($prefix, $hideProductsOtherParam);
+            $this->sessionHelper->setValue($prefix, $hideProductsOtherParam);
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('hide_products_others_listings_prefix', $prefix);
+        $this->globalData->setValue('hide_products_others_listings_prefix', $prefix);
 
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $grid = $this->createBlock('Walmart_Listing_Product_Add_SourceMode_Product_Grid');
+            $grid = $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Product\Grid::class);
 
             $this->setAjaxContent($grid->toHtml());
             return;
@@ -144,7 +150,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 
         $this->setPageHelpLink('x/PwBhAQ');
 
-        $this->addContent($this->createBlock('Walmart_Listing_Product_Add_SourceMode_Product'));
+        $this->addContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Product::class)
+        );
     }
 
     public function stepOneSourceCategories()
@@ -159,8 +168,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
             return $this->_redirect('*/*/*', ['_current' => true]);
         }
 
-        $this->getHelper('Data\Session')->setValue('temp_products', []);
-        $this->getHelper('Data\Session')->setValue(
+        $this->sessionHelper->setValue('temp_products', []);
+        $this->sessionHelper->setValue(
             'products_source',
             SourceModeBlock::MODE_CATEGORY
         );
@@ -171,10 +180,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 
         if ($this->getRequest()->isPost()) {
             $hideProductsOtherParam = $this->getRequest()->getPost('hide_products_others_listings', 1);
-            $this->getHelper('Data\Session')->setValue($prefix, $hideProductsOtherParam);
+            $this->sessionHelper->setValue($prefix, $hideProductsOtherParam);
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('hide_products_others_listings_prefix', $prefix);
+        $this->globalData->setValue('hide_products_others_listings_prefix', $prefix);
 
         $tempSession = $this->getSessionValue('source_categories');
         $selectedProductsIds = !isset($tempSession['products_ids']) ? [] : $tempSession['products_ids'];
@@ -184,8 +193,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
                 $this->setSessionValue('current_category_id', $this->getRequest()->getParam('current_category_id'));
             }
 
-            /** @var $grid SourceModeBlock\Category\Grid */
-            $grid = $this->createBlock('Walmart_Listing_Product_Add_SourceMode_Category_Grid');
+            /** @var SourceModeBlock\Category\Grid $grid */
+            $grid = $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Category\Grid::class);
 
             $grid->setSelectedIds($selectedProductsIds);
             $grid->setCurrentCategoryId($this->getSessionValue('current_category_id'));
@@ -197,18 +207,24 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 
         $this->setPageHelpLink('x/PwBhAQ');
 
-        $gridContainer = $this->createBlock('Walmart_Listing_Product_Add_SourceMode_Category');
+        $gridContainer = $this->getLayout()
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Category::class);
         $this->addContent($gridContainer);
 
-        /** @var $treeBlock SourceModeBlock\Category\Tree */
-        $treeBlock = $this->createBlock('Walmart_Listing_Product_Add_SourceMode_Category_Tree', '', [
-            'data' => [
-                'tree_settings' => [
-                    'show_products_amount' => true,
-                    'hide_products_this_listing' => true
-                ]
-            ]
-        ]);
+        /** @var SourceModeBlock\Category\Tree $treeBlock */
+        $treeBlock = $this->getLayout()
+                          ->createBlock(
+                              \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Category\Tree::class,
+                              '',
+                              [
+                                  'data' => [
+                                      'tree_settings' => [
+                                      'show_products_amount' => true,
+                                      'hide_products_this_listing' => true
+                                      ]
+                                  ]
+                              ]
+                          );
 
         if ($this->getSessionValue('current_category_id') === null) {
             $currentNode = $treeBlock->getRoot()->getChildren()->getIterator()->current();
@@ -242,14 +258,17 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Set Category Policy'));
 
-        $this->addContent($this->createBlock('Walmart_Listing_Product_Add_CategoryTemplate'));
+        $this->addContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate::class)
+        );
     }
 
     //----------------------------------------
 
     protected function getAddedListingProductsIds()
     {
-        $listingProductsIds = $this->getHelper('Data\Session')->getValue('temp_products');
+        $listingProductsIds = $this->sessionHelper->getValue('temp_products');
 
         if (empty($listingProductsIds)) {
             $listingProductsIds = $this->getListing()->getSetting('additional_data', 'adding_listing_products_ids');
@@ -257,7 +276,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
             $this->getListing()
                 ->setSetting('additional_data', 'adding_listing_products_ids', $listingProductsIds)->save();
 
-            $this->getHelper('Data\Session')->setValue('temp_products', []);
+            $this->sessionHelper->setValue('temp_products', []);
         }
 
         return $listingProductsIds;
@@ -294,13 +313,13 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         }
         //--
 
-        $this->getHelper('Data\Session')->setValue('products_source', '');
+        $this->sessionHelper->setValue('products_source', '');
 
         $additionalData = $this->getListing()->getSettings('additional_data');
 
         $this->addVariationAttributes($additionalData['adding_listing_products_ids']);
 
-        $this->getHelper('Data\Session')->setValue(
+        $this->sessionHelper->setValue(
             'added_products_ids',
             $additionalData['adding_listing_products_ids']
         );
@@ -308,7 +327,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Congratulations'));
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\Review $blockReview */
-        $blockReview = $this->createBlock('Walmart_Listing_Product_Add_Review');
+        $blockReview = $this->getLayout()
+                            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\Review::class);
 
         if (isset($additionalData['source'])) {
             $blockReview->setSource($additionalData['source']);
@@ -318,8 +338,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 
         $this->addContent($blockReview);
     }
-
-    //########################################
 
     private function deleteListingOthers()
     {
@@ -354,8 +372,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         }
     }
 
-    //########################################
-
     private function addVariationAttributes($productsIds)
     {
         $listingProductCollection = $this->listingProductCollectionFactory->create();
@@ -368,8 +384,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         }
     }
 
-    //########################################
-
     protected function getHideProductsInOtherListingsPrefix()
     {
         $id = $this->getRequest()->getParam('id');
@@ -381,17 +395,15 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         return $prefix;
     }
 
-    //########################################
-
     protected function setRuleData($prefix)
     {
-        $listingData = $this->getHelper('Data\GlobalData')
+        $listingData = $this->globalData
                             ->getValue('listing_for_products_add')
                             ->getData();
 
         $storeId = isset($listingData['store_id']) ? (int)$listingData['store_id'] : 0;
         $prefix .= isset($listingData['id']) ? '_'.$listingData['id'] : '';
-        $this->getHelper('Data\GlobalData')->setValue('rule_prefix', $prefix);
+        $this->globalData->setValue('rule_prefix', $prefix);
 
         $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
             [
@@ -402,23 +414,21 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 
         $ruleParam = $this->getRequest()->getPost('rule');
         if (!empty($ruleParam)) {
-            $this->getHelper('Data\Session')->setValue(
+            $this->sessionHelper->setValue(
                 $prefix,
                 $ruleModel->getSerializedFromPost($this->getRequest()->getPostValue())
             );
         } elseif ($ruleParam !== null) {
-            $this->getHelper('Data\Session')->setValue($prefix, []);
+            $this->sessionHelper->setValue($prefix, []);
         }
 
-        $sessionRuleData = $this->getHelper('Data\Session')->getValue($prefix);
+        $sessionRuleData = $this->sessionHelper->getValue($prefix);
         if (!empty($sessionRuleData)) {
             $ruleModel->loadFromSerialized($sessionRuleData);
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('rule_model', $ruleModel);
+        $this->globalData->setValue('rule_model', $ruleModel);
     }
-
-    //########################################
 
     public function clear()
     {
@@ -431,6 +441,4 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
             $this->getListing()->setSettings('additional_data', $additionalData)->save();
         }
     }
-
-    //########################################
 }

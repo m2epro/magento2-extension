@@ -51,12 +51,12 @@ class Form extends AbstractForm
             );
         }
 
-        $viewButton = $this->createBlock('Magento\Button')->addData([
+        $viewButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->addData([
             'label' => $this->__('View'),
             'type' => 'submit'
         ]);
 
-        $randomButton = $this->createBlock('Magento\Button')->addData([
+        $randomButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->addData([
             'label' => $this->__('View Random Product'),
             'type' => 'submit',
             'onclick' => '$(\'product_id\').value = \'\'; return true;'

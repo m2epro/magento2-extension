@@ -18,7 +18,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Specific');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Specific::class);
     }
 
     //########################################

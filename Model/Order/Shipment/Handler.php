@@ -161,14 +161,14 @@ abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
             return [];
         }
 
-        $carrierCode = $carrierTitle = trim($track->getData('carrier_code'));
+        $carrierCode = $carrierTitle = trim((string)$track->getData('carrier_code'));
         $carrier = $this->carrierFactory->create($carrierCode, $order->getStoreId());
         $carrier && $carrierTitle = $carrier->getConfigData('title');
 
         return [
             'carrier_code'    => $carrierCode,
             'carrier_title'   => $carrierTitle,
-            'shipping_method' => trim($track->getData('title')),
+            'shipping_method' => trim((string)$track->getData('title')),
             'tracking_number' => $number
         ];
     }

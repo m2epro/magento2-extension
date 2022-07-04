@@ -27,7 +27,7 @@ class BusinessDiscount extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Amazon\Template\SellingFormat\BusinessDiscount');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Template\SellingFormat\BusinessDiscount::class);
     }
 
     //########################################

@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other\Removing
- */
 class Removing extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other
 {
     public function execute()

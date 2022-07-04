@@ -63,7 +63,8 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
 
         //------------------------------
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter\Grid $filtersGrid */
-        $filtersGrid = $this->createBlock('Ebay_Listing_View_Settings_Motors_Add_Filter_Grid');
+        $filtersGrid = $this->getLayout()
+                    ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter\Grid::class);
         $filtersGrid->setMotorsType($this->getMotorsType());
 
         $this->addTab('filters', [
@@ -75,7 +76,8 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
 
         //------------------------------
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Group\Grid $groupsGrid */
-        $groupsGrid = $this->createBlock('Ebay_Listing_View_Settings_Motors_Add_Group_Grid');
+        $groupsGrid = $this->getLayout()
+                   ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Group\Grid::class);
         $groupsGrid->setMotorsType($this->getMotorsType());
 
         $this->addTab('groups', [

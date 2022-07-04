@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Indi
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Individual\Generate
- */
 class Generate extends Main
 {
     public function execute()
@@ -30,7 +27,7 @@ class Generate extends Main
             return $this->getResult();
         }
 
-        /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+        /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         $listingProduct = $this->walmartFactory->getObjectLoaded('Listing\Product', $listingProductId);
 
         $magentoVariations = $listingProduct->getMagentoProduct()->getVariationInstance()->getVariationsTypeStandard();
@@ -74,7 +71,7 @@ class Generate extends Main
                 );
             }
 
-            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
             $variation = reset($variations);
 
             $options = $variation->getOptions();

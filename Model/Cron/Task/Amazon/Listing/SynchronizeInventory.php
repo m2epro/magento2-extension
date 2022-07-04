@@ -148,7 +148,7 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
      */
     protected function isTaskInProgress()
     {
-        /** @var $lockItemManager \Ess\M2ePro\Model\Lock\Item\Manager */
+        /** @var \Ess\M2ePro\Model\Lock\Item\Manager $lockItemManager */
         $lockItemManager = $this->modelFactory->getObject(
             'Lock_Item_Manager',
             [

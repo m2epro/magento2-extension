@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Edit;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Edit\Form
- */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     public $templateModel = null;
@@ -19,7 +16,24 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     public $attributesByInputTypes = [];
     public $allAttributes = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    protected $magentoAttributeHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     public function _construct()
     {
@@ -36,13 +50,10 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $marketplaces = $marketplaces->toArray();
         $this->marketplaceData = $marketplaces['items'];
 
-        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
-
-        $this->allAttributes = $magentoAttributeHelper->getAll();
-
+        $this->allAttributes = $this->magentoAttributeHelper->getAll();
         $this->attributesByInputTypes = [
-            'text' => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text']),
-            'text_select' => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text', 'select'])
+            'text' => $this->magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text']),
+            'text_select' => $this->magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text', 'select'])
         ];
     }
 
@@ -163,14 +174,14 @@ HTML
     public function _beforeToHtml()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\Category::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\Category::class)
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class)
         );
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart_Template_Category'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart_Template_Category'));
         $this->jsUrl->addUrls([
             'formSubmit'    => $this->getUrl(
                 '*/walmart_template_category/save',
@@ -250,15 +261,15 @@ HTML
             )
         ]);
 
-        $formData = $this->getHelper('Data')->jsonEncode($this->formData);
+        $formData = $this->dataHelper->jsonEncode($this->formData);
         $isEdit = $this->templateModel->getId() ? 'true' : 'false';
         $isCategoryLocked = $this->isCategoryLocked() ? 'true' : 'false';
         $isMarketplaceLocked = $this->isMarketplaceLocked() ? 'true' : 'false';
-        $marketplaceForceSet = $this->getHelper('Data')->jsonEncode(
+        $marketplaceForceSet = $this->dataHelper->jsonEncode(
             (bool)(int)$this->getRequest()->getParam('marketplace_id')
         );
-        $allAttributes = $this->getHelper('Data')->jsonEncode($this->getHelper('Magento\Attribute')->getAll());
-        $specifics = $this->getHelper('Data')->jsonEncode($this->formData['specifics']);
+        $allAttributes = $this->dataHelper->jsonEncode($this->magentoAttributeHelper->getAll());
+        $specifics = $this->dataHelper->jsonEncode($this->formData['specifics']);
 
         $this->js->addRequireJs([
             'jQuery' => 'jquery',
@@ -427,7 +438,7 @@ HTML;
             <input type="hidden"
                    name="category_path"
                    id="category_path"
-                   value="{$this->getHelper('Data')->escapeHtml($this->formData['category_path'])}" />
+                   value="{$this->dataHelper->escapeHtml($this->formData['category_path'])}" />
             <input type="hidden"
                    name="browsenode_id"
                    id="browsenode_id"

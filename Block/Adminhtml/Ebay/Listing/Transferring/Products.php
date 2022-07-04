@@ -15,16 +15,16 @@ use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
  */
 class Products extends AbstractBlock
 {
-    //########################################
-
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Transferring $transferring */
     protected $transferring;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Ess\M2ePro\Model\Ebay\Listing\Transferring $transferring,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -33,13 +33,14 @@ class Products extends AbstractBlock
 
         $this->addData($data);
         $this->setId('ebayListingTransferringProducts');
+        $this->dataHelper = $dataHelper;
     }
 
     //########################################
 
     protected function _toHtml()
     {
-        $translations = $this->getHelper('Data')->jsonEncode(
+        $translations = $this->dataHelper->jsonEncode(
             [
                 'Sell on Another Marketplace' => $this->__('Sell on Another Marketplace'),
                 'Adding has been completed' => $this->__('Adding has been completed'),
@@ -49,8 +50,8 @@ class Products extends AbstractBlock
             ]
         );
 
-        $urls = $this->getHelper('Data')->jsonEncode(
-            $this->getHelper('Data')->getControllerActions(
+        $urls = $this->dataHelper->jsonEncode(
+            $this->dataHelper->getControllerActions(
                 'Ebay_Listing_Transferring',
                 ['listing_id' => $this->getListing()->getId()]
             )
@@ -58,7 +59,7 @@ class Products extends AbstractBlock
 
         $this->transferring->setListing($this->getListing());
 
-        $products = $this->getHelper('Data')->jsonEncode($this->transferring->getProductsIds());
+        $products = $this->dataHelper->jsonEncode($this->transferring->getProductsIds());
         $successUrl = $this->getUrl(
             '*/ebay_listing/view',
             ['id' => $this->transferring->getTargetListingId()]

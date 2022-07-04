@@ -18,7 +18,7 @@ class Index extends Order
     public function execute()
     {
         $this->init();
-        $this->addContent($this->createBlock('Amazon\Order'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order::class));
         $this->setPageHelpLink('x/1v4UB');
 
         return $this->getResult();

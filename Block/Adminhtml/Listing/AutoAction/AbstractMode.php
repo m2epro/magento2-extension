@@ -76,7 +76,7 @@ HTML
 
     protected function getHelpBlock()
     {
-        $helpBlock = $this->createBlock('HelpBlock')->setData([
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
             'id' => 'block_notice_listing_auto_action_mode',
             'content' => $this->__(<<<HTML
 <p>Choose the level at which Products should be automatically added or deleted.</p><br>

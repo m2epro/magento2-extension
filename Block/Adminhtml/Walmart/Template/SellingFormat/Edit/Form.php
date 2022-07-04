@@ -8,14 +8,15 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit;
 
+use Ess\M2ePro\Block\Adminhtml\Magento\Button;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
+use Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form\Promotions;
+use Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form\ShippingOverrideRules;
 use Ess\M2ePro\Model\Walmart\Template\SellingFormat;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form
- */
 class Form extends AbstractForm
 {
+    /** @var \Magento\Framework\App\ResourceConnection */
     private $resourceConnection;
 
     public $templateModel;
@@ -24,20 +25,36 @@ class Form extends AbstractForm
     public $allAttributesByInputTypes     = [];
     public $allAttributes             = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    protected $magentoAttributeHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->resourceConnection = $resourceConnection;
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->supportHelper = $supportHelper;
+        $this->databaseHelper = $databaseHelper;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -51,21 +68,22 @@ class Form extends AbstractForm
         $this->templateModel   = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
         $this->formData        = $this->getFormData();
 
-        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
-        $magentoAttributeHelper  = $this->getHelper('Magento\Attribute');
-
-        $this->allAttributes = $magentoAttributeHelper->getAll();
+        $this->allAttributes = $this->magentoAttributeHelper->getAll();
         $this->allAttributesByInputTypes = [
-            'text'        => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text']),
-            'text_select' => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text', 'select']),
-            'text_price'  => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text', 'price']),
-            'text_date'   => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text', 'date']),
-            'text_weight' => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text', 'weight']),
-            'boolean'     => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['boolean']),
+            'text'        => $this->magentoAttributeHelper
+                ->filterByInputTypes($this->allAttributes, ['text']),
+            'text_select' => $this->magentoAttributeHelper
+                ->filterByInputTypes($this->allAttributes, ['text', 'select']),
+            'text_price'  => $this->magentoAttributeHelper
+                ->filterByInputTypes($this->allAttributes, ['text', 'price']),
+            'text_date'   => $this->magentoAttributeHelper
+                ->filterByInputTypes($this->allAttributes, ['text', 'date']),
+            'text_weight' => $this->magentoAttributeHelper
+                ->filterByInputTypes($this->allAttributes, ['text', 'weight']),
+            'boolean'     => $this->magentoAttributeHelper
+                ->filterByInputTypes($this->allAttributes, ['boolean']),
         ];
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
@@ -603,7 +621,7 @@ HTML
                 'required' => true,
                 'style' => 'width: 65%',
                 'field_extra_attributes' => 'style="display: none;"',
-                'after_element_html' => '<span id="tax_codes">' . $this->createBlock('Magento\Button')
+                'after_element_html' => '<span id="tax_codes">' . $this->getLayout()->createBlock(Button::class)
                                      ->setData('label', $this->__('Show Sales Tax Codes'))
                                      ->addData([
                                          'onclick' => 'WalmartTemplateSellingFormatObj.openTaxCodePopup(false)',
@@ -792,7 +810,7 @@ HTML
                         20th November and stop selling on 30th November. <br><br>
 
                         Read more details <a href="%url%" target="_blank">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/cv1IB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/cv1IB')
                 )
             ]
         );
@@ -1208,7 +1226,7 @@ HTML
 
     public function getPromotionsHtml($form)
     {
-        return $this->createBlock('Walmart_Template_SellingFormat_Edit_Form_Promotions')
+        return $this->getLayout()->createBlock(Promotions::class)
                     ->setParentForm($form)
                     ->setAttributesByInputType('text_date', $this->allAttributesByInputTypes['text_date'])
                     ->setAttributesByInputType('text_price', $this->allAttributesByInputTypes['text_price'])
@@ -1217,7 +1235,7 @@ HTML
 
     public function getShippingOverrideRuleHtml($form)
     {
-        return $this->createBlock('Walmart_Template_SellingFormat_Edit_Form_ShippingOverrideRules')
+        return $this->getLayout()->createBlock(ShippingOverrideRules::class)
                      ->setParentForm($form)
                      ->setAllAttributes($this->allAttributes)
                      ->toHtml();
@@ -1228,7 +1246,7 @@ HTML
         $fieldCount,
         $name
     ) {
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
         for ($i = 0; $i < $fieldCount; $i++) {
             $value = '';
             if (!empty($this->formData[$name][$i]['name'])) {
@@ -1272,7 +1290,9 @@ HTML
             $valueBlock->setId($name . '_value_' . $i);
             $valueBlock->setForm($fieldSet->getForm());
 
-            $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
+            $button = $this->getLayout()
+                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
+                           ->addData([
                 'label' => $this->__('Insert'),
                 'destination_id' => $name . '_value_' . $i,
                 'magento_attributes' => $this->getClearAttributesByInputTypesOptions(),
@@ -1338,28 +1358,28 @@ HTML
     protected function _beforeToHtml()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Template\SellingFormat::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Template\SellingFormat::class)
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\SellingFormat::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\SellingFormat::class)
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')
+            $this->dataHelper
                 ->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion::class)
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')
+            $this->dataHelper
                  ->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride::class)
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class)
         );
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart_Template_SellingFormat'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart_Template_SellingFormat'));
         $this->jsUrl->addUrls([
             'formSubmit'    => $this->getUrl(
                 '*/walmart_template_sellingFormat/save',
@@ -1422,14 +1442,14 @@ HTML
             'Sales Tax Codes' => $this->__('Sales Tax Codes'),
         ]);
 
-        $formData = $this->getHelper('Data')->jsonEncode($this->formData);
+        $formData = $this->dataHelper->jsonEncode($this->formData);
         $isEdit = $this->templateModel->getId() ? 'true' : 'false';
-        $allAttributes = $this->getHelper('Data')->jsonEncode($this->getHelper('Magento\Attribute')->getAll());
-        $marketplacesWithTaxCodes = $this->getHelper('Data')
+        $allAttributes = $this->dataHelper->jsonEncode($this->magentoAttributeHelper->getAll());
+        $marketplacesWithTaxCodes = $this->dataHelper
                                          ->jsonEncode($this->getMarketplacesWithTaxCodesDictionary());
 
-        $promotions = $this->getHelper('Data')->jsonEncode($this->formData['promotions']);
-        $shippingOverride = $this->getHelper('Data')->jsonEncode($this->formData['shipping_override_rule']);
+        $promotions = $this->dataHelper->jsonEncode($this->formData['promotions']);
+        $shippingOverride = $this->dataHelper->jsonEncode($this->formData['shipping_override_rule']);
 
         $this->js->addRequireJs(
             [
@@ -1480,7 +1500,7 @@ JS
 
         $queryStmt = $connRead->select()
                               ->from(
-                                  $this->getHelper('Module_Database_Structure')
+                                  $this->databaseHelper
                                       ->getTableNameWithPrefix('m2epro_walmart_dictionary_marketplace'),
                                   ['marketplace_id']
                               )
@@ -1512,7 +1532,7 @@ JS
 
         $data['shipping_override_rule'] = $this->templateModel->getChildObject()->getShippingOverrides();
         $data['promotions'] = $this->templateModel->getChildObject()->getPromotions();
-        $data['attributes'] = $this->getHelper('Data')->jsonDecode($data['attributes']);
+        $data['attributes'] = $this->dataHelper->jsonDecode($data['attributes']);
 
         return array_merge($default, $data);
     }
@@ -1551,12 +1571,12 @@ JS
     public function getForceAddedAttributeOption($attributeCode, $availableValues, $value = null)
     {
         if (empty($attributeCode) ||
-            $this->getHelper('Magento\Attribute')->isExistInAttributesArray($attributeCode, $availableValues)) {
+            $this->magentoAttributeHelper->isExistInAttributesArray($attributeCode, $availableValues)) {
             return '';
         }
 
-        $attributeLabel = $this->getHelper('Data')
-                               ->escapeHtml($this->getHelper('Magento\Attribute')->getAttributeLabel($attributeCode));
+        $attributeLabel = $this->dataHelper
+                               ->escapeHtml($this->magentoAttributeHelper->getAttributeLabel($attributeCode));
 
         $result = ['value' => $value, 'label' => $attributeLabel];
 
@@ -1575,7 +1595,7 @@ JS
         }
 
         $optionsResult = [];
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
 
         foreach ($this->allAttributesByInputTypes[$attributeType] as $attribute) {
             $tmpOption = [
@@ -1597,7 +1617,7 @@ JS
     public function getClearAttributesByInputTypesOptions()
     {
         $optionsResult = [];
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
 
         foreach ($this->allAttributesByInputTypes['text_select'] as $attribute) {
             $optionsResult[] = [

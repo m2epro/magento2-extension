@@ -10,16 +10,35 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs;
 
 use Ess\M2ePro\Model\Amazon\Template\Description;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs\General
- */
 class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    public $templateModel = null;
+    public $templateModel;
     public $formData = [];
     public $marketplaceData = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    protected $magentoAttributeHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->supportHelper = $supportHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     public function _construct()
     {
@@ -72,7 +91,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     you should enable New ASIN/ISBN Creation feature.<br/><br/>
                     More detailed information about ability to work with this Page you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/OP8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/OP8UB')
                 )
             ]
         );
@@ -152,7 +171,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $this->css->add('label.mage-error[for="category_path"] { width: 160px !important; left: initial !important; }');
 
-        $productDataNick = $this->getHelper('Data')->escapeHtml($this->formData['product_data_nick']);
+        $productDataNick = $this->dataHelper->escapeHtml($this->formData['product_data_nick']);
 
         $fieldSet->addField(
             'product_data_nick_select',
@@ -380,7 +399,7 @@ HTML;
         <input type="hidden"
                name="general[category_path]"
                id="category_path"
-               value="{$this->getHelper('Data')->escapeHtml($this->formData['category_path'])}" />
+               value="{$this->dataHelper->escapeHtml($this->formData['category_path'])}" />
         <input type="hidden"
                name="general[browsenode_id]"
                id="browsenode_id"
@@ -419,17 +438,13 @@ HTML;
             ]
         ];
 
-        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
-
-        $attributeHelper = $this->getHelper('Magento\Attribute');
-        $allAttributes = $attributeHelper->getAll();
-
+        $allAttributes = $this->magentoAttributeHelper->getAll();
         $allAttributesByInputTypes = [
-            'text' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text']),
-            'text_select' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'select']),
+            'text' => $this->magentoAttributeHelper->filterByInputTypes($allAttributes, ['text']),
+            'text_select' => $this->magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'select']),
         ];
 
-        $isExistInAttributesArray = $magentoAttributeHelper->isExistInAttributesArray(
+        $isExistInAttributesArray = $this->magentoAttributeHelper->isExistInAttributesArray(
             $this->formData['worldwide_id_custom_attribute'],
             $allAttributesByInputTypes['text']
         );
@@ -437,8 +452,8 @@ HTML;
         if ($this->formData['worldwide_id_custom_attribute'] != '' && !$isExistInAttributesArray) {
             $optionsResult['opt_group']['value'][] = [
                 'value' => Description::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE,
-                'label' => $this->getHelper('Data')->escapeHtml(
-                    $magentoAttributeHelper->getAttributeLabel($this->formData['worldwide_id_custom_attribute'])
+                'label' => $this->dataHelper->escapeHtml(
+                    $this->magentoAttributeHelper->getAttributeLabel($this->formData['worldwide_id_custom_attribute'])
                 ),
                 'attrs' => [
                     'attribute_code' => $this->formData['worldwide_id_custom_attribute'],
@@ -450,7 +465,7 @@ HTML;
         foreach ($allAttributesByInputTypes['text'] as $attribute) {
             $tmpOption = [
                 'value' => Description::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE,
-                'label' => $this->getHelper('Data')->escapeHtml($attribute['label']),
+                'label' => $this->dataHelper->escapeHtml($attribute['label']),
                 'attrs' => ['attribute_code' => $attribute['code']]
             ];
 
@@ -541,18 +556,18 @@ HTML;
             'Recent'      => $this->__('Recent'),
         ]);
 
-        $formData = $this->getHelper('Data')->jsonEncode($this->formData);
+        $formData = $this->dataHelper->jsonEncode($this->formData);
         $isEdit = $this->templateModel->getId() ? 'true' : 'false';
         $isCategoryLocked = $this->isCategoryLocked() ? 'true' : 'false';
         $isMarketplaceLocked = $this->isMarketplaceLocked() ? 'true' : 'false';
-        $marketplaceForceSet = $this->getHelper('Data')->jsonEncode(
+        $marketplaceForceSet = $this->dataHelper->jsonEncode(
             (bool)(int)$this->getRequest()->getParam('marketplace_id')
         );
         $isLockedNewAsin = $this->isNewAsinSwitcherLocked() ? 'true' : 'false';
-        $newAsinSwitcherForceSet = $this->getHelper('Data')->jsonEncode(
+        $newAsinSwitcherForceSet = $this->dataHelper->jsonEncode(
             (bool)(int)$this->getRequest()->getParam('is_new_asin_accepted')
         );
-        $allAttributes = $this->getHelper('Data')->jsonEncode($this->getHelper('Magento\Attribute')->getAll());
+        $allAttributes = $this->dataHelper->jsonEncode($this->magentoAttributeHelper->getAll());
 
         $this->js->addRequireJs([
             'jQuery' => 'jquery',

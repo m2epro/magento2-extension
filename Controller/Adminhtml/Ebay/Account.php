@@ -12,16 +12,20 @@ use Ess\M2ePro\Model\Ebay\Account as EbayAccount;
 
 abstract class Account extends Main
 {
+    /** @var \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update */
+    protected $storeCategoryUpdate;
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Store */
     private $componentEbayCategoryStore;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update $storeCategoryUpdate,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($ebayFactory, $context);
 
+        $this->storeCategoryUpdate = $storeCategoryUpdate;
         $this->componentEbayCategoryStore = $componentEbayCategoryStore;
     }
 
@@ -44,7 +48,7 @@ abstract class Account extends Main
         try {
             $params = $this->getDataForServer($data);
 
-            /** @var $dispatcherObject \Ess\M2ePro\Model\Ebay\Connector\Dispatcher */
+            /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
 
             $connectorObj = $dispatcherObject->getVirtualConnector(
@@ -93,7 +97,7 @@ abstract class Account extends Main
 
         // Update eBay store
         // ---------------------------------------
-        $account->getChildObject()->updateEbayStoreInfo();
+        $this->storeCategoryUpdate->process($account->getChildObject());
 
         if ($this->componentEbayCategoryStore->isExistDeletedCategories()) {
             $url = $this->getUrl('*/ebay_category/index', ['filter' => base64_encode('state=0')]);
@@ -133,7 +137,7 @@ abstract class Account extends Main
                 return $account;
             }
 
-            /** @var $dispatcherObject \Ess\M2ePro\Model\Ebay\Connector\Dispatcher */
+            /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
 
             $connectorObj = $dispatcherObject->getVirtualConnector(
@@ -174,8 +178,8 @@ abstract class Account extends Main
 
         // Update eBay store
         // ---------------------------------------
-        if ($isChangeTokenSession || (int)$this->getRequest()->getParam('update_ebay_store')) {
-            $account->getChildObject()->updateEbayStoreInfo();
+        if ($isChangeTokenSession) {
+            $this->storeCategoryUpdate->process($account->getChildObject());
 
             if ($this->componentEbayCategoryStore->isExistDeletedCategories()) {
                 $url = $this->getUrl('*/ebay_category/index', ['filter' => base64_encode('state=0')]);
@@ -222,9 +226,9 @@ abstract class Account extends Main
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $collection */
         $collection = $this->ebayFactory->getObject('Account')->getCollection()
-            ->addFieldToSelect('title')
-            ->addFieldToFilter('user_id', $userId)
-            ->addFieldToFilter('id', ['neq' => $newAccountId]);
+                                        ->addFieldToSelect('title')
+                                        ->addFieldToFilter('user_id', $userId)
+                                        ->addFieldToFilter('id', ['neq' => $newAccountId]);
 
         return $collection->getSize();
     }

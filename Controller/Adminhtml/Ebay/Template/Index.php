@@ -19,9 +19,7 @@ class Index extends Template
 
     public function execute()
     {
-        $content = $this->createBlock(
-            'Ebay\\Template'
-        );
+        $content = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template::class);
 
         $this->getResult()->getConfig()->getTitle()->prepend('Policies');
         $this->addContent($content);

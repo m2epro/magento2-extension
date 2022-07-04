@@ -18,8 +18,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     public function _construct()
     {
         $this->_init(
-            'Ess\M2ePro\Model\ArchivedEntity',
-            'Ess\M2ePro\Model\ResourceModel\ArchivedEntity'
+            \Ess\M2ePro\Model\ArchivedEntity::class,
+            \Ess\M2ePro\Model\ResourceModel\ArchivedEntity::class
         );
     }
 

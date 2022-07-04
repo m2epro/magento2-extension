@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\DuplicateProducts
- */
 class DuplicateProducts extends Main
 {
     public function execute()
@@ -31,7 +28,7 @@ class DuplicateProducts extends Main
         }
 
         foreach ($listingProductsIds as $listingProductId) {
-            /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $this->walmartFactory->getObjectLoaded('Listing\Product', $listingProductId);
 
             $duplicatedListingProduct = $listingProduct->getListing()->addProduct(

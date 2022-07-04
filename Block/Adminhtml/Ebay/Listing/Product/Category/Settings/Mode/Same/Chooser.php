@@ -8,15 +8,24 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Same;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Same\Chooser
- */
+use Ess\M2ePro\Block\Adminhtml\Listing\View\Header;
+
 class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
     /** @var \Ess\M2ePro\Model\Listing */
     protected $_listing;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = [])
+    {
+        parent::__construct($context, $data);
+        $this->dataHelper = $dataHelper;
+    }
 
     public function _construct()
     {
@@ -60,14 +69,14 @@ JS;
         $parentHtml = parent::_toHtml();
 
         // ---------------------------------------
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions(
             'Ebay_Listing_Product_Category_Settings',
             [
                 '_current' => true
             ]
         ));
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay_Category', ['_current' => true]));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay_Category', ['_current' => true]));
 
         $this->jsUrl->add($this->getUrl('*/ebay_listing_product_category_settings', [
             'step' => 3,
@@ -80,15 +89,16 @@ JS;
         // ---------------------------------------
 
         // ---------------------------------------
-        $viewHeaderBlock = $this->createBlock('Listing_View_Header', '', [
+        $viewHeaderBlock = $this->getLayout()->createBlock(Header::class, '', [
             'data' => ['listing' => $this->_listing]
         ]);
         // ---------------------------------------
 
         // ---------------------------------------
 
-        /** @var $chooserBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser */
-        $chooserBlock = $this->createBlock('Ebay_Template_Category_Chooser');
+        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser $chooserBlock */
+        $chooserBlock = $this->getLayout()
+                             ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser::class);
         $chooserBlock->setMarketplaceId($this->_listing->getMarketplaceId());
         $chooserBlock->setAccountId($this->_listing->getAccountId());
         $chooserBlock->setCategoriesData($this->getData('categories_data'));

@@ -10,12 +10,39 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\Other;
 
 use \Ess\M2ePro\Model\Amazon\Listing\Product;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\Other\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGrid
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
+        \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->databaseHelper = $databaseHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct(
+            $magentoProductCollectionFactory,
+            $localeCurrency,
+            $amazonFactory,
+            $resourceConnection,
+            $helperData,
+            $context,
+            $backendHelper,
+            $data
+        );
+    }
 
     public function _construct()
     {
@@ -44,7 +71,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
 
         $collection->getSelect()->joinLeft(
             [
-                'cpe' => $this->getHelper('Module_Database_Structure')
+                'cpe' => $this->databaseHelper
                     ->getTableNameWithPrefix('catalog_product_entity')
             ],
             '(cpe.entity_id = `main_table`.product_id)',
@@ -128,7 +155,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
         if ($title === null || $title === '') {
             $value = '<i style="color:gray;">' . $this->__('receiving') . '...</i>';
         } else {
-            $value = $this->getHelper('Data')->escapeHtml($title);
+            $value = $this->dataHelper->escapeHtml($title);
         }
 
         $value = '<div style="margin-bottom: 5px">' . $value . '</div>';
@@ -143,7 +170,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
 
         $sku = $row->getData('sku');
         if (!empty($sku)) {
-            $sku = $this->getHelper('Data')->escapeHtml($sku);
+            $sku = $this->dataHelper->escapeHtml($sku);
             $skuWord = $this->__('SKU');
 
             $value .= <<<HTML
@@ -162,7 +189,7 @@ HTML;
 
     public function callbackColumnActions($value, $row, $column, $isExport)
     {
-        $altTitle = $this->getHelper('Data')->escapeHtml($this->__('Go to Listing'));
+        $altTitle = $this->dataHelper->escapeHtml($this->__('Go to Listing'));
         $iconSrc  = $this->getViewFileUrl('Ess_M2ePro::images/goto_listing.png');
 
         $manageUrl = $this->getUrl('*/amazon_listing_other/view/', [

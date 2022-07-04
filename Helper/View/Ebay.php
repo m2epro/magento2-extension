@@ -8,69 +8,90 @@
 
 namespace Ess\M2ePro\Helper\View;
 
-/**
- * Class \Ess\M2ePro\Helper\View\Ebay
- */
-class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
+class Ebay
 {
-    const NICK  = 'ebay';
+    public const NICK  = 'ebay';
 
-    const WIZARD_INSTALLATION_NICK = 'installationEbay';
-    const MENU_ROOT_NODE_NICK = 'Ess_M2ePro::ebay';
+    public const WIZARD_INSTALLATION_NICK = 'installationEbay';
+    public const MENU_ROOT_NODE_NICK = 'Ess_M2ePro::ebay';
 
-    const MODE_SIMPLE = 'simple';
-    const MODE_ADVANCED = 'advanced';
+    public const MODE_SIMPLE = 'simple';
+    public const MODE_ADVANCED = 'advanced';
 
-    protected $ebayFactory;
-    protected $activeRecordFactory;
-    protected $modelFactory;
-
-    //########################################
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
+    private $ebayFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
+    private $activeRecordFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
+    private $modelFactory;
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translation;
+    /** @var \Ess\M2ePro\Helper\Module\Wizard */
+    private $wizard;
+    /** @var \Ess\M2ePro\Helper\Data\Cache\Runtime */
+    private $runtimeCache;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $modelFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Helper\Module\Translation $translation,
+        \Ess\M2ePro\Helper\Module\Wizard $wizard,
+        \Ess\M2ePro\Helper\Data\Cache\Runtime $runtimeCache
     ) {
         $this->ebayFactory = $ebayFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->modelFactory = $modelFactory;
-        parent::__construct($helperFactory, $context);
+        $this->translation = $translation;
+        $this->wizard = $wizard;
+        $this->runtimeCache = $runtimeCache;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getTitle()
+    /**
+     * @return \Magento\Framework\Phrase|mixed|string
+     */
+    public function getTitle(): string
     {
-        return $this->getHelper('Module\Translation')->__('eBay Integration');
+        return $this->translation->__('eBay Integration');
     }
 
-    //########################################
-
-    public function getMenuRootNodeLabel()
+    /**
+     * @return \Magento\Framework\Phrase|mixed|string
+     */
+    public function getMenuRootNodeLabel(): string
     {
         return $this->getTitle();
     }
 
-    //########################################
-
-    public function getWizardInstallationNick()
+    /**
+     * @return string
+     */
+    public function getWizardInstallationNick(): string
     {
         return self::WIZARD_INSTALLATION_NICK;
     }
 
-    public function isInstallationWizardFinished()
+    /**
+     * @return bool
+     */
+    public function isInstallationWizardFinished(): bool
     {
-        return $this->getHelper('Module\Wizard')->isFinished(
+        return $this->wizard->isFinished(
             $this->getWizardInstallationNick()
         );
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function isFeedbacksShouldBeShown($accountId = null)
+    /**
+     * @param $accountId
+     *
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isFeedbacksShouldBeShown($accountId = null): bool
     {
         $accountCollection = $this->modelFactory->getObject('Ebay\Account')->getCollection();
         $accountCollection->addFieldToFilter('feedbacks_receive', 1);
@@ -93,9 +114,15 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
     //----------------------------------------
 
-    public function isDuplicatesFilterShouldBeShown($listingId = null)
+    /**
+     * @param $listingId
+     *
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isDuplicatesFilterShouldBeShown($listingId = null): bool
     {
-        $sessionCache = $this->getHelper('Data_Cache_Runtime');
+        $sessionCache = $this->runtimeCache;
 
         if ($sessionCache->getValue('is_duplicates_filter_should_be_shown') !== null) {
             return $sessionCache->getValue('is_duplicates_filter_should_be_shown');
@@ -110,6 +137,4 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
         return $result;
     }
-
-    //########################################
 }

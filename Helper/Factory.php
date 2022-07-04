@@ -8,18 +8,12 @@
 
 namespace Ess\M2ePro\Helper;
 
-/**
- * Class \Ess\M2ePro\Helper\Factory
- */
 class Factory
 {
-    protected $objectManager;
-
-    //########################################
+    /** @var \Magento\Framework\ObjectManagerInterface */
+    private $objectManager;
 
     /**
-     * Construct
-     *
      * @param \Magento\Framework\ObjectManagerInterface $objectManager
      */
     public function __construct(
@@ -28,38 +22,16 @@ class Factory
         $this->objectManager = $objectManager;
     }
 
-    //########################################
-
     /**
-     * @param $helperName
-     * @param array $arguments
-     * @return \Magento\Framework\App\Helper\AbstractHelper
-     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @param string $helperName
+     *
+     * @return object
      */
-    public function getObject($helperName, array $arguments = [])
+    public function getObject(string $helperName)
     {
         // fix for Magento2 sniffs that forcing to use ::class
         $helperName = str_replace('_', '\\', $helperName);
 
-        $helper = $this->objectManager->get('\Ess\M2ePro\Helper\\'.$helperName, $arguments);
-
-        if (!$helper instanceof \Magento\Framework\App\Helper\AbstractHelper) {
-            throw new \Ess\M2ePro\Model\Exception\Logic(
-                __('%1 doesn\'t extends \Magento\Framework\App\Helper\AbstractHelper', $helperName)
-            );
-        }
-
-        return $helper;
+        return $this->objectManager->get('\Ess\M2ePro\Helper\\' . $helperName);
     }
-
-    /**
-     * @param string $helperName
-     * @return bool
-     */
-    public function canCreateObject($helperName)
-    {
-        return class_exists('Ess\M2ePro\Helper\\' . str_replace('_', '\\', $helperName));
-    }
-
-    //########################################
 }

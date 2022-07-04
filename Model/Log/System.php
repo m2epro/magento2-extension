@@ -23,7 +23,7 @@ class System extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Log\System');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Log\System::class);
     }
 
     //########################################

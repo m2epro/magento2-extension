@@ -81,8 +81,8 @@ class Transferring extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
     protected function destinationStep()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Transferring\Destination $block */
-        $block = $this->createBlock(
-            'Amazon_Listing_Transferring_Destination',
+        $block = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Transferring\Destination::class,
             '',
             [
                 'data' => [
@@ -213,8 +213,8 @@ HTML
         );
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Transferring\Products $block */
-        $block = $this->createBlock(
-            'Amazon_Listing_Transferring_Products',
+        $block = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Transferring\Products::class,
             '',
             [
                 'data' => [

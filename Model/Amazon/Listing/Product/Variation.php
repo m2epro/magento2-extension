@@ -18,7 +18,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Variation');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Variation::class);
     }
 
     public function afterSave()
@@ -193,7 +193,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
         if ($this->getListingProduct()->getMagentoProduct()->isConfigurableType() ||
             $this->getListingProduct()->getMagentoProduct()->isGroupedType()) {
             foreach ($options as $option) {
-                /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+                /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
                 $sku = $option->getChildObject()->getSku();
                 break;
             }
@@ -201,7 +201,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
         // Bundle product
         } elseif ($this->getListingProduct()->getMagentoProduct()->isBundleType()) {
             foreach ($options as $option) {
-                /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+                /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
 
                 if (!$option->getProductId()) {
                     continue;
@@ -214,7 +214,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
         // Simple with options product
         } elseif ($this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions()) {
             foreach ($options as $option) {
-                /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+                /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
                 $sku != '' && $sku .= '-';
                 $tempSku = $option->getChildObject()->getSku();
                 if ($tempSku == '') {
@@ -227,7 +227,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
             // Downloadable with separated links product
         } elseif ($this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()) {
 
-            /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
 
             $option = reset($options);
             $sku = $option->getMagentoProduct()->getSku().'-'
@@ -266,7 +266,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
 
     public function getQty($magentoMode = false)
     {
-        /** @var $calculator \Ess\M2ePro\Model\Amazon\Listing\Product\QtyCalculator */
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\QtyCalculator $calculator */
         $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_QtyCalculator');
         $calculator->setProduct($this->getListingProduct());
         $calculator->setIsMagentoMode($magentoMode);
@@ -284,7 +284,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
 
         $src = $this->getAmazonSellingFormatTemplate()->getRegularPriceSource();
 
-        /** @var $calculator \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator */
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
         $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_PriceCalculator');
         $calculator->setSource($src)->setProduct($this->getListingProduct());
         $calculator->setCoefficient($this->getAmazonSellingFormatTemplate()->getRegularPriceCoefficient());
@@ -302,7 +302,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
 
         $src = $this->getAmazonSellingFormatTemplate()->getRegularMapPriceSource();
 
-        /** @var $calculator \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator */
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
         $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_PriceCalculator');
         $calculator->setSource($src)->setProduct($this->getListingProduct());
         $calculator->setPriceVariationMode($this->getAmazonSellingFormatTemplate()->getRegularPriceVariationMode());
@@ -318,7 +318,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
 
         $src = $this->getAmazonSellingFormatTemplate()->getRegularSalePriceSource();
 
-        /** @var $calculator \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator */
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
         $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_PriceCalculator');
         $calculator->setSource($src)->setProduct($this->getListingProduct());
         $calculator->setIsSalePrice(true);
@@ -339,7 +339,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
 
         $src = $this->getAmazonSellingFormatTemplate()->getBusinessPriceSource();
 
-        /** @var $calculator \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator */
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
         $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_PriceCalculator');
         $calculator->setSource($src)->setProduct($this->getListingProduct());
         $calculator->setCoefficient($this->getAmazonSellingFormatTemplate()->getBusinessPriceCoefficient());
@@ -370,7 +370,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
             $storeId = $this->getListing()->getStoreId();
             $src['tier_website_id'] = $this->getHelper('Magento\Store')->getWebsite($storeId)->getId();
 
-            /** @var $calculator \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator */
+            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
             $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_PriceCalculator');
             $calculator->setSource($src)->setProduct($this->getListingProduct());
             $calculator->setSourceModeMapping([
@@ -400,7 +400,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
         $resultValue = [];
 
         foreach ($businessDiscounts as $businessDiscount) {
-            /** @var $calculator \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator */
+            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
             $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_PriceCalculator');
             $calculator->setSource($businessDiscount->getSource())->setProduct($this->getListingProduct());
             $calculator->setSourceModeMapping([

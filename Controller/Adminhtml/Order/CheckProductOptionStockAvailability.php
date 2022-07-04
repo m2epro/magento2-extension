@@ -10,16 +10,24 @@ namespace Ess\M2ePro\Controller\Adminhtml\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Order;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Order\CheckProductOptionStockAvailability
- */
 class CheckProductOptionStockAvailability extends Order
 {
+    /** @var \Ess\M2ePro\Helper\Magento\Product */
+    protected $magentoProductHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\Product $magentoProductHelper,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+        $this->magentoProductHelper = $magentoProductHelper;
+    }
+
     public function execute()
     {
         $orderItemId = $this->getRequest()->getParam('order_item_id');
 
-        /** @var $orderItem \Ess\M2ePro\Model\Order\Item */
+        /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
         $orderItem = $this->activeRecordFactory->getObjectLoaded('Order\Item', $orderItemId);
         $optionsData = $this->getProductOptionsDataFromPost();
 
@@ -37,7 +45,7 @@ class CheckProductOptionStockAvailability extends Order
             $associatedProducts["{$optionId}::{$valueId}"] = $optionData['product_ids'];
         }
 
-        $associatedProducts = $this->getHelper('Magento\Product')->prepareAssociatedProducts(
+        $associatedProducts = $this->magentoProductHelper->prepareAssociatedProducts(
             $associatedProducts,
             $orderItem->getMagentoProduct()
         );

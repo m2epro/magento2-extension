@@ -393,7 +393,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
     {
         if (empty($this->validatorObject)) {
 
-            /** @var $validator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Validator */
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Validator $validator */
             $validator = $this->modelFactory->getObject(
                 'Ebay\Listing\Product\Action\Type\\' . $this->getOrmActionType() . '\Validator'
             );

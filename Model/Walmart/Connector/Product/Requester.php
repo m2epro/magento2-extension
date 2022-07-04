@@ -367,7 +367,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
     {
         if ($this->validatorObject === null) {
 
-            /** @var $validator \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Validator */
+            /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Validator $validator */
             $validator = $this->modelFactory->getObject(
                 'Walmart\Listing\Product\Action\Type\\' . $this->getOrmActionType() . '\Validator'
             );
@@ -388,7 +388,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
     protected function getRequestObject()
     {
         if ($this->requestObject === null) {
-            /** @var $request \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Request */
+            /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Request $request */
             $request = $this->modelFactory->getObject(
                 'Walmart\Listing\Product\Action\Type\\' . $this->getOrmActionType() . '\Request'
             );

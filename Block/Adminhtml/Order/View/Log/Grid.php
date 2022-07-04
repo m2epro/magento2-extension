@@ -15,7 +15,7 @@ use Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid;
  */
 class Grid extends AbstractGrid
 {
-    /** @var $order \Ess\M2ePro\Model\Order */
+    /** @var \Ess\M2ePro\Model\Order $order */
     private $order;
 
     //########################################
@@ -58,7 +58,7 @@ class Grid extends AbstractGrid
             'align'     => 'left',
             'width'     => '165px',
             'type'      => 'datetime',
-            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+            'filter'    => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
             'format'    => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
             'index'     => 'create_date'

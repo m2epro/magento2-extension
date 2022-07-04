@@ -50,7 +50,7 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Component\Switcher
                 ['length' => 15]
             );
 
-            /** @var $account \Ess\M2ePro\Model\Account */
+            /** @var \Ess\M2ePro\Model\Account $account */
             $items[$account->getComponentMode()]['value'][] = [
                 'value' => $account->getId(),
                 'label' => $accountTitle

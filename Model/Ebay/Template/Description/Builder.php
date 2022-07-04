@@ -209,6 +209,16 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             }
         }
 
+        if (isset($this->rawData['watermark_settings']['opacity_level'])) {
+            $watermarkSettings['opacity_level'] = (int)$this->rawData['watermark_settings']['opacity_level'];
+
+            if (isset($this->rawData['old_watermark_settings']) &&
+                $this->rawData['watermark_settings']['opacity_level'] !==
+                $this->rawData['old_watermark_settings']['opacity_level']) {
+                $hashChange = true;
+            }
+        }
+
         // ---------------------------------------
 
         $watermarkImageFile = $this->phpEnvironmentRequest->getFiles('watermark_image');
@@ -316,6 +326,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
                     'position' => Description::WATERMARK_POSITION_TOP,
                     'scale' => Description::WATERMARK_SCALE_MODE_NONE,
                     'transparent' => Description::WATERMARK_TRANSPARENT_MODE_NO,
+                    'opacity_level' => Description::WATERMARK_OPACITY_LEVEL_DEFAULT,
 
                     'hashes' => [
                         'current'  => '',

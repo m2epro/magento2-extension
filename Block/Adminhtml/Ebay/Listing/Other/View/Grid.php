@@ -10,16 +10,19 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Other\View;
 
 use Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty as OnlineQty;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Other\View\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
@@ -27,11 +30,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         $this->ebayFactory = $ebayFactory;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -122,7 +127,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'          => 'product_id',
             'filter_index'   => 'main_table.product_id',
             'frame_callback' => [$this, 'callbackColumnProductId'],
-            'filter'         => 'Ess\M2ePro\Block\Adminhtml\Grid\Column\Filter\ProductId',
+            'filter'         => \Ess\M2ePro\Block\Adminhtml\Grid\Column\Filter\ProductId::class,
             'filter_condition_callback' => [$this, 'callbackFilterProductId']
         ]);
 
@@ -154,7 +159,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'type'         => 'number',
             'index'        => 'available_qty',
             'filter_index' => new \Zend_Db_Expr('(second_table.online_qty - second_table.online_qty_sold)'),
-            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty',
+            'renderer'     => OnlineQty::class,
             'render_online_qty' => OnlineQty::ONLINE_AVAILABLE_QTY
         ]);
 
@@ -165,7 +170,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'type'         => 'number',
             'index'        => 'online_qty_sold',
             'filter_index' => 'second_table.online_qty_sold',
-            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty'
+            'renderer'     => OnlineQty::class
         ]);
 
         $this->addColumn('online_price', [
@@ -197,18 +202,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('end_date', [
-           'header'       => $this->__('End Date'),
-           'align'        => 'right',
-           'width'        => '150px',
-           'type'         => 'datetime',
-           'filter'       => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
-           'filter_time'  => true,
-           'index'        => 'end_date',
-           'filter_index' => 'second_table.end_date',
-           'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\DateTime'
+            'header'       => $this->__('End Date'),
+            'align'        => 'right',
+            'width'        => '150px',
+            'type'         => 'datetime',
+            'filter'       => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
+            'filter_time'  => true,
+            'index'        => 'end_date',
+            'filter_index' => 'second_table.end_date',
+            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\DateTime::class
         ]);
 
-        $back = $this->getHelper('Data')->makeBackUrlParam('*/ebay_listing_other/view', [
+        $back = $this->dataHelper->makeBackUrlParam('*/ebay_listing_other/view', [
             'account' => $this->getRequest()->getParam('account'),
             'marketplace' => $this->getRequest()->getParam('marketplace'),
             'back' => $this->getRequest()->getParam('back')
@@ -268,8 +273,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             if (strlen($productTitle) > 60) {
                 $productTitle = substr($productTitle, 0, 60) . '...';
             }
-            $productTitle = $this->getHelper('Data')->escapeHtml($productTitle);
-            $productTitle = $this->getHelper('Data')->escapeJs($productTitle);
+            $productTitle = $this->dataHelper->escapeHtml($productTitle);
+            $productTitle = $this->dataHelper->escapeJs($productTitle);
 
             $htmlValue = '&nbsp;<a href="javascript:void(0);"
                                     onclick="ListingOtherMappingObj.openPopUp(
@@ -291,7 +296,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $htmlValue .= '&nbsp&nbsp&nbsp<a href="javascript:void(0);"'
             .' onclick="EbayListingOtherGridObj.movingHandler.getGridHtml('
-            .$this->getHelper('Data')->jsonEncode([(int)$row->getData('id')])
+            .$this->dataHelper->jsonEncode([(int)$row->getData('id')])
             .')">'
             .$this->__('Move')
             .'</a>';
@@ -309,7 +314,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         } elseif ($tempSku == '') {
             $tempSku = '<i style="color:gray;">none</i>';
         } else {
-            $tempSku = $this->getHelper('Data')->escapeHtml($tempSku);
+            $tempSku = $this->dataHelper->escapeHtml($tempSku);
         }
 
         $categoryHtml = '';

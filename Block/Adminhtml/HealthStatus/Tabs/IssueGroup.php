@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs;
  */
 class IssueGroup extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    const NOTE_ELEMENT = 'Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Element\Note';
+    const NOTE_ELEMENT = \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Element\Note::class;
 
     /** @var \Ess\M2ePro\Model\HealthStatus\Task\Result\Set */
     private $resultSet;

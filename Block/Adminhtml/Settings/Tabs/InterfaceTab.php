@@ -23,9 +23,8 @@ class InterfaceTab extends AbstractTab
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
-        parent::__construct($context, $registry, $formFactory, $data);
-
         $this->moduleConfiguration = $moduleConfiguration;
+        parent::__construct($context, $registry, $formFactory, $data);
     }
 
     protected function _prepareForm()
@@ -100,7 +99,8 @@ HTML
             'label'   => $this->__('Restore All Helps & Remembered Choices'),
             'class' => 'primary'
         ];
-        $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
+        $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                         ->setData($data);
 
         $fieldset->addField(
             'restore_block_notices',

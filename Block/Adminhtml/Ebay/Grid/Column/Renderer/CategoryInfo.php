@@ -40,9 +40,11 @@ class CategoryInfo extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Te
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
     private $componentEbayCategoryEbay;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Backend\Block\Context $context,
@@ -52,6 +54,7 @@ class CategoryInfo extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Te
 
         $this->helperFactory             = $helperFactory;
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+        $this->translationHelper = $translationHelper;
     }
 
     //########################################
@@ -74,7 +77,7 @@ class CategoryInfo extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Te
             $iconSrc = $this->getViewFileUrl('Ess_M2ePro::images/warning.png');
             $html .= <<<HTML
 <img src="{$iconSrc}" alt="">&nbsp;<span style="font-style: italic; color: gray">
-    {$this->getHelper('Module\Translation')->__('Not Selected')}</span>
+    {$this->translationHelper->__('Not Selected')}</span>
 HTML;
         }
 
@@ -84,10 +87,10 @@ HTML;
     protected function renderCategoryInfo($categoryData, $categoryType)
     {
         $titles = [
-            eBayCategory::TYPE_EBAY_MAIN       => $this->getHelper('Module\Translation')->__('eBay Primary Category'),
-            eBayCategory::TYPE_EBAY_SECONDARY  => $this->getHelper('Module\Translation')->__('eBay Secondary Category'),
-            eBayCategory::TYPE_STORE_MAIN      => $this->getHelper('Module\Translation')->__('Store Primary Category'),
-            eBayCategory::TYPE_STORE_SECONDARY => $this->getHelper('Module\Translation')->__('Store Secondary Category')
+            eBayCategory::TYPE_EBAY_MAIN       => $this->translationHelper->__('eBay Primary Category'),
+            eBayCategory::TYPE_EBAY_SECONDARY  => $this->translationHelper->__('eBay Secondary Category'),
+            eBayCategory::TYPE_STORE_MAIN      => $this->translationHelper->__('Store Primary Category'),
+            eBayCategory::TYPE_STORE_SECONDARY => $this->translationHelper->__('Store Secondary Category')
         ];
 
         if (!isset($categoryData[$categoryType], $titles[$categoryType]) ||
@@ -140,17 +143,17 @@ HTML;
         if (!isset($categoryData[eBayCategory::TYPE_EBAY_MAIN]['is_custom_template'])) {
             $color = $specificsRequired ? 'red' : 'grey';
             $info = <<<HTML
-<span style="font-style: italic; color: {$color}">{$this->getHelper('Module\Translation')->__('Not Set')}</span>
+<span style="font-style: italic; color: {$color}">{$this->translationHelper->__('Not Set')}</span>
 HTML;
         } elseif ($categoryData[eBayCategory::TYPE_EBAY_MAIN]['is_custom_template'] == 1) {
-            $info = "<span>{$this->getHelper('Module\Translation')->__('Custom')}</span>";
+            $info = "<span>{$this->translationHelper->__('Custom')}</span>";
         } else {
-            $info = "<span>{$this->getHelper('Module\Translation')->__('Default')}</span>";
+            $info = "<span>{$this->translationHelper->__('Default')}</span>";
         }
 
         return <<<HTML
 <div style="margin-bottom: .5em;">
-    <span style="text-decoration: underline">{$this->getHelper('Module\Translation')->__('Item Specifics')}:</span>{$requiredMark}&nbsp;
+    <span style="text-decoration: underline">{$this->translationHelper->__('Item Specifics')}:</span>{$requiredMark}&nbsp;
     {$info}
 </div>
 HTML;

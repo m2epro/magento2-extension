@@ -21,7 +21,7 @@ class Note extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Order\Note');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Order\Note::class);
     }
 
     //########################################
@@ -96,7 +96,7 @@ class Note extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $magentoOrderModel = $this->getOrder()->getMagentoOrder();
 
         if ($magentoOrderModel !== null) {
-            /** @var $orderUpdater \Ess\M2ePro\Model\Magento\Order\Updater */
+            /** @var \Ess\M2ePro\Model\Magento\Order\Updater $orderUpdater */
             $orderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
 
             $orderUpdater->setMagentoOrder($magentoOrderModel);

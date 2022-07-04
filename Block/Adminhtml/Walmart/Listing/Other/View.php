@@ -15,14 +15,17 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     protected $walmartFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->walmartFactory = $walmartFactory;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $data);
     }
 
@@ -49,7 +52,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
 
         if ($this->getRequest()->getParam('back') !== null) {
-            $url = $this->getHelper('Data')->getBackUrl();
+            $url = $this->dataHelper->getBackUrl();
             $this->buttonList->add('back', [
                 'label'   => $this->__('Back'),
                 'onclick' => 'CommonObj.backClick(\'' . $url . '\')',
@@ -82,8 +85,8 @@ HTML
         $marketplaceId = $this->getRequest()->getParam('marketplace');
 
         // ---------------------------------------
-        $viewHeaderBlock = $this->createBlock(
-            'Listing_Other_View_Header',
+        $viewHeaderBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Listing\Other\View\Header::class,
             '',
             ['data' => [
                 'account' => $this->walmartFactory->getCachedObjectLoaded('Account', $accountId),

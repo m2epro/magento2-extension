@@ -23,7 +23,7 @@ class View extends Main
 
             $this->getHelper('Data\GlobalData')->setValue('view_listing', $listing);
 
-            $listingView = $this->createBlock('Amazon_Listing_View');
+            $listingView = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View::class);
 
             // Set rule model
             // ---------------------------------------
@@ -82,7 +82,7 @@ class View extends Main
             $this->__('M2E Pro Listing "%listing_title%"', $listing->getTitle())
         );
 
-        $this->addContent($this->createBlock('Amazon_Listing_View'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View::class));
 
         // Set rule model
         // ---------------------------------------
@@ -111,7 +111,7 @@ class View extends Main
         }
         // ---------------------------------------
 
-        /** @var $ruleModel \Ess\M2ePro\Model\Magento\Product\Rule */
+        /** @var \Ess\M2ePro\Model\Magento\Product\Rule $ruleModel */
         $ruleModel = $this->activeRecordFactory->getObject('Amazon_Magento_Product_Rule')->setData(
             [
                 'prefix' => $prefix,

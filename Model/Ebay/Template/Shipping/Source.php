@@ -14,12 +14,12 @@ namespace Ess\M2ePro\Model\Ebay\Template\Shipping;
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
-     * @var $magentoProduct \Ess\M2ePro\Model\Magento\Product
+     * @var \Ess\M2ePro\Model\Magento\Product $magentoProduct
      */
     private $magentoProduct;
 
     /**
-     * @var $shippingTemplateModel \Ess\M2ePro\Model\Ebay\Template\Shipping
+     * @var \Ess\M2ePro\Model\Ebay\Template\Shipping $shippingTemplateModel
      */
     private $shippingTemplateModel;
 

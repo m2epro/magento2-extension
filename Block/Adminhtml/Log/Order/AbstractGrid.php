@@ -13,7 +13,31 @@ namespace Ess\M2ePro\Block\Adminhtml\Log\Order;
  */
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 {
-    //#######################################
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\View $viewHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->databaseHelper = $databaseHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct(
+            $resourceConnection,
+            $viewHelper,
+            $context,
+            $backendHelper,
+            $data
+        );
+    }
 
     abstract protected function getComponentMode();
 
@@ -88,7 +112,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         }
 
         $collection->getSelect()->joinLeft(
-            ['so' => $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('sales_order')],
+            ['so' => $this->databaseHelper->getTableNameWithPrefix('sales_order')],
             '(so.entity_id = `mo`.magento_order_id)',
             ['magento_order_number' => 'increment_id']
         );
@@ -126,7 +150,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             'header'       => $this->__('Creation Date'),
             'align'        => 'left',
             'type'         => 'datetime',
-            'filter'       => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+            'filter'       => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
             'filter_time'  => true,
             'index'        => 'create_date',
             'filter_index' => 'main_table.create_date'
@@ -215,7 +239,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
                 $url = '#';
         }
 
-        return '<a href="' . $url . '" target="_blank">' . $this->getHelper('Data')->escapeHtml($channelOrderId) . '</a>';
+        return '<a href="' . $url . '" target="_blank">' . $this->dataHelper->escapeHtml($channelOrderId) . '</a>';
     }
 
     public function callbackColumnMagentoOrderNumber($value, $row, $column, $isExport)
@@ -228,7 +252,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         } else {
             $url = $this->getUrl('sales/order/view', ['order_id' => $magentoOrderId]);
             $result = '<a href="' . $url . '" target="_blank">'
-                        . $this->getHelper('Data')->escapeHtml($magentoOrderNumber) . '</a>';
+                        . $this->dataHelper->escapeHtml($magentoOrderNumber) . '</a>';
         }
 
         return "<span style='min-width: 110px; display: block;'>{$result}</span>";

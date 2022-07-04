@@ -8,12 +8,28 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Summary;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Summary\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Magento\Category\CollectionFactory $categoryCollectionFactory,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->databaseHelper = $databaseHelper;
+        parent::__construct(
+            $categoryCollectionFactory,
+            $context,
+            $backendHelper,
+            $dataHelper,
+            $data
+        );
+    }
 
     public function setProductsForEachCategory($productsForEachCategory)
     {
@@ -66,7 +82,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         $dbSelect = $collection->getConnection()
              ->select()
              ->from(
-                 $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('catalog_category_product'),
+                 $this->databaseHelper->getTableNameWithPrefix('catalog_category_product'),
                  'category_id'
              )
              ->where('`product_id` IN(?)', $this->getProductsIds());
@@ -179,7 +195,7 @@ HTML;
 </style>
 HTML;
 
-        $help = $this->createBlock('HelpBlock')->setData([
+        $help = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
             'content' => $this->__(
                 'The Quantity of chosen Products in each Category is shown in brackets.<br/>
                 If the Product belongs to several Categories, it is shown in each Category.

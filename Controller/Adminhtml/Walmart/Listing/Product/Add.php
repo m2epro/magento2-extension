@@ -10,15 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
- */
 abstract class Add extends Main
 {
     protected $sessionKey = 'walmart_listing_product_add';
     protected $listing = null;
-
-    //########################################
 
     protected function setSessionValue($key, $value)
     {

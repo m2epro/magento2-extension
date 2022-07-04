@@ -18,7 +18,7 @@ class Ktype extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Dictionary\Motor\Ktype');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Dictionary\Motor\Ktype::class);
     }
 
     //########################################

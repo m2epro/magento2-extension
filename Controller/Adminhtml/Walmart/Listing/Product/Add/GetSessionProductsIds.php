@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add\GetSessionProductsIds
- */
 class GetSessionProductsIds extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
-    //########################################
-
     public function execute()
     {
         $tempSession = $this->getSessionValue('source_categories');
@@ -26,6 +21,4 @@ class GetSessionProductsIds extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Lis
 
         return $this->getResult();
     }
-
-    //########################################
 }

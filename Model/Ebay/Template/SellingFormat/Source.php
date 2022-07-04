@@ -14,12 +14,12 @@ namespace Ess\M2ePro\Model\Ebay\Template\SellingFormat;
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
-     * @var $magentoProduct \Ess\M2ePro\Model\Magento\Product
+     * @var \Ess\M2ePro\Model\Magento\Product $magentoProduct
      */
     private $magentoProduct = null;
 
     /**
-     * @var $sellingTemplateModel \Ess\M2ePro\Model\Template\SellingFormat
+     * @var \Ess\M2ePro\Model\Template\SellingFormat $sellingTemplateModel
      */
     private $sellingTemplateModel = null;
 

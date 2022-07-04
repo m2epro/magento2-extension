@@ -228,7 +228,7 @@ class Shipping extends AbstractModel
 
         foreach ($this->getShippingTemplate()->getServices(true) as $service) {
 
-            /** @var $service \Ess\M2ePro\Model\Ebay\Template\Shipping\Service */
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Shipping\Service $service */
 
             if (!$service->isShippingTypeLocal()) {
                 continue;
@@ -321,7 +321,7 @@ class Shipping extends AbstractModel
 
         foreach ($this->getShippingTemplate()->getServices(true) as $service) {
 
-            /** @var $service \Ess\M2ePro\Model\Ebay\Template\Shipping\Service */
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Shipping\Service $service */
 
             if (!$service->isShippingTypeInternational()) {
                 continue;

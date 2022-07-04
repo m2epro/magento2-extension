@@ -56,7 +56,7 @@ class AccountContinue extends InstallationWalmart
             }
         }
 
-        /** @var $marketplaceObject \Ess\M2ePro\Model\Marketplace */
+        /** @var \Ess\M2ePro\Model\Marketplace $marketplaceObject */
         $marketplaceObject = $this->walmartFactory->getCachedObjectLoaded(
             'Marketplace',
             $params['marketplace_id']
@@ -71,7 +71,7 @@ class AccountContinue extends InstallationWalmart
             $accountData
         );
 
-        /** @var $account \Ess\M2ePro\Model\Account */
+        /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->walmartFactory->getObject('Account');
         $this->modelFactory->getObject('Walmart_Account_Builder')->build($account, $accountData);
 
@@ -88,7 +88,7 @@ class AccountContinue extends InstallationWalmart
                 $requestData['private_key'] = $params['private_key'];
             }
 
-            /** @var $dispatcherObject \Ess\M2ePro\Model\Walmart\Connector\Dispatcher */
+            /** @var \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
 
             $connectorObj = $dispatcherObject->getConnector(

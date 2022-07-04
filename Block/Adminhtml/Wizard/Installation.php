@@ -13,7 +13,24 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard;
  */
 abstract class Installation extends AbstractWizard
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param \Ess\M2ePro\Helper\Module\Wizard $wizardHelper
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Module\Wizard $wizardHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($dataHelper, $wizardHelper, $context, $data);
+    }
 
     abstract protected function getStep();
 
@@ -44,11 +61,11 @@ abstract class Installation extends AbstractWizard
     protected function _toHtml()
     {
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions(
+            $this->dataHelper->getControllerActions(
                 $this->nameBuilder->buildClassName(
                     [
                         'Wizard',
-                        $this->getNick()
+                        $this->getNick(),
                     ]
                 ),
                 [],
@@ -56,26 +73,27 @@ abstract class Installation extends AbstractWizard
             )
         );
         $this->jsUrl->addUrls([
-            'wizard_registration/createLicense' => $this->getUrl('*/wizard_registration/createLicense')
+            'wizard_registration/createLicense' => $this->getUrl('*/wizard_registration/createLicense'),
         ]);
-
 
         $stepsBlock = $this->createBlock(
             $this->nameBuilder->buildClassName(
                 [
                     'Wizard',
                     $this->getNick(),
-                    'Breadcrumb'
+                    'Breadcrumb',
                 ]
             )
         )->setSelectedStep($this->getStep());
 
-        $helpBlock = $this->createBlock('HelpBlock', 'wizard.help.block')->setData(
-            [
-                'no_collapse' => true,
-                'no_hide'     => true
-            ]
-        );
+        $helpBlock = $this->getLayout()
+                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class, 'wizard.help.block')
+                          ->setData(
+                              [
+                              'no_collapse' => true,
+                              'no_hide'     => true,
+                              ]
+                          );
 
         $contentBlock = $this->createBlock(
             $this->nameBuilder->buildClassName(
@@ -84,12 +102,12 @@ abstract class Installation extends AbstractWizard
                     $this->getNick(),
                     'Installation',
                     $this->getStep(),
-                    'Content'
+                    'Content',
                 ]
             )
         )->setData(
             [
-                'nick' => $this->getNick()
+                'nick' => $this->getNick(),
             ]
         );
 
@@ -98,6 +116,4 @@ abstract class Installation extends AbstractWizard
             $helpBlock->toHtml() .
             $contentBlock->toHtml();
     }
-
-    //########################################
 }

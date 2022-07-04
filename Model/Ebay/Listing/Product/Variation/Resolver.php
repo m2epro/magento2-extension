@@ -315,7 +315,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
             $options = $variation->getOptions(true);
             $option  = reset($options);
 

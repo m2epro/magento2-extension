@@ -30,7 +30,7 @@ class Generate extends Main
             return $this->getResult();
         }
 
-        /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+        /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $listingProductId);
 
         $magentoVariations = $listingProduct->getMagentoProduct()->getVariationInstance()->getVariationsTypeStandard();
@@ -74,7 +74,7 @@ class Generate extends Main
                 );
             }
 
-            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
             $variation = reset($variations);
 
             $options = $variation->getOptions();

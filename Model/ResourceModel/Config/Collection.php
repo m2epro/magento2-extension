@@ -21,8 +21,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     protected function _construct()
     {
         $this->_init(
-            'Ess\M2ePro\Model\Config',
-            'Ess\M2ePro\Model\ResourceModel\Config'
+            \Ess\M2ePro\Model\Config::class,
+            \Ess\M2ePro\Model\ResourceModel\Config::class
         );
     }
 

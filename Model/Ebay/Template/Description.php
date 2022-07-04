@@ -98,6 +98,9 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     const WATERMARK_TRANSPARENT_MODE_NO  = 0;
     const WATERMARK_TRANSPARENT_MODE_YES = 1;
 
+    const WATERMARK_OPACITY_LEVEL = [10, 20, 30, 40, 50, 60, 70, 80, 90];
+    const WATERMARK_OPACITY_LEVEL_DEFAULT = 30;
+
     const WATERMARK_CACHE_TIME     = 604800; // 7 days
     const GALLERY_IMAGES_COUNT_MAX = 11;
 
@@ -143,7 +146,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description::class);
     }
 
     /**
@@ -1008,6 +1011,18 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function getWatermarkTransparentMode()
     {
         return (int)$this->getSetting('watermark_settings', 'transparent');
+    }
+
+    /**
+     * @return int
+     */
+    public function getWatermarkOpacityLevel()
+    {
+        return (int)$this->getSetting(
+            'watermark_settings',
+            'opacity_level',
+            \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_OPACITY_LEVEL_DEFAULT
+        );
     }
 
     // ---------------------------------------

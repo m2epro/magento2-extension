@@ -49,7 +49,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         $params = $this->getParams();
 
-        /** @var $lockItemManager \Ess\M2ePro\Model\Lock\Item\Manager */
+        /** @var \Ess\M2ePro\Model\Lock\Item\Manager $lockItemManager */
         $lockItemManager = $this->modelFactory->getObject('Lock_Item_Manager', ['nick' => self::LOCK_ITEM_PREFIX]);
         $lockItemManager->create();
 
@@ -75,7 +75,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         $params = $this->getParams();
 
-        /** @var $lockItem \Ess\M2ePro\Model\Lock\Item\Manager */
+        /** @var \Ess\M2ePro\Model\Lock\Item\Manager $lockItem */
         $lockItem = $this->modelFactory->getObject('Lock_Item_Manager', ['nick' => self::LOCK_ITEM_PREFIX]);
         $lockItem->remove();
 

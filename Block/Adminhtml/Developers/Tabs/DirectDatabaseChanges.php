@@ -10,23 +10,25 @@ namespace Ess\M2ePro\Block\Adminhtml\Developers\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Developers\Tabs\DirectDatabaseChanges
- */
 class DirectDatabaseChanges extends AbstractForm
 {
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
+
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         array $data = []
     ) {
-        parent::__construct($context, $registry, $formFactory, $data);
         $this->moduleConfiguration = $moduleConfiguration;
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
     }
 
     //########################################
@@ -53,8 +55,8 @@ performance of your Magento site and synchronization with Channels.</li>
 </ul>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/3Pxw'),
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/1fxw')
+                    $this->supportHelper->getDocumentationArticleUrl('x/3Pxw'),
+                    $this->supportHelper->getDocumentationArticleUrl('x/1fxw')
                 )
             ]
         );
@@ -66,13 +68,17 @@ HTML
 
         $inspectorMode = $this->moduleConfiguration->isEnableListingProductInspectorMode();
 
-        $button = $this->createBlock('Magento\Button', '', ['data' => [
+        $button = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Magento\Button::class,
+            '',
+            ['data' => [
             'id' => 'save_inspector_mode',
             'label' => $this->__('Save'),
             'onclick' => 'DevelopersObj.saveDirectDatabaseChanges()',
             'style' => 'display: none;',
             'class' => 'primary'
-        ]]);
+            ]]
+        );
 
         $fieldSet->addField(
             'listing_product_inspector_mode',

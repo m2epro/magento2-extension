@@ -21,7 +21,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstr
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Variation\Option');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Variation\Option::class);
     }
 
     //########################################

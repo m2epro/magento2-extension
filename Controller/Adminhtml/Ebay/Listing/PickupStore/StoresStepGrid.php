@@ -18,7 +18,10 @@ class StoresStepGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Picku
     public function execute()
     {
         $this->initListing();
-        $this->setAjaxContent($this->createBlock('Ebay_Listing_PickupStore_Step_Stores_Grid'));
+        $this->setAjaxContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Step\Stores\Grid::class)
+        );
         return $this->getResult();
     }
 

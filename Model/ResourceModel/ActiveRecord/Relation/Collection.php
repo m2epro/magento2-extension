@@ -58,8 +58,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\ActiveRecord\Relation',
-            'Ess\M2ePro\Model\ResourceModel\ActiveRecord\Relation'
+            \Ess\M2ePro\Model\ActiveRecord\Relation::class,
+            \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Relation::class
         );
     }
 

@@ -245,7 +245,7 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
             return $customerDataObject;
         }
 
-        /** @var $customerBuilder \Ess\M2ePro\Model\Magento\Customer */
+        /** @var \Ess\M2ePro\Model\Magento\Customer $customerBuilder */
         $customerBuilder = $this->modelFactory->getObject('Magento\Customer');
 
         if ($accountModel->isMagentoOrdersCustomerNew()) {

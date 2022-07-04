@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Amazon\Order\Invoice',
-            'Ess\M2ePro\Model\ResourceModel\Amazon\Order\Invoice'
+            \Ess\M2ePro\Model\Amazon\Order\Invoice::class,
+            \Ess\M2ePro\Model\ResourceModel\Amazon\Order\Invoice::class
         );
     }
 

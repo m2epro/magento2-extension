@@ -18,7 +18,7 @@ class Index extends Order
     public function execute()
     {
         $this->init();
-        $this->addContent($this->createBlock('Walmart\Order'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Order::class));
         $this->setPageHelpLink('x/f-1IB');
 
         return $this->getResult();

@@ -66,8 +66,7 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     {
         // ---------------------------------------
 
-        $addPromotionPriceButton = $this
-            ->createBlock('Magento\Button')
+        $addPromotionPriceButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
             ->addData([
                 'onclick' => 'WalmartTemplateSellingFormatObj.addPromotionsPriceRow();',
                 'class'   => 'add add_promotion_price_button primary'
@@ -265,8 +264,7 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
         // ---------------------------------------
 
-        $removePromotionPriceButton = $this
-            ->createBlock('Magento\Button')
+        $removePromotionPriceButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
             ->addData([
                 'label'   => $this->__('Remove'),
                 'class'   => 'delete icon-btn remove_promotion_price_button'
@@ -389,7 +387,8 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $element->setForm($this->parentForm);
 
         if ($this->renderer === null) {
-            $this->renderer = $this->createBlock('Magento_Form_Renderer_Element');
+            $this->renderer = $this->getLayout()
+                                   ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Form\Renderer\Element::class);
         }
 
         $element->setRenderer($this->renderer);

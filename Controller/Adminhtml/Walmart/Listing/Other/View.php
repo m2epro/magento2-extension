@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other\View
- */
 class View extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other
 {
     public function execute()
@@ -27,7 +24,9 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Unmanaged Listings'));
         $this->setPageHelpLink('x/ev1IB');
 
-        $this->addContent($this->createBlock('Walmart_Listing_Other_View'));
+        $this->addContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Other\View::class)
+        );
 
         return $this->getResult();
     }

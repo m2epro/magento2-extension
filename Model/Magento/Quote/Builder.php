@@ -196,7 +196,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     private function initializeCurrency()
     {
-        /** @var $currencyHelper \Ess\M2ePro\Model\Currency */
+        /** @var \Ess\M2ePro\Model\Currency $currencyHelper */
         $currencyHelper = $this->currency;
 
         if ($currencyHelper->isConvertible($this->proxyOrder->getCurrency(), $this->quote->getStore())) {

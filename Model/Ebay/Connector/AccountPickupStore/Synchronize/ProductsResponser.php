@@ -253,7 +253,7 @@ class ProductsResponser extends \Ess\M2ePro\Model\Connector\Command\Pending\Resp
         }
 
         if ($message->isNotice()) {
-            return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE;
+            return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO;
         }
 
         return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;

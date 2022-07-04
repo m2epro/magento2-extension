@@ -18,7 +18,7 @@ class VariationParent extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractM
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Indexer\VariationParent');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Indexer\VariationParent::class);
     }
 
     //########################################

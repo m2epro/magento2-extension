@@ -12,19 +12,32 @@ use Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
 
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $session;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $session,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        $this->session = $session;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     protected function _prepareForm()
     {
-        $form = $this->_formFactory->create(['data' => [
-            'id' => 'edit_form',
-            'method' => 'post',
-        ]]);
+        $form = $this->_formFactory->create([
+            'data' => [
+                'id'     => 'edit_form',
+                'method' => 'post',
+            ],
+        ]);
 
         $fieldset = $form->addFieldset('general', ['legend' => '']);
 
-        if (!$this->getHelper('Data\Session')->getValue('unexpected_migration_m1_url')) {
-
+        if (!$this->session->getValue('unexpected_migration_m1_url')) {
             /** @var MigrationFromMagento1 $wizard */
             $wizard = $this->helperFactory->getObject('Module_Wizard')->getWizard(MigrationFromMagento1::NICK);
 
@@ -32,11 +45,11 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'magento_1_url',
                 'text',
                 [
-                    'name' => 'magento_1_url',
-                    'label' => $this->__('M1 Website Address'),
-                    'title' => $this->__('M1 Website Address'),
+                    'name'     => 'magento_1_url',
+                    'label'    => $this->__('M1 Website Address'),
+                    'title'    => $this->__('M1 Website Address'),
                     'required' => true,
-                    'value' => $wizard->getPossibleM1Domain()
+                    'value'    => $wizard->getPossibleM1Domain(),
                 ]
             );
         }
@@ -45,18 +58,18 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'disable_m1_module',
             \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Boolean::class,
             [
-                'name' => 'disable_m1_module',
-                'label' => $this->__('Disable M1 Synchronization'),
-                'title' => $this->__('Disable M1 synchronization'),
-                'class' => 'M2ePro-required-when-visible',
+                'name'     => 'disable_m1_module',
+                'label'    => $this->__('Disable M1 Synchronization'),
+                'title'    => $this->__('Disable M1 synchronization'),
+                'class'    => 'M2ePro-required-when-visible',
                 'required' => true,
-                'value' => '',
-                'tooltip' => $this->__(
-                    '<p style="color: #41362f">If your Magento v2.x is staging yet, 
-                    it is recommended to keep synchronization on Magento v1.x running. It can be disabled later under 
+                'value'    => '',
+                'tooltip'  => $this->__(
+                    '<p style="color: #41362f">If your Magento v2.x is staging yet,
+                    it is recommended to keep synchronization on Magento v1.x running. It can be disabled later under
                     <i>System > Configuration > M2E Pro > Module & Channels > Module
                      > Automatic Synchronization</i>.</p>'
-                )
+                ),
             ]
         );
 
@@ -65,6 +78,4 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         return parent::_prepareForm();
     }
-
-    //########################################
 }

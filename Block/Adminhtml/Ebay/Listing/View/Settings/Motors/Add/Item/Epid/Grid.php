@@ -10,9 +10,14 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item\
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item\Grid
 {
+    /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Motor\Item\CollectionFactory */
     protected $itemCollectionFactory;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Ebay\Motor\Item\CollectionFactory $itemCollectionFactory,
@@ -20,12 +25,20 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors
         \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         array $data = []
     ) {
-        parent::__construct($componentEbayMotors, $context, $backendHelper, $data);
-
         $this->itemCollectionFactory = $itemCollectionFactory;
         $this->resourceConnection    = $resourceConnection;
+        $this->databaseHelper = $databaseHelper;
+        parent::__construct(
+            $componentEbayMotors,
+            $context,
+            $backendHelper,
+            $dataHelper,
+            $data
+        );
     }
 
     //########################################
@@ -37,7 +50,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors
         $collection->setConnection($this->resourceConnection->getConnection());
         $collection->setIdFieldName('epid');
 
-        $table = $this->getHelper('Module_Database_Structure')
+        $table = $this->databaseHelper
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_motor_epid');
 
         $collection->getSelect()->reset()->from([

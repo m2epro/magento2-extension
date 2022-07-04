@@ -16,15 +16,24 @@ use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 class Switcher extends AbstractBlock
 {
     const MODE_LISTING_PRODUCT = 1;
-    const MODE_COMMON          = 2;
+    const MODE_COMMON = 2;
 
-    const MAX_TEMPLATE_ITEMS_COUNT  = 10000;
+    const MAX_TEMPLATE_ITEMS_COUNT = 10000;
 
     protected $_template = 'ebay/listing/template/switcher.phtml';
 
     private $templates = null;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+        $this->globalDataHelper = $globalDataHelper;
+    }
 
     public function _construct()
     {
@@ -103,7 +112,7 @@ class Switcher extends AbstractBlock
 
     public function getTemplateMode()
     {
-        $templateMode = $this->getHelper('Data\GlobalData')->getValue(
+        $templateMode = $this->globalDataHelper->getValue(
             'ebay_template_mode_' . $this->getTemplateNick()
         );
 
@@ -127,7 +136,7 @@ class Switcher extends AbstractBlock
 
     public function getTemplateObject()
     {
-        $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_' . $this->getTemplateNick());
+        $template = $this->globalDataHelper->getValue('ebay_template_' . $this->getTemplateNick());
 
         if ($template !== null && $template->getId() !== null) {
             return $template;
@@ -141,7 +150,7 @@ class Switcher extends AbstractBlock
     public function isTemplateModeParentForced()
     {
         $key = 'ebay_template_force_parent_' . $this->getTemplateNick();
-        $forcedParent = $this->getHelper('Data\GlobalData')->getValue($key);
+        $forcedParent = $this->globalDataHelper->getValue($key);
 
         return (bool)$forcedParent;
     }
@@ -169,19 +178,19 @@ class Switcher extends AbstractBlock
 
         switch ($this->getTemplateNick()) {
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY:
-                $blockName = 'Ess\M2ePro\Block\Adminhtml\Ebay\Template\ReturnPolicy\Edit\Form\Data';
+                $blockName = \Ess\M2ePro\Block\Adminhtml\Ebay\Template\ReturnPolicy\Edit\Form\Data::class;
                 break;
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING:
-                $blockName = 'Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping\Edit\Form\Data';
+                $blockName = \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping\Edit\Form\Data::class;
                 break;
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT:
-                $blockName = 'Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Data';
+                $blockName = \Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Data::class;
                 break;
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION:
-                $blockName = 'Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description\Edit\Form\Data';
+                $blockName = \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description\Edit\Form\Data::class;
                 break;
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SYNCHRONIZATION:
-                $blockName = 'Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Data';
+                $blockName = \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Data::class;
                 break;
         }
 
@@ -192,9 +201,9 @@ class Switcher extends AbstractBlock
         }
 
         $parameters = [
-            'is_custom' => $this->isTemplateModeCustom(),
-            'custom_title' => $this->getHelper('Data\GlobalData')->getValue('ebay_custom_template_title'),
-            'policy_localization' => $this->getData('policy_localization')
+            'is_custom'           => $this->isTemplateModeCustom(),
+            'custom_title'        => $this->globalDataHelper->getValue('ebay_custom_template_title'),
+            'policy_localization' => $this->getData('policy_localization'),
         ];
 
         return $this->getLayout()->createBlock($blockName, '', ['data' => $parameters]);
@@ -232,7 +241,7 @@ HTML;
 
     public function canDisplayUseDefaultOption()
     {
-        $displayUseDefaultOption = $this->getHelper('Data\GlobalData')->getValue('ebay_display_use_default_option');
+        $displayUseDefaultOption = $this->globalDataHelper->getValue('ebay_display_use_default_option');
 
         if ($displayUseDefaultOption === null) {
             return true;
@@ -281,12 +290,12 @@ HTML;
         $manager = $this->modelFactory->getObject('Ebay_Template_Manager')->setTemplate($this->getTemplateNick());
 
         $collection = $manager->getTemplateModel()
-            ->getCollection()
-            ->addFieldToFilter('is_custom_template', 0)
-            ->setOrder('title', 'ASC');
+                              ->getCollection()
+                              ->addFieldToFilter('is_custom_template', 0)
+                              ->setOrder('title', 'ASC');
 
         if ($manager->isMarketplaceDependentTemplate()) {
-            $marketplace = $this->getHelper('Data\GlobalData')->getValue('ebay_marketplace');
+            $marketplace = $this->globalDataHelper->getValue('ebay_marketplace');
             $collection->addFieldToFilter('marketplace_id', $marketplace->getId());
         }
 
@@ -298,18 +307,21 @@ HTML;
     public function getSwitcherJsObjectName()
     {
         $nick = ucfirst($this->getTemplateNick());
+
         return "ebayTemplate{$nick}SwitcherJsObject";
     }
 
     public function getSwitcherId()
     {
         $nick = $this->getTemplateNick();
+
         return "template_{$nick}";
     }
 
     public function getSwitcherName()
     {
         $nick = $this->getTemplateNick();
+
         return "template_{$nick}";
     }
 
@@ -338,9 +350,10 @@ HTML;
         $data = [
             'class'   => 'action primary save-custom-template-' . $nick,
             'label'   => $this->__('Save as New Policy'),
-            'onclick' => 'EbayListingTemplateSwitcherObj.customSaveAsTemplate(\''. $nick .'\');',
+            'onclick' => 'EbayListingTemplateSwitcherObj.customSaveAsTemplate(\'' . $nick . '\');',
         ];
-        $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
+        $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                         ->setData($data);
         $this->setChild('save_custom_as_template', $buttonBlock);
         // ---------------------------------------
     }
@@ -349,10 +362,10 @@ HTML;
 
     protected function _toHtml()
     {
-
         $isTemplateModeTemplate = (int)$this->isTemplateModeTemplate();
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'Switcher/Initialization',
         'M2ePro/Ebay/Listing/Template/Switcher'

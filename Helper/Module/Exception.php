@@ -8,48 +8,60 @@
 
 namespace Ess\M2ePro\Helper\Module;
 
-/**
- * Class \Ess\M2ePro\Helper\Module\Exception
- */
-class Exception extends \Ess\M2ePro\Helper\AbstractHelper
+class Exception
 {
-
+    /** @var \Magento\Framework\App\ResourceConnection */
+    private $resourceConnection;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     private $activeRecordFactory;
-    private $modelFactory;
-    private $phpEnvironmentRequest;
+    /** @var \Magento\Store\Model\StoreManagerInterface */
     private $storeManager;
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
+    /** @var \Ess\M2ePro\Helper\Module\Log */
+    private $logHelper;
+    /** @var string */
+    private $systemLogTableName;
+    /** @var \Magento\Framework\ObjectManagerInterface */
+    private $objectManager;
 
-    protected $systemLogTableName;
-    protected $resourceConnection;
+    /** @var bool */
+    private $isRegisterFatalHandler = false;
 
-    //########################################
-
+    /**
+     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     * @param \Ess\M2ePro\Helper\Module\Translation $translationHelper
+     * @param \Ess\M2ePro\Helper\Module\Log $logHelper
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager
+     */
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context,
-        \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\App\ResourceConnection $resourceConnection
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
+        \Ess\M2ePro\Helper\Module\Log $logHelper,
+        \Magento\Framework\ObjectManagerInterface $objectManager
     ) {
-        $this->activeRecordFactory   = $activeRecordFactory;
-        $this->modelFactory          = $modelFactory;
-        $this->phpEnvironmentRequest = $phpEnvironmentRequest;
-        $this->storeManager          = $storeManager;
-        $this->resourceConnection    = $resourceConnection;
-        parent::__construct($helperFactory, $context);
+        $this->activeRecordFactory = $activeRecordFactory;
+        $this->storeManager = $storeManager;
+        $this->resourceConnection = $resourceConnection;
+        $this->translationHelper = $translationHelper;
+        $this->logHelper = $logHelper;
+        $this->objectManager = $objectManager;
     }
 
-    //########################################
-
-    public function process($throwable)
+    /**
+     * @param \Throwable $throwable
+     *
+     * @return void
+     */
+    public function process($throwable): void
     {
-        /**@var \Exception $throwable */
-
         try {
             $class = get_class($throwable);
-            $info  = $this->getExceptionDetailedInfo($throwable);
+            $info = $this->getExceptionDetailedInfo($throwable);
 
             $type = \Ess\M2ePro\Model\Log\System::TYPE_EXCEPTION;
             if ($throwable instanceof \Ess\M2ePro\Model\Exception\Connection) {
@@ -62,20 +74,25 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
                 $throwable->getMessage(),
                 $info
             );
-
             // @codingStandardsIgnoreLine
-        } catch (\Exception $exceptionTemp) {
+        } catch (\Throwable $e) {
         }
     }
 
-    public function processFatal($error, $traceInfo)
+    /**
+     * @param array $error
+     * @param $traceInfo
+     *
+     * @return void
+     */
+    private function processFatal(array $error, $traceInfo): void
     {
         try {
             $class = 'Fatal Error';
 
             if (isset($error['message']) && strpos($error['message'], 'Allowed memory size') !== false) {
                 $this->writeSystemLogByDirectSql(
-                    300, //\Ess\M2ePro\Model\Log\System::TYPE_FATAL_ERROR
+                    300, // \Ess\M2ePro\Model\Log\System::TYPE_FATAL_ERROR
                     $class,
                     $error['message'],
                     $this->getFatalInfo($error, 'Fatal Error')
@@ -92,30 +109,28 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
                 $error['message'],
                 $info
             );
-
             // @codingStandardsIgnoreLine
         } catch (\Exception $exceptionTemp) {
         }
     }
 
-    // ---------------------------------------
-
-    public function setFatalErrorHandler()
+    /**
+     * @return void
+     */
+    public function setFatalErrorHandler(): void
     {
-        $temp = $this->getHelper('Data\GlobalData')->getValue('set_fatal_error_handler');
-
-        if (!empty($temp)) {
+        if ($this->isRegisterFatalHandler) {
             return;
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('set_fatal_error_handler', true);
+        $this->isRegisterFatalHandler = true;
 
-        $this->systemLogTableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(
-            'm2epro_system_log'
-        );
+        $this->systemLogTableName = $this->objectManager->get(\Ess\M2ePro\Helper\Module\Database\Structure::class)
+                                                        ->getTableNameWithPrefix(
+                                                            'm2epro_system_log'
+                                                        );
 
-        $exceptionHelper  = $this->getHelper('Module\Exception');
-        $shutdownFunction = function () use ($exceptionHelper) {
+        $shutdownFunction = function () {
             $error = error_get_last();
 
             if ($error === null) {
@@ -125,9 +140,9 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
             $fatalErrors = [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR];
 
             if (in_array((int)$error['type'], $fatalErrors)) {
-                $trace     = debug_backtrace(false);
-                $traceInfo = $exceptionHelper->getFatalStackTraceInfo($trace);
-                $exceptionHelper->processFatal($error, $traceInfo);
+                $trace = debug_backtrace(false);
+                $traceInfo = $this->getFatalStackTraceInfo($trace);
+                $this->processFatal($error, $traceInfo);
             }
         };
 
@@ -135,48 +150,73 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
         register_shutdown_function($shutdownFunction);
     }
 
-    public function getUserMessage(\Exception $exception)
+    /**
+     * @param \Throwable $exception
+     *
+     * @return string
+     */
+    public function getUserMessage(\Throwable $exception): string
     {
-        return $this->getHelper('Module\Translation')->__('Fatal error occurred').': "'.$exception->getMessage().'".';
+        return $this->translationHelper->__('Fatal error occurred') . ': "' . $exception->getMessage() . '".';
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getFatalErrorDetailedInfo($error, $traceInfo)
+    /**
+     * @param array $error
+     * @param $traceInfo
+     *
+     * @return string
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getFatalErrorDetailedInfo(array $error, $traceInfo): string
     {
         $info = $this->getFatalInfo($error, 'Fatal Error');
         $info .= $traceInfo;
         $info .= $this->getAdditionalActionInfo();
-        $info .= $this->getHelper('Module\Log')->platformInfo();
-        $info .= $this->getHelper('Module\Log')->moduleInfo();
+        $info .= $this->logHelper->platformInfo();
+        $info .= $this->logHelper->moduleInfo();
 
         return $info;
     }
 
-    public function getExceptionDetailedInfo($throwable)
+    /**
+     * @param \Throwable $throwable
+     *
+     * @return string
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getExceptionDetailedInfo($throwable): string
     {
-        /**@var \Exception $throwable */
-
         $info = $this->getExceptionInfo($throwable, get_class($throwable));
         $info .= $this->getExceptionStackTraceInfo($throwable);
         $info .= $this->getAdditionalActionInfo();
-        $info .= $this->getHelper('Module\Log')->platformInfo();
-        $info .= $this->getHelper('Module\Log')->moduleInfo();
+        $info .= $this->logHelper->platformInfo();
+        $info .= $this->logHelper->moduleInfo();
 
         return $info;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    protected function systemLog($type, $class, $message, $description)
+    /**
+     * @param int $type
+     * @param string $class
+     * @param string $message
+     * @param string $description
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function systemLog(int $type, string $class, string $message, string $description): void
     {
         // @codingStandardsIgnoreLine
         $trace = debug_backtrace();
-        $file  = isset($trace[1]['file']) ? $trace[1]['file'] : 'not set';
-        $line  = isset($trace[1]['line']) ? $trace[1]['line'] : 'not set';
+        $file = $trace[1]['file'] ?? 'not set';
+        $line = $trace[1]['line'] ?? 'not set';
 
         $additionalData = [
-            'called-from' => $file . ' : ' . $line
+            'called-from' => $file . ' : ' . $line,
         ];
 
         /** @var \Ess\M2ePro\Model\Log\System $log */
@@ -194,7 +234,16 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
         $log->save();
     }
 
-    private function writeSystemLogByDirectSql($type, $class, $message, $description)
+    /**
+     * @param int $type
+     * @param string $class
+     * @param string $message
+     * @param string $description
+     *
+     * @return void
+     * @throws \Exception
+     */
+    private function writeSystemLogByDirectSql(int $type, string $class, string $message, string $description): void
     {
         $date = new \DateTime('now', new \DateTimeZone('UTC'));
 
@@ -205,23 +254,24 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
                 'class'                => $class,
                 'description'          => $message,
                 'detailed_description' => $description,
-                'create_date'          => $date->format('Y-m-d H:i:s')
+                'create_date'          => $date->format('Y-m-d H:i:s'),
             ]
         );
     }
 
-    //########################################
-
-    private function getExceptionInfo($throwable, $type)
+    /**
+     * @param \Throwable $throwable
+     * @param string $type
+     *
+     * @return string
+     */
+    private function getExceptionInfo($throwable, string $type): string
     {
-        /**@var \Exception $throwable */
-
-        $additionalData = $throwable instanceof \Ess\M2ePro\Model\Exception ? $throwable->getAdditionalData()
-            : '';
+        $additionalData = $throwable instanceof \Ess\M2ePro\Model\Exception ? $throwable->getAdditionalData() : '';
         // @codingStandardsIgnoreLine
         is_array($additionalData) && $additionalData = print_r($additionalData, true);
 
-        $exceptionInfo = <<<EXCEPTION
+        return <<<EXCEPTION
 -------------------------------- EXCEPTION INFO ----------------------------------
 Type: {$type}
 File: {$throwable->getFile()}
@@ -231,28 +281,31 @@ Message: {$throwable->getMessage()}
 Additional Data: {$additionalData}
 
 EXCEPTION;
-
-        return $exceptionInfo;
     }
 
-    private function getExceptionStackTraceInfo($throwable)
+    /**
+     * @param \Throwable $throwable
+     *
+     * @return string
+     */
+    private function getExceptionStackTraceInfo($throwable): string
     {
-        /**@var \Exception $throwable */
-
-        $stackTraceInfo = <<<TRACE
+        return <<<TRACE
 -------------------------------- STACK TRACE INFO --------------------------------
 {$throwable->getTraceAsString()}
 
 TRACE;
-
-        return $stackTraceInfo;
     }
 
-    // ---------------------------------------
-
-    private function getFatalInfo($error, $type)
+    /**
+     * @param array $error
+     * @param string $type
+     *
+     * @return string
+     */
+    private function getFatalInfo(array $error, string $type): string
     {
-        $fatalInfo = <<<FATAL
+        return <<<FATAL
 -------------------------------- FATAL ERROR INFO --------------------------------
 Type: {$type}
 File: {$error['file']}
@@ -260,18 +313,21 @@ Line: {$error['line']}
 Message: {$error['message']}
 
 FATAL;
-
-        return $fatalInfo;
     }
 
-    public function getFatalStackTraceInfo($stackTrace)
+    /**
+     * @param array $stackTrace
+     *
+     * @return string
+     */
+    public function getFatalStackTraceInfo($stackTrace): string
     {
         if (!is_array($stackTrace)) {
             $stackTrace = [];
         }
 
         $stackTrace = array_reverse($stackTrace);
-        $info       = '';
+        $info = '';
 
         if (count($stackTrace) > 1) {
             foreach ($stackTrace as $key => $trace) {
@@ -279,8 +335,8 @@ FATAL;
                 $info .= " {$trace['class']}{$trace['type']}{$trace['function']}(";
 
                 if (!empty($trace['args'])) {
-                    foreach ($trace['args'] as $key => $arg) {
-                        $key != 0 && $info .= ',';
+                    foreach ($trace['args'] as $argKey => $arg) {
+                        $argKey !== 0 && $info .= ',';
 
                         if (is_object($arg)) {
                             $info .= get_class($arg);
@@ -293,33 +349,29 @@ FATAL;
             }
         }
 
-        if ($info == '') {
+        if ($info === '') {
             $info = 'Unavailable';
         }
 
-        $stackTraceInfo = <<<TRACE
+        return <<<TRACE
 -------------------------------- STACK TRACE INFO --------------------------------
 {$info}
 
 TRACE;
-
-        return $stackTraceInfo;
     }
 
-    // ---------------------------------------
-
-    private function getAdditionalActionInfo()
+    /**
+     * @return string
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    private function getAdditionalActionInfo(): string
     {
         $currentStoreId = $this->storeManager->getStore()->getId();
 
-        $actionInfo = <<<ACTION
+        return <<<ACTION
 -------------------------------- ADDITIONAL INFO -------------------------------------
 Current Store: {$currentStoreId}
 
 ACTION;
-
-        return $actionInfo;
     }
-
-    //########################################
 }

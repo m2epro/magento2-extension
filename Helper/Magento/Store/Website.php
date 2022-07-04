@@ -8,27 +8,30 @@
 
 namespace Ess\M2ePro\Helper\Magento\Store;
 
-/**
- * Class \Ess\M2ePro\Helper\Magento\Store\Website
- */
-class Website extends \Ess\M2ePro\Helper\AbstractHelper
+class Website
 {
-    private $defaultWebsite = null;
+    /** @var \Magento\Store\Api\Data\WebsiteInterface */
+    private $defaultWebsite;
+    /** @var \Magento\Store\Model\WebsiteFactory */
+    private $websiteFactory;
+    /** @var \Magento\Store\Model\StoreManagerInterface */
+    private $storeManager;
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
 
-    protected $websiteFactory;
-    protected $storeManager;
-
-    //########################################
-
+    /**
+     * @param \Magento\Store\Model\WebsiteFactory $websiteFactory
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Ess\M2ePro\Helper\Module\Translation $translationHelper
+     */
     public function __construct(
         \Magento\Store\Model\WebsiteFactory $websiteFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper
     ) {
         $this->websiteFactory = $websiteFactory;
         $this->storeManager = $storeManager;
-        parent::__construct($helperFactory, $context);
+        $this->translationHelper = $translationHelper;
     }
 
     //########################################
@@ -51,11 +54,16 @@ class Website extends \Ess\M2ePro\Helper\AbstractHelper
     public function getName($storeId)
     {
         $website = $this->getWebsite($storeId);
+
         return $website ? $website->getName() : '';
     }
 
     //########################################
 
+    /**
+     * @return \Magento\Store\Api\Data\WebsiteInterface|null
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
     public function getDefault()
     {
         if ($this->defaultWebsite !== null) {
@@ -63,7 +71,6 @@ class Website extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $this->defaultWebsite = $this->storeManager->getWebsite(true);
-        ;
 
         return $this->defaultWebsite;
     }
@@ -98,7 +105,7 @@ class Website extends \Ess\M2ePro\Helper\AbstractHelper
         $website = $this->websiteFactory->create()->load($code, 'code');
 
         if ($website->getId()) {
-            $error = $this->getHelper('Module\Translation')->__('Website with code %value% already exists', $code);
+            $error = $this->translationHelper->__('Website with code %value% already exists', $code);
             throw new \Ess\M2ePro\Model\Exception($error);
         }
 
@@ -110,6 +117,4 @@ class Website extends \Ess\M2ePro\Helper\AbstractHelper
 
         return $website;
     }
-
-    //########################################
 }

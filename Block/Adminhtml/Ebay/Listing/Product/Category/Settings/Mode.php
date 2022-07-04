@@ -83,8 +83,8 @@ require([
 JS
         );
 
-        $viewHeaderBlock = $this->createBlock(
-            'Listing_View_Header',
+        $viewHeaderBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
             '',
             ['data' => ['listing' => $listing]]
         );

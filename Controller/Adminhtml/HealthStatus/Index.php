@@ -31,8 +31,8 @@ class Index extends HealthStatus
         $currentStatus->set($resultSet);
 
         /** @var \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs $tabsBlock */
-        $tabsBlock = $this->createBlock(
-            'HealthStatus\Tabs',
+        $tabsBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs::class,
             '',
             [
                 'resultSet' => $resultSet,
@@ -51,7 +51,7 @@ class Index extends HealthStatus
         }
 
         $this->addLeft($tabsBlock);
-        $this->addContent($this->createBlock('HealthStatus'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HealthStatus::class));
 
         $this->setPageHelpLink('x/2gY3B');
 

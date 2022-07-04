@@ -8,73 +8,99 @@
 
 namespace Ess\M2ePro\Helper\View;
 
-/**
- * Class \Ess\M2ePro\Helper\View\Configuration
- */
-class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
+class Configuration
 {
-    const NICK  = 'configuration';
+    public const NICK = 'configuration';
 
-    const EBAY_SECTION_COMPONENT     = 'm2epro_ebay_integration';
-    const AMAZON_SECTION_COMPONENT   = 'm2epro_amazon_integration';
-    const WALMART_SECTION_COMPONENT  = 'm2epro_walmart_integration';
-    const ADVANCED_SECTION_COMPONENT = 'm2epro_advanced_settings';
-    const ADVANCED_SECTION_WIZARD    = 'm2epro_migration_wizard';
+    public const EBAY_SECTION_COMPONENT = 'm2epro_ebay_integration';
+    public const AMAZON_SECTION_COMPONENT = 'm2epro_amazon_integration';
+    public const WALMART_SECTION_COMPONENT = 'm2epro_walmart_integration';
+    public const ADVANCED_SECTION_COMPONENT = 'm2epro_advanced_settings';
+    public const ADVANCED_SECTION_WIZARD = 'm2epro_migration_wizard';
 
-    protected $urlBuilder;
-
-    //########################################
+    /** @var \Magento\Backend\Model\UrlInterface */
+    private $urlBuilder;
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translation;
+    /** @var \Ess\M2ePro\Helper\Component */
+    private $component;
 
     public function __construct(
         \Magento\Backend\Model\UrlInterface $urlBuilder,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Helper\Module\Translation $translation,
+        \Ess\M2ePro\Helper\Component $component
     ) {
         $this->urlBuilder = $urlBuilder;
-        parent::__construct($helperFactory, $context);
+        $this->translation = $translation;
+        $this->component = $component;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function getTitle()
     {
-        return $this->getHelper('Module\Translation')->__('Configuration');
+        return $this->translation->__('Configuration');
     }
 
-    //########################################
-
-    public function getComponentsUrl(array $params = [])
+    /**
+     * @param array $params
+     *
+     * @return string
+     */
+    public function getComponentsUrl(array $params = []): string
     {
-        return $this->urlBuilder->getUrl('adminhtml/system_config/edit', array_merge([
-            'section' => self::EBAY_SECTION_COMPONENT
-        ], $params));
+        return $this->urlBuilder->getUrl(
+            'adminhtml/system_config/edit',
+            array_merge([
+                'section' => self::EBAY_SECTION_COMPONENT,
+            ], $params)
+        );
     }
 
-    public function getSettingsUrl(array $params = [])
+    /**
+     * @param array $params
+     *
+     * @return string
+     */
+    public function getSettingsUrl(array $params = []): string
     {
         return $this->urlBuilder->getUrl("m2epro/{$this->getFirstEnabledComponent()}_settings/index", $params);
     }
 
-    public function getLogsClearingUrl(array $params = [])
+    /**
+     * @param array $params
+     *
+     * @return string
+     */
+    public function getLogsClearingUrl(array $params = []): string
     {
-        return $this->urlBuilder->getUrl("m2epro/{$this->getFirstEnabledComponent()}_settings/index", array_merge([
-            'active_tab' => \Ess\M2ePro\Block\Adminhtml\Settings\Tabs::TAB_ID_LOGS_CLEARING
-        ], $params));
+        return $this->urlBuilder->getUrl(
+            "m2epro/{$this->getFirstEnabledComponent()}_settings/index",
+            array_merge([
+                'active_tab' => \Ess\M2ePro\Block\Adminhtml\Settings\Tabs::TAB_ID_LOGS_CLEARING,
+            ], $params)
+        );
     }
 
-    public function getLicenseUrl(array $params = [])
+    /**
+     * @param array $params
+     *
+     * @return string
+     */
+    public function getLicenseUrl(array $params = []): string
     {
-        return $this->urlBuilder->getUrl("m2epro/{$this->getFirstEnabledComponent()}_settings/index", array_merge([
-            'active_tab' => \Ess\M2ePro\Block\Adminhtml\Settings\Tabs::TAB_ID_LICENSE
-        ], $params));
+        return $this->urlBuilder->getUrl(
+            "m2epro/{$this->getFirstEnabledComponent()}_settings/index",
+            array_merge([
+                'active_tab' => \Ess\M2ePro\Block\Adminhtml\Settings\Tabs::TAB_ID_LICENSE,
+            ], $params)
+        );
     }
 
-    private function getFirstEnabledComponent()
+    private function getFirstEnabledComponent(): string
     {
-        $components = $this->getHelper('Component')->getEnabledComponents();
+        $components = $this->component->getEnabledComponents();
 
         return !empty($components) ? $components[0] : \Ess\M2ePro\Helper\Component\Ebay::NICK;
     }
-
-    //########################################
 }

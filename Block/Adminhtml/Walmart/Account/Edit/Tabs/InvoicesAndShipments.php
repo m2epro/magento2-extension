@@ -10,12 +10,21 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\InvoicesAndShipments
- */
 class InvoicesAndShipments extends AbstractForm
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     protected function _prepareForm()
     {
@@ -87,15 +96,15 @@ HTML
             ]
         );
 
-        $otherCarriers = empty($formData['other_carriers']) ? [] : $this->getHelper('Data')->jsonDecode(
+        $otherCarriers = empty($formData['other_carriers']) ? [] : $this->dataHelper->jsonDecode(
             $formData['other_carriers']
         );
         for ($i = 0; $i < 5; $i++) {
             $code = $url = '';
 
             if (!empty($otherCarriers[$i])) {
-                $code = $this->getHelper('Data')->escapeHtml($otherCarriers[$i]['code']);
-                $url = $this->getHelper('Data')->escapeHtml($otherCarriers[$i]['url']);
+                $code = $this->dataHelper->escapeHtml($otherCarriers[$i]['code']);
+                $url = $this->dataHelper->escapeHtml($otherCarriers[$i]['url']);
             }
 
             $fieldset->addField('other_carrier_field_' . $i . '_separator', self::SEPARATOR, []);

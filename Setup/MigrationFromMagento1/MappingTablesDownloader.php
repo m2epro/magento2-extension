@@ -11,12 +11,9 @@ namespace Ess\M2ePro\Setup\MigrationFromMagento1;
 use Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
 use Magento\Framework\DB\Ddl\Table;
 
-/**
- * Class \Ess\M2ePro\Setup\MigrationFromMagento1\MappingTablesDownloader
- */
 class MappingTablesDownloader
 {
-    const ROWS_PER_ONE_CALL = 50000;
+    public const ROWS_PER_ONE_CALL = 50000;
 
     /** @var string */
     private $baseUrl;
@@ -39,16 +36,19 @@ class MappingTablesDownloader
     /** @var string */
     private $licenseKey;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         Mapper $mapper
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->mapper             = $mapper;
         $this->helperFactory      = $helperFactory;
+        $this->supportHelper = $supportHelper;
     }
 
     //########################################
@@ -124,10 +124,10 @@ class MappingTablesDownloader
         throw new \Ess\M2ePro\Model\Exception\Logic(
             $this->helperFactory->getObject('Module\Translation')->translate([
                 'Failed to upload M2E Pro data because the provided URL address is wrong or not accessible.
-                Please ensure you enter the correct URL, then click Continue to try again. 
-                If the issue persists, follow <a href="%url%" target="_blank">these instructions</a> to complete 
+                Please ensure you enter the correct URL, then click Continue to try again.
+                If the issue persists, follow <a href="%url%" target="_blank">these instructions</a> to complete
                 the migration process.',
-                $this->helperFactory->getObject('Module_Support')->getKnowledgebaseArticleUrl('1600682')
+                $this->supportHelper->getKnowledgebaseArticleUrl('1600682')
             ])
         );
     }
@@ -402,7 +402,7 @@ class MappingTablesDownloader
 
                 throw new \Exception(
                     $this->helperFactory->getObject('Module\Translation')->translate([
-                        'Failed to upload M2E Pro data. Reason: %REASON% Please try again by clicking <b>Continue</b>. 
+                        'Failed to upload M2E Pro data. Reason: %REASON% Please try again by clicking <b>Continue</b>.
                         If the issue persists, contact Support.',
                         isset($responseData['error_message']) ? $responseData['error_message'] : ''
                     ])

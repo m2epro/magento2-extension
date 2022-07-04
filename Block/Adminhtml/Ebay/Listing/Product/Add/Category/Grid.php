@@ -8,16 +8,41 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Grid
 {
     private $selectedIds = [];
 
     private $currentCategoryId = null;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Category */
+    private $magentoCategoryHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\Category $magentoCategoryHelper,
+        \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
+        \Magento\Catalog\Model\Product\Type $type,
+        \Ess\M2ePro\Helper\Magento\Product $magentoProductHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->magentoCategoryHelper = $magentoCategoryHelper;
+        $this->databaseHelper = $databaseHelper;
+        parent::__construct(
+            $magentoProductCollectionFactory,
+            $type,
+            $magentoProductHelper,
+            $context,
+            $backendHelper,
+            $dataHelper,
+            $data
+        );
+    }
 
     private function getCollectionIds()
     {
@@ -27,7 +52,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Grid
             return $ids;
         }
 
-        $ids = $this->getHelper('Magento\Category')->getProductsFromCategories(
+        $ids = $this->magentoCategoryHelper->getProductsFromCategories(
             [$this->getCurrentCategoryId()],
             $this->_getStore()->getId()
         );
@@ -115,7 +140,7 @@ CSS
     {
         $collection->joinTable(
             [
-                'ccp' => $this->getHelper('Module_Database_Structure')
+                'ccp' => $this->databaseHelper
                     ->getTableNameWithPrefix('catalog_category_product')
             ],
             'product_id=entity_id',

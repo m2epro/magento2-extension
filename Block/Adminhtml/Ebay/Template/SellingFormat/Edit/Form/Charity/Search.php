@@ -32,7 +32,7 @@ class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         parent::_beforeToHtml();
 
         // ---------------------------------------
-        $buttonBlock = $this->createBlock('Magento\Button')
+        $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
             ->setData([
                 'id'    => 'searchCharity_submit',
                 'class' => 'action primary',

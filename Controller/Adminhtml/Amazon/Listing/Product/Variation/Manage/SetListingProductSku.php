@@ -99,7 +99,7 @@ class SetListingProductSku extends Main
     {
         try {
 
-            /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
+            /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(
                 'product',

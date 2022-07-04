@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Order\View;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Order\View\Form
- */
 class Form extends AbstractContainer
 {
     protected $_template = 'walmart/order.phtml';
@@ -26,16 +23,19 @@ class Form extends AbstractContainer
     /** @var \Ess\M2ePro\Model\Order */
     public $order;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Store\Model\StoreManager $storeManager,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->storeManager = $storeManager;
 
         parent::__construct($context, $data);
+        $this->dataHelper = $dataHelper;
     }
 
     public function _construct()
@@ -67,7 +67,8 @@ class Form extends AbstractContainer
             'label'   => $this->__('Edit'),
             'onclick' => "OrderEditItemObj.openEditShippingAddressPopup({$this->order->getId()});",
         ];
-        $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
+        $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                         ->setData($data);
         $this->setChild('edit_shipping_info', $buttonBlock);
 
         // ---------------------------------------
@@ -78,20 +79,21 @@ class Form extends AbstractContainer
                 'label'   => $this->__('Resend Shipping Information'),
                 'onclick' => 'setLocation(\''.$url.'\');',
             ];
-            $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
+            $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                             ->setData($data);
             $this->setChild('resubmit_shipping_info', $buttonBlock);
         }
         // ---------------------------------------
 
         // Shipping data
         // ---------------------------------------
-        /** @var $shippingAddress \Ess\M2ePro\Model\Walmart\Order\ShippingAddress */
+        /** @var \Ess\M2ePro\Model\Walmart\Order\ShippingAddress $shippingAddress */
         $shippingAddress = $this->order->getShippingAddress();
 
         $this->shippingAddress = $shippingAddress->getData();
         $this->shippingAddress['country_name'] = $shippingAddress->getCountryName();
         // ---------------------------------------
-        $buttonAddNoteBlock = $this->createBlock('Magento\Button')
+        $buttonAddNoteBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
             ->setData(
                 [
                     'label'   => $this->__('Add Note'),
@@ -116,14 +118,24 @@ class Form extends AbstractContainer
         ]);
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Controller\Adminhtml\Order\EditItem::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Controller\Adminhtml\Order\EditItem::class)
         );
 
-        $this->setChild('shipping_address', $this->createBlock('Walmart_Order_Edit_ShippingAddress'));
-        $this->setChild('item', $this->createBlock('Walmart_Order_View_Item'));
-        $this->setChild('item_edit', $this->createBlock('Order_Item_Edit'));
-        $this->setChild('log', $this->createBlock('Order_View_Log_Grid'));
-        $this->setChild('order_note_grid', $this->createBlock('Order_Note_Grid'));
+        $this->setChild('shipping_address',
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Order\Edit\ShippingAddress::class)
+        );
+        $this->setChild('item',
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Order\View\Item::class)
+        );
+        $this->setChild('item_edit',
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Item\Edit::class)
+        );
+        $this->setChild('log',
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\View\Log\Grid::class)
+        );
+        $this->setChild('order_note_grid',
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Note\Grid::class)
+        );
         $this->setChild('add_note_button', $buttonAddNoteBlock);
 
         return parent::_beforeToHtml();

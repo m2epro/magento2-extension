@@ -71,28 +71,28 @@ JS
 
     protected function createViewModeSwitcherBlock()
     {
-        return $this->createBlock('Log_Listing_View_Switcher')->setData([
+        return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Log\Listing\View\Switcher::class)->setData([
             'component_mode' => $this->getComponentMode()
         ]);
     }
 
     protected function createAccountSwitcherBlock()
     {
-        return $this->createBlock('Account\Switcher')->setData([
+        return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Account\Switcher::class)->setData([
             'component_mode' => $this->getComponentMode(),
         ]);
     }
 
     protected function createMarketplaceSwitcherBlock()
     {
-        return $this->createBlock('Marketplace\Switcher')->setData([
+        return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher::class)->setData([
             'component_mode' => $this->getComponentMode(),
         ]);
     }
 
     protected function createUniqueMessageFilterBlock()
     {
-        return $this->createBlock('Log\UniqueMessageFilter')->setData([
+        return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Log\UniqueMessageFilter::class)->setData([
             'route' => "*/{$this->getComponentMode()}_log_listing_product/",
             'title' => $this->__('Only messages with a unique Product ID')
         ]);

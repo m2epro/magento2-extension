@@ -8,24 +8,24 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Other;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Other\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $ebayFactory;
 
     private $cacheData = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->ebayFactory = $ebayFactory;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -137,7 +137,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $accountTitle = $this->ebayFactory
                              ->getObjectLoaded('Account', $row->getData('account_id'))
                              ->getTitle();
-        return $this->getHelper('Data')->escapeHtml($accountTitle);
+        return $this->dataHelper->escapeHtml($accountTitle);
     }
 
     public function callbackColumnMarketplace($value, $row, $column, $isExport)
@@ -145,7 +145,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $marketplaceTitle = $this->ebayFactory
                                  ->getObjectLoaded('Marketplace', $row->getData('marketplace_id'))
                                  ->getTitle();
-        return $this->getHelper('Data')->escapeHtml($marketplaceTitle);
+        return $this->dataHelper->escapeHtml($marketplaceTitle);
     }
 
     public function callbackColumnTotalProducts($value, $row, $column, $isExport)
@@ -223,7 +223,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return $this->getUrl('*/ebay_listing_other/view', [
             'account' => $row->getData('account_id'),
             'marketplace' => $row->getData('marketplace_id'),
-            'back'=> $this->getHelper('Data')->makeBackUrlParam('*/ebay_listing_other/index')
+            'back'=> $this->dataHelper->makeBackUrlParam('*/ebay_listing_other/index')
         ]);
     }
 

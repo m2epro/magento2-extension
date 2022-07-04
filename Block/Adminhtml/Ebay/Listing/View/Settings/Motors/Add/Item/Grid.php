@@ -15,17 +15,21 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
     protected $componentEbayMotors;
 
-    private $listingId  = null;
-    private $motorsType = null;
+    private $listingId;
+    private $motorsType;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->componentEbayMotors = $componentEbayMotors;
-
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -185,7 +189,8 @@ HTML;
             'class'   => 'action-primary',
             'onclick' => 'EbayListingViewSettingsMotorsAddItemGridObj.saveFilter()'
         ];
-        $saveFilterBtn = $this->createBlock('Magento\Button')->setData($data);
+        $saveFilterBtn = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                           ->setData($data);
         $this->setChild('save_filter', $saveFilterBtn);
         //------------------------------
 
@@ -263,7 +268,7 @@ HTML
         ]);
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Ebay\Motors')
+            $this->dataHelper->getClassConstants(Motors::class)
         );
 
         $this->js->add(<<<JS

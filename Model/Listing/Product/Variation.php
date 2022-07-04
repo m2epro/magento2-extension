@@ -25,7 +25,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstract
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation::class);
     }
 
     //########################################
@@ -143,7 +143,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstract
             return $cacheData;
         }
 
-        /** @var $options \Ess\M2ePro\Model\Listing\Product\Variation\Option[] */
+        /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option[] $options */
         $options = $this->getRelatedComponentItems(
             'Listing_Product_Variation_Option',
             'listing_product_variation_id',

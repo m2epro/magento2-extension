@@ -11,25 +11,26 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\For
 use Magento\Backend\Block\Widget\Form\Renderer\Fieldset\Element as MagentoElement;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 
-/**
- * Class Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Renderer\Dictionary
- */
 class Dictionary extends MagentoElement
 {
+    /** @var \Ess\M2ePro\Helper\Factory  */
     public $helperFactory;
 
     protected $element;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    public $translationHelper;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
 
         $this->helperFactory = $context->getHelperFactory();
         $this->setTemplate('ebay/template/category/chooser/specific/form/renderer/dictionary.phtml');
+        $this->translationHelper = $translationHelper;
     }
 
     //########################################
@@ -44,13 +45,4 @@ class Dictionary extends MagentoElement
         $this->element = $element;
         return $this->toHtml();
     }
-
-    //########################################
-
-    public function getTranslator()
-    {
-        return $this->helperFactory->getObject('Module\Translation');
-    }
-
-    //########################################
 }

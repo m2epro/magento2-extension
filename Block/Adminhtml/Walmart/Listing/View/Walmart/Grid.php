@@ -39,6 +39,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Ess\M2ePro\Helper\View\Walmart $walmartViewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
@@ -46,8 +47,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         $this->walmartViewHelper = $walmartViewHelper;
-
-        parent::__construct($context, $backendHelper, $data);
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
 
     public function _construct()
@@ -76,7 +77,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareCollection()
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->setListingProductModeOn();
@@ -177,7 +178,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'     => 'number',
             'index'    => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
         ]);
 
         $this->addColumn('name', [
@@ -198,7 +199,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'         => 'text',
             'index'        => 'walmart_sku',
             'filter_index' => 'walmart_sku',
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Sku'
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Sku::class
         ]);
 
         $this->addColumn('gtin', [
@@ -209,7 +210,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'index'          => 'gtin',
             'filter_index'   => 'gtin',
             'marketplace_id' => $this->listing->getMarketplaceId(),
-            'renderer'       => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Gtin',
+            'renderer'       => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Gtin::class,
             'filter_condition_callback' => [$this, 'callbackFilterGtin']
         ]);
 
@@ -220,7 +221,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'         => 'number',
             'index'        => 'online_qty',
             'filter_index' => 'online_qty',
-            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Qty',
+            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Qty::class,
             'filter_condition_callback' => [$this, 'callbackFilterQty']
         ]);
 
@@ -265,7 +266,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             $this->listing->getId()
         );
 
-        $isShouldBeShown && $statusColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Filter\Status';
+        $isShouldBeShown && $statusColumn['filter'] = \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Filter\Status::class;
 
         $this->addColumn('status', $statusColumn);
 
@@ -333,7 +334,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     public function callbackColumnProductTitle($productTitle, $row, $column, $isExport)
     {
-        $productTitle = $this->getHelper('Data')->escapeHtml($productTitle);
+        $productTitle = $this->dataHelper->escapeHtml($productTitle);
 
         $value = '<span>'.$productTitle.'</span>';
 
@@ -346,7 +347,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
 
         $value .= '<br/><strong>'.$this->__('SKU') .
-            ':</strong> '.$this->getHelper('Data')->escapeHtml($sku) . '<br/>';
+            ':</strong> '.$this->dataHelper->escapeHtml($sku) . '<br/>';
 
         $listingProductId = (int)$row->getData('id');
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -392,11 +393,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
             if (!$parentType->hasChannelGroupId() &&
                 !$listingProduct->isSetProcessingLock('child_products_in_action')) {
-                $popupTitle = $this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeHtml(
+                $popupTitle = $this->dataHelper->escapeJs($this->dataHelper->escapeHtml(
                     $this->__('Manage Magento Product Variations')
                 ));
 
-                $linkTitle = $this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeHtml(
+                $linkTitle = $this->dataHelper->escapeJs($this->dataHelper->escapeHtml(
                     $this->__('Change "Magento Variations" Mode')
                 ));
 
@@ -427,7 +428,7 @@ HTML;
             $value .= '</div>';
 
             $linkContent = $this->__('Manage Variations');
-            $vpmt = $this->getHelper('Data')->escapeJs(
+            $vpmt = $this->dataHelper->escapeJs(
                 $this->__('Manage Variations of "'. $productTitle . '" ')
             );
             if (!empty($gtin)) {
@@ -457,7 +458,7 @@ HTML;
 <div style="float: left; margin: 0 0 0 7px">
     <a {$problemStyle}href="javascript:"
     onclick="ListingGridObj.variationProductManageHandler.openPopUp(
-            {$listingProductId}, '{$this->getHelper('Data')->escapeHtml($vpmt)}'
+            {$listingProductId}, '{$this->dataHelper->escapeHtml($vpmt)}'
         )"
     title="{$linkTitle}">{$linkContent}</a>&nbsp;{$problemIcon}
 </div>
@@ -488,8 +489,8 @@ JS
                 if ($option === '' || $option === null) {
                     $option = '--';
                 }
-                $value .= '<strong>' . $this->getHelper('Data')->escapeHtml($attribute) .
-                    '</strong>:&nbsp;' . $this->getHelper('Data')->escapeHtml($option) . '<br/>';
+                $value .= '<strong>' . $this->dataHelper->escapeHtml($attribute) .
+                    '</strong>:&nbsp;' . $this->dataHelper->escapeHtml($option) . '<br/>';
             }
             $value .= '</div>';
         }
@@ -531,7 +532,7 @@ HTML;
 HTML;
 
         if (empty($gtin)) {
-            $linkTitle = $this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeHtml(
+            $linkTitle = $this->dataHelper->escapeJs($this->dataHelper->escapeHtml(
                 $this->__('Change "Magento Variations" Mode')
             ));
 
@@ -613,7 +614,8 @@ HTML;
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Status $status */
-        $status = $this->createBlock('Walmart_Grid_Column_Renderer_Status');
+        $status = $this->getLayout()
+                       ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Status::class);
         $status->setParentAndChildReviseScheduledCache($this->parentAndChildReviseScheduledCache);
 
         return $status->render($row);

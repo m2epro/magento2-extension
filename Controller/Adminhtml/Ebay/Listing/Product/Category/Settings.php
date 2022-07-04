@@ -23,8 +23,11 @@ abstract class Settings extends Listing
     protected $componentEbayCategoryEbay;
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Store */
     protected $componentEbayCategoryStore;
+    /** @var \Ess\M2ePro\Helper\Magento\Category */
+    protected $magentoCategoryHelper;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Magento\Category $magentoCategoryHelper,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
@@ -36,11 +39,12 @@ abstract class Settings extends Listing
         $this->componentEbayCategoryStore = $componentEbayCategoryStore;
         $this->componentEbayCategory      = $componentEbayCategory;
         $this->componentEbayCategoryEbay  = $componentEbayCategoryEbay;
+        $this->magentoCategoryHelper      = $magentoCategoryHelper;
     }
 
     protected function getSelectedListingProductsIdsByCategoriesIds($categoriesIds)
     {
-        $productsIds = $this->getHelper('Magento\Category')->getProductsFromCategories($categoriesIds);
+        $productsIds = $this->magentoCategoryHelper->getProductsFromCategories($categoriesIds);
 
         $listingProductIds = $this->ebayFactory->getObject('Listing\Product')->getCollection()
             ->addFieldToFilter('product_id', ['in' => $productsIds])->getAllIds();

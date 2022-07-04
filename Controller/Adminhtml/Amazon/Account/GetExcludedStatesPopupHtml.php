@@ -18,7 +18,8 @@ class GetExcludedStatesPopupHtml extends Account
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\Order\ExcludedStates $block */
-        $block = $this->createBlock('Amazon_Account_Edit_Tabs_Order_ExcludedStates');
+        $block = $this->getLayout()
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\Order\ExcludedStates::class);
         $block->setData('selected_states', explode(',', $this->getRequest()->getParam('selected_states')));
 
         $this->setAjaxContent($block);

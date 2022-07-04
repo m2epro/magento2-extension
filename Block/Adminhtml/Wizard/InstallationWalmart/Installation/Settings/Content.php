@@ -27,7 +27,6 @@ class Content extends AbstractForm
         array $data = []
     ) {
         $this->walmartFactory = $walmartFactory;
-
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -55,7 +54,7 @@ HTML
     protected function _prepareForm()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs\Main $settings */
-        $settings = $this->createBlock('Walmart_Settings_Tabs_Main');
+        $settings = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs\Main::class);
 
         $settings->toHtml();
         $form = $settings->getForm();

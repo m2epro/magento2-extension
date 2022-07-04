@@ -28,7 +28,7 @@ class Delete extends Account
         $deleted = $locked = 0;
         foreach ($ids as $id) {
 
-            /** @var $account \Ess\M2ePro\Model\Account */
+            /** @var \Ess\M2ePro\Model\Account $account */
             $account = $this->ebayFactory->getObjectLoaded('Account', $id);
 
             if ($account->isLocked(true)) {

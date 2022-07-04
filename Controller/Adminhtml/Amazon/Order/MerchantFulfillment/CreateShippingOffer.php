@@ -8,6 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Order\MerchantFulfillment;
 
+use Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment\Information;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Order;
 use Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment;
 
@@ -48,7 +49,7 @@ class CreateShippingOffer extends Order
             $orderId
         );
 
-        $popup = $this->createBlock('Amazon_Order_MerchantFulfillment_Information');
+        $popup = $this->getLayout()->createBlock(Information::class);
         $showTryAgainBtn = false;
 
         try {

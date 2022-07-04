@@ -17,8 +17,14 @@ use Magento\Framework\Message\MessageInterface;
 class Content extends AbstractForm
 {
     protected $amazonFactory;
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    private $amazonHelper;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
@@ -26,17 +32,21 @@ class Content extends AbstractForm
         array $data = []
     ) {
         $this->amazonFactory = $amazonFactory;
-
+        $this->amazonHelper = $amazonHelper;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
     protected function _prepareLayout()
     {
-        $this->getLayout()->getBlock('wizard.help.block')->setContent($this->__(<<<HTML
+        $this->getLayout()->getBlock('wizard.help.block')->setContent(
+            $this->__(
+                <<<HTML
 On this step, you should link your Amazon Account with your M2E Pro.<br/><br/>
 Please, select the Marketplace you are going to sell on and click on Continue button.
 HTML
-        ));
+            )
+        );
 
         parent::_prepareLayout();
     }
@@ -46,7 +56,7 @@ HTML
         $form = $this->_formFactory->create([
             'data' => [
                 'id' => 'edit_form',
-            ]
+            ],
         ]);
 
         $fieldset = $form->addFieldset(
@@ -56,13 +66,15 @@ HTML
         );
 
         $marketplacesCollection = $this->amazonFactory->getObject('Marketplace')->getCollection()
-            ->addFieldToFilter('developer_key', ['notnull' => true])
-            ->setOrder('sorder', 'ASC');
+                                                      ->addFieldToFilter('developer_key', ['notnull' => true])
+                                                      ->setOrder('sorder', 'ASC');
 
-        $marketplaces = [[
-            'value' => '',
-            'label' => ''
-        ]];
+        $marketplaces = [
+            [
+                'value' => '',
+                'label' => '',
+            ],
+        ];
         foreach ($marketplacesCollection->getItems() as $item) {
             $marketplace = array_merge($item->getData(), $item->getChildObject()->getData());
             $marketplaces[$marketplace['id']] = $marketplace['title'];
@@ -76,7 +88,7 @@ HTML
                 'css_class' => 'account-mode-choose',
                 'name' => 'marketplace_id',
                 'values' => $marketplaces,
-                'onchange' => 'InstallationAmazonWizardObj.marketplaceChange()'
+                'onchange' => 'InstallationAmazonWizardObj.marketplaceChange()',
             ]
         );
 
@@ -86,7 +98,8 @@ HTML
             [
                 'messages' => [
                     [
-                        'content' => $this->__('
+                        'content' => $this->__(
+                            '
                             For providing access to Amazon Account click the "Get Access Data" link.
                             You will be redirected to the Amazon Website.<br /><br />
                             Sign-in and complete steps of getting access for M2E Pro:<br /><br />
@@ -99,7 +112,8 @@ HTML
                                 <li>Copy generated "Merchant ID" / "MWS Auth Token" and paste it in the corresponding
                                 fields of the current Page.</li>
                             </ul>
-                        '),
+                        '
+                        ),
                         'type'    => MessageInterface::TYPE_NOTICE,
                     ],
                 ],
@@ -117,9 +131,9 @@ HTML
             'label',
             [
                 'container_id' => 'manual_authorization_marketplace_application_name_container',
-                'label' => $this->__('Application Name'),
-                'value' => $this->getHelper('Component\Amazon')->getApplicationName(),
-                'css_class' => 'manual-authorization',
+                'label'        => $this->__('Application Name'),
+                'value'        => $this->amazonHelper->getApplicationName(),
+                'css_class'    => 'manual-authorization',
             ]
         )->setFieldExtraAttributes('style="display: none; line-height: 3.2rem"');
 
@@ -134,9 +148,9 @@ HTML
                 'label',
                 [
                     'container_id' => 'manual_authorization_marketplace_developer_key_container_' . $marketplace['id'],
-                    'label' => $this->__('Developer Account Number'),
-                    'value' => $marketplace['developer_key'],
-                    'css_class' => 'manual-authorization',
+                    'label'        => $this->__('Developer Account Number'),
+                    'value'        => $marketplace['developer_key'],
+                    'css_class'    => 'manual-authorization',
                 ]
             )->setFieldExtraAttributes('style="display: none; line-height: 3.2rem"');
 
@@ -146,9 +160,7 @@ HTML
                 [
                     'container_id' => 'manual_authorization_marketplace_register_url_container_' . $marketplace['id'],
                     'label'        => '',
-                    'href'         => $this->getHelper('Component\Amazon')->getRegisterUrl(
-                        $marketplace['id']
-                    ),
+                    'href'         => $this->amazonHelper->getRegisterUrl($marketplace['id']),
                     'onclick'      => '',
                     'target'       => '_blank',
                     'value'        => $this->__('Get Access Data'),
@@ -158,35 +170,35 @@ HTML
             )->setFieldExtraAttributes('style="display: none"');
 
             $fieldset->addField(
-                'manual_authorization_marketplace_merchant_id_'.$marketplace['id'],
+                'manual_authorization_marketplace_merchant_id_' . $marketplace['id'],
                 'text',
                 [
                     'container_id' => 'manual_authorization_marketplace_merchant_id_container_' . $marketplace['id'],
-                    'label'    => $this->__('Merchant ID'),
-                    'name'     => 'manual_authorization_marketplace_merchant_id_'.$marketplace['id'],
-                    'style'    => 'width: 50%',
-                    'required' => true,
-                    'css_class' => 'manual-authorization M2ePro-marketplace-merchant',
-                    'tooltip' => $this->__(
+                    'label'        => $this->__('Merchant ID'),
+                    'name'         => 'manual_authorization_marketplace_merchant_id_' . $marketplace['id'],
+                    'style'        => 'width: 50%',
+                    'required'     => true,
+                    'css_class'    => 'manual-authorization M2ePro-marketplace-merchant',
+                    'tooltip'      => $this->__(
                         'Paste generated Merchant ID from Amazon. (It must look like: A15UFR7CZVW5YA).'
-                    )
+                    ),
                 ]
             )->setFieldExtraAttributes('style="display: none"');
 
             $fieldset->addField(
-                'manual_authorization_marketplace_token_'.$marketplace['id'],
+                'manual_authorization_marketplace_token_' . $marketplace['id'],
                 'text',
                 [
                     'container_id' => 'manual_authorization_marketplace_token_container_' . $marketplace['id'],
-                    'label'    => $this->__('MWS Auth Token'),
-                    'name'     => 'manual_authorization_marketplace_token_'.$marketplace['id'],
-                    'style'    => 'width: 50%',
-                    'required' => true,
-                    'css_class' => 'manual-authorization M2ePro-marketplace-merchant',
-                    'tooltip' => $this->__(
+                    'label'        => $this->__('MWS Auth Token'),
+                    'name'         => 'manual_authorization_marketplace_token_' . $marketplace['id'],
+                    'style'        => 'width: 50%',
+                    'required'     => true,
+                    'css_class'    => 'manual-authorization M2ePro-marketplace-merchant',
+                    'tooltip'      => $this->__(
                         'Paste generated MWS Auth Token from Amazon.
                         (It must look like: amzn.mws.bna3f75c-a683-49c7-6da0-749y33313dft).'
-                    )
+                    ),
                 ]
             )->setFieldExtraAttributes('style="display: none"');
         }
@@ -196,21 +208,21 @@ HTML
                 'The specified Title is already used for other Account. Account Title must be unique.'
             ),
             'M2E Pro was not able to get access to the Amazon Account. Please, make sure, that you choose correct ' .
-            'Option on MWS Authorization Page and enter correct Merchant ID.' => $this->__(
+            'Option on MWS Authorization Page and enter correct Merchant ID.'                      => $this->__(
                 'M2E Pro was not able to get access to the Amazon Account.' .
                 ' Please, make sure, that you choose correct Option on MWS Authorization Page
                 and enter correct Merchant ID / MWS Auth Token'
             ),
-            'M2E Pro was not able to get access to the Amazon Account. Reason: %error_message%' => $this->__(
+            'M2E Pro was not able to get access to the Amazon Account. Reason: %error_message%'    => $this->__(
                 'M2E Pro was not able to get access to the Amazon Account. Reason: %error_message%'
             ),
-            'Please fill Merchant ID and MWS Auth Token fields.' => $this->__(
+            'Please fill Merchant ID and MWS Auth Token fields.'                                   => $this->__(
                 'Please fill Merchant ID and MWS Auth Token fields.'
             ),
         ]);
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Wizard\InstallationAmazon'));
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Account'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Wizard\InstallationAmazon'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon\Account'));
 
         $form->setUseContainer(true);
         $this->setForm($form);

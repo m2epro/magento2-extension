@@ -16,9 +16,10 @@ class LastActions extends \Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions
     public function __construct(
         \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $data);
+        parent::__construct($context, $dataHelper,$data);
         $this->viewHelper = $viewHelper;
     }
 

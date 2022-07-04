@@ -8,62 +8,59 @@
 
 namespace Ess\M2ePro\Helper\View;
 
-/**
- * Class \Ess\M2ePro\Helper\View\Amazon
- */
-class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
+class Amazon
 {
-    const NICK  = 'amazon';
+    public const NICK = 'amazon';
 
-    const WIZARD_INSTALLATION_NICK = 'installationAmazon';
-    const MENU_ROOT_NODE_NICK = 'Ess_M2ePro::amazon';
+    public const WIZARD_INSTALLATION_NICK = 'installationAmazon';
+    public const MENU_ROOT_NODE_NICK = 'Ess_M2ePro::amazon';
 
-    protected $urlBuilder;
-    protected $activeRecordFactory;
-    protected $authSession;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translation;
+    /** @var \Ess\M2ePro\Helper\Module\Wizard */
+    private $wizard;
 
     public function __construct(
-        \Magento\Backend\Model\UrlInterface $urlBuilder,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Magento\Backend\Model\Auth\Session $authSession,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Helper\Module\Translation $translation,
+        \Ess\M2ePro\Helper\Module\Wizard $wizard
     ) {
-        $this->urlBuilder = $urlBuilder;
-        $this->activeRecordFactory = $activeRecordFactory;
-        $this->authSession = $authSession;
-        parent::__construct($helperFactory, $context);
+        $this->translation = $translation;
+        $this->wizard = $wizard;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getTitle()
+    /**
+     * @return string
+     */
+    public function getTitle(): string
     {
-        return $this->getHelper('Module\Translation')->__('Amazon Integration');
+        return $this->translation->__('Amazon Integration');
     }
 
-    //########################################
-
-    public function getMenuRootNodeLabel()
+    /**
+     * @return string
+     */
+    public function getMenuRootNodeLabel(): string
     {
         return $this->getTitle();
     }
 
-    //########################################
-
-    public function getWizardInstallationNick()
+    /**
+     * @return string
+     */
+    public function getWizardInstallationNick(): string
     {
         return self::WIZARD_INSTALLATION_NICK;
     }
 
-    public function isInstallationWizardFinished()
+    /**
+     * @return bool
+     */
+    public function isInstallationWizardFinished(): bool
     {
-        return $this->getHelper('Module\Wizard')->isFinished(
+        return $this->wizard->isFinished(
             $this->getWizardInstallationNick()
         );
     }
-
-    //########################################
 }

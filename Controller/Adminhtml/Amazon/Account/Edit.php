@@ -15,6 +15,29 @@ use Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
  */
 class Edit extends Account
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    private $helperAmazon;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $helperData;
+
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $helperDataGlobalData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon $helperAmazon,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Helper\Data\GlobalData $helperDataGlobalData,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+
+        $this->helperAmazon = $helperAmazon;
+        $this->helperData = $helperData;
+        $this->helperDataGlobalData = $helperDataGlobalData;
+    }
+
     protected function getLayoutType()
     {
         return self::LAYOUT_TWO_COLUMNS;
@@ -36,7 +59,7 @@ class Edit extends Account
             return $this->_redirect('*/amazon_account');
         }
 
-        $marketplaces = $this->getHelper('Component\Amazon')->getMarketplacesAvailableForApiCreation();
+        $marketplaces = $this->helperAmazon->getMarketplacesAvailableForApiCreation();
         if ($marketplaces->getSize() <= 0) {
             $message = 'You should select and update at least one Amazon marketplace.';
             $this->messageManager->addError($this->__($message));
@@ -47,7 +70,7 @@ class Edit extends Account
             $this->addLicenseMessage($account);
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('edit_account', $account);
+        $this->helperDataGlobalData->setValue('edit_account', $account);
 
         // Set header text
         // ---------------------------------------
@@ -59,7 +82,7 @@ class Edit extends Account
             $account->getId()
         ) {
             $headerText = $headerTextEdit;
-            $headerText .= ' "'.$this->getHelper('Data')->escapeHtml($account->getTitle()).'"';
+            $headerText .= ' "'.$this->helperData->escapeHtml($account->getTitle()).'"';
         } else {
             $headerText = $headerTextAdd;
         }
@@ -68,8 +91,8 @@ class Edit extends Account
 
         // ---------------------------------------
 
-        $this->addLeft($this->createBlock('Amazon_Account_Edit_Tabs'));
-        $this->addContent($this->createBlock('Amazon_Account_Edit'));
+        $this->addLeft($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs::class));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit::class));
         $this->setPageHelpLink('x/Hv8UB');
 
         return $this->getResultPage();

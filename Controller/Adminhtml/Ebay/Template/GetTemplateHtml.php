@@ -41,7 +41,8 @@ class GetTemplateHtml extends Template
             $templateDataForce = (bool)$this->getRequest()->getParam('data_force', false);
 
             /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher $switcherBlock */
-            $switcherBlock = $this->createBlock('Ebay_Listing_Template_Switcher');
+            $switcherBlock = $this->getLayout()
+                                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher::class);
             $switcherBlock->setData(['template_nick' => $templateNick]);
             // ---------------------------------------
 

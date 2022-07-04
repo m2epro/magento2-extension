@@ -62,8 +62,8 @@ class SourceMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContai
     {
         $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
 
-        $viewHeaderBlock = $this->createBlock(
-            'Listing_View_Header',
+        $viewHeaderBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
             '',
             ['data' => ['listing' => $listing]]
         );

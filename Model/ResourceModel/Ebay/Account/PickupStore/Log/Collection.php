@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Ebay\Account\PickupStore\Log',
-            'Ess\M2ePro\Model\ResourceModel\Ebay\Account\PickupStore\Log'
+            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::class,
+            \Ess\M2ePro\Model\ResourceModel\Ebay\Account\PickupStore\Log::class
         );
     }
 

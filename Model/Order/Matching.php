@@ -18,7 +18,7 @@ class Matching extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Order\Matching');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Order\Matching::class);
     }
 
     //########################################

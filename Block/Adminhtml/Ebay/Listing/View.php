@@ -10,15 +10,22 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View
- */
 class View extends AbstractContainer
 {
     /** @var \Ess\M2ePro\Model\Listing */
-    private $listing = null;
+    private $listing;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -27,7 +34,8 @@ class View extends AbstractContainer
         $this->listing = $this->getHelper('Data\GlobalData')->getValue('view_listing');
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Switcher $viewModeSwitcher */
-        $viewModeSwitcher = $this->createBlock('Ebay_Listing_View_Switcher');
+        $viewModeSwitcher = $this->getLayout()
+                                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Switcher::class);
 
         // Initialization block
         // ---------------------------------------
@@ -47,11 +55,11 @@ class View extends AbstractContainer
         $this->css->addFile('ebay/listing/view.css');
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Listing::class)
         );
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(
-                '\Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid'
+            $this->dataHelper->getClassConstants(
+                \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::class
             )
         );
 
@@ -123,7 +131,7 @@ class View extends AbstractContainer
                 'label'      => $this->__('Edit Settings'),
                 'onclick'    => '',
                 'class'      => 'drop_down edit_default_settings_drop_down primary',
-                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
+                'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown::class,
                 'options'    => $this->getSettingsButtonDropDownItems()
             ]
         );
@@ -137,7 +145,7 @@ class View extends AbstractContainer
                 'label'        => $this->__('Add Products'),
                 'class'        => 'add',
                 'button_class' => '',
-                'class_name'   => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown',
+                'class_name'   => \Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown::class,
                 'options'      => $this->getAddProductsDropDownItems(),
             ]
         );
@@ -166,8 +174,8 @@ class View extends AbstractContainer
             return parent::getGridHtml();
         }
 
-        $viewHeaderBlock = $this->createBlock(
-            'Listing_View_Header',
+        $viewHeaderBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
             '',
             [
                 'data' => ['listing' => $this->listing]
@@ -175,8 +183,8 @@ class View extends AbstractContainer
         );
         $viewHeaderBlock->setListingViewMode(true);
 
-        /** @var $helper \Ess\M2ePro\Helper\Data */
-        $helper = $this->getHelper('Data');
+        /** @var \Ess\M2ePro\Helper\Data $helper */
+        $helper = $this->dataHelper;
 
         $this->jsUrl->addUrls(
             array_merge(
@@ -257,7 +265,7 @@ JS
     {
         $items = [];
 
-        $backUrl = $this->getHelper('Data')->makeBackUrlParam(
+        $backUrl = $this->dataHelper->makeBackUrlParam(
             '*/ebay_listing/view',
             ['id' => $this->listing->getId()]
         );

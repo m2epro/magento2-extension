@@ -16,7 +16,7 @@ class GetChangePartsCompatibilityModePopupHtml extends \Ess\M2ePro\Controller\Ad
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid\Motor\EditMode $block */
-        $block = $this->createBlock('Ebay_Listing_Grid_Motor_EditMode');
+        $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid\Motor\EditMode::class);
         $block->setListingId($this->getRequest()->getParam('listing_id'));
 
         $this->setAjaxContent($block);

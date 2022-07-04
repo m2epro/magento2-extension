@@ -15,7 +15,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
  */
 class ExternalTransaction extends AbstractGrid
 {
-    /** @var $order \Ess\M2ePro\Model\Order */
+    /** @var \Ess\M2ePro\Model\Order $order */
     private $order = null;
 
     //########################################
@@ -85,7 +85,7 @@ class ExternalTransaction extends AbstractGrid
             'width'    => '150px',
             'index'    => 'transaction_date',
             'type'     => 'datetime',
-            'filter'   => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+            'filter'   => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
             'format'   => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
             'sortable' => false

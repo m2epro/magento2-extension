@@ -16,9 +16,10 @@ class LastActions extends \Ess\M2ePro\Block\Adminhtml\Listing\Log\Grid\LastActio
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($viewHelper, $context, $data);
+        parent::__construct($viewHelper, $context, $dataHelper, $data);
         $this->resourceConnection = $resourceConnection;
     }
 

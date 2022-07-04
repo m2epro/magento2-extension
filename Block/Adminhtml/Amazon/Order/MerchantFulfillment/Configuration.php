@@ -24,22 +24,31 @@ class Configuration extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFor
     /** @var \Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment */
     private $merchantFulfillment;
 
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    private $magentoAttributeHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment $merchantFulfillment,
         \Ess\M2ePro\Model\Registration\Manager $manager,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\Config\ReinitableConfigInterface $storeConfig,
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $registry, $formFactory, $data);
-
         $this->merchantFulfillment = $merchantFulfillment;
         $this->manager = $manager;
         $this->localeCurrency = $localeCurrency;
         $this->storeConfig = $storeConfig;
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
     }
 
     public function _construct()
@@ -108,13 +117,10 @@ class Configuration extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFor
             $formData = array_merge($defaults, $cachedData);
         }
 
-        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
-        $magentoAttributeHelper = $this->getHelper('Magento_Attribute');
-
-        $allAttributes = $magentoAttributeHelper->getAll();
+        $allAttributes = $this->magentoAttributeHelper->getAll();
 
         $attributesByInputTypes = [
-            'text' => $magentoAttributeHelper->filterByInputTypes($allAttributes, ['text']),
+            'text' => $this->magentoAttributeHelper->filterByInputTypes($allAttributes, ['text']),
         ];
 
         $form = $this->_formFactory->create(
@@ -795,7 +801,7 @@ HTML
     protected function _prepareLayout()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment::class)
         );
 
         $this->js->add(
@@ -830,7 +836,7 @@ JS
 
     protected function _toHtml()
     {
-        $helpBlock = $this->createBlock('HelpBlock');
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class);
         $helpBlock->setData(
             [
                 'title'   => $this->__('Amazon\'s Shipping Services'),
@@ -854,8 +860,9 @@ HTML
             ]
         );
 
-        $breadcrumb = $this->createBlock('Amazon_Order_MerchantFulfillment_Breadcrumb')
-            ->setSelectedStep(1);
+        $breadcrumb = $this->getLayout()
+                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment\Breadcrumb::class)
+                           ->setSelectedStep(1);
 
         return $helpBlock->toHtml() .
             $breadcrumb->toHtml() .
@@ -879,7 +886,7 @@ HTML
 
         foreach ($this->getData('order_items') as $parentOrderItem) {
             /**
-             * @var $parentOrderItem \Ess\M2ePro\Model\Order\Item
+             * @var \Ess\M2ePro\Model\Order\Item $parentOrderItem
              */
             $parentOrderItem->getMagentoProduct();
 

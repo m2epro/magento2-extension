@@ -13,14 +13,25 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 class Grid extends AbstractGrid
 {
     /** @var \Ess\M2ePro\Model\ResourceModel\Order\Note\Collection */
-    protected $notesCollection = null;
+    protected $notesCollection;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
 
     /** @var \Ess\M2ePro\Model\ResourceModel\Order\Item\Collection */
-    private $itemsCollection = null;
+    private $itemsCollection;
+
     /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
     private $componentEbayPickupStore;
+
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
@@ -28,13 +39,16 @@ class Grid extends AbstractGrid
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $backendHelper, $data);
-
         $this->resourceConnection = $resourceConnection;
         $this->ebayFactory = $ebayFactory;
         $this->componentEbayPickupStore = $componentEbayPickupStore;
+        $this->databaseHelper = $databaseHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $backendHelper, $data);
     }
 
     public function _construct()
@@ -66,7 +80,7 @@ class Grid extends AbstractGrid
                 ['account_mode' => 'mode']
             )
             ->joinLeft(
-                ['so' => $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('sales_order')],
+                ['so' => $this->databaseHelper->getTableNameWithPrefix('sales_order')],
                 '(so.entity_id = `main_table`.magento_order_id)',
                 ['magento_order_num' => 'increment_id']
             );
@@ -152,7 +166,7 @@ class Grid extends AbstractGrid
                 'header'         => $this->__('Sale Date'),
                 'align'          => 'left',
                 'type'           => 'datetime',
-                'filter'         => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+                'filter'         => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
                 'format'         => \IntlDateFormatter::MEDIUM,
                 'filter_time'    => true,
                 'index'          => 'purchase_create_date',
@@ -167,7 +181,7 @@ class Grid extends AbstractGrid
                 'header'         => $this->__('Ship By Date'),
                 'align'          => 'left',
                 'type'           => 'datetime',
-                'filter'         => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+                'filter'         => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
                 'format'         => \IntlDateFormatter::MEDIUM,
                 'filter_time'    => true,
                 'index'          => 'shipping_date_to',
@@ -195,7 +209,7 @@ class Grid extends AbstractGrid
                 'width'                     => '145px',
                 'index'                     => 'ebay_order_id',
                 'frame_callback'            => [$this, 'callbackColumnEbayOrder'],
-                'filter'                    => 'Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\OrderId',
+                'filter'                    => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\OrderId::class,
                 'filter_condition_callback' => [$this, 'callbackFilterEbayOrderId']
             ]
         );
@@ -387,7 +401,7 @@ class Grid extends AbstractGrid
 
         if ($magentoOrderId !== null) {
             if ($row['magento_order_num']) {
-                $magentoOrderNumber = $this->getHelper('Data')->escapeHtml($row['magento_order_num'] ?? '');
+                $magentoOrderNumber = $this->dataHelper->escapeHtml($row['magento_order_num'] ?? '');
                 $orderUrl = $this->getUrl('sales/order/view', ['order_id' => $magentoOrderId]);
                 $returnString = '<a href="' . $orderUrl . '" target="_blank">' . $magentoOrderNumber . '</a>';
             } else {
@@ -396,7 +410,8 @@ class Grid extends AbstractGrid
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewLogIcon\Order $viewLogIcon */
-        $viewLogIcon = $this->createBlock('Grid_Column_Renderer_ViewLogIcon_Order');
+        $viewLogIcon = $this->getLayout()
+                            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewLogIcon\Order::class);
         $logIconHtml = $viewLogIcon->render($row);
 
         if ($logIconHtml !== '') {
@@ -428,7 +443,7 @@ class Grid extends AbstractGrid
 
     public function callbackColumnEbayOrder($value, $row, $column, $isExport)
     {
-        $back = $this->getHelper('Data')->makeBackUrlParam('*/ebay_order/index');
+        $back = $this->dataHelper->makeBackUrlParam('*/ebay_order/index');
         $itemUrl = $this->getUrl('*/ebay_order/view', ['id' => $row->getId(), 'back' => $back]);
 
         $returnString = <<<HTML
@@ -439,7 +454,7 @@ HTML;
             $returnString .= '<br/> [ <b>SM: </b> # ' . $row->getChildObject()->getData('selling_manager_id') . ' ]';
         }
 
-        /** @var $notes \Ess\M2ePro\Model\Order\Note[] */
+        /** @var \Ess\M2ePro\Model\Order\Note[] $notes */
         $notes = $this->notesCollection->getItemsByColumnValue('order_id', $row->getData('id'));
 
         if ($notes) {
@@ -467,7 +482,7 @@ HTML;
             return $returnString;
         }
 
-        $shippingDetails = $this->getHelper('Data')->jsonDecode($row->getChildObject()->getData('shipping_details'));
+        $shippingDetails = $this->dataHelper->jsonDecode($row->getChildObject()->getData('shipping_details'));
         if (empty($shippingDetails['in_store_pickup_details'])) {
             return $returnString;
         }
@@ -479,7 +494,7 @@ HTML;
 
     public function callbackColumnItems($value, $row, $column, $isExport)
     {
-        /** @var $items \Ess\M2ePro\Model\Order\Item[] */
+        /** @var \Ess\M2ePro\Model\Order\Item[] $items */
         $items = $this->itemsCollection->getItemsByColumnValue('order_id', $row->getData('id'));
 
         $html = '';
@@ -537,7 +552,7 @@ HTML;
             $skuHtml = '';
             if ($item->getChildObject()->getSku()) {
                 $skuLabel = $this->__('SKU');
-                $sku = $this->getHelper('Data')->escapeHtml($item->getChildObject()->getSku());
+                $sku = $this->dataHelper->escapeHtml($item->getChildObject()->getSku());
                 if ($product !== null) {
                     $productUrl = $this->getUrl('catalog/product/edit', ['id' => $product->getId()]);
                     $sku = <<<STRING
@@ -566,8 +581,8 @@ HTML;
 HTML;
 
                 foreach ($variation as $optionName => $optionValue) {
-                    $optionName = $this->getHelper('Data')->escapeHtml($optionName);
-                    $optionValue = $this->getHelper('Data')->escapeHtml($optionValue);
+                    $optionName = $this->dataHelper->escapeHtml($optionName);
+                    $optionValue = $this->dataHelper->escapeHtml($optionValue);
 
                     $variationHtml .= <<<HTML
 <span style="padding-left: 20px;"><b><i>{$optionName}</i>:</b>&nbsp;{$optionValue}</span><br/>
@@ -584,7 +599,7 @@ HTML;
 
             if ($item->getChildObject()->getTransactionId()) {
                 $transactionLabel = $this->__('Transaction');
-                $transactionId = $this->getHelper('Data')->escapeHtml($item->getChildObject()->getTransactionId());
+                $transactionId = $this->dataHelper->escapeHtml($item->getChildObject()->getTransactionId());
 
                 $transactionHtml .= <<<HTML
 <span style="padding-left: 10px;"><b>{$transactionLabel}:</b>&nbsp;{$transactionId}</span>
@@ -597,8 +612,8 @@ HTML;
                 (int)$row->getData('marketplace_id')
             );
             $itemLabel = $this->__('Item');
-            $itemId = $this->getHelper('Data')->escapeHtml($item->getChildObject()->getItemId());
-            $itemTitle = $this->getHelper('Data')->escapeHtml($item->getChildObject()->getTitle());
+            $itemId = $this->dataHelper->escapeHtml($item->getChildObject()->getItemId());
+            $itemTitle = $this->dataHelper->escapeHtml($item->getChildObject()->getTitle());
 
             $html .= <<<HTML
 <b>{$itemLabel}: #</b> <a href="{$itemUrl}" target="_blank">{$itemId}</a><br/>
@@ -612,8 +627,8 @@ HTML;
 
     public function callbackColumnBuyer($value, $row, $column, $isExport)
     {
-        $returnString = $this->getHelper('Data')->escapeHtml($row->getChildObject()->getData('buyer_name')) . '<br/>';
-        $returnString .= $this->getHelper('Data')->escapeHtml($row->getChildObject()->getData('buyer_user_id'));
+        $returnString = $this->dataHelper->escapeHtml($row->getChildObject()->getData('buyer_name')) . '<br/>';
+        $returnString .= $this->dataHelper->escapeHtml($row->getChildObject()->getData('buyer_user_id'));
 
         return $returnString;
     }
@@ -781,10 +796,10 @@ JS
 
         $tempGridIds = [];
         $this->getHelper('Component\Ebay')->isEnabled() && $tempGridIds[] = $this->getId();
-        $tempGridIds = $this->getHelper('Data')->jsonEncode($tempGridIds);
+        $tempGridIds = $this->dataHelper->jsonEncode($tempGridIds);
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')
+            $this->dataHelper
                 ->getClassConstants(\Ess\M2ePro\Model\Log\AbstractModel::class)
         );
 
@@ -792,7 +807,7 @@ JS
             [
                 'ebay_order/view' => $this->getUrl(
                     '*/ebay_order/view',
-                    ['back' => $this->getHelper('Data')->makeBackUrlParam('*/ebay_order/index')]
+                    ['back' => $this->dataHelper->makeBackUrlParam('*/ebay_order/index')]
                 )
             ]
         );

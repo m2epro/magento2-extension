@@ -26,7 +26,9 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Unmanaged Listings'));
 
-        $this->addContent($this->createBlock('Amazon_Listing_Other_View'));
+        $this->addContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Other\View::class)
+        );
 
         return $this->getResult();
     }

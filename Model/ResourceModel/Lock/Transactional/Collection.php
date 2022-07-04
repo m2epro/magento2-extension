@@ -18,8 +18,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     public function _construct()
     {
         $this->_init(
-            'Ess\M2ePro\Model\Lock\Transactional',
-            'Ess\M2ePro\Model\ResourceModel\Lock\Transactional'
+            \Ess\M2ePro\Model\Lock\Transactional::class,
+            \Ess\M2ePro\Model\ResourceModel\Lock\Transactional::class
         );
     }
 

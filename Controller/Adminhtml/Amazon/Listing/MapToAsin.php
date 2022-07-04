@@ -17,13 +17,18 @@ class MapToAsin extends Main
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary */
     protected $vocabularyHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $helperData;
+
     public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($amazonFactory, $context);
         $this->vocabularyHelper = $vocabularyHelper;
+        $this->helperData = $helperData;
     }
 
     public function execute()
@@ -41,14 +46,14 @@ class MapToAsin extends Main
         }
 
         if (!$this->getHelper('Component\Amazon')->isASIN($generalId) &&
-            !$this->getHelper('Data')->isISBN($generalId)
+            !$this->helperData->isISBN($generalId)
         ) {
             $this->setAjaxContent('General ID has invalid format.', false);
 
             return $this->getResult();
         }
 
-        /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+        /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $productId);
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
@@ -98,7 +103,7 @@ class MapToAsin extends Main
             return $this->getResult();
         }
 
-        $optionsData = $this->getHelper('Data')->jsonDecode($optionsData);
+        $optionsData = $this->helperData->jsonDecode($optionsData);
 
         if ($variationManager->isRelationParentType()) {
             if (empty($optionsData['virtual_matched_attributes'])) {

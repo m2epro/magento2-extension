@@ -44,7 +44,10 @@ class Edit extends Template
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
         $this->setPageHelpLink('x/b-1IB');
-        $this->addContent($this->createBlock('Walmart_Template_Description_Edit'));
+        $this->addContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Template\Description\Edit::class)
+        );
 
         return $this->getResultPage();
     }

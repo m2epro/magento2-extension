@@ -25,7 +25,8 @@ class OtherCategories extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Prod
         $this->setSessionValue('mode', CategoryTemplateBlock::MODE_PRODUCT);
         $this->initSessionDataProducts($this->listing->getChildObject()->getAddedListingProductsIds());
 
-        $block = $this->createBlock('Ebay_Listing_Product_Category_Settings_Other_Product');
+        $block = $this->getLayout()
+              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Other\Product::class);
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Set eBay Category'));
 
         $categoriesData = $this->getSessionValue($this->getSessionDataKey());

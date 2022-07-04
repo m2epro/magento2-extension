@@ -10,11 +10,22 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Voca
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Vocabulary\RemoveOption
- */
 class RemoveOption extends Main
 {
+    /** @var \Ess\M2ePro\Helper\Component\Walmart\Vocabulary */
+    private $vocabularyHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Component\Walmart\Vocabulary $vocabularyHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->vocabularyHelper = $vocabularyHelper;
+    }
+
     public function execute()
     {
         $productOption = $this->getRequest()->getParam('product_option');
@@ -31,8 +42,7 @@ class RemoveOption extends Main
             $productOptionsGroup = $this->getHelper('Data')->jsonDecode($productOptionsGroup);
         }
 
-        $vocabularyHelper = $this->getHelper('Component_Walmart_Vocabulary');
-        $vocabularyHelper->removeOptionFromLocalStorage($productOption, $productOptionsGroup, $channelAttr);
+        $this->vocabularyHelper->removeOptionFromLocalStorage($productOption, $productOptionsGroup, $channelAttr);
 
         $this->setJsonContent([
             'success' => true

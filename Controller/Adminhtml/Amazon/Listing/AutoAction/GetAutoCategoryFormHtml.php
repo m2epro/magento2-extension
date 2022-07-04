@@ -13,6 +13,19 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction;
  */
 class GetAutoCategoryFormHtml extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
 {
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $helperDataGlobalData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $helperDataGlobalData,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+
+        $this->helperDataGlobalData = $helperDataGlobalData;
+    }
+
     //########################################
 
     public function execute()
@@ -21,9 +34,10 @@ class GetAutoCategoryFormHtml extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Li
             'Listing',
             $this->getRequest()->getParam('listing_id')
         );
-        $this->getHelper('Data\GlobalData')->setValue('amazon_listing', $listing);
+        $this->helperDataGlobalData->setValue('amazon_listing', $listing);
 
-        $block = $this->createBlock('Amazon_Listing_AutoAction_Mode_Category_Form');
+        $block = $this->getLayout()
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode\Category\Form::class);
 
         $this->setAjaxContent($block);
         return $this->getResult();

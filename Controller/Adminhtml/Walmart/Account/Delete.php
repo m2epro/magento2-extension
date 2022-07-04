@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Account\Delete
- */
 class Delete extends Account
 {
     public function execute()
@@ -38,7 +35,7 @@ class Delete extends Account
         $deleted = $locked = 0;
         foreach ($accounts as $account) {
 
-            /** @var $account \Ess\M2ePro\Model\Account */
+            /** @var \Ess\M2ePro\Model\Account $account */
 
             if ($account->isLocked(true)) {
                 $locked++;

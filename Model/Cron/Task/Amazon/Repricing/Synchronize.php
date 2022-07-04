@@ -127,7 +127,7 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $skus[] = $listingOther['sku'];
         }
 
-        /** @var $repricingSynchronization \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General */
+        /** @var \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General $repricingSynchronization */
         $repricingSynchronization = $this->modelFactory->getObject('Amazon_Repricing_Synchronization_General');
         $repricingSynchronization->setAccount($account);
         $result = $repricingSynchronization->run($skus);
@@ -235,7 +235,7 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $skus[] = $listingOther['sku'];
         }
 
-        /** @var $repricingSynchronization \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\ActualPrice */
+        /** @var \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\ActualPrice $repricingSynchronization */
         $repricingSynchronization = $this->modelFactory->getObject('Amazon_Repricing_Synchronization_ActualPrice');
         $repricingSynchronization->setAccount($account);
         $result = $repricingSynchronization->run($skus);

@@ -15,7 +15,26 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 {
     protected $listingProductPickupStoreStateId;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\View $viewHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct(
+            $resourceConnection,
+            $viewHelper,
+            $context,
+            $backendHelper,
+            $data
+        );
+    }
 
     public function _construct()
     {
@@ -35,7 +54,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             'listing_product_pickup_store_state',
             0
         );
-        $this->isAjax = $this->getHelper('Data')->jsonEncode($this->getRequest()->isXmlHttpRequest());
+        $this->isAjax = $this->dataHelper->jsonEncode($this->getRequest()->isXmlHttpRequest());
     }
 
     //########################################
@@ -60,7 +79,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             'header'    => $this->__('Creation Date'),
             'align'     => 'left',
             'type'      => 'datetime',
-            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+            'filter'    => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
             'index'     => 'create_date',
             'format' => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,

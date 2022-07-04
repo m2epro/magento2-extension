@@ -19,7 +19,7 @@ class UnassignProduct extends Order
     {
         $orderItemId = $this->getRequest()->getPost('order_item_id');
 
-        /** @var $orderItem \Ess\M2ePro\Model\Order\Item */
+        /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
         $orderItem = $this->activeRecordFactory->getObjectLoaded('Order\Item', $orderItemId);
 
         if (!$orderItem->getId()) {

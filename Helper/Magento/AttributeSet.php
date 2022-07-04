@@ -8,51 +8,62 @@
 
 namespace Ess\M2ePro\Helper\Magento;
 
-/**
- * Class \Ess\M2ePro\Helper\Magento\AttributeSet
- */
 class AttributeSet extends \Ess\M2ePro\Helper\Magento\AbstractHelper
 {
-    protected $productFactory;
-    protected $productResource;
-    protected $productColFactory;
-    protected $entityAttributeSetFactory;
-    protected $entityAttributeSetColFactory;
-    protected $resourceConnection;
+    /** @var \Magento\Catalog\Model\ProductFactory */
+    private $productFactory;
+    /** @var \Magento\Catalog\Model\ResourceModel\Product */
+    private $productResource;
+    /** @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory */
+    private $productColFactory;
+    /** @var \Magento\Eav\Model\Entity\Attribute\SetFactory */
+    private $entityAttributeSetFactory;
+    /** @var \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory */
+    private $entityAttributeSetColFactory;
+    /** @var \Magento\Framework\App\ResourceConnection */
+    private $resourceConnection;
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $dbStructure;
 
-    //########################################
-
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Database\Structure $dbStructure
+     * @param \Magento\Catalog\Model\ProductFactory $productFactory
+     * @param \Magento\Catalog\Model\ResourceModel\Product $productResource
+     * @param \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productColFactory
+     * @param \Magento\Eav\Model\Entity\Attribute\SetFactory $entityAttributeSetFactory
+     * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory $entityAttributeSetColFactory
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager
+     */
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Database\Structure $dbStructure,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Magento\Catalog\Model\ResourceModel\Product $productResource,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productColFactory,
         \Magento\Eav\Model\Entity\Attribute\SetFactory $entityAttributeSetFactory,
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory $entityAttributeSetColFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Framework\ObjectManagerInterface $objectManager
     ) {
+        parent::__construct($objectManager);
         $this->productFactory = $productFactory;
         $this->productResource = $productResource;
         $this->productColFactory = $productColFactory;
         $this->entityAttributeSetFactory = $entityAttributeSetFactory;
         $this->entityAttributeSetColFactory = $entityAttributeSetColFactory;
         $this->resourceConnection = $resourceConnection;
-        parent::__construct(
-            $objectManager,
-            $helperFactory,
-            $context
-        );
+        $this->dbStructure = $dbStructure;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function getAll($returnType = self::RETURN_TYPE_ARRAYS)
     {
         $attributeSetsCollection = $this->entityAttributeSetColFactory->create()
-            ->setEntityTypeFilter($this->productResource->getTypeId())
-            ->setOrder('attribute_set_name', 'ASC');
+                                                                      ->setEntityTypeFilter(
+                                                                          $this->productResource->getTypeId()
+                                                                      )
+                                                                      ->setOrder('attribute_set_name', 'ASC');
 
         return $this->_convertCollectionToReturnType($attributeSetsCollection, $returnType);
     }
@@ -67,12 +78,12 @@ class AttributeSet extends \Ess\M2ePro\Helper\Magento\AbstractHelper
         }
 
         $connection = $this->resourceConnection->getConnection();
-        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('catalog_product_entity');
+        $tableName = $this->dbStructure->getTableNameWithPrefix('catalog_product_entity');
 
         $dbSelect = $connection->select()
-            ->from($tableName, 'attribute_set_id')
-            ->where('`entity_id` IN ('.implode(',', $productIds).')')
-            ->group('attribute_set_id');
+                               ->from($tableName, 'attribute_set_id')
+                               ->where('`entity_id` IN (' . implode(',', $productIds) . ')')
+                               ->group('attribute_set_id');
 
         $result = $connection->query($dbSelect);
         $result->setFetchMode(\Zend_Db::FETCH_NUM);
@@ -180,13 +191,13 @@ class AttributeSet extends \Ess\M2ePro\Helper\Magento\AbstractHelper
         }
 
         $connection = $this->resourceConnection->getConnection();
-        $tableName = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('eav_entity_attribute');
+        $tableName = $this->dbStructure->getTableNameWithPrefix('eav_entity_attribute');
 
         $dbSelect = $connection->select()
-            ->from($tableName, 'attribute_set_id')
-            ->where('attribute_id IN ('.implode(',', $attributeIds).')')
-            ->where('entity_type_id = ?', $this->productResource->getTypeId())
-            ->group('attribute_set_id');
+                               ->from($tableName, 'attribute_set_id')
+                               ->where('attribute_id IN (' . implode(',', $attributeIds) . ')')
+                               ->where('entity_type_id = ?', $this->productResource->getTypeId())
+                               ->group('attribute_set_id');
 
         if ($isFully) {
             $dbSelect->having('count(*) = ?', count($attributeIds));
@@ -202,6 +213,4 @@ class AttributeSet extends \Ess\M2ePro\Helper\Magento\AbstractHelper
             \Eav\Model\Entity\Attribute\Set::class
         );
     }
-
-    //########################################
 }

@@ -72,7 +72,7 @@ HTML;
         $testResultUrl = $this->urlBuilder->getUrl('*/support/testMemoryLimitResult');
         $knowledgeBaseUrl = $this->getHelper('Module\Support')->getKnowledgeBaseUrl('1535371');
 
-        $button = $this->layout->createBlock('Ess\M2ePro\Block\Adminhtml\Magento\Button')->setData([
+        $button = $this->layout->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->setData([
             'label'   => $helper->__('Check'),
             'class'   => 'delete',
             'onclick' => "memoryLimitTest();"
@@ -87,7 +87,7 @@ function memoryLimitTest()
         method: 'post',
         asynchronous: true,
         onComplete: function(transport) {
-            
+
             new Ajax.Request('{$testResultUrl}', {
                 method: 'post',
                 asynchronous: true,
@@ -99,7 +99,7 @@ function memoryLimitTest()
                             MessageObj.addError('{$helper->__('Something went wrong. Please try again later.')}');
                             return;
                         }
-                        
+
                         if (response['result'] < {$this->getCheckObject()->getMin()}) {
                             MessageObj.addWarning(
                                 '{$this->getTestWarningMessage()}'
@@ -128,8 +128,8 @@ HTML;
     {
         return $this->getHelper('Data')->escapeJs(
             $this->getHelper('Module\Translation')->__(
-                'Actual memory limit is %value% Mb. 
-                The value must be increased on your server for the proper synchronization work. 
+                'Actual memory limit is %value% Mb.
+                The value must be increased on your server for the proper synchronization work.
                 Read <a href="%url%" target="_blank">here</a> how to do it.'
             )
         );

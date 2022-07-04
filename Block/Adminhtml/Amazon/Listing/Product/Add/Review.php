@@ -37,8 +37,8 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
         $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
 
-        $viewHeaderBlock = $this->createBlock(
-            'Listing_View_Header',
+        $viewHeaderBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
             '',
             ['data' => ['listing' => $listing]]
         );
@@ -53,7 +53,7 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
             'id' => $this->getRequest()->getParam('id')
         ]);
 
-        $buttonBlock = $this->createBlock('Magento\Button')
+        $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
             ->setData([
                 'id'   => $this->__('go_to_the_listing'),
                 'label'   => $this->__('Go To The Listing'),
@@ -69,7 +69,7 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
             'id' => $this->getRequest()->getParam('id')
         ]);
 
-        $buttonBlock = $this->createBlock('Magento\Button')
+        $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
             ->setData([
                 'label'   => $this->__('List Added Products Now'),
                 'onclick' => 'setLocation(\''.$url.'\');',

@@ -10,17 +10,41 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs;
 
 use Ess\M2ePro\Model\Amazon\Template\Description\Definition as DefinitionTemplate;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs\Definition
- */
 class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    public $templateModel = null;
+    public $templateModel;
     public $formData = [];
     public $allAttributes = [];
     public $allAttributesByInputTypes = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    protected $magentoAttributeHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->supportHelper = $supportHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     public function _construct()
     {
@@ -31,26 +55,27 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $this->setId('amazonTemplateDescriptionEditTabsDefinition');
         // ---------------------------------------
 
-        $this->templateModel = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
+        $this->templateModel = $this->globalDataHelper->getValue('tmp_template');
         $this->formData = $this->getFormData();
 
-        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
-
-        $this->allAttributes = $magentoAttributeHelper->getAll();
+        $this->allAttributes = $this->magentoAttributeHelper->getAll();
 
         $this->allAttributesByInputTypes = [
-            'text' => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text']),
-            'text_select' => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text', 'select']),
-            'text_select_multiselect' => $magentoAttributeHelper->filterByInputTypes(
+            'text' => $this->magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text']),
+            'text_select' => $this->magentoAttributeHelper
+                ->filterByInputTypes($this->allAttributes, ['text', 'select']),
+            'text_select_multiselect' => $this->magentoAttributeHelper->filterByInputTypes(
                 $this->allAttributes,
                 ['text', 'select', 'multiselect']
             ),
-            'text_weight' => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text', 'weight']),
-            'text_images' => $magentoAttributeHelper->filterByInputTypes(
+            'text_weight' => $this->magentoAttributeHelper
+                ->filterByInputTypes($this->allAttributes, ['text', 'weight']),
+            'text_images' => $this->magentoAttributeHelper->filterByInputTypes(
                 $this->allAttributes,
                 ['text', 'image', 'media_image', 'gallery', 'multiline', 'textarea', 'select', 'multiselect']
             ),
-            'text_price'  => $magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text', 'price']),
+            'text_price'  => $this->magentoAttributeHelper
+                ->filterByInputTypes($this->allAttributes, ['text', 'price']),
         ];
     }
 
@@ -77,7 +102,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
                     More detailed information about ability to work with this Page you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/YAMVB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/YAMVB')
                 )
             ]
         );
@@ -123,7 +148,8 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $selectAttrBlock->setId('selectAttr_title_template');
         $selectAttrBlock->setForm($this->_form);
 
-        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
+        $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
+                                    ->addData([
             'label' => $this->__('Insert'),
             'destination_id' => 'title_template',
             'class' => 'select_attributes_for_title_button primary',
@@ -630,7 +656,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         $options = [];
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
         foreach ($this->allAttributes as $attribute) {
             $options[] = [
                 'value' => $attribute['code'],
@@ -653,7 +679,8 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
+        $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
+                                    ->addData([
             'label' => $this->__('Insert'),
             'destination_id' => 'description_template',
             'class' => 'primary',
@@ -1404,7 +1431,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $fieldTitle,
         $maxlength = 50
     ) {
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
         for ($i = 0; $i < $fieldCount; $i++) {
             $button = $this->getMultiElementButton($name, $i);
 
@@ -1472,7 +1499,7 @@ HTML
     public function getClearAttributesByInputTypesOptions($type)
     {
         $optionsResult = [];
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
 
         foreach ($this->allAttributesByInputTypes[$type] as $attribute) {
             $optionsResult[] = [
@@ -1491,7 +1518,7 @@ HTML
         }
 
         $optionsResult = [];
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
 
         foreach ($this->allAttributesByInputTypes[$attributeType] as $attribute) {
             $tmpOption = [
@@ -1627,7 +1654,7 @@ HTML
             $optionsResult[] = $forceAddedAttributeOption;
         }
 
-        $helper = $this->getHelper('Data');
+        $helper = $this->dataHelper;
         foreach ($this->allAttributesByInputTypes['text_weight'] as $attribute) {
             $tmpOption = [
                 'value' => $attribute['code'],
@@ -1743,16 +1770,15 @@ HTML
             ],
         ];
 
-        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
-        $IsExistInAttributesArray = $magentoAttributeHelper->isExistInAttributesArray(
+        $IsExistInAttributesArray = $this->magentoAttributeHelper->isExistInAttributesArray(
             $this->formData['item_package_quantity_custom_attribute'],
             $this->allAttributesByInputTypes['text_select']
         );
         if ($this->formData['item_package_quantity_custom_attribute'] != '' && !$IsExistInAttributesArray) {
             $optionsResult[] = [
                 'value' => DefinitionTemplate::ITEM_PACKAGE_QUANTITY_MODE_CUSTOM_ATTRIBUTE,
-                'label' => $this->getHelper('Data')->escapeHtml(
-                    $magentoAttributeHelper->getAttributeLabel(
+                'label' => $this->dataHelper->escapeHtml(
+                    $this->magentoAttributeHelper->getAttributeLabel(
                         $this->formData['item_package_quantity_custom_attribute']
                     )
                 ),
@@ -1785,16 +1811,16 @@ HTML
             ['value' => DefinitionTemplate::NUMBER_OF_ITEMS_MODE_CUSTOM_VALUE, 'label' => $this->__('Custom Value')],
         ];
 
-        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
-        $IsExistInAttributesArray = $magentoAttributeHelper->isExistInAttributesArray(
+        $IsExistInAttributesArray = $this->magentoAttributeHelper->isExistInAttributesArray(
             $this->formData['number_of_items_custom_attribute'],
             $this->allAttributesByInputTypes['text_select']
         );
         if ($this->formData['number_of_items_custom_attribute'] != '' && !$IsExistInAttributesArray) {
             $optionsResult[] = [
                 'value' => DefinitionTemplate::NUMBER_OF_ITEMS_MODE_CUSTOM_ATTRIBUTE,
-                'label' => $this->getHelper('Data')->escapeHtml(
-                    $magentoAttributeHelper->getAttributeLabel($this->formData['number_of_items_custom_attribute'])
+                'label' => $this->dataHelper->escapeHtml(
+                    $this->magentoAttributeHelper
+                        ->getAttributeLabel($this->formData['number_of_items_custom_attribute'])
                 ),
                 'attrs' => [
                     'selected' => 'selected',
@@ -1956,7 +1982,7 @@ HTML
                 continue;
             }
 
-            $formData[$formField] = $this->getHelper('Data')->jsonDecode($formData[$formField]);
+            $formData[$formField] = $this->dataHelper->jsonDecode($formData[$formField]);
         }
 
         $formData['package_weight_custom_value'] == 0 && $formData['package_weight_custom_value'] = '';
@@ -1971,7 +1997,7 @@ HTML
     protected function _beforeToHtml()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')
+            $this->dataHelper
                 ->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\Description\Definition::class)
         );
 
@@ -1982,7 +2008,8 @@ HTML
 
     private function getMultiElementButton($type, $index)
     {
-        return $this->createBlock('Magento_Button_MagentoAttribute')->addData([
+        return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
+                                 ->addData([
             'label' => $this->__('Insert'),
             'destination_id' => $type . '_' . $index,
             'on_click_callback' => "AmazonTemplateDescriptionDefinitionObj.multi_element_keyup('{$type}',{value:' '});",
@@ -1991,17 +2018,15 @@ HTML
         ]);
     }
 
-    //########################################
-
     public function getForceAddedAttributeOption($attributeCode, $availableValues, $value = null)
     {
         if (empty($attributeCode) ||
-            $this->getHelper('Magento\Attribute')->isExistInAttributesArray($attributeCode, $availableValues)) {
+            $this->magentoAttributeHelper->isExistInAttributesArray($attributeCode, $availableValues)) {
             return '';
         }
 
-        $attributeLabel = $this->getHelper('Data')
-            ->escapeHtml($this->getHelper('Magento\Attribute')->getAttributeLabel($attributeCode));
+        $attributeLabel = $this->dataHelper
+            ->escapeHtml($this->magentoAttributeHelper->getAttributeLabel($attributeCode));
 
         $result = ['value' => $value, 'label' => $attributeLabel];
 
@@ -2013,29 +2038,31 @@ HTML
         return $result;
     }
 
-    // ---------------------------------------
-
-    public function getWeightUnits()
+    /**
+     * @return string[]
+     */
+    public function getWeightUnits(): array
     {
         return [
             'GR',
             'KG',
             'OZ',
             'LB',
-            'MG'
+            'MG',
         ];
     }
 
-    public function getDimensionsUnits()
+    /**
+     * @return string[]
+     */
+    public function getDimensionsUnits(): array
     {
         return [
             'MM',
             'CM',
             'M',
             'IN',
-            'FT'
+            'FT',
         ];
     }
-
-    //########################################
 }

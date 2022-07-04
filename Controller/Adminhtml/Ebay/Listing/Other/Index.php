@@ -15,7 +15,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
 {
     public function execute()
     {
-        $this->addContent($this->createBlock('Ebay_Listing_Other'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Other::class));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Unmanaged Listings'));
         $this->setPageHelpLink('x/FP8UB');
 

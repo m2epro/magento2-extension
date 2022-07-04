@@ -10,12 +10,31 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs;
 
 use Ess\M2ePro\Helper\Component\Walmart\Configuration as ConfigurationHelper;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs\Main
- */
 class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    protected $magentoAttributeHelper;
+
+    /** @var \Ess\M2ePro\Helper\Component\Walmart\Configuration */
+    private $walmartConfigurationHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Component\Walmart\Configuration $walmartConfigurationHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->walmartConfigurationHelper = $walmartConfigurationHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     protected function _prepareForm()
     {
@@ -37,14 +56,10 @@ HTML
             );
         }
 
-        /** @var \Ess\M2ePro\Helper\Component\Walmart\Configuration $configurationHelper */
-        $configurationHelper = $this->getHelper('Component_Walmart_Configuration');
+        $configurationHelper = $this->walmartConfigurationHelper;
 
-        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
-        $magentoAttributeHelper = $this->getHelper('Magento_Attribute');
-
-        $textAttributes = $magentoAttributeHelper->filterByInputTypes(
-            $magentoAttributeHelper->getAll(),
+        $textAttributes = $this->magentoAttributeHelper->filterByInputTypes(
+            $this->magentoAttributeHelper->getAll(),
             ['text']
         );
 
@@ -191,7 +206,7 @@ HTML
         $warningToolTip = '';
 
         if ($configurationHelper->isUpcModeCustomAttribute() &&
-            !$magentoAttributeHelper->isExistInAttributesArray(
+            !$this->magentoAttributeHelper->isExistInAttributesArray(
                 $configurationHelper->getUpcCustomAttribute(),
                 $textAttributes
             ) && $this->getData('upc_custom_attribute') != '') {
@@ -217,7 +232,8 @@ HTML
             $preparedAttributes[] = [
                 'attrs' => $attrs,
                 'value' => ConfigurationHelper::UPC_MODE_CUSTOM_ATTRIBUTE,
-                'label' => $magentoAttributeHelper->getAttributeLabel($configurationHelper->getUpcCustomAttribute())
+                'label' => $this->magentoAttributeHelper
+                    ->getAttributeLabel($configurationHelper->getUpcCustomAttribute())
             ];
         }
 
@@ -279,7 +295,7 @@ HTML
         $warningToolTip = '';
 
         if ($configurationHelper->isEanModeCustomAttribute() &&
-            !$magentoAttributeHelper->isExistInAttributesArray(
+            !$this->magentoAttributeHelper->isExistInAttributesArray(
                 $configurationHelper->getEanCustomAttribute(),
                 $textAttributes
             ) && $this->getData('ean_custom_attribute') != '') {
@@ -305,7 +321,8 @@ HTML
             $preparedAttributes[] = [
                 'attrs' => $attrs,
                 'value' => ConfigurationHelper::EAN_MODE_CUSTOM_ATTRIBUTE,
-                'label' => $magentoAttributeHelper->getAttributeLabel($configurationHelper->getEanCustomAttribute())
+                'label' => $this->magentoAttributeHelper
+                    ->getAttributeLabel($configurationHelper->getEanCustomAttribute())
             ];
         }
 
@@ -367,7 +384,7 @@ HTML
         $warningToolTip = '';
 
         if ($configurationHelper->isGtinModeCustomAttribute() &&
-            !$magentoAttributeHelper->isExistInAttributesArray(
+            !$this->magentoAttributeHelper->isExistInAttributesArray(
                 $configurationHelper->getGtinCustomAttribute(),
                 $textAttributes
             ) && $this->getData('gtin_custom_attribute') != '') {
@@ -393,7 +410,8 @@ HTML
             $preparedAttributes[] = [
                 'attrs' => $attrs,
                 'value' => ConfigurationHelper::GTIN_MODE_CUSTOM_ATTRIBUTE,
-                'label' => $magentoAttributeHelper->getAttributeLabel($configurationHelper->getGtinCustomAttribute())
+                'label' => $this->magentoAttributeHelper
+                    ->getAttributeLabel($configurationHelper->getGtinCustomAttribute())
             ];
         }
 
@@ -455,7 +473,7 @@ HTML
         $warningToolTip = '';
 
         if ($configurationHelper->isIsbnModeCustomAttribute() &&
-            !$magentoAttributeHelper->isExistInAttributesArray(
+            !$this->magentoAttributeHelper->isExistInAttributesArray(
                 $configurationHelper->getIsbnCustomAttribute(),
                 $textAttributes
             ) && $this->getData('isbn_custom_attribute') != '') {
@@ -481,7 +499,8 @@ HTML
             $preparedAttributes[] = [
                 'attrs' => $attrs,
                 'value' => ConfigurationHelper::ISBN_MODE_CUSTOM_ATTRIBUTE,
-                'label' => $magentoAttributeHelper->getAttributeLabel($configurationHelper->getIsbnCustomAttribute())
+                'label' => $this->magentoAttributeHelper
+                    ->getAttributeLabel($configurationHelper->getIsbnCustomAttribute())
             ];
         }
 
@@ -546,7 +565,7 @@ HTML
     <b>All products</b> - Product ID exemption will be applied to all products.<br/>
     <b>Specific products</b> - Product ID exemption will be applied to products that have a value
     “CUSTOM” in Product ID attribute.<br/><br/>
-    
+
     <b>Note:</b> You must apply for Product ID exemption on Walmart first.
 HTML
                 )
@@ -605,7 +624,7 @@ HTML
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart\Configuration::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart\Configuration::class)
         );
 
         $this->js->add(

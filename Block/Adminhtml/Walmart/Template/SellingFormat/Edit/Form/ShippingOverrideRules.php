@@ -66,9 +66,9 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
     {
         // ---------------------------------------
 
-        $addShippingOverrideRuleButton = $this
-            ->createBlock('Magento\Button')
-            ->setData([
+        $addShippingOverrideRuleButton = $this->getLayout()
+                                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                              ->setData([
                 'onclick' => 'WalmartTemplateSellingFormatObj.addRow();',
                 'class'   => 'add add_shipping_override_rule_button primary'
             ]);
@@ -215,8 +215,7 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
 
         // ---------------------------------------
 
-        $removeButton = $this
-            ->createBlock('Magento\Button')
+        $removeButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
             ->addData([
                 'label'   => $this->__('Remove'),
                 'class'   => 'delete icon-btn remove_shipping_override_rule_button'
@@ -331,7 +330,8 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
         $element->setForm($this->parentForm);
 
         if ($this->renderer === null) {
-            $this->renderer = $this->createBlock('Magento_Form_Renderer_Element');
+            $this->renderer = $this->getLayout()
+                                   ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Form\Renderer\Element::class);
         }
 
         $element->setRenderer($this->renderer);

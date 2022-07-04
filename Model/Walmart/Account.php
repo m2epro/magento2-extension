@@ -76,7 +76,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Walmart\Account');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Account::class);
     }
 
     //########################################

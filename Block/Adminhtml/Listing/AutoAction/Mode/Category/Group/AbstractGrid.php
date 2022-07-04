@@ -8,14 +8,27 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\Group;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\Group\Grid
- */
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     private $isGridPrepared = false;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Category */
+    private $magentoCategoryHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\Category $magentoCategoryHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->magentoCategoryHelper = $magentoCategoryHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $backendHelper, $data);
+    }
 
     public function _construct()
     {
@@ -161,10 +174,8 @@ HTML;
         }
 
         $html = '';
-        $magentoCategoryHelper = $this->getHelper('Magento\Category');
-
         foreach ($categories as $categoryId) {
-            $path = $magentoCategoryHelper->getPath($categoryId);
+            $path = $this->magentoCategoryHelper->getPath($categoryId);
 
             if (empty($path)) {
                 continue;
@@ -175,7 +186,7 @@ HTML;
             }
 
             $path = implode(' > ', $path);
-            $html .= '<span style="font-style: italic;">' . $this->getHelper('Data')->escapeHtml($path) . '</span>';
+            $html .= '<span style="font-style: italic;">' . $this->dataHelper->escapeHtml($path) . '</span>';
         }
 
         return $html;

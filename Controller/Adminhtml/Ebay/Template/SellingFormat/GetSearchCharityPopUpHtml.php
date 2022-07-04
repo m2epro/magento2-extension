@@ -29,7 +29,8 @@ class GetSearchCharityPopUpHtml extends Template
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Charity\Search $charitySearchBlock */
-        $charitySearchBlock = $this->createBlock('Ebay_Template_SellingFormat_Edit_Form_Charity_Search');
+        $charitySearchBlock = $this->getLayout()
+               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Charity\Search::class);
         $charitySearchBlock->setData('marketplace_id', $marketplaceId);
 
         $this->setAjaxContent($charitySearchBlock);

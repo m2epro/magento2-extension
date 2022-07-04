@@ -19,9 +19,7 @@ class Index extends Template
 
     public function execute()
     {
-        $content = $this->createBlock(
-            'Walmart\\Template'
-        );
+        $content = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Template::class);
 
         $this->getResultPage()->getConfig()->getTitle()->prepend('Policies');
         $this->addContent($content);

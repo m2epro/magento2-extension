@@ -189,7 +189,7 @@ class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
                 'Value was changed from [%from%] to [%to%] in the "%source%" Source.',
                 ['!from' => $oldValue, '!to' => $newValue, '!source'=> $sourceItem->getSourceCode()]
             ),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
         );
     }
 

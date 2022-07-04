@@ -10,18 +10,22 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Step\Products;
 
 use Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty as OnlineQty;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Step\Products\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
+
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     protected $magentoProductCollectionFactory;
+
     /** @var  \Ess\M2ePro\Model\Listing */
     protected $listing;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
@@ -29,11 +33,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->localeCurrency = $localeCurrency;
         $this->ebayFactory = $ebayFactory;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -75,7 +81,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // ---------------------------------------
         // Get collection
         // ---------------------------------------
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->setListingProductModeOn();
         $collection->setStoreId($this->listing->getStoreId());
@@ -224,7 +230,7 @@ CSS
             'type'     => 'number',
             'index'    => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
         ]);
 
         $this->addColumn('name', [
@@ -245,7 +251,7 @@ CSS
             'index'          => 'item_id',
             'account_id'     => $this->listing->getAccountId(),
             'marketplace_id' => $this->listing->getMarketplaceId(),
-            'renderer'       => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ItemId'
+            'renderer'       => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ItemId::class
         ]);
 
         $this->addColumn('available_qty', [
@@ -255,7 +261,7 @@ CSS
             'type'     => 'number',
             'index'    => 'available_qty',
             'filter'   => false,
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty',
+            'renderer' => OnlineQty::class,
             'render_online_qty' => OnlineQty::ONLINE_AVAILABLE_QTY
         ]);
 
@@ -274,7 +280,7 @@ CSS
             'currency'     => $this->listing->getMarketplace()->getChildObject()->getCurrency(),
             'index'        => $priceSortField,
             'filter_index' => $priceSortField,
-            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\MinMaxPrice',
+            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\MinMaxPrice::class,
             'filter_condition_callback' => [$this, 'callbackFilterPrice']
         ]);
 
@@ -308,7 +314,7 @@ CSS
         $onlineTitle = $row->getData('online_title');
         !empty($onlineTitle) && $title = $onlineTitle;
 
-        $title = $this->getHelper('Data')->escapeHtml($title);
+        $title = $this->dataHelper->escapeHtml($title);
         $valueHtml = '<span class="product-title-value">' . $title . '</span>';
 
         $sku = $row->getData('sku');
@@ -323,7 +329,7 @@ CSS
 
         $valueHtml .= '<br/>' .
             '<strong>' . $this->__('SKU') . ':</strong>&nbsp;' .
-            $this->getHelper('Data')->escapeHtml($sku);
+            $this->dataHelper->escapeHtml($sku);
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $row->getData('listing_product_id'));
@@ -332,7 +338,7 @@ CSS
             return $valueHtml;
         }
 
-        $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+        $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
         $productAttributes = array_keys($additionalData['variations_sets']);
         $valueHtml .= '<div style="font-size: 11px; font-weight: bold; color: grey; margin: 7px 0 0 7px">';
         $valueHtml .= implode(', ', $productAttributes);

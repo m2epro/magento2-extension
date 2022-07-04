@@ -8,14 +8,20 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Renderer\Description;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Renderer\Description\Image
- */
 class Image extends \Ess\M2ePro\Block\Adminhtml\Renderer\Description
 {
     private $imageId;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+        $this->dataHelper = $dataHelper;
+    }
 
     public function _construct()
     {
@@ -37,7 +43,7 @@ class Image extends \Ess\M2ePro\Block\Adminhtml\Renderer\Description
             $this->imageId = substr(sha1(
                 'image-'
                 . $this->getData('index_number')
-                . $this->getHelper('Data')->jsonEncode($this->getData('src'))
+                . $this->dataHelper->jsonEncode($this->getData('src'))
             ), 20);
         }
         return $this->imageId;

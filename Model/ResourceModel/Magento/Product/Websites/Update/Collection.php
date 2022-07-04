@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Magento\Product\Websites\Update',
-            'Ess\M2ePro\Model\ResourceModel\Magento\Product\Websites\Update'
+            \Ess\M2ePro\Model\Magento\Product\Websites\Update::class,
+            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Websites\Update::class
         );
     }
 

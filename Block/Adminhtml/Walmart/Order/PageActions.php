@@ -18,17 +18,23 @@ class PageActions extends AbstractBlock
     protected function _toHtml()
     {
         // ---------------------------------------
-        $marketplaceSwitcherBlock = $this->createBlock('Walmart_Marketplace_Switcher')->setData([
+        $marketplaceSwitcherBlock = $this->getLayout()
+                                         ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Marketplace\Switcher::class)
+                                         ->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
             'controller_name' => 'walmart_order'
         ]);
 
-        $accountSwitcherBlock = $this->createBlock('Walmart_Account_Switcher')->setData([
+        $accountSwitcherBlock = $this->getLayout()
+                                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Account\Switcher::class)
+                                     ->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
             'controller_name' => 'walmart_order'
         ]);
 
-        $orderStateSwitcherBlock = $this->createBlock('Order\NotCreatedFilter')->setData([
+        $orderStateSwitcherBlock = $this->getLayout()
+                                        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\NotCreatedFilter::class)
+                                        ->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
             'controller' => 'walmart_order'
         ]);

@@ -23,7 +23,8 @@ class ViewVariationsSettingsAjax extends Main
             return $this->getResponse()->setBody('You should provide correct parameters.');
         }
 
-        $settings = $this->createBlock('Amazon_Listing_Product_Variation_Manage_Tabs_Settings_Form');
+        $settings = $this->getLayout()
+         ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Settings\Form::class);
         $settings->setListingProduct($this->amazonFactory->getObjectLoaded('Listing\Product', $productId));
 
         $this->setJsonContent([

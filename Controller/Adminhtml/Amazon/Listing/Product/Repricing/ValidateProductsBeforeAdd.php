@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing;
 
+use Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Sellercentral\Repricing\RegularPricePopup;
+
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing\ValidateProductsBeforeAdd
  */
@@ -40,9 +42,7 @@ class ValidateProductsBeforeAdd extends \Ess\M2ePro\Controller\Adminhtml\Amazon\
             return $this->getResult();
         }
 
-        $popup = $this->createBlock(
-            'Amazon_Listing_View_Sellercentral_Repricing_RegularPricePopup'
-        );
+        $popup = $this->getLayout()->createBlock(RegularPricePopup::class);
 
         $this->setJsonContent([
             'title' => $this->__('Attention!'),

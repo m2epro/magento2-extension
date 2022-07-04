@@ -70,10 +70,15 @@ class Cancel extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
                 continue;
             }
 
-            $resultItems[] = [
+            $entry = [
                 'number' => $itemData['item_id'],
                 'qty'    => $itemData['qty'],
             ];
+            if (!empty($itemData['is_buyer_cancellation'])) {
+                $entry['is_buyer_cancellation'] = true;
+            }
+
+            $resultItems[] = $entry;
         }
 
         return [

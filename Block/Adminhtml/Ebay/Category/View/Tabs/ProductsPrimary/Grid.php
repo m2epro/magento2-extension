@@ -27,7 +27,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\AbstractG
 
     protected function _prepareCollection()
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->setListingProductModeOn();
         $collection->addAttributeToSelect('sku');

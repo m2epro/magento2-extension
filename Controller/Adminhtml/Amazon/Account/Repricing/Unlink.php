@@ -22,7 +22,7 @@ class Unlink extends Account
         $status   = $this->getRequest()->getParam('status');
         $messages = $this->getRequest()->getParam('messages', []);
 
-        /** @var $account \Ess\M2ePro\Model\Account */
+        /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->amazonFactory->getObjectLoaded('Account', $accountId, null, false);
 
         if ($accountId && $account === null) {
@@ -45,7 +45,7 @@ class Unlink extends Account
         }
 
         if ($status == '1') {
-            /** @var $repricingSynchronization \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General */
+            /** @var \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General $repricingSynchronization */
             $repricingSynchronization = $this->modelFactory->getObject('Amazon_Repricing_Synchronization_General');
             $repricingSynchronization->setAccount($account);
             $repricingSynchronization->reset();

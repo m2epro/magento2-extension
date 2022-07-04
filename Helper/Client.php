@@ -8,12 +8,9 @@
 
 namespace Ess\M2ePro\Helper;
 
-/**
- * Class \Ess\M2ePro\Helper\Client
- */
-class Client extends AbstractHelper
+class Client
 {
-    const API_APACHE_HANDLER = 'apache2handler';
+    private const API_APACHE_HANDLER = 'apache2handler';
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
@@ -25,15 +22,34 @@ class Client extends AbstractHelper
     protected $phpEnvironmentRequest;
     /** @var \Ess\M2ePro\Helper\Data */
     protected $helperData;
+    /** @var \Ess\M2ePro\Model\Config\Manager */
+    private $config;
+    /** @var \Ess\M2ePro\Model\Registry\Manager */
+    private $registry;
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $moduleDbStructure;
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $helperMagento;
 
-    //########################################
-
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Database\Structure $moduleDbStructure
+     * @param \Ess\M2ePro\Helper\Magento $helperMagento
+     * @param \Ess\M2ePro\Model\Config\Manager $config
+     * @param \Ess\M2ePro\Model\Registry\Manager $registry
+     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
+     * @param \Magento\Framework\Filesystem $filesystem
+     * @param \Magento\Framework\App\ResourceConnection $resource
+     * @param \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest
+     * @param \Ess\M2ePro\Helper\Data $helperData
+     */
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Database\Structure $moduleDbStructure,
+        \Ess\M2ePro\Helper\Magento $helperMagento,
+        \Ess\M2ePro\Model\Config\Manager $config,
+        \Ess\M2ePro\Model\Registry\Manager $registry,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\Filesystem $filesystem,
         \Magento\Framework\App\ResourceConnection $resource,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest,
         \Ess\M2ePro\Helper\Data $helperData
     ) {
@@ -42,14 +58,21 @@ class Client extends AbstractHelper
         $this->resource = $resource;
         $this->phpEnvironmentRequest = $phpEnvironmentRequest;
         $this->helperData = $helperData;
-        parent::__construct($helperFactory, $context);
+        $this->config = $config;
+        $this->registry = $registry;
+        $this->moduleDbStructure = $moduleDbStructure;
+        $this->helperMagento = $helperMagento;
     }
 
-    //########################################
+    // ----------------------------------------
 
+    /**
+     * @return string
+     * @throws \Ess\M2ePro\Model\Exception
+     */
     public function getDomain()
     {
-        $domain = $this->getHelper('Module')->getConfig()->getGroupValue('/location/', 'domain');
+        $domain = $this->config->getGroupValue('/location/', 'domain');
         if (empty($domain)) {
             $domain = $this->getServerDomain();
         }
@@ -63,7 +86,7 @@ class Client extends AbstractHelper
 
     public function getIp()
     {
-        $ip = $this->getHelper('Module')->getConfig()->getGroupValue('/location/', 'ip');
+        $ip = $this->config->getGroupValue('/location/', 'ip');
         if (empty($ip)) {
             $ip = $this->getServerIp();
         }
@@ -75,28 +98,36 @@ class Client extends AbstractHelper
         return $ip;
     }
 
-    public function getBaseDirectory()
+    /**
+     * @return string
+     */
+    public function getBaseDirectory(): string
     {
         return $this->filesystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::ROOT)
-              ->getAbsolutePath();
+                                ->getAbsolutePath();
     }
 
     // ---------------------------------------
 
-    public function updateLocationData($forceUpdate = false)
+    /**
+     * @param bool $forceUpdate
+     *
+     * @return void
+     */
+    public function updateLocationData($forceUpdate = false): void
     {
-        $dateLastCheck = $this->getHelper('Module')->getRegistry()->getValue('/location/date_last_check/');
+        $dateLastCheck = $this->registry->getValue('/location/date_last_check/');
         if ($dateLastCheck !== null) {
             $dateLastCheck = (int)$this->helperData
                 ->createGmtDateTime($dateLastCheck)
                 ->format('U');
 
-            if (!$forceUpdate && $this->helperData->getCurrentGmtDate(true) < $dateLastCheck + 60*60*24) {
+            if (!$forceUpdate && $this->helperData->getCurrentGmtDate(true) < $dateLastCheck + 60 * 60 * 24) {
                 return;
             }
         }
 
-        $this->getHelper('Module')->getRegistry()->setValue(
+        $this->registry->setValue(
             '/location/date_last_check/',
             $this->helperData->getCurrentGmtDate()
         );
@@ -111,11 +142,14 @@ class Client extends AbstractHelper
             $ip = '127.0.0.1';
         }
 
-        $this->getHelper('Module')->getConfig()->setGroupValue('/location/', 'domain', $domain);
-        $this->getHelper('Module')->getConfig()->setGroupValue('/location/', 'ip', $ip);
+        $this->config->setGroupValue('/location/', 'domain', $domain);
+        $this->config->setGroupValue('/location/', 'ip', $ip);
     }
 
-    protected function getServerDomain()
+    /**
+     * @return string
+     */
+    protected function getServerDomain(): string
     {
         $domain = rtrim($this->phpEnvironmentRequest->getServer('HTTP_HOST'), '/');
         empty($domain) && $domain = '127.0.0.1';
@@ -124,7 +158,10 @@ class Client extends AbstractHelper
         return strtolower(trim((string)$domain));
     }
 
-    protected function getServerIp()
+    /**
+     * @return string
+     */
+    protected function getServerIp(): string
     {
         $ip = $this->phpEnvironmentRequest->getServer('SERVER_ADDR');
         !$this->isValidIp($ip) && $ip = $this->phpEnvironmentRequest->getServer('LOCAL_ADDR');
@@ -133,7 +170,12 @@ class Client extends AbstractHelper
         return strtolower(trim((string)$ip));
     }
 
-    protected function isValidIp($ip)
+    /**
+     * @param string $ip
+     *
+     * @return bool
+     */
+    protected function isValidIp($ip): bool
     {
         return !empty($ip) && (
                 filter_var($ip, FILTER_VALIDATE_IP) ||
@@ -141,22 +183,35 @@ class Client extends AbstractHelper
             );
     }
 
-    //########################################
+    // ----------------------------------------
 
+    /**
+     * @param bool $asArray
+     *
+     * @return array|string
+     */
     public function getPhpVersion($asArray = false)
     {
         $version = [
-            PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION
+            PHP_MAJOR_VERSION,
+            PHP_MINOR_VERSION,
+            PHP_RELEASE_VERSION,
         ];
 
         return $asArray ? $version : implode('.', $version);
     }
 
-    public function getPhpApiName()
+    /**
+     * @return string
+     */
+    public function getPhpApiName(): string
     {
         return PHP_SAPI;
     }
 
+    /**
+     * @return false|string
+     */
     public function getPhpIniFileLoaded()
     {
         return php_ini_loaded_file();
@@ -164,28 +219,28 @@ class Client extends AbstractHelper
 
     // ---------------------------------------
 
-    public function isPhpApiApacheHandler()
+    public function isPhpApiApacheHandler(): bool
     {
-        return $this->getPhpApiName() == self::API_APACHE_HANDLER;
+        return $this->getPhpApiName() === self::API_APACHE_HANDLER;
     }
 
-    public function isPhpApiFastCgi()
+    public function isPhpApiFastCgi(): bool
     {
         return !$this->isPhpApiApacheHandler();
     }
 
     // ---------------------------------------
 
-    public function getPhpSettings()
+    public function getPhpSettings(): array
     {
         return [
             'memory_limit'       => $this->getMemoryLimit(),
             'max_execution_time' => $this->getExecutionTime(),
-            'phpinfo'            => $this->getPhpInfoArray()
+            'phpinfo'            => $this->getPhpInfoArray(),
         ];
     }
 
-    public function getPhpInfoArray()
+    public function getPhpInfoArray(): array
     {
         if (in_array('phpinfo', $this->getDisabledFunctions())) {
             return [];
@@ -197,20 +252,44 @@ class Client extends AbstractHelper
 
             $pi = preg_replace(
                 [
-                '#^.*<body>(.*)</body>.*$#m', '#<h2>PHP License</h2>.*$#ms',
-                '#<h1>Configuration</h1>#',  "#\r?\n#", "#</(h1|h2|h3|tr)>#", '# +<#',
-                "#[ \t]+#", '#&nbsp;#', '#  +#', '# class=".*?"#', '%&#039;%',
-                '#<tr>(?:.*?)" src="(?:.*?)=(.*?)" alt="PHP Logo" /></a><h1>PHP Version (.*?)</h1>(?:\n+?)</td></tr>#',
-                '#<h1><a href="(?:.*?)\?=(.*?)">PHP Credits</a></h1>#',
-                '#<tr>(?:.*?)" src="(?:.*?)=(.*?)"(?:.*?)Zend Engine (.*?),(?:.*?)</tr>#',
-                "# +#", '#<tr>#', '#</tr>#'],
+                    '#^.*<body>(.*)</body>.*$#m',
+                    '#<h2>PHP License</h2>.*$#ms',
+                    '#<h1>Configuration</h1>#',
+                    "#\r?\n#",
+                    "#</(h1|h2|h3|tr)>#",
+                    '# +<#',
+                    "#[ \t]+#",
+                    '#&nbsp;#',
+                    '#  +#',
+                    '# class=".*?"#',
+                    '%&#039;%',
+                    '#<tr>(?:.*?)" src="(?:.*?)=(.*?)" alt="PHP Logo" /></a><h1>PHP Version (.*?)</h1>(?:\n+?)</td></tr>#',
+                    '#<h1><a href="(?:.*?)\?=(.*?)">PHP Credits</a></h1>#',
+                    '#<tr>(?:.*?)" src="(?:.*?)=(.*?)"(?:.*?)Zend Engine (.*?),(?:.*?)</tr>#',
+                    "# +#",
+                    '#<tr>#',
+                    '#</tr>#',
+                ],
                 [
-                '$1', '', '', '', '</$1>' . "\n", '<', ' ', ' ', ' ', '', ' ',
-                '<h2>PHP Configuration</h2>'."\n".'<tr><td>PHP Version</td><td>$2</td></tr>'.
-                "\n".'<tr><td>PHP Egg</td><td>$1</td></tr>',
-                '<tr><td>PHP Credits Egg</td><td>$1</td></tr>',
-                '<tr><td>Zend Engine</td><td>$2</td></tr>' . "\n" .
-                '<tr><td>Zend Egg</td><td>$1</td></tr>', ' ', '%S%', '%E%'
+                    '$1',
+                    '',
+                    '',
+                    '',
+                    '</$1>' . "\n",
+                    '<',
+                    ' ',
+                    ' ',
+                    ' ',
+                    '',
+                    ' ',
+                    '<h2>PHP Configuration</h2>' . "\n" . '<tr><td>PHP Version</td><td>$2</td></tr>' .
+                    "\n" . '<tr><td>PHP Egg</td><td>$1</td></tr>',
+                    '<tr><td>PHP Credits Egg</td><td>$1</td></tr>',
+                    '<tr><td>Zend Engine</td><td>$2</td></tr>' . "\n" .
+                    '<tr><td>Zend Egg</td><td>$1</td></tr>',
+                    ' ',
+                    '%S%',
+                    '%E%',
                 ],
                 ob_get_clean()
             );
@@ -231,33 +310,41 @@ class Client extends AbstractHelper
                     if (!isset($m[0]) || !isset($m[1]) || !isset($m[2])) {
                         continue;
                     }
-                    $pi[$n][$m[1]]=(!isset($m[3]) || $m[2]==$m[3])?$m[2]:array_slice($m, 2);
+                    $pi[$n][$m[1]] = (!isset($m[3]) || $m[2] == $m[3]) ? $m[2] : array_slice($m, 2);
                 }
             }
         } catch (\Exception $exception) {
             ob_get_clean();
+
             return [];
         }
 
         return $pi;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getMysqlVersion()
+    /**
+     * @return string|null
+     */
+    public function getMysqlVersion(): ?string
     {
         return $this->resource->getConnection()->getServerVersion();
     }
 
-    public function getMysqlApiName()
+    /**
+     * @return string
+     */
+    public function getMysqlApiName(): string
     {
         $connection = $this->resource->getConnection();
+
         return $connection instanceof \PDO ? $connection->getAttribute(\PDO::ATTR_CLIENT_VERSION) : 'N/A';
     }
 
     // ---------------------------------------
 
-    public function getMysqlSettings()
+    public function getMysqlSettings(): array
     {
         $sqlQuery = "SHOW VARIABLES
                      WHERE `Variable_name` IN ('connect_timeout','wait_timeout')";
@@ -270,21 +357,23 @@ class Client extends AbstractHelper
         }
 
         $phpInfo = $this->getPhpInfoArray();
-        $settings = array_merge($settings, isset($phpInfo['mysql'])?$phpInfo['mysql']:[]);
 
-        return $settings;
+        return array_merge($settings, $phpInfo['mysql'] ?? []);
     }
 
-    public function getMysqlTotals()
+    /**
+     * @return array
+     */
+    public function getMysqlTotals(): array
     {
-        $moduleTables = $this->getHelper('Module_Database_Structure')->getModuleTables();
-        $magentoTables = $this->getHelper('Magento')->getMySqlTables();
+        $moduleTables = $this->moduleDbStructure->getModuleTables();
+        $magentoTables = $this->helperMagento->getMySqlTables();
 
         $connRead = $this->resource->getConnection();
 
         $totalRecords = 0;
         foreach ($moduleTables as $moduleTable) {
-            $moduleTable = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix($moduleTable);
+            $moduleTable = $this->moduleDbStructure->getTableNameWithPrefix($moduleTable);
 
             if (!in_array($moduleTable, $magentoTables)) {
                 continue;
@@ -296,14 +385,14 @@ class Client extends AbstractHelper
 
         return [
             'magento_tables' => count($magentoTables),
-            'module_tables' => count($moduleTables),
-            'module_records' => $totalRecords
+            'module_tables'  => count($moduleTables),
+            'module_records' => $totalRecords,
         ];
     }
 
     // ---------------------------------------
 
-    public function updateMySqlConnection()
+    public function updateMySqlConnection(): void
     {
         $connection = $this->resource->getConnection();
 
@@ -314,27 +403,38 @@ class Client extends AbstractHelper
         }
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getDisabledFunctions()
+    /**
+     * @return string[]
+     */
+    public function getDisabledFunctions(): array
     {
         return array_filter(explode(',', ini_get('disable_functions')));
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getSystem()
+    /**
+     * @return string
+     */
+    public function getSystem(): string
     {
         return PHP_OS;
     }
 
-    // ---------------------------------------
+    // ----------------------------------------
 
+    /**
+     * @param bool $inMegabytes
+     *
+     * @return int
+     */
     public function getMemoryLimit($inMegabytes = true)
     {
         $memoryLimit = trim(ini_get('memory_limit'));
 
-        if ($memoryLimit == '') {
+        if ($memoryLimit === '') {
             return 0;
         }
 
@@ -344,15 +444,15 @@ class Client extends AbstractHelper
         switch ($lastMemoryLimitLetter) {
             case 'g':
                 $memoryLimit *= 1024;
-                // no break
+            // no break
 
             case 'm':
                 $memoryLimit *= 1024;
-                // no break
+            // no break
 
             case 'k':
                 $memoryLimit *= 1024;
-                // no break
+            // no break
         }
 
         if ($memoryLimit > 0 && $inMegabytes) {
@@ -362,7 +462,12 @@ class Client extends AbstractHelper
         return $memoryLimit;
     }
 
-    public function setMemoryLimit($maxSize)
+    /**
+     * @param int $maxSize
+     *
+     * @return void
+     */
+    public function setMemoryLimit($maxSize): void
     {
         $minSize = 32;
         $currentMemoryLimit = $this->getMemoryLimit();
@@ -384,9 +489,14 @@ class Client extends AbstractHelper
         // @codingStandardsIgnoreEnd
     }
 
+    /**
+     * @param int|null $bytes
+     *
+     * @return int
+     */
     public function testMemoryLimit($bytes = null)
     {
-        $this->getHelper('Module')->getRegistry()->setValue('/tools/memory-limit/test/', null);
+        $this->registry->setValue('/tools/memory-limit/test/', null);
 
         $i = 0;
         $array = [];
@@ -395,20 +505,24 @@ class Client extends AbstractHelper
         while (($usage = memory_get_usage(true)) < $bytes || $bytes === null) {
             $array[] = $array;
             if (++$i % 100 === 0) {
-                $this->getHelper('Module')->getRegistry()->setValue('/tools/memory-limit/test/', $usage);
+                $this->registry->setValue('/tools/memory-limit/test/', $usage);
             }
         }
+
         // @codingStandardsIgnoreEnd
 
         return $usage;
     }
 
+    /**
+     * @return int|null
+     */
     public function getTestedMemoryLimit()
     {
-        return $this->getHelper('Module')->getRegistry()->getValue('/tools/memory-limit/test/');
+        return $this->registry->getValue('/tools/memory-limit/test/');
     }
 
-    // ---------------------------------------
+    // ----------------------------------------
 
     public function getExecutionTime()
     {
@@ -422,7 +536,7 @@ class Client extends AbstractHelper
 
     public function testExecutionTime($seconds)
     {
-        $this->getHelper('Module')->getRegistry()->setValue('/tools/execution-time/test/', null);
+        $this->registry->setValue('/tools/execution-time/test/', null);
 
         $i = 0;
 
@@ -430,22 +544,22 @@ class Client extends AbstractHelper
         while ($i < $seconds) {
             sleep(1);
             if (++$i % 10 === 0) {
-                $this->getHelper('Module')->getRegistry()->setValue('/tools/execution-time/test/', $i);
+                $this->registry->setValue('/tools/execution-time/test/', $i);
             }
         }
         // @codingStandardsIgnoreEnd
 
-        $this->getHelper('Module')->getRegistry()->setValue('/tools/execution-time/test/', $seconds);
+        $this->registry->setValue('/tools/execution-time/test/', $seconds);
 
         return $i;
     }
 
     public function getTestedExecutionTime()
     {
-        return $this->getHelper('Module')->getRegistry()->getValue('/tools/execution-time/test/');
+        return $this->registry->getValue('/tools/execution-time/test/');
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * Ability to fix ZF-5063: Segmentaion fault on preg_replace in Zend_Db_Statement
@@ -460,14 +574,17 @@ class Client extends AbstractHelper
         ini_set('pcre.recursion_limit', $limit);
     }
 
-    public function getClassName($object)
+    /**
+     * @param object $object
+     *
+     * @return string
+     */
+    public function getClassName($object): string
     {
         if ($object instanceof \Magento\Framework\Interception\InterceptorInterface) {
             return get_parent_class($object);
-        } else {
-            return get_class($object);
         }
-    }
 
-    //########################################
+        return get_class($object);
+    }
 }

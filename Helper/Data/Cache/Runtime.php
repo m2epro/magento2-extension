@@ -8,63 +8,59 @@
 
 namespace Ess\M2ePro\Helper\Data\Cache;
 
-class Runtime extends \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
+class Runtime implements \Ess\M2ePro\Helper\Data\Cache\BaseInterface
 {
+    /** @var array */
     private $cacheStorage = [];
 
-    //########################################
-
+    /**
+     * @inheritDoc
+     */
     public function getValue($key)
     {
-        return isset($this->cacheStorage[$key]['data']) ? $this->cacheStorage[$key]['data'] : null;
+        return $this->cacheStorage[$key]['data'] ?? null;
     }
 
-    public function setValue($key, $value, array $tags = [], $lifetime = null)
+    /**
+     * @inheritDoc
+     */
+    public function setValue($key, $value, array $tags = [], $lifetime = null): void
     {
         $this->cacheStorage[$key] = [
             'data' => $value,
             'tags' => $tags,
         ];
-
-        return $value;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function removeValue($key)
+    /**
+     * @inheritDoc
+     */
+    public function removeValue($key): void
     {
-        if (!isset($this->cacheStorage[$key])) {
-            return false;
-        }
-
         unset($this->cacheStorage[$key]);
-        return true;
     }
 
-    public function removeTagValues($tag)
+    /**
+     * @inheritDoc
+     */
+    public function removeTagValues($tag): void
     {
-        $isDelete = false;
         foreach ($this->cacheStorage as $key => $data) {
             if (!in_array($tag, $data['tags'])) {
                 continue;
             }
 
             unset($this->cacheStorage[$key]);
-            $isDelete = true;
         }
-
-        return $isDelete;
     }
 
-    public function removeAllValues()
+    /**
+     * @inheritDoc
+     */
+    public function removeAllValues(): void
     {
-        if (empty($this->cacheStorage)) {
-            return false;
-        }
-
         $this->cacheStorage = [];
-        return true;
     }
-
-    //########################################
 }

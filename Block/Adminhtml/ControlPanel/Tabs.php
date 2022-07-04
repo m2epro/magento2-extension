@@ -11,12 +11,21 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel;
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTabs;
 use \Ess\M2ePro\Helper\View\ControlPanel as HelperControlPanel;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs
- */
 class Tabs extends AbstractHorizontalTabs
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Json\EncoderInterface $jsonEncoder,
+        \Magento\Backend\Model\Auth\Session $authSession,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $jsonEncoder, $authSession, $data);
+        $this->translationHelper = $translationHelper;
+    }
 
     public function _construct()
     {
@@ -44,13 +53,17 @@ class Tabs extends AbstractHorizontalTabs
 
         // ---------------------------------------
         $this->addTab(HelperControlPanel::TAB_OVERVIEW, [
-            'label'   => $this->helperFactory->getObject('Module\Translation')->__('Overview'),
-            'content' => $this->createBlock('ControlPanel_Tabs_Overview')->toHtml()
+            'label'   => $this->translationHelper->__('Overview'),
+            'content' => $this->getLayout()
+                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Overview::class)
+                              ->toHtml()
         ]);
         // ---------------------------------------
-        $params = ['label' => $this->helperFactory->getObject('Module\Translation')->__('Inspection')];
+        $params = ['label' => $this->translationHelper->__('Inspection')];
         if ($activeTab == HelperControlPanel::TAB_INSPECTION) {
-            $params['content'] = $this->createBlock('ControlPanel_Tabs_Inspection')->toHtml();
+            $params['content'] = $this->getLayout()
+                                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Inspection::class)
+                                      ->toHtml();
         } else {
             $params['class'] = 'ajax';
             $params['url'] = $this->getUrl('*/controlPanel/InspectionTab');
@@ -58,9 +71,11 @@ class Tabs extends AbstractHorizontalTabs
         $this->addTab(HelperControlPanel::TAB_INSPECTION, $params);
 
         // ---------------------------------------
-        $params = ['label' => $this->helperFactory->getObject('Module\Translation')->__('Database')];
+        $params = ['label' => $this->translationHelper->__('Database')];
         if ($activeTab == HelperControlPanel::TAB_DATABASE) {
-            $params['content'] = $this->createBlock('ControlPanel_Tabs_Database')->toHtml();
+            $params['content'] = $this->getLayout()
+                                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database::class)
+                                      ->toHtml();
         } else {
             $params['class'] = 'ajax';
             $params['url'] = $this->getUrl('*/controlPanel/databaseTab');
@@ -69,18 +84,22 @@ class Tabs extends AbstractHorizontalTabs
         // ---------------------------------------
 
         $this->addTab(HelperControlPanel::TAB_TOOLS_MODULE, [
-            'label'   => $this->helperFactory->getObject('Module\Translation')->__('Module Tools'),
-            'content' => $this->createBlock('ControlPanel_Tabs_ToolsModule')->toHtml(),
+            'label'   => $this->translationHelper->__('Module Tools'),
+            'content' => $this->getLayout()
+                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\ToolsModule::class)
+                              ->toHtml(),
         ]);
 
         $this->addTab(HelperControlPanel::TAB_CRON, [
-            'label'   => $this->helperFactory->getObject('Module\Translation')->__('Cron'),
-            'content' => $this->createBlock('ControlPanel_Tabs_Cron')->toHtml(),
+            'label'   => $this->translationHelper->__('Cron'),
+            'content' => $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Cron::class)
+                                           ->toHtml(),
         ]);
 
         $this->addTab(HelperControlPanel::TAB_DEBUG, [
-            'label'   => $this->helperFactory->getObject('Module\Translation')->__('Debug'),
-            'content' => $this->createBlock('ControlPanel_Tabs_Debug')->toHtml(),
+            'label'   => $this->translationHelper->__('Debug'),
+            'content' => $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Debug::class)
+                                           ->toHtml(),
         ]);
 
         $this->setActiveTab($activeTab);
@@ -101,7 +120,7 @@ function SetupManagementActionHandler() {
         if (result == null) {
             return false;
         }
-        
+
         url = url.replace(encodeURIComponent('#') + placeHolder + encodeURIComponent('#'), result);
         document.location = url;
     }

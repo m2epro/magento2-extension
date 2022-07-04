@@ -18,7 +18,7 @@ class GetPopupGrid extends \Ess\M2ePro\Controller\Adminhtml\Order
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Order\UploadByUser\Grid $block */
-        $block = $this->createBlock('Order_UploadByUser_Grid');
+        $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\UploadByUser\Grid::class);
         $block->setComponent($this->getRequest()->getParam('component'));
 
         $this->setAjaxContent($block->toHtml());

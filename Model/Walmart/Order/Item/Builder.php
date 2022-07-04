@@ -8,14 +8,12 @@
 
 namespace Ess\M2ePro\Model\Walmart\Order\Item;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Order\Item\Builder
- */
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {
     private $walmartFactory;
 
-    //########################################
+    /** @var bool */
+    private $previousBuyerCancellationRequested;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
@@ -27,8 +25,6 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         parent::__construct($helperFactory, $modelFactory, $data);
     }
 
-    //########################################
-
     public function initialize(array $data)
     {
         // Init general data
@@ -38,6 +34,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $this->setData('order_id', $data['order_id']);
         $this->setData('sku', trim($data['sku']));
         $this->setData('title', trim($data['title']));
+        $this->setData('buyer_cancellation_requested', $data['buyer_cancellation_requested']);
         // ---------------------------------------
 
         // Init sale data
@@ -74,6 +71,11 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             ->addFieldToFilter('sku', $this->getData('sku'))
             ->getFirstItem();
 
+        $this->previousBuyerCancellationRequested = false;
+        if ($existItem->getId()) {
+            $this->previousBuyerCancellationRequested = $existItem->getChildObject()->isBuyerCancellationRequested();
+        }
+
         foreach ($this->getData() as $key => $value) {
             if (!$existItem->getId() || ($existItem->hasData($key) && $existItem->getData($key) != $value)) {
                 $existItem->addData($this->getData());
@@ -94,5 +96,11 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         return $existItem;
     }
 
-    //########################################
+    /**
+     * @return bool
+     */
+    public function getPreviousBuyerCancellationRequested(): bool
+    {
+        return $this->previousBuyerCancellationRequested;
+    }
 }

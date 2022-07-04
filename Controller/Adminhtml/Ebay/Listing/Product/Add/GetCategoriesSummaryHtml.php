@@ -8,9 +8,9 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add\GetCategoriesSummaryHtml
- */
+use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Summary\Grid;
+use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree;
+
 class GetCategoriesSummaryHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 {
 
@@ -19,12 +19,12 @@ class GetCategoriesSummaryHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Lis
         $tempSession = $this->getSessionValue('source_categories');
         $productsIds = !isset($tempSession['products_ids']) ? [] : $tempSession['products_ids'];
 
-        /** @var $treeBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree */
-        $treeBlock = $this->createBlock('Ebay_Listing_Product_Add_Category_Tree');
+        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree $treeBlock */
+        $treeBlock = $this->getLayout()->createBlock(Tree::class);
         $treeBlock->setSelectedIds($productsIds);
 
-        /** @var $block \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Summary\Grid */
-        $block = $this->createBlock('Ebay_Listing_Product_Add_Category_Summary_Grid');
+        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Summary\Grid $block */
+        $block = $this->getLayout()->createBlock(Grid::class);
         $block->setStoreId($this->getListing()->getStoreId());
         $block->setProductsIds($productsIds);
         $block->setProductsForEachCategory($treeBlock->getProductsCountForEachCategory());

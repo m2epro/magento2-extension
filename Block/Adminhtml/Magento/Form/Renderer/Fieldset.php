@@ -19,14 +19,17 @@ class Fieldset extends MagentoFieldset
     /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->helperFactory = $context->getHelperFactory();
         parent::__construct($context, $data);
+        $this->dataHelper = $dataHelper;
     }
 
     //########################################
@@ -84,7 +87,7 @@ HTML;
      */
     public function escapeHtml($data, $allowedTags = null)
     {
-        return $this->helperFactory->getObject('Data')->escapeHtml(
+        return $this->dataHelper->escapeHtml(
             $data,
             ['div', 'a', 'strong', 'br', 'i', 'b', 'ul', 'li', 'p'],
             ENT_NOQUOTES

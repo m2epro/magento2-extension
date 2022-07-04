@@ -43,7 +43,10 @@ class Edit extends Template
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Shipping Template Policies'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
-        $this->addContent($this->createBlock('Amazon_Template_Shipping_Edit'));
+        $this->addContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Shipping\Edit::class)
+        );
 
         $this->setPageHelpLink('x/6-0kB');
 

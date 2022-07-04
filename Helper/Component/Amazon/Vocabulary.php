@@ -11,21 +11,42 @@ namespace Ess\M2ePro\Helper\Component\Amazon;
 class Vocabulary extends \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary
 {
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
-    protected $amazonParentFactory;
+    private $amazonParentFactory;
+    /** @var \Ess\M2ePro\Model\Factory */
+    private $modelFactory;
 
+    /**
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonParentFactory
+     * @param \Ess\M2ePro\Model\Factory $modelFactory
+     * @param \Ess\M2ePro\Helper\Module $moduleHelper
+     * @param \Ess\M2ePro\Helper\Module\Exception $exceptionHelper
+     * @param \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCacheHelper
+     * @param \Ess\M2ePro\Model\Config\Manager $config
+     * @param \Ess\M2ePro\Model\Registry\Manager $registry
+     */
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonParentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Helper\Module $moduleHelper,
+        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
+        \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCacheHelper,
+        \Ess\M2ePro\Model\Config\Manager $config,
+        \Ess\M2ePro\Model\Registry\Manager $registry
     ) {
-        parent::__construct($modelFactory, $activeRecordFactory, $helperFactory, $context);
+        parent::__construct(
+            $modelFactory,
+            $moduleHelper,
+            $exceptionHelper,
+            $permanentCacheHelper,
+            $config,
+            $registry
+        );
 
         $this->amazonParentFactory = $amazonParentFactory;
+        $this->modelFactory = $modelFactory;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function addAttribute($productAttribute, $channelAttribute)
     {
@@ -86,7 +107,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary
         );
         $existListingProductCollection->addFieldToFilter(
             'additional_data',
-            ['regexp'=> '"variation_channel_attributes_sets":.*"'.$channelAttribute.'":']
+            ['regexp' => '"variation_channel_attributes_sets":.*"' . $channelAttribute . '":']
         );
 
         $affectedListingsProducts = $existListingProductCollection->getItems();
@@ -117,7 +138,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary
             }
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
-            $amazonListingProduct      = $newListingProduct->getChildObject();
+            $amazonListingProduct = $newListingProduct->getChildObject();
             $amazonDescriptionTemplate = $amazonListingProduct->getAmazonDescriptionTemplate();
 
             $productAttributes = $amazonListingProduct->getVariationManager()->getTypeModel()->getProductAttributes();
@@ -165,17 +186,16 @@ class Vocabulary extends \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary
 
         $listingProductCollection->addFieldToFilter(
             'additional_data',
-            ['regexp'=> '"variation_matched_attributes":{.+}']
+            ['regexp' => '"variation_matched_attributes":{.+}']
         );
         $listingProductCollection->addFieldToFilter(
             'additional_data',
-            ['regexp'=>
-                '"variation_channel_attributes_sets":.*"'.$channelAttribute.'":\s*[\[|{].*'.$channelOption.'.*[\]|}]'
+            [
+                'regexp' =>
+                    '"variation_channel_attributes_sets":.*"' . $channelAttribute . '":\s*[\[|{].*' . $channelOption . '.*[\]|}]',
             ]
         );
 
         return $listingProductCollection->getItems();
     }
-
-    //########################################
 }

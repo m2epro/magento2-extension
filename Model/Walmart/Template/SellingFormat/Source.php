@@ -16,12 +16,12 @@ use Ess\M2ePro\Model\Walmart\Template\SellingFormat as WalmartSellingFormat;
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
-     * @var $magentoProduct \Ess\M2ePro\Model\Magento\Product
+     * @var \Ess\M2ePro\Model\Magento\Product $magentoProduct
      */
     private $magentoProduct = null;
 
     /**
-     * @var $sellingFormatTemplateModel \Ess\M2ePro\Model\Template\Sellingformat
+     * @var \Ess\M2ePro\Model\Template\Sellingformat $sellingFormatTemplateModel
      */
     private $sellingFormatTemplateModel = null;
 

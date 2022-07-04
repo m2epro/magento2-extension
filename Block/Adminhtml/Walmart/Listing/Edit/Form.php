@@ -18,18 +18,22 @@ class Form extends AbstractForm
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
     protected $walmartFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->walmartFactory = $walmartFactory;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -148,7 +152,7 @@ HTML
         {$editPolicyTooltip}</div>
         <span>{$this->__('or')}</span>
     </span>
-    <a id="add_selling_format_template_link" href="javascript: void(0);" 
+    <a id="add_selling_format_template_link" href="javascript: void(0);"
         onclick="WalmartListingSettingsObj.addNewTemplate(
             M2ePro.url.get('addNewSellingFormatTemplate'),
             WalmartListingSettingsObj.newSellingFormatTemplateCallback
@@ -308,7 +312,7 @@ HTML
     protected function _prepareLayout()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')
+            $this->dataHelper
                 ->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class)
         );
 
@@ -415,7 +419,7 @@ HTML
         'M2ePro/Walmart/Listing/Settings'
     ], function(){
         window.TemplateManagerObj = new TemplateManager();
-    
+
         window.WalmartListingSettingsObj = new WalmartListingSettings();
         WalmartListingSettingsObj.initObservers();
     });

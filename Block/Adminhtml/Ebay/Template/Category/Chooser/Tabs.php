@@ -37,8 +37,8 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
         !$hideRecent && $this->addTab(self::TAB_ID_RECENT, [
             'label'   => $this->__('Recently Used'),
             'title'   => $this->__('Recently Used'),
-            'content' => $this->createBlock(
-                'Ebay_Template_Category_Chooser_Tabs_Recent',
+            'content' => $this->getLayout()->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Tabs\Recent::class,
                 '',
                 $blockData
             )->toHtml(),
@@ -47,8 +47,8 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
         $this->addTab(self::TAB_ID_BROWSE, [
             'label'   => $this->__('Browse'),
             'title'   => $this->__('Browse'),
-            'content' => $this->createBlock(
-                'Ebay_Template_Category_Chooser_Tabs_Browse',
+            'content' => $this->getLayout()->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Tabs\Browse::class,
                 '',
                 $blockData
             )->toHtml(),
@@ -57,8 +57,8 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
         $this->addTab(self::TAB_ID_SEARCH, [
             'label'   => $this->__('Search'),
             'title'   => $this->__('Search'),
-            'content' => $this->createBlock(
-                'Ebay_Template_Category_Chooser_Tabs_Search',
+            'content' => $this->getLayout()->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Tabs\Search::class,
                 '',
                 $blockData
             )
@@ -67,12 +67,20 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
         $this->addTab(self::TAB_ID_ATTRIBUTE, [
             'label'   => $this->__('Magento Attribute'),
             'title'   => $this->__('Magento Attribute'),
-            'content' => $this->createBlock(
-                'Ebay_Template_Category_Chooser_Tabs_Attribute',
+            'content' => $this->getLayout()->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Tabs\Attribute::class,
                 '',
                 $blockData
             )->toHtml()
         ]);
+
+        $this->jsUrl->addUrls(
+            [
+                'ebay_account_store_category/refresh' => $this->getUrl(
+                    '*/ebay_account_store_category/refresh/'
+                ),
+            ]
+        );
 
         return parent::_prepareLayout();
     }

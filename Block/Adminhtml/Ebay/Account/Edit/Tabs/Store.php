@@ -10,26 +10,45 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Store
- */
 class Store extends AbstractForm
 {
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     protected function _prepareForm()
     {
-        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account')
-            ? $this->getHelper('Data\GlobalData')->getValue('edit_account') : [];
+        $account = $this->globalDataHelper->getValue('edit_account')
+            ? $this->globalDataHelper->getValue('edit_account') : [];
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         $defaults = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
 
         $formData = array_merge($defaults, $formData);
 
-        $formData['ebay_store_title'] = $this->getHelper('Data')->escapeHtml($formData['ebay_store_title']);
-        $formData['ebay_store_subscription_level'] = $this->getHelper('Data')->escapeHtml(
+        $formData['ebay_store_title'] = $this->dataHelper->escapeHtml($formData['ebay_store_title']);
+        $formData['ebay_store_subscription_level'] = $this->dataHelper->escapeHtml(
             $formData['ebay_store_subscription_level']
         );
-        $formData['ebay_store_description'] = $this->getHelper('Data')->escapeHtml($formData['ebay_store_description']);
+        $formData['ebay_store_description'] = $this->dataHelper->escapeHtml($formData['ebay_store_description']);
 
         $isEdit = !!$this->getRequest()->getParam('id');
 
@@ -48,7 +67,7 @@ class Store extends AbstractForm
 Category settings via M2E Pro.</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
-                    , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/WP8UB'))
+                    , $this->supportHelper->getDocumentationArticleUrl('x/WP8UB'))
             ]
         );
 
@@ -109,7 +128,7 @@ HTML
                     'label' => '',
                     'value' => $this->__('Refresh'),
                     'class' => 'action-primary',
-                    'onclick' => 'EbayAccountObj.ebayStoreUpdate();',
+                    'onclick' => 'EbayAccountObj.refreshStoreCategories();',
                     'tooltip' => $this->__(
                         'Click on Refresh button to update eBay Store information - title, URL, Category tree, etc.'
                     )
@@ -134,38 +153,9 @@ HTML
                     'ebay_store_categories_not_found',
                     'label',
                     [
+                        'container_id' => 'ebay_store_categories_not_found',
                         'label' => '',
                         'value' => $this->__('Categories not found.')
-                    ]
-                );
-            } else {
-                $hideButton = $this->createBlock('Magento\Button')->addData([
-                    'label' => $this->__('Hide'),
-                    'class' => 'primary',
-                    'onclick' => 'EbayAccountObj.ebayStoreSelectCategoryHide();',
-                    'style' => 'margin-left: 15px;'
-                ]);
-
-                $fieldset->addField(
-                    'ebay_store_categories_selected',
-                    'text',
-                    [
-                        'container_id' => 'ebay_store_categories_selected_container',
-                        'label' => $this->__('Category ID'),
-                        'name' => 'ebay_store_categories_selected',
-                        'tooltip' => $this->__('Highlighted Category ID.'),
-                        'readonly' => true,
-                        'class' => 'hide',
-                        'placeholder' => $this->__('Please, select the Category'),
-                        'after_element_html' => $hideButton->toHtml()
-                    ]
-                );
-
-                $fieldset->addField(
-                    'tree-div',
-                    self::CUSTOM_CONTAINER,
-                    [
-                        'label' => '',
                     ]
                 );
             }
@@ -177,12 +167,12 @@ HTML
 require([
     'M2ePro/Ebay/Account',
 ], function() {
-    EbayAccountObj.ebayStoreSelectCategoryHide();
     EbayAccountObj.ebayStoreInitExtTree($categoriesTreeArray);
 });
 JS
                 );
             }
+
         } else {
             $fieldset = $form->addFieldset(
                 'no_subscription',
@@ -196,6 +186,7 @@ JS
                 'no_subscription_message',
                 'label',
                 [
+                    'container_id' => 'ebay_store_categories_no_subscription_message',
                     'value' => $this->__('This eBay Account does not have an eBay Store subscription.'),
                 ]
             );
@@ -206,10 +197,60 @@ JS
                 [
                     'value' => $this->__('Refresh'),
                     'class' => 'action-primary',
-                    'onclick' => 'EbayAccountObj.ebayStoreUpdate();',
+                    'onclick' => 'EbayAccountObj.refreshStoreCategories();',
                 ]
             );
         }
+
+        $hideButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->addData([
+            'label' => $this->__('Hide'),
+            'class' => 'primary',
+            'onclick' => 'EbayAccountObj.ebayStoreSelectCategoryHide();',
+            'style' => 'margin-left: 15px;'
+        ]);
+
+        $fieldset->addField(
+            'ebay_store_categories_selected',
+            'text',
+            [
+                'container_id' => 'ebay_store_categories_selected_container',
+                'label' => $this->__('Category ID'),
+                'name' => 'ebay_store_categories_selected',
+                'tooltip' => $this->__('Highlighted Category ID.'),
+                'readonly' => true,
+                'class' => 'hide',
+                'placeholder' => $this->__('Please, select the Category'),
+                'after_element_html' => $hideButton->toHtml()
+            ]
+        );
+
+        $fieldset->addField(
+            'tree-div',
+            self::CUSTOM_CONTAINER,
+            [
+                'label' => '',
+            ]
+        );
+
+        $this->js->add(<<<JS
+require([
+    'M2ePro/Ebay/Account',
+], function() {
+    EbayAccountObj.ebayStoreSelectCategoryHide();
+});
+JS
+        );
+
+        $this->jsUrl->addUrls(
+            [
+                'ebay_account_store_category/refresh' => $this->getUrl(
+                    '*/ebay_account_store_category/refresh/'
+                ),
+                'ebay_account_store_category/getTree' => $this->getUrl(
+                    '*/ebay_account_store_category/getTree/'
+                ),
+            ]
+        );
 
         $this->css->add(<<<CSS
 #no_subscription .admin__field-control {

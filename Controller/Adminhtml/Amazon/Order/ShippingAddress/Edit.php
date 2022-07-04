@@ -18,12 +18,13 @@ class Edit extends Order
     public function execute()
     {
         $id = $this->getRequest()->getParam('id');
-        /** @var $order \Ess\M2ePro\Model\Order */
+        /** @var \Ess\M2ePro\Model\Order $order */
         $order = $this->amazonFactory->getObjectLoaded('Order', (int)$id);
 
         $this->getHelper('Data\GlobalData')->setValue('order', $order);
 
-        $form = $this->createBlock('Amazon_Order_Edit_ShippingAddress_Form');
+        $form = $this->getLayout()
+                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order\Edit\ShippingAddress\Form::class);
 
         $this->setAjaxContent($form->toHtml());
         return $this->getResult();

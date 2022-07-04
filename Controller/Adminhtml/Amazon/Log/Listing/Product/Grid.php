@@ -16,15 +16,20 @@ use Ess\M2ePro\Block\Adminhtml\Log\Listing\View;
  */
 class Grid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing
 {
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $helperDataSession;
+
     //########################################
 
     protected $nameBuilder;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $helperDataSession,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         Context $context
     ) {
+        $this->helperDataSession = $helperDataSession;
         $this->nameBuilder = $nameBuilder;
 
         parent::__construct($amazonFactory, $context);
@@ -68,7 +73,7 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing
             }
         }
 
-        $sessionViewMode = $this->getHelper('Data\Session')->getValue(
+        $sessionViewMode = $this->helperDataSession->getValue(
             \Ess\M2ePro\Helper\View\Amazon::NICK . '_log_listing_view_mode'
         );
 

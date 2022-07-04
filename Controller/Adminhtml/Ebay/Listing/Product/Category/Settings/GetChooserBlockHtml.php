@@ -18,7 +18,8 @@ class GetChooserBlockHtml extends Settings
         $listing = $this->getListingFromRequest();
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser $chooserBlock */
-        $chooserBlock = $this->createBlock('Ebay_Listing_Product_Category_Settings_Chooser');
+        $chooserBlock = $this->getLayout()
+                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser::class);
         $chooserBlock->setAccountId($listing->getAccountId());
         $chooserBlock->setMarketplaceId($listing->getMarketplaceId());
         $chooserBlock->setCategoryMode($this->getRequest()->getParam('category_mode'));

@@ -24,7 +24,8 @@ class GetGrid extends Account
             return $this->getResult();
         }
 
-        $response = $this->createBlock('Ebay_Account_Feedback_Grid')->toHtml();
+        $response = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Feedback\Grid::class)
+                                      ->toHtml();
 
         $this->setAjaxContent($response);
 

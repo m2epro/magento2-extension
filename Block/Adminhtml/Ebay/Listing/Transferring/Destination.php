@@ -13,19 +13,24 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Transferring;
  */
 class Destination extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
-    //########################################
-
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory */
     private $ebayFactory;
-
     /** @var \Magento\Store\Model\StoreManager $storeManager */
     private $storeManager;
-
+    /** @var string */
     protected $_template = 'ebay/listing/transferring/destination.phtml';
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
 
-    //########################################
-
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Magento\Store\Model\StoreManager $storeManager
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param array $data
+     */
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Magento\Store\Model\StoreManager $storeManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -33,6 +38,7 @@ class Destination extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     ) {
         $this->storeManager = $storeManager;
         $this->ebayFactory = $ebayFactory;
+        $this->supportHelper = $supportHelper;
 
         parent::__construct($context, $data);
     }
@@ -87,7 +93,7 @@ class Destination extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     protected function _toHtml()
     {
-        $helpBlock = $this->createBlock('HelpBlock')->setData([
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
             'content' => $this->__(
                 <<<HTML
 The Sell on Another Marketplace feature allows you to list products on multiple eBay marketplaces.
@@ -95,7 +101,7 @@ To do it, you have to choose From and To Accounts, Marketplaces, Store Views and
 Click <a href="%url%" target="_blank">here</a> to learn more detailed information.
 HTML
                 ,
-                $this->getHelper('Module_Support')->getDocumentationArticleUrl('x/o1oJAg')
+                $this->supportHelper->getDocumentationArticleUrl('x/o1oJAg')
             ),
             'style' => 'margin-top: 15px;',
             'title' => $this->__('Sell on Another Marketplace')
@@ -111,7 +117,9 @@ HTML;
 
     protected function _beforeToHtml()
     {
-        $storeSwitcherBlock = $this->createBlock('StoreSwitcher')->setData('id', 'to_store_id');
+        $storeSwitcherBlock = $this->getLayout()
+                                   ->createBlock(\Ess\M2ePro\Block\Adminhtml\StoreSwitcher::class)
+                                   ->setData('id', 'to_store_id');
         $this->setChild('store_switcher', $storeSwitcherBlock);
 
         return parent::_beforeToHtml();

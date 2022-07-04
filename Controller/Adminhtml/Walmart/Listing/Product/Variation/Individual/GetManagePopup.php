@@ -9,10 +9,8 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Individual;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
+use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Individual\Manage;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Individual\GetManagePopup
- */
 class GetManagePopup extends Main
 {
     public function execute()
@@ -28,8 +26,8 @@ class GetManagePopup extends Main
             return $this->getResult();
         }
 
-        $variationManageBlock = $this->createBlock('Walmart_Listing_Product_Variation_Individual_Manage')
-            ->setData('listing_product_id', $listingProductId);
+        $variationManageBlock = $this->getLayout()->createBlock(Manage::class)
+                                                  ->setData('listing_product_id', $listingProductId);
 
         $this->setJsonContent([
             'type' => 'success',

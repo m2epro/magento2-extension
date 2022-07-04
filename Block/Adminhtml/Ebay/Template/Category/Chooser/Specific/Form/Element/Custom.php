@@ -22,19 +22,27 @@ class Custom extends \Magento\Framework\Data\Form\Element\AbstractElement
 
     public $layout;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         Factory $factoryElement,
         CollectionFactory $factoryCollection,
         Escaper $escaper,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         $data = []
     ) {
         $this->helperFactory = $context->getHelperFactory();
         $this->layout = $context->getLayout();
         parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
         $this->setType('specifics');
+        $this->translationHelper = $translationHelper;
+        $this->dataHelper = $dataHelper;
     }
 
     //########################################
@@ -90,7 +98,7 @@ class Custom extends \Magento\Framework\Data\Form\Element\AbstractElement
             $display = '';
         }
 
-        $labelText = $this->getTranslator()->__('From Attribute label');
+        $labelText = $this->translationHelper->__('From Attribute label');
 
         return <<<HTML
 <span id="specific_custom_attribute_title_label_{$index}" style="{$display}">
@@ -137,15 +145,15 @@ HTML;
             ],
             [
                 'value' => Specific::VALUE_MODE_CUSTOM_ATTRIBUTE,
-                'label' => $this->getTranslator()->__('Custom Attribute'),
+                'label' => $this->translationHelper->__('Custom Attribute'),
             ],
             [
                 'value' => Specific::VALUE_MODE_CUSTOM_VALUE,
-                'label' => $this->getTranslator()->__('Custom Value'),
+                'label' => $this->translationHelper->__('Custom Value'),
             ],
             [
                 'value' => Specific::VALUE_MODE_CUSTOM_LABEL_ATTRIBUTE,
-                'label' => $this->getTranslator()->__('Custom Label / Attribute'),
+                'label' => $this->translationHelper->__('Custom Label / Attribute'),
             ]
         ];
 
@@ -219,7 +227,7 @@ HTML;
         if (empty($specific['value_custom_value'])) {
             $customValues = [''];
         } else {
-            $customValues = $this->getHelperData()->jsonDecode($specific['value_custom_value']);
+            $customValues = $this->dataHelper->jsonDecode($specific['value_custom_value']);
         }
 
         $display = 'display: none;';
@@ -246,18 +254,4 @@ HTML;
 
         return $element->toHtml();
     }
-
-    //########################################
-
-    public function getTranslator()
-    {
-        return $this->helperFactory->getObject('Module\Translation');
-    }
-
-    public function getHelperData()
-    {
-        return $this->helperFactory->getObject('Data');
-    }
-
-    //########################################
 }

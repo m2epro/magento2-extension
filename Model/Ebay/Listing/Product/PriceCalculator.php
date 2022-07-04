@@ -28,13 +28,29 @@ class PriceCalculator extends \Ess\M2ePro\Model\Listing\Product\PriceCalculator
         return $this->getPriceVariationMode() == SellingFormat::PRICE_VARIATION_MODE_CHILDREN;
     }
 
-    //########################################
+    public function getProductValue()
+    {
+        $this->setAttributeSourceProduct($this->getMagentoProduct());
+
+        return parent::getProductValue();
+    }
 
     public function getVariationValue(ListingProductVariation $variation)
     {
         if ($variation->getChildObject()->isDelete()) {
             return $variation->getChildObject()->getOnlinePrice();
         }
+
+        if ($this->getMagentoProduct()->isBundleType() && $this->isPriceVariationModeParent()) {
+            $magentoProduct = $this->getMagentoProduct();
+        } else {
+            $options = $variation->getOptions(true);
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
+            $option = reset($options);
+            $magentoProduct = $option->getMagentoProduct();
+        }
+
+        $this->setAttributeSourceProduct($magentoProduct);
 
         return parent::getVariationValue($variation);
     }

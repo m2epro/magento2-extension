@@ -10,12 +10,19 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing;
 
 use Ess\M2ePro\Model\Cron\Task\Amazon\Listing\SynchronizeInventory\ProcessingRunner;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Other
- */
 class Other extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -58,7 +65,7 @@ class Other extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             ]
         );
 
-        $this->isAjax = $this->getHelper('Data')->jsonEncode($this->getRequest()->isXmlHttpRequest());
+        $this->isAjax = $this->dataHelper->jsonEncode($this->getRequest()->isXmlHttpRequest());
     }
 
     protected function _prepareLayout()

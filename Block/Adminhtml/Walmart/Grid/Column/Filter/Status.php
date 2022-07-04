@@ -8,24 +8,24 @@
 
 namespace  Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Filter;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Filter\Status
- */
 class Status extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
 {
     protected $helperFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Backend\Block\Context $context,
         \Magento\Framework\DB\Helper $resourceHelper,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         array $data = []
     ) {
         $this->helperFactory = $helperFactory;
 
         parent::__construct($context, $resourceHelper, $data);
+        $this->translationHelper = $translationHelper;
     }
 
     //########################################
@@ -45,7 +45,7 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
                {$isResetChecked}
                class="admin__control-checkbox">
         <label for="{$this->_getHtmlId()}_checkbox" class="admin__field-label">
-            <span>{$this->helperFactory->getObject('Module\Translation')->__('Can be fixed')}</span>
+            <span>{$this->translationHelper->__('Can be fixed')}</span>
         </label>
     </div>
 </div>

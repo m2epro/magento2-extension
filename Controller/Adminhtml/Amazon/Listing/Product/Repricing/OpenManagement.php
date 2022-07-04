@@ -13,6 +13,19 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing;
  */
 class OpenManagement extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Repricing */
+    private $helperAmazonRepricing;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Repricing $helperAmazonRepricing,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+
+        $this->helperAmazonRepricing = $helperAmazonRepricing;
+    }
+
     public function execute()
     {
         $listingId     = $this->getRequest()->getParam('id');
@@ -26,6 +39,6 @@ class OpenManagement extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             return $this->_redirect($this->getUrl('*/amazon_listing/view', ['id' => $listingId]));
         }
 
-        return $this->_redirect($this->getHelper('Component_Amazon_Repricing')->getManagementUrl($account));
+        return $this->_redirect($this->helperAmazonRepricing->getManagementUrl($account));
     }
 }

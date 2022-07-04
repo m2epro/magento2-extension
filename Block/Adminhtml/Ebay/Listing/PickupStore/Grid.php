@@ -8,18 +8,22 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
+
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     protected $magentoProductCollectionFactory;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
+
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -27,11 +31,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->ebayFactory = $ebayFactory;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->resourceConnection = $resourceConnection;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -62,7 +68,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // ---------------------------------------
         // Get collection
         // ---------------------------------------
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->setListingProductModeOn();
         $collection->setStoreId($this->listing->getStoreId());
@@ -236,7 +242,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'type'     => 'number',
             'index'    => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
         ]);
 
         $this->addColumn('name', [
@@ -268,7 +274,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'          => 'item_id',
             'account_id'     => $this->listing->getAccountId(),
             'marketplace_id' => $this->listing->getMarketplaceId(),
-            'renderer'       => '\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ItemId'
+            'renderer'       => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ItemId::class
         ]);
 
         $this->addColumn('pickup_store_product_qty', [
@@ -363,7 +369,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $title = $row->getName();
         $onlineTitle = $row->getData('online_title');
         !empty($onlineTitle) && $title = $onlineTitle;
-        $title = $this->getHelper('Data')->escapeHtml($title);
+        $title = $this->dataHelper->escapeHtml($title);
 
         $valueHtml = '<span class="product-title-value">' . $title . '</span>';
 
@@ -379,7 +385,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         !empty($onlineSku) && $sku = $onlineSku;
 
         $valueHtml .= '<br/><strong>' . $this->__('SKU') . ':</strong>&nbsp;'
-            . $this->getHelper('Data')->escapeHtml($sku);
+            . $this->dataHelper->escapeHtml($sku);
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         $listingProduct = $this->ebayFactory->getObjectLoaded(
@@ -391,7 +397,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             return '<div style="padding: 2px 4px;">' . $valueHtml . '</div>';
         }
 
-        $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+        $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
         $productAttributes = array_keys($additionalData['variations_sets']);
 
         $valueHtml .= '<div style="font-size: 11px; font-weight: bold; color: grey; margin: 7px 0 10px 7px">';
@@ -545,7 +551,8 @@ HTML
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ViewLogIcon\PickupStore $viewLogIcon */
-        $viewLogIcon = $this->createBlock('Ebay_Grid_Column_Renderer_ViewLogIcon_PickupStore');
+        $viewLogIcon = $this->getLayout()
+                    ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ViewLogIcon\PickupStore::class);
         $logIcon = $viewLogIcon->render($row);
 
         if (!empty($logIcon)) {

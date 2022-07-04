@@ -51,12 +51,16 @@ class SynchronizationLog extends AbstractContainer
 
     protected function _toHtml()
     {
-        $helpBlock = $this->createBlock('HelpBlock', '', ['data' => [
+        $helpBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\HelpBlock::class,
+            '',
+            ['data' => [
             'content' => $this->__(
                 'The Log includes information about synchronization of
                  M2E Pro Listings, Orders, Marketplaces, Unmanaged Listings.'
             )
-        ]]);
+            ]]
+        );
 
         return $helpBlock->toHtml() . parent::_toHtml();
     }

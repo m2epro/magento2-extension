@@ -29,14 +29,18 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
     protected function _toHtml()
     {
-        $helpBlock = $this->createBlock('HelpBlock', '', [
+        $helpBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\HelpBlock::class,
+            '',
+            [
             'data' => [
                 'content' => $this->__('
                 In this section, you can observe Store and Product Variation details as well as their Quantity and Logs
                 for each Variation separately.
             ')
             ]
-        ]);
+            ]
+        );
 
         return $helpBlock->toHtml() . parent::_toHtml();
     }

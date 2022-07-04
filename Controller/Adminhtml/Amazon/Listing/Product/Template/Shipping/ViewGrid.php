@@ -28,7 +28,7 @@ class ViewGrid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\T
                 $productsIds = explode(',', $productsIds);
             }
 
-            /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $productsIds[0]);
             $marketplaceId = $listingProduct->getListing()->getMarketplaceId();
         }
@@ -37,7 +37,8 @@ class ViewGrid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\T
             $productsIds = explode(',', $productsIds);
         }
 
-        $grid = $this->createBlock('Amazon_Listing_Product_Template_Shipping_Grid');
+        $grid = $this->getLayout()
+                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Shipping\Grid::class);
         $grid->setMarketplaceId($marketplaceId);
         $grid->setProductsIds($productsIds);
 

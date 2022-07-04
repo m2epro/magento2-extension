@@ -19,8 +19,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        parent::__construct($viewHelper, $context, $backendHelper, $data);
         $this->amazonFactory = $amazonFactory;
+        parent::__construct($viewHelper, $context, $backendHelper, $data);
     }
 
     protected function _prepareCollection()

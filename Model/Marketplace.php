@@ -26,7 +26,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Marketplace');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Marketplace::class);
     }
 
     //########################################

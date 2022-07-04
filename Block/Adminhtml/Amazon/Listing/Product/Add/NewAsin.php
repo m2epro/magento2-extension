@@ -8,16 +8,37 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin
- */
 class NewAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
     /** @var  \Ess\M2ePro\Model\Listing */
     protected $listing;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    /**
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        parent::__construct($context, $data);
+    }
+
+    /**
+     * @return void
+     */
     public function _construct()
     {
         parent::_construct();
@@ -39,7 +60,7 @@ class NewAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->removeButton('edit');
         // ---------------------------------------
 
-        $this->listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
+        $this->listing = $this->globalDataHelper->getValue('listing_for_products_add');
 
         $url = $this->getUrl('*/*/index', [
             'step' => 3,
@@ -58,8 +79,6 @@ class NewAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         ]);
     }
 
-    //########################################
-
     protected function _prepareLayout()
     {
         $this->appendHelpBlock([
@@ -70,25 +89,24 @@ class NewAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 <p>More detailed information about creation of New Amazon Products and Description Policies
                  you can find in the following article article
                  <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/1QkVB')
+                $this->supportHelper->getDocumentationArticleUrl('x/1QkVB')
             ),
         ]);
 
         parent::_prepareLayout();
     }
 
-    //########################################
-
-    protected function _toHtml()
+    /**
+     * @return string
+     */
+    protected function _toHtml(): string
     {
-        $viewHeaderBlock = $this->createBlock(
-            'Listing_View_Header',
+        $viewHeaderBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
             '',
             ['data' => ['listing' => $this->listing]]
         );
 
         return $viewHeaderBlock->toHtml() . parent::_toHtml();
     }
-
-    //########################################
 }

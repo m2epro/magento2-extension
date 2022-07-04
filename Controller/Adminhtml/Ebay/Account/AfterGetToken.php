@@ -15,16 +15,36 @@ use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
  */
 class AfterGetToken extends Account
 {
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $helperException;
+
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $helperDataSession;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Exception $helperException,
+        \Ess\M2ePro\Helper\Data\Session $helperDataSession,
+        \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update $storeCategoryUpdate,
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($storeCategoryUpdate, $componentEbayCategoryStore, $ebayFactory, $context);
+
+        $this->helperException = $helperException;
+        $this->helperDataSession = $helperDataSession;
+    }
+
     //########################################
 
     public function execute()
     {
-        $sessionId = $this->getHelper('Data\Session')->getValue('get_token_session_id', true);
+        $sessionId = $this->helperDataSession->getValue('get_token_session_id', true);
         $sessionId === null && $this->_redirect('*/*/index');
 
-        $this->getHelper('Data\Session')->setValue('get_token_account_token_session', $sessionId);
+        $this->helperDataSession->setValue('get_token_account_token_session', $sessionId);
 
-        $id = (int)$this->getHelper('Data\Session')->getValue('get_token_account_id', true);
+        $id = (int)$this->helperDataSession->getValue('get_token_account_id', true);
 
         if ((int)$id <= 0) {
             return $this->_redirect(
@@ -37,14 +57,14 @@ class AfterGetToken extends Account
         }
 
         $data = [
-            'mode' => $this->getHelper('Data\Session')->getValue('get_token_account_mode'),
+            'mode' => $this->helperDataSession->getValue('get_token_account_mode'),
             'token_session' => $sessionId
         ];
 
         try {
             $this->updateAccount($id, $data);
         } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
+            $this->helperException->process($exception);
 
             $this->messageManager->addError($this->__(
                 'The Ebay access obtaining is currently unavailable.<br/>Reason: %error_message%',

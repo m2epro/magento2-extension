@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Product;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Product\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
     private $listing;
@@ -18,24 +15,25 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     protected $magentoProductCollectionFactory;
     protected $type;
     protected $websiteFactory;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Product */
+    private $magentoProductHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Catalog\Model\Product\Type $type,
         \Magento\Store\Model\WebsiteFactory $websiteFactory,
+        \Ess\M2ePro\Helper\Magento\Product $magentoProductHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->type = $type;
         $this->websiteFactory = $websiteFactory;
-        parent::__construct($context, $backendHelper, $data);
+        $this->magentoProductHelper = $magentoProductHelper;
+        parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -64,7 +62,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
     protected function _prepareCollection()
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create()
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('name')
@@ -167,7 +165,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         $collection->addFieldToFilter(
             [[
                 'attribute' => 'type_id',
-                'in' => $this->getHelper('Magento\Product')->getOriginKnownTypes()
+                'in' => $this->magentoProductHelper->getOriginKnownTypes()
             ]]
         );
 
@@ -188,7 +186,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'index'        => 'entity_id',
             'filter_index' => 'entity_id',
             'store_id'     => $this->listing->getStoreId(),
-            'renderer'     => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
+            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
         ]);
 
         $this->addColumn('name', [
@@ -243,7 +241,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'align'          => 'right',
             'width'          => '100px',
             'type'           => 'price',
-            'filter'         => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Price',
+            'filter'         => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Price::class,
             'currency_code'  => $store->getBaseCurrency()->getCode(),
             'index'          => 'price',
             'filter_index'   => 'price',
@@ -423,7 +421,7 @@ JS
     protected function getProductTypes()
     {
         $magentoProductTypes = $this->type->getOptionArray();
-        $knownTypes = $this->getHelper('Magento\Product')->getOriginKnownTypes();
+        $knownTypes = $this->magentoProductHelper->getOriginKnownTypes();
 
         foreach ($magentoProductTypes as $type => $magentoProductTypeLabel) {
             if (in_array($type, $knownTypes)) {

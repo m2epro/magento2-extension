@@ -8,16 +8,25 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\Form
- */
 abstract class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected $listing;
 
     public $formData = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     public function _construct()
     {
@@ -70,7 +79,7 @@ abstract class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abs
 
         $fieldSet->addField(
             'adding_mode',
-            'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select',
+            \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select::class,
             [
                 'name' => 'adding_mode',
                 'label' => $this->__('Product Assigned to Categories'),
@@ -88,7 +97,7 @@ abstract class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abs
 
         $fieldSet->addField(
             'adding_add_not_visible',
-            'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select',
+            \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select::class,
             [
                 'name' => 'adding_add_not_visible',
                 'label' => $this->__('Add not Visible Individually Products'),
@@ -112,7 +121,7 @@ abstract class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abs
 
         $fieldSet->addField(
             'deleting_mode',
-            'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select',
+            \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select::class,
             [
                 'name' => 'deleting_mode',
                 'label' => $this->__('Product Deleted from Categories'),
@@ -186,7 +195,7 @@ abstract class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abs
             );
 
         foreach ($categories as &$group) {
-            $group['title'] = $this->getHelper('Data')->escapeHtml($group['title']);
+            $group['title'] = $this->dataHelper->escapeHtml($group['title']);
         }
 
         return $categories;
@@ -214,9 +223,9 @@ abstract class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abs
 
     protected function _afterToHtml($html)
     {
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class));
+        $this->jsPhp->addConstants($this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Listing::class));
 
-        $magentoCategoryIdsFromOtherGroups = $this->getHelper('Data')->jsonEncode(
+        $magentoCategoryIdsFromOtherGroups = $this->dataHelper->jsonEncode(
             $this->getCategoriesFromOtherGroups()
         );
         $this->js->add(<<<JS
@@ -239,7 +248,7 @@ JS
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree $block */
-        $block = $this->createBlock('Listing_Category_Tree');
+        $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree::class);
         $block->setCallback('ListingAutoActionObj.magentoCategorySelectCallback');
         $block->setSelectedCategories($selectedCategories);
 

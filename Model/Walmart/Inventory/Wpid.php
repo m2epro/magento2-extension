@@ -18,7 +18,7 @@ class Wpid extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Walmart\Inventory\Wpid');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Inventory\Wpid::class);
     }
 
     //########################################

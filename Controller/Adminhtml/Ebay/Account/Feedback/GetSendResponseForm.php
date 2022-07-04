@@ -28,7 +28,9 @@ class GetSendResponseForm extends Account
 
         $this->getHelper('Data\GlobalData')->setValue('feedback', $feedback);
 
-        $form = $this->createBlock('Ebay_Account_Feedback_SendResponseForm')->toHtml();
+        $form = $this->getLayout()
+                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Feedback\SendResponseForm::class)
+                     ->toHtml();
 
         $title = $this->__('Send Response For Feedback (Item ID: %item_id%)', $feedback->getEbayItemId());
 

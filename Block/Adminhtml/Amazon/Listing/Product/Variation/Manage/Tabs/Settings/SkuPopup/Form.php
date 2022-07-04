@@ -48,7 +48,7 @@ class Form extends AbstractForm
 
     protected function _toHtml()
     {
-        $helpBlock = $this->createBlock('HelpBlock')->setData([
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
             'content' => $this->__('
             In order to prove that this is your Product, you need to provide SKU of the respective Product
             in your Amazon Inventory. Please follow the Rules below to avoid issues:

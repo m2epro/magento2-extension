@@ -22,7 +22,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abst
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Variation\Option');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Variation\Option::class);
     }
 
     //########################################

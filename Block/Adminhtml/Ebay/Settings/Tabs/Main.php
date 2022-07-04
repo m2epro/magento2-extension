@@ -25,10 +25,9 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
-        parent::__construct($context, $registry, $formFactory, $data);
-
         $this->componentEbayConfiguration = $componentEbayConfiguration;
         $this->ebayViewHelper = $ebayViewHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
     }
 
     protected function _prepareForm()

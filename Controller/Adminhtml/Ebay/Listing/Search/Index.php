@@ -24,18 +24,18 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $listingType = $this->getRequest()->getParam('listing_type', false);
 
             if ($listingType == \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_LISTING_OTHER) {
-                $gridBlock = 'Ebay_Listing_Search_Other_Grid';
+                $gridBlock = \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\Other\Grid::class;
             } else {
-                $gridBlock = 'Ebay_Listing_Search_Product_Grid';
+                $gridBlock = \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\Product\Grid::class;
             }
 
             $this->setAjaxContent(
-                $this->createBlock($gridBlock)
+                $this->getLayout()->createBlock($gridBlock)
             );
             return $this->getResult();
         }
 
-        $this->addContent($this->createBlock('Ebay_Listing_Search'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search::class));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Search Products'));
         $this->setPageHelpLink('x/Ev8UB');
 

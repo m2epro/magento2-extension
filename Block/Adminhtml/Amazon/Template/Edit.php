@@ -10,11 +10,20 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
- */
 abstract class Edit extends AbstractContainer
 {
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $data);
+    }
+
     protected function _beforeToHtml()
     {
         $this->jsTranslator->addTranslations([
@@ -35,7 +44,7 @@ abstract class Edit extends AbstractContainer
         }
 
         if ($id) {
-            $saveConfirmation = $this->getHelper('Data')->escapeJs(
+            $saveConfirmation = $this->dataHelper->escapeJs(
                 $this->__('<br/>
 <b>Note:</b> All changes you have made will be automatically applied to all M2E Pro Listings where this Policy is used.
                 ')

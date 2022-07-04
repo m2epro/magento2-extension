@@ -12,14 +12,25 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 use Ess\M2ePro\Model\Walmart\Account;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\Order
- */
 class Order extends AbstractForm
 {
+    /** @var \Magento\Sales\Model\Order\Config */
     protected $orderConfig;
+
+    /** @var \Magento\Customer\Model\Group */
     protected $customerGroup;
+
+    /** @var \Magento\Tax\Model\ClassModel */
     protected $taxClass;
+
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    /** @var \Ess\M2ePro\Helper\Magento\Store\Website */
+    private $storeWebsite;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Tax\Model\ClassModel $taxClass,
@@ -28,11 +39,17 @@ class Order extends AbstractForm
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsite,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->orderConfig = $orderConfig;
         $this->customerGroup = $customerGroup;
         $this->taxClass = $taxClass;
+        $this->supportHelper = $supportHelper;
+        $this->storeWebsite = $storeWebsite;
+        $this->dataHelper = $dataHelper;
 
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -41,10 +58,10 @@ class Order extends AbstractForm
     {
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
         $ordersSettings = $account !== null ? $account->getChildObject()->getData('magento_orders_settings') : [];
-        $ordersSettings = !empty($ordersSettings) ? $this->getHelper('Data')->jsonDecode($ordersSettings) : [];
+        $ordersSettings = !empty($ordersSettings) ? $this->dataHelper->jsonDecode($ordersSettings) : [];
 
         // ---------------------------------------
-        $websites = $this->getHelper('Magento_Store_Website')->getWebsites(true);
+        $websites = $this->storeWebsite->getWebsites(true);
         // ---------------------------------------
 
         // ---------------------------------------
@@ -62,7 +79,7 @@ class Order extends AbstractForm
 
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
         $formData['magento_orders_settings'] = !empty($formData['magento_orders_settings'])
-            ? $this->getHelper('Data')->jsonDecode($formData['magento_orders_settings']) : [];
+            ? $this->dataHelper->jsonDecode($formData['magento_orders_settings']) : [];
 
         $defaults = $this->modelFactory->getObject('Walmart_Account_Builder')->getDefaultData();
 
@@ -86,7 +103,7 @@ select tax settings to apply to an Order, activate an automatic invoice and ship
 The detailed information can be found <a href="%url%" target="_blank">here</a>.
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/hv1IB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/hv1IB')
                 )
             ]
         );

@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add;
 
+use Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Tree;
+
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 {
     //########################################
@@ -83,7 +85,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return $this->_redirect('*/*/index', ['clear'=>'yes']);
         }
 
-        $this->addContent($this->createBlock('Amazon_Listing_Product_Add_SourceMode'));
+        $this->addContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::class)
+        );
         $this->setPageHelpLink('x/tgMVB');
     }
 
@@ -121,15 +125,19 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         $this->getHelper('Data\GlobalData')->setValue('hide_products_others_listings_prefix', $prefix);
 
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $grid = $this->createBlock('Amazon_Listing_Product_Add_SourceMode_Product_Grid');
+            $grid = $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Product\Grid::class);
 
             $this->setAjaxContent($grid->toHtml());
             return;
         }
 
-        $this->setPageHelpLink('x/CwQVB');
+        $this->setPageHelpLink('x/tgMVB');
 
-        $this->addContent($this->createBlock('Amazon_Listing_Product_Add_SourceMode_Product'));
+        $this->addContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Product::class)
+        );
     }
 
     public function stepOneSourceCategories()
@@ -171,8 +179,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
                 $this->setSessionValue('current_category_id', $this->getRequest()->getParam('current_category_id'));
             }
 
-            /** @var $grid \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Grid */
-            $grid = $this->createBlock('Amazon_Listing_Product_Add_SourceMode_Category_Grid');
+            /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Grid $grid */
+            $grid = $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Grid::class);
 
             $grid->setSelectedIds($selectedProductsIds);
             $grid->setCurrentCategoryId($this->getSessionValue('current_category_id'));
@@ -182,13 +191,14 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink('x/EgQVB');
+        $this->setPageHelpLink('x/tgMVB');
 
-        $gridContainer = $this->createBlock('Amazon_Listing_Product_Add_SourceMode_Category');
+        $gridContainer = $this->getLayout()
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category::class);
         $this->addContent($gridContainer);
 
-        /** @var $treeBlock \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Tree */
-        $treeBlock = $this->createBlock('Amazon_Listing_Product_Add_SourceMode_Category_Tree', '', [
+        /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Tree $treeBlock */
+        $treeBlock = $this->getLayout()->createBlock(Tree::class, '', [
             'data' => [
                 'tree_settings' => [
                     'show_products_amount' => true,
@@ -228,21 +238,24 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         }
 
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $grid = $this->createBlock('Amazon_Listing_Product_Add_SearchAsin_Grid');
+            $grid = $this->getLayout()
+                         ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SearchAsin\Grid::class);
             $this->setAjaxContent($grid);
 
             return;
         }
 
-        $this->setPageHelpLink('x/XQQVB');
+        $this->setPageHelpLink('x/1QkVB');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('Search Existing Amazon Products (ASIN/ISBN)')
         );
 
-        $this->setPageHelpLink('x/XQQVB');
+        $this->setPageHelpLink('x/1QkVB');
 
-        $this->addContent($this->createBlock('Amazon_Listing_Product_Add_SearchAsin'));
+        $this->addContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SearchAsin::class)
+        );
     }
 
     protected function addNewAsinView()
@@ -256,11 +269,13 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink('x/cwQVB');
+        $this->setPageHelpLink('x/1QkVB');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('New ASIN/ISBN Creation'));
 
-        $this->addContent($this->createBlock('Amazon_Listing_Product_Add_NewAsin'));
+        $this->addContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin::class)
+        );
     }
 
     //----------------------------------------
@@ -303,7 +318,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Congratulations'));
 
-        $this->addContent($this->createBlock('Amazon_Listing_Product_Add_Review'));
+        $this->addContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\Review::class)
+        );
     }
 
     //########################################

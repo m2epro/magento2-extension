@@ -11,9 +11,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Search;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Listing as AmazonListing;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Search\Form
- */
 class Form extends AbstractForm
 {
     protected $useFormContainer = true;
@@ -21,22 +18,29 @@ class Form extends AbstractForm
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
 
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    protected $magentoAttributeHelper;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->amazonFactory = $amazonFactory;
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
@@ -52,13 +56,9 @@ class Form extends AbstractForm
             ]
         );
 
-        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
-        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
-
-        $attributes = $this->getHelper('Magento\Attribute')->getAll();
-
+        $attributes = $this->magentoAttributeHelper->getAll();
         $attributesByTypes = [
-            'text' => $magentoAttributeHelper->filterByInputTypes($attributes, ['text'])
+            'text' => $this->magentoAttributeHelper->filterByInputTypes($attributes, ['text'])
         ];
         $formData = $this->getListingData();
 
@@ -83,7 +83,7 @@ class Form extends AbstractForm
         $preparedAttributes = [];
 
         if ($formData['general_id_mode'] == AmazonListing::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE &&
-            !$magentoAttributeHelper->isExistInAttributesArray(
+            !$this->magentoAttributeHelper->isExistInAttributesArray(
                 $formData['general_id_custom_attribute'],
                 $attributesByTypes['text']
             ) && $formData['general_id_custom_attribute'] != '') {
@@ -95,7 +95,8 @@ class Form extends AbstractForm
             $preparedAttributes[] = [
                 'attrs' => $attrs,
                 'value' => AmazonListing::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE,
-                'label' => $magentoAttributeHelper->getAttributeLabel($formData['general_id_custom_attribute']),
+                'label' => $this->magentoAttributeHelper
+                    ->getAttributeLabel($formData['general_id_custom_attribute']),
             ];
         }
 
@@ -155,7 +156,7 @@ class Form extends AbstractForm
         $preparedAttributes = [];
 
         if ($formData['worldwide_id_mode'] == AmazonListing::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE &&
-            !$magentoAttributeHelper->isExistInAttributesArray(
+            !$this->magentoAttributeHelper->isExistInAttributesArray(
                 $formData['worldwide_id_custom_attribute'],
                 $attributesByTypes['text']
             ) && $formData['worldwide_id_custom_attribute'] != '') {
@@ -167,7 +168,8 @@ class Form extends AbstractForm
             $preparedAttributes[] = [
                 'attrs' => $attrs,
                 'value' => AmazonListing::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE,
-                'label' => $magentoAttributeHelper->getAttributeLabel($formData['worldwide_id_custom_attribute']),
+                'label' => $this->magentoAttributeHelper
+                    ->getAttributeLabel($formData['worldwide_id_custom_attribute']),
             ];
         }
 
@@ -255,7 +257,7 @@ class Form extends AbstractForm
     protected function _prepareLayout()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(AmazonListing::class)
+            $this->dataHelper->getClassConstants(AmazonListing::class)
         );
 
         $this->css->add(
@@ -278,7 +280,7 @@ CSS
         'M2ePro/Amazon/Listing/Create/Search'
     ], function(){
         window.AmazonListingCreateSearchObj = new AmazonListingCreateSearch();
-    
+
         $('general_id_mode').observe('change', AmazonListingCreateSearchObj.general_id_mode_change);
         $('worldwide_id_mode').observe('change', AmazonListingCreateSearchObj.worldwide_id_mode_change);
     });

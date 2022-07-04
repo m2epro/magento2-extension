@@ -8,52 +8,68 @@
 
 namespace Ess\M2ePro\Helper\Component\Ebay;
 
-class Motors extends \Ess\M2ePro\Helper\AbstractHelper
+class Motors
 {
-    const TYPE_EPID_MOTOR = 1;
-    const TYPE_KTYPE      = 2;
-    const TYPE_EPID_UK    = 3;
-    const TYPE_EPID_DE    = 4;
-    const TYPE_EPID_AU    = 5;
+    public const TYPE_EPID_MOTOR = 1;
+    public const TYPE_KTYPE = 2;
+    public const TYPE_EPID_UK = 3;
+    public const TYPE_EPID_DE = 4;
+    public const TYPE_EPID_AU = 5;
 
-    const EPID_SCOPE_MOTORS = 1;
-    const EPID_SCOPE_UK     = 2;
-    const EPID_SCOPE_DE     = 3;
-    const EPID_SCOPE_AU     = 4;
+    public const EPID_SCOPE_MOTORS = 1;
+    public const EPID_SCOPE_UK = 2;
+    public const EPID_SCOPE_DE = 3;
+    public const EPID_SCOPE_AU = 4;
 
-    const PRODUCT_TYPE_VEHICLE    = 0;
-    const PRODUCT_TYPE_MOTORCYCLE = 1;
-    const PRODUCT_TYPE_ATV        = 2;
+    public const PRODUCT_TYPE_VEHICLE = 0;
+    public const PRODUCT_TYPE_MOTORCYCLE = 1;
+    public const PRODUCT_TYPE_ATV = 2;
 
-    const MAX_ITEMS_COUNT_FOR_ATTRIBUTE = 3000;
+    public const MAX_ITEMS_COUNT_FOR_ATTRIBUTE = 3000;
 
+    /** @var \Magento\Framework\App\ResourceConnection */
     private $resourceConnection;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     private $eBayFactory;
+    /** @var \Magento\Eav\Model\Config */
     private $eavConfig;
+    /** @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory */
     private $catalogProductCollectionFactory;
-
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Configuration */
     private $componentEbayConfiguration;
+    /** @var \Ess\M2ePro\Model\Config\Manager */
+    private $config;
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $dbStructure;
 
+    /**
+     * @param \Ess\M2ePro\Model\Config\Manager $config
+     * @param \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $eBayFactory
+     * @param \Magento\Eav\Model\Config $eavConfig
+     * @param \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $catalogProductCollectionFactory
+     * @param \Ess\M2ePro\Helper\Module\Database\Structure $dbStructure
+     */
     public function __construct(
+        \Ess\M2ePro\Model\Config\Manager $config,
         \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $eBayFactory,
         \Magento\Eav\Model\Config $eavConfig,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $catalogProductCollectionFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Helper\Module\Database\Structure $dbStructure
     ) {
-        parent::__construct($helperFactory, $context);
-
-        $this->resourceConnection              = $resourceConnection;
-        $this->eBayFactory                     = $eBayFactory;
-        $this->eavConfig                       = $eavConfig;
+        $this->resourceConnection = $resourceConnection;
+        $this->eBayFactory = $eBayFactory;
+        $this->eavConfig = $eavConfig;
         $this->catalogProductCollectionFactory = $catalogProductCollectionFactory;
-        $this->componentEbayConfiguration      = $componentEbayConfiguration;
+        $this->componentEbayConfiguration = $componentEbayConfiguration;
+        $this->config = $config;
+        $this->dbStructure = $dbStructure;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function getAttribute($type)
     {
@@ -77,14 +93,12 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
         return '';
     }
 
-    //########################################
-
     public function parseAttributeValue($value)
     {
         $parsedData = [
             'items' => [],
             'filters' => [],
-            'groups' => []
+            'groups' => [],
         ];
 
         if (empty($value)) {
@@ -95,10 +109,10 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
 
         preg_match_all(
             '/("?(\d+)"?,)|' .
-             '("?(\d+?)"?\|"(.+?)",)|' .
-             '("?(ITEM)"?\|"(\d+?)"?\|"(.+?)",)|' .
-             '("?(FILTER)"?\|"?(\d+?)"?,)|' .
-             '("?(GROUP)"?\|"?(\d+?)"?,)/',
+            '("?(\d+?)"?\|"(.+?)",)|' .
+            '("?(ITEM)"?\|"(\d+?)"?\|"(.+?)",)|' .
+            '("?(FILTER)"?\|"?(\d+?)"?,)|' .
+            '("?(GROUP)"?\|"?(\d+?)"?,)/',
             $value,
             $matches
         );
@@ -111,7 +125,7 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
             $item[1] = (empty($item[1])) ? '' : trim(trim($item[1], ','), '"');
             $item[2] = (empty($item[2])) ? '' : trim(trim($item[2], ','), '"');
 
-            $items[] = [$item[0],$item[1],$item[2]];
+            $items[] = [$item[0], $item[1], $item[2]];
         }
 
         foreach ($items as $item) {
@@ -231,11 +245,13 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function isTypeBasedOnEpids($type)
     {
-        if (in_array($type, [
-            self::TYPE_EPID_MOTOR,
-            self::TYPE_EPID_UK,
-            self::TYPE_EPID_DE,
-            self::TYPE_EPID_AU])
+        if (
+            in_array($type, [
+                self::TYPE_EPID_MOTOR,
+                self::TYPE_EPID_UK,
+                self::TYPE_EPID_DE,
+                self::TYPE_EPID_AU,
+            ])
         ) {
             return true;
         }
@@ -253,13 +269,13 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
     public function getDictionaryTable($type)
     {
         if ($this->isTypeBasedOnEpids($type)) {
-            return $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(
+            return $this->dbStructure->getTableNameWithPrefix(
                 'm2epro_ebay_dictionary_motor_epid'
             );
         }
 
         if ($this->isTypeBasedOnKtypes($type)) {
-            return $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(
+            return $this->dbStructure->getTableNameWithPrefix(
                 'm2epro_ebay_dictionary_motor_ktype'
             );
         }
@@ -328,24 +344,25 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
      * @param int $type
      *
      * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Zend_Db_Statement_Exception
      */
     public function getDictionaryRecordCount($type)
     {
         $postfix = \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE == $type ? 'ktype' : 'epid';
-        $dbHelper = $this->getHelper('Module_Database_Structure');
+        $dbHelper = $this->dbStructure;
 
         $selectStmt = $this->resourceConnection->getConnection()
-            ->select()
-            ->from(
-                $dbHelper->getTableNameWithPrefix("m2epro_ebay_dictionary_motor_{$postfix}"),
-                [
-                    'count' => new \Zend_Db_Expr('COUNT(*)'),
-                    'is_custom'
-                ]
-            )
-            ->group('is_custom');
+                                               ->select()
+                                               ->from(
+                                                   $dbHelper->getTableNameWithPrefix(
+                                                       "m2epro_ebay_dictionary_motor_{$postfix}"
+                                                   ),
+                                                   [
+                                                       'count' => new \Zend_Db_Expr('COUNT(*)'),
+                                                       'is_custom',
+                                                   ]
+                                               )
+                                               ->group('is_custom');
 
         if ($this->isTypeBasedOnEpids($type)) {
             $selectStmt->where('scope = ?', $this->getEpidsScopeByType($type));
@@ -393,12 +410,12 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
     public function getGroupsAssociatedWithFilter($filterId)
     {
         $connRead = $this->resourceConnection->getConnection('core/read');
-        $table = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
+        $table = $this->dbStructure
+                      ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
 
         $select = $connRead->select();
         $select->from(['emftg' => $table], ['group_id'])
-            ->where('filter_id = ?', $filterId);
+               ->where('filter_id = ?', $filterId);
 
         return $connRead->fetchCol($select);
     }
@@ -425,8 +442,8 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
         $attributesIdsTemplate = implode(',', $attributesIds);
         $collection->getSelect()->joinInner(
             [
-                'pet' => $this->getHelper('Module_Database_Structure')
-                    ->getTableNameWithPrefix('catalog_product_entity_text')
+                'pet' => $this->dbStructure
+                              ->getTableNameWithPrefix('catalog_product_entity_text'),
             ],
             '(`pet`.`entity_id` = `e`.`entity_id` AND pet.attribute_id IN(' . $attributesIdsTemplate . ')
                 AND value LIKE \'' . $sqlTemplateLike . '\')',
@@ -436,8 +453,8 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
 
         $collection->getSelect()->joinInner(
             [
-                'lp' => $this->getHelper('Module_Database_Structure')
-                    ->getTableNameWithPrefix('m2epro_listing_product')
+                'lp' => $this->dbStructure
+                             ->getTableNameWithPrefix('m2epro_listing_product'),
             ],
             '(`lp`.`product_id` = `e`.`entity_id` AND `lp`.`component_mode` = "' .
             \Ess\M2ePro\Helper\Component\Ebay::NICK . '")',
@@ -461,8 +478,8 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
 
         $connWrite = $this->resourceConnection->getConnection('core/write');
 
-        $ebayListingProductTable = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_ebay_listing_product');
+        $ebayListingProductTable = $this->dbStructure
+                                        ->getTableNameWithPrefix('m2epro_ebay_listing_product');
 
         $connWrite->update(
             $ebayListingProductTable,
@@ -479,14 +496,11 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
             'uk_epids_attribute',
             'de_epids_attribute',
             'au_epids_attribute',
-            'ktypes_attribute'
+            'ktypes_attribute',
         ];
 
-        /** @var \Ess\M2ePro\Model\Config\Manager $config */
-        $config = $this->getHelper('Module')->getConfig();
-
         foreach ($keys as $attributeConfigKey) {
-            $motorsEpidAttribute = $config->getGroupValue('/ebay/configuration/', $attributeConfigKey);
+            $motorsEpidAttribute = $this->config->getGroupValue('/ebay/configuration/', $attributeConfigKey);
             $attribute = $this->eavConfig->getAttribute('catalog_product', $motorsEpidAttribute);
 
             if ($attributeId = $attribute->getId()) {

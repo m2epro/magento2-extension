@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Marketplace',
-            'Ess\M2ePro\Model\ResourceModel\Marketplace'
+            \Ess\M2ePro\Model\Marketplace::class,
+            \Ess\M2ePro\Model\ResourceModel\Marketplace::class
         );
     }
 

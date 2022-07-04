@@ -76,7 +76,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Walmart\Order');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Order::class);
     }
 
     //########################################
@@ -455,7 +455,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
 
         // Create invoice
         // ---------------------------------------
-        /** @var $invoiceBuilder \Ess\M2ePro\Model\Magento\Order\Invoice */
+        /** @var \Ess\M2ePro\Model\Magento\Order\Invoice $invoiceBuilder */
         $invoiceBuilder = $this->modelFactory->getObject('Magento_Order_Invoice');
         $invoiceBuilder->setMagentoOrder($magentoOrder);
         $invoiceBuilder->buildInvoice();
@@ -508,7 +508,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
             return null;
         }
 
-        /** @var $shipmentBuilder \Ess\M2ePro\Model\Magento\Order\Shipment */
+        /** @var \Ess\M2ePro\Model\Magento\Order\Shipment $shipmentBuilder */
         $shipmentBuilder = $this->shipmentFactory->create($this->getParentObject()->getMagentoOrder());
         $shipmentBuilder->setMagentoOrder($this->getParentObject()->getMagentoOrder());
         $shipmentBuilder->buildShipments();
@@ -542,7 +542,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         }
 
         if (empty($trackingDetails['tracking_number'])) {
-            $this->getParentObject()->addNoticeLog(
+            $this->getParentObject()->addInfoLog(
                 'Order status was not updated to Shipped because tracking number is missing.
                 Please add the valid tracking number to the order.'
             );

@@ -22,7 +22,7 @@ class Category extends AbstractMode
     {
         foreach ($this->getAutoCategoriesByCategory($categoryId) as $autoCategory) {
 
-            /** @var $autoCategory \Ess\M2ePro\Model\Listing\Auto\Category */
+            /** @var \Ess\M2ePro\Model\Listing\Auto\Category $autoCategory */
 
             if ($autoCategory->getGroup()->isAddingModeNone()) {
                 continue;
@@ -60,13 +60,13 @@ class Category extends AbstractMode
     {
         foreach ($this->getAutoCategoriesByCategory($categoryId) as $autoCategory) {
 
-            /** @var $autoCategory \Ess\M2ePro\Model\Listing\Auto\Category */
+            /** @var \Ess\M2ePro\Model\Listing\Auto\Category $autoCategory */
 
             if ($autoCategory->getGroup()->isDeletingModeNone()) {
                 continue;
             }
 
-            /** @var $listing \Ess\M2ePro\Model\Listing */
+            /** @var \Ess\M2ePro\Model\Listing $listing */
 
             $listing = $this->getLoadedListing($autoCategory->getGroup()->getListingId());
 
@@ -99,10 +99,10 @@ class Category extends AbstractMode
             return $this->cacheLoadedListings[$listingId];
         }
 
-        /** @var $listing \Ess\M2ePro\Model\Listing */
+        /** @var \Ess\M2ePro\Model\Listing $listing */
         $listing = $this->activeRecordFactory->getCachedObjectLoaded('Listing', $listingId);
 
-        /** @var $listingStoreObject \Magento\Store\Model\Store */
+        /** @var \Magento\Store\Model\Store $listingStoreObject */
         $listingStoreObject = $this->storeManager->getStore($listing->getStoreId());
         $listing->setData('store_website_id', $listingStoreObject->getWebsite()->getId());
 

@@ -10,16 +10,13 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\ViewLogIcon;
 
 use Ess\M2ePro\Model\Listing\Log;
 
-/**
- * Class  \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\ViewLogIcon\Listing
- */
 class Listing extends \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewLogIcon\Listing
 {
     //########################################
 
     protected function getAvailableActions()
     {
-        $translator = $this->getHelper('Module\Translation');
+        $translator = $this->translationHelper;
 
         return parent::getAvailableActions() +
             [
@@ -35,7 +32,9 @@ class Listing extends \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewLogIc
 
     protected function getLastActions($listingProductId, $logs)
     {
-        $summary = $this->createBlock('Amazon_Listing_Log_Grid_LastActions')->setData([
+        $summary = $this->getLayout()
+                        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Log\Grid\LastActions::class)
+                        ->setData([
             'entity_id'           => $listingProductId,
             'logs'                => $logs,
             'available_actions'   => $this->getAvailableActions(),

@@ -8,13 +8,28 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Search
- */
 class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
 
+    /**
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $data);
+    }
+
+    /**
+     * @return void
+     */
     public function _construct()
     {
         parent::_construct();
@@ -56,12 +71,16 @@ class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
     //########################################
 
-    protected function _toHtml()
+    /**
+     * @return string
+     */
+    protected function _toHtml(): string
     {
-        $breadcrumb = $this->createBlock('Amazon_Listing_Create_Breadcrumb')
-            ->setSelectedStep(3);
+        $breadcrumb = $this->getLayout()
+                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Breadcrumb::class)
+                           ->setSelectedStep(3);
 
-        $helpBlock = $this->createBlock('HelpBlock')->setData([
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
             'content' => $this->__(
                 'In this Section you can specify the sources from which the values for ASIN/ISBN and
                 UPC/EAN will be taken in case you have those for your Items. <br/><br/>
@@ -86,7 +105,7 @@ class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 <br/>
                 More detailed information you can find
                 <a href="%url%" target="_blank" class="external-link">here</a>.',
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/if8UB')
+                $this->supportHelper->getDocumentationArticleUrl('x/if8UB')
             )
         ]);
 
@@ -95,6 +114,4 @@ class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             $helpBlock->toHtml() .
             parent::_toHtml();
     }
-
-    //########################################
 }

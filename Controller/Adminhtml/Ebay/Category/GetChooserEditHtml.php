@@ -15,13 +15,18 @@ class GetChooserEditHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
     private $componentEbayCategory;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $helperDataGlobalData;
+
     public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $helperDataGlobalData,
         \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($ebayFactory, $context);
 
+        $this->helperDataGlobalData = $helperDataGlobalData;
         $this->componentEbayCategory = $componentEbayCategory;
     }
 
@@ -34,7 +39,8 @@ class GetChooserEditHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         $marketplaceId = $this->getRequest()->getParam('marketplace_id');
         $accountId     = $this->getRequest()->getParam('account_id');
 
-        $editBlock = $this->createBlock('Ebay_Template_Category_Chooser_Edit');
+        $editBlock = $this->getLayout()
+                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Edit::class);
         $editBlock->setCategoryType($categoryType);
 
         $helper = $this->componentEbayCategory;
@@ -46,7 +52,7 @@ class GetChooserEditHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         }
 
         if (empty($recentCategories)) {
-            $this->getHelper('Data\GlobalData')->setValue('category_chooser_hide_recent', true);
+            $this->helperDataGlobalData->setValue('category_chooser_hide_recent', true);
         }
 
         if ($selectedMode != TemplateCategory::CATEGORY_MODE_NONE) {

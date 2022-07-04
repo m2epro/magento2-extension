@@ -10,11 +10,20 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account
- */
 class Account extends AbstractContainer
 {
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $data);
+    }
+
     protected function _construct()
     {
         parent::_construct();
@@ -37,7 +46,7 @@ HTML
         )
         ]);
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay_Account_Feedback'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay_Account_Feedback'));
 
         $this->jsTranslator->addTranslations([
             'Should be between 2 and 80 characters long.' => $this->__('Should be between 2 and 80 characters long.')

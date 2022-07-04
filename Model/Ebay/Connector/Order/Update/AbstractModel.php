@@ -14,7 +14,7 @@ namespace Ess\M2ePro\Model\Ebay\Connector\Order\Update;
 abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 {
     /**
-     * @var $order \Ess\M2ePro\Model\Order
+     * @var \Ess\M2ePro\Model\Order $order
      */
     protected $order = null;
     protected $action = null;

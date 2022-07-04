@@ -10,19 +10,12 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product;
 
 use Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\EditSku
- */
 class EditSku extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\ActionAbstract
 {
-    //########################################
-
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::walmart_listings_m2epro');
     }
-
-    //########################################
 
     public function execute()
     {
@@ -127,6 +120,4 @@ class EditSku extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\ActionAbs
 
         return $this->getResult();
     }
-
-    //########################################
 }

@@ -19,7 +19,7 @@ class DatabaseTab extends Main
 {
     public function execute()
     {
-        $block = $this->createBlock('ControlPanel_Tabs_Database', '');
+        $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database::class, '');
         $this->setAjaxContent($block);
 
         return $this->getResult();

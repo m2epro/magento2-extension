@@ -19,7 +19,7 @@ class Index extends Settings
 
     public function execute()
     {
-        $block = $this->createBlock('Ebay_Synchronization_Tabs');
+        $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Synchronization\Tabs::class);
         $block->setData('active_tab', \Ess\M2ePro\Block\Adminhtml\Ebay\Synchronization\Tabs::TAB_ID_GENERAL);
 
         $this->addContent($block);

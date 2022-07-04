@@ -18,7 +18,17 @@ class Vocabulary extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Walmart\Vocabulary */
+    private $walmartVocabularyHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Component\Walmart\Vocabulary $walmartVocabularyHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+        $this->walmartVocabularyHelper = $walmartVocabularyHelper;
+    }
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
@@ -51,7 +61,7 @@ class Vocabulary extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             ->getVariationInstance()
             ->getVariationsTypeStandard();
 
-        $vocabularyHelper = $this->getHelper('Component_Walmart_Vocabulary');
+        $vocabularyHelper = $this->walmartVocabularyHelper;
         $vocabularyData = $vocabularyHelper->getLocalData();
 
         if (empty($matchedAttributes)) {
@@ -102,7 +112,8 @@ class Vocabulary extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     protected function _beforeToHtml()
     {
-        $form = $this->createBlock('Walmart_Listing_Product_Variation_Manage_Tabs_Vocabulary_Form');
+        $form = $this->getLayout()
+        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Vocabulary\Form::class);
         $this->setChild('variation_Vocabulary_form', $form);
 
         return parent::_beforeToHtml();

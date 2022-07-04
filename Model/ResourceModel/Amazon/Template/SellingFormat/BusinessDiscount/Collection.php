@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount',
-            'Ess\M2ePro\Model\ResourceModel\Amazon\Template\SellingFormat\BusinessDiscount'
+            \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount::class,
+            \Ess\M2ePro\Model\ResourceModel\Amazon\Template\SellingFormat\BusinessDiscount::class
         );
     }
 

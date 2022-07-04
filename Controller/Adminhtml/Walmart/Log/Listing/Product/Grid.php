@@ -8,26 +8,26 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing\Product;
 
-use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\View;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing\Product\Grid
- */
 class Grid extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
 
-    protected $nameBuilder;
+    /** @var \Magento\Framework\Code\NameBuilder */
+    private $nameBuilder;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
-        Context $context
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        $this->nameBuilder = $nameBuilder;
-
         parent::__construct($walmartFactory, $context);
+
+        $this->sessionHelper = $sessionHelper;
+        $this->nameBuilder = $nameBuilder;
     }
 
     public function execute()
@@ -68,7 +68,7 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing
             }
         }
 
-        $sessionViewMode = $this->getHelper('Data\Session')->getValue(
+        $sessionViewMode = $this->sessionHelper->getValue(
             \Ess\M2ePro\Helper\View\Walmart::NICK . '_log_listing_view_mode'
         );
 
@@ -93,6 +93,4 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing
 
         return $this->getResult();
     }
-
-    //########################################
 }

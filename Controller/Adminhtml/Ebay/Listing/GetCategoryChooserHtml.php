@@ -8,6 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
+use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser;
 use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
 
 /**
@@ -54,8 +55,8 @@ class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listi
             $converter->setCategoryDataFromTemplate($template->getData(), eBayCategory::TYPE_STORE_SECONDARY);
         }
 
-        /** @var $chooserBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser */
-        $chooserBlock = $this->createBlock('Ebay_Listing_Product_Category_Settings_Chooser');
+        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser $chooserBlock */
+        $chooserBlock = $this->getLayout()->createBlock(Chooser::class);
         $accountId && $chooserBlock->setAccountId($accountId);
         $marketplaceId && $chooserBlock->setMarketplaceId($marketplaceId);
         $chooserBlock->setCategoryMode($this->getRequest()->getParam('category_mode'));

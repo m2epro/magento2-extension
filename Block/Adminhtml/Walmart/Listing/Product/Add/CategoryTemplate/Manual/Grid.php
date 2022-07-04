@@ -26,12 +26,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->walmartFactory = $walmartFactory;
-
-        parent::__construct($context, $backendHelper, $data);
+        parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
 
     //########################################
@@ -63,7 +63,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     {
         // Get collection
         // ---------------------------------------
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->setListingProductModeOn();
 
@@ -116,7 +116,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'index'    => 'entity_id',
             'filter_index' => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId'
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
         ]);
 
         $this->addColumn('name', [
@@ -149,7 +149,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
         $actionsColumn = [
             'header'    => $this->__('Actions'),
-            'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
             'no_link' => true,
             'align'     => 'center',
             'width'     => '130px',
@@ -198,14 +198,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             $productTitle = substr($productTitle, 0, 60) . '...';
         }
 
-        $productTitle = $this->getHelper('Data')->escapeHtml($productTitle);
+        $productTitle = $this->dataHelper->escapeHtml($productTitle);
 
         $value = '<span>'.$productTitle.'</span>';
 
         $sku = $row->getData('sku');
 
         $value .= '<br/><strong>'.$this->__('SKU') .
-            ':</strong> '.$this->getHelper('Data')->escapeHtml($sku) . '<br/>';
+            ':</strong> '.$this->dataHelper->escapeHtml($sku) . '<br/>';
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
@@ -257,7 +257,7 @@ HTML;
             $categoryTemplateId
         );
 
-        $title = $this->getHelper('Data')->escapeHtml($categoryTemplate->getData('title'));
+        $title = $this->dataHelper->escapeHtml($categoryTemplate->getData('title'));
 
         return <<<HTML
 <a target="_blank" href="{$templateCategoryEditUrl}">{$title}</a>

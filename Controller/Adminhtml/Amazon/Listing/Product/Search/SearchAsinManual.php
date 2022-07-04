@@ -15,6 +15,19 @@ use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
  */
 class SearchAsinManual extends Main
 {
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $helperDataGlobalData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $helperDataGlobalData,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+
+        $this->helperDataGlobalData = $helperDataGlobalData;
+    }
+
     public function execute()
     {
         $productId = $this->getRequest()->getParam('product_id');
@@ -24,7 +37,7 @@ class SearchAsinManual extends Main
             return $this->getResponse()->setBody('No product_id!');
         }
 
-        /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+        /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $productId);
 
         if ($listingProduct->isNotListed() &&
@@ -33,7 +46,7 @@ class SearchAsinManual extends Main
         ) {
             $marketplaceObj = $listingProduct->getListing()->getMarketplace();
 
-            /** @var $dispatcher \Ess\M2ePro\Model\Amazon\Search\Dispatcher */
+            /** @var \Ess\M2ePro\Model\Amazon\Search\Dispatcher $dispatcher */
             $dispatcher = $this->modelFactory->getObject('Amazon_Search_Dispatcher');
             $result = $dispatcher->runCustom($listingProduct, $query);
 
@@ -45,16 +58,18 @@ class SearchAsinManual extends Main
                 return $this->getResult();
             }
 
-            $this->getHelper('Data\GlobalData')->setValue('search_data', $result);
-            $this->getHelper('Data\GlobalData')->setValue('product_id', $productId);
-            $this->getHelper('Data\GlobalData')->setValue('marketplace_id', $marketplaceObj->getId());
+            $this->helperDataGlobalData->setValue('search_data', $result);
+            $this->helperDataGlobalData->setValue('product_id', $productId);
+            $this->helperDataGlobalData->setValue('marketplace_id', $marketplaceObj->getId());
         } else {
-            $this->getHelper('Data\GlobalData')->setValue('search_data', []);
+            $this->helperDataGlobalData->setValue('search_data', []);
         }
 
         $response = [
             'result' => 'success',
-            'html'   => $this->createBlock('Amazon_Listing_Product_Search_Grid')->toHtml()
+            'html'   => $this->getLayout()
+                             ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Search\Grid::class)
+                             ->toHtml()
         ];
 
         $this->setJsonContent($response);

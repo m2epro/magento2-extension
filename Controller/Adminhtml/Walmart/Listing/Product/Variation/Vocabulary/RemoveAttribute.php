@@ -10,11 +10,21 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Voca
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Vocabulary\RemoveAttribute
- */
 class RemoveAttribute extends Main
 {
+    /** @var \Ess\M2ePro\Helper\Component\Walmart\Vocabulary */
+    private $vocabularyHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Walmart\Vocabulary $vocabularyHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->vocabularyHelper = $vocabularyHelper;
+    }
+
     public function execute()
     {
         $magentoAttr = $this->getRequest()->getParam('magento_attr');
@@ -25,8 +35,7 @@ class RemoveAttribute extends Main
             return $this->getResult();
         }
 
-        $vocabularyHelper = $this->getHelper('Component_Walmart_Vocabulary');
-        $vocabularyHelper->removeAttributeFromLocalStorage($magentoAttr, $channelAttr);
+        $this->vocabularyHelper->removeAttributeFromLocalStorage($magentoAttr, $channelAttr);
 
         $this->setJsonContent([
             'success' => true

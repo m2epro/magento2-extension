@@ -18,7 +18,10 @@ class ProductsStep extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupS
     public function execute()
     {
         $this->initListing();
-        $this->setAjaxContent($this->createBlock('Ebay_Listing_PickupStore_Step_Products_Wrapper'));
+        $this->setAjaxContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Step\Products\Wrapper::class)
+        );
         return $this->getResult();
     }
 

@@ -8,37 +8,45 @@
 
 namespace Ess\M2ePro\Helper\Magento;
 
-/**
- * Class \Ess\M2ePro\Helper\Magento\Admin
- */
 class Admin extends AbstractHelper
 {
+    /** @var \Magento\User\Model\User */
     private $user;
+    /** @var \Magento\Store\Model\StoreManagerInterface */
     private $storeManager;
+    /** @var \Magento\Backend\Model\Auth\Session */
     private $authSession;
+    /** @var \Ess\M2ePro\Helper\Magento\Store */
+    private $magentoStore;
 
-    //########################################
-
+    /**
+     * @param \Ess\M2ePro\Helper\Magento\Store $magentoStore
+     * @param \Magento\User\Model\User $user
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Magento\Backend\Model\Auth\Session $authSession
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager
+     */
     public function __construct(
+        \Ess\M2ePro\Helper\Magento\Store $magentoStore,
         \Magento\User\Model\User $user,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Backend\Model\Auth\Session $authSession,
-        \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Framework\ObjectManagerInterface $objectManager
     ) {
-        $this->user         = $user;
+        parent::__construct($objectManager);
+        $this->user = $user;
         $this->storeManager = $storeManager;
-        $this->authSession  = $authSession;
-
-        parent::__construct($objectManager, $helperFactory, $context);
+        $this->authSession = $authSession;
+        $this->magentoStore = $magentoStore;
     }
 
-    //########################################
-
+    /**
+     * @return array|mixed|null
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
     public function getCurrentInfo()
     {
-        $defaultStoreId = $this->getHelper('Magento\Store')->getDefaultStoreId();
+        $defaultStoreId = $this->magentoStore->getDefaultStoreId();
 
         // ---------------------------------------
         $userId = $this->authSession->getUser()->getId();
@@ -72,6 +80,4 @@ class Admin extends AbstractHelper
 
         return $userInfo;
     }
-
-    //########################################
 }

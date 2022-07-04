@@ -18,7 +18,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\Order\Note', 'Ess\M2ePro\Model\ResourceModel\Order\Note');
+        $this->_init(\Ess\M2ePro\Model\Order\Note::class, \Ess\M2ePro\Model\ResourceModel\Order\Note::class);
     }
 
     //########################################

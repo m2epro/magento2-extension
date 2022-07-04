@@ -19,7 +19,9 @@ class SynchronizationLogGrid extends Developers
 
     public function execute()
     {
-        $this->setAjaxContent($this->createBlock('Developers_Tabs_SynchronizationLog_Grid'));
+        $this->setAjaxContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Developers\Tabs\SynchronizationLog\Grid::class)
+        );
         return $this->getResult();
     }
 

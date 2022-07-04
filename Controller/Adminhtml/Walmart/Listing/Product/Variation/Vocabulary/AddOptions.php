@@ -10,11 +10,26 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Voca
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Vocabulary\AddOptions
- */
 class AddOptions extends Main
 {
+    /** @var \Ess\M2ePro\Helper\Component\Walmart\Vocabulary */
+    private $vocabularyHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Component\Walmart\Vocabulary $vocabularyHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->vocabularyHelper = $vocabularyHelper;
+        $this->dataHelper = $dataHelper;
+    }
+
     public function execute()
     {
         $optionsData          = $this->getRequest()->getParam('options_data');
@@ -22,17 +37,15 @@ class AddOptions extends Main
         $needAddToVocabulary  = (bool)$this->getRequest()->getParam('need_add', false);
 
         if (!empty($optionsData)) {
-            $optionsData = $this->getHelper('Data')->jsonDecode($optionsData);
+            $optionsData = $this->dataHelper->jsonDecode($optionsData);
         }
 
         if (!$isRememberAutoAction && !$needAddToVocabulary) {
             return;
         }
 
-        $vocabularyHelper = $this->getHelper('Component_Walmart_Vocabulary');
-
         if ($isRememberAutoAction && !$needAddToVocabulary) {
-            $vocabularyHelper->disableOptionAutoAction();
+            $this->vocabularyHelper->disableOptionAutoAction();
             return;
         }
 
@@ -41,7 +54,7 @@ class AddOptions extends Main
         }
 
         if ($isRememberAutoAction) {
-            $vocabularyHelper->enableOptionAutoAction();
+            $this->vocabularyHelper->enableOptionAutoAction();
         }
 
         if (empty($optionsData)) {
@@ -50,7 +63,7 @@ class AddOptions extends Main
 
         foreach ($optionsData as $channelAttribute => $options) {
             foreach ($options as $productOption => $channelOption) {
-                $vocabularyHelper->addOption($productOption, $channelOption, $channelAttribute);
+                $this->vocabularyHelper->addOption($productOption, $channelOption, $channelAttribute);
             }
         }
     }

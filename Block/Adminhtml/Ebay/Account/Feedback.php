@@ -8,11 +8,20 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Feedback
- */
 class Feedback extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $data);
+    }
+
     protected function _construct()
     {
         parent::_construct();
@@ -26,7 +35,7 @@ class Feedback extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
 
     protected function _toHtml()
     {
-        $helpBlock = $this->createBlock('HelpBlock');
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class);
         $helpBlock->setData([
             'content' => $this->__(
                 <<<HTML
@@ -38,7 +47,7 @@ More detailed information about ability to work with this Page you can find
 <a href="%url%" target="_blank" class="external-link">here</a>
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/pf0bB')
+                $this->supportHelper->getDocumentationArticleUrl('x/pf0bB')
             )
         ]);
 

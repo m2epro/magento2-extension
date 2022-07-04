@@ -20,7 +20,9 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher
         parent::loadItems();
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Switcher $accountSwitcher */
-        $accountSwitcher = $this->createBlock('Amazon_Account_Switcher')->setData([
+        $accountSwitcher = $this->getLayout()
+                                ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Switcher::class)
+                                ->setData([
             'component_mode' => $this->getData('component_mode')
         ]);
 

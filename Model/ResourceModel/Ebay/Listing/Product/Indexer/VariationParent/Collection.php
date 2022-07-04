@@ -19,8 +19,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            'Ess\M2ePro\Model\Ebay\Listing\Product\Indexer\VariationParent',
-            'Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Indexer\VariationParent'
+            \Ess\M2ePro\Model\Ebay\Listing\Product\Indexer\VariationParent::class,
+            \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Indexer\VariationParent::class
         );
     }
 

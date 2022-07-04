@@ -15,17 +15,28 @@ class MagentoInventory extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstrac
 {
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
 
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param array $data
+     */
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
-        parent::__construct($context, $registry, $formFactory, $data);
-
         $this->moduleConfiguration = $moduleConfiguration;
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
     }
 
     protected function _prepareForm()
@@ -77,7 +88,7 @@ Customers can purchase products only as a set. Read the <a href="%url%" target="
 Customers can purchase each option of Variational Product separately.
 HTML
                     ,
-                    $this->getHelper('Module_Support')->getSupportUrl(
+                    $this->supportHelper->getSupportUrl(
                         'knowledgebase/1585305-listing-magento-grouped-product-as-product-set'
                     )
                 )

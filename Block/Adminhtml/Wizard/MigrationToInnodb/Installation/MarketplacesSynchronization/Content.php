@@ -16,8 +16,17 @@ use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 class Content extends AbstractBlock
 {
     protected $enabledMarketplaces = [];
+    /** @var \Ess\M2ePro\Helper\Component */
+    private $componentHelper;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Component $componentHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+        $this->componentHelper = $componentHelper;
+    }
 
     public function _construct()
     {
@@ -27,7 +36,7 @@ class Content extends AbstractBlock
         $this->setTemplate('wizard/migrationToInnodb/installation/marketplacesSynchronization.phtml');
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function _prepareLayout()
     {
@@ -42,8 +51,6 @@ HTML
         parent::_prepareLayout();
     }
 
-    //########################################
-
     protected function _beforeToHtml()
     {
         $collection = $this->activeRecordFactory->getObject('Marketplace')->getCollection();
@@ -52,7 +59,7 @@ HTML
         foreach ($collection->getItems() as $marketplace) {
             /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
             if (!$marketplace->getResource()->isDictionaryExist($marketplace)) {
-                $component = (string)$this->getHelper('Component')->getComponentTitle($marketplace->getComponentMode());
+                $component = (string)$this->componentHelper->getComponentTitle($marketplace->getComponentMode());
                 $this->enabledMarketplaces[$component][] = $marketplace;
             }
         }
@@ -60,12 +67,8 @@ HTML
         return parent::_beforeToHtml();
     }
 
-    //########################################
-
-    public function getEnabledMarketplaces()
+    public function getEnabledMarketplaces(): array
     {
         return $this->enabledMarketplaces;
     }
-
-    //########################################
 }

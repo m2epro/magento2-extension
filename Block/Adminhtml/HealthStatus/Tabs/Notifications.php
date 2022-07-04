@@ -11,27 +11,25 @@ namespace Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs;
 use Ess\M2ePro\Model\HealthStatus\Notification\Settings;
 use Ess\M2ePro\Model\HealthStatus\Task\Result;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Notifications
- */
 class Notifications extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    /**
-     * @var \Magento\Backend\Model\Auth
-     */
+    /** @var \Magento\Backend\Model\Auth  */
     protected $auth;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Backend\Model\Auth $auth,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $registry, $formFactory, $data);
         $this->auth = $auth;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
     }
 
     //########################################
@@ -167,12 +165,16 @@ HTML
         );
         //------------------------------------
 
-        $button = $this->createBlock('Magento\Button', '', ['data' => [
+        $button = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Magento\Button::class,
+            '',
+            ['data' => [
             'id'      => 'submit_button',
             'label'   => $this->__('Save'),
             'onclick' => 'HealthStatusObj.saveClick()',
             'class'   => 'action-primary'
-        ]]);
+            ]]
+        );
 
         $fieldSet->addField(
             'submit_button_container',
@@ -196,7 +198,7 @@ HTML
         $this->jsUrl->add($this->getUrl('*/*/save'), 'formSubmit');
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\HealthStatus\Notification\Settings::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\HealthStatus\Notification\Settings::class)
         );
 
         $this->js->addRequireJs(['hS' => 'M2ePro/HealthStatus'], <<<JS

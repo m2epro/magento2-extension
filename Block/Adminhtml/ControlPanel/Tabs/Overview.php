@@ -27,32 +27,40 @@ class Overview extends AbstractForm
 
     //########################################
 
+    /**
+     * @return \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Overview
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
     protected function _beforeToHtml()
     {
-        $this->setChild('actual_info', $this->createBlock(
-            'ControlPanel_Info_Actual'
-        ));
+        $this->setChild(
+            'actual_info',
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Info\Actual::class)
+        );
 
-        $this->setChild('license_info', $this->createBlock(
-            'ControlPanel_Info_License'
-        ));
+        $this->setChild(
+            'license_info',
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Info\License::class)
+        );
 
         //----------------------------------------
 
-        $this->setChild('cron_info', $this->createBlock(
-            'ControlPanel_Inspection_Cron'
-        ));
+        $this->setChild(
+            'cron_info',
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\Cron::class)
+        );
 
-        $this->setChild('version_info', $this->createBlock(
-            'ControlPanel_Inspection_VersionInfo'
-        ));
+        $this->setChild(
+            'version_info',
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\VersionInfo::class)
+        );
 
         //----------------------------------------
 
         $this->setChild(
             'database_general',
-            $this->createBlock(
-                'ControlPanel_Info_MysqlTables',
+            $this->getLayout()->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\ControlPanel\Info\MysqlTables::class,
                 '',
                 ['data' => [
                     'tables_list' => [
@@ -89,8 +97,8 @@ class Overview extends AbstractForm
 
         $this->setChild(
             'database_components',
-            $this->createBlock(
-                'ControlPanel_Info_MysqlTables',
+            $this->getLayout()->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\ControlPanel\Info\MysqlTables::class,
                 '',
                 ['data' => [
                     'tables_list' => [

@@ -33,6 +33,12 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
     /** @var \Ess\M2ePro\Helper\View */
     protected $viewHelper;
 
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -41,6 +47,8 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
         \Ess\M2ePro\Helper\View $viewHelper,
         \Magento\Backend\Block\Context $context,
         \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -50,6 +58,8 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
         $this->activeRecordFactory = $activeRecordFactory;
         $this->resourceConnection = $resourceConnection;
         $this->viewHelper = $viewHelper;
+        $this->translationHelper = $translationHelper;
+        $this->dataHelper = $dataHelper;
     }
 
     public function render(\Magento\Framework\DataObject $row)
@@ -59,12 +69,16 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
 
         if ($this->getColumn()->getData('showLogIcon')) {
             /** @var \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewLogIcon\Listing $viewLogIcon */
-            $viewLogIcon = $this->createBlock('Grid_Column_Renderer_ViewLogIcon_Listing', '', [
+            $viewLogIcon = $this->getLayout()->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewLogIcon\Listing::class,
+                '',
+                [
                 'data' => ['jsHandler' => 'EbayListingViewEbayGridObj']
-            ]);
+                ]
+            );
             $html = $viewLogIcon->render($row);
 
-            $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+            $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
             $synchNote = (isset($additionalData['synch_template_list_rules_note']))
                                 ? $additionalData['synch_template_list_rules_note']
                                 : [];
@@ -84,7 +98,7 @@ HTML;
                 }
             }
         }
-        $translator = $this->getHelper('Module\Translation');
+        $translator = $this->translationHelper;
         $html .= $this->getCurrentStatus($row);
 
         if ($row->getData('is_duplicate') && isset($additionalData['item_duplicate_action_required'])) {
@@ -116,7 +130,7 @@ HTML;
     protected function getCurrentStatus($row)
     {
         $html = '';
-        $translator = $this->getHelper('Module\Translation');
+        $translator = $this->translationHelper;
 
         switch ($row->getData('status')) {
             case \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED:

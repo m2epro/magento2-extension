@@ -23,7 +23,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Order\Log');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Order\Log::class);
     }
 
     //########################################
@@ -90,7 +90,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         }
 
         $map = [
-            Message::TYPE_NOTICE  => self::TYPE_NOTICE,
+            Message::TYPE_NOTICE  => self::TYPE_INFO,
             Message::TYPE_SUCCESS => self::TYPE_SUCCESS,
             Message::TYPE_WARNING => self::TYPE_WARNING,
             Message::TYPE_ERROR   => self::TYPE_ERROR

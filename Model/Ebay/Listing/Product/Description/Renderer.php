@@ -141,7 +141,7 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
             $pricesList = [];
 
             foreach ($this->listingProduct->getVariations(true) as $variation) {
-                /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+                /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
                 $pricesList[] = $variation->getChildObject()->getPrice();
             }
 

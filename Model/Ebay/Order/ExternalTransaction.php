@@ -15,7 +15,7 @@ class ExternalTransaction extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     const NOT_PAYPAL_TRANSACTION = 'SIS';
 
-    /** @var $order \Ess\M2ePro\Model\Order */
+    /** @var \Ess\M2ePro\Model\Order $order */
     protected $order = null;
 
     protected $ebayFactory;
@@ -55,7 +55,7 @@ class ExternalTransaction extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Order\ExternalTransaction');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Order\ExternalTransaction::class);
     }
 
     //########################################

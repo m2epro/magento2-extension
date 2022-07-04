@@ -22,9 +22,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        parent::__construct($context, $backendHelper, $data);
-
         $this->componentEbayMotors = $componentEbayMotors;
+        parent::__construct($context, $backendHelper, $data);
     }
 
     public function _construct()

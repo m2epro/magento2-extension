@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add\SaveProductsToSessionAndGetInfo
- */
 class SaveProductsToSessionAndGetInfo extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
-    //########################################
-
     public function execute()
     {
         $tempSession = $this->getSessionValue('source_categories');
@@ -38,10 +33,6 @@ class SaveProductsToSessionAndGetInfo extends \Ess\M2ePro\Controller\Adminhtml\W
         $tempSession['products_ids'] = array_values(array_filter(array_flip($all)));
         $this->setSessionValue('source_categories', $tempSession);
 
-        // ---------------------------------------
-
         $this->_forward('getTreeInfo');
     }
-
-    //########################################
 }

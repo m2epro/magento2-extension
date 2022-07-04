@@ -20,7 +20,8 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher
         parent::loadItems();
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Switcher $accountSwitcher */
-        $accountSwitcher = $this->createBlock('Walmart_Account_Switcher')->setData([
+        $accountSwitcher = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Account\Switcher::class)
+                                             ->setData([
             'component_mode' => $this->getData('component_mode')
         ]);
 

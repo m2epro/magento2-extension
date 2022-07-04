@@ -15,7 +15,7 @@ class Dispute extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 {
     const DISPUTE_EXPLANATION_BUYER_HAS_NOT_PAID = 'BuyerNotPaid';
 
-    /** @var $orderItem \Ess\M2ePro\Model\Order\Item */
+    /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
     private $orderItem;
 
     //########################################

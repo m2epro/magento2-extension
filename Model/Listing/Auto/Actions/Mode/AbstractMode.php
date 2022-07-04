@@ -138,7 +138,7 @@ abstract class AbstractMode extends \Ess\M2ePro\Model\AbstractModel
             \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_PRODUCT_TO_LISTING,
             'Product was not added since the item is already presented in another Listing related to ' .
             'the Channel account and marketplace.',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
         );
     }
 

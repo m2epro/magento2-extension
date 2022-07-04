@@ -73,7 +73,9 @@ class CheckMessages extends Base
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Template\Messages $messagesBlock */
-        $messagesBlock = $this->createBlock('Template\Messages')->getResultBlock($nick, $component);
+        $messagesBlock = $this->getLayout()
+                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Template\Messages::class)
+                              ->getResultBlock($nick, $component);
 
         $messagesBlock->setData('template_data', $templateData);
         $messagesBlock->setData('marketplace_id', $this->getRequest()->getParam('marketplace_id'));

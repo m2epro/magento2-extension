@@ -11,12 +11,21 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use \Ess\M2ePro\Model\Ebay\Account\PickupStore;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs\StockSettings
- */
 class StockSettings extends AbstractForm
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    protected $magentoAttributeHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     public function _construct()
     {
@@ -28,18 +37,13 @@ class StockSettings extends AbstractForm
         // ---------------------------------------
     }
 
-    //########################################
-
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create();
         $formData = $this->getFormData();
 
-        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
-        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
-
-        $attributes = $magentoAttributeHelper->getAll();
-        $attributesByInputTypes = ['text' => $magentoAttributeHelper->filterByInputTypes($attributes, ['text']),];
+        $attributes = $this->magentoAttributeHelper->getAll();
+        $attributesByInputTypes = ['text' => $this->magentoAttributeHelper->filterByInputTypes($attributes, ['text']),];
 
         $form->addField(
             'block_notice_ebay_accounts_pickup_store_stock_settings',
@@ -117,7 +121,7 @@ class StockSettings extends AbstractForm
 
         if ($formData['qty_mode'] == PickupStore::QTY_MODE_ATTRIBUTE) {
             $magentoAttributesValues[] = [
-                'label' => $magentoAttributeHelper->getAttributeLabel($formData['qty_custom_attribute']),
+                'label' => $this->magentoAttributeHelper->getAttributeLabel($formData['qty_custom_attribute']),
                 'value' => PickupStore::QTY_MODE_ATTRIBUTE,
                 'attrs' => [
                     'attribute_code' => $formData['qty_custom_attribute'],

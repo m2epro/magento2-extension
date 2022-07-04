@@ -30,10 +30,10 @@ class Builder extends AbstractModel
 
     protected $amazonFactory;
 
-    /** @var $order \Ess\M2ePro\Model\Account */
+    /** @var \Ess\M2ePro\Model\Account $order */
     protected $account = null;
 
-    /** @var $order \Ess\M2ePro\Model\Order */
+    /** @var \Ess\M2ePro\Model\Order $order */
     protected $order = null;
 
     protected $status = self::STATUS_NOT_MODIFIED;
@@ -325,7 +325,7 @@ class Builder extends AbstractModel
         foreach ($this->items as $itemData) {
             $itemData['order_id'] = $this->order->getId();
 
-            /** @var $itemBuilder \Ess\M2ePro\Model\Amazon\Order\Item\Builder */
+            /** @var \Ess\M2ePro\Model\Amazon\Order\Item\Builder $itemBuilder */
             $itemBuilder = $this->modelFactory->getObject('Amazon_Order_Item_Builder');
             $itemBuilder->initialize($itemData);
 
@@ -473,7 +473,7 @@ class Builder extends AbstractModel
             return;
         }
 
-        /** @var $magentoOrderUpdater \Ess\M2ePro\Model\Magento\Order\Updater */
+        /** @var \Ess\M2ePro\Model\Magento\Order\Updater $magentoOrderUpdater */
         $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
         $magentoOrderUpdater->setMagentoOrder($this->order->getMagentoOrder());
 
@@ -510,7 +510,7 @@ class Builder extends AbstractModel
             $magentoOrderComments[] = 'Order cannot be canceled in Magento. Reason: ' . $e->getMessage();
         }
 
-        /** @var $magentoOrderUpdater \Ess\M2ePro\Model\Magento\Order\Updater */
+        /** @var \Ess\M2ePro\Model\Magento\Order\Updater $magentoOrderUpdater */
         $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
         $magentoOrderUpdater->setMagentoOrder($this->order->getMagentoOrder());
         $magentoOrderUpdater->updateComments($magentoOrderComments);

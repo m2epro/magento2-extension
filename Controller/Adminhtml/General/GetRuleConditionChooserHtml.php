@@ -22,8 +22,8 @@ class GetRuleConditionChooserHtml extends General
 
         switch ($request->getParam('attribute')) {
             case 'sku':
-                $block = $this->createBlock(
-                    'Magento_Product_Rule_Chooser_Sku',
+                $block = $this->getLayout()->createBlock(
+                    \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\Chooser\Sku::class,
                     'product_rule_chooser_sku',
                     [
                         'data' => [

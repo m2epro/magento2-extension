@@ -10,12 +10,19 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit
- */
 class Edit extends AbstractContainer
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -70,7 +77,7 @@ class Edit extends AbstractContainer
 
         $url = $this->getUrl(
             '*/ebay_account_pickupStore/save',
-            ['back' => $this->getHelper('Data')->makeBackUrlParam('edit', [])]
+            ['back' => $this->dataHelper->makeBackUrlParam('edit', [])]
         );
 
         $this->addButton('save_buttons', [
@@ -79,7 +86,7 @@ class Edit extends AbstractContainer
             'class' => 'add',
             'button_class' => '',
             'onclick'   => 'EbayPickupStoreObj.saveAndEditClick(\''.$url.'\')',
-            'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+            'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
             'options' => [
                 'save' => [
                     'label'     => $this->__('Save And Back'),

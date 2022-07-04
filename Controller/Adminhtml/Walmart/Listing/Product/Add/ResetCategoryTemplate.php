@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add\ResetCategoryTemplate
- */
 class ResetCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
-    //########################################
-
     public function execute()
     {
         $listingProductsIds = $this->getListing()->getSetting('additional_data', 'adding_listing_products_ids');
@@ -29,6 +24,4 @@ class ResetCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Lis
             'step' => 3
         ]);
     }
-
-    //########################################
 }

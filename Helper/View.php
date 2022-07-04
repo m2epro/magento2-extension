@@ -12,7 +12,7 @@ use Ess\M2ePro\Helper\View\Ebay\Controller as EbayControllerHelper;
 use Ess\M2ePro\Helper\View\Amazon\Controller as AmazonControllerHelper;
 use Ess\M2ePro\Helper\View\Walmart\Controller as WalmartControllerHelper;
 
-class View extends \Ess\M2ePro\Helper\AbstractHelper
+class View
 {
     const GENERAL_BLOCK_PATH = 'General';
 
@@ -22,10 +22,8 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
     const MOVING_LISTING_OTHER_SELECTED_SESSION_KEY = 'moving_listing_other_selected';
     const MOVING_LISTING_PRODUCTS_SELECTED_SESSION_KEY = 'moving_listing_products_selected';
 
-    protected $activeRecordFactory;
-    protected $urlBuilder;
-    protected $modelFactory;
-
+    /** @var \Magento\Backend\Model\UrlInterface */
+    private $urlBuilder;
     /** @var \Ess\M2ePro\Helper\View\Ebay */
     protected $ebayViewHelper;
     /** @var \Ess\M2ePro\Helper\View\Amazon */
@@ -38,34 +36,52 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
     protected $amazonControllerHelper;
     /** @var \Ess\M2ePro\Helper\View\Walmart\Controller */
     protected $walmartControllerHelper;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Module\Log */
+    private $logHelper;
+    /** @var \Magento\Framework\App\RequestInterface */
+    private $request;
 
+    /**
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param \Ess\M2ePro\Helper\Module\Log $logHelper
+     * @param \Magento\Backend\Model\UrlInterface $urlBuilder
+     * @param \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper
+     * @param \Ess\M2ePro\Helper\View\Amazon $amazonViewHelper
+     * @param \Ess\M2ePro\Helper\View\Walmart $walmartViewHelper
+     * @param \Ess\M2ePro\Helper\View\Ebay\Controller $ebayControllerHelper
+     * @param \Ess\M2ePro\Helper\View\Amazon\Controller $amazonControllerHelper
+     * @param \Ess\M2ePro\Helper\View\Walmart\Controller $walmartControllerHelper
+     * @param \Magento\Framework\App\RequestInterface $request
+     */
     public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Module\Log $logHelper,
         \Magento\Backend\Model\UrlInterface $urlBuilder,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $modelFactory,
         \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
         \Ess\M2ePro\Helper\View\Amazon $amazonViewHelper,
         \Ess\M2ePro\Helper\View\Walmart $walmartViewHelper,
         \Ess\M2ePro\Helper\View\Ebay\Controller $ebayControllerHelper,
         \Ess\M2ePro\Helper\View\Amazon\Controller $amazonControllerHelper,
         \Ess\M2ePro\Helper\View\Walmart\Controller $walmartControllerHelper,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Framework\App\RequestInterface $request
     ) {
-        parent::__construct($helperFactory, $context);
-        $this->activeRecordFactory = $activeRecordFactory;
         $this->urlBuilder = $urlBuilder;
-        $this->modelFactory = $modelFactory;
         $this->ebayViewHelper = $ebayViewHelper;
         $this->amazonViewHelper = $amazonViewHelper;
         $this->walmartViewHelper = $walmartViewHelper;
         $this->ebayControllerHelper = $ebayControllerHelper;
         $this->amazonControllerHelper = $amazonControllerHelper;
         $this->walmartControllerHelper = $walmartControllerHelper;
+        $this->dataHelper = $dataHelper;
+        $this->logHelper = $logHelper;
+        $this->request = $request;
     }
 
     /**
      * @param string $viewNick
+     *
      * @return \Ess\M2ePro\Helper\View\Amazon|\Ess\M2ePro\Helper\View\Ebay|\Ess\M2ePro\Helper\View\Walmart
      */
     public function getViewHelper($viewNick = null)
@@ -88,6 +104,7 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
 
     /**
      * @param string $viewNick
+     *
      * @return EbayControllerHelper|AmazonControllerHelper|WalmartControllerHelper
      */
     public function getControllerHelper($viewNick = null)
@@ -108,9 +125,9 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
         return $this->amazonControllerHelper;
     }
 
-    public function getCurrentView()
+    public function getCurrentView(): ?string
     {
-        $controllerName = $this->_getRequest()->getControllerName();
+        $controllerName = $this->request->getControllerName();
 
         if ($controllerName === null) {
             return null;
@@ -141,41 +158,42 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
 
     // ---------------------------------------
 
-    public function isCurrentViewEbay()
+    public function isCurrentViewEbay(): bool
     {
         return $this->getCurrentView() == \Ess\M2ePro\Helper\View\Ebay::NICK;
     }
 
-    public function isCurrentViewAmazon()
+    public function isCurrentViewAmazon(): bool
     {
         return $this->getCurrentView() == \Ess\M2ePro\Helper\View\Amazon::NICK;
     }
 
-    public function isCurrentViewWalmart()
+    public function isCurrentViewWalmart(): bool
     {
         return $this->getCurrentView() == \Ess\M2ePro\Helper\View\Walmart::NICK;
     }
 
-    public function isCurrentViewControlPanel()
+    public function isCurrentViewControlPanel(): bool
     {
         return $this->getCurrentView() == \Ess\M2ePro\Helper\View\ControlPanel::NICK;
     }
 
-    public function isCurrentViewConfiguration()
+    public function isCurrentViewConfiguration(): bool
     {
         return $this->getCurrentView() == \Ess\M2ePro\Helper\View\Configuration::NICK;
     }
 
-    public function getUrl($row, $controller, $action, array $params = [])
+    public function getUrl($row, $controller, $action, array $params = []): string
     {
         $component = strtolower($row->getData('component_mode'));
+
         return $this->urlBuilder->getUrl("*/{$component}_{$controller}/{$action}", $params);
     }
 
     public function getModifiedLogMessage($logMessage)
     {
-        return $this->getHelper('Data')->escapeHtml(
-            $this->getHelper('Module\Log')->decodeDescription($logMessage),
+        return $this->dataHelper->escapeHtml(
+            $this->logHelper->decodeDescription($logMessage),
             ['a'],
             ENT_NOQUOTES
         );

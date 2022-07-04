@@ -46,7 +46,10 @@ class Edit extends Template
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
         $this->setPageHelpLink('x/Ov8UB');
-        $this->addContent($this->createBlock('Amazon_Template_Synchronization_Edit'));
+        $this->addContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit::class)
+        );
 
         return $this->getResultPage();
     }

@@ -8,6 +8,9 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add;
 
+use Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Tree;
+use Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Summary\Grid;
+
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add\GetCategoriesSummaryHtml
  */
@@ -20,12 +23,12 @@ class GetCategoriesSummaryHtml extends \Ess\M2ePro\Controller\Adminhtml\Amazon\L
         $tempSession = $this->getSessionValue('source_categories');
         $productsIds = !isset($tempSession['products_ids']) ? [] : $tempSession['products_ids'];
 
-        /** @var $treeBlock \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Tree */
-        $treeBlock = $this->createBlock('Amazon_Listing_Product_Add_SourceMode_Category_Tree', '');
+        /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Tree $treeBlock */
+        $treeBlock = $this->getLayout()->createBlock(Tree::class, '');
         $treeBlock->setSelectedIds($productsIds);
 
-        /** @var $block \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Summary\Grid */
-        $block = $this->createBlock('Amazon_Listing_Product_Add_SourceMode_Category_Summary_Grid', '');
+        /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Summary\Grid $block */
+        $block = $this->getLayout()->createBlock(Grid::class, '');
         $block->setStoreId($this->getListing()->getStoreId());
         $block->setProductsIds($productsIds);
         $block->setProductsForEachCategory($treeBlock->getProductsCountForEachCategory());

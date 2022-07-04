@@ -159,12 +159,12 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
             $processingIds[] = $processingLock->getProcessingId();
         }
 
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel */
+        /** @var \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel $collection */
         $collection = $this->activeRecordFactory->getObject('Processing')->getCollection();
         $collection->addFieldToFilter('id', ['in'=>array_unique($processingIds)]);
 
         foreach ($collection->getItems() as $processing) {
-            /** @var $processing \Ess\M2ePro\Model\Processing */
+            /** @var \Ess\M2ePro\Model\Processing $processing */
 
             /** @var \Ess\M2ePro\Model\Processing\Runner $processingRunner */
             $processingRunner = $this->modelFactory->getObject($processing->getModel());
@@ -233,7 +233,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
             throw new \Ess\M2ePro\Model\Exception\Logic('Method require loaded instance first');
         }
 
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel */
+        /** @var \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel $collection */
         $lockedCollection = $this->activeRecordFactory->getObject('Processing\Lock')->getCollection();
 
         $lockedCollection->addFieldToFilter('model_name', $this->getObjectModelName());
@@ -297,7 +297,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
             throw new \Ess\M2ePro\Model\Exception\Logic('Method require loaded instance first');
         }
 
-        /** @var $tempCollection \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection */
+        /** @var \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection $tempCollection */
         $tempCollection = $model->getCollection();
         $tempCollection->addFieldToFilter(new \Zend_Db_Expr("`{$fieldName}`"), $this->getId());
 

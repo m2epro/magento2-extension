@@ -19,7 +19,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
     protected $customerAddressFactory;
     protected $addressFactory;
 
-    /** @var $magentoOrder \Magento\Sales\Model\Order */
+    /** @var \Magento\Sales\Model\Order $magentoOrder */
     protected $magentoOrder;
 
     protected $needSave = false;
@@ -95,7 +95,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
             $shippingAddress->addData($addressInfo);
             $shippingAddress->save();
         } else {
-            /** @var $shippingAddress \Magento\Sales\Model\Order\Address */
+            /** @var \Magento\Sales\Model\Order\Address $shippingAddress */
             $shippingAddress = $this->addressFactory->create();
             $shippingAddress->setCustomerId($this->magentoOrder->getCustomerId());
             $shippingAddress->addData($addressInfo);
@@ -176,7 +176,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
             return;
         }
 
-        /** @var $customerAddress \Magento\Customer\Model\Address */
+        /** @var \Magento\Customer\Model\Address $customerAddress */
         $customerAddress = $this->customerAddressFactory->create()
             ->setData($customerAddress)
             ->setCustomerId($customer->getId())
@@ -275,13 +275,17 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
             return;
         }
 
+        if ($this->magentoOrder->hasCreditmemos()) {
+            return;
+        }
+
         if ($this->magentoOrder->canUnhold()) {
             throw new \Ess\M2ePro\Model\Exception('Cancel is not allowed for Orders which were put on Hold.');
         }
 
         if ($this->magentoOrder->getState() === \Magento\Sales\Model\Order::STATE_COMPLETE ||
             $this->magentoOrder->getState() === \Magento\Sales\Model\Order::STATE_CLOSED) {
-            throw new \Ess\M2ePro\Model\Exception('Cancel is not allowed for Orders which were Completed or Closed.');
+            return;
         }
 
         $allInvoiced = true;

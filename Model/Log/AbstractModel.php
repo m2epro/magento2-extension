@@ -19,10 +19,10 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\AbstractMode
      * @see \Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::$actionsSortOrder
      * @see \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\View\Grouped\AbstractGrid::_prepareCollection()
      */
-    const TYPE_NOTICE   = 1;
-    const TYPE_SUCCESS  = 2;
-    const TYPE_WARNING  = 3;
-    const TYPE_ERROR    = 4;
+    public const TYPE_INFO    = 1;
+    public const TYPE_SUCCESS = 2;
+    public const TYPE_WARNING  = 3;
+    public const TYPE_ERROR    = 4;
 
     protected $componentMode = null;
 

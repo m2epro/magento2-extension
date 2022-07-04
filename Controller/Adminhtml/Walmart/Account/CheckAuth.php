@@ -10,11 +10,26 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Account\CheckAuth
- */
 class CheckAuth extends Account
 {
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $helperException;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $helperData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Exception $helperException,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->helperException = $helperException;
+        $this->helperData = $helperData;
+    }
+
     public function execute()
     {
         $consumerId    = $this->getRequest()->getParam('consumer_id', false);
@@ -28,7 +43,7 @@ class CheckAuth extends Account
             'reason' => null
         ];
 
-        /** @var $marketplaceObject \Ess\M2ePro\Model\Marketplace */
+        /** @var \Ess\M2ePro\Model\Marketplace $marketplaceObject */
         $marketplaceObject = $this->walmartFactory->getCachedObjectLoaded(
             'Marketplace',
             $marketplaceId
@@ -63,11 +78,11 @@ class CheckAuth extends Account
             $result['result'] = isset($response['status']) ? $response['status']  : null;
 
             if (!empty($response['reason'])) {
-                $result['reason'] = $this->getHelper('Data')->escapeJs($response['reason']);
+                $result['reason'] = $this->helperData->escapeJs($response['reason']);
             }
         } catch (\Exception $exception) {
             $result['result'] = false;
-            $this->getHelper('Module\Exception')->process($exception);
+            $this->helperException->process($exception);
         }
 
         $this->setJsonContent($result);

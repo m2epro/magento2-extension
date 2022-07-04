@@ -229,7 +229,7 @@ abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Va
     private function removeStructure()
     {
         foreach ($this->getListingProduct()->getVariations(true) as $variation) {
-            /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
             $variation->delete();
         }
     }
@@ -269,7 +269,7 @@ abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Va
             ->getItems();
 
         foreach ($items as $item) {
-            /** @var $item \Ess\M2ePro\Model\Walmart\Item */
+            /** @var \Ess\M2ePro\Model\Walmart\Item $item */
             $item->delete();
         }
     }

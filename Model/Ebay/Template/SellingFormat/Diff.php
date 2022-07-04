@@ -45,7 +45,7 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'price_increase_vat_percent',
             'price_variation_mode',
             'fixed_price_mode',
-            'fixed_price_coefficient',
+            'fixed_price_modifier',
             'fixed_price_custom_attribute',
             'start_price_mode',
             'start_price_coefficient',

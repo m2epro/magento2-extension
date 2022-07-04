@@ -43,7 +43,8 @@ class SetGeneralIdOwner extends Main
         $data = $this->setGeneralIdOwner($listingProductId, $generalIdOwner);
 
         if (!$data['success']) {
-            $mainBlock = $this->createBlock('Amazon_Listing_Product_Template_Description');
+            $mainBlock = $this->getLayout()
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Description::class);
             $mainBlock->setMessages([
                 [
                     'type' => 'warning',

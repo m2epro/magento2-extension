@@ -79,7 +79,9 @@ class Save extends Order
 
         $this->setJsonContent([
             'success' => true,
-            'html' => $this->createBlock('Walmart_Order_Edit_ShippingAddress')->toHtml()
+            'html' => $this->getLayout()
+                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Order\Edit\ShippingAddress::class)
+                           ->toHtml()
         ]);
 
         return $this->getResult();

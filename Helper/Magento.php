@@ -8,45 +8,95 @@
 
 namespace Ess\M2ePro\Helper;
 
-use \Magento\Deploy\Package\Package;
+use Magento\Deploy\Package\Package;
 
-/**
- * Class \Ess\M2ePro\Helper\Magento
- */
-class Magento extends \Ess\M2ePro\Helper\AbstractHelper
+class Magento
 {
-    const CLOUD_COMPOSER_KEY        = 'magento/magento-cloud-metapackage';
-    const CLOUD_SERVER_KEY          = 'MAGENTO_CLOUD_APPLICATION';
-    const APPLICATION_CLOUD_NICK    = 'cloud';
-    const APPLICATION_PERSONAL_NICK = 'personal';
+    public const CLOUD_COMPOSER_KEY = 'magento/magento-cloud-metapackage';
+    public const CLOUD_SERVER_KEY = 'MAGENTO_CLOUD_APPLICATION';
+    public const APPLICATION_CLOUD_NICK = 'cloud';
+    public const APPLICATION_PERSONAL_NICK = 'personal';
 
-    const ENTERPRISE_EDITION_NICK   = 'enterprise';
-    const COMMUNITY_EDITION_NICK    = 'community';
+    public const ENTERPRISE_EDITION_NICK = 'enterprise';
+    public const COMMUNITY_EDITION_NICK = 'community';
 
-    const MAGENTO_INVENTORY_MODULE_NICK = 'Magento_Inventory';
+    public const MAGENTO_INVENTORY_MODULE_NICK = 'Magento_Inventory';
 
-    protected $deploymentVersionStorageFile;
-    protected $filesystem;
-    protected $themeResolver;
-    protected $productMetadata;
-    protected $resource;
-    protected $moduleList;
-    protected $deploymentConfig;
-    protected $cronScheduleFactory;
-    protected $localeResolver;
-    protected $appState;
-    protected $translatedLists;
-    protected $countryFactory;
-    protected $entityStore;
-    protected $objectManager;
-    protected $appCache;
-    protected $eventConfig;
-    protected $sequenceManager;
-    protected $composerInformation;
+    /** @var \Magento\Framework\App\View\Deployment\Version\Storage\File */
+    private $deploymentVersionStorageFile;
+    /** @var \Magento\Framework\Filesystem */
+    private $filesystem;
+    /** @var \Magento\Framework\View\Design\Theme\ResolverInterface */
+    private $themeResolver;
+    /** @var \Magento\Framework\App\ProductMetadataInterface */
+    private $productMetadata;
+    /** @var \Magento\Framework\App\ResourceConnection */
+    private $resource;
+    /** @var \Magento\Framework\Module\ModuleListInterface */
+    private $moduleList;
+    /** @var \Magento\Framework\App\DeploymentConfig */
+    private $deploymentConfig;
+    /** @var \Magento\Cron\Model\ScheduleFactory */
+    private $cronScheduleFactory;
+    /** @var \Magento\Framework\Locale\ResolverInterface */
+    private $localeResolver;
+    /** @var \Magento\Framework\App\State */
+    private $appState;
+    /** @var \Magento\Framework\Locale\TranslatedLists */
+    private $translatedLists;
+    /** @var \Magento\Directory\Model\CountryFactory */
+    private $countryFactory;
+    /** @var \Magento\Framework\ObjectManagerInterface */
+    private $objectManager;
+    /** @var \Magento\Framework\App\CacheInterface */
+    private $appCache;
+    /** @var \Magento\SalesSequence\Model\Manager */
+    private $sequenceManager;
+    /** @var \Magento\Framework\Composer\ComposerInformation */
+    private $composerInformation;
+    /** @var \Ess\M2ePro\Helper\Magento\Store */
+    private $magentoStoreHelper;
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $exceptionHelper;
+    /** @var \Ess\M2ePro\Helper\Date */
+    private $dateHelper;
+    /** @var \Magento\Framework\App\RequestInterface */
+    private $request;
+    /** @var \Magento\Framework\UrlInterface */
+    private $urlBuilder;
+    /** @var \Magento\Framework\App\Config\ScopeConfigInterface */
+    private $scopeConfig;
 
-    //########################################
-
+    /**
+     * @param \Magento\Framework\UrlInterface $urlBuilder
+     * @param \Magento\Framework\App\RequestInterface $request
+     * @param \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper
+     * @param \Ess\M2ePro\Helper\Module\Exception $exceptionHelper
+     * @param \Ess\M2ePro\Helper\Date $dateHelper
+     * @param \Magento\Framework\App\View\Deployment\Version\Storage\File $deploymentVersionStorageFile
+     * @param \Magento\Framework\Filesystem $filesystem
+     * @param \Magento\Framework\View\Design\Theme\ResolverInterface $themeResolver
+     * @param \Magento\Framework\App\ProductMetadataInterface $productMetadata
+     * @param \Magento\Framework\App\ResourceConnection $resource
+     * @param \Magento\Framework\Module\ModuleListInterface $moduleList
+     * @param \Magento\Framework\App\DeploymentConfig $deploymentConfig
+     * @param \Magento\Cron\Model\ScheduleFactory $scheduleFactory
+     * @param \Magento\Framework\Locale\ResolverInterface $localeResolver
+     * @param \Magento\Framework\App\State $appState
+     * @param \Magento\Framework\Locale\TranslatedLists $translatedLists
+     * @param \Magento\Directory\Model\CountryFactory $countryFactory
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager
+     * @param \Magento\Framework\App\CacheInterface $appCache
+     * @param \Magento\SalesSequence\Model\Manager $sequenceManager
+     * @param \Magento\Framework\Composer\ComposerInformation $composerInformation
+     */
     public function __construct(
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Magento\Framework\UrlInterface $urlBuilder,
+        \Magento\Framework\App\RequestInterface $request,
+        \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper,
+        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
+        \Ess\M2ePro\Helper\Date $dateHelper,
         \Magento\Framework\App\View\Deployment\Version\Storage\File $deploymentVersionStorageFile,
         \Magento\Framework\Filesystem $filesystem,
         \Magento\Framework\View\Design\Theme\ResolverInterface $themeResolver,
@@ -59,93 +109,109 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\App\State $appState,
         \Magento\Framework\Locale\TranslatedLists $translatedLists,
         \Magento\Directory\Model\CountryFactory $countryFactory,
-        \Magento\Eav\Model\Entity\Store $entityStore,
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Framework\App\CacheInterface $appCache,
-        \Magento\Framework\Event\Config $eventConfig,
         \Magento\SalesSequence\Model\Manager $sequenceManager,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\Composer\ComposerInformation $composerInformation,
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Framework\Composer\ComposerInformation $composerInformation
     ) {
         $this->deploymentVersionStorageFile = $deploymentVersionStorageFile;
-        $this->filesystem                   = $filesystem;
-        $this->themeResolver                = $themeResolver;
-        $this->productMetadata              = $productMetadata;
-        $this->resource                     = $resource;
-        $this->moduleList                   = $moduleList;
-        $this->deploymentConfig             = $deploymentConfig;
-        $this->cronScheduleFactory          = $scheduleFactory;
-        $this->localeResolver               = $localeResolver;
-        $this->appState                     = $appState;
-        $this->translatedLists              = $translatedLists;
-        $this->countryFactory               = $countryFactory;
-        $this->entityStore                  = $entityStore;
-        $this->objectManager                = $objectManager;
-        $this->appCache                     = $appCache;
-        $this->eventConfig                  = $eventConfig;
-        $this->sequenceManager              = $sequenceManager;
-        $this->composerInformation          = $composerInformation;
-
-        parent::__construct($helperFactory, $context);
+        $this->filesystem = $filesystem;
+        $this->themeResolver = $themeResolver;
+        $this->productMetadata = $productMetadata;
+        $this->resource = $resource;
+        $this->moduleList = $moduleList;
+        $this->deploymentConfig = $deploymentConfig;
+        $this->cronScheduleFactory = $scheduleFactory;
+        $this->localeResolver = $localeResolver;
+        $this->appState = $appState;
+        $this->translatedLists = $translatedLists;
+        $this->countryFactory = $countryFactory;
+        $this->objectManager = $objectManager;
+        $this->appCache = $appCache;
+        $this->sequenceManager = $sequenceManager;
+        $this->composerInformation = $composerInformation;
+        $this->magentoStoreHelper = $magentoStoreHelper;
+        $this->exceptionHelper = $exceptionHelper;
+        $this->dateHelper = $dateHelper;
+        $this->request = $request;
+        $this->urlBuilder = $urlBuilder;
+        $this->scopeConfig = $scopeConfig;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getName()
+    /**
+     * @return string
+     */
+    public function getName(): string
     {
         return 'magento';
     }
 
+    /**
+     * @param $asArray
+     *
+     * @return string|string[]
+     */
     public function getVersion($asArray = false)
     {
         $versionString = $this->productMetadata->getVersion();
+
         return $asArray ? explode('.', $versionString) : $versionString;
     }
 
     /**
      * @return bool
      */
-    public function isMSISupportingVersion()
+    public function isMSISupportingVersion(): bool
     {
         return $this->moduleList->getOne(self::MAGENTO_INVENTORY_MODULE_NICK) !== null;
     }
 
-    //########################################
-
-    public function getEditionName()
-    {
-        return strtolower($this->productMetadata->getEdition());
-    }
-
-    // ---------------------------------------
-
-    public function isEnterpriseEdition()
-    {
-        return $this->getEditionName() == self::ENTERPRISE_EDITION_NICK;
-    }
-
-    public function isCommunityEdition()
-    {
-        return $this->getEditionName() == self::COMMUNITY_EDITION_NICK;
-    }
-
-    // ---------------------------------------
+    // ----------------------------------------
 
     /**
      * @return string
      */
-    public function getLocation()
+    public function getEditionName(): string
     {
-        return $this->isApplicationCloud() ?
-                self::APPLICATION_CLOUD_NICK :
-                self::APPLICATION_PERSONAL_NICK;
+        return strtolower($this->productMetadata->getEdition());
+    }
+
+    // ----------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isEnterpriseEdition(): bool
+    {
+        return $this->getEditionName() == self::ENTERPRISE_EDITION_NICK;
     }
 
     /**
      * @return bool
      */
-    public function isApplicationCloud()
+    public function isCommunityEdition(): bool
+    {
+        return $this->getEditionName() == self::COMMUNITY_EDITION_NICK;
+    }
+
+    // ----------------------------------------
+
+    /**
+     * @return string
+     */
+    public function getLocation(): string
+    {
+        return $this->isApplicationCloud() ?
+            self::APPLICATION_CLOUD_NICK :
+            self::APPLICATION_PERSONAL_NICK;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isApplicationCloud(): bool
     {
         return $this->hasComposerCloudSign() || $this->hasServerCloudSign();
     }
@@ -153,7 +219,7 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
     /**
      * @return bool
      */
-    private function hasComposerCloudSign()
+    private function hasComposerCloudSign(): bool
     {
         return $this->composerInformation->isPackageInComposerJson(self::CLOUD_COMPOSER_KEY);
     }
@@ -161,35 +227,47 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
     /**
      * @return bool
      */
-    private function hasServerCloudSign()
+    private function hasServerCloudSign(): bool
     {
-        if ($this->_request instanceof \Magento\Framework\App\Request\Http) {
-            return $this->_request->getServer(self::CLOUD_SERVER_KEY) !== null;
+        if ($this->request instanceof \Magento\Framework\App\Request\Http) {
+            return $this->request->getServer(self::CLOUD_SERVER_KEY) !== null;
         }
 
         return false;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function isDeveloper()
+    /**
+     * @return bool
+     */
+    public function isDeveloper(): bool
     {
-        return $this->appState->getMode() == \Magento\Framework\App\State::MODE_DEVELOPER;
+        return $this->appState->getMode() === \Magento\Framework\App\State::MODE_DEVELOPER;
     }
 
-    public function isProduction()
+    /**
+     * @return bool
+     */
+    public function isProduction(): bool
     {
-        return $this->appState->getMode() == \Magento\Framework\App\State::MODE_PRODUCTION;
+        return $this->appState->getMode() === \Magento\Framework\App\State::MODE_PRODUCTION;
     }
 
-    public function isDefault()
+    /**
+     * @return bool
+     */
+    public function isDefault(): bool
     {
-        return $this->appState->getMode() == \Magento\Framework\App\State::MODE_DEFAULT;
+        return $this->appState->getMode() === \Magento\Framework\App\State::MODE_DEFAULT;
     }
 
-    public function isCronWorking()
+    /**
+     * @return bool
+     */
+    public function isCronWorking(): bool
     {
-        $minDateTime = $this->getHelper('Data')->createCurrentGmtDateTime();
+        $minDateTime = $this->dateHelper->createCurrentGmtDateTime();
         $minDateTime->modify('-1 day');
         $minDateTime = $minDateTime->format('Y-m-d H:i:s');
 
@@ -201,7 +279,10 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
 
     // ---------------------------------------
 
-    public function getAreas()
+    /**
+     * @return array
+     */
+    public function getAreas(): array
     {
         return [
             \Magento\Framework\App\Area::AREA_GLOBAL,
@@ -212,9 +293,12 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         ];
     }
 
-    public function getBaseUrl()
+    /**
+     * @return string
+     */
+    public function getBaseUrl(): string
     {
-        return str_replace('index.php/', '', $this->_urlBuilder->getBaseUrl());
+        return str_replace('index.php/', '', $this->urlBuilder->getBaseUrl());
     }
 
     public function getLocale()
@@ -225,6 +309,7 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
     public function getLocaleCode()
     {
         $localeComponents = explode('_', $this->getLocale());
+
         return strtolower(array_shift($localeComponents));
     }
 
@@ -263,10 +348,11 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         if (!$this->isSecretKeyToUrl()) {
             return '';
         }
-        return $this->_urlBuilder->getSecretKey();
+
+        return $this->urlBuilder->getSecretKey();
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function isStaticContentExists($path = null)
     {
@@ -274,15 +360,16 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
             \Magento\Framework\App\Filesystem\DirectoryList::STATIC_VIEW
         );
 
-        $basePath = $this->getThemePath() .DIRECTORY_SEPARATOR. $this->getLocale() .DIRECTORY_SEPARATOR . $path;
+        $basePath = $this->getThemePath() . DIRECTORY_SEPARATOR . $this->getLocale() . DIRECTORY_SEPARATOR . $path;
         $exist = $directoryReader->isExist($basePath);
 
         if (!$exist) {
-            $basePath = $this->themeResolver->get()->getArea() .DIRECTORY_SEPARATOR.
-                        Package::BASE_THEME .DIRECTORY_SEPARATOR. Package::BASE_LOCALE .DIRECTORY_SEPARATOR . $path;
+            $basePath = $this->themeResolver->get()->getArea() . DIRECTORY_SEPARATOR .
+                Package::BASE_THEME . DIRECTORY_SEPARATOR . Package::BASE_LOCALE . DIRECTORY_SEPARATOR . $path;
 
             $exist = $directoryReader->isExist($basePath);
         }
+
         return $exist;
     }
 
@@ -297,9 +384,9 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         return $deployedTimeStamp ? gmdate('Y-m-d H:i:s', $deployedTimeStamp) : false;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getCountries()
+    public function getCountries(): array
     {
         return $this->countryFactory->create()->getCollection()->toOptionArray();
     }
@@ -317,22 +404,21 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
 
     /**
      * @param $countryCode
+     *
      * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getRegionsByCountryCode($countryCode)
     {
-        $result = [];
-
         try {
             $country = $this->countryFactory->create()->loadByCode($countryCode);
         } catch (\Exception $e) {
-            $this->getHelper('Module_Exception')->process($e);
-            return $result;
+            $this->exceptionHelper->process($e);
+
+            return [];
         }
 
         if (!$country->getId()) {
-            return $result;
+            return [];
         }
 
         $result = [];
@@ -341,46 +427,54 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
             $result[] = [
                 'region_id' => $region->getRegionId(),
                 'code'      => $region->getCode(),
-                'name'      => $region->getName()
+                'name'      => $region->getName(),
             ];
         }
 
         if (empty($result) && $countryCode == 'AU') {
             $result = [
-                ['region_id' => '','code' => 'NSW','name' => 'New South Wales'],
-                ['region_id' => '','code' => 'QLD','name' => 'Queensland'],
-                ['region_id' => '','code' => 'SA','name' => 'South Australia'],
-                ['region_id' => '','code' => 'TAS','name' => 'Tasmania'],
-                ['region_id' => '','code' => 'VIC','name' => 'Victoria'],
-                ['region_id' => '','code' => 'WA','name' => 'Western Australia'],
+                ['region_id' => '', 'code' => 'NSW', 'name' => 'New South Wales'],
+                ['region_id' => '', 'code' => 'QLD', 'name' => 'Queensland'],
+                ['region_id' => '', 'code' => 'SA', 'name' => 'South Australia'],
+                ['region_id' => '', 'code' => 'TAS', 'name' => 'Tasmania'],
+                ['region_id' => '', 'code' => 'VIC', 'name' => 'Victoria'],
+                ['region_id' => '', 'code' => 'WA', 'name' => 'Western Australia'],
             ];
         } elseif (empty($result) && $countryCode == 'GB') {
             $result = [
-                ['region_id' => '','code' => 'UKH','name' => 'East of England'],
-                ['region_id' => '','code' => 'UKF','name' => 'East Midlands'],
-                ['region_id' => '','code' => 'UKI','name' => 'London'],
-                ['region_id' => '','code' => 'UKC','name' => 'North East'],
-                ['region_id' => '','code' => 'UKD','name' => 'North West'],
-                ['region_id' => '','code' => 'UKJ','name' => 'South East'],
-                ['region_id' => '','code' => 'UKK','name' => 'South West'],
-                ['region_id' => '','code' => 'UKG','name' => 'West Midlands'],
-                ['region_id' => '','code' => 'UKE','name' => 'Yorkshire and the Humber'],
+                ['region_id' => '', 'code' => 'UKH', 'name' => 'East of England'],
+                ['region_id' => '', 'code' => 'UKF', 'name' => 'East Midlands'],
+                ['region_id' => '', 'code' => 'UKI', 'name' => 'London'],
+                ['region_id' => '', 'code' => 'UKC', 'name' => 'North East'],
+                ['region_id' => '', 'code' => 'UKD', 'name' => 'North West'],
+                ['region_id' => '', 'code' => 'UKJ', 'name' => 'South East'],
+                ['region_id' => '', 'code' => 'UKK', 'name' => 'South West'],
+                ['region_id' => '', 'code' => 'UKG', 'name' => 'West Midlands'],
+                ['region_id' => '', 'code' => 'UKE', 'name' => 'Yorkshire and the Humber'],
             ];
         }
 
         return $result;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getMySqlTables()
+    /**
+     * @return array
+     */
+    public function getMySqlTables(): array
     {
         return $this->resource->getConnection()->listTables();
     }
 
     // ---------------------------------------
 
-    public function getDatabaseName()
+    /**
+     * @return string
+     * @throws \Magento\Framework\Exception\FileSystemException
+     * @throws \Magento\Framework\Exception\RuntimeException
+     */
+    public function getDatabaseName(): string
     {
         return (string)$this->deploymentConfig->get(
             \Magento\Framework\Config\ConfigOptionsListConstants::CONFIG_PATH_DB_CONNECTION_DEFAULT
@@ -395,14 +489,12 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         );
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function isInstalled()
     {
         return $this->deploymentConfig->isAvailable();
     }
-
-    //########################################
 
     public function getModules()
     {
@@ -420,7 +512,7 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
             $scope->setCurrentScope($area);
 
             $eventsData = $this->objectManager->create(\Magento\Framework\Event\Config\Data::class, [
-                'configScope' => $scope
+                'configScope' => $scope,
             ]);
 
             foreach ($eventsData->get(null) as $eventName => $eventData) {
@@ -441,19 +533,19 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         return $eventObservers;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function getNextMagentoOrderId()
     {
         $sequence = $this->sequenceManager->getSequence(
             \Magento\Sales\Model\Order::ENTITY,
-            $this->getHelper('Magento\Store')->getDefaultStoreId()
+            $this->magentoStoreHelper->getDefaultStoreId()
         );
 
         return $sequence->getNextValue();
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function clearMenuCache()
     {
@@ -464,6 +556,4 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
     {
         return $this->appCache->clean();
     }
-
-    //########################################
 }

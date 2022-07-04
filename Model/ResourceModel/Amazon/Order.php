@@ -27,7 +27,7 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 
     public function hasGifts($orderId)
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Amazon\Order\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Order\Collection $collection */
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Order\Item')
             ->getCollection();
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
@@ -41,7 +41,7 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 
     public function getItemsTotal($orderId)
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Amazon\Order\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Order\Collection $collection */
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Order\Item')
             ->getCollection();
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);

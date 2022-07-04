@@ -19,8 +19,9 @@ class GetCategoriesJson extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Pr
         $tempSession = $this->getSessionValue('source_categories');
         $selectedProductsIds = !isset($tempSession['products_ids']) ? [] : $tempSession['products_ids'];
 
-        /** @var $treeBlock \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree */
-        $treeBlock = $this->createBlock('Ebay_Listing_Product_Add_Category_Tree');
+        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree $treeBlock */
+        $treeBlock = $this->getLayout()
+                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree::class);
         $treeBlock->setSelectedIds($selectedProductsIds);
 
         $this->setAjaxContent($treeBlock->getCategoryChildrenJson($this->getRequest()->getParam('category')), false);

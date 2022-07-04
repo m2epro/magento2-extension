@@ -18,16 +18,33 @@ class LogsClearing extends AbstractTab
     /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
     private $componentEbayPickupStore;
 
+    /** @var \Ess\M2ePro\Model\Config\Manager */
+    private $config;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore
+     * @param \Ess\M2ePro\Model\Config\Manager $config
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param array $data
+     */
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
+        \Ess\M2ePro\Model\Config\Manager $config,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $registry, $formFactory, $data);
-
         $this->componentEbayPickupStore = $componentEbayPickupStore;
+        $this->config = $config;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
     }
 
     protected function _prepareForm()
@@ -288,7 +305,6 @@ HTML
 
     protected function prepareFormData()
     {
-        $config = $this->getHelper('Module')->getConfig();
         $tasks = [
             LogClearing::LOG_LISTINGS,
             LogClearing::LOG_SYNCHRONIZATIONS,
@@ -304,8 +320,8 @@ HTML
         $days  = [];
 
         foreach ($tasks as $task) {
-            $modes[$task] = $config->getGroupValue('/logs/clearing/'.$task.'/', 'mode');
-            $days[$task] = $config->getGroupValue('/logs/clearing/'.$task.'/', 'days');
+            $modes[$task] = $this->config->getGroupValue('/logs/clearing/'.$task.'/', 'mode');
+            $days[$task] = $this->config->getGroupValue('/logs/clearing/'.$task.'/', 'days');
         }
 
         $this->modes = $modes;
@@ -324,7 +340,8 @@ HTML
                 'class'   => 'clear_all_' . $task . ' primary',
                 'style'   => 'margin-left: 15px'
             ];
-            $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
+            $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                             ->setData($data);
             $this->setChild('clear_all_'.$task, $buttonBlock);
             // ---------------------------------------
         }
@@ -340,7 +357,7 @@ HTML
             \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs::TAB_ID_LOGS_CLEARING
         );
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Settings\LogsClearing'));
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Settings\LogsClearing'));
         $this->jsUrl->add($this->getUrl('*/settings_logsClearing/save'), 'formSubmit');
 
         $this->jsTranslator->add(

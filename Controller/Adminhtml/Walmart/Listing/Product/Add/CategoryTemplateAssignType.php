@@ -8,12 +8,20 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplateAssignType
- */
 class CategoryTemplateAssignType extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->dataHelper = $dataHelper;
+    }
 
     public function execute()
     {
@@ -34,13 +42,13 @@ class CategoryTemplateAssignType extends \Ess\M2ePro\Controller\Adminhtml\Walmar
 
         $listing = $this->walmartFactory->getObjectLoaded('Listing', $listingId);
         $listingAdditionalData = $listing->getData('additional_data');
-        $listingAdditionalData = $this->getHelper('Data')->jsonDecode($listingAdditionalData);
+        $listingAdditionalData = $this->dataHelper->jsonDecode($listingAdditionalData);
 
         $listingAdditionalData['category_template_mode'] = $mode;
 
         $listing->setData(
             'additional_data',
-            $this->getHelper('Data')->jsonEncode($listingAdditionalData)
+            $this->dataHelper->jsonEncode($listingAdditionalData)
         )->save();
 
         if ($mode == 'same' && !empty($categoryTemplateId)) {
@@ -65,7 +73,7 @@ class CategoryTemplateAssignType extends \Ess\M2ePro\Controller\Adminhtml\Walmar
 
             $listing->setData(
                 'additional_data',
-                $this->getHelper('Data')->jsonEncode($listingAdditionalData)
+                $this->dataHelper->jsonEncode($listingAdditionalData)
             )->save();
         } elseif ($mode == 'category') {
             return $this->_redirect('*/*/categoryTemplateAssignByMagentoCategory', [
@@ -79,6 +87,4 @@ class CategoryTemplateAssignType extends \Ess\M2ePro\Controller\Adminhtml\Walmar
 
         $this->_forward('index');
     }
-
-    //########################################
 }

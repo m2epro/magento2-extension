@@ -35,7 +35,7 @@ class HelpBlock extends AbstractElement
 
     public function getElementHtml()
     {
-        return $this->layout->createBlock('Ess\M2ePro\Block\Adminhtml\HelpBlock')->addData([
+        return $this->layout->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->addData([
             'id'            => $this->getId(),
             'title'         => $this->getData('title'),
             'content'       => $this->getData('content'),

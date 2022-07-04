@@ -8,24 +8,32 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Charity
- */
 class Charity extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     private $enabledMarketplaces = null;
 
     protected $_template = 'ebay/template/selling_format/charity.phtml';
 
+    /** @var \Magento\Framework\App\ResourceConnection  */
     protected $resourceConnection;
+
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $databaseHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->resourceConnection = $resourceConnection;
         parent::__construct($context, $data);
+        $this->databaseHelper = $databaseHelper;
+        $this->dataHelper = $dataHelper;
     }
 
     protected function _beforeToHtml()
@@ -33,7 +41,7 @@ class Charity extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         parent::_beforeToHtml();
 
         // ---------------------------------------
-        $buttonBlock = $this->createBlock('Magento\Button')
+        $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
             ->setData([
                 'label'   => $this->__('Add Charity'),
                 'onclick' => 'EbayTemplateSellingFormatObj.addCharityRow();',
@@ -43,7 +51,7 @@ class Charity extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         // ---------------------------------------
 
         // ---------------------------------------
-        $buttonBlock = $this->createBlock('Magento\Button')
+        $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
             ->setData([
                 'label'   => $this->__('Remove'),
                 'onclick' => 'EbayTemplateSellingFormatObj.removeCharityRow(this);',
@@ -74,7 +82,7 @@ class Charity extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     public function getCharityDictionary()
     {
         $connection = $this->resourceConnection->getConnection();
-        $tableDictMarketplace = $this->getHelper('Module_Database_Structure')
+        $tableDictMarketplace = $this->databaseHelper
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_marketplace');
 
         $dbSelect = $connection->select()
@@ -83,7 +91,7 @@ class Charity extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $data = $connection->fetchAssoc($dbSelect);
 
         foreach ($data as $key => $item) {
-            $data[$key]['charities'] = $this->getHelper('Data')->jsonDecode($item['charities']);
+            $data[$key]['charities'] = $this->dataHelper->jsonDecode($item['charities']);
         }
 
         return $data;

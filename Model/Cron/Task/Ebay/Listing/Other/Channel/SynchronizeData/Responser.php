@@ -81,7 +81,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Inventory\Get\ItemsResp
     {
         try {
 
-            /** @var $updatingModel \Ess\M2ePro\Model\Ebay\Listing\Other\Updating */
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Other\Updating $updatingModel */
             $updatingModel = $this->modelFactory->getObject('Ebay_Listing_Other_Updating');
             $updatingModel->initialize(
                 $this->ebayFactory->getObjectLoaded('Account', $this->params['account_id'])

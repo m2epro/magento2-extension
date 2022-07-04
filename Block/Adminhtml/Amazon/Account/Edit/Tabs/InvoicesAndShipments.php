@@ -16,12 +16,36 @@ use \Ess\M2ePro\Model\Amazon\Account as AmazonAccount;
  */
 class InvoicesAndShipments extends AbstractForm
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     protected function _prepareForm()
     {
         /** @var \Ess\M2ePro\Model\Account $account */
-        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
+        $account = $this->globalDataHelper->getValue('edit_account');
 
         $formData = $this->getFormData();
 
@@ -41,7 +65,7 @@ HTML
     target="_blank">article</a> for more details.</p>
 HTML
                 ,
-                $this->getHelper('Module_Support')->getHowToGuideUrl('1586245')
+                $this->supportHelper->getHowToGuideUrl('1586245')
             );
         }
 
@@ -49,7 +73,7 @@ HTML
             'invoices_and_shipments',
             self::HELP_BLOCK,
             [
-                'content' => $helpText
+                'content' => $helpText,
             ]
         );
 
@@ -57,7 +81,7 @@ HTML
             'invoices',
             [
                 'legend'      => $this->__('Invoices'),
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -74,9 +98,9 @@ HTML
                         AmazonAccount::AUTO_INVOICING_UPLOAD_MAGENTO_INVOICES =>
                             $this->__('Upload Magento Invoices'),
                         AmazonAccount::AUTO_INVOICING_VAT_CALCULATION_SERVICE =>
-                            $this->__('Use VAT Calculation Service')
+                            $this->__('Use VAT Calculation Service'),
                     ],
-                    'value'   => $formData['auto_invoicing']
+                    'value'   => $formData['auto_invoicing'],
                 ]
             );
 
@@ -97,7 +121,7 @@ HTML
                         AmazonAccount::INVOICE_GENERATION_BY_EXTENSION =>
                             $this->__('I will upload my own Invoices'),
                     ],
-                    'value'        => ''
+                    'value'        => '',
                 ]
             );
 
@@ -121,7 +145,7 @@ HTML
                 ],
                 'tooltip' => $this->__(
                     'Enable to automatically create Magento Invoices when order status is Unshipped/Partially Shipped.'
-                )
+                ),
             ]
         );
 
@@ -129,7 +153,7 @@ HTML
             'shipments',
             [
                 'legend'      => $this->__('Shipments'),
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -147,7 +171,7 @@ HTML
                 'tooltip' => $this->__(
                     'Enable to automatically create shipment for the Magento order when the associated order
                     on Channel is shipped.'
-                )
+                ),
             ]
         );
 
@@ -159,7 +183,7 @@ HTML
         return parent::_prepareForm();
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function _prepareLayout()
     {
@@ -178,18 +202,16 @@ JS
         return parent::_prepareLayout();
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function getFormData()
     {
         /** @var \Ess\M2ePro\Model\Account $account */
-        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
+        $account = $this->globalDataHelper->getValue('edit_account');
 
         $formData = $account ? array_merge($account->toArray(), $account->getChildObject()->toArray()) : [];
         $defaults = $this->modelFactory->getObject('Amazon_Account_Builder')->getDefaultData();
 
         return array_merge($defaults, $formData);
     }
-
-    //########################################
 }

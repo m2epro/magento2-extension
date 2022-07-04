@@ -76,17 +76,11 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
-        $stockItem = $this->getStockItem();
-
-        if ($stockItem->getQty() - $stockItem->getMinQty() - $qty < 0) {
-            switch ($stockItem->getBackorders()) {
-                case \Magento\CatalogInventory\Model\Stock::BACKORDERS_YES_NONOTIFY:
-                case \Magento\CatalogInventory\Model\Stock::BACKORDERS_YES_NOTIFY:
-                    break;
-                default:
-                    throw new \Ess\M2ePro\Model\Exception('The requested Quantity is not available.');
-            }
+        if (!$this->isAllowedQtyBelowZero() && $this->resultOfSubtractingQtyBelowZero($qty)) {
+            return false;
         }
+
+        $stockItem = $this->getStockItem();
 
         if ($stockItem->getManageStock() && $this->stockConfiguration->canSubtractQty()) {
             $stockItem->setQty($stockItem->getQty() - $qty);
@@ -102,6 +96,18 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return true;
+    }
+
+    public function resultOfSubtractingQtyBelowZero($qty)
+    {
+        return $this->getStockItem()->getQty() - $this->getStockItem()->getMinQty() - $qty < 0;
+    }
+
+    public function isAllowedQtyBelowZero()
+    {
+        $backordersStatus = $this->getStockItem()->getBackorders();
+        return $backordersStatus == \Magento\CatalogInventory\Model\Stock::BACKORDERS_YES_NONOTIFY ||
+            $backordersStatus == \Magento\CatalogInventory\Model\Stock::BACKORDERS_YES_NOTIFY;
     }
 
     /**

@@ -26,7 +26,8 @@ class GetSpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         $marketplaceId = $this->getRequest()->getParam('marketplace_id');
         $uniqueId = $this->getRequest()->getParam('unique_id');
 
-        $categoryBlock = $this->createBlock('Ebay_Listing_Product_Category_Settings_Specific');
+        $categoryBlock = $this->getLayout()
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Specific::class);
 
         $categoryBlock->setMarketplaceId($marketplaceId);
         $categoryBlock->setCategoryMode($categoryMode);

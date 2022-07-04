@@ -23,7 +23,7 @@ class Template extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Feedback\Template');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Feedback\Template::class);
     }
 
     protected $ebayFactory;

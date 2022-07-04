@@ -12,33 +12,63 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 use Ess\M2ePro\Model\Amazon\Account;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\ListingOther
- */
 class ListingOther extends AbstractForm
 {
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    protected $magentoAttributeHelper;
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->supportHelper = $supportHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create();
 
-        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
-        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
+        $allAttributes = $this->magentoAttributeHelper->getAll();
 
-        $allAttributes = $magentoAttributeHelper->getAll();
-
-        $attributes = $magentoAttributeHelper->filterByInputTypes(
+        $attributes = $this->magentoAttributeHelper->filterByInputTypes(
             $allAttributes,
             [
                 'text', 'textarea', 'select'
             ]
         );
 
-        /** @var $account \Ess\M2ePro\Model\Account */
-        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
+        /** @var \Ess\M2ePro\Model\Account $account */
+        $account = $this->globalDataHelper->getValue('edit_account');
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         if (isset($formData['other_listings_mapping_settings'])) {
-            $formData['other_listings_mapping_settings'] = (array)$this->getHelper('Data')->jsonDecode(
+            $formData['other_listings_mapping_settings'] = (array)$this->dataHelper->jsonDecode(
                 $formData['other_listings_mapping_settings']
             );
         }
@@ -59,7 +89,7 @@ configure the automatic linking and moving settings.</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/XP8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/KP8UB')
                 )
             ]
         );

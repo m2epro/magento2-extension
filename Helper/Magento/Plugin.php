@@ -8,34 +8,29 @@
 
 namespace Ess\M2ePro\Helper\Magento;
 
-use \Magento\Framework\App\Area;
+use Magento\Framework\App\Area;
 
-/**
- * Class \Ess\M2ePro\Helper\Magento\Plugin
- */
-class Plugin extends \Ess\M2ePro\Helper\AbstractHelper
+class Plugin
 {
-    protected $fileResolver;
-    protected $areaList;
-
-    //########################################
+    /** @var \Magento\Framework\App\Config\FileResolver  */
+    private $fileResolver;
+    /** @var \Magento\Framework\App\AreaList  */
+    private $areaList;
 
     public function __construct(
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Config\FileResolver $fileResolver,
-        \Magento\Framework\App\AreaList $areaList,
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Framework\App\AreaList $areaList
     ) {
-        parent::__construct($helperFactory, $context);
-
         $this->fileResolver = $fileResolver;
         $this->areaList = $areaList;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getAll()
+    /**
+     * @return array
+     */
+    public function getAll(): array
     {
         $plugins = [];
 
@@ -46,9 +41,14 @@ class Plugin extends \Ess\M2ePro\Helper\AbstractHelper
         return $plugins;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    private function scanConfigFiles($name)
+    /**
+     * @param $name
+     *
+     * @return array
+     */
+    private function scanConfigFiles($name): array
     {
         $files = [];
         $areaCodes = array_merge(
@@ -66,7 +66,12 @@ class Plugin extends \Ess\M2ePro\Helper\AbstractHelper
         return !empty($files) ? array_keys($files) : [];
     }
 
-    private function scanConfigFile($fileName)
+    /**
+     * @param $fileName
+     *
+     * @return array
+     */
+    private function scanConfigFile($fileName): array
     {
         $dom = new \DOMDocument();
         $dom->load($fileName);
@@ -100,12 +105,22 @@ class Plugin extends \Ess\M2ePro\Helper\AbstractHelper
         return $plugins;
     }
 
-    private function isValidPlugin($plugin)
+    /**
+     * @param $plugin
+     *
+     * @return bool
+     */
+    private function isValidPlugin($plugin): bool
     {
         return ($plugin instanceof \DOMElement) && $plugin->tagName === 'plugin' && $plugin->getAttribute('type');
     }
 
-    private function getMethods($class)
+    /**
+     * @param $class
+     *
+     * @return array
+     */
+    private function getMethods($class): array
     {
         try {
             $reflection = new \ReflectionClass($class);

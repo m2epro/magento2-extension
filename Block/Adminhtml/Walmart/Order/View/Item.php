@@ -15,7 +15,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
  */
 class Item extends AbstractGrid
 {
-    /** @var $order \Ess\M2ePro\Model\Order */
+    /** @var \Ess\M2ePro\Model\Order $order */
     protected $order = null;
 
     protected $itemSkuToWalmartIds;
@@ -24,7 +24,14 @@ class Item extends AbstractGrid
     protected $resourceConnection;
     protected $walmartFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
+
+    /** @var \Ess\M2ePro\Helper\Component\Walmart */
+    private $walmartHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Catalog\Model\Product $productModel,
@@ -32,12 +39,17 @@ class Item extends AbstractGrid
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
+        \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->productModel = $productModel;
         $this->resourceConnection = $resourceConnection;
+        $this->translationHelper = $translationHelper;
         $this->walmartFactory = $walmartFactory;
-
+        $this->walmartHelper = $walmartHelper;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -205,11 +217,9 @@ class Item extends AbstractGrid
      */
     public function callbackColumnProduct($value, $row, $column, $isExport)
     {
-        /** @var \Ess\M2ePro\Helper\Data $dataHelper */
-        $dataHelper = $this->getHelper('Data');
+        $dataHelper = $this->dataHelper;
 
-        /** @var \Ess\M2ePro\Helper\Module\Translation $translationHelper */
-        $translationHelper = $this->getHelper('Module_Translation');
+        $translationHelper = $this->translationHelper;
 
         $walmartOrderItem = $row->getChildObject();
         $skuHtml = '';
@@ -221,7 +231,7 @@ HTML;
 
         $walmartLink = '';
         $marketplaceId = $this->order->getMarketplaceId();
-        $walmartHelper = $this->getHelper('Component_Walmart');
+        $walmartHelper = $this->walmartHelper;
         $idForLink = $walmartHelper->getIdentifierForItemUrl($marketplaceId);
         if (!empty($this->itemSkuToWalmartIds[$walmartOrderItem->getSku()][$idForLink])) {
             $itemUrl = $walmartHelper->getItemUrl(

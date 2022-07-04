@@ -10,14 +10,32 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Shipping\Edit;
 
 use Ess\M2ePro\Model\Amazon\Template\Shipping;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Shipping\Edit\Form
- */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected $formData;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    protected $magentoAttributeHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->supportHelper = $supportHelper;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     protected function _prepareForm()
     {
@@ -35,11 +53,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $formData = $this->getFormData();
 
-        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
-        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
-        $attributes = $magentoAttributeHelper->getAll();
+        $attributes = $this->magentoAttributeHelper->getAll();
         $attributesByInputTypes = [
-            'text_select' => $magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'select'])
+            'text_select' => $this->magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'select'])
         ];
 
         $fieldset = $form->addFieldset(
@@ -145,17 +161,17 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         So you should provide a Channel Template Name which you would like to be used.<br />
         More detailed information about ability to work with this Page
         you can find <a target="_blank" href="%url%">here</a>',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/6-0kB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/6-0kB')
                 )
             ]
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class)
         );
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')
+            $this->dataHelper
                 ->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\Shipping::class)
         );
 
@@ -192,7 +208,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $formData = $this->getFormData();
 
-        $title = $this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeHtml($formData['title']));
+        $title = $this->dataHelper->escapeJs($this->dataHelper->escapeHtml($formData['title']));
 
         $this->js->add(
             <<<JS

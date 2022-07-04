@@ -10,12 +10,30 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Account;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Account\Save
- */
 class Save extends Account
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Wizard */
+    private $helperWizard;
+
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $helperException;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $helperData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Wizard $helperWizard,
+        \Ess\M2ePro\Helper\Module\Exception $helperException,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->helperWizard = $helperWizard;
+        $this->helperException = $helperException;
+        $this->helperData = $helperData;
+    }
 
     public function execute()
     {
@@ -31,7 +49,7 @@ class Save extends Account
         try {
             $account = $id ? $this->updateAccount($id, $data) : $this->addAccount($data);
         } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
+            $this->helperException->process($exception);
 
             $message = $this->__(
                 'The Walmart access obtaining is currently unavailable.<br/>Reason: %error_message%',
@@ -62,21 +80,16 @@ class Save extends Account
 
         $this->messageManager->addSuccess($this->__('Account was saved'));
 
-        /** @var $wizardHelper \Ess\M2ePro\Helper\Module\Wizard */
-        $wizardHelper = $this->getHelper('Module\Wizard');
-
         $routerParams = [
             'id'       => $account->getId(),
             '_current' => true
         ];
 
-        if ($wizardHelper->isActive(\Ess\M2ePro\Helper\View\Walmart::WIZARD_INSTALLATION_NICK) &&
-            $wizardHelper->getStep(\Ess\M2ePro\Helper\View\Walmart::WIZARD_INSTALLATION_NICK) == 'account') {
+        if ($this->helperWizard->isActive(\Ess\M2ePro\Helper\View\Walmart::WIZARD_INSTALLATION_NICK) &&
+            $this->helperWizard->getStep(\Ess\M2ePro\Helper\View\Walmart::WIZARD_INSTALLATION_NICK) == 'account') {
             $routerParams['wizard'] = true;
         }
 
-        return $this->_redirect($this->getHelper('Data')->getBackUrl('list', [], ['edit'=>$routerParams]));
+        return $this->_redirect($this->helperData->getBackUrl('list', [], ['edit'=>$routerParams]));
     }
-
-    //########################################
 }

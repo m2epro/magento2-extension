@@ -12,9 +12,6 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Listing as AmazonListing;
 use Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\General as ValidatorSkuGeneral;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling\Form
- */
 class Form extends AbstractForm
 {
     protected $useFormContainer = true;
@@ -22,22 +19,29 @@ class Form extends AbstractForm
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    protected $magentoAttributeHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->amazonFactory = $amazonFactory;
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
@@ -53,33 +57,29 @@ class Form extends AbstractForm
             ]
         );
 
-        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
-        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
-
-        $attributes = $this->getHelper('Magento\Attribute')->getAll();
-
+        $attributes = $this->magentoAttributeHelper->getAll();
         $attributesByTypes = [
-            'boolean'       => $magentoAttributeHelper->filterByInputTypes(
+            'boolean'       => $this->magentoAttributeHelper->filterByInputTypes(
                 $attributes,
                 ['boolean']
             ),
-            'text'          => $magentoAttributeHelper->filterByInputTypes(
+            'text'          => $this->magentoAttributeHelper->filterByInputTypes(
                 $attributes,
                 ['text']
             ),
-            'text_textarea' => $magentoAttributeHelper->filterByInputTypes(
+            'text_textarea' => $this->magentoAttributeHelper->filterByInputTypes(
                 $attributes,
                 ['text', 'textarea']
             ),
-            'text_date'     => $magentoAttributeHelper->filterByInputTypes(
+            'text_date'     => $this->magentoAttributeHelper->filterByInputTypes(
                 $attributes,
                 ['text', 'date', 'datetime']
             ),
-            'text_select'   => $magentoAttributeHelper->filterByInputTypes(
+            'text_select'   => $this->magentoAttributeHelper->filterByInputTypes(
                 $attributes,
                 ['text', 'select']
             ),
-            'text_images'   => $magentoAttributeHelper->filterByInputTypes(
+            'text_images'   => $this->magentoAttributeHelper->filterByInputTypes(
                 $attributes,
                 ['text', 'image', 'media_image', 'gallery', 'multiline', 'textarea', 'select', 'multiselect']
             )
@@ -565,7 +565,8 @@ HTML
             $preparedAttributes[] = $attribute;
         }
 
-        $button = $this->createBlock('Magento_Button_MagentoAttribute')->addData([
+        $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
+                                    ->addData([
             'label' => $this->__('Insert'),
             'destination_id' => 'condition_note_value',
             'class'=>'primary',
@@ -1031,14 +1032,14 @@ HTML
     protected function _prepareLayout()
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')
+            $this->dataHelper
                 ->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class)
         );
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')
+            $this->dataHelper
                 ->getClassConstants(AmazonListing::class)
         );
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(ValidatorSkuGeneral::class));
+        $this->jsPhp->addConstants($this->dataHelper->getClassConstants(ValidatorSkuGeneral::class));
 
         $this->jsUrl->addUrls(
             [
@@ -1274,7 +1275,7 @@ JS
             'handling_time_custom_attribute' => '',
 
             'restock_date_mode'             => AmazonListing::RESTOCK_DATE_MODE_NONE,
-            'restock_date_value'            => $this->getHelper('Data')->getCurrentTimezoneDate(),
+            'restock_date_value'            => $this->dataHelper->getCurrentTimezoneDate(),
             'restock_date_custom_attribute' => ''
         ];
     }

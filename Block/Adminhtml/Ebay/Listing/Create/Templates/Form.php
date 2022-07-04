@@ -10,26 +10,27 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create\Templates;
 
 use \Ess\M2ePro\Model\Ebay\Template\Manager as TemplateManager;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create\Templates\Form
- */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->ebayFactory = $ebayFactory;
+        $this->dataHelper = $dataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -399,7 +400,7 @@ HTML
         $formData = $this->getListingData();
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')
+            $this->dataHelper
                 ->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay::class)
         );
 
@@ -534,7 +535,7 @@ JS
 
     protected function getShippingTemplates($marketplaceId)
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping\Collection $collection */
         $collection = $this->activeRecordFactory->getObject('Ebay_Template_Shipping')->getCollection();
         $collection->addFieldToFilter('marketplace_id', $marketplaceId);
         $collection->addFieldToFilter('is_custom_template', 0);
@@ -554,7 +555,7 @@ JS
 
     protected function getReturnPolicyTemplates($marketplaceId)
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Ebay\Template\ReturnPolicy\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Template\ReturnPolicy\Collection $collection */
         $collection = $this->activeRecordFactory->getObject('Ebay_Template_ReturnPolicy')->getCollection();
         $collection->addFieldToFilter('marketplace_id', $marketplaceId);
         $collection->addFieldToFilter('is_custom_template', 0);
@@ -574,7 +575,7 @@ JS
 
     protected function getSellingFormatTemplates()
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Template\SellingFormat\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Template\SellingFormat\Collection $collection */
         $collection = $this->ebayFactory->getObject('Template_SellingFormat')->getCollection();
         $collection->addFieldToFilter('is_custom_template', 0);
         $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
@@ -593,7 +594,7 @@ JS
 
     protected function getDescriptionTemplates()
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Template\Description\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Template\Description\Collection $collection */
         $collection = $this->ebayFactory->getObject('Template_Description')->getCollection();
         $collection->addFieldToFilter('is_custom_template', 0);
         $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
@@ -612,7 +613,7 @@ JS
 
     protected function getSynchronizationTemplates()
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\Template\Synchronization\Collection */
+        /** @var \Ess\M2ePro\Model\ResourceModel\Template\Synchronization\Collection $collection */
         $collection = $this->ebayFactory->getObject('Template_Synchronization')->getCollection();
         $collection->addFieldToFilter('is_custom_template', 0);
         $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);

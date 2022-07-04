@@ -68,7 +68,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
                              . '\'' . $this->getSaveConfirmationText() . '\','
                              . '\'' . \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_DESCRIPTION . '\''
                              . ')',
-                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
                         'label' => $this->__('Save And Continue Edit'),
@@ -94,7 +94,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
                                . '\'' . $this->getSaveConfirmationText() . '\','
                                . '\'' . \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_DESCRIPTION . '\''
                                . ')',
-                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
                         'label'     => $this->__('Save And Back'),

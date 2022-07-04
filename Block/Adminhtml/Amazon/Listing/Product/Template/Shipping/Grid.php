@@ -8,15 +8,23 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Shipping;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Shipping\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $marketplaceId;
     protected $productsIds;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $backendHelper, $data);
+    }
 
     public function _construct()
     {
@@ -109,7 +117,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $this->setChild(
             'refresh_button',
-            $this->createBlock('Magento\Button')
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
                 ->setData([
                     'id' => 'shipping_template_refresh_btn',
                     'label'     => $this->__('Refresh'),
@@ -144,7 +152,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'close_on_save' => true
         ]);
 
-        $title = $this->getHelper('Data')->escapeHtml($value);
+        $title = $this->dataHelper->escapeHtml($value);
 
         return <<<HTML
 <a target="_blank" href="{$templateEditUrl}">{$title}</a>

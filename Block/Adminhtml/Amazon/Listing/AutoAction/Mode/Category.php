@@ -8,13 +8,34 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode\Category
- */
 class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\AbstractCategory
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
 
+    /**
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $registry, $formFactory, $dataHelper, $data);
+    }
+
+    /**
+     * @return void
+     */
     public function _construct()
     {
         parent::_construct();
@@ -25,31 +46,38 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstr
         // ---------------------------------------
     }
 
-    //########################################
-
     protected function prepareGroupsGrid()
     {
-        $groupGrid = $this->createBlock('Amazon_Listing_AutoAction_Mode_Category_Group_Grid');
+        $groupGrid = $this->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode\Category\Group\Grid::class);
         $groupGrid->prepareGrid();
         $this->setChild('group_grid', $groupGrid);
 
         return $groupGrid;
     }
 
-    //########################################
-
+    /**
+     * @param $html
+     *
+     * @return string
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \ReflectionException
+     */
     protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Amazon\Listing::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Amazon\Listing::class)
         );
 
         return parent::_afterToHtml($html);
     }
 
-    protected function _toHtml()
+    /**
+     * @return string
+     */
+    protected function _toHtml(): string
     {
-        $helpBlock = $this->createBlock('HelpBlock')->setData([
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
             'content' => $this->__(
                 '<p>These Rules of automatic product adding and removal come into action when a Magento Product is
                 added to the Magento Category with regard to the Store View selected for the M2E Pro Listing. In other
@@ -64,12 +92,10 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstr
                 create as many groups as you need, but one Magento Category can be used only in one Rule.</p><br>
                 <p>More detailed information you can find
                 <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/uAMVB')
+                $this->supportHelper->getDocumentationArticleUrl('x/uAMVB')
             )
         ]);
 
         return $helpBlock->toHtml() . parent::_toHtml();
     }
-
-    //########################################
 }

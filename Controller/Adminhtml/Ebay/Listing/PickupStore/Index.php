@@ -20,11 +20,13 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
         $listing = $this->initListing();
 
         if ($this->isAjax()) {
-            $this->setAjaxContent($this->createBlock('Ebay_Listing_PickupStore_Grid'));
+            $this->setAjaxContent(
+                $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Grid::class)
+            );
             return $this->getResult();
         }
 
-        $this->addContent($this->createBlock('Ebay_Listing_PickupStore'));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore::class));
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('In-Store Pickup "%s%"', $listing->getTitle())
         );

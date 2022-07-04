@@ -8,104 +8,118 @@
 
 namespace Ess\M2ePro\Helper\Component;
 
-use \Ess\M2ePro\Model\Listing\Product as ListingProduct;
+use Ess\M2ePro\Model\Listing\Product as ListingProduct;
 
-class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
+class Amazon
 {
-    const NICK  = 'amazon';
+    public const NICK = 'amazon';
 
-    const MARKETPLACE_SYNCHRONIZATION_LOCK_ITEM_NICK = 'amazon_marketplace_synchronization';
+    public const MARKETPLACE_SYNCHRONIZATION_LOCK_ITEM_NICK = 'amazon_marketplace_synchronization';
 
-    const MARKETPLACE_CA = 24;
-    const MARKETPLACE_DE = 25;
-    const MARKETPLACE_FR = 26;
-    const MARKETPLACE_UK = 28;
-    const MARKETPLACE_US = 29;
-    const MARKETPLACE_ES = 30;
-    const MARKETPLACE_IT = 31;
-    const MARKETPLACE_CN = 32;
-    const MARKETPLACE_MX = 34;
-    const MARKETPLACE_AU = 35;
-    const MARKETPLACE_NL = 39;
-    const MARKETPLACE_TR = 40;
-    const MARKETPLACE_SE = 41;
-    const MARKETPLACE_JP = 42;
-    const MARKETPLACE_PL = 43;
+    public const MARKETPLACE_CA = 24;
+    public const MARKETPLACE_DE = 25;
+    public const MARKETPLACE_FR = 26;
+    public const MARKETPLACE_UK = 28;
+    public const MARKETPLACE_US = 29;
+    public const MARKETPLACE_ES = 30;
+    public const MARKETPLACE_IT = 31;
+    public const MARKETPLACE_CN = 32;
+    public const MARKETPLACE_MX = 34;
+    public const MARKETPLACE_AU = 35;
+    public const MARKETPLACE_NL = 39;
+    public const MARKETPLACE_TR = 40;
+    public const MARKETPLACE_SE = 41;
+    public const MARKETPLACE_JP = 42;
+    public const MARKETPLACE_PL = 43;
 
     /** @var \Magento\Directory\Model\ResourceModel\Region\Collection */
-    protected $regionCollection;
-
+    private $regionCollection;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
-    protected $amazonFactory;
-
+    private $amazonFactory;
     /** @var \Ess\M2ePro\Helper\Module\Translation */
-    protected $moduleTranslation;
-
-    /** @var \Ess\M2ePro\Helper\Module */
-    protected $helperModule;
-
+    private $moduleTranslation;
     /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
-    protected $cachePermanent;
+    private $cachePermanent;
+    /** @var \Ess\M2ePro\Model\Config\Manager */
+    private $config;
 
+    /**
+     * @param \Magento\Directory\Model\ResourceModel\Region\Collection $regionCollection
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
+     * @param \Ess\M2ePro\Helper\Module\Translation $moduleTranslation
+     * @param \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent
+     * @param \Ess\M2ePro\Model\Config\Manager $config
+     */
     public function __construct(
         \Magento\Directory\Model\ResourceModel\Region\Collection $regionCollection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Module\Translation $moduleTranslation,
-        \Ess\M2ePro\Helper\Module $helperModule,
         \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Model\Config\Manager $config
     ) {
-        parent::__construct($helperFactory, $context);
-
         $this->regionCollection = $regionCollection;
         $this->amazonFactory = $amazonFactory;
         $this->moduleTranslation = $moduleTranslation;
-        $this->helperModule = $helperModule;
         $this->cachePermanent = $cachePermanent;
+        $this->config = $config;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getTitle()
+    /**
+     * @return string
+     */
+    public function getTitle(): string
     {
         return $this->moduleTranslation->__('Amazon');
     }
 
-    public function getChannelTitle()
+    /**
+     * @return string
+     */
+    public function getChannelTitle(): string
     {
         return $this->moduleTranslation->__('Amazon');
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getHumanTitleByListingProductStatus($status)
+    /**
+     * @param string $status
+     *
+     * @return string|null
+     */
+    public function getHumanTitleByListingProductStatus($status): ?string
     {
         $statuses = [
             ListingProduct::STATUS_UNKNOWN    => $this->moduleTranslation->__('Unknown'),
             ListingProduct::STATUS_NOT_LISTED => $this->moduleTranslation->__('Not Listed'),
             ListingProduct::STATUS_LISTED     => $this->moduleTranslation->__('Active'),
             ListingProduct::STATUS_STOPPED    => $this->moduleTranslation->__('Inactive'),
-            ListingProduct::STATUS_BLOCKED    => $this->moduleTranslation->__('Incomplete')
+            ListingProduct::STATUS_BLOCKED    => $this->moduleTranslation->__('Incomplete'),
         ];
 
-        if (!isset($statuses[$status])) {
-            return null;
-        }
-
-        return $statuses[$status];
+        return $statuses[$status] ?? null;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function isEnabled()
+    /**
+     * @return bool
+     */
+    public function isEnabled(): bool
     {
-        return (bool)$this->helperModule->getConfig()->getGroupValue('/component/'.self::NICK.'/', 'mode');
+        return (bool)$this->config->getGroupValue('/component/' . self::NICK . '/', 'mode');
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getRegisterUrl($marketplaceId = null)
+    /**
+     * @param int $marketplaceId
+     *
+     * @return string
+     */
+    public function getRegisterUrl($marketplaceId = null): string
     {
         $marketplaceId = (int)$marketplaceId;
         $marketplaceId <= 0 && $marketplaceId = self::MARKETPLACE_US;
@@ -115,41 +129,53 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 
         $marketplace = $this->amazonFactory->getCachedObjectLoaded('Marketplace', $marketplaceId);
 
-        return 'https://sellercentral.'.
-                $domain.
-                '/gp/mws/registration/register.html?ie=UTF8&*Version*=1&*entries*=0&applicationName='.
-                rawurlencode($applicationName).'&appDevMWSAccountId='.
-                $marketplace->getChildObject()->getDeveloperKey();
+        return 'https://sellercentral.' .
+            $domain .
+            '/gp/mws/registration/register.html?ie=UTF8&*Version*=1&*entries*=0&applicationName=' .
+            rawurlencode($applicationName) . '&appDevMWSAccountId=' .
+            $marketplace->getChildObject()->getDeveloperKey();
     }
 
-    public function getItemUrl($productId, $marketplaceId = null)
+    /**
+     * @param int $productId
+     * @param int|null $marketplaceId
+     *
+     * @return string
+     */
+    public function getItemUrl($productId, $marketplaceId = null): string
     {
         $marketplaceId = (int)$marketplaceId;
         $marketplaceId <= 0 && $marketplaceId = self::MARKETPLACE_US;
 
         $domain = $this->amazonFactory->getCachedObjectLoaded('Marketplace', $marketplaceId)->getUrl();
 
-        return 'http://'.$domain.'/gp/product/'.$productId;
+        return 'http://' . $domain . '/gp/product/' . $productId;
     }
 
-    public function getOrderUrl($orderId, $marketplaceId = null)
+    /**
+     * @param int $orderId
+     * @param int|null $marketplaceId
+     *
+     * @return string
+     */
+    public function getOrderUrl($orderId, $marketplaceId = null): string
     {
         $marketplaceId = (int)$marketplaceId;
         $marketplaceId <= 0 && $marketplaceId = self::MARKETPLACE_US;
 
         $domain = $this->amazonFactory->getCachedObjectLoaded('Marketplace', $marketplaceId)->getUrl();
 
-        return 'https://sellercentral.'.$domain.'/orders-v3/order/'.$orderId;
+        return 'https://sellercentral.' . $domain . '/orders-v3/order/' . $orderId;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param string $string
      *
      * @return bool
      */
-    public function isASIN($string)
+    public function isASIN($string): bool
     {
         $string = (string)$string;
         if (strlen($string) !== 10) {
@@ -165,31 +191,43 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getApplicationName()
     {
-        return $this->helperModule->getConfig()->getGroupValue('/amazon/', 'application_name');
+        return $this->config->getGroupValue('/amazon/', 'application_name');
     }
 
     // ----------------------------------------
 
-    public function getCurrencies()
+    /**
+     * @return string[]
+     */
+    public function getCurrencies(): array
     {
-        return  [
+        return [
             'GBP' => 'British Pound',
             'EUR' => 'Euro',
             'USD' => 'US Dollar',
         ];
     }
 
-    public function getCarriers()
+    /**
+     * @return string[]
+     */
+    public function getCarriers(): array
     {
         return [
             'usps'  => 'USPS',
             'ups'   => 'UPS',
             'fedex' => 'FedEx',
-            'dhl'   => 'DHL'
+            'dhl'   => 'DHL',
         ];
     }
 
-    public function getCarrierTitle($carrierCode, $title)
+    /**
+     * @param string $carrierCode
+     * @param string $title
+     *
+     * @return string
+     */
+    public function getCarrierTitle($carrierCode, $title): string
     {
         $carriers = $this->getCarriers();
         $carrierCode = strtolower($carrierCode);
@@ -206,21 +244,23 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
     public function getMarketplacesAvailableForApiCreation()
     {
         return $this->amazonFactory->getObject('Marketplace')->getCollection()
-                    ->addFieldToFilter('component_mode', self::NICK)
-                    ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
-                    ->addFieldToFilter('developer_key', ['notnull' => true])
-                    ->setOrder('sorder', 'ASC');
+                                   ->addFieldToFilter('component_mode', self::NICK)
+                                   ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
+                                   ->addFieldToFilter('developer_key', ['notnull' => true])
+                                   ->setOrder('sorder', 'ASC');
     }
 
     public function getMarketplacesAvailableForAsinCreation()
     {
-        $collection = $this->getMarketplacesAvailableForApiCreation();
-        return $collection->addFieldToFilter('is_new_asin_available', 1);
+        return $this->getMarketplacesAvailableForApiCreation()->addFieldToFilter('is_new_asin_available', 1);
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getStatesList()
+    /**
+     * @return array
+     */
+    public function getStatesList(): array
     {
         $collection = $this->regionCollection->addCountryFilter('US');
         $collection->addFieldToFilter(
@@ -235,8 +275,8 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
                     'Armed Forces Pacific',
                     'Federated States Of Micronesia',
                     'Marshall Islands',
-                    'Palau'
-                ]
+                    'Palau',
+                ],
             ]
         );
 
@@ -249,12 +289,13 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
         return $states;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function clearCache()
+    /**
+     * @return void
+     */
+    public function clearCache(): void
     {
         $this->cachePermanent->removeTagValues(self::NICK);
     }
-
-    //########################################
 }

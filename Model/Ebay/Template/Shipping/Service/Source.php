@@ -13,6 +13,7 @@ namespace Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
  */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
+    /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
     /**
      * @var $magentoProduct \Ess\M2ePro\Model\Magento\Product
      */

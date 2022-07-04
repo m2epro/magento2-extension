@@ -18,9 +18,13 @@ class AddProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Transferring $transferring */
     protected $transferring;
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $helperData;
+
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context,
         \Ess\M2ePro\Model\Amazon\Listing\Transferring $transferring
@@ -28,6 +32,7 @@ class AddProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         parent::__construct($amazonFactory, $context);
 
         $this->transferring = $transferring;
+        $this->helperData = $helperData;
     }
 
     //########################################
@@ -79,7 +84,7 @@ class AddProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 
             $targetListing->getChildObject()->setData(
                 'product_add_ids',
-                $this->getHelper('Data')->jsonEncode($existingIds)
+                $this->helperData->jsonEncode($existingIds)
             );
             $targetListing->save();
         }
@@ -98,6 +103,6 @@ class AddProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             $this->transferring->clearSession();
         }
 
-        return $this->getResponse()->setBody($this->getHelper('Data')->jsonEncode(['result' => 'success']));
+        return $this->getResponse()->setBody($this->helperData->jsonEncode(['result' => 'success']));
     }
 }

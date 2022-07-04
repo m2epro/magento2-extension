@@ -34,7 +34,8 @@ class MarkAsShipped extends Order
         ];
 
         if ($order->getChildObject()->isPrime()) {
-            $popUp = $this->createBlock('Amazon_order_merchantFulfillment_message');
+            $popUp = $this->getLayout()
+                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment\Message::class);
             $popUp->setData('message', 'markAsShipped');
             $responseData['html'] = $popUp->toHtml();
             $responseData['success'] = false;

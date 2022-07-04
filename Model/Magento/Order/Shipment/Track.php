@@ -17,7 +17,7 @@ use Magento\Sales\Model\ResourceModel\Order\Shipment\Track\Collection as TrackCo
 class Track extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $shipmentTrackFactory;
-    /** @var $shipment \Magento\Sales\Model\Order */
+    /** @var \Magento\Sales\Model\Order $shipment */
     protected $magentoOrder = null;
 
     protected $supportedCarriers = [];
@@ -102,7 +102,7 @@ class Track extends \Ess\M2ePro\Model\AbstractModel
         $this->getHelper('Data\GlobalData')->setValue('skip_shipment_observer', true);
         // ---------------------------------------
 
-        /** @var $shipment \Magento\Sales\Model\Order\Shipment */
+        /** @var \Magento\Sales\Model\Order\Shipment $shipment */
         $shipment = $this->magentoOrder->getShipmentsCollection()->getFirstItem();
 
         // Sometimes Magento returns an array instead of Collection by a call of $shipment->getTracksCollection()
@@ -112,7 +112,7 @@ class Track extends \Ess\M2ePro\Model\AbstractModel
         }
 
         foreach ($trackingDetails as $trackingDetail) {
-            /** @var $track \Magento\Sales\Model\Order\Shipment\Track */
+            /** @var \Magento\Sales\Model\Order\Shipment\Track $track */
             $track = $this->shipmentTrackFactory->create();
             $track->setNumber($trackingDetail['number']);
             $track->setTitle($trackingDetail['title']);

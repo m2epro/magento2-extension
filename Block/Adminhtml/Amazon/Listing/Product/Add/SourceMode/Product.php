@@ -8,12 +8,19 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Product
- */
 class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -42,7 +49,7 @@ class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
                 'wizard' => $this->getRequest()->getParam('wizard')
             ]);
         } else {
-            $url = $this->getHelper('Data')->getBackUrl(
+            $url = $this->dataHelper->getBackUrl(
                 '*/amazon_listing/index'
             );
         }
@@ -74,7 +81,7 @@ class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->css->addFile('listing/autoAction.css');
 
         $this->jsPhp->addConstants(
-            $this->getHelper('Data')->getClassConstants(\Ess\M2ePro\Model\Listing::class)
+            $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Listing::class)
         );
 
         return parent::_prepareLayout();
@@ -84,13 +91,13 @@ class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
     {
         $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
 
-        $viewHeaderBlock = $this->createBlock(
-            'Listing_View_Header',
+        $viewHeaderBlock = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
             '',
             ['data' => ['listing' => $listing]]
         );
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
+        $this->jsUrl->addUrls($this->dataHelper->getControllerActions(
             'Amazon_Listing_AutoAction',
             ['listing_id' => $this->getRequest()->getParam('id')]
         ));
@@ -123,9 +130,9 @@ class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 JS
         );
 
-        $hideOthersListingsProductsFilterBlock = $this->createBlock(
-            'Listing_Product_ShowOthersListingsProductsFilter'
-        )->setData([
+        $hideOthersListingsProductsFilterBlock = $this->getLayout()
+                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\Product\ShowOthersListingsProductsFilter::class)
+                  ->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'controller' => 'amazon_listing_product_add'
         ]);

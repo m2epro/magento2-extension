@@ -8,13 +8,28 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\General
- */
 class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
 
+    /**
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        $this->supportHelper = $supportHelper;
+        parent::__construct($context, $data);
+    }
+
+    /**
+     * @return void
+     */
     public function _construct()
     {
         parent::_construct();
@@ -41,14 +56,16 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         );
     }
 
-    //########################################
-
-    protected function _toHtml()
+    /**
+     * @return string
+     */
+    protected function _toHtml(): string
     {
-        $breadcrumb = $this->createBlock('Amazon_Listing_Create_Breadcrumb')
+        $breadcrumb = $this->getLayout()
+                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Breadcrumb::class)
             ->setSelectedStep(1);
 
-        $helpBlock = $this->createBlock('HelpBlock')->setData(
+        $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData(
             [
                 'content' => $this->__(
                     '<p>It is necessary to select an Amazon Account (existing or create a new one) as well as choose
@@ -57,7 +74,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 values will be used in the Listing settings.</p><br>
                 <p>More detailed information you can find
                 <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/hf8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/hf8UB')
                 )
             ]
         );
@@ -68,6 +85,4 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             $helpBlock->toHtml() .
             '<div id="content_container">' . parent::_toHtml() . '</div>';
     }
-
-    //########################################
 }

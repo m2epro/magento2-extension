@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\ActionAbstract
- */
 abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 {
-    //########################################
-
     protected function scheduleAction($action, array $params = [])
     {
         if (!$listingsProductsIds = $this->getRequest()->getParam('selected_products')) {
@@ -72,8 +67,6 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Walmart\M
         $this->setJsonContent(['result' => 'success', 'action_id' => $logsActionId]);
         return $this->getResult();
     }
-
-    //########################################
 
     protected function checkLocking(&$listingsProducts, $logsActionId, $action)
     {
@@ -166,6 +159,4 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Walmart\M
 
         throw new \Ess\M2ePro\Model\Exception\Logic('Unknown action.');
     }
-
-    //########################################
 }

@@ -57,7 +57,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $dataBlock = $this->createBlock('Amazon_Template_Description_Edit_Data');
+        $dataBlock = $this->getLayout()
+                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Data::class);
         $form->addField(
             'content_html',
             self::CUSTOM_CONTAINER,

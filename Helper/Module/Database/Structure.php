@@ -8,49 +8,68 @@
 
 namespace Ess\M2ePro\Helper\Module\Database;
 
-use Ess\M2ePro\Helper\Module;
-use Magento\Framework\Component\ComponentRegistrar;
-
-/**
- * Class \Ess\M2ePro\Helper\Module\Database\Structure
- */
-class Structure extends \Ess\M2ePro\Helper\AbstractHelper
+class Structure
 {
-    protected $resourceConnection;
+    /** @var \Magento\Framework\App\ResourceConnection */
+    private $resourceConnection;
 
-    protected $directoryReaderFactory;
+    /** @var \Magento\Framework\Filesystem\Directory\ReadFactory */
+    private $directoryReaderFactory;
 
-    protected $componentRegistrar;
+    /** @var \Magento\Framework\Component\ComponentRegistrar */
+    private $componentRegistrar;
 
-    protected $activeRecordFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
+    private $activeRecordFactory;
 
-    protected $objectManager;
+    /** @var \Magento\Framework\ObjectManagerInterface */
+    private $objectManager;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
 
+    /** @var \Ess\M2ePro\Helper\Component */
+    private $componentHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data\Cache\Runtime */
+    private $runtimeCacheHelper;
+
+    /**
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     * @param \Magento\Framework\Filesystem\Directory\ReadFactory $directoryReaderFactory
+     * @param \Magento\Framework\Component\ComponentRegistrar $componentRegistrar
+     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager
+     * @param \Ess\M2ePro\Helper\Magento $magentoHelper
+     * @param \Ess\M2ePro\Helper\Component $componentHelper
+     * @param \Ess\M2ePro\Helper\Data\Cache\Runtime $runtimeCacheHelper
+     */
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\Framework\Filesystem\Directory\ReadFactory $directoryReaderFactory,
-        ComponentRegistrar $componentRegistrar,
+        \Magento\Framework\Component\ComponentRegistrar $componentRegistrar,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Magento\Framework\App\Helper\Context $context
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
+        \Ess\M2ePro\Helper\Component $componentHelper,
+        \Ess\M2ePro\Helper\Data\Cache\Runtime $runtimeCacheHelper
     ) {
-        $this->resourceConnection     = $resourceConnection;
+        $this->resourceConnection = $resourceConnection;
         $this->directoryReaderFactory = $directoryReaderFactory;
-        $this->componentRegistrar     = $componentRegistrar;
-        $this->activeRecordFactory    = $activeRecordFactory;
-        $this->objectManager          = $objectManager;
-
-        parent::__construct($helperFactory, $context);
+        $this->componentRegistrar = $componentRegistrar;
+        $this->activeRecordFactory = $activeRecordFactory;
+        $this->objectManager = $objectManager;
+        $this->magentoHelper = $magentoHelper;
+        $this->componentHelper = $componentHelper;
+        $this->runtimeCacheHelper = $runtimeCacheHelper;
     }
 
-    //########################################
-
+    /**
+     * @return array|mixed
+     */
     public function getMysqlTables()
     {
-        $cacheData = $this->helperFactory->getObject('Data_Cache_Runtime')->getValue(__METHOD__);
+        $cacheData = $this->runtimeCacheHelper->getValue(__METHOD__);
         if (null !== $cacheData) {
             return $cacheData;
         }
@@ -58,35 +77,46 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         $result = [];
 
         $queryStmt = $this->resourceConnection->getConnection()
-            ->select()
-            ->from('information_schema.tables', ['table_name'])
-            ->where('table_schema = ?', $this->getHelper('Magento')->getDatabaseName())
-            ->where('table_name LIKE ?', "%m2epro\_%")
-            ->query();
+                                              ->select()
+                                              ->from('information_schema.tables', ['table_name'])
+                                              ->where('table_schema = ?', $this->magentoHelper->getDatabaseName())
+                                              ->where('table_name LIKE ?', "%m2epro\_%")
+                                              ->query();
 
         while ($tableName = $queryStmt->fetchColumn()) {
             $result[] = $tableName;
         }
 
-        $this->helperFactory->getObject('Data_Cache_Runtime')->setValue(__METHOD__, $result);
+        $this->runtimeCacheHelper->setValue(__METHOD__, $result);
+
         return $result;
     }
 
-    public function getModuleTables()
+    /**
+     * @return int[]|string[]
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\ValidatorException
+     * @throws \ReflectionException
+     */
+    public function getModuleTables(): array
     {
         return array_keys($this->getTablesModels());
     }
 
-    //########################################
-
+    /**
+     * @return array|mixed
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\ValidatorException
+     * @throws \ReflectionException
+     */
     public function getHorizontalTables()
     {
-        $cacheData = $this->helperFactory->getObject('Data_Cache_Runtime')->getValue(__METHOD__);
+        $cacheData = $this->runtimeCacheHelper->getValue(__METHOD__);
         if (null !== $cacheData) {
             return $cacheData;
         }
 
-        $components = $this->getHelper('Component')->getComponents();
+        $components = $this->componentHelper->getComponents();
         $mySqlTables = $this->getModuleTables();
 
         // minimal amount of child tables to be a horizontal table
@@ -98,7 +128,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
             $mySqlTableCropped = str_replace('m2epro_', '', $mySqlTable);
 
             foreach ($components as $component) {
-                $needComponentTable = "m2epro_{$component}_{$mySqlTableCropped}";
+                $needComponentTable = "m2epro_{$component}_$mySqlTableCropped";
 
                 if (in_array($needComponentTable, $mySqlTables)) {
                     $tempComponentTables[$component] = $needComponentTable;
@@ -112,15 +142,19 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
             }
         }
 
-        $this->helperFactory->getObject('Data_Cache_Runtime')->setValue(__METHOD__, $result);
+        $this->runtimeCacheHelper->setValue(__METHOD__, $result);
+
         return $result;
     }
 
-    // ---------------------------------------
-
-    public function getTableComponent($tableName)
+    /**
+     * @param string $tableName
+     *
+     * @return mixed|string
+     */
+    public function getTableComponent(string $tableName)
     {
-        foreach ($this->getHelper('Component')->getComponents() as $component) {
+        foreach ($this->componentHelper->getComponents() as $component) {
             if (strpos(strtolower($tableName), strtolower($component)) !== false) {
                 return $component;
             }
@@ -129,40 +163,72 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         return 'general';
     }
 
-    // ---------------------------------------
-
-    public function isModuleTable($tableName)
+    /**
+     * @param string $tableName
+     *
+     * @return bool
+     */
+    public function isModuleTable(string $tableName): bool
     {
         return strpos($tableName, 'm2epro_') !== false;
     }
 
-    public function isTableHorizontal($tableName)
+    /**
+     * @param string $tableName
+     *
+     * @return bool
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\ValidatorException
+     * @throws \ReflectionException
+     */
+    public function isTableHorizontal(string $tableName): bool
     {
-        return $this->isTableHorizontalChild($tableName) || $this->isTableHorizontalParent($tableName);
+        return $this->isTableHorizontalChild($tableName)
+            || $this->isTableHorizontalParent($tableName);
     }
 
-    public function isTableHorizontalChild($tableName)
+    /**
+     * @param string $tableName
+     *
+     * @return bool
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\ValidatorException
+     * @throws \ReflectionException
+     */
+    public function isTableHorizontalChild(string $tableName): bool
     {
         $horizontalTables = $this->getHorizontalTables();
 
-        $modifiedTableName = str_replace($this->getHelper('Component')->getComponents(), '', $tableName);
+        $modifiedTableName = str_replace($this->componentHelper->getComponents(), '', $tableName);
         $modifiedTableName = str_replace('__', '_', $modifiedTableName);
 
-        return !array_key_exists($tableName, $horizontalTables) &&
-                array_key_exists($modifiedTableName, $horizontalTables);
+        return !array_key_exists($tableName, $horizontalTables)
+            && array_key_exists($modifiedTableName, $horizontalTables);
     }
 
-    public function isTableHorizontalParent($tableName)
+    /**
+     * @param string $tableName
+     *
+     * @return bool
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\ValidatorException
+     * @throws \ReflectionException
+     */
+    public function isTableHorizontalParent(string $tableName): bool
     {
         return array_key_exists($tableName, $this->getHorizontalTables());
     }
 
-    // ---------------------------------------
-
-    public function isTableExists($tableName)
+    /**
+     * @param string $tableName
+     *
+     * @return bool|mixed
+     * @throws \Zend_Db_Statement_Exception
+     */
+    public function isTableExists(string $tableName)
     {
-        $cacheKey  = __METHOD__ . $tableName;
-        $cacheData = $this->helperFactory->getObject('Data_Cache_Runtime')->getValue($cacheKey);
+        $cacheKey = __METHOD__ . $tableName;
+        $cacheData = $this->runtimeCacheHelper->getValue($cacheKey);
 
         if (null !== $cacheData) {
             return $cacheData;
@@ -170,20 +236,28 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
 
         $connection = $this->resourceConnection->getConnection();
 
-        $databaseName = $this->getHelper('Magento')->getDatabaseName();
+        $databaseName = $this->magentoHelper->getDatabaseName();
         $tableName = $this->getTableNameWithPrefix($tableName);
 
-        $result = $connection->query("SHOW TABLE STATUS FROM `{$databaseName}` WHERE `name` = '{$tableName}'")
-                           ->fetch();
+        $result = $connection->query("SHOW TABLE STATUS FROM `$databaseName` WHERE `name` = '$tableName'")
+                             ->fetch();
 
-        $this->helperFactory->getObject('Data_Cache_Runtime')->setValue($cacheKey, $result);
+        $this->runtimeCacheHelper->setValue($cacheKey, $result);
+
         return $result !== false;
     }
 
-    public function isTableStatusOk($tableName)
+    /**
+     * @param string $tableName
+     *
+     * @return bool|mixed
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Zend_Db_Statement_Exception
+     */
+    public function isTableStatusOk(string $tableName)
     {
-        $cacheKey  = __METHOD__ . $tableName;
-        $cacheData = $this->helperFactory->getObject('Data_Cache_Runtime')->getValue($cacheKey);
+        $cacheKey = __METHOD__ . $tableName;
+        $cacheData = $this->runtimeCacheHelper->getValue($cacheKey);
 
         if (null !== $cacheData) {
             return $cacheData;
@@ -192,7 +266,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         $connection = $this->resourceConnection->getConnection();
 
         if (!$this->isTableExists($tableName)) {
-            throw new \Ess\M2ePro\Model\Exception("Table '{$tableName}' is not exists.");
+            throw new \Ess\M2ePro\Model\Exception("Table '$tableName' is not exists.");
         }
 
         $result = true;
@@ -200,27 +274,39 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         try {
             $tableName = $this->getTableNameWithPrefix($tableName);
             $connection->select()->from($tableName, new \Zend_Db_Expr('1'))
-                     ->limit(1)
-                     ->query();
+                       ->limit(1)
+                       ->query();
         } catch (\Exception $e) {
             $result = false;
         }
 
-        $this->helperFactory->getObject('Data_Cache_Runtime')->setValue($cacheKey, $result);
+        $this->runtimeCacheHelper->setValue($cacheKey, $result);
+
         return $result;
     }
 
-    public function isTableReady($tableName)
+    /**
+     * @param string $tableName
+     *
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Zend_Db_Statement_Exception
+     */
+    public function isTableReady(string $tableName): bool
     {
-        return $this->isTableExists($tableName) && $this->isTableStatusOk($tableName);
+        return $this->isTableExists($tableName)
+            && $this->isTableStatusOk($tableName);
     }
 
-    // ---------------------------------------
-
-    public function getCountOfRecords($tableName)
+    /**
+     * @param string $tableName
+     *
+     * @return int|mixed
+     */
+    public function getCountOfRecords(string $tableName)
     {
-        $cacheKey  = __METHOD__ . $tableName;
-        $cacheData = $this->helperFactory->getObject('Data_Cache_Runtime')->getValue($cacheKey);
+        $cacheKey = __METHOD__ . $tableName;
+        $cacheData = $this->runtimeCacheHelper->getValue($cacheKey);
 
         if (null !== $cacheData) {
             return $cacheData;
@@ -230,17 +316,23 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         $tableName = $this->getTableNameWithPrefix($tableName);
 
         $result = $connection->select()->from($tableName, new \Zend_Db_Expr('COUNT(*)'))
-                          ->query()
-                          ->fetchColumn();
+                             ->query()
+                             ->fetchColumn();
 
-        $this->helperFactory->getObject('Data_Cache_Runtime')->setValue($cacheKey, $result);
+        $this->runtimeCacheHelper->setValue($cacheKey, $result);
+
         return (int)$result;
     }
 
-    public function getDataLength($tableName)
+    /**
+     * @param string $tableName
+     *
+     * @return float|mixed
+     */
+    public function getDataLength(string $tableName)
     {
-        $cacheKey  = __METHOD__ . $tableName;
-        $cacheData = $this->helperFactory->getObject('Data_Cache_Runtime')->getValue($cacheKey);
+        $cacheKey = __METHOD__ . $tableName;
+        $cacheData = $this->runtimeCacheHelper->getValue($cacheKey);
 
         if (null !== $cacheData) {
             return $cacheData;
@@ -248,25 +340,31 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
 
         $connection = $this->resourceConnection->getConnection();
 
-        $databaseName = $this->getHelper('Magento')->getDatabaseName();
+        $databaseName = $this->magentoHelper->getDatabaseName();
         $tableName = $this->getTableNameWithPrefix($tableName);
 
         $dataLength = $connection->select()
-                     ->from('information_schema.tables', [new \Zend_Db_Expr('data_length + index_length')])
-                     ->where('`table_name` = ?', $tableName)
-                     ->where('`table_schema` = ?', $databaseName)
-                     ->query()
-                     ->fetchColumn();
+                                 ->from('information_schema.tables', [new \Zend_Db_Expr('data_length + index_length')])
+                                 ->where('`table_name` = ?', $tableName)
+                                 ->where('`table_schema` = ?', $databaseName)
+                                 ->query()
+                                 ->fetchColumn();
 
         $result = round($dataLength / 1024 / 1024, 2);
 
-        $this->helperFactory->getObject('Data_Cache_Runtime')->setValue($cacheKey, $result);
+        $this->runtimeCacheHelper->setValue($cacheKey, $result);
+
         return $result;
     }
 
-    // ---------------------------------------
-
-    public function getModuleTablesInfo()
+    /**
+     * @return array
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\ValidatorException
+     * @throws \ReflectionException
+     * @throws \Zend_Db_Statement_Exception
+     */
+    public function getModuleTablesInfo(): array
     {
         $tablesInfo = [];
         foreach ($this->getModuleTables() as $currentTable) {
@@ -277,10 +375,16 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         return $tablesInfo;
     }
 
-    public function getTableInfo($tableName)
+    /**
+     * @param string $tableName
+     *
+     * @return array|false|mixed
+     * @throws \Zend_Db_Statement_Exception
+     */
+    public function getTableInfo(string $tableName)
     {
-        $cacheKey  = __METHOD__ . $tableName;
-        $cacheData = $this->helperFactory->getObject('Data_Cache_Runtime')->getValue($cacheKey);
+        $cacheKey = __METHOD__ . $tableName;
+        $cacheData = $this->runtimeCacheHelper->getValue($cacheKey);
 
         if (null !== $cacheData) {
             return $cacheData;
@@ -293,7 +397,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         $moduleTableName = $this->getTableNameWithPrefix($tableName);
 
         $stmtQuery = $this->resourceConnection->getConnection()->query(
-            "SHOW COLUMNS FROM {$moduleTableName}"
+            "SHOW COLUMNS FROM $moduleTableName"
         );
 
         $result = [];
@@ -301,46 +405,69 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
 
         while ($row = $stmtQuery->fetch()) {
             $result[strtolower($row['Field'])] = [
-                'name'     => strtolower($row['Field']),
-                'type'     => strtolower($row['Type']),
-                'null'     => strtolower($row['Null']),
-                'key'      => strtolower($row['Key']),
-                'default'  => strtolower($row['Default'] ?? ''),
-                'extra'    => strtolower($row['Extra']),
-                'after'    => $afterPosition
+                'name'    => strtolower($row['Field']),
+                'type'    => strtolower($row['Type']),
+                'null'    => strtolower($row['Null']),
+                'key'     => strtolower($row['Key']),
+                'default' => strtolower($row['Default'] ?? ''),
+                'extra'   => strtolower($row['Extra']),
+                'after'   => $afterPosition,
             ];
 
             $afterPosition = strtolower($row['Field']);
         }
 
-        $this->helperFactory->getObject('Data_Cache_Runtime')->setValue($cacheKey, $result);
+        $this->runtimeCacheHelper->setValue($cacheKey, $result);
+
         return $result;
     }
 
-    public function getColumnInfo($table, $columnName)
+    /**
+     * @param string $table
+     * @param string $columnName
+     *
+     * @return mixed|null
+     * @throws \Zend_Db_Statement_Exception
+     */
+    public function getColumnInfo(string $table, string $columnName)
     {
         $info = $this->getTableInfo($table);
-        return isset($info[$columnName]) ? $info[$columnName] : null;
+
+        return $info[$columnName] ?? null;
     }
 
-    public function getTableModel($tableName)
+    /**
+     * @param string $tableName
+     *
+     * @return mixed|null
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\ValidatorException
+     * @throws \ReflectionException
+     */
+    public function getTableModel(string $tableName)
     {
         $tablesModels = $this->getTablesModels();
-        if (!isset($tablesModels[$tableName])) {
-            return null;
-        }
 
-        return $tablesModels[$tableName];
+        return $tablesModels[$tableName] ?? null;
     }
 
+    /**
+     * @return array|mixed
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\ValidatorException
+     * @throws \ReflectionException
+     */
     protected function getTablesModels()
     {
-        $cacheData = $this->helperFactory->getObject('Data_Cache_Runtime')->getValue(__METHOD__);
+        $cacheData = $this->runtimeCacheHelper->getValue(__METHOD__);
         if (null !== $cacheData) {
             return $cacheData;
         }
 
-        $path = $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, Module::IDENTIFIER);
+        $path = $this->componentRegistrar->getPath(
+            \Magento\Framework\Component\ComponentRegistrar::MODULE,
+            \Ess\M2ePro\Helper\Module::IDENTIFIER
+        );
         $path .= '/Model/ResourceModel';
 
         /** @var \Magento\Framework\Filesystem\Directory\Read $directoryReader */
@@ -353,10 +480,11 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
             }
 
             $modelName = preg_replace('/\.php$/', '', str_replace('/', '\\', $directoryItem));
-            $className = '\Ess\M2ePro\Model\ResourceModel\\'.$modelName;
+            $className = '\Ess\M2ePro\Model\ResourceModel\\' . $modelName;
 
             $reflectionClass = new \ReflectionClass($className);
-            if ($reflectionClass->isAbstract() ||
+            if (
+                $reflectionClass->isAbstract() ||
                 !$reflectionClass->isSubclassOf(\Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel::class)
             ) {
                 continue;
@@ -366,18 +494,26 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
             $object = $this->objectManager->get($className);
 
             $tableName = $object->getMainTable();
-            $tableName = str_replace($this->getHelper('Magento')->getDatabaseTablesPrefix(), '', $tableName);
+            $tableName = str_replace($this->magentoHelper->getDatabaseTablesPrefix(), '', $tableName);
 
             $tablesModels[$tableName] = $modelName;
         }
 
-        $this->helperFactory->getObject('Data_Cache_Runtime')->setValue(__METHOD__, $tablesModels);
+        $this->runtimeCacheHelper->setValue(__METHOD__, $tablesModels);
+
         return $tablesModels;
     }
 
-    // ---------------------------------------
-
-    public function getIdColumn($table)
+    /**
+     * @param string $table
+     *
+     * @return string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\ValidatorException
+     * @throws \ReflectionException
+     */
+    public function getIdColumn(string $table): string
     {
         $tableModel = $this->getTableModel($table);
         $tableModel = $this->activeRecordFactory->getObject($tableModel);
@@ -385,7 +521,17 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         return $tableModel->getIdFieldName();
     }
 
-    public function isIdColumnAutoIncrement($table)
+    /**
+     * @param string $table
+     *
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\ValidatorException
+     * @throws \ReflectionException
+     * @throws \Zend_Db_Statement_Exception
+     */
+    public function isIdColumnAutoIncrement(string $table): bool
     {
         $idColumn = $this->getIdColumn($table);
         $columnInfo = $this->getColumnInfo($table, $idColumn);
@@ -393,9 +539,16 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         return isset($columnInfo['extra']) && strpos($columnInfo['extra'], 'increment') !== false;
     }
 
-    // ---------------------------------------
-
-    public function getConfigSnapshot($table)
+    /**
+     * @param string $table
+     *
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\ValidatorException
+     * @throws \ReflectionException
+     */
+    public function getConfigSnapshot(string $table): array
     {
         $tableModel = $this->getTableModel($table);
         $tableModel = $this->activeRecordFactory->getObject($tableModel);
@@ -404,26 +557,31 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
 
         $result = [];
         foreach ($collection['items'] as $item) {
-            $codeHash = strtolower($item['group']).'#'.strtolower($item['key']);
+            $codeHash = strtolower($item['group']) . '#' . strtolower($item['key']);
             $result[$codeHash] = [
-                'id'     => (int)$item['id'],
-                'group'  => $item['group'],
-                'key'    => $item['key'],
-                'value'  => $item['value'],
+                'id'    => (int)$item['id'],
+                'group' => $item['group'],
+                'key'   => $item['key'],
+                'value' => $item['value'],
             ];
         }
 
         return $result;
     }
 
-    // ---------------------------------------
-
-    public function getStoreRelatedColumns()
+    /**
+     * @return array
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\ValidatorException
+     * @throws \ReflectionException
+     * @throws \Zend_Db_Statement_Exception
+     */
+    public function getStoreRelatedColumns(): array
     {
         $result = [];
 
         $simpleColumns = ['store_id', 'related_store_id'];
-        $jsonColumns   = ['magento_orders_settings', 'marketplaces_data'];
+        $jsonColumns = ['magento_orders_settings', 'marketplaces_data'];
 
         foreach ($this->getModuleTablesInfo() as $tableName => $tableInfo) {
             foreach ($tableInfo as $columnName => $columnInfo) {
@@ -440,19 +598,27 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         return $result;
     }
 
-    public function getTableNameWithPrefix($tableName)
+    /**
+     * @param string $tableName
+     *
+     * @return string
+     */
+    public function getTableNameWithPrefix(string $tableName): string
     {
         return $this->resourceConnection->getTableName($tableName);
     }
 
-    public function getTableNameWithoutPrefix($tableName)
+    /**
+     * @param string $tableName
+     *
+     * @return array|string|string[]
+     */
+    public function getTableNameWithoutPrefix(string $tableName)
     {
         return str_replace(
-            $this->getHelper('Magento')->getDatabaseTablesPrefix(),
+            $this->magentoHelper->getDatabaseTablesPrefix(),
             '',
             $this->getTableNameWithPrefix($tableName)
         );
     }
-
-    //########################################
 }

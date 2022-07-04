@@ -21,7 +21,10 @@ class NewTemplateHtml extends Template
     {
         $nick = $this->getRequest()->getParam('nick');
 
-        $this->setAjaxContent($this->createBlock('Ebay_Listing_Template_NewTemplate_Form')->setData('nick', $nick));
+        $this->setAjaxContent(
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\NewTemplate\Form::class)
+                              ->setData('nick', $nick)
+        );
 
         return $this->getResult();
     }

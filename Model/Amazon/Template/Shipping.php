@@ -55,7 +55,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ess\M2ePro\Model\ResourceModel\Amazon\Template\Shipping');
+        $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Template\Shipping::class);
     }
 
     //########################################

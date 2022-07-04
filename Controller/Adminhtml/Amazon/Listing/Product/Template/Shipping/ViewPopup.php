@@ -46,7 +46,8 @@ class ViewPopup extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\
             return $this->getResult();
         }
 
-        $mainBlock = $this->createBlock('Amazon_Listing_Product_Template_Shipping');
+        $mainBlock = $this->getLayout()
+                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Shipping::class);
         if (!empty($messages)) {
             $mainBlock->setMessages($messages);
         }

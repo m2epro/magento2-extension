@@ -121,7 +121,7 @@ class Delete extends \Ess\M2ePro\Plugin\AbstractPlugin
                 'Source set was changed in the "%stock%" Stock used for M2E Pro Listing.',
                 ['!stock'=> $stock->getName()]
             ),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
         );
     }
 

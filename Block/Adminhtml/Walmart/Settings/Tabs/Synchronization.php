@@ -11,24 +11,39 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs;
 use Magento\Framework\Message\MessageInterface;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs\Synchronization
- */
 class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
 
+    /** @var \Ess\M2ePro\Model\Config\Manager */
+    private $config;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration
+     * @param \Ess\M2ePro\Model\Config\Manager $config
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param array $data
+     */
     public function __construct(
         \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
+        \Ess\M2ePro\Model\Config\Manager $config,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $registry, $formFactory, $data);
-
         $this->moduleConfiguration = $moduleConfiguration;
+        $this->config = $config;
+        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
     }
 
     /**
@@ -39,7 +54,7 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
     protected function _prepareForm()
     {
         // ---------------------------------------
-        $instructionsMode = $this->getHelper('Module')->getConfig()->getGroupValue(
+        $instructionsMode = $this->config->getGroupValue(
             '/cron/task/walmart/listing/product/process_instructions/',
             'mode'
         );
@@ -138,7 +153,7 @@ HTML
         $this->jsUrl->addUrls([
             Tabs::TAB_ID_SYNCHRONIZATION => $this->getUrl('*/walmart_synchronization/save'),
             'synch_formSubmit' => $this->getUrl('*/walmart_synchronization/save'),
-            'logViewUrl' => $this->getUrl('*/walmart_synchronization_log/index', ['back'=>$this->getHelper('Data')
+            'logViewUrl' => $this->getUrl('*/walmart_synchronization_log/index', ['back'=>$this->dataHelper
                 ->makeBackUrlParam('*/walmart_synchronization/index')]),
         ]);
 
