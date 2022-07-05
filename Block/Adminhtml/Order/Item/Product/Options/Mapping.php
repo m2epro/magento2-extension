@@ -122,8 +122,8 @@ class Mapping extends AbstractContainer
 
                 foreach ($magentoVariation['values'] as $magentoOptionValue) {
                     $magentoValueLabel = array_shift($magentoOptionValue['labels']);
-                    if ($magentoOptionLabel === '' || $magentoOptionLabel === null) {
-                        $magentoOptionLabel = $this->__('N/A');
+                    if ($magentoValueLabel === '' || $magentoValueLabel === null) {
+                        $magentoValueLabel = $this->__('N/A');
                     }
 
                     $magentoOption['values'][] = [

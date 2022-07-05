@@ -53,7 +53,7 @@ class Form extends AbstractForm
                 terms and conditions will be sent to your request.</p>
 HTML
                 ,
-                $this->supportHelper->getDocumentationArticleUrl('spaces/m2/overview'),
+                $this->supportHelper->getDocumentationArticleUrl('x/O310B'),
                 $this->supportHelper->getKnowledgebaseUrl()
             )
         ]);

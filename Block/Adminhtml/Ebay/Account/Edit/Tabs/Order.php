@@ -226,7 +226,9 @@ HTML
                         Please note that the Create Product and Order option is not meant
                         for the creation of full-fledged products in your Magento catalog.
                         <a href="%url%" target="_blank">See why</a>',
-                        $this->supportHelper->getDocumentationArticleUrl('spaces/m2/pages/68484950/Order+Import#Product-Is-Listed-by-Any-Other-Software')
+                        $this->supportHelper->getDocumentationArticleUrl(
+                            'x/Vv8UB#Product-Is-Listed-by-Any-Other-Software'
+                        )
                     )
                     . '</span>'
             ]
