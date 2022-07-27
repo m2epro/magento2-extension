@@ -20,13 +20,6 @@ define([
             this.marketplaceId = marketplaceId;
             this.accountId = accountId;
 
-            jQuery.validator.addMethod('M2ePro-validate-ebay-template-switcher', function(value, $element) {
-
-               var mode = base64_decode(value).evalJSON().mode;
-
-               return mode !== null;
-            }, M2ePro.translator.translate('This is a required field.'));
-
             $super(gridId, listingId);
         },
 
@@ -40,6 +33,11 @@ define([
             this.mappingHandler = new ListingMapping(this, 'ebay');
 
             this.actions = Object.extend(this.actions, {
+                editAllSettingsAction: function(id) {
+                    this.editSettings(id,
+                            M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_ALL_POLICY')
+                    );
+                }.bind(this),
                 editPriceQuantityFormatSettingsAction: function(id) {
                     this.editSettings(id,
                         M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_SELLING_FORMAT')
@@ -144,14 +142,7 @@ define([
                                 text: M2ePro.translator.translate('Save'),
                                 class: 'action-primary action-accept',
                                 click: function () {
-                                    var switcher = jQuery('.template-switcher');
-
-                                    if (!switcher.length ||
-                                        !jQuery.validator.validateElement(switcher)) {
-                                        return;
-                                    }
-
-                                    EbayListingTemplateSwitcherObj.saveSwitchers(function (params) {
+                                    EbayListingProductSettingsObj.save(function (params) {
                                         EbayListingViewSettingsGridObj.saveSettings(params);
                                     });
                                 }
@@ -268,7 +259,7 @@ define([
             }
 
             if (productTitles) {
-                title += ' ' + M2ePro.translator.translate('for') + ' "' + productTitles + '"';
+                title += ' ' + M2ePro.translator.translate('For') + ' "' + productTitles + '"';
             }
 
             return title;

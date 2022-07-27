@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Description;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Description\Edit
- */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
 {
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
@@ -116,13 +111,9 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
         $this->css->addFile('walmart/template.css');
     }
 
-    //########################################
-
     private function isEditMode()
     {
-        $templateModel = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
+        $templateModel = $this->globalDataHelper->getValue('tmp_template');
         return $templateModel && $templateModel->getId();
     }
-
-    //########################################
 }

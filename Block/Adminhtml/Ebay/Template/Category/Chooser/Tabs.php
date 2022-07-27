@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Tabs
- */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTabs
 {
     const TAB_ID_RECENT    = 'recent';
@@ -18,7 +15,19 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
     const TAB_ID_SEARCH    = 'search';
     const TAB_ID_ATTRIBUTE = 'attribute';
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Json\EncoderInterface $jsonEncoder,
+        \Magento\Backend\Model\Auth\Session $authSession,
+        array $data = []
+    ) {
+        $this->globalDataHelper = $globalDataHelper;
+        parent::__construct($context, $jsonEncoder, $authSession, $data);
+    }
 
     public function _construct()
     {
@@ -27,11 +36,9 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
         $this->setDestElementId('chooser_tabs_container');
     }
 
-    //########################################
-
     protected function _prepareLayout()
     {
-        $hideRecent = $this->getHelper('Data\GlobalData')->getValue('category_chooser_hide_recent');
+        $hideRecent = $this->globalDataHelper->getValue('category_chooser_hide_recent');
         $blockData = ['category_type' => $this->getData('category_type')];
 
         !$hideRecent && $this->addTab(self::TAB_ID_RECENT, [

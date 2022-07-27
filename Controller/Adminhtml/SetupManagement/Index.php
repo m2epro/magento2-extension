@@ -14,13 +14,13 @@ use Magento\Framework\Config\ConfigOptionsListConstants;
 use Magento\Framework\Message\MessageInterface;
 use Magento\Setup\Model\Cron;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\SetupManagement\Index
- */
 class Index extends \Magento\Backend\App\Action
 {
     const AUTHORIZATION_COOKIE_NAME  = '_auth_';
     const AUTHORIZATION_COOKIE_VALUE = 'secure';
+
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $dbStructureHelper;
 
     /** @var \Magento\Framework\App\ResourceConnection $resourceConnection */
     protected $resourceConnection;
@@ -64,13 +64,9 @@ class Index extends \Magento\Backend\App\Action
     /** @var \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory $cookieManager */
     protected $cookieMetadataFactory;
 
-    /** @var  \Ess\M2ePro\Helper\Factory */
-    protected $helperFactory;
-
-    //########################################
-
     public function __construct(
-        \Magento\Framework\Module\ModuleListInterface $moduleList,
+        \Ess\M2ePro\Helper\Module\Database\Structure $dbStructureHelper,
+        \Magento\Framework\Module\ModuleListInterface $moduleHelperList,
         \Magento\Framework\Model\ResourceModel\Db\Context $dbContext,
         \Magento\Framework\Module\PackageInfo $packageInfo,
         \Magento\Framework\View\Design\Theme\ResolverInterface $themeResolver,
@@ -82,15 +78,15 @@ class Index extends \Magento\Backend\App\Action
         \Magento\Framework\App\DeploymentConfig $deploymentConfig,
         \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
         \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory $cookieMetadataFactory,
-        \Magento\Backend\App\Action\Context $context,
-        \Ess\M2ePro\Helper\Factory $helperFactory
+        \Magento\Backend\App\Action\Context $context
     ) {
         parent::__construct($context);
 
         $this->resourceConnection = $this->_objectManager->get(\Magento\Framework\App\ResourceConnection::class);
         $this->moduleResource     = new \Magento\Framework\Module\ModuleResource($dbContext);
 
-        $this->moduleList            = $moduleList;
+        $this->dbStructureHelper     = $dbStructureHelper;
+        $this->moduleList            = $moduleHelperList;
         $this->packageInfo           = $packageInfo;
         $this->localeResolver        = $context->getLocaleResolver();
         $this->themeResolver         = $themeResolver;
@@ -102,7 +98,6 @@ class Index extends \Magento\Backend\App\Action
         $this->deploymentConfig      = $deploymentConfig;
         $this->cookieManager         = $cookieManager;
         $this->cookieMetadataFactory = $cookieMetadataFactory;
-        $this->helperFactory         = $helperFactory;
     }
 
     //########################################
@@ -523,8 +518,7 @@ HTML;
     {
         $html = "<div>";
 
-        $tableName = $this->helperFactory->getObject('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_setup');
+        $tableName = $this->dbStructureHelper->getTableNameWithPrefix('m2epro_setup');
         if (!$this->resourceConnection->getConnection()->isTableExists($tableName)) {
             $html .= <<<HTML
 <span class="feature-enabled">m2epro_setup table is not installed.</span>
@@ -652,8 +646,7 @@ HTML;
         $select = $this->resourceConnection->getConnection()
             ->select()
             ->from(
-                $this->helperFactory->getObject('Module_Database_Structure')
-                    ->getTableNameWithPrefix('core_config_data'),
+                $this->dbStructureHelper->getTableNameWithPrefix('core_config_data'),
                 'value'
             )
             ->where('scope = ?', 'default')
@@ -678,8 +671,7 @@ HTML;
 
         if ($this->getMagentoCoreConfigValue($path) === false) {
             $this->resourceConnection->getConnection()->insert(
-                $this->helperFactory->getObject('Module_Database_Structure')
-                    ->getTableNameWithPrefix('core_config_data'),
+                $this->dbStructureHelper->getTableNameWithPrefix('core_config_data'),
                 [
                     'scope'    => 'default',
                     'scope_id' => 0,
@@ -689,8 +681,7 @@ HTML;
             );
         } else {
             $this->resourceConnection->getConnection()->update(
-                $this->helperFactory->getObject('Module_Database_Structure')
-                    ->getTableNameWithPrefix('core_config_data'),
+                $this->dbStructureHelper->getTableNameWithPrefix('core_config_data'),
                 ['value' => $value],
                 [
                     'scope = ?'    => 'default',
@@ -702,8 +693,6 @@ HTML;
 
         return $this->_redirect($this->_url->getUrl('*/*/*'));
     }
-
-    //----------------------------------------
 
     public function setMagentoCoreSetupValueAction()
     {
@@ -802,7 +791,7 @@ HTML;
 
         $this->resourceConnection->getConnection()
              ->delete(
-                 $this->helperFactory->getObject('Module_Database_Structure')->getTableNameWithPrefix('m2epro_setup'),
+                 $this->dbStructureHelper->getTableNameWithPrefix('m2epro_setup'),
                  ['id = ?' => (int)$id]
              );
 
@@ -823,7 +812,7 @@ HTML;
 
         $this->resourceConnection->getConnection()
             ->update(
-                $this->helperFactory->getObject('Module_Database_Structure')->getTableNameWithPrefix('m2epro_setup'),
+                $this->dbStructureHelper->getTableNameWithPrefix('m2epro_setup'),
                 [$column => $value],
                 ['id = ?' => (int)$id]
             );
@@ -903,8 +892,6 @@ HTML;
         return $this->_redirect($this->_url->getUrl('*/*/*'));
     }
 
-    //########################################
-
     private function isAuthorized()
     {
         $cookie = $this->cookieManager->getCookie(self::AUTHORIZATION_COOKIE_NAME);
@@ -952,6 +939,4 @@ HTML;
 HTML
         );
     }
-
-    //########################################
 }

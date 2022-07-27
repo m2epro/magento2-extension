@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon\SearchAsin
- */
 class SearchAsin extends InstallationAmazon
 {
     public function execute()

@@ -34,7 +34,7 @@ class OrderItemGrid extends Order
         $order = $this->amazonFactory->getObjectLoaded('Order', (int)$id);
 
         if (!$id || !$order->getId()) {
-            return $this->_redirect($this->_redirect->getRefererUrl());
+            return $this->_redirect($this->redirect->getRefererUrl());
         }
 
         $this->helperDataGlobalData->setValue('order', $order);

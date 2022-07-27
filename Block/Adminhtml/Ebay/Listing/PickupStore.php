@@ -10,32 +10,29 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore
- */
 class PickupStore extends AbstractContainer
 {
     protected $localeResolver;
     protected $listing;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
 
     public function __construct(
         \Magento\Framework\Locale\ResolverInterface $localeResolver,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         array $data = []
     ) {
         $this->localeResolver = $localeResolver;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
         parent::_construct();
 
-        $this->listing = $this->getHelper('Data\GlobalData')->getValue('temp_data');
+        $this->listing = $this->globalDataHelper->getValue('temp_data');
 
         // Initialization block
         // ---------------------------------------

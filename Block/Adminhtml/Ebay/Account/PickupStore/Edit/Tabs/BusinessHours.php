@@ -10,24 +10,23 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\PickupStore\Edit\Tabs\BusinessHours
- */
 class BusinessHours extends AbstractForm
 {
-    //########################################
-
     /** @var \Ess\M2ePro\Helper\Data */
     protected $helperData;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
         $this->helperData = $helperData;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -114,7 +113,7 @@ class BusinessHours extends AbstractForm
         ];
 
         $formData = [];
-        $model = $this->getHelper('Data\GlobalData')->getValue('temp_data');
+        $model = $this->globalDataHelper->getValue('temp_data');
         if ($model !== null) {
             $formData = $model->toArray();
         }

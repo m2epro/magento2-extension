@@ -8,28 +8,20 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
-use Ess\M2ePro\Controller\Adminhtml\Context;
-use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Order\UpdateShippingStatus
- */
-class UpdateShippingStatus extends Order
+class UpdateShippingStatus extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Order
 {
-    protected $orderShipmentCollectionFactory;
-
-    //########################################
+    /** @var \Magento\Sales\Model\ResourceModel\Order\Shipment\CollectionFactory */
+    private $orderShipmentCollectionFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Magento\Sales\Model\ResourceModel\Order\Shipment\CollectionFactory $orderShipmentCollectionFactory,
-        Context $context
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($ebayFactory, $context);
+
         $this->orderShipmentCollectionFactory = $orderShipmentCollectionFactory;
     }
-
-    //########################################
 
     public function execute()
     {
@@ -90,8 +82,6 @@ class UpdateShippingStatus extends Order
             );
         }
 
-        return $this->_redirect($this->_redirect->getRefererUrl());
+        return $this->_redirect($this->redirect->getRefererUrl());
     }
-
-    //########################################
 }

@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors\SetNoteToFilters
- */
 class SetNoteToFilters extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
-    //########################################
-
     public function execute()
     {
         $filtersIds = $this->getRequest()->getParam('filters_ids');
@@ -35,6 +30,4 @@ class SetNoteToFilters extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         return $this->getResult();
     }
-
-    //########################################
 }

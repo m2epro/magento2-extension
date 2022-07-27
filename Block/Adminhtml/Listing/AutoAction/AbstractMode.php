@@ -8,21 +8,25 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\AutoAction;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode
- */
 abstract class AbstractMode extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
+    /** @var \Magento\Framework\Data\FormFactory */
     protected $formFactory;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Magento\Store */
+    private $magentoStoreHelper;
 
     public function __construct(
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
     ) {
         $this->formFactory = $formFactory;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->magentoStoreHelper = $magentoStoreHelper;
         parent::__construct($context, $data);
     }
 
@@ -33,28 +37,24 @@ abstract class AbstractMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
         $this->setId('listingAutoActionMode');
     }
 
-    //########################################
-
     public function isAdminStore()
     {
         /** @var \Ess\M2ePro\Model\Listing $listing */
-        $listing = $this->getHelper('Data\GlobalData')->getValue('listing');
+        $listing = $this->globalDataHelper->getValue('listing');
         return $listing->getStoreId() == \Magento\Store\Model\Store::DEFAULT_STORE_ID;
     }
 
     public function getWebsiteName()
     {
         /** @var \Ess\M2ePro\Model\Listing $listing */
-        $listing = $this->getHelper('Data\GlobalData')->getValue('listing');
-        return $this->getHelper('Magento\Store')->getWebsiteName($listing->getStoreId());
+        $listing = $this->globalDataHelper->getValue('listing');
+        return $this->magentoStoreHelper->getWebsiteName($listing->getStoreId());
     }
 
     public function getHelpPageUrl()
     {
         return '';
     }
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -64,8 +64,6 @@ abstract class AbstractMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
 HTML
                 . parent::_toHtml();
     }
-
-    // ---------------------------------------
 
     protected function getBlockTitle()
     {
@@ -182,6 +180,4 @@ HTML
 
         return $form->toHtml();
     }
-
-    //########################################
 }

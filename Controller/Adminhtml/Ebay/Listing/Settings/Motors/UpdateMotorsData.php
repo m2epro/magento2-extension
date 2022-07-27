@@ -75,6 +75,4 @@ class UpdateMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         return $this->getResult();
     }
-
-    //########################################
 }

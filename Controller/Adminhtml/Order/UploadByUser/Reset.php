@@ -12,13 +12,8 @@ use Ess\M2ePro\Model\Cron\Task\Amazon\Order\UploadByUser\Manager as AmazonManage
 use Ess\M2ePro\Model\Cron\Task\Ebay\Order\UploadByUser\Manager as EbayManager;
 use Ess\M2ePro\Model\Cron\Task\Walmart\Order\UploadByUser\Manager as WalmartManager;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Order\UploadByUser\Reset
- */
 class Reset extends \Ess\M2ePro\Controller\Adminhtml\Order
 {
-    //########################################
-
     public function execute()
     {
         $component = $this->getRequest()->getParam('component');
@@ -48,8 +43,6 @@ class Reset extends \Ess\M2ePro\Controller\Adminhtml\Order
         return $this->getResult();
     }
 
-    //########################################
-
     protected function getManager(\Ess\M2ePro\Model\Account $account)
     {
         switch ($account->getComponentMode()) {
@@ -70,6 +63,4 @@ class Reset extends \Ess\M2ePro\Controller\Adminhtml\Order
         $manager->setIdentifierByAccount($account);
         return $manager;
     }
-
-    //########################################
 }

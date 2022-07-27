@@ -19,17 +19,27 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    /** @var \Ess\M2ePro\Helper\Component */
+    private $componentHelper;
+
     public function __construct(
         \Magento\Store\Model\StoreFactory $storeFactory,
         \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Component $componentHelper,
         array $data = []
     ) {
         $this->storeFactory = $storeFactory;
         $this->viewHelper = $viewHelper;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->componentHelper = $componentHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -55,8 +65,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareCollection()
     {
-        $componentMode = $this->getHelper('Data\GlobalData')->getValue('componentMode');
-        $ignoreListings = (array)$this->getHelper('Data\GlobalData')->getValue('ignoreListings');
+        $componentMode = $this->globalDataHelper->getValue('componentMode');
+        $ignoreListings = (array)$this->globalDataHelper->getValue('ignoreListings');
 
         $collection = $this->parentFactory
             ->getObject($componentMode, 'Listing')
@@ -130,8 +140,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
     }
 
-    //########################################
-
     public function callbackColumnId($value, $row, $column, $isExport)
     {
         return $value.'&nbsp;';
@@ -196,15 +204,13 @@ HTML;
         return $actions;
     }
 
-    //########################################
-
     protected function getHelpBlockHtml()
     {
         $helpBlockHtml  = '';
 
         if ($this->canDisplayContainer()) {
-            $componentTitle = $this->getHelper('Component')->getComponentTitle(
-                $this->getHelper('Data\GlobalData')->getValue('componentMode')
+            $componentTitle = $this->componentHelper->getComponentTitle(
+                $this->globalDataHelper->getValue('componentMode')
             );
 
             $helpBlockHtml = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
@@ -223,14 +229,14 @@ HTML
 
     protected function getNewListingUrl()
     {
-        $componentMode = $this->getHelper('Data\GlobalData')->getValue('componentMode');
+        $componentMode = $this->globalDataHelper->getValue('componentMode');
         $newListingUrl = $this->getUrl(
             '*/' .strtolower($componentMode). '_listing_create/index',
             [
                 'step'           => 1,
                 'clear'          => 1,
-                'account_id'     => $this->getHelper('Data\GlobalData')->getValue('accountId'),
-                'marketplace_id' => $this->getHelper('Data\GlobalData')->getValue('marketplaceId'),
+                'account_id'     => $this->globalDataHelper->getValue('accountId'),
+                'marketplace_id' => $this->globalDataHelper->getValue('marketplaceId'),
                 'creation_mode'  => \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY,
                 'component'      => $componentMode
             ]
@@ -260,8 +266,6 @@ JS
         return $this->getHelpBlockHtml() . parent::_toHtml();
     }
 
-    //########################################
-
     public function getGridUrl()
     {
         return $this->getData('grid_url');
@@ -272,16 +276,12 @@ JS
         return false;
     }
 
-    //########################################
-
     protected function addAccountAndMarketplaceFilter($collection)
     {
-        $accountId = $this->getHelper('Data\GlobalData')->getValue('accountId');
-        $marketplaceId = $this->getHelper('Data\GlobalData')->getValue('marketplaceId');
+        $accountId = $this->globalDataHelper->getValue('accountId');
+        $marketplaceId = $this->globalDataHelper->getValue('marketplaceId');
 
         $collection->addFieldToFilter('main_table.marketplace_id', $marketplaceId);
         $collection->addFieldToFilter('main_table.account_id', $accountId);
     }
-
-    //########################################
 }

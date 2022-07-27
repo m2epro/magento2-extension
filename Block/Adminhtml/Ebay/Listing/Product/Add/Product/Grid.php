@@ -24,6 +24,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Module $moduleHelper,
         array $data = []
     ) {
         $this->visibility = $visibility;
@@ -36,6 +38,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Grid
             $context,
             $backendHelper,
             $dataHelper,
+            $globalDataHelper,
+            $moduleHelper,
             $data
         );
     }

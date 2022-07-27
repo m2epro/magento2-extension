@@ -10,14 +10,20 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add;
 
 use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode as SourceModeBlock;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\Review
- */
 class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
     protected $source;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        $this->globalDataHelper = $globalDataHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -31,8 +37,6 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         $this->setTemplate('walmart/listing/product/add/review.phtml');
     }
 
-    //########################################
-
     protected function _beforeToHtml()
     {
         parent::_beforeToHtml();
@@ -40,7 +44,7 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         // ---------------------------------------
 
         /** @var \Ess\M2ePro\Model\Listing $listing */
-        $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
+        $listing = $this->globalDataHelper->getValue('listing_for_products_add');
 
         $viewHeaderBlock = $this->getLayout()->createBlock(
             \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
@@ -101,8 +105,6 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         // ---------------------------------------
     }
 
-    //########################################
-
     public function setSource($source)
     {
         $this->source = $source;
@@ -112,6 +114,4 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     {
         return $this->source;
     }
-
-    //########################################
 }

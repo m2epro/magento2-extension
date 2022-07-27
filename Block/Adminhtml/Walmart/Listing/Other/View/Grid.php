@@ -8,16 +8,12 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Other\View;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Other\View\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
 
     /** @var \Magento\Framework\App\ResourceConnection */
-
     protected $resourceConnection;
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
@@ -26,6 +22,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Component\Walmart */
+    private $walmartHelper;
+
     public function __construct(
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -33,12 +32,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
         array $data = []
     ) {
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         $this->walmartFactory = $walmartFactory;
         $this->dataHelper = $dataHelper;
+        $this->walmartHelper = $walmartHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -59,8 +60,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setUseAjax(true);
         // ---------------------------------------
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -217,8 +216,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return parent::_prepareLayout();
     }
 
-    //########################################
-
     public function callbackColumnProductId($value, $row, $column, $isExport)
     {
         if (empty($value)) {
@@ -288,10 +285,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $gtinHtml = $this->escapeHtml($gtin);
 
-        $walmartHelper = $this->getHelper('Component\Walmart');
         $marketplaceId = $row->getData('marketplace_id');
-        $channelUrl = $walmartHelper->getItemUrl(
-            $childObject->getData($walmartHelper->getIdentifierForItemUrl($marketplaceId)),
+        $channelUrl = $this->walmartHelper->getItemUrl(
+            $childObject->getData($this->walmartHelper->getIdentifierForItemUrl($marketplaceId)),
             $marketplaceId
         );
 
@@ -413,8 +409,6 @@ HTML;
         return $value.$this->getStatusChangeReasons($statusChangeReasons);
     }
 
-    //########################################
-
     protected function callbackFilterProductId($collection, $column)
     {
         $value = $column->getFilter()->getValue();
@@ -529,8 +523,6 @@ SQL;
         $collection->getSelect()->where($where);
     }
 
-    //########################################
-
     private function getStatusChangeReasons($statusChangeReasons)
     {
         if (empty($statusChangeReasons)) {
@@ -548,8 +540,6 @@ SQL;
 HTML;
     }
 
-    //########################################
-
     protected function _beforeToHtml()
     {
         if ($this->getRequest()->isXmlHttpRequest() || $this->getRequest()->getParam('isAjax')) {
@@ -565,8 +555,6 @@ JS
         return parent::_beforeToHtml();
     }
 
-    //########################################
-
     public function getGridUrl()
     {
         return $this->getUrl('*/walmart_listing_other/grid', ['_current' => true]);
@@ -576,6 +564,4 @@ JS
     {
         return false;
     }
-
-    //########################################
 }

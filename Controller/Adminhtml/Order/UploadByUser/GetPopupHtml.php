@@ -8,22 +8,14 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Order\UploadByUser;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Order\UploadByUser\GetPopupHtml
- */
 class GetPopupHtml extends \Ess\M2ePro\Controller\Adminhtml\Order
 {
-    //########################################
-
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Order\UploadByUser\Popup $block */
         $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\UploadByUser\Popup::class);
         $block->setComponent($this->getRequest()->getParam('component'));
-
         $this->setAjaxContent($block->toHtml());
         return $this->getResult();
     }
-
-    //########################################
 }

@@ -8,15 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\General;
 
-use Ess\M2ePro\Controller\Adminhtml\General;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\General\ModelGetAll
- */
-class ModelGetAll extends General
+class ModelGetAll extends \Ess\M2ePro\Controller\Adminhtml\General
 {
-    //########################################
-
     public function execute()
     {
         $model = $this->getRequest()->getParam('model', '');
@@ -61,6 +54,4 @@ class ModelGetAll extends General
         $this->setJsonContent($data['items']);
         return $this->getResult();
     }
-
-    //########################################
 }

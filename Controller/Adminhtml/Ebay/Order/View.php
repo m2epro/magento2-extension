@@ -8,19 +8,27 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
-use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Order\View
- */
-class View extends Order
+class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Order
 {
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalData,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($ebayFactory, $context);
+
+        $this->globalData = $globalData;
+    }
+
     public function execute()
     {
         $id    = $this->getRequest()->getParam('id');
         $order = $this->ebayFactory->getObjectLoaded('Order', (int)$id);
 
-        $this->getHelper('Data\GlobalData')->setValue('order', $order);
+        $this->globalData->setValue('order', $order);
 
         $this->addContent(
             $this->getLayout()->createBlock(

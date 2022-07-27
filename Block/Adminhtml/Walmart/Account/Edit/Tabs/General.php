@@ -23,6 +23,12 @@ class General extends AbstractForm
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    /** @var \Ess\M2ePro\Helper\Component\Walmart */
+    private $walmartHelper;
+
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $WalmartFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -30,20 +36,22 @@ class General extends AbstractForm
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
         array $data = []
     ) {
         $this->walmartFactory = $WalmartFactory;
         $this->supportHelper = $supportHelper;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->walmartHelper = $walmartHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
         /** @var \Ess\M2ePro\Model\Account $account */
-        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
+        $account = $this->globalDataHelper->getValue('edit_account');
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         if (isset($formData['other_listings_mapping_settings'])) {
@@ -59,7 +67,7 @@ class General extends AbstractForm
 
         $isEdit = !!$this->getRequest()->getParam('id');
 
-        $marketplacesCollection = $this->getHelper('Component\Walmart')->getMarketplacesAvailableForApiCreation();
+        $marketplacesCollection = $this->walmartHelper->getMarketplacesAvailableForApiCreation();
         $marketplaces = [];
         foreach ($marketplacesCollection->getItems() as $item) {
             $marketplaces[] = array_merge($item->getData(), $item->getChildObject()->getData());
@@ -184,7 +192,7 @@ HTML
             'link',
             [
                 'label'     => '',
-                'href'      => $this->getHelper('Component\Walmart')->getRegisterUrl($marketplaceCA),
+                'href'      => $this->walmartHelper->getRegisterUrl($marketplaceCA),
                 'target'    => '_blank',
                 'value'     => $this->__('Get Access Data'),
                 'class'     => "external-link",
@@ -196,7 +204,7 @@ HTML
             'link',
             [
                 'label'     => '',
-                'href'      => $this->getHelper('Component\Walmart')->getRegisterUrl($marketplaceUS),
+                'href'      => $this->walmartHelper->getRegisterUrl($marketplaceUS),
                 'target'    => '_blank',
                 'value'     => $this->__('Get Access Data'),
                 'class'     => "external-link",
@@ -321,8 +329,6 @@ HTML
         return parent::_prepareForm();
     }
 
-    //########################################
-
     protected function _prepareLayout()
     {
         $this->js->add(
@@ -341,6 +347,4 @@ JS
 
         return parent::_prepareLayout();
     }
-
-    //########################################
 }

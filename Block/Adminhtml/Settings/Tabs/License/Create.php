@@ -8,21 +8,20 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Settings\Tabs\License;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\License\Create
- */
 class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected $country;
     protected $authSession;
     protected $user;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Store */
+    private $magentoStoreHelper;
 
     public function __construct(
         \Magento\Config\Model\Config\Source\Locale\Country $country,
         \Magento\Backend\Model\Auth\Session $authSession,
         \Magento\User\Model\User $user,
+        \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
@@ -31,14 +30,13 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $this->country = $country;
         $this->authSession = $authSession;
         $this->user = $user;
+        $this->magentoStoreHelper = $magentoStoreHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
-    //########################################
-
     protected function _prepareForm()
     {
-        $defaultStoreId = $this->getHelper('Magento\Store')->getDefaultStoreId();
+        $defaultStoreId = $this->magentoStoreHelper->getDefaultStoreId();
 
         // ---------------------------------------
         $userId = $this->authSession->getUser()->getId();
@@ -163,6 +161,4 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $this->setForm($form);
         return parent::_prepareForm();
     }
-
-    //########################################
 }

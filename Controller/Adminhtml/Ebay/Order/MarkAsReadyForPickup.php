@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Order\MarkAsReadyForPickup
- */
 class MarkAsReadyForPickup extends Order
 {
     public function execute()
@@ -27,6 +24,6 @@ class MarkAsReadyForPickup extends Order
             );
         }
 
-        return $this->_redirect($this->_redirect->getRefererUrl());
+        return $this->_redirect($this->redirect->getRefererUrl());
     }
 }

@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Order\View;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Order\View\Item
- */
 class Item extends AbstractGrid
 {
     /** @var \Ess\M2ePro\Model\Order $order */
@@ -33,6 +30,9 @@ class Item extends AbstractGrid
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
     public function __construct(
         \Magento\Catalog\Model\Product $productModel,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -42,6 +42,7 @@ class Item extends AbstractGrid
         \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->productModel = $productModel;
@@ -50,6 +51,7 @@ class Item extends AbstractGrid
         $this->walmartFactory = $walmartFactory;
         $this->walmartHelper = $walmartHelper;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -72,10 +74,8 @@ class Item extends AbstractGrid
         $this->_defaultLimit = 200;
         // ---------------------------------------
 
-        $this->order = $this->getHelper('Data\GlobalData')->getValue('order');
+        $this->order = $this->globalDataHelper->getValue('order');
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -147,8 +147,6 @@ class Item extends AbstractGrid
         return parent::_prepareColumns();
     }
 
-    //########################################
-
     protected function _afterLoadCollection()
     {
         $cache = [];
@@ -203,8 +201,6 @@ class Item extends AbstractGrid
 
         return parent::_afterLoadCollection();
     }
-
-    //########################################
 
     /**
      * @param string $value
@@ -379,6 +375,4 @@ HTML;
     {
         return $this->getUrl('*/*/orderItemGrid', ['_current' => true]);
     }
-
-    //########################################
 }

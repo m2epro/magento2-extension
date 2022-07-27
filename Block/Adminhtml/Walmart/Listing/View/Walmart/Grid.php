@@ -40,6 +40,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
@@ -47,8 +48,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         $this->walmartViewHelper = $walmartViewHelper;
-        $this->dataHelper = $dataHelper;
-        parent::__construct($context, $backendHelper, $dataHelper, $data);
+        parent::__construct($context, $backendHelper, $dataHelper, $globalDataHelper, $data);
     }
 
     public function _construct()
@@ -57,7 +57,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->setDefaultSort(false);
 
-        $this->listing = $this->getHelper('Data\GlobalData')->getValue('view_listing');
+        $this->listing = $this->globalDataHelper->getValue('view_listing');
 
         $this->hideSwitchToIndividualConfirm =
             $this->listing->getSetting('additional_data', 'hide_switch_to_individual_confirm', 0);
@@ -72,8 +72,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->showAdvancedFilterProductsOption = false;
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -329,8 +327,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         return parent::_prepareMassaction();
     }
-
-    //########################################
 
     public function callbackColumnProductTitle($productTitle, $row, $column, $isExport)
     {
@@ -621,8 +617,6 @@ HTML;
         return $status->render($row);
     }
 
-    // ---------------------------------------
-
     protected function callbackFilterTitle($collection, $column)
     {
         $value = $column->getFilter()->getValue();
@@ -773,14 +767,10 @@ SQL;
         }
     }
 
-    //########################################
-
     public function getRowUrl($row)
     {
         return false;
     }
-
-    //########################################
 
     public function getTooltipHtml($content, $id = '', $classes = [])
     {
@@ -796,8 +786,6 @@ SQL;
 HTML;
     }
 
-    //########################################
-
     protected function _toHtml()
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
@@ -810,8 +798,6 @@ JS
 
         return parent::_toHtml();
     }
-
-    //########################################
 
     private function getLockedData($row)
     {
@@ -828,8 +814,6 @@ JS
 
         return $this->lockedDataCache[$listingProductId];
     }
-
-    //########################################
 
     protected function getChildProductsWarningsData()
     {
@@ -864,12 +848,8 @@ JS
         return in_array($listingProductId, $this->getChildProductsWarningsData());
     }
 
-    //########################################
-
     private function convertAndFormatPriceCurrency($price, $currency)
     {
         return $this->localeCurrency->getCurrency($currency)->toCurrency($price);
     }
-
-    //########################################
 }

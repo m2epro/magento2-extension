@@ -213,6 +213,9 @@ define([
             $('magento_orders_customer_mode').observe('change', AmazonAccountObj.magentoOrdersCustomerModeChange).simulate('change');
             $('magento_orders_tax_mode').observe('change', AmazonAccountObj.magentoOrdersTaxModeChange).simulate('change');
             $('magento_orders_tax_amazon_collects').observe('change', AmazonAccountObj.magentoOrdersTaxAmazonCollectsChange).simulate('change');
+            $('magento_orders_tax_amazon_collects_for_eea_shipment')
+                .observe('change', AmazonAccountObj.magentoOrdersTaxSkipTaxInEEAOrders)
+                .simulate('change');
             $('magento_orders_status_mapping_mode').observe('change', AmazonAccountObj.magentoOrdersStatusMappingModeChange);
 
             if ($('regular_price_mode')) {
@@ -539,7 +542,7 @@ define([
                     excludedStates.innerHTML = transport.responseText;
 
                     self.excludedStatesPopUp = jQuery(excludedStates).modal({
-                        title: M2ePro.translator.translate('Select States where Amazon is responsible for tax calculation/collection'),
+                        title: M2ePro.translator.translate('Select states where tax will be excluded'),
                         type: 'popup',
                         buttons: [{
                             text: M2ePro.translator.translate('Confirm'),
@@ -570,6 +573,57 @@ define([
             self.excludedStatesPopUp.modal('closeModal');
         },
 
+        openExcludedCountriesPopup: function() {
+            var self = this;
+
+            new Ajax.Request(M2ePro.url.get('amazon_account/getExcludedCountriesPopupHtml'), {
+                method: 'post',
+                parameters: {
+                    selected_countries: $('magento_orders_tax_excluded_countries').value
+                },
+                onSuccess: function(transport) {
+                    var excludedCountries = $('excluded_countries_popup');
+
+                    if (!excludedCountries) {
+                        excludedCountries = new Element('div', {
+                            id: 'excluded_countries_popup'
+                        });
+                    }
+
+                    excludedCountries.innerHTML = transport.responseText;
+
+                    self.excludedCountriesPopUp = jQuery(excludedCountries).modal({
+                        title: M2ePro.translator.translate('Select countries where VAT will be excluded'),
+                        type: 'popup',
+                        buttons: [{
+                            text: M2ePro.translator.translate('Confirm'),
+                            class: 'primary',
+                            click: function() {
+                                self.changeExcludedCountries();
+                            }
+                        }]
+                    });
+
+                    self.excludedCountriesPopUp.modal('openModal');
+                }
+            });
+        },
+
+        changeExcludedCountries: function() {
+            var self = this;
+            var excludedCountries = [];
+
+            $$('.excluded_country_checkbox').each(function(element) {
+                if (element.checked) {
+                    excludedCountries.push(element.value);
+                }
+            });
+
+            $('magento_orders_tax_excluded_countries').value = excludedCountries.toString();
+
+            self.excludedCountriesPopUp.modal('closeModal');
+        },
+
         magentoOrdersTaxModeChange: function() {
             if ($('magento_orders_tax_mode').value == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account::MAGENTO_ORDERS_TAX_MODE_CHANNEL') ||
                 $('magento_orders_tax_mode').value == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account::MAGENTO_ORDERS_TAX_MODE_MIXED')) {
@@ -590,6 +644,14 @@ define([
                 $('show_excluded_states_button').show();
             } else {
                 $('show_excluded_states_button').hide();
+            }
+        },
+
+        magentoOrdersTaxSkipTaxInEEAOrders: function() {
+            if ($('magento_orders_tax_amazon_collects_for_eea_shipment').value == 1) {
+                $('show_excluded_countries_button').show();
+            } else {
+                $('show_excluded_countries_button').hide();
             }
         },
 

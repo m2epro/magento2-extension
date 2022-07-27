@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -8,38 +8,33 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Save
- */
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 {
-    /** @var \Magento\Framework\Stdlib\DateTime  */
-    protected $dateTime;
-
     /** @var \Ess\M2ePro\Helper\Data */
     protected $helperData;
 
-    //########################################
-
+    /**
+     * @param \Ess\M2ePro\Helper\Data $helperData
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
+     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
+     */
     public function __construct(
-        \Magento\Framework\Stdlib\DateTime $dateTime,
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        $this->dateTime = $dateTime;
         $this->helperData = $helperData;
         parent::__construct($amazonFactory, $context);
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::amazon_listings_m2epro');
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function execute()
     {
@@ -140,9 +135,9 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         }
 
         if ($templateData['restock_date_value'] === '') {
-            $templateData['restock_date_value'] = $this->helperData->getCurrentGmtDate();
+            $templateData['restock_date_value'] = \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s');
         } else {
-            $timestamp = $this->helperData->parseTimestampFromLocalizedFormat(
+            $timestamp = \Ess\M2ePro\Helper\Date::parseDateFromLocalFormat(
                 $templateData['restock_date_value'],
                 \IntlDateFormatter::SHORT,
                 \IntlDateFormatter::SHORT
@@ -193,7 +188,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         return $this->_redirect($this->helperData->getBackUrl('list', [], ['edit'=>['id'=>$id]]));
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function processSellingFormatTemplateChange(
         array $oldData,
@@ -319,6 +314,4 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         $changeProcessor = $this->modelFactory->getObject('Amazon_Template_Shipping_ChangeProcessor');
         $changeProcessor->process($diff, $affectedListingsProductsData);
     }
-
-    //########################################
 }

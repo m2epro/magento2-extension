@@ -8,16 +8,13 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\ResetSpecificsToDefault
- */
 class ResetSpecificsToDefault extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     /** @var \Ess\M2ePro\Helper\Module\Exception */
     private $helperException;
 
     /** @var \Magento\Framework\DB\TransactionFactory  */
-    protected $transactionFactory = null;
+    private $transactionFactory;
 
     //########################################
 
@@ -27,9 +24,10 @@ class ResetSpecificsToDefault extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
+        parent::__construct($ebayFactory, $context);
+
         $this->helperException = $helperException;
         $this->transactionFactory = $transactionFactory;
-        parent::__construct($ebayFactory, $context);
     }
 
     //########################################
@@ -67,8 +65,6 @@ class ResetSpecificsToDefault extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
         return $this->getResult();
     }
 
-    //########################################
-
     protected function updateProcessChanges($listingProducts, $oldSnapshot)
     {
         /** @var \Ess\M2ePro\Model\Ebay\Template\AffectedListingsProducts\Processor $changesProcessor */
@@ -86,6 +82,4 @@ class ResetSpecificsToDefault extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
             );
         }
     }
-
-    //########################################
 }

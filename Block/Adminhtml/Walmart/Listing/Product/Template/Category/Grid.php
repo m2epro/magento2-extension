@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Template\Category;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Template\Category\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $productsIds = [];
@@ -26,19 +23,22 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Module\Wizard */
+    private $wizardHelper;
+
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Module\Wizard $wizardHelper,
         array $data = []
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->dataHelper = $dataHelper;
+        $this->wizardHelper = $wizardHelper;
         parent::__construct($context, $backendHelper, $data);
     }
-
-    //########################################
 
     /**
      * @return string
@@ -56,8 +56,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->mapToTemplateJsFn = $mapToTemplateLink;
     }
 
-    // ---------------------------------------
-
     /**
      * @return string
      */
@@ -73,8 +71,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $this->createNewTemplateJsFn = $createNewTemplateJsFn;
     }
-
-    // ---------------------------------------
 
     /**
      * @param mixed $productsIds
@@ -92,8 +88,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return $this->productsIds;
     }
 
-    // ---------------------------------------
-
     public function setMagentoCategoryIds($magentoCategoryIds)
     {
         $this->magentoCategoryIds = $magentoCategoryIds;
@@ -103,8 +97,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         return $this->magentoCategoryIds;
     }
-
-    // ---------------------------------------
 
     public function _construct()
     {
@@ -122,8 +114,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // ---------------------------------------
     }
 
-    // ---------------------------------------
-
     protected function _prepareCollection()
     {
         $this->setNoTemplatesText();
@@ -136,8 +126,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         return parent::_prepareCollection();
     }
-
-    // ---------------------------------------
 
     protected function _prepareColumns()
     {
@@ -180,27 +168,21 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return parent::_prepareLayout();
     }
 
-    //########################################
-
     public function getRefreshButtonHtml()
     {
         return $this->getChildHtml('refresh_button');
     }
-
-    //########################################
 
     public function getMainButtonsHtml()
     {
         return $this->getRefreshButtonHtml() . parent::getMainButtonsHtml();
     }
 
-    //########################################
-
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
         $templateCategoryEditUrl = $this->getUrl('*/walmart_template_category/edit', [
             'id' => $row->getData('id'),
-            'wizard' => $this->getHelper('Module\Wizard')->isActive(
+            'wizard' => $this->wizardHelper->isActive(
                 \Ess\M2ePro\Helper\View\Walmart::WIZARD_INSTALLATION_NICK
             ),
             'close_on_save' => true
@@ -229,8 +211,6 @@ HTML;
 HTML;
     }
 
-    // ---------------------------------------
-
     protected function callbackFilterTitle($collection, $column)
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Template\Category\Collection $collection */
@@ -246,16 +226,12 @@ HTML;
         );
     }
 
-    //########################################
-
     protected function _toHtml()
     {
         $this->jsUrl->add($this->getNewTemplateCategoryUrl(), 'newTemplateCategoryUrl');
 
         return parent::_toHtml();
     }
-
-    //########################################
 
     public function getGridUrl()
     {
@@ -275,8 +251,6 @@ HTML;
         return false;
     }
 
-    //########################################
-
     protected function getMarketplaceId()
     {
         if (empty($this->marketplaceId)) {
@@ -292,8 +266,6 @@ HTML;
 
         return $this->marketplaceId;
     }
-
-    // ---------------------------------------
 
     protected function setNoTemplatesText()
     {
@@ -319,6 +291,4 @@ HTML;
             'close_on_save' => 1
         ]);
     }
-
-    //########################################
 }

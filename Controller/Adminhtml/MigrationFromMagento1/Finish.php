@@ -8,12 +8,35 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1\Finish
- */
 class Finish extends Base
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module */
+    private $moduleHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
+    /** @var \Ess\M2ePro\Helper\Component */
+    private $componentHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $dbStructureHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module $moduleHelper,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Component $componentHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $dbStructureHelper,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context,
+        \Ess\M2ePro\Setup\MigrationFromMagento1\Runner $migrationRunner
+    ) {
+        parent::__construct($context, $migrationRunner);
+
+        $this->moduleHelper = $moduleHelper;
+        $this->supportHelper = $supportHelper;
+        $this->componentHelper = $componentHelper;
+        $this->dbStructureHelper = $dbStructureHelper;
+    }
 
     /**
      * @throws \Exception
@@ -28,16 +51,14 @@ class Finish extends Base
 
         $this->addDefaultValuesInSyncPolicyMessage();
 
-        if ($components = $this->getHelper('Component')->getEnabledComponents()) {
+        if ($components = $this->componentHelper->getEnabledComponents()) {
             $component = reset($components);
 
             return $this->_redirect($this->getUrl("*/{$component}_listing/index"));
         } else {
-            return $this->_redirect($this->getHelper('Module\Support')->getPageRoute());
+            return $this->_redirect($this->supportHelper->getPageRoute());
         }
     }
-
-    //########################################
 
     /**
      * @throws \Exception
@@ -45,15 +66,14 @@ class Finish extends Base
     private function addDefaultValuesInSyncPolicyMessage()
     {
         // \Ess\M2ePro\Setup\Update\y20_m10\DefaultValuesInSyncPolicy::class
-        $messages = $this->getHelper('Module')->getUpgradeMessages();
+        $messages = $this->moduleHelper->getUpgradeMessages();
         $addingMessage = false;
 
         $connection = $this->resourceConnection->getConnection();
         foreach (['ebay', 'amazon', 'walmart'] as $component) {
             $templates = $connection
                 ->select()
-                ->from($this->getHelper('Module_Database_Structure')
-                    ->getTableNameWithPrefix("m2epro_{$component}_template_synchronization"))
+                ->from($this->dbStructureHelper->getTableNameWithPrefix("m2epro_{$component}_template_synchronization"))
                 ->where('relist_qty_calculated = ?', \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_NONE)
                 ->orWhere('stop_qty_calculated = ?', \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_NONE)
                 ->query()
@@ -88,8 +108,8 @@ Otherwise, it may <a href="%url_2%" target="_blank">affect actual product data u
 <a href="%url_skip%"><b>skip this message</b></a>.
 HTML
                     ,
-                    $this->getHelper('Module_Support')->getKnowledgebaseUrl('1560897'),
-                    $this->getHelper('Module_Support')->getKnowledgebaseUrl('1606824')
+                    $this->supportHelper->getKnowledgebaseUrl('1560897'),
+                    $this->supportHelper->getKnowledgebaseUrl('1606824')
                 ),
                 'url_reset' => 'm2epro/template/setDefaultValuesInSyncPolicy',
                 'url_skip'  => 'm2epro/template/skipDefaultValuesInSyncPolicy',
@@ -97,8 +117,6 @@ HTML
             ];
         }
 
-        $this->getHelper('Module')->getRegistry()->setValue('/upgrade/messages/', $messages);
+        $this->moduleHelper->getRegistry()->setValue('/upgrade/messages/', $messages);
     }
-
-    //########################################
 }

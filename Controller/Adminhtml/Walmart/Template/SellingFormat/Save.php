@@ -10,12 +10,20 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat\Save
- */
 class Save extends Template
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->dataHelper = $dataHelper;
+    }
 
     public function execute()
     {
@@ -79,7 +87,7 @@ class Save extends Template
         // ---------------------------------------
 
         $this->messageManager->addSuccess($this->__('Policy was saved'));
-        return $this->_redirect($this->getHelper('Data')->getBackUrl('*/walmart_template/index', [], [
+        return $this->_redirect($this->dataHelper->getBackUrl('*/walmart_template/index', [], [
             'edit' => [
                 'id' => $id,
                 'wizard' => $this->getRequest()->getParam('wizard'),
@@ -87,8 +95,6 @@ class Save extends Template
             ],
         ]));
     }
-
-    // ---------------------------------------
 
     private function updateServices($data, $templateId)
     {
@@ -141,6 +147,4 @@ class Save extends Template
             $builder->build($promotionInstance, $promotionData);
         }
     }
-
-    //########################################
 }

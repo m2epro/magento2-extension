@@ -15,14 +15,19 @@ class Form extends AbstractForm
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    private $amazonHelper;
+
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         array $data = []
     ) {
         $this->dataHelper = $dataHelper;
+        $this->amazonHelper = $amazonHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -31,8 +36,6 @@ class Form extends AbstractForm
         parent::_construct();
         $this->css->addFile('marketplace/form.css');
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
@@ -134,7 +137,7 @@ HTML;
                     $selectData
                 )->addCustomAttribute('marketplace_id', $marketplace['instance']->getId())
                  ->addCustomAttribute('component_name', \Ess\M2ePro\Helper\Component\Amazon::NICK)
-                 ->addCustomAttribute('component_title', $this->getHelper('Component\Amazon')->getTitle())
+                 ->addCustomAttribute('component_title', $this->amazonHelper->getTitle())
                  ->addCustomAttribute('onchange', 'MarketplaceObj.changeStatus(this);');
             }
         }
@@ -144,8 +147,6 @@ HTML;
 
         return $this;
     }
-
-    //########################################
 
     protected function prepareData()
     {
@@ -205,8 +206,6 @@ HTML;
         // ---------------------------------------
     }
 
-    //########################################
-
     protected function _toHtml()
     {
         $this->jsUrl->addUrls([
@@ -239,6 +238,4 @@ JS
 
         return parent::_toHtml();
     }
-
-    //########################################
 }

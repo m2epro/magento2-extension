@@ -17,13 +17,19 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
     /** @var \Ess\M2ePro\Helper\Module\Support */
     private $supportHelper;
 
+    /** @var \Ess\M2ePro\Helper\Component\Ebay */
+    private $ebayHelper;
+
     public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Component\Ebay $ebayHelper,
         array $data = []
     ) {
-        parent::__construct($context, $data);
+        parent::__construct($sessionDataHelper, $context, $data);
         $this->supportHelper = $supportHelper;
+        $this->ebayHelper = $ebayHelper;
     }
 
     public function getDefaultViewMode()
@@ -55,14 +61,10 @@ HTML
         );
     }
 
-    //---------------------------------------
-
     protected function getComponentMode()
     {
         return \Ess\M2ePro\Helper\Component\Ebay::NICK;
     }
-
-    //---------------------------------------
 
     protected function loadItems()
     {
@@ -71,7 +73,7 @@ HTML
                 'value' => [
                     [
                         'value' => self::VIEW_MODE_EBAY,
-                        'label' => $this->getHelper('Component\Ebay')->getTitle()
+                        'label' => $this->ebayHelper->getTitle()
                     ],
                     [
                         'value' => self::VIEW_MODE_SETTINGS,
@@ -85,6 +87,4 @@ HTML
             ]
         ];
     }
-
-    //########################################
 }

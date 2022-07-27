@@ -10,15 +10,25 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationToInnodb;
 
 use Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationToInnodb;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationToInnodb\Index
- */
 class Index extends MigrationToInnodb
 {
+    /** @var \Ess\M2ePro\Helper\Component */
+    private $componentHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component $componentHelper,
+        \Magento\Framework\Code\NameBuilder $nameBuilder,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($nameBuilder, $context);
+
+        $this->componentHelper = $componentHelper;
+    }
+
     public function execute()
     {
         if ($this->isNotStarted() || $this->isActive()) {
-            $enabledComponents = $this->getHelper('Component')->getEnabledComponents();
+            $enabledComponents = $this->componentHelper->getEnabledComponents();
             $component = array_shift($enabledComponents);
 
             $this->getRequest()->getParam('referrer') && $component = $this->getRequest()->getParam('referrer');

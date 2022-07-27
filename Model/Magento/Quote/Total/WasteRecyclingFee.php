@@ -159,12 +159,10 @@ class WasteRecyclingFee extends AbstractTotal
         }
 
         $baseValueExclTax = $baseValueInclTax = $item->getWasteRecyclingFee();
-        $valueExclTax = $valueInclTax = $this->priceCurrency->round(
-            $this->priceCurrency->convert($baseValueExclTax, $this->_store)
-        );
+        $valueExclTax = $valueInclTax = round($this->priceCurrency->convert($baseValueExclTax, $this->_store), 2);
 
-        $rowValueInclTax = $rowValueExclTax = $this->priceCurrency->round($valueInclTax * $item->getTotalQty());
-        $baseRowValueInclTax = $this->priceCurrency->round($baseValueInclTax * $item->getTotalQty());
+        $rowValueInclTax = $rowValueExclTax = round($valueInclTax * $item->getTotalQty(), 2);
+        $baseRowValueInclTax = round($baseValueInclTax * $item->getTotalQty());
         $baseRowValueExclTax = $baseRowValueInclTax;
 
         $productTaxes[] = [
@@ -230,15 +228,15 @@ class WasteRecyclingFee extends AbstractTotal
         $baseRowValueInclTax
     ) {
         //Accumulate the values.  Will be used later in the 'weee tax' collector
-        $this->weeeTotalExclTax += $this->priceCurrency->round($rowValueExclTax);
-        $this->weeeBaseTotalExclTax += $this->priceCurrency->round($baseRowValueExclTax);
+        $this->weeeTotalExclTax += round((float)$rowValueExclTax, 2);
+        $this->weeeBaseTotalExclTax += round((float)$baseRowValueExclTax, 2);
 
         //This value is used to calculate shipping cost; it will be overridden by tax collector
         $total->setSubtotalInclTax(
-            $total->getSubtotalInclTax() + $this->priceCurrency->round($rowValueInclTax)
+            $total->getSubtotalInclTax() + round((float)$rowValueInclTax, 2)
         );
         $total->setBaseSubtotalInclTax(
-            $total->getBaseSubtotalInclTax() + $this->priceCurrency->round($baseRowValueInclTax)
+            $total->getBaseSubtotalInclTax() + round((float)$baseRowValueInclTax, 2)
         );
         return $this;
     }

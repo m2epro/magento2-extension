@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  2011-2015 ESS-UA [M2E Pro]
  * @license    Commercial use is forbidden
@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\System\Servicing\Statistic;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\System\Servicing\Statistic\InstructionType
- */
 class InstructionType extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'system/servicing/statistic/instruction_type';
@@ -58,7 +55,7 @@ class InstructionType extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->registryManager = $registryManager;
         $this->statisticManager = $statisticManager;
         $this->listingProductInstruction = $listingProductInstruction;
-        $this->currentDateTime = $this->helperData->createCurrentGmtDateTime();
+        $this->currentDateTime = \Ess\M2ePro\Helper\Date::createCurrentGmt();
     }
 
     protected function performActions()

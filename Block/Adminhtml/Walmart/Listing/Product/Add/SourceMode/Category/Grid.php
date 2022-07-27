@@ -25,6 +25,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\Sourc
         \Magento\Catalog\Model\Product\Type $type,
         \Magento\Store\Model\WebsiteFactory $websiteFactory,
         \Ess\M2ePro\Helper\Magento\Product $magentoProductHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
@@ -38,6 +39,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\Sourc
             $type,
             $websiteFactory,
             $magentoProductHelper,
+            $globalDataHelper,
             $context,
             $backendHelper,
             $dataHelper,
@@ -56,8 +58,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\Sourc
         return $this;
     }
 
-    //########################################
-
     private function getCollectionIds()
     {
         $ids = $this->getData('collection_ids');
@@ -74,8 +74,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\Sourc
         $this->setData('collection_ids', $ids);
         return $ids;
     }
-
-    //########################################
 
     protected function _prepareMassaction()
     {
@@ -119,8 +117,6 @@ CSS
         return parent::_prepareMassaction();
     }
 
-    //########################################
-
     public function setSelectedIds(array $ids)
     {
         $this->selectedIds = $ids;
@@ -132,8 +128,6 @@ CSS
         return $this->selectedIds;
     }
 
-    // ---------------------------------------
-
     public function setCurrentCategoryId($currentCategoryId)
     {
         $this->currentCategoryId = $currentCategoryId;
@@ -144,8 +138,6 @@ CSS
     {
         return $this->currentCategoryId;
     }
-
-    //########################################
 
     /**
      * @inheritdoc
@@ -165,8 +157,6 @@ CSS
 
         parent::setCollection($collection);
     }
-
-    //########################################
 
     public function getSelectedProductsCallback()
     {
@@ -198,8 +188,6 @@ var add_category_products = function(callback) {
 };
 JS;
     }
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -240,6 +228,4 @@ JS
 </script>
 HTML;
     }
-
-    //########################################
 }

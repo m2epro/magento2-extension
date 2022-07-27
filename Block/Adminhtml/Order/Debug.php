@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Order;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Order\Debug
- */
 class Debug extends AbstractContainer
 {
     protected $_template = 'order/debug.phtml';
@@ -21,12 +18,15 @@ class Debug extends AbstractContainer
     protected $taxModel;
     protected $storeModel;
     protected $quoteManager;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
 
     public function __construct(
         \Magento\Tax\Model\Calculation $taxCalculator,
         \Magento\Tax\Model\ClassModel $taxModel,
         \Magento\Store\Model\Store $storeModel,
         \Ess\M2ePro\Model\Magento\Quote\Manager $quoteManager,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         array $data = []
     ) {
@@ -34,6 +34,7 @@ class Debug extends AbstractContainer
         $this->taxModel = $taxModel;
         $this->storeModel = $storeModel;
         $this->quoteManager = $quoteManager;
+        $this->globalDataHelper = $globalDataHelper;
 
         parent::__construct($context, $data);
     }
@@ -41,7 +42,7 @@ class Debug extends AbstractContainer
     protected function _beforeToHtml()
     {
         /** @var \Ess\M2ePro\Model\Order $order */
-        $order = $this->getHelper('Data\GlobalData')->getValue('order');
+        $order = $this->globalDataHelper->getValue('order');
         $store = $this->storeModel->load($order->getStoreId());
 
         /** @var \Ess\M2ePro\Model\Magento\Quote\Store\Configurator $storeConfigurator */

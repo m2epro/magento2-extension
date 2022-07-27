@@ -35,20 +35,23 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    private $amazonHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         array $data = []
     ) {
         $this->variationHelper = $variationHelper;
         $this->dataHelper = $dataHelper;
+        $this->amazonHelper = $amazonHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
@@ -667,8 +670,6 @@ CSS
         return parent::_prepareForm();
     }
 
-    //########################################
-
     /**
      * @param array $message
      * @param string $type
@@ -708,8 +709,6 @@ CSS
         return $type;
     }
 
-    // ---------------------------------------
-
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
      * @return $this
@@ -729,8 +728,6 @@ CSS
         return $this->listingProduct;
     }
 
-    // ---------------------------------------
-
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProductTypeModel;
 
@@ -749,8 +746,6 @@ CSS
         return $this->listingProductTypeModel;
     }
 
-    // ---------------------------------------
-
     /**
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Attribute
      */
@@ -766,8 +761,6 @@ CSS
 
         return $this->matcherAttributes;
     }
-
-    // ---------------------------------------
 
     public function getWarnings()
     {
@@ -822,8 +815,6 @@ CSS
         }
     }
 
-    // ---------------------------------------
-
     protected function _beforeToHtml()
     {
         $this->calculateWarnings();
@@ -844,22 +835,16 @@ CSS
         return $this->getWarnings() . parent::_toHtml();
     }
 
-    //########################################
-
     public function isInAction()
     {
         $processingLocks = $this->getListingProduct()->getProcessingLocks();
         return !empty($processingLocks);
     }
 
-    // ---------------------------------------
-
     public function getProductAttributes()
     {
         return $this->getListingProductTypeModel()->getProductAttributes();
     }
-
-    // ---------------------------------------
 
     public function showGeneralIdActions()
     {
@@ -867,8 +852,6 @@ CSS
                !$this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions() &&
                !$this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks();
     }
-
-    // ---------------------------------------
 
     public function hasGeneralId()
     {
@@ -882,7 +865,7 @@ CSS
 
     public function getGeneralIdLink()
     {
-        $url = $this->getHelper('Component\Amazon')->getItemUrl(
+        $url = $this->amazonHelper->getItemUrl(
             $this->getGeneralId(),
             $this->getListingProduct()->getListing()->getMarketplaceId()
         );
@@ -897,8 +880,6 @@ HTML;
         return $this->getListingProduct()->getChildObject()->isGeneralIdOwner();
     }
 
-    // ---------------------------------------
-
     public function getDescriptionTemplateLink()
     {
         $url = $this->getUrl('*/amazon_template_description/edit', [
@@ -911,8 +892,6 @@ HTML;
 <a href="{$url}" target="_blank" title="{$templateTitle}" >{$templateTitle}</a>
 HTML;
     }
-
-    // ---------------------------------------
 
     public function hasChannelTheme()
     {
@@ -994,8 +973,6 @@ HTML;
         return $this->__('Variation Theme not found.');
     }
 
-    // ---------------------------------------
-
     public function hasMatchedAttributes()
     {
         return $this->getListingProductTypeModel()->hasMatchedAttributes();
@@ -1016,8 +993,6 @@ HTML;
         }
         return array_keys($this->getListingProductTypeModel()->getChannelAttributesSets());
     }
-
-    // ---------------------------------------
 
     public function getVirtualAttributes()
     {
@@ -1056,8 +1031,6 @@ HTML;
         return [];
     }
 
-    // ---------------------------------------
-
     public function isChangeMatchedAttributesAllowed()
     {
         if ($this->isInAction()) {
@@ -1075,8 +1048,6 @@ HTML;
 
         return true;
     }
-
-    //########################################
 
     public function getChildListingProducts()
     {
@@ -1118,8 +1089,6 @@ HTML;
         return $this->getListingProductTypeModel()->getChannelVariations();
     }
 
-    // ---------------------------------------
-
     public function getAmazonVariationsSet()
     {
         $variations = $this->getCurrentChannelVariations();
@@ -1146,8 +1115,6 @@ HTML;
         return $attributesOptions;
     }
 
-    // ---------------------------------------
-
     public function getUsedChannelVariations()
     {
         return $this->getListingProductTypeModel()->getUsedChannelOptions();
@@ -1157,8 +1124,6 @@ HTML;
     {
         return $this->getListingProductTypeModel()->getUsedProductOptions();
     }
-
-    // ---------------------------------------
 
     public function getUnusedProductVariations()
     {
@@ -1170,8 +1135,6 @@ HTML;
         return $this->getListingProductTypeModel()->getUnusedChannelOptions();
     }
 
-    // ---------------------------------------
-
     public function hasUnusedProductVariation()
     {
         return (bool)$this->getUnusedProductVariations();
@@ -1181,8 +1144,6 @@ HTML;
     {
         return (bool)$this->getUnusedChannelVariations();
     }
-
-    // ---------------------------------------
 
     public function hasChildWithEmptyProductOptions()
     {
@@ -1215,6 +1176,4 @@ HTML;
 
         return false;
     }
-
-    //########################################
 }

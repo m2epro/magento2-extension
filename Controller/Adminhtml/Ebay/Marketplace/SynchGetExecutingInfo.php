@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace\SynchGetExecutingInfo
- */
 class SynchGetExecutingInfo extends Marketplace
 {
-    //########################################
-
     public function execute()
     {
         /** @var \Ess\M2ePro\Model\Ebay\Marketplace\Synchronization $synchronization */
@@ -40,6 +35,4 @@ class SynchGetExecutingInfo extends Marketplace
         $this->setJsonContent($response);
         return $this->getResult();
     }
-
-    //########################################
 }

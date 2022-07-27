@@ -11,13 +11,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 use Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Specific\Add;
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category\GetAddSpecificsHtml
- */
 class GetAddSpecificsHtml extends Category
 {
-    //########################################
-
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Specific\Add $addBlock */
@@ -29,6 +24,4 @@ class GetAddSpecificsHtml extends Category
         $this->setAjaxContent($addBlock->toHtml());
         return $this->getResult();
     }
-
-    //########################################
 }

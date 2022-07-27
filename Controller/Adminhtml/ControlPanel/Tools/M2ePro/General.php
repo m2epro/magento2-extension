@@ -86,7 +86,7 @@ class General extends Command
 
         if (!$replaceIdFrom || !$replaceIdTo) {
             $this->messageManager->addError('Required params are not presented.');
-            $this->_redirect($this->_redirect->getRefererUrl());
+            $this->_redirect($this->redirect->getRefererUrl());
         }
 
         $definition = $this->repository->getDefinition('RemovedStores');
@@ -96,7 +96,7 @@ class General extends Command
 
         $inspector->fix([$replaceIdFrom => $replaceIdTo]);
 
-        $this->_redirect($this->_redirect->getRefererUrl());
+        $this->_redirect($this->redirect->getRefererUrl());
     }
 
     // ---------------------------------------
@@ -109,7 +109,7 @@ class General extends Command
         $repairInfo = $this->getRequest()->getPost('repair_info');
 
         if (empty($repairInfo)) {
-            $this->_redirect($this->_redirect->getRefererUrl());
+            $this->_redirect($this->redirect->getRefererUrl());
         }
 
         $dataForRepair = [];
@@ -125,7 +125,7 @@ class General extends Command
 
         $inspector->fix($dataForRepair);
 
-        $this->_redirect($this->_redirect->getRefererUrl());
+        $this->_redirect($this->redirect->getRefererUrl());
     }
 
     /**

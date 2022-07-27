@@ -7,15 +7,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\General;
 
-use Ess\M2ePro\Controller\Adminhtml\General;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\General\GetRuleConditionChooserHtml
- */
-class GetRuleConditionChooserHtml extends General
+class GetRuleConditionChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\General
 {
-    //########################################
-
     public function execute()
     {
         $request = $this->getRequest();
@@ -73,6 +66,4 @@ class GetRuleConditionChooserHtml extends General
 
         return $this->getResult();
     }
-
-    //########################################
 }

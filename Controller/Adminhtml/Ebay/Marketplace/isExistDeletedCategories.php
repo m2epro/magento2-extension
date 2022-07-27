@@ -35,6 +35,4 @@ class isExistDeletedCategories extends Marketplace
 
         return $this->getResult();
     }
-
-    //########################################
 }

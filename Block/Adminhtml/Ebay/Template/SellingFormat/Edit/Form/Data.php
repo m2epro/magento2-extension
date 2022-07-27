@@ -663,11 +663,6 @@ class Data extends AbstractForm
                     SellingFormat::VAT_MODE_NO  => $this->__('No'),
                     SellingFormat::VAT_MODE_YES => $this->__('Yes'),
                 ],
-                'tooltip'      => $this->__(
-                    <<<HTML
-Set "<b>Yes</b>" if you want VAT Rate to be added to your items.
-HTML
-                ),
             ]
         );
 
@@ -680,7 +675,6 @@ HTML
                 'name'         => 'selling_format[vat_percent]',
                 'value'        => $formData['vat_percent'],
                 'class'        => 'M2ePro-validate-vat',
-                'tooltip'      => $this->__('Specify the amount(%) of VAT that will be applied to your items.'),
             ]
         );
 
@@ -697,10 +691,8 @@ HTML
                     1 => $this->__('Yes'),
                 ],
                 'tooltip'      => $this->__(
-                    'Choose if you want to use the Tax Table for your eBay Account to charge Sales Tax.
-                    Tax Tables are set up directly on eBay, not in M2E Pro. To set up or edit Tax Tables,
-                    Log in to your Seller Account on eBay.
-                    They are available only for Canada, Canada (Fr), USA and eBay Motors.'
+                    'Tax Tables are set up directly in your eBay Seller Central and are available only for Canada,
+                    Canada (Fr), USA, and eBay Motors.'
                 ),
             ]
         );

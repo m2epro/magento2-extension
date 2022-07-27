@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Ebay\Order;
 
+use Ess\M2ePro\Model\Order\Exception\ProductCreationDisabled;
+
 /**
  * @method \Ess\M2ePro\Model\Order\Item getParentObject()
  */
@@ -406,7 +408,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
     protected function createProduct()
     {
         if (!$this->getEbayAccount()->isMagentoOrdersListingsOtherProductImportEnabled()) {
-            throw new \Ess\M2ePro\Model\Exception($this->getHelper('Module\Translation')->__(
+            throw new ProductCreationDisabled($this->getHelper('Module\Translation')->__(
                 'Product creation is disabled in "Account > Orders > Product Not Found".'
             ));
         }

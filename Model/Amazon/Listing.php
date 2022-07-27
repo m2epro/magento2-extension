@@ -99,6 +99,9 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Source[] */
     private $listingSourceModels = [];
 
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
+
     protected $currencyModel;
 
     //########################################
@@ -111,11 +114,14 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->currencyModel = $currencyModel;
+        $this->moduleConfiguration = $moduleConfiguration;
+
         parent::__construct(
             $parentFactory,
             $modelFactory,
@@ -1111,10 +1117,6 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             $variationManager->switchModeToAnother();
         }
 
-        $amazonListingProduct->getAmazonItem()
-            ->setData('store_id', $this->getParentObject()->getStoreId())
-            ->save();
-
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Other $amazonListingOther */
         $amazonListingOther = $listingOtherProduct->getChildObject();
 
@@ -1138,6 +1140,13 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             $listingProduct::MOVING_LISTING_OTHER_SOURCE_KEY,
             $listingOtherProduct->getId()
         );
+
+        if ($listingProduct->getMagentoProduct()->isGroupedType() &&
+            $this->moduleConfiguration->isGroupedProductModeSet()
+        ) {
+            $listingProduct->setSetting('additional_data', 'grouped_product_mode', 1);
+        }
+
         $listingProduct->save();
 
         $listingOtherProduct->setSetting(
@@ -1148,6 +1157,16 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
         $listingOtherProduct->save();
 
+        $amazonItem = $amazonListingProduct->getAmazonItem();
+        if ($listingProduct->getMagentoProduct()->isGroupedType() &&
+            $this->moduleConfiguration->isGroupedProductModeSet()
+        ) {
+            $amazonItem->setAdditionalData(json_encode(['grouped_product_mode' => 1]));
+        }
+
+        $amazonItem->setData('store_id', $this->getParentObject()->getStoreId());
+        $amazonItem ->save();
+        
         if ($amazonListingOther->isRepricing()) {
             $listingProductRepricing = $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing');
             $listingProductRepricing->setData(

@@ -8,35 +8,35 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Maintenance;
 
-use \Magento\Backend\App\Action;
 use \Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Maintenance\Index
- */
-class Index extends Action
+class Index extends \Magento\Backend\App\Action
 {
-    private $helperFactory;
-    private $resourceConnection;
+    /** @var \Ess\M2ePro\Helper\Module\Maintenance */
+    private $moduleMaintenanceHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Wizard */
+    private $wizardHelper;
+
+    /** @var \Magento\Framework\View\Result\PageFactory */
     private $pageFactory;
 
-    //########################################
-
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Maintenance $moduleMaintenanceHelper,
+        \Ess\M2ePro\Helper\Module\Wizard $wizardHelper,
         \Ess\M2ePro\Controller\Adminhtml\Context $controllerContext,
-        Action\Context $context
+        \Magento\Backend\App\Action\Context $context
     ) {
-        $this->helperFactory = $controllerContext->getHelperFactory();
-        $this->resourceConnection = $controllerContext->getResourceConnection();
-        $this->pageFactory = $controllerContext->getResultPageFactory();
         parent::__construct($context);
-    }
 
-    //########################################
+        $this->pageFactory = $controllerContext->getResultPageFactory();
+        $this->moduleMaintenanceHelper = $moduleMaintenanceHelper;
+        $this->wizardHelper = $wizardHelper;
+    }
 
     public function execute()
     {
-        if (!$this->helperFactory->getObject('Module\Maintenance')->isEnabled()) {
+        if (!$this->moduleMaintenanceHelper->isEnabled()) {
             return $this->_redirect('admin');
         }
 
@@ -61,9 +61,7 @@ class Index extends Action
     private function isMigration()
     {
         /** @var \Ess\M2ePro\Model\Wizard\MigrationFromMagento1 $wizard */
-        $wizard = $this->helperFactory->getObject('Module_Wizard')->getWizard(MigrationFromMagento1::NICK);
+        $wizard = $this->wizardHelper->getWizard(MigrationFromMagento1::NICK);
         return $wizard->isStarted();
     }
-
-    //########################################
 }

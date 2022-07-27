@@ -10,12 +10,26 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 use Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Edit;
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category\GetCategoryChooserHtml
- */
+
 class GetCategoryChooserHtml extends Category
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Walmart\Category */
+    private $categoryHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Walmart\Category $categoryHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalData,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->categoryHelper = $categoryHelper;
+        $this->globalData = $globalData;
+    }
 
     public function execute()
     {
@@ -27,13 +41,13 @@ class GetCategoryChooserHtml extends Category
         $browseNodeId = $this->getRequest()->getPost('browsenode_id');
         $categoryPath = $this->getRequest()->getPost('category_path');
 
-        $recentlySelectedCategories = $this->getHelper('Component_Walmart_Category')->getRecent(
+        $recentlySelectedCategories = $this->categoryHelper->getRecent(
             $this->getRequest()->getPost('marketplace_id'),
             ['browsenode_id' => $browseNodeId, 'path' => $categoryPath]
         );
 
         if (empty($recentlySelectedCategories)) {
-            $this->getHelper('Data\GlobalData')->setValue('category_chooser_hide_recent', true);
+            $this->globalData->setValue('category_chooser_hide_recent', true);
         }
 
         if ($browseNodeId && $categoryPath) {
@@ -46,6 +60,4 @@ class GetCategoryChooserHtml extends Category
         $this->setAjaxContent($editBlock->toHtml());
         return $this->getResult();
     }
-
-    //########################################
 }

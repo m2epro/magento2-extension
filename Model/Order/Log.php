@@ -15,8 +15,42 @@ use \Ess\M2ePro\Model\Connector\Connection\Response\Message;
  */
 class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 {
+    private $orderLogCollection;
+    private $helperData;
+
     /** @var int|null */
     protected $initiator = null;
+
+    public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Ess\M2ePro\Model\ResourceModel\Order\Log\CollectionFactory $orderLogCollection,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        parent::__construct(
+            $parentFactory,
+            $resourceConnection,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
+
+        $this->orderLogCollection = $orderLogCollection;
+        $this->helperData = $helperData;
+    }
 
     //########################################
 
@@ -53,12 +87,19 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
      * @param string $description
      * @param int $type
      * @param array $additionalData
+     * @param bool $isUnique
+     *
+     * @return bool
      */
-    public function addMessage($order, $description, $type, array $additionalData = [])
+    public function addMessage($order, $description, $type, array $additionalData = [], $isUnique = false)
     {
         if (!($order instanceof \Ess\M2ePro\Model\Order)) {
             /** @var \Ess\M2ePro\Model\Order $order */
             $order = $this->parentFactory->getObjectLoaded($this->getComponentMode(), 'Order', $order);
+        }
+
+        if ($isUnique && $this->isExist($order->getId(), $description)) {
+            return false;
         }
 
         $dataForAdd = [
@@ -76,6 +117,8 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         $this->activeRecordFactory->getObject('Order_Log')
             ->setData($dataForAdd)
             ->save();
+
+        return true;
     }
 
     /**
@@ -101,6 +144,21 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
             $message->getText(),
             isset($map[$message->getType()]) ? $map[$message->getType()] : self::TYPE_ERROR
         );
+    }
+
+    //########################################
+
+    public function isExist(int $orderId, string $message): bool
+    {
+        $collection = $this->orderLogCollection->create();
+        $collection->addFieldToFilter('order_id', $orderId);
+        $collection->addFieldToFilter('description', $message);
+
+        if ($collection->getSize()) {
+            return true;
+        }
+
+        return false;
     }
 
     //########################################

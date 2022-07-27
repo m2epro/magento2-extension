@@ -8,20 +8,31 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Step\Stores;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\PickupStore\Step\Stores\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $listing;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        array $data = []
+    ) {
+        $this->globalDataHelper = $globalDataHelper;
+        $this->magentoHelper = $magentoHelper;
+        parent::__construct($context, $backendHelper, $data);
+    }
 
     public function _construct()
     {
         parent::_construct();
 
-        $this->listing = $this->getHelper('Data\GlobalData')->getValue('temp_data');
+        $this->listing = $this->globalDataHelper->getValue('temp_data');
 
         $this->setId('ebayListingProductPickupStoreGrid');
 
@@ -33,8 +44,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setUseAjax(true);
         // ---------------------------------------
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -125,8 +134,6 @@ CSS
         return parent::_prepareMassaction();
     }
 
-    //########################################
-
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
         $name = $row->getData('name');
@@ -142,7 +149,7 @@ CSS
     public function callbackColumnLocationId($value, $row, $column, $isExport)
     {
         $countryCode = $row->getData('country');
-        $countries = $this->getHelper('Magento')->getCountries();
+        $countries = $this->magentoHelper->getCountries();
 
         $realCountry = $countryCode;
         foreach ($countries as $country) {
@@ -180,8 +187,6 @@ CSS
         return "<div><strong>{$phoneLabel}</strong>:&nbsp{$phone} <br/>{$url}</div>";
     }
 
-    // ---------------------------------------
-
     protected function callbackFilterTitle($collection, $column)
     {
         $value = $column->getFilter()->getValue();
@@ -205,7 +210,7 @@ CSS
         }
 
         $countryCodes = [];
-        $countries = $this->getHelper('Magento')->getCountries();
+        $countries = $this->magentoHelper->getCountries();
 
         foreach ($countries as $country) {
             $pos = strpos(strtolower($country['label']), strtolower($value));
@@ -239,8 +244,6 @@ CSS
             OR url LIKE '%{$value}%'"
         );
     }
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -280,8 +283,6 @@ JS
         return parent::_toHtml();
     }
 
-    //########################################
-
     public function getGridUrl()
     {
         return $this->getUrl('*/*/storesStepGrid', [
@@ -293,6 +294,4 @@ JS
     {
         return false;
     }
-
-    //########################################
 }

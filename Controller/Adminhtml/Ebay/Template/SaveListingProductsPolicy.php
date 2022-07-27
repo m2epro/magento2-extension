@@ -8,15 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\SaveListingProductsPolicy
- */
 class SaveListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Template
 {
     /** @var \Magento\Framework\DB\TransactionFactory */
-    protected $transactionFactory = null;
-
-    //########################################
+    private $transactionFactory = null;
 
     public function __construct(
         \Magento\Framework\DB\TransactionFactory $transactionFactory,
@@ -24,11 +19,10 @@ class SaveListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        $this->transactionFactory = $transactionFactory;
         parent::__construct($templateManager, $ebayFactory, $context);
-    }
 
-    //########################################
+        $this->transactionFactory = $transactionFactory;
+    }
 
     public function execute()
     {
@@ -97,36 +91,27 @@ class SaveListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
         return $this->getResult();
     }
 
-    //########################################
-
-    private function getPostedTemplatesData()
+    private function getPostedTemplatesData(): array
     {
-        if (!$post = $this->getRequest()->getPostValue()) {
+        if (!$post = $this->getRequest()->getPost()) {
             return [];
         }
 
-        // ---------------------------------------
         $data = [];
-        foreach ($this->templateManager->getAllTemplates() as $nick) {
-            $manager = $this->templateManager->setTemplate($nick);
 
-            if (!isset($post["template_{$nick}"])) {
-                continue;
+        foreach ($post as $keyId => $val) {
+            $key = str_replace('_id', '', $keyId);
+            $keyMode = $key . '_mode';
+
+            if ($val) {
+                $data[$keyMode] = \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE;
+                $data[$keyId] = $val;
+            } else {
+                $data[$keyMode] = \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_PARENT;
+                $data[$keyId] = null;
             }
-
-            // @codingStandardsIgnoreLine
-            $templateData = $this->getHelper('Data')->jsonDecode(base64_decode($post["template_{$nick}"]));
-
-            if ($templateData['mode'] !== \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_PARENT) {
-                $data[$manager->getTemplateIdColumnName()] = (int)$templateData['id'];
-            }
-
-            $data[$manager->getModeColumnName()] = $templateData['mode'];
         }
-        // ---------------------------------------
 
         return $data;
     }
-
-    //########################################
 }

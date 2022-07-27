@@ -10,12 +10,25 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat\Edit
- */
 class Edit extends Template
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalData,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->globalData = $globalData;
+        $this->dataHelper = $dataHelper;
+    }
 
     public function execute()
     {
@@ -29,7 +42,7 @@ class Edit extends Template
             return $this->_redirect('*/walmart_template/index');
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('tmp_template', $template);
+        $this->globalData->setValue('tmp_template', $template);
 
         $headerTextEdit = $this->__('Edit Selling Policy');
         $headerTextAdd = $this->__('Add Selling Policy');
@@ -38,7 +51,7 @@ class Edit extends Template
             && $template->getId()
         ) {
             $headerText = $headerTextEdit;
-            $headerText .= ' "'.$this->getHelper('Data')->escapeHtml($template->getTitle()).'"';
+            $headerText .= ' "'.$this->dataHelper->escapeHtml($template->getTitle()).'"';
         } else {
             $headerText = $headerTextAdd;
         }
@@ -55,6 +68,4 @@ class Edit extends Template
 
         return $this->getResultPage();
     }
-
-    //########################################
 }

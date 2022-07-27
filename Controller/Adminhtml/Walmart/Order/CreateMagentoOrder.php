@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Order\CreateMagentoOrder
- */
 class CreateMagentoOrder extends Order
 {
     public function execute()
@@ -78,7 +75,7 @@ class CreateMagentoOrder extends Order
         if (count($ids) == 1) {
             return $this->_redirect('*/*/view', ['id' => $ids[0]]);
         } else {
-            return $this->_redirect($this->_redirect->getRefererUrl());
+            return $this->_redirect($this->redirect->getRefererUrl());
         }
     }
 }

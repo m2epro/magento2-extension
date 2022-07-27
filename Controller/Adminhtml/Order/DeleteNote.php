@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Order;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Order\DeleteNote
- */
 class DeleteNote extends Order
 {
     public function execute()

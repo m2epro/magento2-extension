@@ -14,13 +14,17 @@ class View extends AbstractContainer
 {
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $data);
     }
 
@@ -33,7 +37,7 @@ class View extends AbstractContainer
         $this->_mode       = 'view';
 
         /** @var \Ess\M2ePro\Model\Order $order */
-        $order = $this->getHelper('Data\GlobalData')->getValue('order');
+        $order = $this->globalDataHelper->getValue('order');
 
         $this->removeButton('back');
         $this->removeButton('reset');

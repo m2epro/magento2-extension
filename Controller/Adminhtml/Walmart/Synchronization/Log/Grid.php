@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Synchronization\Log;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Synchronization\Log\Grid
- */
 class Grid extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Settings
 {
-    //########################################
-
     public function execute()
     {
         $this->setAjaxContent(
@@ -23,6 +18,4 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Settings
 
         return $this->getResult();
     }
-
-    //########################################
 }

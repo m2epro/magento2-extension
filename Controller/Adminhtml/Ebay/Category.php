@@ -8,19 +8,12 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
- */
 abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 {
-    //########################################
-
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::ebay_listings_m2epro');
     }
-
-    //########################################
 
     protected function getSpecificsFromPost($post)
     {
@@ -123,8 +116,6 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
         return $itemSpecifics;
     }
 
-    //########################################
-
     protected function setRuleData($prefix)
     {
         $prefix .= $this->getRequest()->getParam('active_tab', '');
@@ -154,6 +145,4 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 
         $this->getHelper('Data\GlobalData')->setValue('rule_model', $ruleModel);
     }
-
-    //########################################
 }

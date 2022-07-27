@@ -11,9 +11,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit;
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
 use Ess\M2ePro\Helper\Component\Amazon;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs
- */
 class Tabs extends AbstractTabs
 {
     const TAB_ID_GENERAL                = 'general';
@@ -21,6 +18,24 @@ class Tabs extends AbstractTabs
     const TAB_ID_ORDERS                 = 'orders';
     const TAB_ID_INVOICES_AND_SHIPMENTS = 'invoices_and_shipments';
     const TAB_ID_REPRICING              = 'repricing';
+
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Repricing */
+    private $amazonRepricingHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\Repricing $amazonRepricingHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Json\EncoderInterface $jsonEncoder,
+        \Magento\Backend\Model\Auth\Session $authSession,
+        array $data = []
+    ) {
+        $this->amazonRepricingHelper = $amazonRepricingHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        parent::__construct($context, $jsonEncoder, $authSession, $data);
+    }
 
     protected function _construct()
     {
@@ -33,7 +48,7 @@ class Tabs extends AbstractTabs
     protected function _prepareLayout()
     {
         /** @var \Ess\M2ePro\Model\Account $account */
-        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
+        $account = $this->globalDataHelper->getValue('edit_account');
 
         $this->addTab(self::TAB_ID_GENERAL, [
             'label'   => $this->__('General'),
@@ -119,7 +134,7 @@ JS
 
         return $account !== null
             && $account->getId()
-            && $this->getHelper('Component_Amazon_Repricing')->isEnabled()
+            && $this->amazonRepricingHelper->isEnabled()
             && in_array($account->getChildObject()->getMarketplaceId(), $supportedMarketplaces);
     }
 }

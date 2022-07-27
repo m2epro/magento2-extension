@@ -18,6 +18,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $databaseHelper;
 
+    /* The table is excluded because it uses a composite primary key that causes magenta to fail */
+    private $excludedTables = ['m2epro_ebay_account_store_category'];
+
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -71,7 +74,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $collection = $this->customCollectionFactory->create();
 
         foreach ($tablesList as $tableName) {
-            if (!$structureHelper->isModuleTable($tableName)) {
+            if (in_array($tableName, $this->excludedTables, true) || !$structureHelper->isModuleTable($tableName)) {
                 continue;
             }
 

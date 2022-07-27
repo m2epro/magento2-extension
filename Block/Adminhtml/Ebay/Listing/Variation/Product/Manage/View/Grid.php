@@ -38,6 +38,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
     public function __construct(
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -46,17 +49,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
-        $this->localeCurrency     = $localeCurrency;
+        $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
-        $this->wrapperCollection  = $wrapperCollection;
-        $this->ebayFactory        = $ebayFactory;
+        $this->wrapperCollection = $wrapperCollection;
+        $this->ebayFactory = $ebayFactory;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
-
-    //########################################
 
     /**
      * @return mixed
@@ -92,10 +95,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setDefaultDir('ASC');
         $this->setUseAjax(true);
 
-        $this->listingProductId = $this->getHelper('Data\GlobalData')->getValue('listing_product_id');
+        $this->listingProductId = $this->globalDataHelper->getValue('listing_product_id');
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {

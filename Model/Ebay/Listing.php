@@ -92,6 +92,38 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     private $shippingTemplateModel = null;
 
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
+    
+    //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        parent::__construct(
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
+
+        $this->moduleConfiguration = $moduleConfiguration;
+    }
+
     //########################################
 
     public function _construct()
@@ -701,6 +733,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             ->addFieldToFilter('account_id', $listingOtherProduct->getAccount()->getId())
             ->addFieldToFilter('item_id', $listingOtherProduct->getChildObject()->getItemId());
 
+        /** @var \Ess\M2ePro\Model\Ebay\Item $ebayItem */
         $ebayItem = $collection->getLastItem();
         if (!$ebayItem->getId()) {
             $ebayItem->setData(
@@ -711,6 +744,12 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
                     'product_id'     => $listingOtherProduct->getProductId(),
                 ]
             );
+        }
+
+        if ($listingProduct->getMagentoProduct()->isGroupedType() &&
+            $this->moduleConfiguration->isGroupedProductModeSet()
+        ) {
+            $ebayItem->setAdditionalData(json_encode(['grouped_product_mode' => 1]));
         }
 
         $ebayItem->setData('store_id', $this->getParentObject()->getStoreId())
@@ -745,6 +784,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             $listingProduct::MOVING_LISTING_OTHER_SOURCE_KEY,
             $listingOtherProduct->getId()
         );
+        if ($listingProduct->getMagentoProduct()->isGroupedType() &&
+            $this->moduleConfiguration->isGroupedProductModeSet()
+        ) {
+            $listingProduct->setSetting('additional_data', 'grouped_product_mode', 1);
+        }
         $listingProduct->save();
 
         $listingOtherProduct->setSetting(

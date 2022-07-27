@@ -21,20 +21,23 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
         array $data = []
     ) {
         $this->ebayFactory = $ebayFactory;
         $this->dataHelper = $dataHelper;
+        $this->sessionDataHelper = $sessionDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
@@ -393,8 +396,6 @@ HTML
         return parent::_prepareForm();
     }
 
-    //########################################
-
     protected function _prepareLayout()
     {
         $formData = $this->getListingData();
@@ -491,8 +492,6 @@ JS
         return parent::_prepareLayout();
     }
 
-    //########################################
-
     public function getDefaultFieldsValues()
     {
         return [
@@ -504,14 +503,12 @@ JS
         ];
     }
 
-    //########################################
-
     protected function getListingData()
     {
         if ($this->getRequest()->getParam('id') !== null) {
             $data = array_merge($this->getListing()->getData(), $this->getListing()->getChildObject()->getData());
         } else {
-            $data = $this->getHelper('Data_Session')->getValue(
+            $data = $this->sessionDataHelper->getValue(
                 \Ess\M2ePro\Model\Ebay\Listing::CREATE_LISTING_SESSION_DATA
             );
             $data = array_merge($this->getDefaultFieldsValues(), $data);
@@ -519,8 +516,6 @@ JS
 
         return $data;
     }
-
-    //########################################
 
     protected function getListing()
     {
@@ -530,8 +525,6 @@ JS
 
         return $this->listing;
     }
-
-    //########################################
 
     protected function getShippingTemplates($marketplaceId)
     {
@@ -628,8 +621,6 @@ JS
         return $collection->getConnection()->fetchAssoc($collection->getSelect());
     }
 
-    //########################################
-
     protected function getAddNewUrl($marketplaceId, $nick)
     {
         return $this->getUrl(
@@ -641,7 +632,6 @@ JS
                 'close_on_save'  => 1
             ]
         );
-
     }
 
     protected function getEditUrl($nick)
@@ -655,6 +645,4 @@ JS
             ]
         );
     }
-
-    //########################################
 }

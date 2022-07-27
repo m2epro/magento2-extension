@@ -8,28 +8,30 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\General;
 
-use Ess\M2ePro\Controller\Adminhtml\General;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\General\SkipStaticContentValidationMessage
- */
-class SkipStaticContentValidationMessage extends General
+class SkipStaticContentValidationMessage extends  \Ess\M2ePro\Controller\Adminhtml\General
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module */
+    private $moduleHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module $moduleHelper,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+
+        $this->moduleHelper = $moduleHelper;
+    }
 
     public function execute()
     {
         if ($this->getRequest()->getParam('skip_message', false)) {
-            $this->getHelper('Module')->getRegistry()->setValue(
+            $this->moduleHelper->getRegistry()->setValue(
                 '/global/notification/static_content/skip_for_version/',
-                $this->getHelper('Module')->getPublicVersion()
+                $this->moduleHelper->getPublicVersion()
             );
         }
 
         $backUrl = base64_decode($this->getRequest()->getParam('back'));
-
         return $this->_redirect($backUrl);
     }
-
-    //########################################
 }

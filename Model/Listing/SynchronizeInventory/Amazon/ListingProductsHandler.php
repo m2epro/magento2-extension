@@ -159,15 +159,6 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
 
                 if ($this->isDataChanged($existingData, $newData, 'online_qty')) {
                     if ($this->isNeedSkipQTYChange($existingData, $newData)) {
-                        $this->helperFactory->getObject('Module_Logger')->process(
-                            [
-                                'sku'       => $existingItem['sku'],
-                                'new_qty'   => $newData['online_qty'],
-                                'exist_qty' => $existingItem['online_qty']
-                            ],
-                            'amazon-skip-online-change'
-                        );
-
                         unset($newData['online_qty']);
                     } else {
                         $instructionsData[] = [

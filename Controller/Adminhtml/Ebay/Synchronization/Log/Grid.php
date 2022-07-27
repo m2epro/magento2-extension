@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization\Log;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization\Log\Grid
- */
 class Grid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
 {
-    //########################################
-
     public function execute()
     {
         $response = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Synchronization\Log\Grid::class)
@@ -23,6 +18,4 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
 
         return $this->getResult();
     }
-
-    //########################################
 }

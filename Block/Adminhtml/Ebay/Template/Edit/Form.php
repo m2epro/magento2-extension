@@ -20,6 +20,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
 
     public function __construct(
         \Magento\Framework\Stdlib\StringUtils $stringUtils,
@@ -28,15 +30,15 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->stringUtils = $stringUtils;
         $this->templateManager = $templateManager;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -121,14 +123,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $marketplaceId = $this->getRequest()->getParam('marketplace_id', false);
 
         $nick = $this->getTemplateNick();
-        $templateData = $this->getHelper('Data\GlobalData')->getValue("ebay_template_{$nick}");
+        $templateData = $this->globalDataHelper->getValue("ebay_template_{$nick}");
         return array_merge([
             'title' => '',
             'marketplace_id' => ($marketplaceId !== false) ? $marketplaceId : ''
         ], $templateData->getData());
     }
-
-    //########################################
 
     public function getTemplateNick()
     {

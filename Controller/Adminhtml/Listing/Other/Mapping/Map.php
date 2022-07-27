@@ -8,22 +8,18 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping;
 
-use Ess\M2ePro\Controller\Adminhtml\Listing;
-use Ess\M2ePro\Controller\Adminhtml\Context;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping\Map
- */
-class Map extends Listing
+class Map extends \Ess\M2ePro\Controller\Adminhtml\Listing
 {
-    protected $productFactory;
+    /** @var \Magento\Catalog\Model\ProductFactory */
+    private $productFactory;
 
     public function __construct(
         \Magento\Catalog\Model\ProductFactory $productFactory,
-        Context $context
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        $this->productFactory = $productFactory;
         parent::__construct($context);
+
+        $this->productFactory = $productFactory;
     }
 
     public function execute()

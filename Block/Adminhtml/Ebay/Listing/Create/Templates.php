@@ -12,13 +12,17 @@ class Templates extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContain
 {
     /** @var \Ess\M2ePro\Helper\Module\Support */
     private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionDataHelper;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
         array $data = []
     ) {
         $this->supportHelper = $supportHelper;
+        $this->sessionDataHelper = $sessionDataHelper;
         parent::__construct($context, $data);
     }
 
@@ -54,7 +58,7 @@ class Templates extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContain
 
         $nextStepBtnText = 'Next Step';
 
-        $sessionData = $this->getHelper('Data_Session')->getValue(
+        $sessionData = $this->sessionDataHelper->getValue(
             \Ess\M2ePro\Model\Ebay\Listing::CREATE_LISTING_SESSION_DATA
         );
         if (isset($sessionData['creation_mode']) && $sessionData['creation_mode'] ===
@@ -77,8 +81,6 @@ class Templates extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContain
             ]
         );
     }
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -113,6 +115,4 @@ HTML
             $helpBlock->toHtml() .
             '<div id="content_container">' . parent::_toHtml() . '</div>';
     }
-
-    //########################################
 }

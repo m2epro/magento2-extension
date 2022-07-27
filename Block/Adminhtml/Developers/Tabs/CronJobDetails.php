@@ -224,7 +224,7 @@ HTML
                         Extension Installation.
                         No additional Settings are required. Our Service does HTTP calls to your Magento from
                         IP address: <b>%server_ip%</b>.',
-                        gethostbyname($this->config->getGroupValue('/cron/service/', 'hostname'))
+                        gethostbyname((string)$this->config->getGroupValue('/cron/service/', 'hostname'))
                     ),
                 ]
             );

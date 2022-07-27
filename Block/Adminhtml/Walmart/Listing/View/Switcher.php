@@ -8,16 +8,24 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Switcher
- */
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
 {
     const VIEW_MODE_WALMART         = 'walmart';
     const VIEW_MODE_MAGENTO         = 'magento';
     const VIEW_MODE_SETTINGS        = 'settings';
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Walmart */
+    private $walmartHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        array $data = []
+    ) {
+        $this->walmartHelper = $walmartHelper;
+        parent::__construct($sessionDataHelper, $context, $data);
+    }
 
     public function getDefaultViewMode()
     {
@@ -50,14 +58,10 @@ HTML
         );
     }
 
-    //---------------------------------------
-
     protected function getComponentMode()
     {
         return \Ess\M2ePro\Helper\Component\Walmart::NICK;
     }
-
-    //---------------------------------------
 
     protected function loadItems()
     {
@@ -66,7 +70,7 @@ HTML
                 'value' => [
                     [
                         'value' => self::VIEW_MODE_WALMART,
-                        'label' => $this->getHelper('Component\Walmart')->getTitle()
+                        'label' => $this->walmartHelper->getTitle()
                     ],
                     [
                         'value' => self::VIEW_MODE_SETTINGS,
@@ -80,6 +84,4 @@ HTML
             ]
         ];
     }
-
-    //########################################
 }

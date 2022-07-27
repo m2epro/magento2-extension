@@ -27,15 +27,20 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     /** @var \Ess\M2ePro\Helper\View\Ebay */
     protected $ebayViewHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
@@ -43,7 +48,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         $this->ebayViewHelper = $ebayViewHelper;
-        parent::__construct($context, $backendHelper, $dataHelper, $data);
+        $this->sessionDataHelper = $sessionDataHelper;
+        parent::__construct($context, $backendHelper, $dataHelper, $globalDataHelper, $data);
     }
 
     public function _construct()
@@ -66,8 +72,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
         return $this;
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -311,8 +315,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         return parent::_prepareMassaction();
     }
 
-    //########################################
-
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
         $title = $row->getName();
@@ -439,8 +441,6 @@ HTML;
 HTML;
     }
 
-    // ---------------------------------------
-
     protected function callbackFilterTitle($collection, $column)
     {
         $value = $column->getFilter()->getValue();
@@ -556,8 +556,6 @@ HTML;
         }
     }
 
-    //########################################
-
     public function getGridUrl()
     {
         return $this->getUrl('*/ebay_listing/view', ['_current' => true]);
@@ -567,8 +565,6 @@ HTML;
     {
         return false;
     }
-
-    //########################################
 
     public function getTooltipHtml($content, $id = '')
     {
@@ -581,8 +577,6 @@ HTML;
 </div>
 HTML;
     }
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -598,7 +592,7 @@ JS
 
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
 
-        $temp = $this->getHelper('Data\Session')->getValue('products_ids_for_list', true);
+        $temp = $this->sessionDataHelper->getValue('products_ids_for_list', true);
         $productsIdsForList = empty($temp) ? '' : $temp;
 
         $gridId = $component . 'ListingViewGrid' . $this->listing['id'];
@@ -745,12 +739,8 @@ JS
         return parent::_toHtml();
     }
 
-    //########################################
-
     private function convertAndFormatPriceCurrency($price, $currency)
     {
         return $this->localeCurrency->getCurrency($currency)->toCurrency($price);
     }
-
-    //########################################
 }

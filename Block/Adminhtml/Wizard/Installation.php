@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Wizard;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Wizard\Installation
- */
 abstract class Installation extends AbstractWizard
 {
     /** @var \Ess\M2ePro\Helper\Data */
@@ -33,8 +30,6 @@ abstract class Installation extends AbstractWizard
     }
 
     abstract protected function getStep();
-
-    //########################################
 
     protected function _construct()
     {
@@ -76,10 +71,10 @@ abstract class Installation extends AbstractWizard
             'wizard_registration/createLicense' => $this->getUrl('*/wizard_registration/createLicense'),
         ]);
 
-        $stepsBlock = $this->createBlock(
+        $stepsBlock = $this->getLayout()->createBlock(
             $this->nameBuilder->buildClassName(
                 [
-                    'Wizard',
+                    '\Ess\M2ePro\Block\Adminhtml\Wizard',
                     $this->getNick(),
                     'Breadcrumb',
                 ]
@@ -95,10 +90,10 @@ abstract class Installation extends AbstractWizard
                               ]
                           );
 
-        $contentBlock = $this->createBlock(
+        $contentBlock = $this->getLayout()->createBlock(
             $this->nameBuilder->buildClassName(
                 [
-                    'Wizard',
+                    '\Ess\M2ePro\Block\Adminhtml\Wizard',
                     $this->getNick(),
                     'Installation',
                     $this->getStep(),

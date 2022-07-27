@@ -8,22 +8,27 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Log\Listing\Product;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractView
- */
 abstract class AbstractView extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\AbstractView
 {
     /** @var \Ess\M2ePro\Model\Listing $listing */
     protected $listing;
-
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct;
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    protected $sessionDataHelper;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        $this->sessionDataHelper = $sessionDataHelper;
+        parent::__construct($context, $data);
+    }
 
     protected function getFiltersHtml()
     {
-        $sessionViewMode = $this->getHelper('Data\Session')->getValue(
+        $sessionViewMode = $this->sessionDataHelper->getValue(
             "{$this->getComponentMode()}_log_listing_view_mode"
         );
 
@@ -62,8 +67,6 @@ abstract class AbstractView extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
             . $html;
     }
 
-    //########################################
-
     public function getListingId()
     {
         return $this->getRequest()->getParam(
@@ -89,8 +92,6 @@ abstract class AbstractView extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
         return $this->listing;
     }
 
-    //########################################
-
     public function getListingProductId()
     {
         return $this->getRequest()->getParam(
@@ -115,6 +116,4 @@ abstract class AbstractView extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
 
         return $this->listingProduct;
     }
-
-    //########################################
 }

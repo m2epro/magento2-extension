@@ -8,12 +8,22 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\GetGlobalMessages
- */
+use Ess\M2ePro\Helper\Module;
+
 class GetGlobalMessages extends Main
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module */
+    private $moduleHelper;
+
+    public function __construct(
+        Module $moduleHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($ebayFactory, $context);
+
+        $this->moduleHelper = $moduleHelper;
+    }
 
     public function execute()
     {
@@ -21,7 +31,7 @@ class GetGlobalMessages extends Main
             $this->addLicenseNotifications();
         }
 
-        $this->addNotifications($this->getHelper('Module')->getServerMessages());
+        $this->addNotifications($this->moduleHelper->getServerMessages());
         $this->addCronErrorMessage();
         $this->getCustomViewControllerHelper()->addMessages();
 
@@ -37,6 +47,4 @@ class GetGlobalMessages extends Main
         $this->setJsonContent($messages);
         return $this->getResult();
     }
-
-    //########################################
 }

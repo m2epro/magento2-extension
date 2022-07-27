@@ -252,7 +252,6 @@ define([
         isCategoryTemporaryUnselected: function(type)
         {
             return typeof this.tempSelectedCategory[type] != 'undefined' && this.tempSelectedCategory[type] === false;
-            ;
         },
 
         isCategorySelected: function(type)
@@ -675,6 +674,11 @@ define([
 
         confirmSpecifics: function()
         {
+            if (!EbayTemplateCategorySpecificsObj.isSpecificsChanged()) {
+                jQuery('#chooser_container_specific').modal('closeModal');
+                return;
+            }
+
             this.initFormValidation('#edit_specifics_form');
             if (!jQuery('#edit_specifics_form').valid()) {
                 return;
@@ -697,14 +701,13 @@ define([
                 },
                 onSuccess: function(transport)
                 {
-
                     var response = transport.responseText.evalJSON();
 
+                    self.selectedCategories[typeMain].template_id = null;
+
                     if (response.is_custom_template === null) {
-                        self.selectedCategories[typeMain].template_id = null;
                         self.selectedCategories[typeMain].is_custom_template = '0';
                     } else {
-                        self.selectedCategories[typeMain].template_id = null;
                         self.selectedCategories[typeMain].is_custom_template = '1';
                     }
 

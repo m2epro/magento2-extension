@@ -14,6 +14,6 @@ class Reset extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other
     {
         $this->activeRecordFactory->getObject('Walmart_Listing_Other')->getResource()->resetEntities();
         $this->messageManager->addSuccess($this->__('Walmart Unmanaged Listings were reset.'));
-        $this->_redirect($this->_redirect->getRefererUrl());
+        $this->_redirect($this->redirect->getRefererUrl());
     }
 }

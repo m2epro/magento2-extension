@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Listing\Mapping;
 
 use Ess\M2ePro\Controller\Adminhtml\Listing;
 
-/**
- * Class  \Ess\M2ePro\Controller\Adminhtml\Listing\Mapping\MapProductPopupHtml
- */
 class MapProductPopupHtml extends Listing
 {
-    //########################################
-
     public function execute()
     {
         $block = $this->getLayout()->createBlock(
@@ -35,8 +30,6 @@ class MapProductPopupHtml extends Listing
         return $this->getResult();
     }
 
-    //########################################
-
     protected function getMovingHandlerJs()
     {
         if ($this->getRequest()->getParam('component_mode') == \Ess\M2ePro\Helper\Component\Ebay::NICK) {
@@ -45,6 +38,4 @@ class MapProductPopupHtml extends Listing
 
         return 'ListingGridObj.mappingHandler';
     }
-
-    //########################################
 }

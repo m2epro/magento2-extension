@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1;
 
 use Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1\DisableModule
- */
 class DisableModule extends \Magento\Backend\App\Action
 {
     /** @var \Ess\M2ePro\Helper\Factory */
@@ -20,8 +17,6 @@ class DisableModule extends \Magento\Backend\App\Action
 
     /** @var \Magento\Framework\View\Result\PageFactory $resultPageFactory  */
     protected $resultPageFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -33,14 +28,10 @@ class DisableModule extends \Magento\Backend\App\Action
         parent::__construct($context);
     }
 
-    //########################################
-
     protected function _isAllowed()
     {
         return $this->_auth->isLoggedIn();
     }
-
-    //########################################
 
     public function execute()
     {
@@ -70,6 +61,4 @@ class DisableModule extends \Magento\Backend\App\Action
 
         return $result;
     }
-
-    //########################################
 }

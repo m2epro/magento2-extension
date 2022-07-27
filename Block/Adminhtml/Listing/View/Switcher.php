@@ -8,21 +8,26 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\View;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
- */
 abstract class Switcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
 {
     protected $paramName = 'view_mode';
     protected $viewMode = null;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    protected $sessionDataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        array $data = []
+    ) {
+        $this->sessionDataHelper = $sessionDataHelper;
+        parent::__construct($context, $data);
+    }
 
     abstract protected function getComponentMode();
 
     abstract protected function getDefaultViewMode();
-
-    //########################################
 
     public function getLabel()
     {
@@ -46,7 +51,7 @@ abstract class Switcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
             $this->getRequest()->getParam('id')
         );
 
-        $sessionViewMode = $this->getHelper('Data\Session')->getValue(
+        $sessionViewMode = $this->sessionDataHelper->getValue(
             "{$this->getComponentMode()}_listing_{$listing->getId()}_view_mode"
         );
 
@@ -70,7 +75,7 @@ abstract class Switcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
             $this->getRequest()->getParam('id')
         );
 
-        $this->getHelper('Data\Session')->setValue(
+        $this->sessionDataHelper->setValue(
             "{$this->getComponentMode()}_listing_{$listing->getId()}_view_mode",
             $selectedViewMode
         );
@@ -79,6 +84,4 @@ abstract class Switcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
 
         return $this->viewMode;
     }
-
-    //########################################
 }

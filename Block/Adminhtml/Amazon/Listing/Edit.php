@@ -90,12 +90,30 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             ]
         ];
 
+        $editBackUrl = $this->dataHelper->makeBackUrlParam(
+            $this->getUrl(
+                '*/amazon_listing/edit',
+                [
+                    'id'   => $this->getListing()->getId(),
+                    'back' => $backUrl
+                ]
+            )
+        );
+
+        $url = $this->getUrl(
+            '*/amazon_listing/save',
+            [
+                'id'   => $this->getListing()->getId(),
+            ]
+        );
+
         $saveButtons = [
             'id'           => 'save_and_continue',
             'label'        => $this->__('Save And Continue Edit'),
             'class'        => 'add',
             'button_class' => '',
-            'onclick'      => 'AmazonListingSettingsObj.saveAndEditClick(\'' . $url . '\', 1)',
+            'onclick'      =>
+                'AmazonListingSettingsObj.saveAndEditClick(\'' . $url . '\', 1, \'' . $editBackUrl . '\')',
             'class_name'   => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
             'options'      => $saveButtonsProps
         ];

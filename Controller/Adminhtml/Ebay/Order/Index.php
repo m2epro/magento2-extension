@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Order\Index
- */
 class Index extends Order
 {
     public function execute()

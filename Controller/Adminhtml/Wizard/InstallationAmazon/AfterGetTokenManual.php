@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon\AfterGetTokenManual
- */
 class AfterGetTokenManual extends AfterGetTokenAbstract
 {
-    //########################################
-
     protected function getAccountData()
     {
         $params = $this->getRequest()->getParams();
@@ -46,6 +41,4 @@ class AfterGetTokenManual extends AfterGetTokenAbstract
             ]
         );
     }
-
-    //########################################
 }

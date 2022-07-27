@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Delete
- */
 class Delete extends Template
 {
-    //########################################
-
     public function execute()
     {
         // ---------------------------------------
@@ -54,6 +49,4 @@ class Delete extends Template
 
         $this->_redirect('*/*/index');
     }
-
-    //########################################
 }

@@ -8,23 +8,18 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\General;
 
-use Ess\M2ePro\Controller\Adminhtml\General;
-use Ess\M2ePro\Controller\Adminhtml\Context;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\General\CheckCustomerId
- */
-class CheckCustomerId extends General
+class CheckCustomerId extends \Ess\M2ePro\Controller\Adminhtml\General
 {
-    protected $customerModel;
+    /** @var \Magento\Customer\Model\Customer */
+    private $customerModel;
 
     public function __construct(
         \Magento\Customer\Model\Customer $customerModel,
-        Context $context
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        $this->customerModel = $customerModel;
-
         parent::__construct($context);
+
+        $this->customerModel = $customerModel;
     }
 
     public function execute()

@@ -8,19 +8,13 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Order;
 
-use Ess\M2ePro\Controller\Adminhtml\Context;
-use Ess\M2ePro\Controller\Adminhtml\Order;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Order\AssignProduct
- */
-class AssignProduct extends Order
+class AssignProduct extends \Ess\M2ePro\Controller\Adminhtml\Order
 {
     protected $magentoProductCollectionFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
-        Context $context
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
 

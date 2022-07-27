@@ -8,12 +8,21 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Form
- */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        $this->globalDataHelper = $globalDataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     public function _construct()
     {
@@ -25,11 +34,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
     }
 
-    //########################################
-
     protected function _prepareForm()
     {
-        $templateModel = $this->getHelper('Data\GlobalData')->getValue('tmp_template')->getData();
+        $templateModel = $this->globalDataHelper->getValue('tmp_template')->getData();
         $formData = !empty($templateModel) ? $templateModel : ['title' => ''];
 
         $form = $this->_formFactory->create(['data' => [
@@ -72,6 +79,4 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         return parent::_prepareForm();
     }
-
-    //########################################
 }

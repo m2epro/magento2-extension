@@ -13,6 +13,9 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order;
  */
 class Creator extends \Ess\M2ePro\Model\AbstractModel
 {
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $helperData;
+
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
 
@@ -28,9 +31,11 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Data $helperData,
         array $data = []
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
+        $this->helperData = $helperData;
         parent::__construct($helperFactory, $modelFactory, $data);
     }
 
@@ -110,7 +115,10 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
             try {
                 $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
                 $order->addInfoLog(
-                    'Magento order creation rules are met. M2E Pro will attempt to create Magento order.'
+                    'Magento order creation rules are met. M2E Pro will attempt to create Magento order.',
+                    [],
+                    [],
+                    true
                 );
 
                 $order->createMagentoOrder();

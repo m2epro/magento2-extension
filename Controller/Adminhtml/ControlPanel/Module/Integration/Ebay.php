@@ -161,7 +161,7 @@ class Ebay extends Command
 
         $inspector->fix($fixData);
 
-        $this->_redirect($this->_redirect->getRefererUrl());
+        $this->_redirect($this->redirect->getRefererUrl());
     }
 
     /**

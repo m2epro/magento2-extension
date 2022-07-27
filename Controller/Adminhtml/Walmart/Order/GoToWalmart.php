@@ -10,11 +10,21 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Order\GoToWalmart
- */
 class GoToWalmart extends Order
 {
+    /** @var \Ess\M2ePro\Helper\Component\Walmart */
+    private $walmartHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->walmartHelper = $walmartHelper;
+    }
+
     public function execute()
     {
         $magentoOrderId = $this->getRequest()->getParam('magento_order_id');
@@ -27,7 +37,7 @@ class GoToWalmart extends Order
             return $this->_redirect('*/walmart_order/index');
         }
 
-        $url = $this->getHelper('Component\Walmart')->getOrderUrl(
+        $url = $this->walmartHelper->getOrderUrl(
             $order->getChildObject()->getWalmartOrderId(),
             $order->getMarketplaceId()
         );

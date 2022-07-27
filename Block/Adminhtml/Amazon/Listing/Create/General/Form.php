@@ -17,6 +17,8 @@ class Form extends AbstractForm
 
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionDataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -24,10 +26,12 @@ class Form extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
         array $data = []
     ) {
         $this->amazonFactory = $amazonFactory;
         $this->dataHelper = $dataHelper;
+        $this->sessionDataHelper = $sessionDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -58,7 +62,7 @@ class Form extends AbstractForm
         $marketplaceId = '';
         $storeId = '';
 
-        $sessionData = $this->getHelper('Data_Session')->getValue(
+        $sessionData = $this->sessionDataHelper->getValue(
             \Ess\M2ePro\Model\Amazon\Listing::CREATE_LISTING_SESSION_DATA
         );
         isset($sessionData['title']) && $title = $sessionData['title'];
@@ -212,8 +216,6 @@ HTML
         return parent::_prepareForm();
     }
 
-    //########################################
-
     protected function _prepareLayout()
     {
         $this->jsPhp->addConstants(
@@ -280,6 +282,4 @@ JS
 
         return parent::_prepareLayout();
     }
-
-    //########################################
 }

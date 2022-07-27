@@ -8,12 +8,11 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon;
 
-use Ess\M2ePro\Controller\Adminhtml\Context;
-
 abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
 {
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
+
     /** @var \Ess\M2ePro\Helper\View\Amazon */
     protected $amazonViewHelper;
 
@@ -21,9 +20,10 @@ abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\View\Amazon $amazonViewHelper,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
-        Context $context
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($nameBuilder, $context);
+
         $this->amazonFactory = $amazonFactory;
         $this->amazonViewHelper = $amazonViewHelper;
     }
@@ -32,8 +32,6 @@ abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::amazon');
     }
-
-    //########################################
 
     protected function getCustomViewNick()
     {
@@ -61,8 +59,6 @@ abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
         return $this->amazonViewHelper->getMenuRootNodeLabel();
     }
 
-    //########################################
-
     protected function indexAction()
     {
         if ($this->isSkipped()) {
@@ -71,6 +67,4 @@ abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
 
         return parent::indexAction();
     }
-
-    //########################################
 }

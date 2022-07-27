@@ -14,6 +14,7 @@ abstract class Account extends Main
 {
     /** @var \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update */
     protected $storeCategoryUpdate;
+
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Store */
     private $componentEbayCategoryStore;
 
@@ -29,14 +30,10 @@ abstract class Account extends Main
         $this->componentEbayCategoryStore = $componentEbayCategoryStore;
     }
 
-    //########################################
-
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::ebay_configuration_accounts');
     }
-
-    //########################################
 
     protected function addAccount($data)
     {
@@ -201,8 +198,6 @@ abstract class Account extends Main
         return $account;
     }
 
-    //########################################
-
     protected function getDataForServer($data)
     {
         $params = [
@@ -232,6 +227,4 @@ abstract class Account extends Main
 
         return $collection->getSize();
     }
-
-    //########################################
 }

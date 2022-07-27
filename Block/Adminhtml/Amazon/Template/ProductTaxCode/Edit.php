@@ -10,8 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductTaxCode;
 
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
 {
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
@@ -44,8 +42,8 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
         $isSaveAndClose = (bool)$this->getRequest()->getParam('close_on_save', false);
 
         if (!$isSaveAndClose
-            && $this->getHelper('Data\GlobalData')->getValue('tmp_template')
-            && $this->getHelper('Data\GlobalData')->getValue('tmp_template')->getId()
+            && $this->globalDataHelper->getValue('tmp_template')
+            && $this->globalDataHelper->getValue('tmp_template')->getId()
         ) {
             // ---------------------------------------
             $this->addButton('duplicate', [
@@ -124,6 +122,4 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
         $this->css->addFile('amazon/template.css');
         // ---------------------------------------
     }
-
-    //########################################
 }

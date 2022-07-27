@@ -8,14 +8,21 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Template\SellingFormat;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Template\SellingFormat\Messages
- */
 class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
 {
     const TYPE_CURRENCY_CONVERSION = 'currency_conversion';
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Store */
+    private $magentoStoreHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        array $data = []
+    ) {
+        $this->magentoStoreHelper = $magentoStoreHelper;
+        parent::__construct($context, $data);
+    }
 
     public function getCurrencyConversionMessage($marketplaceCurrency = null)
     {
@@ -31,7 +38,7 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
             return null;
         }
 
-        $storePath = $this->getHelper('Magento\Store')->getStorePath($this->getStore()->getId());
+        $storePath = $this->magentoStoreHelper->getStorePath($this->getStore()->getId());
         $allowed = $this->modelFactory->getObject('Currency')
             ->isAllowed(
                 $marketplaceCurrency,
@@ -94,8 +101,6 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
         return '<span style="color: #3D6611 !important;">' . $message . '</span>';
     }
 
-    //########################################
-
     public function getMessages()
     {
         $messages = parent::getMessages();
@@ -107,8 +112,6 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
 
         return $messages;
     }
-
-    //########################################
 
     protected function canDisplayCurrencyConversionMessage($marketplaceCurrency)
     {
@@ -129,8 +132,6 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
 
         return true;
     }
-
-    //########################################
 
     protected function getTemplateModel()
     {
@@ -154,6 +155,4 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
 
         return $model;
     }
-
-    //########################################
 }

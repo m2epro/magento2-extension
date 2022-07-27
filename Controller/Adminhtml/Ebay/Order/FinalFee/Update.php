@@ -12,10 +12,13 @@ class Update extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Order
 {
     /** @var \Ess\M2ePro\Model\Ebay\Order\FinalFee\Fill */
     private $fillFee;
+
     /** @var \Ess\M2ePro\Helper\Module\Exception */
     private $logger;
+
     /** @var \Magento\Framework\Controller\Result\JsonFactory */
     private $resultJsonFactory;
+
     /** @var \Ess\M2ePro\Model\Currency */
     private $currency;
 
@@ -91,8 +94,6 @@ class Update extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Order
             ]
         );
     }
-
-    // ----------------------------------------
 
     private function formatSuccessResult(\Ess\M2ePro\Model\Ebay\Order $order): ?string
     {

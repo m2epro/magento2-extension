@@ -8,30 +8,45 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving;
 
-use Ess\M2ePro\Controller\Adminhtml\Listing;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving\MoveToListingGrid
- */
-class MoveToListingGrid extends Listing
+class MoveToListingGrid extends \Ess\M2ePro\Controller\Adminhtml\Listing
 {
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalData;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalData,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+
+        $this->globalData = $globalData;
+        $this->dataHelper = $dataHelper;
+    }
+
     public function execute()
     {
-        $this->getHelper('Data\GlobalData')->setValue(
+        $this->globalData->setValue(
             'componentMode',
             $this->getRequest()->getParam('componentMode')
         );
-        $this->getHelper('Data\GlobalData')->setValue(
+
+        $this->globalData->setValue(
             'accountId',
             $this->getRequest()->getParam('accountId')
         );
-        $this->getHelper('Data\GlobalData')->setValue(
+
+        $this->globalData->setValue(
             'marketplaceId',
             $this->getRequest()->getParam('marketplaceId')
         );
-        $this->getHelper('Data\GlobalData')->setValue(
+
+        $this->globalData->setValue(
             'ignoreListings',
-            $this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('ignoreListings'))
+            $this->dataHelper->jsonDecode($this->getRequest()->getParam('ignoreListings'))
         );
 
         $component = ucfirst(strtolower($this->getRequest()->getParam('componentMode')));

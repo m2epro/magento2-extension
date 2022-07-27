@@ -16,11 +16,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     /** @var \Ess\M2ePro\Helper\Magento\Attribute */
     protected $magentoAttributeHelper;
-
     /** @var \Ess\M2ePro\Helper\Module\Support */
     private $supportHelper;
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
@@ -29,11 +30,13 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->supportHelper = $supportHelper;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -225,13 +228,11 @@ JS
         return parent::_prepareLayout();
     }
 
-    //########################################
-
     protected function getFormData()
     {
         if ($this->formData === null) {
             /** @var \Ess\M2ePro\Model\Amazon\Template\Shipping $model */
-            $model = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
+            $model = $this->globalDataHelper->getValue('tmp_template');
 
             $this->formData = [];
             if ($model) {
@@ -245,6 +246,4 @@ JS
 
         return $this->formData;
     }
-
-    //########################################
 }

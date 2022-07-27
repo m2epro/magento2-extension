@@ -8,25 +8,36 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving;
 
-use Ess\M2ePro\Controller\Adminhtml\Listing;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving\PrepareMoveToListing
- */
-class PrepareMoveToListing extends Listing
+class PrepareMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
 {
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $dbStructureHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $dbStructureHelper,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+
+        $this->sessionHelper = $sessionHelper;
+        $this->dbStructureHelper = $dbStructureHelper;
+    }
+
     public function execute()
     {
-        $sessionHelper = $this->getHelper('Data\Session');
         $componentMode = $this->getRequest()->getParam('componentMode');
         $sessionKey = $componentMode . '_' . \Ess\M2ePro\Helper\View::MOVING_LISTING_OTHER_SELECTED_SESSION_KEY;
 
         if ((bool)$this->getRequest()->getParam('is_first_part')) {
-            $sessionHelper->removeValue($sessionKey);
+            $this->sessionHelper->removeValue($sessionKey);
         }
 
         $selectedProducts = [];
-        if ($sessionValue = $sessionHelper->getValue($sessionKey)) {
+        if ($sessionValue = $this->sessionHelper->getValue($sessionKey)) {
             $selectedProducts = $sessionValue;
         }
 
@@ -34,7 +45,7 @@ class PrepareMoveToListing extends Listing
         $selectedProductsPart = explode(',', $selectedProductsPart);
 
         $selectedProducts = array_merge($selectedProducts, $selectedProductsPart);
-        $sessionHelper->setValue($sessionKey, $selectedProducts);
+        $this->sessionHelper->setValue($sessionKey, $selectedProducts);
 
         if (!(bool)$this->getRequest()->getParam('is_last_part')) {
             $this->setJsonContent(['result' => true]);
@@ -50,12 +61,12 @@ class PrepareMoveToListing extends Listing
         $listingOtherCollection->addFieldToFilter('main_table.product_id', ['notnull' => true]);
 
         if ($listingOtherCollection->getSize() != count($selectedProducts)) {
-            $sessionHelper->removeValue($sessionKey);
+            $this->sessionHelper->removeValue($sessionKey);
 
             $this->setJsonContent(
                 [
                     'result'  => false,
-                    'message' => $this->__('Only Linked Products must be selected.')
+                    'message' => $this->__('Only Linked Products must be selected.'),
                 ]
             );
 
@@ -64,15 +75,14 @@ class PrepareMoveToListing extends Listing
 
         $listingOtherCollection->getSelect()->join(
             [
-                'cpe' => $this->getHelper('Module_Database_Structure')
-                         ->getTableNameWithPrefix('catalog_product_entity')
+                'cpe' => $this->dbStructureHelper->getTableNameWithPrefix('catalog_product_entity'),
             ],
             '`main_table`.`product_id` = `cpe`.`entity_id`'
         );
 
         $row = $listingOtherCollection
             ->getSelect()
-            ->group(['main_table.account_id','main_table.marketplace_id'])
+            ->group(['main_table.account_id', 'main_table.marketplace_id'])
             ->reset(\Magento\Framework\DB\Select::COLUMNS)
             ->columns(['marketplace_id', 'account_id'])
             ->query()
@@ -85,6 +95,7 @@ class PrepareMoveToListing extends Listing
         ];
 
         $this->setJsonContent($response);
+
         return $this->getResult();
     }
 }

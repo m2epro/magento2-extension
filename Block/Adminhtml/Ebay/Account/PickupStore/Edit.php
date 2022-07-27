@@ -14,13 +14,17 @@ class Edit extends AbstractContainer
 {
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $data);
     }
 
@@ -34,7 +38,7 @@ class Edit extends AbstractContainer
         $this->_controller = 'adminhtml_ebay_account_pickupStore';
         $this->_mode = 'edit';
 
-        $pickupStoreModel = $this->getHelper('Data\GlobalData')->getValue('temp_data');
+        $pickupStoreModel = $this->globalDataHelper->getValue('temp_data');
         // ---------------------------------------
 
         // Set buttons actions

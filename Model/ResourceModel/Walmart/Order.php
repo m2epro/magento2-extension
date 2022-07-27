@@ -53,7 +53,7 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         ]);
         $collection->getSelect()->group('order_id');
 
-        return round($collection->getFirstItem()->getData('items_total'), 2);
+        return round((float)$collection->getFirstItem()->getData('items_total'), 2);
     }
 
     //########################################

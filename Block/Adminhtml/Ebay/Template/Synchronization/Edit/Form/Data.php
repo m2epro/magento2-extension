@@ -15,22 +15,26 @@ class Data extends AbstractBlock
     protected $_template = 'ebay/template/synchronization/form/data.phtml';
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
     }
 
     protected function _prepareLayout()
     {
-        $this->getHelper('Data\GlobalData')->setValue('synchronization_form_data', $this->getFormData());
+        $this->globalDataHelper->setValue('synchronization_form_data', $this->getFormData());
 
-        $this->getHelper('Data\GlobalData')->setValue('is_custom', $this->getData('is_custom'));
-        $this->getHelper('Data\GlobalData')->setValue('custom_title', $this->getData('custom_title'));
+        $this->globalDataHelper->setValue('is_custom', $this->getData('is_custom'));
+        $this->globalDataHelper->setValue('custom_title', $this->getData('custom_title'));
 
         $this->setChild('tabs', $this->getLayout()
             ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs::class));

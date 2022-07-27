@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Synchronization;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Synchronization\NewAction
- */
 class NewAction extends Template
 {
     public function execute()

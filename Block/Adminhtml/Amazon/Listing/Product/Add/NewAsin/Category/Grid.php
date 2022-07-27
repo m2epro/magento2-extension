@@ -27,6 +27,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $databaseHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -36,6 +39,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
@@ -44,6 +48,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->magentoCategoryHelper = $magentoCategoryHelper;
         $this->databaseHelper = $databaseHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct(
             $categoryCollectionFactory,
             $context,
@@ -57,7 +62,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
     {
         parent::_construct();
 
-        $this->listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
+        $this->listing = $this->globalDataHelper->getValue('listing_for_products_add');
 
         // Initialization block
         // ---------------------------------------
@@ -74,8 +79,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         $this->prepareDataByCategories();
     }
 
-    //########################################
-
     protected function _prepareCollection()
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Category\Collection $collection */
@@ -90,8 +93,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 
         return parent::_prepareCollection();
     }
-
-    //########################################
 
     protected function _prepareColumns()
     {
@@ -153,8 +154,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         return parent::_prepareColumns();
     }
 
-    //########################################
-
     protected function _prepareMassaction()
     {
         $this->setMassactionIdField('entity_id');
@@ -174,8 +173,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 
         return parent::_prepareMassaction();
     }
-
-    //########################################
 
     public function callbackColumnDescriptionTemplateCallback($value, $row, $column, $isExport)
     {
@@ -223,8 +220,6 @@ HTML;
 HTML;
     }
 
-    //########################################
-
     protected function callbackColumnDescriptionTemplateFilterCallback($collection, $column)
     {
         $value = $column->getFilter()->getValue();
@@ -262,14 +257,10 @@ HTML;
         }
     }
 
-    //########################################
-
     public function getRowUrl($row)
     {
         return false;
     }
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -316,8 +307,6 @@ JS
 
         return parent::_toHtml();
     }
-
-    //########################################
 
     private function prepareDataByCategories()
     {
@@ -378,8 +367,6 @@ JS
         $this->listing->save();
     }
 
-    //########################################
-
     protected function isNotExistProductsWithDescriptionTemplate($descriptionTemplatesData)
     {
         if (empty($descriptionTemplatesData)) {
@@ -394,6 +381,4 @@ JS
 
         return true;
     }
-
-    //########################################
 }

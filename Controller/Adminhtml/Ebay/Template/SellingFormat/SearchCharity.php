@@ -11,13 +11,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template\SellingFormat;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 use \Magento\Backend\App\Action;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\SellingFormat\SearchCharity
- */
 class SearchCharity extends Template
 {
-    //########################################
-
     public function execute()
     {
         $query = $this->getRequest()->getPost('query');
@@ -78,6 +73,4 @@ class SearchCharity extends Template
 
         return $this->getResult();
     }
-
-    //########################################
 }

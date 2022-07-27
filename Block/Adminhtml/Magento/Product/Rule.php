@@ -47,6 +47,7 @@ class Rule extends AbstractForm
 
         $renderer = $this->rendererFieldset
             ->setTemplate('Ess_M2ePro::magento/product/rule.phtml')
+            ->setNameInLayout('ess_m2epro.magento_product_rule')
             ->setNewChildUrl(
                 $this->getUrl(
                     '*/general/magentoRuleGetNewConditionHtml',

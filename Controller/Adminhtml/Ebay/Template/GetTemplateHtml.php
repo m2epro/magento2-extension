@@ -53,6 +53,4 @@ class GetTemplateHtml extends Template
 
         return $this->getResult();
     }
-
-    //########################################
 }

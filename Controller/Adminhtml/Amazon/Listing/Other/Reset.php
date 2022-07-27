@@ -21,7 +21,7 @@ class Reset extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other
 
         $this->messageManager->addSuccess($this->__('Amazon Unmanaged Listings were reset.'));
 
-        $this->_redirect($this->_redirect->getRefererUrl());
+        $this->_redirect($this->redirect->getRefererUrl());
     }
 
     //########################################

@@ -13,9 +13,21 @@ use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay;
 class BeforeToken extends InstallationEbay
 {
     /** @var \Ess\M2ePro\Helper\View\Configuration */
-    protected $configurationHelper;
+    private $configurationHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $exceptionHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\License */
+    private $licenseHelper;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
+        \Ess\M2ePro\Helper\Module\License $licenseHelper,
         \Ess\M2ePro\Helper\View\Configuration $configurationHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
@@ -23,7 +35,11 @@ class BeforeToken extends InstallationEbay
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($ebayFactory, $ebayViewHelper, $nameBuilder, $context);
+
         $this->configurationHelper = $configurationHelper;
+        $this->sessionHelper = $sessionHelper;
+        $this->exceptionHelper = $exceptionHelper;
+        $this->licenseHelper = $licenseHelper;
     }
 
     public function execute()
@@ -54,7 +70,7 @@ class BeforeToken extends InstallationEbay
             $dispatcherObject->process($connectorObj);
             $response = $connectorObj->getResponseData();
         } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
+            $this->exceptionHelper->process($exception);
 
             $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
                 $this->modelFactory->getObject('Servicing_Task_License')->getPublicNick()
@@ -62,8 +78,8 @@ class BeforeToken extends InstallationEbay
 
             $error = 'The eBay token obtaining is currently unavailable.<br/>Reason: %error_message%';
 
-            if (!$this->getHelper('Module\License')->isValidDomain() ||
-                !$this->getHelper('Module\License')->isValidIp()) {
+            if (!$this->licenseHelper->isValidDomain() ||
+                !$this->licenseHelper->isValidIp()) {
                 $error .= '</br>Go to the <a href="%url%" target="_blank">License Page</a>.';
                 $error = $this->__(
                     $error,
@@ -89,7 +105,7 @@ class BeforeToken extends InstallationEbay
             return $this->getResult();
         }
 
-        $this->getHelper('Data\Session')->setValue('token_session_id', $response['session_id']);
+        $this->sessionHelper->setValue('token_session_id', $response['session_id']);
 
         $this->setJsonContent([
             'url' => $response['url']

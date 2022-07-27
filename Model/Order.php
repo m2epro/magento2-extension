@@ -9,6 +9,8 @@
 namespace Ess\M2ePro\Model;
 
 use Ess\M2ePro\Model\Magento\Quote\FailDuringEventProcessing;
+use Ess\M2ePro\Model\Order\Exception\ProductCreationDisabled;
+use Ess\M2ePro\Model\Log\AbstractModel as Log;
 
 /**
  * @method \Ess\M2ePro\Model\Amazon\Order|\Ess\M2ePro\Model\Ebay\Order|\Ess\M2ePro\Model\Walmart\Order getChildObject()
@@ -44,6 +46,9 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     private $statusUpdateRequired = false;
 
+    private $helperModuleException;
+    private $helperModuleLog;
+
     //########################################
 
     /** @var \Ess\M2ePro\Model\Order\Log */
@@ -68,6 +73,8 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         \Magento\Framework\Registry $registry,
         \Magento\Catalog\Helper\Product $productHelper,
         \Ess\M2ePro\Model\Magento\Quote\Manager $quoteManager,
+        \Ess\M2ePro\Helper\Module\Exception $helperModuleException,
+        \Ess\M2ePro\Helper\Module\Log $helperModuleLog,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -77,6 +84,8 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         $this->resourceConnection = $resourceConnection;
         $this->productHelper = $productHelper;
         $this->quoteManager = $quoteManager;
+        $this->helperModuleException = $helperModuleException;
+        $this->helperModuleLog = $helperModuleLog;
 
         parent::__construct(
             $parentFactory,
@@ -385,36 +394,36 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     //########################################
 
-    public function addLog($description, $type, array $params = [], array $links = [])
+    public function addLog($description, $type, array $params = [], array $links = [], $isUnique = false)
     {
         /** @var \Ess\M2ePro\Model\Order\Log $log */
         $log = $this->getLog();
 
         if (!empty($params)) {
-            $description = $this->getHelper('Module\Log')->encodeDescription($description, $params, $links);
+            $description = $this->helperModuleLog->encodeDescription($description, $params, $links);
         }
 
-        $log->addMessage($this, $description, $type);
+        return $log->addMessage($this, $description, $type, [], $isUnique);
     }
 
-    public function addSuccessLog($description, array $params = [], array $links = [])
+    public function addSuccessLog($description, array $params = [], array $links = [], $isUnique = false)
     {
-        $this->addLog($description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS, $params, $links);
+        return $this->addLog($description, Log::TYPE_SUCCESS, $params, $links, $isUnique);
     }
 
-    public function addInfoLog($description, array $params = [], array $links = [])
+    public function addInfoLog($description, array $params = [], array $links = [], $isUnique = false)
     {
-        $this->addLog($description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO, $params, $links);
+        return $this->addLog($description, Log::TYPE_INFO, $params, $links, $isUnique);
     }
 
-    public function addWarningLog($description, array $params = [], array $links = [])
+    public function addWarningLog($description, array $params = [], array $links = [], $isUnique = false)
     {
-        $this->addLog($description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING, $params, $links);
+        return $this->addLog($description, Log::TYPE_WARNING, $params, $links, $isUnique);
     }
 
-    public function addErrorLog($description, array $params = [], array $links = [])
+    public function addErrorLog($description, array $params = [], array $links = [], $isUnique = false)
     {
-        $this->addLog($description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR, $params, $links);
+        return $this->addLog($description, Log::TYPE_ERROR, $params, $links, $isUnique);
     }
 
     //########################################
@@ -719,7 +728,12 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             ]);
             $this->save();
 
-            $this->addErrorLog('Magento Order was not created. Reason: %msg%', ['msg' => $e->getMessage()]);
+            $message = 'Magento Order was not created. Reason: %msg%';
+            if ($e instanceof ProductCreationDisabled) {
+                $this->addInfoLog($message, ['msg' => $e->getMessage()], [], true);
+            } else {
+                $this->addErrorLog($message, ['msg' => $e->getMessage()]);
+            }
 
             if ($this->isReservable()) {
                 $this->getReserve()->place();
@@ -765,10 +779,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     }
 
     //########################################
-
-    /**
-     * @return bool
-     */
+    
     public function canCancelMagentoOrder()
     {
         $magentoOrder = $this->getMagentoOrder();
@@ -777,10 +788,47 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             return false;
         }
 
+        if ($magentoOrder->canUnhold()) {
+            $errorMessage = 'Cancel is not allowed for Orders which were put on Hold.';
+            $messageAddedSuccessfully = $this->addErrorLog(
+                'Magento Order #%order_id% was not canceled. Reason: %msg%',
+                [
+                    '!order_id' => $this->getMagentoOrder()->getRealOrderId(),
+                    'msg' => $errorMessage
+                ],
+                [],
+                true
+            );
+
+            return $messageAddedSuccessfully ? $errorMessage : false;
+        }
+
         if ($magentoOrder->getState() === \Magento\Sales\Model\Order::STATE_COMPLETE ||
             $magentoOrder->getState() === \Magento\Sales\Model\Order::STATE_CLOSED) {
             return false;
 
+        }
+
+        $allInvoiced = true;
+        foreach ($magentoOrder->getAllItems() as $item) {
+            if ($item->getQtyToInvoice()) {
+                $allInvoiced = false;
+                break;
+            }
+        }
+        if ($allInvoiced) {
+            $errorMessage = 'Cancel is not allowed for Orders with Invoiced Items.';
+            $messageAddedSuccessfully = $this->addErrorLog(
+                'Magento Order #%order_id% was not canceled. Reason: %msg%',
+                [
+                    '!order_id' => $this->getMagentoOrder()->getRealOrderId(),
+                    'msg' => $errorMessage
+                ],
+                [],
+                true
+            );
+            
+            return $messageAddedSuccessfully ? $errorMessage : false;
         }
 
         return true;
@@ -788,7 +836,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     public function cancelMagentoOrder()
     {
-        if (!$this->canCancelMagentoOrder()) {
+        if ($this->canCancelMagentoOrder() !== true) {
             return;
         }
 
@@ -801,13 +849,8 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             $this->addSuccessLog('Magento Order #%order_id% was canceled.', [
                 '!order_id' => $this->getMagentoOrder()->getRealOrderId()
             ]);
-        } catch (\Exception $e) {
-            $this->helperFactory->getObject('Module\Exception')->process($e);
-            $this->addErrorLog('Magento Order #%order_id% was not canceled. Reason: %msg%', [
-                '!order_id' => $this->getMagentoOrder()->getRealOrderId(),
-                'msg' => $e->getMessage()
-            ]);
-            throw $e;
+        } catch (\Exception $exception) {
+            $this->helperModuleException->process($exception);
         }
     }
 
@@ -820,7 +863,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         try {
             $invoice = $this->getChildObject()->createInvoice();
         } catch (\Exception $e) {
-            $this->helperFactory->getObject('Module\Exception')->process($e);
+            $this->helperModuleException->process($e);
             $this->addErrorLog('Invoice was not created. Reason: %msg%', ['msg' => $e->getMessage()]);
         }
 
@@ -853,7 +896,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         try {
             $shipments = $this->getChildObject()->createShipments();
         } catch (\Exception $e) {
-            $this->helperFactory->getObject('Module\Exception')->process($e);
+            $this->helperModuleException->process($e);
             $this->addErrorLog('Shipment was not created. Reason: %msg%', ['msg' => $e->getMessage()]);
         }
 

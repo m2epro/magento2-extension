@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Grid
- */
 class Grid extends Template
 {
-    //########################################
-
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Grid $switcherBlock */
@@ -25,6 +20,4 @@ class Grid extends Template
         $this->setAjaxContent($grid->toHtml());
         return $this->getResult();
     }
-
-    //########################################
 }

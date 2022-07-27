@@ -10,11 +10,20 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit
- */
 class Edit extends AbstractContainer
 {
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        $this->globalDataHelper = $globalDataHelper;
+        parent::__construct($context, $data);
+    }
+
     protected function _construct()
     {
         parent::_construct();
@@ -54,8 +63,8 @@ class Edit extends AbstractContainer
         ]);
 
         $saveButtonsProps = [];
-        if ($this->getHelper('Data\GlobalData')->getValue('edit_account') &&
-            $this->getHelper('Data\GlobalData')->getValue('edit_account')->getId()) {
+        if ($this->globalDataHelper->getValue('edit_account') &&
+            $this->globalDataHelper->getValue('edit_account')->getId()) {
             $this->addButton('delete', [
                 'label'     => $this->__('Delete'),
                 'onclick'   => 'EbayAccountObj.deleteClick()',

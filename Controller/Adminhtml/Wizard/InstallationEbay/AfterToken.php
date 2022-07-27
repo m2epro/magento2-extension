@@ -14,10 +14,18 @@ use Ess\M2ePro\Model\Ebay\Account as EbayAccount;
 
 class AfterToken extends InstallationEbay
 {
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+
+    /** @var \Ess\M2ePro\Helper\Magento\Store */
+    private $magentoStoreHelper;
+
     /** @var \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update */
     private $storeCategoryUpdate;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper,
         \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update $storeCategoryUpdate,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
@@ -27,11 +35,13 @@ class AfterToken extends InstallationEbay
         parent::__construct($ebayFactory, $ebayViewHelper, $nameBuilder, $context);
 
         $this->storeCategoryUpdate = $storeCategoryUpdate;
+        $this->sessionHelper = $sessionHelper;
+        $this->magentoStoreHelper = $magentoStoreHelper;
     }
 
     public function execute()
     {
-        $tokenSessionId = $this->getHelper('Data\Session')->getValue('token_session_id', true);
+        $tokenSessionId = $this->sessionHelper->getValue('token_session_id', true);
 
         if (!$tokenSessionId) {
             $this->messageManager->addError($this->__('Token is not defined'));
@@ -105,8 +115,7 @@ class AfterToken extends InstallationEbay
         $data = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
         $data['marketplaces_data'] = [];
         $data['other_listings_synchronization'] = 0;
-        $data['magento_orders_settings']['listing_other']['store_id'] = $this->getHelper('Magento\Store')
-            ->getDefaultStoreId();
+        $data['magento_orders_settings']['listing_other']['store_id'] = $this->magentoStoreHelper->getDefaultStoreId();
         $data['magento_orders_settings']['qty_reservation']['days'] = 0;
 
         return $data;

@@ -7,15 +7,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\General;
 
-use Ess\M2ePro\Controller\Adminhtml\General;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\General\MagentoRuleGetNewConditionHtml
- */
-class MagentoRuleGetNewConditionHtml extends General
+class MagentoRuleGetNewConditionHtml extends  \Ess\M2ePro\Controller\Adminhtml\General
 {
-    //########################################
-
     public function execute()
     {
         $id = $this->getRequest()->getParam('id');
@@ -56,6 +49,4 @@ class MagentoRuleGetNewConditionHtml extends General
         $this->setAjaxContent($html);
         return $this->getResult();
     }
-
-    //########################################
 }

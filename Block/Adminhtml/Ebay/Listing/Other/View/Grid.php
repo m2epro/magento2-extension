@@ -24,6 +24,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Component\Ebay */
+    private $ebayHelper;
+
     public function __construct(
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -31,16 +34,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Component\Ebay $ebayHelper,
         array $data = []
     ) {
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         $this->ebayFactory = $ebayFactory;
         $this->dataHelper = $dataHelper;
+        $this->ebayHelper = $ebayHelper;
         parent::__construct($context, $backendHelper, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -59,8 +62,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setUseAjax(true);
         // ---------------------------------------
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -264,8 +265,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return parent::_prepareLayout();
     }
 
-    //########################################
-
     public function callbackColumnProductId($value, $row, $column, $isExport)
     {
         if (empty($value)) {
@@ -339,7 +338,7 @@ HTML;
             return $this->__('N/A');
         }
 
-        $url = $this->getHelper('Component\Ebay')->getItemUrl(
+        $url = $this->ebayHelper->getItemUrl(
             $row->getChildObject()->getData('item_id'),
             $row->getData('account_mode'),
             $row->getData('marketplace_id')
@@ -391,8 +390,6 @@ HTML;
 
         return $value;
     }
-
-    //########################################
 
     protected function callbackFilterProductId($collection, $column)
     {
@@ -447,8 +444,6 @@ HTML;
         );
     }
 
-    //########################################
-
     private function getLockedTag($row)
     {
         /** @var \Ess\M2ePro\Model\Listing\Other $listingOther */
@@ -479,8 +474,6 @@ HTML;
         return $html;
     }
 
-    //########################################
-
     protected function _beforeToHtml()
     {
 
@@ -497,8 +490,6 @@ JS
         return parent::_beforeToHtml();
     }
 
-    //########################################
-
     public function getGridUrl()
     {
         return $this->getUrl('*/ebay_listing_other/viewGrid', ['_current' => true]);
@@ -508,6 +499,4 @@ JS
     {
         return false;
     }
-
-    //########################################
 }

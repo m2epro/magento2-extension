@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors\SaveFilter
- */
 class SaveFilter extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
-    //########################################
-
     public function execute()
     {
         $post = (array)$this->getRequest()->getPost();
@@ -40,6 +35,4 @@ class SaveFilter extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         return $this->getResult();
     }
-
-    //########################################
 }

@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Settings\InterfaceTab;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Settings\InterfaceTab\RestoreRememberedChoices
- */
 class RestoreRememberedChoices extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
-    //########################################
-
     public function execute()
     {
         $collection = $this->activeRecordFactory->getObject('Listing')->getCollection();
@@ -40,6 +35,4 @@ class RestoreRememberedChoices extends \Ess\M2ePro\Controller\Adminhtml\Base
         $this->setJsonContent(['success' => true]);
         return $this->getResult();
     }
-
-    //########################################
 }

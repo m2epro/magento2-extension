@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Developers\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Developers\Tabs\SystemRequirements
- */
 class SystemRequirements extends AbstractBlock
 {
     /** @var \Magento\Framework\Data\FormFactory */
@@ -24,11 +21,15 @@ class SystemRequirements extends AbstractBlock
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Client $clientHelper,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -36,9 +37,8 @@ class SystemRequirements extends AbstractBlock
         $this->formFactory = $formFactory;
         $this->clientHelper = $clientHelper;
         $this->dataHelper = $dataHelper;
+        $this->magentoHelper = $magentoHelper;
     }
-
-    // ----------------------------------------
 
     public function toHtml()
     {
@@ -47,8 +47,6 @@ class SystemRequirements extends AbstractBlock
         return $requirements->toHtml() .
             $this->getAdditionalForm()->toHtml();
     }
-
-    //########################################
 
     /**
      * @return \Magento\Framework\Data\Form
@@ -156,11 +154,11 @@ class SystemRequirements extends AbstractBlock
             'note',
             [
                 'label' => $this->__('Database Name'),
-                'text'  => $this->getHelper('Magento')->getDatabaseName(),
+                'text'  => $this->magentoHelper->getDatabaseName(),
             ]
         );
 
-        $tablesPrefix = $this->getHelper('Magento')->getDatabaseTablesPrefix();
+        $tablesPrefix = $this->magentoHelper->getDatabaseTablesPrefix();
         $fieldSet->addField(
             'mysql_tables_prefix',
             'note',

@@ -51,6 +51,4 @@ class Save extends Settings
 
         return $this->getResult();
     }
-
-    //########################################
 }

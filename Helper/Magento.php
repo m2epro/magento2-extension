@@ -58,8 +58,6 @@ class Magento
     private $magentoStoreHelper;
     /** @var \Ess\M2ePro\Helper\Module\Exception */
     private $exceptionHelper;
-    /** @var \Ess\M2ePro\Helper\Date */
-    private $dateHelper;
     /** @var \Magento\Framework\App\RequestInterface */
     private $request;
     /** @var \Magento\Framework\UrlInterface */
@@ -72,7 +70,6 @@ class Magento
      * @param \Magento\Framework\App\RequestInterface $request
      * @param \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper
      * @param \Ess\M2ePro\Helper\Module\Exception $exceptionHelper
-     * @param \Ess\M2ePro\Helper\Date $dateHelper
      * @param \Magento\Framework\App\View\Deployment\Version\Storage\File $deploymentVersionStorageFile
      * @param \Magento\Framework\Filesystem $filesystem
      * @param \Magento\Framework\View\Design\Theme\ResolverInterface $themeResolver
@@ -96,7 +93,6 @@ class Magento
         \Magento\Framework\App\RequestInterface $request,
         \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper,
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
-        \Ess\M2ePro\Helper\Date $dateHelper,
         \Magento\Framework\App\View\Deployment\Version\Storage\File $deploymentVersionStorageFile,
         \Magento\Framework\Filesystem $filesystem,
         \Magento\Framework\View\Design\Theme\ResolverInterface $themeResolver,
@@ -132,7 +128,6 @@ class Magento
         $this->composerInformation = $composerInformation;
         $this->magentoStoreHelper = $magentoStoreHelper;
         $this->exceptionHelper = $exceptionHelper;
-        $this->dateHelper = $dateHelper;
         $this->request = $request;
         $this->urlBuilder = $urlBuilder;
         $this->scopeConfig = $scopeConfig;
@@ -267,7 +262,7 @@ class Magento
      */
     public function isCronWorking(): bool
     {
-        $minDateTime = $this->dateHelper->createCurrentGmtDateTime();
+        $minDateTime = \Ess\M2ePro\Helper\Date::createCurrentGmt();
         $minDateTime->modify('-1 day');
         $minDateTime = $minDateTime->format('Y-m-d H:i:s');
 

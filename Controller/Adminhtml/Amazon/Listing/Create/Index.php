@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -8,36 +8,31 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Create;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Create\Index
- */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
     /** @var \Ess\M2ePro\Helper\Module\Wizard */
     private $helperWizard;
-
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Transferring $transferring */
-    protected $transferring;
-
-    /** @var \Ess\M2ePro\Helper\Data */
-    protected $helperData;
-
+    private $transferring;
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $helperDataSession;
 
-    //########################################
-
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Wizard $helperWizard
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
+     * @param \Ess\M2ePro\Model\Amazon\Listing\Transferring $transferring
+     * @param \Ess\M2ePro\Helper\Data\Session $helperDataSession
+     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
+     */
     public function __construct(
         \Ess\M2ePro\Helper\Module\Wizard $helperWizard,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\Amazon\Listing\Transferring $transferring,
-        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Data\Session $helperDataSession,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         $this->helperWizard = $helperWizard;
         $this->transferring = $transferring;
-        $this->helperData = $helperData;
         $this->helperDataSession = $helperDataSession;
 
         parent::__construct($amazonFactory, $context);
@@ -225,9 +220,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         $data = $this->getSessionValue();
 
         if ($this->getSessionValue('restock_date_value') === '') {
-            $data['restock_date_value'] = $this->helperData->getCurrentGmtDate();
+            $data['restock_date_value'] = \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s');
         } else {
-            $timestamp = $this->helperData->parseTimestampFromLocalizedFormat(
+            $timestamp = \Ess\M2ePro\Helper\Date::parseDateFromLocalFormat(
                 $this->getSessionValue('restock_date_value')
             );
             $data['restock_date_value'] = gmdate('Y-m-d H:i:s', $timestamp);

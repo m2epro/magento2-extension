@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors\ViewGroupGrid
- */
 class ViewGroupGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
-    //########################################
-
     public function execute()
     {
         $entityId = $this->getRequest()->getParam('entity_id');
@@ -30,6 +25,4 @@ class ViewGroupGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         return $this->getResult();
     }
-
-    //########################################
 }

@@ -1,0 +1,36 @@
+<?php
+
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var $block \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\Order\ExcludedCountries  */
+?>
+
+<div class="fieldset-wrapper" id="magento_block_amazon_accounts_magento_orders_tax_excluded_countries" style="margin-top: 10px;" collapseable="no">
+
+    <div class="fieldset-wrapper-title admin__fieldset-wrapper-title" style="padding: 0 !important;"></div>
+
+    <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+        <div class="hor-scroll">
+            <table class="form-list" cellspacing="0" cellpadding="0">
+                <tr>
+                    <?php foreach ($block->getCountriesList() as $column) : ?>
+                        <td class="value">
+                            <?php foreach ($column as $code => $name) : ?>
+                                <div class="checkbox_container excluded_countries" style="display: block; margin: 5px;">
+                                    <input class="excluded_country_checkbox" type="checkbox" value="<?php echo $code; ?>" <?php if (in_array($code, $block->getSelectedCountries(), true)): ?>checked="checked"<?php endif; ?>/>
+                                    <label><?php echo $name; ?></label>
+                                </div>
+                            <?php endforeach; ?>
+                        </td>
+                    <?php endforeach; ?>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

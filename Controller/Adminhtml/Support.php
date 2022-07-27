@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Support
- */
 abstract class Support extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
-    //########################################
-
     protected function initResultPage()
     {
         if ($this->resultPage !== null) {
@@ -47,6 +42,4 @@ abstract class Support extends \Ess\M2ePro\Controller\Adminhtml\Base
         return $this->_authorization->isAllowed('Ess_M2ePro::ebay_help_center_contact_us') ||
                $this->_authorization->isAllowed('Ess_M2ePro::amazon_help_center_contact_us');
     }
-
-    //########################################
 }

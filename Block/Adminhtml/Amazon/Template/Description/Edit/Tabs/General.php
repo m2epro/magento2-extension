@@ -25,6 +25,12 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    private $amazonHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -32,11 +38,15 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         array $data = []
     ) {
         $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->supportHelper = $supportHelper;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->amazonHelper = $amazonHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -49,14 +59,12 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $this->setId('amazonTemplateDescriptionEditTabsGeneral');
         // ---------------------------------------
 
-        $this->templateModel = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
+        $this->templateModel = $this->globalDataHelper->getValue('tmp_template');
         $this->formData = $this->getFormData();
-        $marketplaces = $this->getHelper('Component\Amazon')->getMarketplacesAvailableForAsinCreation();
+        $marketplaces = $this->amazonHelper->getMarketplacesAvailableForAsinCreation();
         $marketplaces = $marketplaces->toArray();
         $this->marketplaceData = $marketplaces['items'];
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
@@ -315,8 +323,6 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         return parent::_prepareForm();
     }
 
-    // ---------------------------------------
-
     public function getMarketplaceWarningMessageHtml()
     {
         return <<<HTML
@@ -410,8 +416,6 @@ HTML;
 HTML;
     }
 
-    // ---------------------------------------
-
     public function getMarketplaceDataOptions()
     {
         $optionsResult = [
@@ -480,8 +484,6 @@ HTML;
         return $optionsResult;
     }
 
-    //########################################
-
     public function getFormData()
     {
         $default = array_merge(
@@ -528,8 +530,6 @@ HTML;
 
         return false;
     }
-
-    //########################################
 
     protected function _beforeToHtml()
     {
@@ -630,6 +630,4 @@ JS
 
         return parent::_beforeToHtml();
     }
-
-    //########################################
 }

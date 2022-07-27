@@ -10,12 +10,20 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category\SaveRecentCategory
- */
 class SaveRecentCategory extends Category
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Walmart\Category */
+    private $categoryHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Walmart\Category $categoryHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->categoryHelper = $categoryHelper;
+    }
 
     public function execute()
     {
@@ -28,7 +36,7 @@ class SaveRecentCategory extends Category
             return $this->getResult();
         }
 
-        $this->getHelper('Component_Walmart_Category')->addRecent(
+        $this->categoryHelper->addRecent(
             $marketplaceId,
             $browseNodeId,
             $categoryPath
@@ -37,6 +45,4 @@ class SaveRecentCategory extends Category
         $this->setJsonContent(['result' => true]);
         return $this->getResult();
     }
-
-    //########################################
 }

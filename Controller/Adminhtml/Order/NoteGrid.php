@@ -10,15 +10,11 @@ namespace Ess\M2ePro\Controller\Adminhtml\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Order;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Order\NoteGrid
- */
 class NoteGrid extends Order
 {
     public function execute()
     {
         $grid = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Note\Grid::class);
-
         $this->setAjaxContent($grid->toHtml());
         return $this->getResult();
     }

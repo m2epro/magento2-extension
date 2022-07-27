@@ -30,6 +30,12 @@ class Configuration extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFor
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2epro\Helper\Data\Cache\Permanent */
+    private $permanentCacheHelper;
+
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment $merchantFulfillment,
         \Ess\M2ePro\Model\Registration\Manager $manager,
@@ -40,6 +46,8 @@ class Configuration extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFor
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2epro\Helper\Data\Cache\Permanent $permanentCacheHelper,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
         array $data = []
     ) {
         $this->merchantFulfillment = $merchantFulfillment;
@@ -48,6 +56,8 @@ class Configuration extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFor
         $this->storeConfig = $storeConfig;
         $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->dataHelper = $dataHelper;
+        $this->permanentCacheHelper = $permanentCacheHelper;
+        $this->magentoHelper = $magentoHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -57,11 +67,9 @@ class Configuration extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFor
         $this->setId('amazonOrderMerchantFulfillmentConfiguration');
     }
 
-    //########################################
-
     protected function _prepareForm()
     {
-        $cachedData = $this->getHelper('Data_Cache_Permanent')->getValue('amazon_merchant_fulfillment_data');
+        $cachedData = $this->permanentCacheHelper->getValue('amazon_merchant_fulfillment_data');
         if (!$cachedData) {
             $cachedData = [];
         }
@@ -633,7 +641,7 @@ HTML
                 'name'     => 'ship_from_address_country',
                 'label'    => $this->__('Country'),
                 'title'    => $this->__('Country'),
-                'values'   => $this->getHelper('Magento')->getCountries(),
+                'values'   => $this->magentoHelper->getCountries(),
                 'value'    => $formData['ship_from_address_country'],
                 'required' => true
             ]
@@ -796,8 +804,6 @@ HTML
         return $this;
     }
 
-    //########################################
-
     protected function _prepareLayout()
     {
         $this->jsPhp->addConstants(
@@ -831,8 +837,6 @@ JS
 
         return parent::_prepareLayout();
     }
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -868,8 +872,6 @@ HTML
             $breadcrumb->toHtml() .
             parent::_toHtml();
     }
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Order
@@ -972,6 +974,4 @@ HTML
 
         return true;
     }
-
-    //########################################
 }

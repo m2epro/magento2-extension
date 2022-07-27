@@ -11,30 +11,29 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form;
 use \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm as Form;
 use \Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form\ShippingOverrideRules
- */
 class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     private $elementFactory;
 
+    /** @var string */
     protected $_template = 'walmart/template/sellingFormat/form/shipping_override_rules.phtml';
 
     private $parentForm;
     private $renderer;
     public $allAttributes = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Walmart */
+    private $walmartHelper;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
     ) {
         $this->elementFactory = $context->getElementFactory();
+        $this->walmartHelper = $walmartHelper;
         parent::__construct($context, $data);
     }
-
-    //########################################
 
     public function setParentForm($form)
     {
@@ -48,8 +47,6 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
         return $this;
     }
 
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
@@ -59,8 +56,6 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
         $this->setId('walmartTemplateDescriptionEditFormShippingOverrideRules');
         // ---------------------------------------
     }
-
-    //########################################
 
     protected function _beforeToHtml()
     {
@@ -211,7 +206,7 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
 
         // ---------------------------------------
 
-        $this->setData('marketplaces', $this->getHelper('Component\Walmart')->getMarketplacesAvailableForApiCreation());
+        $this->setData('marketplaces', $this->walmartHelper->getMarketplacesAvailableForApiCreation());
 
         // ---------------------------------------
 
@@ -226,8 +221,6 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
 
         return parent::_beforeToHtml();
     }
-
-    //########################################
 
     public function getShippingOverrideRuleSeviceOptions()
     {
@@ -299,8 +292,6 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
         return $options;
     }
 
-    //########################################
-
     public function getMagentoAttributesOptions()
     {
         $optionsResult = [];
@@ -338,8 +329,6 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
         return $element;
     }
 
-    //########################################
-
     public function getShippingOverrideRegionsUs()
     {
         return [
@@ -365,8 +354,6 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
         ];
     }
 
-    //########################################
-
     public function getShippingOverrideRegionsCanada()
     {
         return [
@@ -390,6 +377,4 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
             'EXPEDITED' => 'Expedited',
         ];
     }
-
-    //########################################
 }

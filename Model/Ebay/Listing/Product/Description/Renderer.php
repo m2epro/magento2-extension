@@ -102,12 +102,18 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
             }
 
             $value = '';
-            method_exists($this, $method) && $value = $this->$method($arg);
+            if (method_exists($this, $method)) {
+                $value = $this->$method($arg);
+            }
 
             if (in_array($attributeCode, ['fixed_price', 'start_price', 'reserve_price', 'buyitnow_price'])) {
-                $value = round($value, 2);
+                $value = round((float)$value, 2);
                 $value = $this->priceHelper->currency($value, true, false);
-            }($value !== '') && $replaces[$matches[0][$i]] = $value;
+            }
+
+            if ($value !== '') {
+                $replaces[$matches[0][$i]] = $value;
+            }
         }
 
         $text = str_replace(array_keys($replaces), array_values($replaces), $text);

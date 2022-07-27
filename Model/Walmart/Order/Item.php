@@ -12,6 +12,8 @@
 
 namespace Ess\M2ePro\Model\Walmart\Order;
 
+use Ess\M2ePro\Model\Order\Exception\ProductCreationDisabled;
+
 /**
  * Class \Ess\M2ePro\Model\Walmart\Order\Item
  */
@@ -304,7 +306,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
     private function createProduct()
     {
         if (!$this->getWalmartAccount()->isMagentoOrdersListingsOtherProductImportEnabled()) {
-            throw new \Ess\M2ePro\Model\Exception($this->getHelper('Module\Translation')->__(
+            throw new ProductCreationDisabled($this->getHelper('Module\Translation')->__(
                 'Product creation is disabled in "Account > Orders > Product Not Found".'
             ));
         }

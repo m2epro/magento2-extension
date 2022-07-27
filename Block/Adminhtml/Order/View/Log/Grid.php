@@ -10,15 +10,25 @@ namespace Ess\M2ePro\Block\Adminhtml\Order\View\Log;
 
 use Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Order\View\Log\Grid
- */
 class Grid extends AbstractGrid
 {
     /** @var \Ess\M2ePro\Model\Order $order */
     private $order;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\View $viewHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        array $data = []
+    ) {
+        $this->globalDataHelper = $globalDataHelper;
+        parent::__construct($resourceConnection, $viewHelper, $context, $backendHelper, $data);
+    }
 
     public function _construct()
     {
@@ -38,7 +48,7 @@ class Grid extends AbstractGrid
         $this->setCustomPageSize(false);
         // ---------------------------------------
 
-        $this->order = $this->getHelper('Data\GlobalData')->getValue('order');
+        $this->order = $this->globalDataHelper->getValue('order');
     }
 
     protected function _prepareCollection()
@@ -100,8 +110,6 @@ class Grid extends AbstractGrid
         return parent::_prepareColumns();
     }
 
-    //########################################
-
     public function getRowUrl($row)
     {
         return '';
@@ -111,6 +119,4 @@ class Grid extends AbstractGrid
     {
         return $this->getUrl('*/order/viewLogGrid', ['_current' => true]);
     }
-
-    //########################################
 }

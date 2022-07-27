@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Order\UpdateShippingStatus
- */
 class UpdateShippingStatus extends Order
 {
     public function execute()
@@ -85,6 +82,6 @@ class UpdateShippingStatus extends Order
             );
         }
 
-        $this->_redirect($this->_redirect->getRefererUrl());
+        $this->_redirect($this->redirect->getRefererUrl());
     }
 }

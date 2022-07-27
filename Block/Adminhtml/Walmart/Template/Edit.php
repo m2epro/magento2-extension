@@ -15,12 +15,17 @@ abstract class Edit extends AbstractContainer
     /** @var \Ess\M2ePro\Helper\Data */
     protected $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    protected $globalDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $data);
     }
 
@@ -37,7 +42,7 @@ abstract class Edit extends AbstractContainer
     protected function getSaveConfirmationText($id = null)
     {
         $saveConfirmation = '';
-        $template = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
+        $template = $this->globalDataHelper->getValue('tmp_template');
 
         if ($id === null && $template !== null) {
             $id = $template->getId();

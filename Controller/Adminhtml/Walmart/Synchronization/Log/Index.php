@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Synchronization\Log;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Synchronization\Log\Index
- */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Settings
 {
-    //########################################
-
     public function execute()
     {
         return $this->_redirect(
@@ -22,6 +17,4 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Settings
             ['active_tab' => \Ess\M2ePro\Block\Adminhtml\Developers\Tabs::TAB_ID_SYNCHRONIZATION_LOG]
         );
     }
-
-    //########################################
 }

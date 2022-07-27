@@ -8,26 +8,36 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Listing\Moving;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Listing\Moving\PrepareMoveToListing
- */
 class PrepareMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $dbStructureHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Database\Structure $dbStructureHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+
+        $this->dbStructureHelper = $dbStructureHelper;
+        $this->sessionHelper = $sessionHelper;
+    }
 
     public function execute()
     {
-        $dbHelper = $this->getHelper('Module_Database_Structure');
-        $sessionHelper = $this->getHelper('Data\Session');
         $componentMode = $this->getRequest()->getParam('componentMode');
         $sessionKey = $componentMode . '_' . \Ess\M2ePro\Helper\View::MOVING_LISTING_PRODUCTS_SELECTED_SESSION_KEY;
 
         if ((bool)$this->getRequest()->getParam('is_first_part')) {
-            $sessionHelper->removeValue($sessionKey);
+            $this->sessionHelper->removeValue($sessionKey);
         }
 
         $selectedProducts = [];
-        if ($sessionValue = $sessionHelper->getValue($sessionKey)) {
+        if ($sessionValue = $this->sessionHelper->getValue($sessionKey)) {
             $selectedProducts = $sessionValue;
         }
 
@@ -35,7 +45,7 @@ class PrepareMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
         $selectedProductsPart = explode(',', $selectedProductsPart);
 
         $selectedProducts = array_merge($selectedProducts, $selectedProductsPart);
-        $sessionHelper->setValue($sessionKey, $selectedProducts);
+        $this->sessionHelper->setValue($sessionKey, $selectedProducts);
 
         if (!(bool)$this->getRequest()->getParam('is_last_part')) {
             $this->setJsonContent(['result' => true]);
@@ -51,11 +61,11 @@ class PrepareMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
         $row = $listingProductCollection
             ->getSelect()
             ->join(
-                ['listing' => $dbHelper->getTableNameWithPrefix('m2epro_listing')],
+                ['listing' => $this->dbStructureHelper->getTableNameWithPrefix('m2epro_listing')],
                 '`main_table`.`listing_id` = `listing`.`id`'
             )
             ->join(
-                ['cpe' => $dbHelper->getTableNameWithPrefix('catalog_product_entity')],
+                ['cpe' => $this->dbStructureHelper->getTableNameWithPrefix('catalog_product_entity')],
                 '`main_table`.`product_id` = `cpe`.`entity_id`'
             )
             ->group(['listing.account_id', 'listing.marketplace_id'])
@@ -71,6 +81,4 @@ class PrepareMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
         ]);
         return $this->getResult();
     }
-
-    //########################################
 }

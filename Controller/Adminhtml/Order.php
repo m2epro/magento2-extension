@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Order
- */
 abstract class Order extends Base
 {
     protected function _isAllowed()

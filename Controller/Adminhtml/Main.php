@@ -13,9 +13,6 @@ use Ess\M2ePro\Helper\Module\License;
 use Ess\M2ePro\Model\HealthStatus\Task\Result;
 use Ess\M2ePro\Model\Servicing\Dispatcher;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Main
- */
 abstract class Main extends Base
 {
     private $systemRequirementsChecked = false;
@@ -94,7 +91,7 @@ abstract class Main extends Base
         }
 
         if ($this->isContentLockedByWizard()) {
-            return $this->addWizardUpgradeNotification();
+            return $this->getRedirectToWizard();
         }
 
         return parent::addContent($block);
@@ -145,32 +142,12 @@ abstract class Main extends Base
         $this->systemRequirementsChecked = true;
     }
 
-    protected function addWizardUpgradeNotification()
+    protected function getRedirectToWizard()
     {
-        if ($this->isAjax()) {
-            return false;
-        }
         /** @var Module\Wizard $wizardHelper */
         $wizardHelper = $this->getHelper('Module\Wizard');
-
-        if (!($activeWizard = $wizardHelper->getActiveBlockerWizard($this->getCustomViewNick()))) {
-            return false;
-        }
-
+        $activeWizard = $wizardHelper->getActiveBlockerWizard($this->getCustomViewNick());
         $activeWizardNick = $wizardHelper->getNick($activeWizard);
-
-        if ((bool)$this->getRequest()->getParam('wizard', false) ||
-            $this->getRequest()->getControllerName() == 'wizard_'.$activeWizardNick) {
-            return false;
-        }
-
-        $this->resultPage->getLayout()->unsetChild('page.content', 'page_main_actions');
-        /** @var \Magento\Framework\View\Element\AbstractBlock $notificationBlock */
-        $notificationBlock = $wizardHelper->createBlock('notification', $activeWizardNick);
-        if ($notificationBlock) {
-            return parent::addContent($notificationBlock);
-        }
-
         return $this->_redirect('*/wizard_' . $activeWizardNick, ['referrer' => $this->getCustomViewNick()]);
     }
 

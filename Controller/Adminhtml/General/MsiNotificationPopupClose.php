@@ -8,22 +8,24 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\General;
 
-use Ess\M2ePro\Controller\Adminhtml\Base;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\General\MsiNotificationPopupClose
- */
-class MsiNotificationPopupClose extends Base
+class MsiNotificationPopupClose extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module */
+    private $moduleHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module $moduleHelper,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+
+        $this->moduleHelper = $moduleHelper;
+    }
 
     public function execute()
     {
-        $this->getHelper('Module')->getRegistry()->setValue('/view/msi/popup/shown/', 1);
-
+        $this->moduleHelper->getRegistry()->setValue('/view/msi/popup/shown/', 1);
         $this->setJsonContent(['status' => true]);
         return $this->getResult();
     }
-
-    //########################################
 }

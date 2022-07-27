@@ -10,16 +10,11 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Synchronization;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Settings;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Synchronization\Index
- */
 class Index extends Settings
 {
-    //########################################
-
     public function execute()
     {
-        // Remove when Mageto fix Horizontal Tabs bug
+        // Remove when Magento fix Horizontal Tabs bug
         if ($this->getRequest()->isXmlHttpRequest()) {
             $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Synchronization::class)
                                        ->toHtml();
@@ -38,6 +33,4 @@ class Index extends Settings
 
         return $this->resultPage;
     }
-
-    //########################################
 }

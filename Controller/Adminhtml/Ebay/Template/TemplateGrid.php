@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\TemplateGrid
- */
 class TemplateGrid extends Template
 {
-    //########################################
-
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Grid $switcherBlock */
@@ -25,6 +20,4 @@ class TemplateGrid extends Template
         $this->setAjaxContent($grid->toHtml());
         return $this->getResult();
     }
-
-    //########################################
 }

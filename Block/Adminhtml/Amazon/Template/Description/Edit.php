@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit
- */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
 {
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
@@ -114,13 +109,9 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
         $this->css->addFile('amazon/template.css');
     }
 
-    //########################################
-
     private function isEditMode()
     {
-        $templateModel = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
+        $templateModel = $this->globalDataHelper->getValue('tmp_template');
         return $templateModel && $templateModel->getId();
     }
-
-    //########################################
 }

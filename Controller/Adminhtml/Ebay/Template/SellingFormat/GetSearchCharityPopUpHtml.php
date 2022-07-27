@@ -11,13 +11,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template\SellingFormat;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 use \Magento\Backend\App\Action;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\SellingFormat\GetSearchCharityPopUpHtml
- */
 class GetSearchCharityPopUpHtml extends Template
 {
-    //########################################
-
     public function execute()
     {
         $marketplaceId = $this->getRequest()->getParam('marketplace_id');
@@ -37,6 +32,4 @@ class GetSearchCharityPopUpHtml extends Template
 
         return $this->getResult();
     }
-
-    //########################################
 }

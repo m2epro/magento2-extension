@@ -28,12 +28,13 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
      * @param array $data
      */
     public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Component\Amazon $componentAmazonHelper,
         array $data = []
     ) {
-        parent::__construct($context, $data);
+        parent::__construct($sessionDataHelper, $context, $data);
         $this->supportHelper = $supportHelper;
         $this->componentAmazonHelper = $componentAmazonHelper;
     }

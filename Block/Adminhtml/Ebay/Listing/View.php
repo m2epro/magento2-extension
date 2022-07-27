@@ -18,12 +18,17 @@ class View extends AbstractContainer
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $data);
     }
 
@@ -31,7 +36,7 @@ class View extends AbstractContainer
     {
         parent::_construct();
 
-        $this->listing = $this->getHelper('Data\GlobalData')->getValue('view_listing');
+        $this->listing = $this->globalDataHelper->getValue('view_listing');
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Switcher $viewModeSwitcher */
         $viewModeSwitcher = $this->getLayout()

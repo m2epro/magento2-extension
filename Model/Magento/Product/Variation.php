@@ -665,9 +665,9 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
                 'option_id' => $option->getData('option_id'),
                 'values'    => [],
                 'labels'    => array_filter([
-                    trim($option->getData('store_title')),
-                    trim($option->getData('title')),
-                    trim($option->getData('default_title')),
+                    trim((string)$option->getData('store_title')),
+                    trim((string)$option->getData('title')),
+                    trim((string)$option->getData('default_title')),
                 ])
             ];
 
@@ -678,9 +678,9 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
                     'product_ids' => [$this->getMagentoProduct()->getProductId()],
                     'value_id' => $value->getData('option_type_id'),
                     'labels'   => array_filter([
-                        trim($value->getData('store_title')),
-                        trim($value->getData('title')),
-                        trim($value->getData('default_title'))
+                        trim((string)$value->getData('store_title')),
+                        trim((string)$value->getData('title')),
+                        trim((string)$value->getData('default_title'))
                     ])
                 ];
             }

@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Order;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Order\Grid
- */
 class Grid extends Order
 {
     public function execute()

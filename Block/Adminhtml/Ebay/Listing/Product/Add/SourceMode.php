@@ -8,16 +8,23 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode
- */
 class SourceMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
     const MODE_PRODUCT  = 'product';
     const MODE_CATEGORY = 'category';
     const MODE_OTHER    = 'other';
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        $this->globalDataHelper = $globalDataHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -60,7 +67,7 @@ class SourceMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContai
 
     protected function _toHtml()
     {
-        $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
+        $listing = $this->globalDataHelper->getValue('listing_for_products_add');
 
         $viewHeaderBlock = $this->getLayout()->createBlock(
             \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
@@ -70,6 +77,4 @@ class SourceMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContai
 
         return $viewHeaderBlock->toHtml() . parent::_toHtml();
     }
-
-    //########################################
 }

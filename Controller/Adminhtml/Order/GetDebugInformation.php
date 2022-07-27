@@ -8,13 +8,20 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Order;
 
-use Ess\M2ePro\Controller\Adminhtml\Order;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Order\GetDebugInformation
- */
-class GetDebugInformation extends Order
+class GetDebugInformation extends \Ess\M2ePro\Controller\Adminhtml\Order
 {
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalData,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+
+        $this->globalData = $globalData;
+    }
+
     public function execute()
     {
         $id = $this->getRequest()->getParam('id');
@@ -31,7 +38,7 @@ class GetDebugInformation extends Order
             return $this->getResult();
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('order', $order);
+        $this->globalData->setValue('order', $order);
 
         $debugBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Debug::class);
 

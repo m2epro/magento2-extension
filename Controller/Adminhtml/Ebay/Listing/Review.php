@@ -8,19 +8,40 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Review
- */
+use Ess\M2ePro\Helper\Data\Session;
+
 class Review extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalData;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+
+    public function __construct(
+        Session $sessionHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalData,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($ebayFactory, $context);
+
+        $this->globalData = $globalData;
+        $this->dataHelper = $dataHelper;
+        $this->sessionHelper = $sessionHelper;
+    }
+
     public function execute()
     {
         $listingId = $this->getRequest()->getParam('id');
         $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $listingId);
 
-        $this->getHelper('Data\GlobalData')->setValue('review_listing', $listing);
-
-        $ids = $this->getHelper('Data\Session')->getValue('added_products_ids');
+        $this->globalData->setValue('review_listing', $listing);
+        $ids = $this->sessionHelper->getValue('added_products_ids');
 
         if (empty($ids) && !$this->getRequest()->getParam('disable_list')) {
             return $this->_redirect('*/*/view', ['id' => $listingId]);
@@ -43,7 +64,7 @@ class Review extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         unset($additionalData['source']);
         $listing->setSettings('additional_data', $additionalData);
-        $listing->getChildObject()->setData('product_add_ids', $this->getHelper('Data')->jsonEncode([]));
+        $listing->getChildObject()->setData('product_add_ids', $this->dataHelper->jsonEncode([]));
         $listing->getChildObject()->save();
         $listing->save();
 

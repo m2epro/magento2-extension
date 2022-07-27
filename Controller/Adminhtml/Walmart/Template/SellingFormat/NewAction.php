@@ -10,17 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat\NewAction
- */
 class NewAction extends Template
 {
-    //########################################
-
     public function execute()
     {
         $this->_forward('edit');
     }
-
-    //########################################
 }

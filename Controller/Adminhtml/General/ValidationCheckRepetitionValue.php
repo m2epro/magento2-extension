@@ -8,12 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\General;
 
-use Ess\M2ePro\Controller\Adminhtml\General;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\General\ValidationCheckRepetitionValue
- */
-class ValidationCheckRepetitionValue extends General
+class ValidationCheckRepetitionValue extends \Ess\M2ePro\Controller\Adminhtml\General
 {
     public function execute()
     {

@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace\Index
- */
 class Index extends Marketplace
 {
-    //########################################
-
     public function execute()
     {
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Marketplace::class));
@@ -25,6 +20,4 @@ class Index extends Marketplace
 
         return $this->getResult();
     }
-
-    //########################################
 }

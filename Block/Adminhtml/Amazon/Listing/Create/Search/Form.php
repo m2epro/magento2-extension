@@ -27,6 +27,9 @@ class Form extends AbstractForm
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
@@ -34,11 +37,13 @@ class Form extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
         array $data = []
     ) {
         $this->amazonFactory = $amazonFactory;
         $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->dataHelper = $dataHelper;
+        $this->sessionDataHelper = $sessionDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -252,8 +257,6 @@ class Form extends AbstractForm
         return parent::_prepareForm();
     }
 
-    //########################################
-
     protected function _prepareLayout()
     {
         $this->jsPhp->addConstants(
@@ -290,8 +293,6 @@ JS
         return parent::_prepareLayout();
     }
 
-    //########################################
-
     public function getDefaultFieldsValues()
     {
         return [
@@ -305,14 +306,12 @@ JS
         ];
     }
 
-    //########################################
-
     protected function getListingData()
     {
         if ($this->getRequest()->getParam('id') !== null) {
             $data = array_merge($this->getListing()->getData(), $this->getListing()->getChildObject()->getData());
         } else {
-            $data = $this->getHelper('Data_Session')->getValue(
+            $data = $this->sessionDataHelper->getValue(
                 AmazonListing::CREATE_LISTING_SESSION_DATA
             );
             $data = array_merge($this->getDefaultFieldsValues(), $data);
@@ -320,8 +319,6 @@ JS
 
         return $data;
     }
-
-    //########################################
 
     protected function getListing()
     {
@@ -335,8 +332,6 @@ JS
         return $this->listing;
     }
 
-    //########################################
-
     /**
      * @param boolean $useFormContainer
      */
@@ -346,6 +341,4 @@ JS
 
         return $this;
     }
-
-    //########################################
 }

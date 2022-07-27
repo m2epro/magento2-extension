@@ -230,7 +230,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
         $header = '<br/><b><u>' . $this->getHelper('Module\Translation')->__('M2E Pro Notes') . ':</u></b><br/><br/>';
         $comments = implode('<br/><br/>', $comments);
 
-        $this->magentoOrder->addStatusHistoryComment($header . $comments);
+        $this->magentoOrder->addCommentToStatusHistory($header . $comments);
         $this->needSave = true;
     }
 
@@ -269,35 +269,6 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
     {
         $this->magentoOrder->setActionFlag(\Magento\Sales\Model\Order::ACTION_FLAG_CANCEL, true);
         $this->magentoOrder->setActionFlag(\Magento\Sales\Model\Order::ACTION_FLAG_UNHOLD, true);
-
-        if ($this->magentoOrder->isCanceled()) {
-            //throw new \Ess\M2ePro\Model\Exception('Cancel is not allowed for Orders which were already Canceled.');
-            return;
-        }
-
-        if ($this->magentoOrder->hasCreditmemos()) {
-            return;
-        }
-
-        if ($this->magentoOrder->canUnhold()) {
-            throw new \Ess\M2ePro\Model\Exception('Cancel is not allowed for Orders which were put on Hold.');
-        }
-
-        if ($this->magentoOrder->getState() === \Magento\Sales\Model\Order::STATE_COMPLETE ||
-            $this->magentoOrder->getState() === \Magento\Sales\Model\Order::STATE_CLOSED) {
-            return;
-        }
-
-        $allInvoiced = true;
-        foreach ($this->magentoOrder->getAllItems() as $item) {
-            if ($item->getQtyToInvoice()) {
-                $allInvoiced = false;
-                break;
-            }
-        }
-        if ($allInvoiced) {
-            throw new \Ess\M2ePro\Model\Exception('Cancel is not allowed for Orders with Invoiced Items.');
-        }
 
         $this->magentoOrder->cancel()->save();
     }

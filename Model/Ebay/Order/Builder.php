@@ -353,7 +353,7 @@ class Builder extends AbstractModel
                 $paymentAdditionalData = $this->getHelper('Data')->unserialize(
                     $magentoOrder->getPayment()->getAdditionalData()
                 );
-                if (!empty($paymentAdditionalData)) {
+                if (is_array($paymentAdditionalData) && !empty($paymentAdditionalData)) {
                     $paymentAdditionalData['channel_final_fee'] = $finalFee;
                     $magentoOrder->getPayment()->setAdditionalData(
                         $this->getHelper('Data')->serialize($paymentAdditionalData)
@@ -653,7 +653,7 @@ class Builder extends AbstractModel
     protected function processOrdersContainingItemsFromCurrentOrder()
     {
         foreach ($this->relatedOrders as $relatedOrder) {
-            if ($relatedOrder->canCancelMagentoOrder()) {
+            if ($relatedOrder->canCancelMagentoOrder() === true) {
                 $relatedOrder->addWarningLog(
                     'Magento Order #%order_id% should be canceled ' .
                     'as new combined eBay order #%new_id% was created.',

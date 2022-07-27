@@ -18,23 +18,33 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         array $data = []
     ) {
         $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->supportHelper = $supportHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
     protected function _prepareForm()
     {
         /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTaxCode $model */
-        $model = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
+        $model = $this->globalDataHelper->getValue('tmp_template');
 
         $formData = [];
         if ($model) {
@@ -146,9 +156,11 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 ],
                 'create_magento_attribute' => true,
                 'required' => true,
-                'tooltip' => $this->__('Specify Amazon Tax Code value or select Magento Attribute
-                                        that contains appropriate Tax Code values.
-                                        Only <strong>common</strong> Attributes are available for the selection.')
+                'tooltip' => $this->__(
+                    'Apply Amazon Product Tax Codes to display VAT-exclusive prices to B2B customers. Find more info in
+                    <a href="%url%" target="_blank">this article</a>.',
+                    $this->supportHelper->getDocumentationArticleUrl('x/-A03B')
+                )
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
@@ -210,6 +222,4 @@ JS
 
         return parent::_prepareForm();
     }
-
-    //########################################
 }

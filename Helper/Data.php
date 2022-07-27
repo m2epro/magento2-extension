@@ -32,8 +32,6 @@ class Data
     /** @var \Magento\Framework\App\RequestInterface */
     private $httpRequest;
     private $phpSerialize;
-    /** @var \Ess\M2ePro\Helper\Date */
-    private $dateHelper;
 
     /**
      * @param \Magento\Framework\Module\Dir $dir
@@ -47,14 +45,12 @@ class Data
         \Magento\Backend\Model\UrlInterface $urlBuilder,
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Ess\M2ePro\Helper\Magento $magentoHelper,
-        \Ess\M2ePro\Helper\Date $dateHelper,
         \Magento\Framework\App\RequestInterface $httpRequest
     ) {
         $this->dir = $dir;
         $this->urlBuilder = $urlBuilder;
         $this->objectManager = $objectManager;
         $this->httpRequest = $httpRequest;
-        $this->dateHelper = $dateHelper;
 
         if (version_compare($magentoHelper->getVersion(), '2.4.3', '<')) {
             $this->phpSerialize = version_compare($magentoHelper->getVersion(), '2.3.5', '>=')
@@ -72,44 +68,23 @@ class Data
     // ----------------------------------------
 
     /**
-     * @return string
-     */
-    public function getConfigTimezone(): string
-    {
-        return $this->dateHelper->getConfigTimezone();
-    }
-
-    /**
-     * @return string
-     */
-    public function getDefaultTimezone(): string
-    {
-        return $this->dateHelper->getDefaultTimezone();
-    }
-
-    // ---------------------------------------
-
-    /**
+     * @deprecated
+     * @see \Ess\M2ePro\Helper\Date::createDateGmt
      * @param string $timeString
      *
      * @return \DateTime
      */
     public function createGmtDateTime($timeString): \DateTime
     {
-        return $this->dateHelper->createGmtDateTime($timeString);
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function createCurrentGmtDateTime(): \DateTime
-    {
-        return $this->dateHelper->createGmtDateTime('now');
+        return \Ess\M2ePro\Helper\Date::createDateGmt($timeString);
     }
 
     // ---------------------------------------
 
     /**
+     * @deprecated
+     * @see use explicitly \DateTime
+     *
      * @param bool $returnTimestamp
      * @param string $format
      *
@@ -117,10 +92,18 @@ class Data
      */
     public function getCurrentGmtDate($returnTimestamp = false, $format = 'Y-m-d H:i:s')
     {
-        return $this->dateHelper->getCurrentGmtDate($returnTimestamp, $format);
+        $dateObject = \Ess\M2ePro\Helper\Date::createCurrentGmt();
+
+        if ($returnTimestamp) {
+            return $dateObject->getTimestamp();
+        }
+
+        return $dateObject->format($format);
     }
 
     /**
+     * @deprecated
+     * @see use explicitly \DateTime
      * @param bool $returnTimestamp
      * @param string $format
      *
@@ -128,12 +111,20 @@ class Data
      */
     public function getCurrentTimezoneDate($returnTimestamp = false, $format = 'Y-m-d H:i:s')
     {
-        return $this->dateHelper->getCurrentTimezoneDate($returnTimestamp, $format);
+        $dateObject = \Ess\M2ePro\Helper\Date::createCurrentInCurrentZone();
+
+        if ($returnTimestamp) {
+            return $dateObject->getTimestamp();
+        }
+
+        return $dateObject->format($format);
     }
 
     // ---------------------------------------
 
     /**
+     * @deprecated
+     * @see use explicitly \DateTime
      * @param string $date
      * @param bool $returnTimestamp
      * @param string $format
@@ -142,10 +133,19 @@ class Data
      */
     public function gmtDateToTimezone($date, $returnTimestamp = false, $format = 'Y-m-d H:i:s')
     {
-        return $this->dateHelper->gmtDateToTimezone($date, $returnTimestamp, $format);
+        $dateObject = \Ess\M2ePro\Helper\Date::createDateInCurrentZone($date);
+        $dateObject->setTimezone(new \DateTimeZone(\Ess\M2ePro\Helper\Date::getTimezone()->getDefaultTimezone()));
+
+        if ($returnTimestamp) {
+            return $dateObject->getTimestamp();
+        }
+
+        return $dateObject->format($format);
     }
 
     /**
+     * @deprecated
+     * @see use explicitly \DateTime
      * @param string $date
      * @param bool $returnTimestamp
      * @param string $format
@@ -154,34 +154,17 @@ class Data
      */
     public function timezoneDateToGmt($date, $returnTimestamp = false, $format = 'Y-m-d H:i:s')
     {
-        return $this->dateHelper->timezoneDateToGmt($date, $returnTimestamp, $format);
+        $dateObject = \Ess\M2ePro\Helper\Date::createDateInCurrentZone($date);
+        $dateObject->setTimezone(new \DateTimeZone(\Ess\M2ePro\Helper\Date::getTimezone()->getDefaultTimezone()));
+
+        if ($returnTimestamp) {
+            return $dateObject->getTimestamp();
+        }
+
+        return $dateObject->format($format);
     }
 
     // ---------------------------------------
-
-    /**
-     * @param string $localDate
-     * @param int $localIntlDateFormat
-     * @param int $localIntlTimeFormat
-     * @param string|null $localTimezone
-     *
-     * @return false|float|int
-     */
-    public function parseTimestampFromLocalizedFormat(
-        $localDate,
-        $localIntlDateFormat = \IntlDateFormatter::SHORT,
-        $localIntlTimeFormat = \IntlDateFormatter::SHORT,
-        $localTimezone = null
-    ) {
-        return $this->dateHelper->parseTimestampFromLocalizedFormat(
-            $localDate,
-            $localIntlDateFormat,
-            $localIntlTimeFormat,
-            $localTimezone
-        );
-    }
-
-    // ----------------------------------------
 
     public function escapeJs($string)
     {
@@ -334,17 +317,29 @@ class Data
         return $text;
     }
 
-    public function normalizeToUtfEncoding($data)
+    public static function normalizeToUtf($data)
     {
         if (is_array($data)) {
             foreach ($data as $key => $value) {
-                $data[$key] = $this->normalizeToUtfEncoding($value);
+                $data[$key] = self::normalizeToUtf($value);
             }
         } elseif (is_string($data)) {
             return utf8_encode($data);
         }
 
         return $data;
+    }
+
+    /**
+     * @deprecated
+     * @see self::normalizeToUtf
+     * @param $data
+     *
+     * @return false|mixed|string
+     */
+    public function normalizeToUtfEncoding($data)
+    {
+        return self::normalizeToUtf($data);
     }
 
     /**
@@ -491,6 +486,8 @@ class Data
      * It prevents situations when json_encode() returns FALSE due to some broken bytes sequence.
      * Normally normalizeToUtfEncoding() fixes that
      *
+     * @deprecated
+     * @see \Ess\M2ePro\Helper\Json::encode
      * @param $data
      * @param bool $throwError
      *
@@ -499,43 +496,15 @@ class Data
      */
     public function jsonEncode($data, $throwError = true)
     {
-        if ($data === false) {
-            return 'false';
-        }
-
-        $encoded = json_encode($data);
-        if ($encoded !== false) {
-            return $encoded;
-        }
-
-        $encoded = json_encode($this->normalizeToUtfEncoding($data));
-        if ($encoded !== false) {
-            return $encoded;
-        }
-
-        $previousValue = \Zend_Json::$useBuiltinEncoderDecoder;
-        \Zend_Json::$useBuiltinEncoderDecoder = true;
-        $encoded = \Zend_Json::encode($data);
-        \Zend_Json::$useBuiltinEncoderDecoder = $previousValue;
-
-        if ($encoded !== false) {
-            return $encoded;
-        }
-
-        if (!$throwError) {
-            return null;
-        }
-
-        throw new \Ess\M2ePro\Model\Exception\Logic(
-            'Unable to encode to JSON.',
-            ['source' => $this->serialize($data)]
-        );
+        return \Ess\M2ePro\Helper\Json::encode($data, $throwError);
     }
 
     /**
      * It prevents situations when json_decode() returns NULL due to unknown issue.
      * Despite the fact that given JSON is having correct format
      *
+     * @deprecated
+     * @see \Ess\M2ePro\Helper\Json::decode
      * @param $data
      * @param bool $throwError
      *
@@ -544,32 +513,7 @@ class Data
      */
     public function jsonDecode($data, $throwError = false)
     {
-        if ($data === null || $data === '' || strtolower($data) === 'null') {
-            return null;
-        }
-
-        $decoded = json_decode($data, true);
-        if ($decoded !== null) {
-            return $decoded;
-        }
-
-        try {
-            $previousValue = \Zend_Json::$useBuiltinEncoderDecoder;
-            \Zend_Json::$useBuiltinEncoderDecoder = true;
-            $decoded = \Zend_Json::decode($data);
-            \Zend_Json::$useBuiltinEncoderDecoder = $previousValue;
-        } catch (\Exception $e) {
-            $decoded = null;
-        }
-
-        if ($decoded === null && $throwError) {
-            throw new \Ess\M2ePro\Model\Exception\Logic(
-                'Unable to decode JSON.',
-                ['source' => $data]
-            );
-        }
-
-        return $decoded;
+       return \Ess\M2ePro\Helper\Json::decode($data, $throwError);
     }
 
     // ----------------------------------------

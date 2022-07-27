@@ -16,9 +16,6 @@ use Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
 use Magento\Backend\App\Action;
 use Magento\Framework\View\Result\PageFactory;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Base
- */
 abstract class Base extends Action
 {
     const LAYOUT_ONE_COLUMN  = '1column';
@@ -67,9 +64,10 @@ abstract class Base extends Action
     /** @var \Magento\Framework\View\Result\Page $resultPage  */
     protected $resultPage;
 
-    private $generalBlockWasAppended = false;
+    /** @var \Magento\Framework\App\Response\RedirectInterface */
+    protected $redirect;
 
-    //########################################
+    private $generalBlockWasAppended = false;
 
     public function __construct(Context $context)
     {
@@ -83,6 +81,7 @@ abstract class Base extends Action
         $this->cssRenderer = $context->getCssRenderer();
         $this->resourceConnection = $context->getResourceConnection();
         $this->magentoConfig = $context->getMagentoConfig();
+        $this->redirect = $context->getRedirect();
 
         parent::__construct($context);
     }
@@ -240,7 +239,7 @@ abstract class Base extends Action
         if ($this->isAjax($request) && !$this->_auth->isLoggedIn()) {
             $this->getRawResult()->setContents($this->getHelper('Data')->jsonEncode([
                 'ajaxExpired'  => 1,
-                'ajaxRedirect' => $this->_redirect->getRefererUrl()
+                'ajaxRedirect' => $this->redirect->getRefererUrl()
             ]));
 
             return $this->getRawResult();
@@ -377,7 +376,7 @@ abstract class Base extends Action
         }
 
         if (!$this->generalBlockWasAppended && $appendGeneralBlock) {
-            $generalBlock = $this->createBlock(\Ess\M2ePro\Helper\View::GENERAL_BLOCK_PATH);
+            $generalBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\General::class);
             $generalBlock->setIsAjax(true);
             $blockData = $generalBlock->toHtml() . $blockData;
             $this->generalBlockWasAppended = true;
@@ -393,7 +392,7 @@ abstract class Base extends Action
     protected function setJsonContent(array $data)
     {
         if (!$this->generalBlockWasAppended && isset($data['html'])) {
-            $generalBlock = $this->createBlock(\Ess\M2ePro\Helper\View::GENERAL_BLOCK_PATH);
+            $generalBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\General::class);
             $generalBlock->setIsAjax(true);
             $data['html'] = $generalBlock->toHtml() . $data['html'];
             $this->generalBlockWasAppended = true;
@@ -429,7 +428,7 @@ abstract class Base extends Action
             return;
         }
 
-        $generalBlock = $this->createBlock(\Ess\M2ePro\Helper\View::GENERAL_BLOCK_PATH);
+        $generalBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\General::class);
         $this->getLayout()->setChild('js', $generalBlock->getNameInLayout(), '');
 
         $this->generalBlockWasAppended = true;

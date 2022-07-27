@@ -12,6 +12,9 @@ use \Ess\M2ePro\Model\Ebay\Template\Category\Specific as Specific;
 
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
+    /** @var \Ess\M2ePro\Model\Ebay\Template\Category\BuilderFactory */
+    private $ebayCategoryBuilderFactory;
+
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
     private $componentEbayCategoryEbay;
 
@@ -19,14 +22,17 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
     private $dataHelper;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Template\Category\BuilderFactory $ebayCategoryBuilderFactory,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
-        $this->dataHelper = $dataHelper;
         parent::__construct($context, $data);
+
+        $this->ebayCategoryBuilderFactory = $ebayCategoryBuilderFactory;
+        $this->componentEbayCategoryEbay  = $componentEbayCategoryEbay;
+        $this->dataHelper = $dataHelper;
     }
 
     public function _construct()
@@ -46,8 +52,6 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->removeButton('edit');
     }
 
-    //########################################
-
     public function prepareFormData()
     {
         $templateSpecifics = [];
@@ -63,7 +67,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             );
             $templateSpecifics = $template->getSpecifics();
         } elseif (!empty($selectedSpecs)) {
-            $builder = $this->modelFactory->getObject('Ebay_Template_Category_Builder');
+            $builder = $this->ebayCategoryBuilderFactory->create();
             foreach ($selectedSpecs as $selectedSp) {
                 $templateSpecifics[] = $builder->serializeSpecific($selectedSp);
             }
@@ -121,8 +125,6 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         return $specifics === null ? [] : $specifics;
     }
 
-    //########################################
-
     protected function _toHtml()
     {
         $infoBlock = $this->getLayout()->createBlock(
@@ -155,6 +157,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
     ], function(){
 
         window.EbayTemplateCategorySpecificsObj = new EbayTemplateCategorySpecifics();
+        EbayTemplateCategorySpecificsObj.createSpecificsSnapshot();
     });
 JS
         );
@@ -175,6 +178,4 @@ JS
 </div>
 HTML;
     }
-
-    //########################################
 }

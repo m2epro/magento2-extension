@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\GetChangePartsCompatibilityModePopupHtml
- */
 class GetChangePartsCompatibilityModePopupHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     public function execute()

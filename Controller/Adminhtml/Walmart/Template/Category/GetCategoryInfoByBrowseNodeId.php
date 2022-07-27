@@ -10,19 +10,26 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category\GetCategoryInfoByBrowseNodeId
- */
 class GetCategoryInfoByBrowseNodeId extends Category
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $dbStructureHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Database\Structure $dbStructureHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->dbStructureHelper = $dbStructureHelper;
+    }
 
     public function execute()
     {
         $queryStmt = $this->resourceConnection->getConnection()->select()
             ->from(
-                $this->getHelper('Module_Database_Structure')
-                    ->getTableNameWithPrefix('m2epro_walmart_dictionary_category')
+                $this->dbStructureHelper->getTableNameWithPrefix('m2epro_walmart_dictionary_category')
             )
             ->where('marketplace_id = ?', $this->getRequest()->getPost('marketplace_id'))
             ->where('browsenode_id = ?', $this->getRequest()->getPost('browsenode_id'))
@@ -54,6 +61,4 @@ class GetCategoryInfoByBrowseNodeId extends Category
         $this->setJsonContent($tempCategories[0]);
         return $this->getResult();
     }
-
-    //########################################
 }

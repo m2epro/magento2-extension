@@ -10,12 +10,21 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Shipping;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Shipping\UpdateDiscountProfiles
- */
 class UpdateDiscountProfiles extends Template
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Model\Ebay\Template\Manager $templateManager,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($templateManager, $ebayFactory, $context);
+
+        $this->dataHelper = $dataHelper;
+    }
 
     public function execute()
     {
@@ -30,12 +39,11 @@ class UpdateDiscountProfiles extends Template
 
         $profiles = [];
         if (is_array($accountProfiles) && isset($accountProfiles[$marketplaceId]['profiles'])) {
-            $helper = $this->getHelper('Data');
             foreach ($accountProfiles[$marketplaceId]['profiles'] as $profile) {
                 $profiles[] = [
-                    'type' => $helper->escapeHtml($profile['type']),
-                    'profile_id' => $helper->escapeHtml($profile['profile_id']),
-                    'profile_name' => $helper->escapeHtml($profile['profile_name'])
+                    'type' => $this->dataHelper->escapeHtml($profile['type']),
+                    'profile_id' => $this->dataHelper->escapeHtml($profile['profile_id']),
+                    'profile_name' => $this->dataHelper->escapeHtml($profile['profile_name'])
                 ];
             }
         }
@@ -43,6 +51,4 @@ class UpdateDiscountProfiles extends Template
         $this->setJsonContent($profiles);
         return $this->getResult();
     }
-
-    //########################################
 }

@@ -21,6 +21,9 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Module\Wizard */
+    private $wizardHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -28,11 +31,13 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Component\Walmart\Configuration $walmartConfigurationHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Module\Wizard $wizardHelper,
         array $data = []
     ) {
         $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->walmartConfigurationHelper = $walmartConfigurationHelper;
         $this->dataHelper = $dataHelper;
+        $this->wizardHelper = $wizardHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -40,7 +45,7 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
     {
         $form = $this->_formFactory->create();
 
-        if (!$this->getHelper('Module\Wizard')->isActive(\Ess\M2ePro\Helper\View\Walmart::WIZARD_INSTALLATION_NICK)) {
+        if (!$this->wizardHelper->isActive(\Ess\M2ePro\Helper\View\Walmart::WIZARD_INSTALLATION_NICK)) {
             $form->addField(
                 'walmart_settings_main_help',
                 self::HELP_BLOCK,
@@ -609,8 +614,6 @@ HTML
         return parent::_prepareForm();
     }
 
-    //########################################
-
     protected function _beforeToHtml()
     {
         $this->jsTranslator->add(
@@ -649,12 +652,8 @@ JS
         return parent::_beforeToHtml();
     }
 
-    //########################################
-
     protected function getGlobalNotice()
     {
         return '';
     }
-
-    //########################################
 }

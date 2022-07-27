@@ -219,6 +219,9 @@ class Config extends AbstractConfig
             'y22_m06' => [
                 'FixMistakenConfigs',
                 'EbayFixedPriceModifier'
+            ],
+            'y22_m07' => [
+                'FixFieldBuyerCancellationRequested'
             ]
         ];
     }

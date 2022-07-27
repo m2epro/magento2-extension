@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat\Delete
- */
 class Delete extends Template
 {
-    //########################################
-
     public function execute()
     {
         $ids = $this->getRequestIds();
@@ -46,6 +41,4 @@ class Delete extends Template
 
         return $this->_redirect('*/walmart_template/index');
     }
-
-    //########################################
 }

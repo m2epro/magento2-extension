@@ -8,14 +8,26 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
-use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Save
- */
-class Save extends Template
+class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Template
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Wizard */
+    private $wizardHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Wizard $wizardHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Model\Ebay\Template\Manager $templateManager,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($templateManager, $ebayFactory, $context);
+
+        $this->wizardHelper = $wizardHelper;
+        $this->dataHelper = $dataHelper;
+    }
 
     public function execute()
     {
@@ -31,8 +43,8 @@ class Save extends Template
                     $templates[] = [
                         'nick' => $nick,
                         'id' => (int)$template->getId(),
-                        'title' => $this->getHelper('Data')->escapeJs(
-                            $this->getHelper('Data')->escapeHtml($template->getTitle())
+                        'title' => $this->dataHelper->escapeJs(
+                            $this->dataHelper->escapeHtml($template->getTitle())
                         )
                     ];
                 }
@@ -64,18 +76,16 @@ class Save extends Template
             ]
         ];
 
-        if ($this->getHelper('Module\Wizard')->isActive(\Ess\M2ePro\Helper\View\Ebay::WIZARD_INSTALLATION_NICK)) {
+        if ($this->wizardHelper->isActive(\Ess\M2ePro\Helper\View\Ebay::WIZARD_INSTALLATION_NICK)) {
             $extendedRoutersParams['edit']['wizard'] = true;
         }
 
-        return $this->_redirect($this->getHelper('Data')->getBackUrl(
+        return $this->_redirect($this->dataHelper->getBackUrl(
             'list',
             [],
             $extendedRoutersParams
         ));
     }
-
-    //########################################
 
     protected function isSaveAllowed($templateNick)
     {
@@ -186,6 +196,4 @@ class Save extends Template
 
         return $template;
     }
-
-    //########################################
 }

@@ -10,19 +10,12 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category\GetAddSpecificsGridHtml
- */
 class GetAddSpecificsGridHtml extends Category
 {
-    //########################################
-
     public function execute()
     {
         $gridBlock = $this->prepareGridBlock();
         $this->setAjaxContent($gridBlock->toHtml());
         return $this->getResult();
     }
-
-    //########################################
 }

@@ -11,13 +11,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser;
 use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\GetCategoryChooserHtml
- */
 class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
-    //########################################
-
     public function execute()
     {
         $lPIds = $this->getRequestIds('products_id');
@@ -65,8 +60,6 @@ class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listi
         $this->setAjaxContent($chooserBlock->toHtml());
         return $this->getResult();
     }
-
-    //########################################
 
     protected function tryToLoadCategoryTemplate($ids)
     {
@@ -171,6 +164,4 @@ class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listi
 
         return $template;
     }
-
-    //########################################
 }

@@ -20,12 +20,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\Source
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $databaseHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Category $magentoCategoryHelper,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Catalog\Model\Product\Type $type,
         \Magento\Store\Model\WebsiteFactory $websiteFactory,
         \Ess\M2ePro\Helper\Magento\Product $magentoProductHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
@@ -39,6 +43,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\Source
             $type,
             $websiteFactory,
             $magentoProductHelper,
+            $globalDataHelper,
             $context,
             $backendHelper,
             $dataHelper,

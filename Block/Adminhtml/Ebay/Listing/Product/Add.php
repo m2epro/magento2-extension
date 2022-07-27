@@ -12,13 +12,17 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $data);
     }
 
@@ -102,7 +106,7 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
     public function getGridHtml()
     {
         $viewHeaderBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class, '', [
-            'data' => ['listing' => $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add')]
+            'data' => ['listing' => $this->globalDataHelper->getValue('listing_for_products_add')]
         ]);
 
         $hideOthersListingsProductsFilterBlock = $this->getLayout()
@@ -147,6 +151,4 @@ Click <b>Start Configure</b> to create a Rule or <b>Cancel</b> if you do not wan
 </div>
 HTML;
     }
-
-    //########################################
 }

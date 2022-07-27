@@ -10,21 +10,12 @@ namespace Ess\M2ePro\Controller\Adminhtml\Support;
 
 use Ess\M2ePro\Controller\Adminhtml\Support;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Support\Index
- */
 class Index extends Support
 {
-    //########################################
-
     public function execute()
     {
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Support\Form::class));
-
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Contact Us'));
-
         return $this->getResult();
     }
-
-    //########################################
 }

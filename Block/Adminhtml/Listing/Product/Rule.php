@@ -10,14 +10,23 @@ namespace Ess\M2ePro\Block\Adminhtml\Listing\Product;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Listing\Product\Rule
- */
 class Rule extends AbstractForm
 {
     protected $_isShowHideProductsOption = false;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        $this->globalDataHelper = $globalDataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     public function _construct()
     {
@@ -29,8 +38,6 @@ class Rule extends AbstractForm
         // ---------------------------------------
     }
 
-    //########################################
-
     public function setShowHideProductsOption($isShow = true)
     {
         $this->_isShowHideProductsOption = $isShow;
@@ -41,8 +48,6 @@ class Rule extends AbstractForm
     {
         return $this->_isShowHideProductsOption;
     }
-
-    //########################################
 
     protected function _prepareLayout()
     {
@@ -102,8 +107,6 @@ CSS
         return parent::_prepareLayout();
     }
 
-    //########################################
-
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create([
@@ -125,7 +128,7 @@ CSS
             ]
         );
 
-        $ruleModel = $this->getHelper('Data\GlobalData')->getValue('rule_model');
+        $ruleModel = $this->globalDataHelper->getValue('rule_model');
         $ruleBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule::class)
             ->setData(['rule_model' => $ruleModel]);
 
@@ -142,6 +145,4 @@ CSS
 
         return parent::_prepareForm();
     }
-
-    //########################################
 }

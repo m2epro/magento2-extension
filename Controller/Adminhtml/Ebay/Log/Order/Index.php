@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order\Index
- */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order
 {
-    //########################################
-
     public function execute()
     {
         $orderId = $this->getRequest()->getParam('id', false);
@@ -41,6 +36,4 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Log\Order::class));
         return $this->getResult();
     }
-
-    //########################################
 }

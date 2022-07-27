@@ -10,12 +10,30 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category\Save
- */
 class Save extends Category
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $dbStructureHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private \Ess\M2ePro\Helper\Data\GlobalData $globalData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $dbStructureHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalData,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->dataHelper = $dataHelper;
+        $this->dbStructureHelper = $dbStructureHelper;
+        $this->globalData = $globalData;
+    }
 
     public function execute()
     {
@@ -50,7 +68,7 @@ class Save extends Category
         }
 
         $specifics = !empty($post['encoded_data']) ? $post['encoded_data'] : '';
-        $specifics = (array)$this->getHelper('Data')->jsonDecode($specifics);
+        $specifics = (array)$this->dataHelper->jsonDecode($specifics);
 
         $this->sortSpecifics($specifics, $post['product_data_nick'], $post['marketplace_id']);
 
@@ -101,7 +119,7 @@ class Save extends Category
         }
 
         $this->messageManager->addSuccess($this->__('Policy was saved'));
-        return $this->_redirect($this->getHelper('Data')->getBackUrl(
+        return $this->_redirect($this->dataHelper->getBackUrl(
             'list',
             [],
             ['edit' => [
@@ -111,8 +129,6 @@ class Save extends Category
             ]]
         ));
     }
-
-    // ---------------------------------------
 
     private function validateSpecificData($specificData)
     {
@@ -135,8 +151,7 @@ class Save extends Category
 
     private function sortSpecifics(&$specifics, $productData, $marketplaceId)
     {
-        $table = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_walmart_dictionary_specific');
+        $table = $this->dbStructureHelper->getTableNameWithPrefix('m2epro_walmart_dictionary_specific');
 
         $dictionarySpecifics = $this->resourceConnection->getConnection()->select()
             ->from($table, ['id', 'xpath'])
@@ -150,7 +165,7 @@ class Save extends Category
             $dictionarySpecifics[$xpath] = $specific['id'];
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('dictionary_specifics', $dictionarySpecifics);
+        $this->globalData->setValue('dictionary_specifics', $dictionarySpecifics);
 
         $callback = function ($aXpath, $bXpath) use ($dictionarySpecifics) {
 
@@ -176,6 +191,4 @@ class Save extends Category
 
         uksort($specifics, $callback);
     }
-
-    //########################################
 }

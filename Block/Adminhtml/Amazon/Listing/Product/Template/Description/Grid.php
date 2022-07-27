@@ -32,19 +32,22 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Module\Wizard */
+    private $wizardHelper;
+
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Module\Wizard $wizardHelper,
         array $data = []
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->dataHelper = $dataHelper;
+        $this->wizardHelper = $wizardHelper;
         parent::__construct($context, $backendHelper, $data);
     }
-
-    //########################################
 
     /**
      * @return string
@@ -62,8 +65,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->mapToTemplateJsFn = $mapToTemplateLink;
     }
 
-    // ---------------------------------------
-
     /**
      * @return string
      */
@@ -79,8 +80,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $this->createNewTemplateJsFn = $createNewTemplateJsFn;
     }
-
-    // ---------------------------------------
 
     /**
      * @param boolean $checkNewAsinAccepted
@@ -98,8 +97,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return (bool) $this->checkNewAsinAccepted;
     }
 
-    // ---------------------------------------
-
     /**
      * @param mixed $productsIds
      */
@@ -115,8 +112,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         return $this->productsIds;
     }
-
-    // ---------------------------------------
 
     public function _construct()
     {
@@ -136,8 +131,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // ---------------------------------------
     }
 
-    // ---------------------------------------
-
     protected function _prepareCollection()
     {
         $this->setNoTemplatesText();
@@ -155,8 +148,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         return parent::_prepareCollection();
     }
-
-    // ---------------------------------------
 
     private function prepareCacheData()
     {
@@ -192,8 +183,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             continue;
         }
     }
-
-    // ---------------------------------------
 
     protected function _prepareColumns()
     {
@@ -260,8 +249,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return parent::_prepareLayout();
     }
 
-    //########################################
-
     protected function callbackFilterTitle($collection, $column)
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\Description\Collection $collection */
@@ -295,27 +282,21 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
     }
 
-    //########################################
-
     public function getRefreshButtonHtml()
     {
         return $this->getChildHtml('refresh_button');
     }
-
-    //########################################
 
     public function getMainButtonsHtml()
     {
         return $this->getRefreshButtonHtml() . parent::getMainButtonsHtml();
     }
 
-    //########################################
-
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
         $templateDescriptionEditUrl = $this->getUrl('*/amazon_template_description/edit', [
             'id' => $row->getData('id'),
-            'wizard' => $this->getHelper('Module\Wizard')->isActive(
+            'wizard' => $this->wizardHelper->isActive(
                 \Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK
             ),
             'close_on_save' => true
@@ -378,16 +359,12 @@ HTML;
             . $value . $mapToAsin .');">'.$assignText.'</a>';
     }
 
-    //########################################
-
     protected function _toHtml()
     {
         $this->jsUrl->add($this->getNewTemplateDescriptionUrl(), 'newTemplateDescriptionUrl');
 
         return parent::_toHtml();
     }
-
-    //########################################
 
     public function getGridUrl()
     {
@@ -407,8 +384,6 @@ HTML;
         return false;
     }
 
-    //########################################
-
     protected function getMarketplaceId()
     {
         if (empty($this->marketplaceId)) {
@@ -424,8 +399,6 @@ HTML;
 
         return $this->marketplaceId;
     }
-
-    // ---------------------------------------
 
     protected function setNoTemplatesText()
     {
@@ -449,13 +422,11 @@ HTML;
         return $this->getUrl('*/amazon_template_description/new', [
             'is_new_asin_accepted'  => $this->getCheckNewAsinAccepted(),
             'marketplace_id'        => $this->getMarketplaceId(),
-            'wizard' => $this->getHelper('Module\Wizard')
+            'wizard' => $this->wizardHelper
                 ->isActive(\Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK),
             'close_on_save' => 1
         ]);
     }
-
-    // ---------------------------------------
 
     protected function getParentListingProduct()
     {
@@ -472,8 +443,6 @@ HTML;
         }
         return $this->listingProduct;
     }
-
-    // ---------------------------------------
 
     protected function getVariationsProductsIds()
     {
@@ -501,6 +470,4 @@ HTML;
 
         return $this->variationProductsIds;
     }
-
-    //########################################
 }

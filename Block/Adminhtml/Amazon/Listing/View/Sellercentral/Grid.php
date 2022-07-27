@@ -29,9 +29,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    private $amazonHelper;
+
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Repricing */
+    private $amazonRepricingHelper;
+
     private $parentAndChildReviseScheduledCache = [];
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
+        \Ess\M2ePro\Helper\Component\Amazon\Repricing $amazonRepricingHelper,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
@@ -39,22 +47,23 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
+        $this->amazonHelper = $amazonHelper;
+        $this->amazonRepricingHelper = $amazonRepricingHelper;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->amazonFactory = $amazonFactory;
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
-        parent::__construct($context, $backendHelper, $dataHelper, $data);
+        parent::__construct($context, $backendHelper, $dataHelper, $globalDataHelper, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
         parent::_construct();
 
-        $this->listing = $this->getHelper('Data\GlobalData')->getValue('view_listing');
+        $this->listing = $this->globalDataHelper->getValue('view_listing');
 
         // Initialization block
         // ---------------------------------------
@@ -63,8 +72,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->showAdvancedFilterProductsOption = false;
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -276,7 +283,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'filter_condition_callback' => [$this, 'callbackFilterPrice']
         ];
 
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
+        if ($this->amazonRepricingHelper->isEnabled() &&
             $this->listing->getAccount()->getChildObject()->isRepricing()) {
             $priceColumn['filter'] = \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price::class;
         }
@@ -317,7 +324,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'edit_fulfillment'   => $this->__('Fulfillment')
         ];
 
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled()) {
+        if ($this->amazonRepricingHelper->isEnabled()) {
             $groups['edit_repricing'] = $this->__('Repricing Tool');
         }
 
@@ -361,7 +368,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->listing->getAccount();
 
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
+        if ($this->amazonRepricingHelper->isEnabled() &&
             $account->getChildObject()->isRepricing()) {
             $this->getMassactionBlock()->addItem('showDetails', [
                 'label' => $this->__('Show Details'),
@@ -391,8 +398,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         return parent::_prepareMassaction();
     }
-
-    //########################################
 
     public function callbackColumnProductTitle($productTitle, $row, $column, $isExport)
     {
@@ -507,7 +512,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             return $this->__('N/A');
         }
 
-        $url = $this->getHelper('Component\Amazon')->getItemUrl($value, $this->listing->getMarketplaceId());
+        $url = $this->amazonHelper->getItemUrl($value, $this->listing->getMarketplaceId());
         $parentAsinHtml = '';
         $variationParentId = $row->getData('variation_parent_id');
         if (!empty($variationParentId)) {
@@ -807,7 +812,7 @@ HTML;
             $condition .= ' AND ('.$online_regular_price.' IS NULL))';
         }
 
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
+        if ($this->amazonRepricingHelper->isEnabled() &&
             (isset($value['is_repricing']) && $value['is_repricing'] !== '')) {
             if (!empty($condition)) {
                 $condition = '(' . $condition . ') OR ';
@@ -824,15 +829,10 @@ HTML;
         $collection->getSelect()->where($condition);
     }
 
-
-    //########################################
-
     public function getRowUrl($row)
     {
         return false;
     }
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -854,8 +854,6 @@ JS
         );
     }
 
-    //########################################
-
     private function getLockedData($row)
     {
         $listingProductId = $row->getData('id');
@@ -871,8 +869,6 @@ JS
 
         return $this->lockedDataCache[$listingProductId];
     }
-
-    //########################################
 
     private function getParentAsin($childId)
     {
@@ -903,12 +899,8 @@ JS
         return $this->parentAsins[$childId];
     }
 
-    //########################################
-
     private function convertAndFormatPriceCurrency($price, $currency)
     {
         return $this->localeCurrency->getCurrency($currency)->toCurrency($price);
     }
-
-    //########################################
 }

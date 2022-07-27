@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Wizard
- */
 abstract class Wizard extends Main
 {
     /** @var \Ess\M2ePro\Helper\Module\Wizard|null */
@@ -18,8 +15,6 @@ abstract class Wizard extends Main
 
     /** @var \Magento\Framework\Code\NameBuilder */
     protected $nameBuilder;
-
-    //########################################
 
     public function __construct(
         \Magento\Framework\Code\NameBuilder $nameBuilder,
@@ -69,7 +64,7 @@ abstract class Wizard extends Main
 
     protected function createCongratulationBlock()
     {
-        return $this->createBlock($this->nameBuilder->buildClassName(['Wizard', 'Congratulation']));
+        return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Wizard\Congratulation::class);
     }
 
     protected function indexAction()
@@ -252,9 +247,14 @@ abstract class Wizard extends Main
     protected function renderSimpleStep()
     {
         $this->addContent(
-            $this->createBlock($this->nameBuilder->buildClassName([
-                'Wizard', $this->getNick(), 'Installation', $this->getCurrentStep()
-            ]))->setData([
+            $this->getLayout()->createBlock(
+                $this->nameBuilder->buildClassName([
+                    '\Ess\M2ePro\Block\Adminhtml\Wizard',
+                    $this->getNick(),
+                    'Installation',
+                    $this->getCurrentStep()
+                ])
+            )->setData([
                 'nick' => $this->getNick()
             ])
         );

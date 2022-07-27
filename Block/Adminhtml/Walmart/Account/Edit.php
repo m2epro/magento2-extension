@@ -10,12 +10,23 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Account;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit
- */
 class Edit extends AbstractContainer
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Module\Wizard */
+    private $wizardHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Module\Wizard $wizardHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        $this->globalDataHelper = $globalDataHelper;
+        $this->wizardHelper = $wizardHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -37,10 +48,7 @@ class Edit extends AbstractContainer
         $this->removeButton('edit');
         // ---------------------------------------
 
-        /** @var \Ess\M2ePro\Helper\Module\Wizard $wizardHelper */
-        $wizardHelper = $this->getHelper('Module\Wizard');
-
-        if ($wizardHelper->isActive(\Ess\M2ePro\Helper\View\Walmart::WIZARD_INSTALLATION_NICK)) {
+        if ($this->wizardHelper->isActive(\Ess\M2ePro\Helper\View\Walmart::WIZARD_INSTALLATION_NICK)) {
             // ---------------------------------------
             $this->addButton(
                 'save_and_continue',
@@ -103,8 +111,8 @@ class Edit extends AbstractContainer
             // ---------------------------------------
 
             // ---------------------------------------
-            if ($this->getHelper('Data\GlobalData')->getValue('edit_account') &&
-                $this->getHelper('Data\GlobalData')->getValue('edit_account')->getId()
+            if ($this->globalDataHelper->getValue('edit_account') &&
+                $this->globalDataHelper->getValue('edit_account')->getId()
             ) {
                 // ---------------------------------------
                 $this->addButton(
@@ -140,8 +148,6 @@ class Edit extends AbstractContainer
         }
     }
 
-    //########################################
-
     protected function _prepareLayout()
     {
         $this->js->add(
@@ -156,6 +162,4 @@ JS
 
         return parent::_prepareLayout();
     }
-
-    //########################################
 }

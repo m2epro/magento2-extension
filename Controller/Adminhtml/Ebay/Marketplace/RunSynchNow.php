@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Marketplace\RunSynchNow
- */
 class RunSynchNow extends Marketplace
 {
-    //########################################
-
     public function execute()
     {
         // @codingStandardsIgnoreLine
@@ -63,6 +58,4 @@ class RunSynchNow extends Marketplace
         $this->setJsonContent(['result' => 'success']);
         return $this->getResult();
     }
-
-    //########################################
 }

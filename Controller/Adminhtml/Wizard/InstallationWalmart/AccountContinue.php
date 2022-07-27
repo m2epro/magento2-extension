@@ -9,14 +9,25 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart;
 
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationWalmart;
-use Ess\M2ePro\Model\Walmart\Account as WalmartAccount;
 
 class AccountContinue extends InstallationWalmart
 {
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $exceptionHelper;
+
+    /** @var \Ess\M2ePro\Helper\Magento\Store */
+    private $storeHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\License */
+    private $licenseHelper;
+
     /** @var \Ess\M2ePro\Helper\View\Configuration */
-    protected $configurationHelper;
+    private $configurationHelper;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
+        \Ess\M2ePro\Helper\Magento\Store  $storeHelper,
+        \Ess\M2ePro\Helper\Module\License $licenseHelper,
         \Ess\M2ePro\Helper\View\Configuration $configurationHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Helper\View\Walmart $walmartViewHelper,
@@ -24,6 +35,10 @@ class AccountContinue extends InstallationWalmart
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($walmartFactory, $walmartViewHelper, $nameBuilder, $context);
+
+        $this->exceptionHelper = $exceptionHelper;
+        $this->storeHelper = $storeHelper;
+        $this->licenseHelper = $licenseHelper;
         $this->configurationHelper = $configurationHelper;
     }
 
@@ -109,7 +124,7 @@ class AccountContinue extends InstallationWalmart
             );
             $account->getChildObject()->save();
         } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
+            $this->exceptionHelper->process($exception);
 
             $account->delete();
 
@@ -119,8 +134,8 @@ class AccountContinue extends InstallationWalmart
 
             $error = 'The Walmart access obtaining is currently unavailable.<br/>Reason: %error_message%';
 
-            if (!$this->getHelper('Module\License')->isValidDomain() ||
-                !$this->getHelper('Module\License')->isValidIp()) {
+            if (!$this->licenseHelper->isValidDomain() ||
+                !$this->licenseHelper->isValidIp()) {
                 $error .= '</br>Go to the <a href="%url%" target="_blank">License Page</a>.';
                 $error = $this->__(
                     $error,
@@ -168,9 +183,7 @@ class AccountContinue extends InstallationWalmart
 
         $data['other_listings_synchronization'] = 0;
         $data['other_listings_mapping_mode'] = 0;
-
-        $data['magento_orders_settings']['listing_other']['store_id'] = $this->getHelper('Magento\Store')
-            ->getDefaultStoreId();
+        $data['magento_orders_settings']['listing_other']['store_id'] = $this->storeHelper->getDefaultStoreId();
 
         return $data;
     }

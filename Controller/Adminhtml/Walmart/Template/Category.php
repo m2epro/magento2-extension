@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category
- */
 abstract class Category extends Template
 {
-    // ---------------------------------------
-
     protected function formatCategoryRow(&$row)
     {
         $row['product_data_nicks'] = $row['product_data_nicks'] !== null
@@ -46,6 +41,4 @@ abstract class Category extends Template
 
         return $grid;
     }
-
-    //########################################
 }

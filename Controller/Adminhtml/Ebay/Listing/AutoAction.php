@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
- */
 abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
-    //########################################
-
     /**
      * @param \Ess\M2ePro\Model\Listing $listing
      * @param int $categoryType
@@ -114,8 +109,4 @@ abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         return null;
     }
-
-
-
-    //########################################
 }

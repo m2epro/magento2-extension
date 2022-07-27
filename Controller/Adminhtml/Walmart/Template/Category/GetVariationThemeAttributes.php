@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category\GetVariationThemeAttributes
- */
 class GetVariationThemeAttributes extends Category
 {
-    //########################################
-
     public function execute()
     {
         $model = $this->modelFactory->getObject('Walmart_Marketplace_Details');
@@ -37,6 +32,4 @@ class GetVariationThemeAttributes extends Category
         $this->setJsonContent($attributes);
         return $this->getResult();
     }
-
-    //########################################
 }

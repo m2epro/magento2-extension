@@ -10,15 +10,25 @@ namespace Ess\M2ePro\Block\Adminhtml\Listing\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Listing\Edit\Form
- */
 class Form extends AbstractForm
 {
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        $this->globalDataHelper = $globalDataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     protected function _prepareForm()
     {
-        $global = $this->getHelper('Data\GlobalData');
-        $listing = $global->getValue('edit_listing');
+        $listing = $this->globalDataHelper->getValue('edit_listing');
 
         $form = $this->_formFactory->create(
             ['data' => [

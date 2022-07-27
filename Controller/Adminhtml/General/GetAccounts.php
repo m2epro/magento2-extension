@@ -8,14 +8,20 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\General;
 
-use Ess\M2ePro\Controller\Adminhtml\General;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\General\GetAccounts
- */
-class GetAccounts extends General
+class GetAccounts extends \Ess\M2ePro\Controller\Adminhtml\General
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    )
+    {
+        parent::__construct($context);
+
+        $this->dataHelper = $dataHelper;
+    }
 
     public function execute()
     {
@@ -27,7 +33,7 @@ class GetAccounts extends General
         foreach ($collection->getItems() as $account) {
             $data = [
                 'id' => $account->getId(),
-                'title' => $this->getHelper('Data')->escapeHtml($account->getTitle())
+                'title' => $this->dataHelper->escapeHtml($account->getTitle())
             ];
 
             if ($component == \Ess\M2ePro\Helper\Component\Amazon::NICK ||
@@ -44,6 +50,4 @@ class GetAccounts extends General
         $this->setJsonContent($accounts);
         return $this->getResult();
     }
-
-    //########################################
 }

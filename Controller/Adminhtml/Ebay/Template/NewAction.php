@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\NewAction
- */
 class NewAction extends Template
 {
-    //########################################
-
     public function execute()
     {
         /** @var \Magento\Backend\Model\View\Result\Forward $resultForward */
@@ -24,6 +19,4 @@ class NewAction extends Template
         $resultForward->forward('edit');
         return $resultForward;
     }
-
-    //########################################
 }

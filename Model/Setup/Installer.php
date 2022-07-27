@@ -12306,7 +12306,7 @@ class Installer
                 'buyer_cancellation_requested',
                 Table::TYPE_SMALLINT,
                 null,
-                ['unsigned' => true, 'nullable' => false]
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addIndex('sku', 'sku')
             ->addIndex('title', 'title')

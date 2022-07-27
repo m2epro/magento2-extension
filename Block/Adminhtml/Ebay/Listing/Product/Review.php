@@ -10,14 +10,24 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product;
 
 use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode as SourceModeBlock;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Review
- */
 class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
     protected $source;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionDataHelper;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        $this->globalDataHelper = $globalDataHelper;
+        $this->sessionDataHelper = $sessionDataHelper;
+        parent::__construct($context, $data);
+    }
 
     public function _construct()
     {
@@ -27,13 +37,11 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         $this->setTemplate('ebay/listing/product/review.phtml');
     }
 
-    //########################################
-
     protected function _beforeToHtml()
     {
         parent::_beforeToHtml();
 
-        $listing = $this->getHelper('Data\GlobalData')->getValue('review_listing');
+        $listing = $this->globalDataHelper->getValue('review_listing');
 
         // ---------------------------------------
         $viewHeaderBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class, '', [
@@ -58,7 +66,7 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         // ---------------------------------------
 
         // ---------------------------------------
-        $addedProductsIds = $this->getHelper('Data\Session')->getValue('added_products_ids');
+        $addedProductsIds = $this->sessionDataHelper->getValue('added_products_ids');
         $url = $this->getUrl('*/ebay_listing/previewItems', [
             'currentProductId' => $addedProductsIds[0],
             'productIds' => implode(',', $addedProductsIds),
@@ -105,8 +113,6 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         // ---------------------------------------
     }
 
-    //########################################
-
     public function setSource($value)
     {
         $this->source = $value;
@@ -116,6 +122,4 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     {
         return $this->source;
     }
-
-    //########################################
 }

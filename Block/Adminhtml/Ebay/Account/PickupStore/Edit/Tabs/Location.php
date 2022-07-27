@@ -16,8 +16,11 @@ class Location extends AbstractForm
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
     private $componentEbayPickupStore;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -27,10 +30,9 @@ class Location extends AbstractForm
     ) {
         $this->ebayFactory = $ebayFactory;
         $this->componentEbayPickupStore = $componentEbayPickupStore;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -306,13 +308,11 @@ class Location extends AbstractForm
             'utc_offset'     => ''
         ];
 
-        $model = $this->getHelper('Data\GlobalData')->getValue('temp_data');
+        $model = $this->globalDataHelper->getValue('temp_data');
         if ($model === null) {
             return $default;
         }
 
         return array_merge($default, $model->toArray());
     }
-
-    //########################################
 }

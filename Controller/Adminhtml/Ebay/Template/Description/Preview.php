@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description\Preview
- */
 class Preview extends Description
 {
     private $description = [];
@@ -74,8 +71,6 @@ class Preview extends Description
 
         return $this->getResult();
     }
-
-    //########################################
 
     private function getDescription(
         \Ess\M2ePro\Model\Magento\Product $magentoProduct,
@@ -141,8 +136,6 @@ class Preview extends Description
         }
     }
 
-    // ---------------------------------------
-
     private function getProductsEntities()
     {
         $productId = isset($this->description['magento_product_id'])
@@ -170,8 +163,6 @@ class Preview extends Description
 
         return $magentoProduct->loadProduct($productId, $storeId);
     }
-
-    // ---------------------------------------
 
     private function getListingProductByMagentoProductId($productId, $storeId)
     {

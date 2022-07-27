@@ -25,6 +25,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
+
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
@@ -32,22 +38,24 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
         array $data = []
     ) {
         $this->ebayFactory = $ebayFactory;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->resourceConnection = $resourceConnection;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->magentoHelper = $magentoHelper;
         parent::__construct($context, $backendHelper, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
         parent::_construct();
 
-        $this->listing = $this->getHelper('Data\GlobalData')->getValue('temp_data');
+        $this->listing = $this->globalDataHelper->getValue('temp_data');
 
         // Initialization block
         // ---------------------------------------
@@ -58,8 +66,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setUseAjax(true);
         // ---------------------------------------
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -231,8 +237,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return $this;
     }
 
-    //########################################
-
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
@@ -362,8 +366,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return $this;
     }
 
-    //########################################
-
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
         $title = $row->getName();
@@ -491,7 +493,7 @@ HTML;
         $countryCode = $row->getData('country');
 
         $country = $countryCode;
-        $countries = $this->getHelper('Magento')->getCountries();
+        $countries = $this->magentoHelper->getCountries();
 
         foreach ($countries as $country) {
             if ($country['value'] == $countryCode) {
@@ -564,8 +566,6 @@ HTML
 
         return $logIcon;
     }
-
-    // ---------------------------------------
 
     protected function callbackFilterCheckboxes($collection, $column)
     {
@@ -650,7 +650,7 @@ HTML
         }
 
         $countryCodes = [];
-        $countries = $this->getHelper('Magento')->getCountries();
+        $countries = $this->magentoHelper->getCountries();
 
         foreach ($countries as $country) {
             $pos = strpos(strtolower($country['label']), strtolower($value));
@@ -673,8 +673,6 @@ HTML
         );
     }
 
-    //########################################
-
     public function getGridUrl()
     {
         return $this->getUrl('*/ebay_listing_pickupStore/index', [
@@ -686,8 +684,6 @@ HTML
     {
         return false;
     }
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -770,6 +766,4 @@ JS
 
         return parent::_toHtml();
     }
-
-    //########################################
 }

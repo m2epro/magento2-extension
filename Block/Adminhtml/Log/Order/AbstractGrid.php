@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Log\Order;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Log\Order\AbstractGrid
- */
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 {
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
@@ -19,6 +16,18 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Component */
+    private $componentHelper;
+
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    private $amazonHelper;
+
+    /** @var \Ess\M2ePro\Helper\Component\Ebay */
+    private $ebayHelper;
+
+    /** @var \Ess\M2ePro\Helper\Component\Walmart */
+    private $walmartHelper;
+
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\View $viewHelper,
@@ -26,10 +35,18 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Component $componentHelper,
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
+        \Ess\M2ePro\Helper\Component\Ebay $ebayHelper,
+        \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
         array $data = []
     ) {
         $this->databaseHelper = $databaseHelper;
         $this->dataHelper = $dataHelper;
+        $this->componentHelper = $componentHelper;
+        $this->amazonHelper = $amazonHelper;
+        $this->ebayHelper = $ebayHelper;
+        $this->walmartHelper = $walmartHelper;
         parent::__construct(
             $resourceConnection,
             $viewHelper,
@@ -40,8 +57,6 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
     }
 
     abstract protected function getComponentMode();
-
-    //#######################################
 
     public function _construct()
     {
@@ -156,7 +171,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             'filter_index' => 'main_table.create_date'
         ]);
 
-        $componentNick = $this->getHelper('Component')->getComponentTitle(
+        $componentNick = $this->componentHelper->getComponentTitle(
             $this->getComponentMode()
         );
 
@@ -206,8 +221,6 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 
         return parent::_prepareColumns();
     }
-
-    //########################################
 
     public function callbackColumnChannelOrderId($value, $row, $column, $isExport)
     {
@@ -267,7 +280,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 
         $ordersIds = [];
 
-        if ($this->getHelper('Component\Ebay')->isEnabled()) {
+        if ($this->ebayHelper->isEnabled()) {
             $tempOrdersIds = $this->activeRecordFactory->getObject('Ebay\Order')
                 ->getCollection()
                 ->addFieldToFilter('ebay_order_id', ['like' => '%' . $value . '%'])
@@ -275,7 +288,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             $ordersIds = array_merge($ordersIds, $tempOrdersIds);
         }
 
-        if ($this->getHelper('Component\Amazon')->isEnabled()) {
+        if ($this->amazonHelper->isEnabled()) {
             $tempOrdersIds = $this->activeRecordFactory->getObject('Amazon\Order')
                 ->getCollection()
                 ->addFieldToFilter('amazon_order_id', ['like' => '%' . $value . '%'])
@@ -283,7 +296,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             $ordersIds = array_merge($ordersIds, $tempOrdersIds);
         }
 
-        if ($this->getHelper('Component\Walmart')->isEnabled()) {
+        if ($this->walmartHelper->isEnabled()) {
             $tempOrdersIds = $this->activeRecordFactory->getObject('Walmart\Order')
                 ->getCollection()
                 ->addFieldToFilter('walmart_order_id', ['like' => '%' . $value . '%'])
@@ -296,12 +309,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         $collection->addFieldToFilter('main_table.order_id', ['in' => $ordersIds]);
     }
 
-    //########################################
-
     public function getRowUrl($row)
     {
         return false;
     }
-
-    //########################################
 }

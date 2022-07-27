@@ -10,11 +10,21 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Synchronization;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Synchronization\Delete
- */
 class Delete extends Template
 {
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->dataHelper = $dataHelper;
+    }
+
     public function execute()
     {
         $ids = $this->getRequestIds();

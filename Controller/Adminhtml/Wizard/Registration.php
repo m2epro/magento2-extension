@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Wizard;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\Registration
- */
 abstract class Registration extends \Ess\M2ePro\Controller\Adminhtml\Wizard
 {
     protected function getCustomViewNick()

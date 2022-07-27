@@ -10,15 +10,28 @@ namespace Ess\M2ePro\Model\Ebay\Template\Category;
 
 class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 {
-    private $initDefaultSpecifics = false;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
-    protected $activeRecordFactory;
-    protected $transactionFactory;
+    /** @var \Ess\M2ePro\Model\Ebay\Template\CategoryFactory */
+    private $templateCategoryFactory;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
+    private $activeRecordFactory;
+
+    /** @var \Magento\Framework\DB\TransactionFactory */
+    private $transactionFactory;
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
     private $componentEbayCategoryEbay;
 
+    private $initDefaultSpecifics = false;
+
+    private $filteredData = [];
+
     public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Model\Ebay\Template\CategoryFactory $templateCategoryFactory,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\DB\TransactionFactory $transactionFactory,
@@ -27,44 +40,102 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     ) {
         parent::__construct($helperFactory, $modelFactory);
 
+        $this->dataHelper                = $dataHelper;
+        $this->templateCategoryFactory   = $templateCategoryFactory;
         $this->activeRecordFactory       = $activeRecordFactory;
         $this->transactionFactory        = $transactionFactory;
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
     }
 
-    //########################################
-
     public function build($model, array $rawData)
     {
         /** @var \Ess\M2ePro\Model\Ebay\Template\Category $model */
         $model = parent::build($model, $rawData);
-
-        if (!empty($this->rawData['specific'])) {
-            foreach ($model->getSpecifics(true) as $specific) {
-                // @codingStandardsIgnoreLine
-                $specific->delete();
-            }
-
-            $specifics = [];
-            foreach ($this->rawData['specific'] as $specific) {
-                $specifics[] = $this->serializeSpecific($specific);
-            }
-
-            $this->saveSpecifics($model, $specifics);
-        } else {
-            $this->initDefaultSpecifics && $this->initDefaultSpecifics($model);
-        }
-
+        $specifics = $this->getSpecifics($model);
+        $this->saveSpecifics($model, $specifics);
         return $model;
     }
 
-    //########################################
-
     protected function prepareData()
     {
-        $data = [];
+        $template = $this->getTemplate();
+        $this->initSpecificsFromTemplate($template);
+        $this->model = $template;
 
-        $keys = [
+        return $this->getFilteredData();
+    }
+
+    public function getDefaultData()
+    {
+        return [
+            'category_id'        => 0,
+            'category_path'      => '',
+            'category_mode'      => \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY,
+            'category_attribute' => ''
+        ];
+    }
+
+    private function getTemplate()
+    {
+        if (isset($this->rawData['template_id'])) {
+           return $this->loadTemplateById($this->rawData['template_id']);
+        }
+
+        $isCustomTemplate = $this->rawData['is_custom_template'] ?? false;
+
+        return $isCustomTemplate
+            ? $this->createCustomTemplate()
+            : $this->getDefaultTemplate();
+    }
+
+    private function loadTemplateById($id)
+    {
+        $template = $this->templateCategoryFactory->create();
+        $template->load($id);
+        $this->checkIfTemplateDataMatch($template);
+        return $template;
+    }
+
+    private function createCustomTemplate()
+    {
+        $template = $this->templateCategoryFactory->create();
+        $template->setData('is_custom_template', 1);
+        return $template;
+    }
+
+    private function getDefaultTemplate()
+    {
+        $template = $this->templateCategoryFactory->create();
+
+        if (!isset($this->rawData['category_mode'], $this->rawData['marketplace_id'])) {
+            return $template->setData('is_custom_template', 0);
+        }
+
+        $value =  $this->rawData['category_mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY
+            ? $this->rawData['category_id']
+            : $this->rawData['category_attribute'];
+
+        $template->loadByCategoryValue(
+            $value,
+            $this->rawData['category_mode'],
+            $this->rawData['marketplace_id'],
+            0
+        );
+
+        if ($template->isObjectNew()) {
+            $this->initDefaultSpecifics = true;
+        }
+
+        return $template;
+    }
+
+    private function getFilteredData()
+    {
+        if (!empty($this->filteredData)) {
+            return $this->filteredData;
+        }
+
+        $allowedKeys = [
             'marketplace_id',
             'category_mode',
             'category_id',
@@ -72,74 +143,79 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'category_path'
         ];
 
-        foreach ($keys as $key) {
-            isset($this->rawData[$key]) && $data[$key] = $this->rawData[$key];
+        foreach ($allowedKeys as $key) {
+            if (isset($this->rawData[$key])) {
+                $this->filteredData[$key] = $this->rawData[$key];
+            }
         }
 
-        $template = $this->tryToLoadById($this->rawData, $data);
-        $template->getId() === null && $template = $this->tryToLoadByData($this->rawData, $data);
-        $this->initDefaultSpecifics = $template->getId() === null;
-        $this->model = $template;
-
-        return $data;
+        return $this->filteredData;
     }
 
-    //########################################
+    /** Editing of category data is not allowed */
+    private function checkIfTemplateDataMatch(\Ess\M2ePro\Model\Ebay\Template\Category $template) {
+        $significantKeys = [
+            'marketplace_id',
+            'category_mode',
+            'category_id',
+            'category_attribute',
+        ];
 
-    protected function tryToLoadById(array $data, array $newTemplateData)
-    {
-        /** @var \Ess\M2ePro\Model\Ebay\Template\Category $template */
-        $template = $this->activeRecordFactory->getObject('Ebay_Template_Category');
-
-        if (!isset($data['template_id'])) {
-            return $template;
+        foreach ($this->getFilteredData() as $key => $value) {
+            if (in_array($key, $significantKeys, true) && $template->getData($key) != $value) {
+                $this->initSpecificsFromTemplate($template);
+                $template->setData(['is_custom_template' => 1]);
+            }
         }
-
-        $template->load($data['template_id']);
-        $this->checkIfTemplateDataMatch($template, $newTemplateData);
-
-        return $template;
     }
 
-    protected function tryToLoadByData(array $data, array $newTemplateData)
+    private function getSpecifics(\Ess\M2ePro\Model\Ebay\Template\Category $template)
     {
-        /** @var \Ess\M2ePro\Model\Ebay\Template\Category $template */
-        $template = $this->activeRecordFactory->getObject('Ebay_Template_Category');
-
-        if (!isset($data['category_mode'], $data['marketplace_id'])) {
-            return $template;
+        if (!empty($this->rawData['specific'])) {
+            return $this->getNewSpecifics($template);
         }
 
-        $template->loadByCategoryValue(
-            $data['category_mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY
-                ? $data['category_id']
-                : $data['category_attribute'],
-            $data['category_mode'],
-            $data['marketplace_id'],
-            0
+        if ($this->initDefaultSpecifics) {
+            return $this->initDefaultSpecifics($template);
+        }
+
+        return [];
+    }
+
+    private function initDefaultSpecifics(\Ess\M2ePro\Model\Ebay\Template\Category $template)
+    {
+        $dictionarySpecifics = (array)$this->componentEbayCategoryEbay->getSpecifics(
+            $template->getCategoryId(),
+            $template->getMarketplaceId()
         );
 
-        /* editing of category data is not allowed */
-        if ($template->getId() !== null && $template->isLocked()) {
-            $this->checkIfTemplateDataMatch($template, $newTemplateData);
-            if ($template->getId() === null) {
-                return $template;
-            }
-
-            if (empty($data['specific']) && !$template->getIsCustomTemplate()) {
-                return $template;
-            }
-
-            $this->initSpecificsFromTemplate($template);
-            $template->setData(['is_custom_template' => 1]);
+        $specifics = [];
+        foreach ($dictionarySpecifics as $dictionarySpecific) {
+            $specifics[] = [
+                'mode'            => \Ess\M2ePro\Model\Ebay\Template\Category\Specific::MODE_ITEM_SPECIFICS,
+                'attribute_title' => $dictionarySpecific['title'],
+                'value_mode'      => \Ess\M2ePro\Model\Ebay\Template\Category\Specific::VALUE_MODE_NONE
+            ];
         }
 
-        return $template;
+        return $specifics;
     }
 
-    //########################################
+    private function getNewSpecifics(\Ess\M2ePro\Model\Ebay\Template\Category $template)
+    {
+        $specifics = [];
+        foreach ($template->getSpecifics(true) as $specific) {
+            // @codingStandardsIgnoreLine
+            $specific->delete();
+        }
+        foreach ($this->rawData['specific'] as $specific) {
+            $specifics[] = $this->serializeSpecific($specific);
+        }
 
-    protected function saveSpecifics(\Ess\M2ePro\Model\Ebay\Template\Category $template, array $specifics)
+        return $specifics;
+    }
+
+    private function saveSpecifics(\Ess\M2ePro\Model\Ebay\Template\Category $template, array $specifics)
     {
         $transaction = $this->transactionFactory->create();
 
@@ -155,45 +231,19 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         $transaction->save();
     }
 
-    protected function initDefaultSpecifics(\Ess\M2ePro\Model\Ebay\Template\Category $template)
+    private function initSpecificsFromTemplate(\Ess\M2ePro\Model\Ebay\Template\Category $template)
     {
-        if (!$template->isCategoryModeEbay()) {
+        if (!empty($this->rawData['specific']) || $template->isObjectNew()) {
             return;
         }
 
-        $dictionarySpecifics = (array)$this->componentEbayCategoryEbay->getSpecifics(
-            $template->getCategoryId(),
-            $template->getMarketplaceId()
-        );
-
-        $specifics = [];
-        foreach ($dictionarySpecifics as $dictionarySpecific) {
-            $specifics[] = [
-                'mode'            => \Ess\M2ePro\Model\Ebay\Template\Category\Specific::MODE_ITEM_SPECIFICS,
-                'attribute_title' => $dictionarySpecific['title'],
-                'value_mode'      => \Ess\M2ePro\Model\Ebay\Template\Category\Specific::VALUE_MODE_NONE
-            ];
-        }
-
-        $this->saveSpecifics($template, $specifics);
-    }
-
-    protected function initSpecificsFromTemplate(\Ess\M2ePro\Model\Ebay\Template\Category $template)
-    {
-        if (!empty($this->rawData['specific'])) {
-            return;
-        }
-
-        $helper = $this->getHelper('Data');
         foreach ($template->getSpecifics() as $specific) {
-            $specific['value_ebay_recommended'] = (array)$helper->jsonDecode($specific['value_ebay_recommended']);
-            $specific['value_custom_value']     = (array)$helper->jsonDecode($specific['value_custom_value']);
+            $specific['value_ebay_recommended'] = $this->dataHelper->jsonDecode($specific['value_ebay_recommended']);
+            $specific['value_custom_value']     = $this->dataHelper->jsonDecode($specific['value_custom_value']);
 
             $this->rawData['specific'][] = $specific;
         }
     }
-
-    //----------------------------------------
 
     public function serializeSpecific(array $specific)
     {
@@ -207,14 +257,14 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             $recommendedValue = $specific['value_ebay_recommended'];
             !is_array($recommendedValue) && $recommendedValue = [$recommendedValue];
 
-            $specificData['value_ebay_recommended'] = $this->getHelper('Data')->jsonEncode($recommendedValue);
+            $specificData['value_ebay_recommended'] = $this->dataHelper->jsonEncode($recommendedValue);
         }
 
         if (isset($specific['value_custom_value'])) {
             $customValue = $specific['value_custom_value'];
             !is_array($customValue) && $customValue = [$customValue];
 
-            $specificData['value_custom_value'] = $this->getHelper('Data')->jsonEncode($customValue);
+            $specificData['value_custom_value'] = $this->dataHelper->jsonEncode($customValue);
         }
 
         if (isset($specific['value_custom_attribute'])) {
@@ -223,42 +273,4 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
         return $specificData;
     }
-
-    //########################################
-
-    /**
-     * editing of category data is not allowed
-     */
-    protected function checkIfTemplateDataMatch(
-        \Ess\M2ePro\Model\Ebay\Template\Category $template,
-        array $newTemplateData
-    ) {
-        $significantKeys = [
-            'marketplace_id',
-            'category_mode',
-            'category_id',
-            'category_attribute',
-        ];
-
-        foreach ($newTemplateData as $key => $value) {
-            if (in_array($key, $significantKeys, true) && $template->getData($key) != $value) {
-                $this->initSpecificsFromTemplate($template);
-                $template->setData(['is_custom_template' => 1]);
-            }
-        }
-    }
-
-    //########################################
-
-    public function getDefaultData()
-    {
-        return [
-            'category_id'        => 0,
-            'category_path'      => '',
-            'category_mode'      => \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY,
-            'category_attribute' => ''
-        ];
-    }
-
-    //########################################
 }

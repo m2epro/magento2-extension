@@ -8,20 +8,17 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Settings\MagentoInventory;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Settings\MagentoInventory\Save
- */
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
+        \Ess\M2ePro\Helper\Module\Configuration  $moduleHelperConfiguration,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($context);
-        $this->moduleConfiguration = $moduleConfiguration;
+        $this->moduleConfiguration = $moduleHelperConfiguration;
     }
 
     public function execute()

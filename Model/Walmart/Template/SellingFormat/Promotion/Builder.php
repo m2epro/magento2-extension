@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -8,27 +8,11 @@
 
 namespace Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion;
 
-/**
- * Class Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion\Builder
- */
 class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 {
     private $templateSellingFormatId;
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    protected $helperData;
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Data $helperData,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        array $data = []
-    ) {
-        $this->helperData = $helperData;
-        parent::__construct($helperFactory, $modelFactory, $data);
-    }
-
-    //########################################
+    // ----------------------------------------
 
     public function setTemplateSellingFormatId($templateSellingFormatId)
     {
@@ -44,27 +28,23 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         return $this->templateSellingFormatId;
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function prepareData()
     {
         if (!empty($this->rawData['from_date']['value'])) {
-            $startDate = $this->helperData
-                ->createGmtDateTime($this->rawData['from_date']['value'])
+            $startDate = \Ess\M2ePro\Helper\Date::createDateGmt($this->rawData['from_date']['value'])
                 ->format('Y-m-d H:i');
         } else {
-            $startDate = $this->helperData
-                ->createCurrentGmtDateTime()
+            $startDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()
                 ->format('Y-m-d H:i');
         }
 
         if (!empty($this->rawData['to_date']['value'])) {
-            $endDate = $this->helperData
-                ->createGmtDateTime($this->rawData['to_date']['value'])
+            $endDate = \Ess\M2ePro\Helper\Date::createDateGmt($this->rawData['to_date']['value'])
                 ->format('Y-m-d H:i');
         } else {
-            $endDate = $this->helperData
-                ->createCurrentGmtDateTime()
+            $endDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()
                 ->format('Y-m-d H:i');
         }
 
@@ -90,6 +70,4 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     {
         return [];
     }
-
-    //########################################
 }

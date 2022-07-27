@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -8,25 +8,25 @@
 
 namespace Ess\M2ePro\Model\M2ePro\Connector;
 
-/**
- * Class \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher
- */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
+    /** @var \Magento\Framework\Code\NameBuilder */
     protected $nameBuilder;
-
-    //####################################
+    /** @var \Ess\M2ePro\Model\M2ePro\Connector\Protocol */
+    private $protocol;
 
     public function __construct(
+        \Ess\M2ePro\Model\M2ePro\Connector\Protocol $protocol,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
-        $this->nameBuilder = $nameBuilder;
         parent::__construct($helperFactory, $modelFactory);
+        $this->nameBuilder = $nameBuilder;
+        $this->protocol = $protocol;
     }
 
-    //####################################
+    // ----------------------------------------
 
     public function getConnector($entity, $type, $name, array $params = [])
     {
@@ -42,7 +42,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         $connectorObject = $this->modelFactory->getObject($className, [
             'params' => $params,
         ]);
-        $connectorObject->setProtocol($this->getProtocol());
+        $connectorObject->setProtocol($this->protocol);
 
         return $connectorObject;
     }
@@ -63,7 +63,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         $responseDataKey = null
     ) {
         $virtualConnector = $this->modelFactory->getObject('Connector_Command_RealTime_Virtual');
-        $virtualConnector->setProtocol($this->getProtocol());
+        $virtualConnector->setProtocol($this->protocol);
         $virtualConnector->setCommand([$entity, $type, $name]);
         $virtualConnector->setResponseDataKey($responseDataKey);
 
@@ -72,19 +72,10 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         return $virtualConnector;
     }
 
-    //####################################
+    // ----------------------------------------
 
     public function process(\Ess\M2ePro\Model\Connector\Command\AbstractModel $connector)
     {
         $connector->process();
     }
-
-    //####################################
-
-    private function getProtocol()
-    {
-        return $this->modelFactory->getObject('M2ePro\Connector\Protocol');
-    }
-
-    //####################################
 }

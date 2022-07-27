@@ -23,11 +23,15 @@ class Gtin extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Component\Walmart */
+    private $walmartHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Backend\Block\Context $context,
         \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -35,9 +39,8 @@ class Gtin extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         $this->helperFactory = $helperFactory;
         $this->translationHelper = $translationHelper;
         $this->dataHelper = $dataHelper;
+        $this->walmartHelper = $walmartHelper;
     }
-
-    //########################################
 
     public function render(\Magento\Framework\DataObject $row)
     {
@@ -59,13 +62,12 @@ class Gtin extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         $productId = $row->getData('id');
         $gtinHtml = $this->dataHelper->escapeHtml($gtin);
 
-        $walmartHelper = $this->getHelper('Component\Walmart');
         $marketplaceId = ($this->getColumn()->getData('marketplace_id') !== null)
                               ? $this->getColumn()->getData('marketplace_id')
                               : $row->getData('marketplace_id');
 
-        $channelUrl = $walmartHelper->getItemUrl(
-            $objectRow->getData($walmartHelper->getIdentifierForItemUrl($marketplaceId)),
+        $channelUrl = $this->walmartHelper->getItemUrl(
+            $objectRow->getData($this->walmartHelper->getIdentifierForItemUrl($marketplaceId)),
             $marketplaceId
         );
 
@@ -139,7 +141,4 @@ HTML;
 
         return $html;
     }
-
-    //########################################
-
 }

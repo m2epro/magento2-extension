@@ -31,6 +31,9 @@ class Grid extends AbstractGrid
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    private $amazonHelper;
+
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -38,12 +41,14 @@ class Grid extends AbstractGrid
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         array $data = []
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->amazonFactory = $amazonFactory;
         $this->databaseHelper = $databaseHelper;
         $this->dataHelper = $dataHelper;
+        $this->amazonHelper = $amazonHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -374,8 +379,6 @@ class Grid extends AbstractGrid
         return parent::_prepareMassaction();
     }
 
-    //########################################
-
     public function callbackPurchaseCreateDate($value, $row, $column, $isExport)
     {
         return $this->_localeDate->formatDate(
@@ -400,7 +403,7 @@ class Grid extends AbstractGrid
         $itemUrl = $this->getUrl('*/amazon_order/view', ['id' => $row->getId(), 'back' => $back]);
 
         $orderId = $this->dataHelper->escapeHtml($row->getChildObject()->getData('amazon_order_id'));
-        $url = $this->getHelper('Component\Amazon')->getOrderUrl($orderId, $row->getData('marketplace_id'));
+        $url = $this->amazonHelper->getOrderUrl($orderId, $row->getData('marketplace_id'));
 
         $returnString = <<<HTML
 <a href="{$itemUrl}">{$orderId}</a>
@@ -480,8 +483,6 @@ HTML;
         return $returnString;
     }
 
-    // ---------------------------------------
-
     public function callbackColumnItems($value, $row, $column, $isExport)
     {
         /** @var \Ess\M2ePro\Model\Order\Item[] $items */
@@ -558,7 +559,7 @@ STRING;
             $generalIdLabel = $this->__($item->getChildObject()->getIsIsbnGeneralId() ? 'ISBN' : 'ASIN');
             $generalId = $this->dataHelper->escapeHtml($item->getChildObject()->getGeneralId());
 
-            $itemUrl = $this->getHelper('Component\Amazon')->getItemUrl(
+            $itemUrl = $this->amazonHelper->getItemUrl(
                 $item->getChildObject()->getGeneralId(),
                 $row->getData('marketplace_id')
             );
@@ -660,8 +661,6 @@ HTML;
 
         return $value;
     }
-
-    //########################################
 
     protected function callbackFilterItems($collection, $column)
     {
@@ -768,8 +767,6 @@ HTML;
         }
     }
 
-    //########################################
-
     public function getGridUrl()
     {
         return $this->getUrl('*/amazon_order/grid', ['_current' => true]);
@@ -824,7 +821,7 @@ JS
         );
 
         $tempGridIds = [];
-        $this->getHelper('Component\Amazon')->isEnabled() && $tempGridIds[] = $this->getId();
+        $this->amazonHelper->isEnabled() && $tempGridIds[] = $this->getId();
 
         $tempGridIds = $this->dataHelper->jsonEncode($tempGridIds);
 
@@ -843,6 +840,4 @@ JS
 
         return parent::_prepareLayout();
     }
-
-    //########################################
 }

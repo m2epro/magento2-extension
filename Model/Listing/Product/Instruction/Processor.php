@@ -186,10 +186,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     public function removeInstructionOlderThenWeek()
     {
-        $greaterThenDate = $this
-            ->getHelper('Data')
-            ->createCurrentGmtDateTime()
-            ->modify("-7 day")
+        $greaterThenDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()
+            ->modify('-7 day')
             ->format('Y-m-d');
 
         $productInstructionResource = $this->activeRecordFactory

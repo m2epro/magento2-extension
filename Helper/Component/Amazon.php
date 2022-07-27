@@ -32,6 +32,17 @@ class Amazon
     public const MARKETPLACE_JP = 42;
     public const MARKETPLACE_PL = 43;
 
+    public const EEA_COUNTRY_CODES = [
+        'AT', 'BE', 'BG', 'HR', 'CY',
+        'CZ', 'DK', 'EE', 'FI', 'FR',
+        'DE', 'GR', 'HU', 'IS', 'IE',
+        'IT', 'LV', 'LI', 'LT', 'LU',
+        'MT', 'NL', 'NO', 'PL', 'PT',
+        'RO', 'SK', 'SI', 'ES', 'SE',
+    ];
+
+    /** @var \Magento\Directory\Model\ResourceModel\Country\CollectionFactory */
+    private $countryCollectionFactory;
     /** @var \Magento\Directory\Model\ResourceModel\Region\Collection */
     private $regionCollection;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
@@ -44,6 +55,7 @@ class Amazon
     private $config;
 
     /**
+     * @param \Magento\Directory\Model\ResourceModel\Country\CollectionFactory $countryCollectionFactory
      * @param \Magento\Directory\Model\ResourceModel\Region\Collection $regionCollection
      * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
      * @param \Ess\M2ePro\Helper\Module\Translation $moduleTranslation
@@ -51,12 +63,14 @@ class Amazon
      * @param \Ess\M2ePro\Model\Config\Manager $config
      */
     public function __construct(
+        \Magento\Directory\Model\ResourceModel\Country\CollectionFactory $countryCollectionFactory,
         \Magento\Directory\Model\ResourceModel\Region\Collection $regionCollection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Module\Translation $moduleTranslation,
         \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
         \Ess\M2ePro\Model\Config\Manager $config
     ) {
+        $this->countryCollectionFactory = $countryCollectionFactory;
         $this->regionCollection = $regionCollection;
         $this->amazonFactory = $amazonFactory;
         $this->moduleTranslation = $moduleTranslation;
@@ -289,7 +303,44 @@ class Amazon
         return $states;
     }
 
-    // ----------------------------------------
+    /**
+     * @return array
+     */
+    public function getEEACountriesList(): array
+    {
+        $collection = $this->countryCollectionFactory
+            ->create()
+            ->addFieldToSelect(['iso2_code'])
+            ->addFieldToFilter(
+                'iso2_code',
+                ['in' => self::EEA_COUNTRY_CODES]
+            );
+
+        $tempData = [];
+        /** @var \Magento\Directory\Model\Country $item */
+        foreach ($collection->getItems() as $item) {
+            $tempData[] = [
+                'name' => $item->getName(),
+                'code' => $item->getData('iso2_code')
+            ];
+        }
+
+        $compare = function ($a, $b) {
+            if ($a['name'] === $b['name']) {
+                return 0;
+            }
+
+            return ($a['name'] < $b['name']) ? -1 : 1;
+        };
+        uasort($tempData, $compare);
+
+        $data = [];
+        foreach ($tempData as $value) {
+            $data[$value['code']] = $value['name'];
+        }
+
+        return $data;
+    }
 
     /**
      * @return void

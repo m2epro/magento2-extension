@@ -8,22 +8,27 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View
- */
 class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     /** @var  \Ess\M2ePro\Model\Listing */
     protected $listing;
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionDataHelper;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
         array $data = []
     ) {
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->sessionDataHelper = $sessionDataHelper;
         parent::__construct($context, $data);
     }
 
@@ -31,7 +36,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
     {
         parent::_construct();
 
-        $this->listing = $this->getHelper('Data\GlobalData')->getValue('view_listing');
+        $this->listing = $this->globalDataHelper->getValue('view_listing');
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Switcher $viewModeSwitcher */
         $viewModeSwitcher = $this->getLayout()
@@ -132,8 +137,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         return parent::_prepareLayout();
     }
 
-    //########################################
-
     protected function _toHtml()
     {
         return '<div id="listing_view_progress_bar"></div>' .
@@ -142,8 +145,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             parent::_toHtml() .
             '</div>';
     }
-
-    //########################################
 
     public function getGridHtml()
     {
@@ -266,7 +267,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             )
         );
 
-        $temp = $this->getHelper('Data\Session')->getValue('products_ids_for_list', true);
+        $temp = $this->sessionDataHelper->getValue('products_ids_for_list', true);
         $productsIdsForList = empty($temp) ? '' : $temp;
 
         $templateCategoryPopupTitle = $this->__('Assign Category Policy');
@@ -506,8 +507,6 @@ JS
         return $items;
     }
 
-    //########################################
-
     public function getAddProductsDropDownItems()
     {
         $items = [];
@@ -561,6 +560,4 @@ JS
 
         return $items;
     }
-
-    //########################################
 }

@@ -8,20 +8,30 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Listing\Moving;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Listing\Moving\MoveToListing
- */
 class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+
+        $this->sessionHelper = $sessionHelper;
+        $this->dataHelper = $dataHelper;
+    }
 
     public function execute()
     {
-        $sessionHelper = $this->getHelper('Data\Session');
-
         $componentMode = $this->getRequest()->getParam('componentMode');
         $sessionKey = $componentMode . '_' . \Ess\M2ePro\Helper\View::MOVING_LISTING_PRODUCTS_SELECTED_SESSION_KEY;
-        $selectedProducts = $sessionHelper->getValue($sessionKey);
+        $selectedProducts = $this->sessionHelper->getValue($sessionKey);
 
         /** @var \Ess\M2ePro\Model\Listing $targetListing */
         $sourceListing = null;
@@ -58,16 +68,15 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
         }
 
         $variationUpdaterObject->afterMassProcessEvent();
-        $sessionHelper->removeValue($sessionKey);
+        $this->sessionHelper->removeValue($sessionKey);
 
         if ($errorsCount) {
-
             $logViewUrl = $this->getUrl(
                 '*/' . $componentMode . '_log_listing_product/index',
                 [
                     'id' => $sourceListing->getId(),
-                    'back'=>$this->getHelper('Data')
-                    ->makeBackUrlParam('*/' . $componentMode . '_listing/view', ['id' => $sourceListing->getId()])
+                    'back' => $this->dataHelper
+                        ->makeBackUrlParam('*/' . $componentMode . '_listing/view', ['id' => $sourceListing->getId()]),
                 ]
             );
 
@@ -110,6 +119,4 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
 
         return $this->getResult();
     }
-
-    //########################################
 }

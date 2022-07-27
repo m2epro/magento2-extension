@@ -10,12 +10,24 @@ namespace Ess\M2ePro\Controller\Adminhtml\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Base;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Template\SetDefaultValuesInSyncPolicy
- */
 class SetDefaultValuesInSyncPolicy extends Base
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module */
+    private $moduleHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $dbStructureHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module $moduleHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $dbStructureHelper,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+
+        $this->moduleHelper = $moduleHelper;
+        $this->dbStructureHelper = $dbStructureHelper;
+    }
 
     /**
      * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
@@ -26,7 +38,7 @@ class SetDefaultValuesInSyncPolicy extends Base
     {
         $connection = $this->resourceConnection->getConnection();
         foreach (['ebay', 'amazon', 'walmart'] as $component) {
-            $templateTable = $this->getHelper('Module_Database_Structure')
+            $templateTable = $this->dbStructureHelper
                 ->getTableNameWithPrefix("m2epro_{$component}_template_synchronization");
             $templates = $connection
                 ->select()
@@ -45,17 +57,15 @@ class SetDefaultValuesInSyncPolicy extends Base
             }
         }
 
-        $messages = $this->getHelper('Module')->getUpgradeMessages();
+        $messages = $this->moduleHelper->getUpgradeMessages();
         unset($messages['default_values_in_sync_policy']);
 
-        $this->getHelper('Module')->getRegistry()->setValue('/upgrade/messages/', $messages);
+        $this->moduleHelper->getRegistry()->setValue('/upgrade/messages/', $messages);
 
         $this->getMessageManager()->addSuccess($this->__(
             'Relist and Stop Rules in Synchronization Policies were updated.'
         ));
 
-        return $this->_redirect($this->_redirect->getRefererUrl());
+        return $this->_redirect($this->redirect->getRefererUrl());
     }
-
-    //########################################
 }

@@ -10,14 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description\SaveWatermarkImage
- */
 class SaveWatermarkImage extends Description
 {
-    protected $driverPool;
-
-    //########################################
+    /** @var \Magento\Framework\Filesystem\DriverPool */
+    private $driverPool;
 
     public function __construct(
         \Magento\Framework\Filesystem\DriverPool $driverPool,
@@ -27,11 +23,10 @@ class SaveWatermarkImage extends Description
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        $this->driverPool = $driverPool;
         parent::__construct($phpEnvironmentRequest, $productModel, $templateManager, $ebayFactory, $context);
-    }
 
-    //########################################
+        $this->driverPool = $driverPool;
+    }
 
     public function execute()
     {
@@ -83,6 +78,4 @@ class SaveWatermarkImage extends Description
         ]);
         return $this->getResult();
     }
-
-    //########################################
 }

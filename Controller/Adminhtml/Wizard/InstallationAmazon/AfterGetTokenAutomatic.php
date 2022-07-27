@@ -8,12 +8,22 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon\AfterGetTokenAutomatic
- */
 class AfterGetTokenAutomatic extends AfterGetTokenAbstract
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Helper\View\Amazon $amazonViewHelper,
+        \Magento\Framework\Code\NameBuilder $nameBuilder,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $amazonViewHelper, $nameBuilder, $context);
+
+        $this->sessionHelper = $sessionHelper;
+    }
 
     protected function getAccountData()
     {
@@ -42,12 +52,10 @@ class AfterGetTokenAutomatic extends AfterGetTokenAbstract
             $this->getAmazonAccountDefaultSettings(),
             [
                 'title'          => $params['Merchant'],
-                'marketplace_id' => $this->getHelper('Data\Session')->getValue('marketplace_id'),
+                'marketplace_id' => $this->sessionHelper->getValue('marketplace_id'),
                 'merchant_id'    => $params['Merchant'],
                 'token'          => $params['MWSAuthToken'],
             ]
         );
     }
-
-    //########################################
 }

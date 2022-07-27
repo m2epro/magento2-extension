@@ -8,23 +8,18 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Order;
 
-use Ess\M2ePro\Controller\Adminhtml\Context;
-use Ess\M2ePro\Controller\Adminhtml\Order;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Order\GetCountryRegions
- */
-class GetCountryRegions extends Order
+class GetCountryRegions extends \Ess\M2ePro\Controller\Adminhtml\Order
 {
-    protected $regionCollection;
+    /** @var \Magento\Directory\Model\ResourceModel\Region\Collection */
+    private $regionCollection;
 
     public function __construct(
         \Magento\Directory\Model\ResourceModel\Region\Collection $regionCollection,
-        Context $context
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        $this->regionCollection = $regionCollection;
-
         parent::__construct($context);
+
+        $this->regionCollection = $regionCollection;
     }
 
     public function execute()

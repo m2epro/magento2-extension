@@ -10,20 +10,29 @@ namespace Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1;
 
 use Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1\Complete
- */
 class Complete extends Base
 {
     const MIGRATION_MESSAGE_IDENTIFIER = 'm2epro_migration_message';
 
+    /** @var \Ess\M2ePro\Helper\Module\Maintenance */
+    private $moduleMaintenanceHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $exceptionHelper;
+
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+
     /** @var \Ess\M2ePro\Setup\MigrationFromMagento1\PreconditionsChecker\Factory */
-    protected $preconditionsCheckerFactory;
+    private $preconditionsCheckerFactory;
 
     /** @var \Ess\M2ePro\Setup\MigrationFromMagento1\MappingTablesDownloader */
-    protected $tablesDownloader;
+    private $tablesDownloader;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Maintenance $moduleMaintenanceHelper,
+        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
         \Ess\M2ePro\Controller\Adminhtml\Context $context,
         \Ess\M2ePro\Setup\MigrationFromMagento1\Runner $migrationRunner,
         \Ess\M2ePro\Setup\MigrationFromMagento1\PreconditionsChecker\Factory $preconditionsCheckerFactory,
@@ -31,8 +40,11 @@ class Complete extends Base
     ) {
         parent::__construct($context, $migrationRunner);
 
+        $this->moduleMaintenanceHelper = $moduleMaintenanceHelper;
+        $this->exceptionHelper = $exceptionHelper;
+        $this->sessionHelper = $sessionHelper;
         $this->preconditionsCheckerFactory = $preconditionsCheckerFactory;
-        $this->tablesDownloader            = $mappingTablesDownloader;
+        $this->tablesDownloader = $mappingTablesDownloader;
     }
 
     //########################################
@@ -50,7 +62,7 @@ class Complete extends Base
             try {
                 $m1Url = $this->getRequest()->getParam('magento_1_url')
                     ? $this->tablesDownloader->resolveM1Endpoint($this->getRequest()->getParam('magento_1_url'))
-                    : $this->getHelper('Data\Session')->getValue('unexpected_migration_m1_url', true);
+                    : $this->sessionHelper->getValue('unexpected_migration_m1_url', true);
 
                 if ($m1Url !== null) {
                     $this->tablesDownloader->setM1BaseUrl($m1Url);
@@ -59,7 +71,7 @@ class Complete extends Base
                 }
             } catch (\Exception $exception) {
 
-                $this->getHelper('Module_Exception')->process($exception);
+                $this->exceptionHelper->process($exception);
                 $this->getMessageManager()->addErrorMessage($this->__($exception->getMessage()));
 
                 $message = $this->getMessageManager()->getMessages()->getLastAddedMessage();
@@ -92,7 +104,7 @@ class Complete extends Base
             $this->migrationRunner->setPreconditionsChecker($preconditionsChecker);
             $this->migrationRunner->run();
         } catch (\Exception $exception) {
-            $this->getHelper('Module_Exception')->process($exception);
+            $this->exceptionHelper->process($exception);
             $this->getMessageManager()->addErrorMessage(
                 $this->__('Migration is failed. Reason: %error_message%', $exception->getMessage())
             );
@@ -106,7 +118,7 @@ class Complete extends Base
         }
 
         $this->helperFactory->getObject('Module')->getConfig()->setGroupValue('/cron/', 'mode', 0);
-        $this->getHelper('Module\Maintenance')->disable();
+        $this->moduleMaintenanceHelper->disable();
 
         $wizard->setCurrentStatus(MigrationFromMagento1::STATUS_COMPLETED);
         $this->helperFactory->getObject('Module')->getConfig()->setGroupValue(
@@ -117,6 +129,4 @@ class Complete extends Base
 
         return $this->_redirect($this->getUrl('m2epro/wizard_migrationFromMagento1/installation'));
     }
-
-    //########################################
 }

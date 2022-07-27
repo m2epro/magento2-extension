@@ -29,6 +29,9 @@ class Item extends AbstractGrid
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay $componentEbay,
         \Magento\Catalog\Model\Product $productModel,
@@ -39,15 +42,17 @@ class Item extends AbstractGrid
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
-        $this->productModel       = $productModel;
+        $this->productModel = $productModel;
         $this->resourceConnection = $resourceConnection;
-        $this->ebayFactory        = $ebayFactory;
-        $this->taxCalculator      = $taxCalculator;
-        $this->componentEbay      = $componentEbay;
+        $this->ebayFactory = $ebayFactory;
+        $this->taxCalculator = $taxCalculator;
+        $this->componentEbay = $componentEbay;
         $this->translationHelper = $translationHelper;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -70,7 +75,7 @@ class Item extends AbstractGrid
         $this->_defaultLimit = 200;
         // ---------------------------------------
 
-        $this->order = $this->getHelper('Data\GlobalData')->getValue('order');
+        $this->order = $this->globalDataHelper->getValue('order');
     }
 
     protected function _prepareCollection()

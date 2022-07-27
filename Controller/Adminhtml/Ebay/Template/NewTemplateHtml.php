@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\NewTemplateHtml
- */
 class NewTemplateHtml extends Template
 {
-    //########################################
-
     public function execute()
     {
         $nick = $this->getRequest()->getParam('nick');
@@ -28,6 +23,4 @@ class NewTemplateHtml extends Template
 
         return $this->getResult();
     }
-
-    //########################################
 }

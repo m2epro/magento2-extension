@@ -8,12 +8,11 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart;
 
-use Ess\M2ePro\Controller\Adminhtml\Context;
-
 abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
 {
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
     protected $walmartFactory;
+
     /** @var \Ess\M2ePro\Helper\View\Walmart */
     protected $walmartViewHelper;
 
@@ -21,9 +20,10 @@ abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Helper\View\Walmart $walmartViewHelper,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
-        Context $context
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($nameBuilder, $context);
+
         $this->walmartFactory = $walmartFactory;
         $this->walmartViewHelper = $walmartViewHelper;
     }
@@ -32,8 +32,6 @@ abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::walmart');
     }
-
-    //########################################
 
     protected function getCustomViewNick()
     {

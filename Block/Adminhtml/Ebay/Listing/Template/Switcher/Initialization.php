@@ -12,14 +12,18 @@ class Initialization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
     }
 
     public function _construct()
@@ -46,27 +50,27 @@ class Initialization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
         // initiate account param
         // ---------------------------------------
-        $account = $this->getHelper('Data\GlobalData')->getValue('ebay_account');
+        $account = $this->globalDataHelper->getValue('ebay_account');
         $params['account_id'] = $account->getId();
         // ---------------------------------------
 
         // initiate marketplace param
         // ---------------------------------------
-        $marketplace = $this->getHelper('Data\GlobalData')->getValue('ebay_marketplace');
+        $marketplace = $this->globalDataHelper->getValue('ebay_marketplace');
         $params['marketplace_id'] = $marketplace->getId();
         // ---------------------------------------
 
         // initiate attribute sets param
         // ---------------------------------------
         if ($this->getMode() == \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher::MODE_LISTING_PRODUCT) {
-            $attributeSets = $this->getHelper('Data\GlobalData')->getValue('ebay_attribute_sets');
+            $attributeSets = $this->globalDataHelper->getValue('ebay_attribute_sets');
             $params['attribute_sets'] = implode(',', $attributeSets);
         }
         // ---------------------------------------
 
         // initiate display use default option param
         // ---------------------------------------
-        $displayUseDefaultOption = $this->getHelper('Data\GlobalData')->getValue('ebay_display_use_default_option');
+        $displayUseDefaultOption = $this->globalDataHelper->getValue('ebay_display_use_default_option');
         $params['display_use_default_option'] = (int)(bool)$displayUseDefaultOption;
         // ---------------------------------------
 
@@ -110,8 +114,8 @@ class Initialization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             'Save as New Policy' => $this->__('Save as New Policy'),
         ]);
 
-        $store = $this->getHelper('Data\GlobalData')->getValue('ebay_store');
-        $marketplace = $this->getHelper('Data\GlobalData')->getValue('ebay_marketplace');
+        $store = $this->globalDataHelper->getValue('ebay_store');
+        $marketplace = $this->globalDataHelper->getValue('ebay_marketplace');
 
         $this->js->add(<<<JS
     define('Switcher/Initialization',[

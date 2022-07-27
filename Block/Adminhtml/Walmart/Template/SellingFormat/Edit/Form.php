@@ -37,6 +37,12 @@ class Form extends AbstractForm
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    /** @var \Ess\M2ePro\Helper\Component\Walmart */
+    private $walmartHelper;
+
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
@@ -46,6 +52,8 @@ class Form extends AbstractForm
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
         array $data = []
     ) {
         $this->resourceConnection = $resourceConnection;
@@ -53,6 +61,8 @@ class Form extends AbstractForm
         $this->supportHelper = $supportHelper;
         $this->databaseHelper = $databaseHelper;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->walmartHelper = $walmartHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -65,7 +75,7 @@ class Form extends AbstractForm
         $this->setId('walmartTemplateSellingFormatEditForm');
         // ---------------------------------------
 
-        $this->templateModel   = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
+        $this->templateModel   = $this->globalDataHelper->getValue('tmp_template');
         $this->formData        = $this->getFormData();
 
         $this->allAttributes = $this->magentoAttributeHelper->getAll();
@@ -599,11 +609,9 @@ HTML
                 'required' => true,
                 'create_magento_attribute' => true,
                 'tooltip' => $this->__(
-                    '
-                    A tax code assigned to the taxable Item. The PTC is used by Walmart to automatically<br>
-                    calculate the taxes on each sale based on the Item sold and delivery location.<br><br>
-                    <strong>Note:</strong> The current Sales Tax Codes can be found
-                     <a href="javascript:void(0)" onclick="%onclick%">here</a>.',
+                    'Provide a Product Tax Code, which is assigned to a taxable item so Walmart can automatically
+                    calculate taxes on each sale. Find the current Sales Tax Codes
+                    <a href="javascript:void(0)" onclick="%onclick%">here</a>.',
                     'WalmartTemplateSellingFormatObj.openTaxCodePopup(true);'
                 )
             ]
@@ -952,7 +960,7 @@ HTML
             ['value' => '', 'label' => '', 'style' => 'display: none;']
         ];
 
-        foreach ($this->getHelper('Component\Walmart')->getMarketplacesAvailableForApiCreation() as $marketplace) {
+        foreach ($this->walmartHelper->getMarketplacesAvailableForApiCreation() as $marketplace) {
             $optionsResult[] = [
                 'value' => $marketplace->getId(),
                 'label' => $this->escapeHtml($marketplace->getTitle())
@@ -1222,8 +1230,6 @@ HTML
         ));
     }
 
-    // ---------------------------------------
-
     public function getPromotionsHtml($form)
     {
         return $this->getLayout()->createBlock(Promotions::class)
@@ -1352,8 +1358,6 @@ HTML
             ]
         );
     }
-
-    //########################################
 
     protected function _beforeToHtml()
     {
@@ -1492,8 +1496,6 @@ JS
         return '<div id="modal_dialog_message"></div>' . parent::_toHtml();
     }
 
-    // ---------------------------------------
-
     public function getMarketplacesWithTaxCodesDictionary()
     {
         $connRead = $this->resourceConnection->getConnection();
@@ -1509,8 +1511,6 @@ JS
 
         return (array)$queryStmt->fetchAll(\Zend_Db::FETCH_COLUMN);
     }
-
-    //########################################
 
     public function getFormData()
     {
@@ -1536,8 +1536,6 @@ JS
 
         return array_merge($default, $data);
     }
-
-    //########################################
 
     protected function getAttributeOptions($attributeMode, $attributeName, $attributeType)
     {
@@ -1628,6 +1626,4 @@ JS
 
         return $optionsResult;
     }
-
-    //########################################
 }

@@ -19,10 +19,20 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstra
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper,
         array $data = []
     ) {
         $this->supportHelper = $supportHelper;
-        parent::__construct($context, $registry, $formFactory, $dataHelper, $data);
+        parent::__construct(
+            $context,
+            $registry,
+            $formFactory,
+            $dataHelper,
+            $globalDataHelper,
+            $magentoStoreHelper,
+            $data
+        );
     }
 
     public function _construct()
@@ -31,8 +41,6 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstra
 
         $this->setId('ebayListingAutoActionModeWebsite');
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
@@ -48,8 +56,6 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstra
 
         return $this;
     }
-
-    //########################################
 
     protected function _afterToHtml($html)
     {

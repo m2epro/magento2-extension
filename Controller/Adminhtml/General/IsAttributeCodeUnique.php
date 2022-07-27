@@ -8,29 +8,24 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\General;
 
-use Ess\M2ePro\Controller\Adminhtml\General;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\General\IsAttributeCodeUnique
- */
-class IsAttributeCodeUnique extends General
+class IsAttributeCodeUnique extends \Ess\M2ePro\Controller\Adminhtml\General
 {
-    protected $attributeFactory;
-    protected $catalogProductFactory;
+    /** @var \Magento\Eav\Model\Entity\AttributeFactory */
+    private $attributeFactory;
 
-    //########################################
+    /** @var \Magento\Catalog\Model\ProductFactory */
+    private $catalogProductFactory;
 
     public function __construct(
         \Magento\Eav\Model\Entity\AttributeFactory $attributeFactory,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
+        parent::__construct($context);
+
         $this->attributeFactory = $attributeFactory;
         $this->catalogProductFactory = $catalogProductFactory;
-        parent::__construct($context);
     }
-
-    //########################################
 
     public function execute()
     {
@@ -45,6 +40,4 @@ class IsAttributeCodeUnique extends General
 
         return $this->getResult();
     }
-
-    //########################################
 }

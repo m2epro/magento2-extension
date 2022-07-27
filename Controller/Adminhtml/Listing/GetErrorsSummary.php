@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Listing;
 
 use Ess\M2ePro\Controller\Adminhtml\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Listing\GetErrorsSummary
- */
 class GetErrorsSummary extends Listing
 {
     public function execute()

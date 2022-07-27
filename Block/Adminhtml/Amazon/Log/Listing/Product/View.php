@@ -22,11 +22,12 @@ class View extends AbstractView
      */
     public function __construct(
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         array $data = []
     ) {
         $this->supportHelper = $supportHelper;
-        parent::__construct($context, $data);
+        parent::__construct($sessionDataHelper, $context, $data);
     }
 
     protected function getComponentMode()
@@ -48,8 +49,6 @@ class View extends AbstractView
             'component_mode' => $this->getComponentMode(),
         ]);
     }
-
-    // ----------------------------------------
 
     protected function _toHtml()
     {

@@ -9,14 +9,19 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
+use Ess\M2ePro\Helper\Data;
 use Magento\Backend\App\Action;
 
 class Edit extends Template
 {
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Template\Switcher\DataLoader */
     private $componentEbayTemplateSwitcherDataLoader;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Component\Ebay\Template\Switcher\DataLoader $componentEbayTemplateSwitcherDataLoader,
         \Ess\M2ePro\Model\Ebay\Template\Manager $templateManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -24,6 +29,7 @@ class Edit extends Template
     ) {
         parent::__construct($templateManager, $ebayFactory, $context);
 
+        $this->dataHelper = $dataHelper;
         $this->componentEbayTemplateSwitcherDataLoader = $componentEbayTemplateSwitcherDataLoader;
     }
 
@@ -90,7 +96,7 @@ class Edit extends Template
             $headerText =
                 $this->__(
                     'Edit "%template_title%" %template_name% Policy',
-                    $this->getHelper('Data')->escapeHtml($template->getTitle()),
+                    $this->dataHelper->escapeHtml($template->getTitle()),
                     $this->getTemplateName($nick)
                 );
         } else {
@@ -129,6 +135,4 @@ class Edit extends Template
 
         return $title;
     }
-
-    //########################################
 }

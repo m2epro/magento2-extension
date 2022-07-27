@@ -8,15 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\General;
 
-use Ess\M2ePro\Controller\Adminhtml\Base;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\General\IsMarketplaceEnabled
- */
-class IsMarketplaceEnabled extends Base
+class IsMarketplaceEnabled extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
-    //########################################
-
     public function execute()
     {
         $marketplaceId = $this->getRequest()->getParam('marketplace_id');
@@ -41,6 +34,4 @@ class IsMarketplaceEnabled extends Base
 
         return $this->getResult();
     }
-
-    //########################################
 }

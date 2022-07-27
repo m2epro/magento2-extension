@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon\AfterGetTokenAbstract
- */
 abstract class AfterGetTokenAbstract extends InstallationAmazon
 {
-    //########################################
-
     public function execute()
     {
         try {
@@ -95,6 +90,11 @@ abstract class AfterGetTokenAbstract extends InstallationAmazon
         $data['magento_orders_settings']['tax']['excluded_states'] = implode(
             ',',
             $data['magento_orders_settings']['tax']['excluded_states']
+        );
+
+        $data['magento_orders_settings']['tax']['excluded_countries'] = implode(
+            ',',
+            $data['magento_orders_settings']['tax']['excluded_countries']
         );
 
         return $data;

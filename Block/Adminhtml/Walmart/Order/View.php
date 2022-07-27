@@ -18,12 +18,17 @@ class View extends AbstractContainer
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $data);
     }
 
@@ -38,7 +43,7 @@ class View extends AbstractContainer
         $this->_mode = 'view';
         // ---------------------------------------
 
-        $this->order = $this->getHelper('Data\GlobalData')->getValue('order');
+        $this->order = $this->globalDataHelper->getValue('order');
 
         // Set buttons actions
         // ---------------------------------------
@@ -104,14 +109,10 @@ class View extends AbstractContainer
         }
     }
 
-    //########################################
-
     protected function _beforeToHtml()
     {
         $this->js->addRequireJs(['debug' => 'M2ePro/Order/Debug'], '');
 
         return parent::_beforeToHtml();
     }
-
-    //########################################
 }

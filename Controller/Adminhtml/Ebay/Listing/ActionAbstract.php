@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\ActionAbstract
- */
 abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 {
-    //########################################
-
     protected function processConnector($action, array $params = [])
     {
         if ($this->getHelper('Server_Maintenance')->isNow()) {
@@ -208,6 +203,4 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 
         throw new \Ess\M2ePro\Model\Exception\Logic('Unknown action.');
     }
-
-    //########################################
 }

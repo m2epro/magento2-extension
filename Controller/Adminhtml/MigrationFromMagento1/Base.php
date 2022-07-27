@@ -11,9 +11,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1;
 use Magento\Backend\App\Action;
 use Ess\M2ePro\Helper\Factory as HelperFactory;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1\Base
- */
 abstract class Base extends Action
 {
     /** @var HelperFactory $helperFactory */
@@ -31,8 +28,6 @@ abstract class Base extends Action
     /** @var \Ess\M2ePro\Setup\MigrationFromMagento1\Runner */
     protected $migrationRunner;
 
-    //########################################
-
     public function __construct(
         \Ess\M2ePro\Controller\Adminhtml\Context $context,
         \Ess\M2ePro\Setup\MigrationFromMagento1\Runner $migrationRunner
@@ -45,14 +40,10 @@ abstract class Base extends Action
         parent::__construct($context);
     }
 
-    //########################################
-
     protected function _isAllowed()
     {
         return $this->_auth->isLoggedIn();
     }
-
-    //########################################
 
     protected function getRawResult()
     {
@@ -62,8 +53,6 @@ abstract class Base extends Action
 
         return $this->rawResult;
     }
-
-    //########################################
 
     protected function __()
     {
@@ -80,6 +69,4 @@ abstract class Base extends Action
     {
         return $this->helperFactory->getObject($helperName, $arguments);
     }
-
-    //########################################
 }

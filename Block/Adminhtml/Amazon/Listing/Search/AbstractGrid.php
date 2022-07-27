@@ -20,8 +20,10 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
 
     /** @var \Ess\M2ePro\Helper\Data */
     protected $helperData;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    protected $amazonHelper;
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Repricing */
+    protected $amazonRepricingHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
@@ -29,6 +31,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
+        \Ess\M2ePro\Helper\Component\Amazon\Repricing $amazonRepricingHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
@@ -38,10 +42,10 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
         $this->amazonFactory = $amazonFactory;
         $this->resourceConnection = $resourceConnection;
         $this->helperData = $helperData;
+        $this->amazonHelper = $amazonHelper;
+        $this->amazonRepricingHelper = $amazonRepricingHelper;
         parent::__construct($context, $backendHelper, $data);
     }
-
-    //########################################
 
     abstract public function callbackColumnProductTitle($value, $row, $column, $isExport);
     abstract public function callbackColumnStatus($value, $row, $column, $isExport);
@@ -129,7 +133,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'filter_condition_callback' => [$this, 'callbackFilterPrice']
         ];
 
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
+        if ($this->amazonRepricingHelper->isEnabled() &&
             $this->activeRecordFactory->getObject('Amazon_Account_Repricing')->getCollection()->getSize() > 0) {
             $priceColumn['filter'] = \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price::class;
         }
@@ -194,7 +198,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             return $this->__('N/A');
         }
 
-        $url = $this->getHelper('Component\Amazon')->getItemUrl($value, $row->getData('marketplace_id'));
+        $url = $this->amazonHelper->getItemUrl($value, $row->getData('marketplace_id'));
         return '<a href="'.$url.'" target="_blank">'.$value.'</a>';
     }
 
@@ -301,7 +305,7 @@ HTML;
 
         $repricingHtml = '';
 
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
+        if ($this->amazonRepricingHelper->isEnabled() &&
             $row->getData('is_repricing')
         ) {
             if ($row->getData('is_variation_parent')) {

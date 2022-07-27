@@ -15,11 +15,6 @@ class Save extends Settings
     /** @var \Ess\M2ePro\Model\Config\Manager */
     private $config;
 
-    /**
-     * @param \Ess\M2ePro\Model\Config\Manager $config
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory
-     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
-     */
     public function __construct(
         \Ess\M2ePro\Model\Config\Manager $config,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,

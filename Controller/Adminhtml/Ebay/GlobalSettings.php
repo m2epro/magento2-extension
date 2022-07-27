@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\GlobalSettings
- */
 class GlobalSettings extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 {
-    //########################################
-
     public function execute()
     {
         $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\System\Config\Tabs::class);
@@ -25,6 +20,4 @@ class GlobalSettings extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 
         return $this->resultPage;
     }
-
-    //########################################
 }

@@ -18,9 +18,13 @@ class Information extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     /** @var \Magento\Framework\Locale\CurrencyInterface */
     private $localeCurrency;
 
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment $merchantFulfillment,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
@@ -28,6 +32,7 @@ class Information extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     ) {
         $this->merchantFulfillment = $merchantFulfillment;
         $this->localeCurrency = $localeCurrency;
+        $this->magentoHelper = $magentoHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -36,8 +41,6 @@ class Information extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         parent::_construct();
         $this->setId('amazonOrderMerchantFulfillmentInformation');
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
@@ -371,7 +374,7 @@ HTML;
                 'label',
                 [
                     'label' => $this->__('Country'),
-                    'value' => $this->getHelper('Magento')->getTranslatedCountryName(
+                    'value' => $this->magentoHelper->getTranslatedCountryName(
                         $fulfillmentData['address']['to']['physical']['country']
                     )
                 ]
@@ -476,7 +479,7 @@ HTML;
                 'label',
                 [
                     'label' => $this->__('Country'),
-                    'value' => $this->getHelper('Magento')->getTranslatedCountryName(
+                    'value' => $this->magentoHelper->getTranslatedCountryName(
                         $fulfillmentData['address']['from']['physical']['country']
                     )
                 ]
@@ -547,16 +550,12 @@ HTML;
         return $this;
     }
 
-    //########################################
-
     protected function _prepareLayout()
     {
         $this->jsTranslator->add('Use Amazon\'s Shipping Services', $this->__('Use Amazon\'s Shipping Services'));
 
         return parent::_prepareLayout();
     }
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -590,8 +589,6 @@ HTML
         return $html . parent::_toHtml();
     }
 
-    //########################################
-
     public function getOrderItems()
     {
         $data = [];
@@ -614,6 +611,4 @@ HTML
 
         return $data;
     }
-
-    //########################################
 }

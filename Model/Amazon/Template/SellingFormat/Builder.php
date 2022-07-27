@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -11,26 +11,8 @@ namespace Ess\M2ePro\Model\Amazon\Template\SellingFormat;
 use Ess\M2ePro\Model\Template\SellingFormat as SellingFormat;
 use Ess\M2ePro\Model\Amazon\Template\SellingFormat as AmazonSellingFormat;
 
-/**
- * Class Ess\M2ePro\Model\Amazon\Template\SellingFormat\Builder
- */
 class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 {
-    /** @var \Ess\M2ePro\Helper\Data */
-    protected $helperData;
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Data $helperData,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        array $data = []
-    ) {
-        $this->helperData = $helperData;
-        parent::__construct($helperFactory, $modelFactory, $data);
-    }
-
-    //########################################
-
     protected function prepareData()
     {
         $data = [];
@@ -44,17 +26,15 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         }
 
         if ($data['regular_sale_price_start_date_value'] === '') {
-            $data['regular_sale_price_start_date_value'] = $this->helperData->getCurrentGmtDate(
-                false,
-                'Y-m-d 00:00:00'
-            );
+            $data['regular_sale_price_start_date_value'] = \Ess\M2ePro\Helper\Date::createCurrentGmt()
+                                                                                  ->format('Y-m-d 00:00:00');
         } else {
             // UTC Date are shown on interface
-            $timestamp = $this->helperData->parseTimestampFromLocalizedFormat(
+            $timestamp = \Ess\M2ePro\Helper\Date::parseDateFromLocalFormat(
                 $data['regular_sale_price_start_date_value'],
                 \IntlDateFormatter::SHORT,
                 \IntlDateFormatter::NONE,
-                $this->helperData->getDefaultTimezone()
+                \Ess\M2ePro\Helper\Date::getTimezone()->getDefaultTimezone()
             );
             $data['regular_sale_price_start_date_value'] = gmdate(
                 'Y-m-d 00:00:00',
@@ -63,17 +43,15 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         }
 
         if ($data['regular_sale_price_end_date_value'] === '') {
-            $data['regular_sale_price_end_date_value'] = $this->helperData->getCurrentGmtDate(
-                false,
-                'Y-m-d 00:00:00'
-            );
+            $data['regular_sale_price_end_date_value'] = \Ess\M2ePro\Helper\Date::createCurrentGmt()
+                                                                                ->format('Y-m-d 00:00:00');
         } else {
             // UTC Date are shown on interface
-            $timestamp = $this->helperData->parseTimestampFromLocalizedFormat(
+            $timestamp = \Ess\M2ePro\Helper\Date::parseDateFromLocalFormat(
                 $data['regular_sale_price_end_date_value'],
                 \IntlDateFormatter::SHORT,
                 \IntlDateFormatter::NONE,
-                $this->helperData->getDefaultTimezone()
+                \Ess\M2ePro\Helper\Date::getTimezone()->getDefaultTimezone()
             );
             $data['regular_sale_price_end_date_value'] = gmdate(
                 'Y-m-d 00:00:00',
@@ -132,8 +110,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'regular_sale_price_start_date_custom_attribute' => '',
             'regular_sale_price_end_date_custom_attribute' => '',
 
-            'regular_sale_price_start_date_value' => $this->helperData->getCurrentGmtDate(false, 'Y-m-d'),
-            'regular_sale_price_end_date_value' => $this->helperData->getCurrentGmtDate(false, 'Y-m-d'),
+            'regular_sale_price_start_date_value' => \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d'),
+            'regular_sale_price_end_date_value' => \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d'),
 
             'regular_price_vat_percent' => 0,
 
@@ -152,6 +130,4 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'discount_rules' => []
         ];
     }
-
-    //########################################
 }

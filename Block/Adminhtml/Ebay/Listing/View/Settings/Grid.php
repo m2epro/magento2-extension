@@ -44,6 +44,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $databaseHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
@@ -56,19 +59,22 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
-        $this->resourceConnection              = $resourceConnection;
-        $this->productFactory                  = $productFactory;
-        $this->templateManager                 = $templateManager;
+        $this->resourceConnection = $resourceConnection;
+        $this->productFactory = $productFactory;
+        $this->templateManager = $templateManager;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
-        $this->ebayFactory                     = $ebayFactory;
-        $this->componentEbayCategory           = $componentEbayCategory;
-        $this->componentEbayMotors             = $componentEbayMotors;
-        $this->magentoAttributeHelper          = $magentoAttributeHelper;
+        $this->ebayFactory = $ebayFactory;
+        $this->componentEbayCategory = $componentEbayCategory;
+        $this->componentEbayMotors = $componentEbayMotors;
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->databaseHelper = $databaseHelper;
-        parent::__construct($context, $backendHelper, $dataHelper, $data);
+        $this->sessionDataHelper = $sessionDataHelper;
+        parent::__construct($context, $backendHelper, $dataHelper, $globalDataHelper, $data);
     }
 
     public function _construct()
@@ -89,9 +95,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
     }
 
-    //########################################
-
-    protected function _prepareCollection()
+    protected function _prepareCollection(): Grid
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
@@ -296,7 +300,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         return $result;
     }
 
-    protected function _prepareColumns()
+    protected function _prepareColumns(): Grid
     {
         $this->addColumn('product_id', [
             'header'   => $this->__('Product ID'),
@@ -373,9 +377,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         return parent::_prepareColumns();
     }
 
-    //########################################
-
-    protected function _prepareMassaction()
+    protected function _prepareMassaction(): \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     {
         // Set massaction identifiers
         // ---------------------------------------
@@ -392,7 +394,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         return parent::_prepareMassaction();
     }
 
-    protected function _prepareMassactionGroup()
+    protected function _prepareMassactionGroup(): Grid
     {
         $this->getMassactionBlock()->setGroups([
             'edit_settings'            => $this->__('Edit Listing Policies Overrides'),
@@ -403,40 +405,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         return $this;
     }
 
-    protected function _prepareMassactionItems()
+    protected function _prepareMassactionItems(): Grid
     {
-        // --- Shipping Settings -----
-
-        $this->getMassactionBlock()->addItem('editShippingSettings', [
-            'label' => $this->__('Shipping'),
-            'url' => '',
-        ], 'edit_settings');
-
-        $this->getMassactionBlock()->addItem('editReturnSettings', [
-            'label' => $this->__('Return'),
-            'url' => '',
-        ], 'edit_settings');
-
         // ---------------------------------------
 
-        // ---------- Selling Settings -----------
-
-        $this->getMassactionBlock()->addItem('editPriceQuantityFormatSettings', [
-            'label' => $this->__('Selling'),
-            'url' => '',
-        ], 'edit_settings');
-
-        $this->getMassactionBlock()->addItem('editDescriptionSettings', [
-            'label' => $this->__('Description'),
-            'url' => '',
-        ], 'edit_settings');
-
-        // ---------------------------------------
-
-        // ---------- Synchronization ------------
-
-        $this->getMassactionBlock()->addItem('editSynchSettings', [
-            'label' => $this->__('Synchronization'),
+        $this->getMassactionBlock()->addItem('editAllSettings', [
+            'label' => $this->__('All Settings'),
             'url' => '',
         ], 'edit_settings');
 
@@ -447,7 +421,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'url'   => '',
         ], 'edit_categories_settings');
 
-        // ---------- Other ------------
+        // ---------------------------------------
 
         if ($this->isMotorsAvailable() && $this->motorsAttribute) {
             $this->getMassactionBlock()->addItem('editMotors', [
@@ -473,9 +447,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         return $this;
     }
 
-    //########################################
-
-    public function callbackColumnTitle($value, $row, $column, $isExport)
+    public function callbackColumnTitle($value, $row, $column, $isExport): string
     {
         $value = '<span>' . $this->dataHelper->escapeHtml($value) . '</span>';
 
@@ -493,8 +465,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $row->getData('listing_product_id'));
 
         if ($listingProduct->getChildObject()->isVariationsReady()) {
-            $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
-
+            $additionalData = (array)json_decode($row->getData('additional_data'), true);
             $productAttributes = isset($additionalData['variations_sets'])
                 ? array_keys($additionalData['variations_sets']) : [];
 
@@ -506,49 +477,49 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         return $value;
     }
 
-    public function callbackColumnCategory($value, $row, $column, $isExport)
+    public function callbackColumnCategory($value, $row, $column, $isExport): string
     {
-        $value = '';
+        $html = '';
 
         $categories = $this->componentEbayCategory->getCategoryTitles();
 
         if ($row->getData('category_main_mode') == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE) {
-            $value .= $this->getCategoryInfoHtml(
+            $html .= $this->getCategoryInfoHtml(
                 $this->componentEbayCategory->getCategoryTitle(
                     \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN
                 ),
                 '<span style="color: red">' . $this->__('Not Set') . '</span>'
             );
         } else {
-            $value .= $this->getEbayCategoryInfoHtml(
+            $html .= $this->getEbayCategoryInfoHtml(
                 $row,
                 'category_main',
                 $categories[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN]
             );
         }
 
-        $value .= $this->getEbayCategoryInfoHtml(
+        $html .= $this->getEbayCategoryInfoHtml(
             $row,
             'category_secondary',
             $categories[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY]
         );
 
-        $value .= $this->getStoreCategoryInfoHtml(
+        $html .= $this->getStoreCategoryInfoHtml(
             $row,
             'category_main',
             $categories[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN]
         );
 
-        $value .= $this->getStoreCategoryInfoHtml(
+        $html .= $this->getStoreCategoryInfoHtml(
             $row,
             'category_secondary',
             $categories[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]
         );
 
-        return $value;
+        return $html;
     }
 
-    public function callbackColumnSetting($value, $row, $column, $isExport)
+    public function callbackColumnSetting($value, $row, $column, $isExport): string
     {
         $templatesNames = [
             Manager::TEMPLATE_SHIPPING        => $this->__('Shipping'),
@@ -682,8 +653,6 @@ HTML;
 
         return $html;
     }
-
-    //########################################
 
     public function callbackFilterTitle($collection, $column)
     {
@@ -840,21 +809,17 @@ HTML;
         }
     }
 
-    //########################################
-
-    public function getGridUrl()
+    public function getGridUrl(): string
     {
         return $this->getUrl('*/ebay_listing/view', ['_current' => true]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($row): bool
     {
         return false;
     }
 
-    //########################################
-
-    private function getEbayCategoryInfoHtml($row, $modeNick, $modeTitle)
+    private function getEbayCategoryInfoHtml($row, $modeNick, $modeTitle): string
     {
         $helper = $this->dataHelper;
         $mode = $row->getData($modeNick . '_mode');
@@ -903,7 +868,7 @@ HTML;
         return $this->getCategoryInfoHtml($modeTitle, $category);
     }
 
-    private function getCategoryInfoHtml($modeTitle, $category)
+    private function getCategoryInfoHtml($modeTitle, $category): string
     {
         return <<<HTML
     <div>
@@ -913,9 +878,7 @@ HTML;
 HTML;
     }
 
-    //########################################
-
-    private function isMotorsAvailable()
+    private function isMotorsAvailable(): bool
     {
         return $this->isMotorEpidsAvailable() || $this->isMotorKtypesAvailable();
     }
@@ -945,9 +908,7 @@ HTML;
         return \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE;
     }
 
-    //########################################
-
-    protected function getGroupOrder()
+    protected function getGroupOrder(): array
     {
         return [
             'edit_general_settings'    => $this->__('Edit Listing Policies Overrides'),
@@ -956,7 +917,7 @@ HTML;
         ];
     }
 
-    protected function getColumnActionsItems()
+    protected function getColumnActionsItems(): array
     {
         $actions = [
             'editCategories' => [
@@ -967,53 +928,16 @@ HTML;
             ]
         ];
 
-        // --- Shipping Settings -----
+        // ---------------------------------------
 
-        $actions['editShipping'] = [
-            'caption' => $this->__('Shipping'),
+        $actions['editAll'] = [
+            'caption' => $this->__('All Settings'),
             'group' => 'edit_general_settings',
             'field' => 'id',
-            'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editShippingSettingsAction\']'
-        ];
-
-        $actions['editReturn'] = [
-            'caption' => $this->__('Return'),
-            'group' => 'edit_general_settings',
-            'field' => 'id',
-            'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editReturnSettingsAction\']'
+            'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editAllSettingsAction\']'
         ];
 
         // ---------------------------------------
-
-        // ---------- Selling Settings -----------
-        $actions['priceQuantityFormat'] = [
-            'caption' => $this->__('Selling'),
-            'group' => 'edit_general_settings',
-            'field' => 'id',
-            'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editPriceQuantityFormatSettingsAction\']'
-        ];
-
-        $actions['editDescription'] = [
-            'caption' => $this->__('Description'),
-            'group' => 'edit_general_settings',
-            'field' => 'id',
-            'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editDescriptionSettingsAction\']'
-        ];
-
-        // ---------------------------------------
-
-        // ---------- Synchronization ------------
-
-        $actions['editSynchSettings'] = [
-            'caption' => $this->__('Synchronization'),
-            'group' => 'edit_general_settings',
-            'field' => 'id',
-            'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editSynchSettingsAction\']'
-        ];
-
-        // ---------------------------------------
-
-        // ---------- Other ------------
 
         if ($this->isMotorsAvailable() && $this->motorsAttribute) {
             $actions['editMotors'] = [
@@ -1038,9 +962,7 @@ HTML;
         return $actions;
     }
 
-    //########################################
-
-    protected function _toHtml()
+    protected function _toHtml(): string
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(<<<JS
@@ -1119,7 +1041,7 @@ JS
             'Edit Selling Policy Setting' => $this->__('Edit Selling Policy Setting'),
             'Edit Synchronization Policy Setting' => $this->__('Edit Synchronization Policy Setting'),
             'Edit Settings' => $this->__('Edit Settings'),
-            'for' => $this->__('for'),
+            'For' => $this->__('For'),
             'Category Settings' => $this->__('Category Settings'),
             'Specifics' => $this->__('Specifics'),
             'Compatibility Attribute ePIDs' => $this->__('Compatibility Attribute ePIDs'),
@@ -1159,7 +1081,7 @@ JS
             'Add New Listing' => $this->__('Add New Listing')
         ]);
 
-        $temp = $this->getHelper('Data\Session')->getValue('products_ids_for_list', true);
+        $temp = $this->sessionDataHelper->getValue('products_ids_for_list', true);
         $productsIdsForList = empty($temp) ? '' : $temp;
 
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
@@ -1225,8 +1147,6 @@ JS
 
         return parent::_toHtml();
     }
-
-    //########################################
 
     private function prepareExistingMotorsData()
     {
@@ -1326,6 +1246,4 @@ JS
 
         return $this;
     }
-
-    //########################################
 }

@@ -8,26 +8,26 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing\Product;
 
-use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\View;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing\Product\Grid
- */
 class Grid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing
 {
-    //########################################
+    /** @var \Magento\Framework\Code\NameBuilder */
+    private $nameBuilder;
 
-    protected $nameBuilder;
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
-        Context $context
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        $this->nameBuilder = $nameBuilder;
-
         parent::__construct($ebayFactory, $context);
+
+        $this->nameBuilder = $nameBuilder;
+        $this->sessionHelper = $sessionHelper;
     }
 
     public function execute()
@@ -63,7 +63,7 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing
             }
         }
 
-        $sessionViewMode = $this->getHelper('Data\Session')->getValue(
+        $sessionViewMode = $this->sessionHelper->getValue(
             \Ess\M2ePro\Helper\View\Ebay::NICK . '_log_listing_view_mode'
         );
 
@@ -76,18 +76,16 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing
             $sessionViewMode
         );
 
-        $gridClass = $this->nameBuilder->buildClassName([
-            \Ess\M2ePro\Helper\View\Ebay::NICK,
-            'Log_Listing_Product_View',
-            $viewMode,
-            'Grid'
-        ]);
+        if ($viewMode === View\Switcher::VIEW_MODE_GROUPED) {
+            $gridClass = \Ess\M2ePro\Block\Adminhtml\Ebay\Log\Listing\Product\View\Grouped\Grid::class;
+        }
+        else {
+            $gridClass = \Ess\M2ePro\Block\Adminhtml\Ebay\Log\Listing\Product\View\Separated\Grid::class;
+        }
 
-        $response = $this->createBlock($gridClass)->toHtml();
-        $this->setAjaxContent($response);
+        $block = $this->getLayout()->createBlock($gridClass);
+        $this->setAjaxContent($block->toHtml());
 
         return $this->getResult();
     }
-
-    //########################################
 }

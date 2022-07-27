@@ -30,6 +30,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->websiteFactory = $websiteFactory;
@@ -39,7 +40,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->resourceConnection = $resourceConnection;
         $this->magentoProductHelper = $magentoProductHelper;
-        parent::__construct($context, $backendHelper, $dataHelper, $data);
+        parent::__construct($context, $backendHelper, $dataHelper, $globalDataHelper, $data);
     }
 
     public function _construct()

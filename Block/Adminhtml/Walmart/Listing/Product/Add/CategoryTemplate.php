@@ -16,12 +16,17 @@ class CategoryTemplate extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
     /** @var \Ess\M2ePro\Helper\Module\Support */
     private $supportHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->supportHelper = $supportHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $data);
     }
 
@@ -46,7 +51,7 @@ class CategoryTemplate extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
         $this->removeButton('edit');
         // ---------------------------------------
 
-        $this->listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
+        $this->listing = $this->globalDataHelper->getValue('listing_for_products_add');
 
         $url = $this->getUrl('*/*/removeAddedProducts', [
             'step' => 1,
@@ -64,8 +69,6 @@ class CategoryTemplate extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
             'onclick'   => "categoryTemplateModeFormSubmit()"
         ]);
     }
-
-    //########################################
 
     protected function _prepareLayout()
     {
@@ -85,8 +88,6 @@ class CategoryTemplate extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
         parent::_prepareLayout();
     }
 
-    //########################################
-
     protected function _toHtml()
     {
         $viewHeaderBlock = $this->getLayout()->createBlock(
@@ -97,6 +98,4 @@ class CategoryTemplate extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
 
         return $viewHeaderBlock->toHtml() . parent::_toHtml();
     }
-
-    //########################################
 }

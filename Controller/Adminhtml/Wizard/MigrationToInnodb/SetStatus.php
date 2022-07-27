@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationToInnodb;
 
 use Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationToInnodb;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationToInnodb\SetStatus
- */
 class SetStatus extends MigrationToInnodb
 {
     public function execute()

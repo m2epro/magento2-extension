@@ -15,10 +15,6 @@ class TestMemoryLimit extends Support
     /** @var \Ess\M2ePro\Helper\Client */
     private $clientHelper;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Client $clientHelper
-     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
-     */
     public function __construct(
         \Ess\M2ePro\Helper\Client $clientHelper,
         \Ess\M2ePro\Controller\Adminhtml\Context $context

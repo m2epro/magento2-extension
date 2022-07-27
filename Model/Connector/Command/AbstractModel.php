@@ -15,7 +15,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $params = [];
 
-    /** @var \Ess\M2ePro\Model\Connector\Protocol */
+    /** @var \Ess\M2ePro\Model\Connector\ProtocolInterface */
     protected $protocol = null;
 
     /** @var \Ess\M2ePro\Model\Connector\Connection\Single $connection */
@@ -34,7 +34,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function setProtocol(\Ess\M2ePro\Model\Connector\Protocol $protocol)
+    public function setProtocol(\Ess\M2ePro\Model\Connector\ProtocolInterface $protocol)
     {
         $this->protocol = $protocol;
         return $this;

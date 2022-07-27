@@ -8,14 +8,20 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Listing;
 
-use Ess\M2ePro\Controller\Adminhtml\Context;
-use Ess\M2ePro\Controller\Adminhtml\Listing;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Listing\ClearLog
- */
-class ClearLog extends Listing
+class ClearLog extends \Ess\M2ePro\Controller\Adminhtml\Listing
 {
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+
+        $this->dataHelper = $dataHelper;
+    }
+
     public function execute()
     {
         $ids = $this->getRequestIds();
@@ -31,6 +37,6 @@ class ClearLog extends Listing
         }
 
         $this->getMessageManager()->addSuccess($this->__('The Listing(s) Log was cleared.'));
-        $this->_redirect($this->getHelper('Data')->getBackUrl('list'));
+        $this->_redirect($this->dataHelper->getBackUrl('list'));
     }
 }

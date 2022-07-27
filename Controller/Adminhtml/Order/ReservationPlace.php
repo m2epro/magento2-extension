@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Order;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Order\ReservationPlace
- */
 class ReservationPlace extends Order
 {
     public function execute()
@@ -65,6 +62,6 @@ class ReservationPlace extends Order
             );
         }
 
-        $this->_redirect($this->_redirect->getRefererUrl());
+        $this->_redirect($this->redirect->getRefererUrl());
     }
 }

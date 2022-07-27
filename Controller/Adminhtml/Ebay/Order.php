@@ -8,19 +8,12 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Order
- */
 abstract class Order extends Main
 {
-    //########################################
-
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::ebay_sales_orders');
     }
-
-    //########################################
 
     protected function init()
     {
@@ -83,6 +76,4 @@ abstract class Order extends Main
 
         return true;
     }
-
-    //########################################
 }

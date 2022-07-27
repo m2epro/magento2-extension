@@ -12,8 +12,6 @@ class Transferring extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 {
     use \Ess\M2ePro\Block\Adminhtml\Traits\BlockTrait;
 
-    //########################################
-
     /** @var \Ess\M2ePro\Model\Listing $listing */
     protected $listing;
 
@@ -22,8 +20,6 @@ class Transferring extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 
     /** @var \Ess\M2ePro\Model\Ebay\Template\Manager $templateManager */
     protected $templateManager;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -37,14 +33,10 @@ class Transferring extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
         $this->templateManager = $templateManager;
     }
 
-    //########################################
-
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::ebay_listings');
     }
-
-    //########################################
 
     public function execute()
     {
@@ -75,8 +67,6 @@ class Transferring extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
                 return $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
         }
     }
-
-    //########################################
 
     protected function destinationStep()
     {
@@ -168,6 +158,4 @@ class Transferring extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 
         return $this->getResultPage();
     }
-
-    //########################################
 }

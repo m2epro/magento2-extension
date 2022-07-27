@@ -14,8 +14,6 @@ use Ess\M2ePro\Helper\View\Walmart\Controller as WalmartControllerHelper;
 
 class View
 {
-    const GENERAL_BLOCK_PATH = 'General';
-
     const LISTING_CREATION_MODE_FULL = 0;
     const LISTING_CREATION_MODE_LISTING_ONLY = 1;
 

@@ -29,6 +29,9 @@ class Form extends AbstractForm
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Component\Amazon\Configuration $configuration,
         \Magento\Customer\Model\Group $customerGroup,
@@ -38,6 +41,7 @@ class Form extends AbstractForm
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->configuration = $configuration;
@@ -45,13 +49,14 @@ class Form extends AbstractForm
         $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->supportHelper = $supportHelper;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
     protected function _prepareForm()
     {
         /** @var \Ess\M2ePro\Model\Template\SellingFormat $template */
-        $template = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
+        $template = $this->globalDataHelper->getValue('tmp_template');
         $formData = $template !== null
             ? array_merge($template->getData(), $template->getChildObject()->getData()) : [];
 
@@ -1154,6 +1159,4 @@ JS
 
         parent::_prepareLayout();
     }
-
-    //########################################
 }

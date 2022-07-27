@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\GlobalSettings
- */
 class GlobalSettings extends Main
 {
-    //########################################
-
     public function execute()
     {
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\System\Config\Tabs::class));
@@ -22,6 +17,4 @@ class GlobalSettings extends Main
 
         return $this->getResult();
     }
-
-    //########################################
 }

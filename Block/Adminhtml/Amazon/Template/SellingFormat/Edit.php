@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit
- */
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
 {
     protected function _construct()
@@ -39,8 +36,8 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
         $isSaveAndClose = (bool)$this->getRequest()->getParam('close_on_save', false);
 
         if (!$isSaveAndClose
-            && $this->getHelper('Data\GlobalData')->getValue('tmp_template')
-            && $this->getHelper('Data\GlobalData')->getValue('tmp_template')->getId()
+            && $this->globalDataHelper->getValue('tmp_template')
+            && $this->globalDataHelper->getValue('tmp_template')->getId()
         ) {
             // ---------------------------------------
             $this->addButton('duplicate', [

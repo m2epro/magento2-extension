@@ -8,13 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping;
 
-use Ess\M2ePro\Controller\Adminhtml\Listing;
-use Ess\M2ePro\Controller\Adminhtml\Context;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping\AutoMap
- */
-class AutoMap extends Listing
+class AutoMap extends \Ess\M2ePro\Controller\Adminhtml\Listing
 {
     public function execute()
     {

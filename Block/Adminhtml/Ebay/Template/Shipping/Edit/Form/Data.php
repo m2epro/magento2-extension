@@ -1830,7 +1830,9 @@ HTML;
             $ebayValues['value'][] = $tmp;
         }
 
-        $options[] = $ebayValues;
+        if ($ebayValues['value'] !== []) {
+            $options[] = $ebayValues;
+        }
 
         $attributesOptions = [
             'value' => [],

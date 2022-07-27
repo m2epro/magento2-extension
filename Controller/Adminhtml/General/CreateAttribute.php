@@ -8,26 +8,19 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\General;
 
-use Ess\M2ePro\Controller\Adminhtml\General;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\General\CreateAttribute
- */
-class CreateAttribute extends General
+class CreateAttribute extends \Ess\M2ePro\Controller\Adminhtml\General
 {
-    protected $entityAttributeSetFactory;
-
-    //########################################
+    /** @var \Magento\Eav\Model\Entity\Attribute\SetFactory */
+    private $entityAttributeSetFactory;
 
     public function __construct(
         \Magento\Eav\Model\Entity\Attribute\SetFactory $entityAttributeSetFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        $this->entityAttributeSetFactory = $entityAttributeSetFactory;
         parent::__construct($context);
-    }
 
-    //########################################
+        $this->entityAttributeSetFactory = $entityAttributeSetFactory;
+    }
 
     public function execute()
     {
@@ -73,6 +66,4 @@ class CreateAttribute extends General
         $this->setJsonContent($attributeResult);
         return $this->getResult();
     }
-
-    //########################################
 }

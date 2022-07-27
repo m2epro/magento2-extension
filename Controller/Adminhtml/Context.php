@@ -19,9 +19,6 @@ use \Magento\Framework\Controller\Result\RawFactory;
 use \Magento\Framework\View\LayoutFactory;
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer\CssRenderer;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Context
- */
 class Context extends ActionContext
 {
     /** @var HelperFactory $helperFactory */

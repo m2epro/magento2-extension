@@ -43,7 +43,7 @@ class PriceTable extends AbstractBlock
     {
         parent::_beforeToHtml();
 
-        $buttonBlock = $this->createBlock('Magento\Button')
+        $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
             ->setData([
                 'label'   => $this->__('Add Price Change'),
                 'onclick' => 'EbayTemplateSellingFormatObj.addFixedPriceChangeRow();',

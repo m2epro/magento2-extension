@@ -22,10 +22,20 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstra
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper,
         array $data = []
     ) {
         $this->supportHelper = $supportHelper;
-        parent::__construct($context, $registry, $formFactory, $dataHelper, $data);
+        parent::__construct(
+            $context,
+            $registry,
+            $formFactory,
+            $dataHelper,
+            $globalDataHelper,
+            $magentoStoreHelper,
+            $data
+        );
     }
 
     protected function _prepareForm()
@@ -251,6 +261,4 @@ JS
 
         return parent::_afterToHtml($html);
     }
-
-    //########################################
 }

@@ -8,12 +8,20 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\GetGlobalMessages
- */
 class GetGlobalMessages extends Main
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module */
+    private $moduleHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module $moduleHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->moduleHelper = $moduleHelper;
+    }
 
     public function execute()
     {
@@ -21,7 +29,7 @@ class GetGlobalMessages extends Main
             $this->addLicenseNotifications();
         }
 
-        $this->addNotifications($this->getHelper('Module')->getServerMessages());
+        $this->addNotifications($this->moduleHelper->getServerMessages());
         $this->addCronErrorMessage();
         $this->getCustomViewControllerHelper()->addMessages();
 
@@ -37,6 +45,4 @@ class GetGlobalMessages extends Main
         $this->setJsonContent($messages);
         return $this->getResult();
     }
-
-    //########################################
 }

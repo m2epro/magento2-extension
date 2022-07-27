@@ -18,16 +18,21 @@ class Form extends AbstractForm
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Component\Ebay */
+    private $ebayHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Component\Ebay $ebayHelper,
         array $data = []
     ) {
         $this->componentEbayPickupStore = $componentEbayPickupStore;
         $this->dataHelper = $dataHelper;
+        $this->ebayHelper = $ebayHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -36,8 +41,6 @@ class Form extends AbstractForm
         parent::_construct();
         $this->css->addFile('marketplace/form.css');
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
@@ -133,7 +136,7 @@ HTML;
                     $selectData
                 )->addCustomAttribute('marketplace_id', $marketplace['instance']->getId())
                  ->addCustomAttribute('component_name', \Ess\M2ePro\Helper\Component\Ebay::NICK)
-                 ->addCustomAttribute('component_title', $this->getHelper('Component\Ebay')->getTitle())
+                 ->addCustomAttribute('component_title', $this->ebayHelper->getTitle())
                  ->addCustomAttribute('onchange', 'MarketplaceObj.changeStatus(this);');
             }
         }
@@ -143,8 +146,6 @@ HTML;
 
         return $this;
     }
-
-    //########################################
 
     protected function _beforeToHtml()
     {
@@ -218,8 +219,6 @@ HTML;
         return parent::_beforeToHtml();
     }
 
-    //########################################
-
     protected function _toHtml()
     {
         $this->jsUrl->addUrls([
@@ -262,6 +261,4 @@ JS
 
         return parent::_toHtml();
     }
-
-    //########################################
 }

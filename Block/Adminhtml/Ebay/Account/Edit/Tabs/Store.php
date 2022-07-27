@@ -161,7 +161,7 @@ HTML
             }
 
             if (!empty($categoriesTreeArray)) {
-                $categoriesTreeArray = $this->getHelper('Data')->jsonEncode($categoriesTreeArray);
+                $categoriesTreeArray = $this->dataHelper->jsonEncode($categoriesTreeArray);
 
                 $this->js->add(<<<JS
 require([

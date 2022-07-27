@@ -30,9 +30,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
-    //########################################
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
+
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    private $amazonHelper;
+
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Repricing */
+    private $amazonRepricingHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -41,16 +46,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
+        \Ess\M2ePro\Helper\Component\Amazon\Repricing $amazonRepricingHelper,
         array $data = []
     ) {
         $this->amazonFactory = $amazonFactory;
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         $this->dataHelper = $dataHelper;
+        $this->amazonHelper = $amazonHelper;
+        $this->amazonRepricingHelper = $amazonRepricingHelper;
         parent::__construct($context, $backendHelper, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -61,8 +68,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setDefaultDir('ASC');
         $this->setUseAjax(true);
     }
-
-    //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
@@ -79,8 +84,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         return $this->listingProduct;
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -243,7 +246,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_condition_callback' => [$this, 'callbackFilterPrice']
         ];
 
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
+        if ($this->amazonRepricingHelper->isEnabled() &&
             $this->getListingProduct()->getListing()->getAccount()->getChildObject()->isRepricing()) {
             $priceColumn['filter'] = \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price::class;
         }
@@ -309,8 +312,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         return parent::_prepareMassaction();
     }
-
-    //########################################
 
     public function callbackColumnProductOptions($additionalData, $row, $column, $isExport)
     {
@@ -451,7 +452,7 @@ HTML;
         $html = '<div class="m2ePro-variation-attributes" style="color: grey; margin-left: 7px">';
 
         if (!empty($generalId)) {
-            $url = $this->getHelper('Component\Amazon')->getItemUrl(
+            $url = $this->amazonHelper->getItemUrl(
                 $generalId,
                 $this->getListingProduct()->getListing()->getMarketplaceId()
             );
@@ -685,7 +686,7 @@ HTML;
             $condition .= ' AND (second_table.online_regular_price IS NULL))';
         }
 
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
+        if ($this->amazonRepricingHelper->isEnabled() &&
             (isset($value['is_repricing']) && $value['is_repricing'] !== '')) {
             if (!empty($condition)) {
                 $condition = '(' . $condition . ') OR ';
@@ -718,8 +719,6 @@ HTML;
 
         $collection->getSelect()->where('`sku` LIKE ?', '%' . $value . '%');
     }
-
-    //########################################
 
     public function getMainButtonsHtml()
     {
@@ -856,8 +855,6 @@ HTML;
             ->getUsedChannelOptions();
     }
 
-    // ---------------------------------------
-
     public function getGridUrl()
     {
         return $this->getUrl('*/amazon_listing_product_variation_manage/viewVariationsGridAjax', [
@@ -869,8 +866,6 @@ HTML;
     {
         return false;
     }
-
-    //########################################
 
     public function getTooltipHtml($content, $id = '', $classes = [])
     {
@@ -885,8 +880,6 @@ HTML;
     </div>
 HTML;
     }
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -924,8 +917,6 @@ JS
 
         return parent::_toHtml();
     }
-
-    //########################################
 
     private function canChangeProductVariation(\Ess\M2ePro\Model\Listing\Product $childListingProduct)
     {
@@ -975,8 +966,6 @@ JS
         return $this->lockedDataCache[$listingProductId];
     }
 
-    //########################################
-
     protected function getTemplateDescriptionLinkHtml($listingProduct)
     {
         $templateDescriptionEditUrl = $this->getUrl('*/amazon_template_description/edit', [
@@ -994,8 +983,6 @@ JS
 <br/>
 HTML;
     }
-
-    //########################################
 
     public function getProductVariationsTree($childProduct, $attributes)
     {
@@ -1100,8 +1087,6 @@ HTML;
         return $return;
     }
 
-    //########################################
-
     public function getCurrentProductVariations()
     {
 
@@ -1142,8 +1127,6 @@ HTML;
         return $this->usedProductVariations;
     }
 
-    //########################################
-
     public function getUnusedProductVariations()
     {
         return $this->getListingProduct()
@@ -1165,8 +1148,6 @@ HTML;
 
         return false;
     }
-
-    //########################################
 
     public function getChildListingProducts()
     {
@@ -1196,11 +1177,9 @@ HTML;
         return $attributesOptions;
     }
 
-    //########################################
-
     protected function getGeneralIdLink($generalId)
     {
-        $url = $this->getHelper('Component\Amazon')->getItemUrl(
+        $url = $this->amazonHelper->getItemUrl(
             $generalId,
             $this->getListingProduct()->getListing()->getMarketplaceId()
         );
@@ -1209,8 +1188,6 @@ HTML;
 <a href="{$url}" target="_blank" title="{$generalId}" >{$generalId}</a>
 HTML;
     }
-
-    //########################################
 
     private function parseGroupedData($data)
     {
@@ -1229,12 +1206,8 @@ HTML;
         return $result;
     }
 
-    //########################################
-
     private function convertAndFormatPriceCurrency($price, $currency)
     {
         return $this->localeCurrency->getCurrency($currency)->toCurrency($price);
     }
-
-    //########################################
 }

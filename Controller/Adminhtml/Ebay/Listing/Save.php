@@ -8,19 +8,25 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Save
- */
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($ebayFactory, $context);
+
+        $this->dataHelper = $dataHelper;
+    }
 
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::ebay_listings_m2epro');
     }
-
-    //########################################
 
     public function execute()
     {
@@ -131,8 +137,6 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         $this->getMessageManager()->addSuccess($this->__('The Listing was saved.'));
 
-        return $this->_redirect($this->getHelper('Data')->getBackUrl('list', [], ['edit' => ['id' => $id]]));
+        return $this->_redirect($this->dataHelper->getBackUrl('list', [], ['edit' => ['id' => $id]]));
     }
-
-    //########################################
 }

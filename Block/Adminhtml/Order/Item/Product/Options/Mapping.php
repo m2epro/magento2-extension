@@ -10,24 +10,30 @@ namespace Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Options;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Options\Mapping
- */
 class Mapping extends AbstractContainer
 {
     protected $_template = 'order/item/product/options/mapping.phtml';
 
     /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
     private $magentoProduct = null;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        $this->globalDataHelper = $globalDataHelper;
+        parent::__construct($context, $data);
+    }
 
     /**
      * @return \Ess\M2ePro\Model\Order\Item
      */
     public function getOrderItem()
     {
-        return $this->getHelper('Data\GlobalData')->getValue('order_item');
+        return $this->globalDataHelper->getValue('order_item');
     }
 
     public function getProductTypeHeader()
@@ -162,6 +168,4 @@ class Mapping extends AbstractContainer
 
         parent::_beforeToHtml();
     }
-
-    //########################################
 }

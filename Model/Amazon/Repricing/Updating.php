@@ -13,7 +13,28 @@ namespace Ess\M2ePro\Model\Amazon\Repricing;
  */
 class Updating extends AbstractModel
 {
-    //########################################
+    private $listingLogFactory;
+
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Log */
+    private $listingLogResource;
+    private $translation;
+
+    public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\Amazon\Listing\LogFactory $listingLogFactory,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Log $listingLogResource,
+        \Ess\M2ePro\Helper\Module\Translation $translation
+    ) {
+        parent::__construct($activeRecordFactory, $amazonFactory, $resourceConnection, $helperFactory, $modelFactory);
+
+        $this->listingLogFactory = $listingLogFactory;
+        $this->listingLogResource = $listingLogResource;
+        $this->translation = $translation;
+    }
 
     /**
      * @param \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing[] $listingsProductsRepricing
@@ -43,8 +64,6 @@ class Updating extends AbstractModel
         return $updatedSkus;
     }
 
-    //########################################
-
     private function getChangeData(\Ess\M2ePro\Model\Amazon\Listing\Product\Repricing $listingProductRepricing)
     {
         $isDisabled = $listingProductRepricing->isDisabled();
@@ -62,6 +81,28 @@ class Updating extends AbstractModel
             $minPrice     == $listingProductRepricing->getLastUpdatedMinPrice() &&
             $maxPrice     == $listingProductRepricing->getLastUpdatedMaxPrice()
         ) {
+            return false;
+        }
+
+        if ($regularPrice > $maxPrice) {
+            $this->logListingProductMessage(
+                $listingProductRepricing->getListingProduct(),
+                $this->translation->__(
+                    'Item price was not updated. Regular Price must be equal to or lower than the Max Price value.'
+                )
+            );
+
+            return false;
+        }
+
+        if ($regularPrice < $minPrice) {
+            $this->logListingProductMessage(
+                $listingProductRepricing->getListingProduct(),
+                $this->translation->__(
+                    'Item price was not updated. Regular Price must be equal to or higher than the Min Price value.'
+                )
+            );
+
             return false;
         }
 
@@ -114,5 +155,20 @@ class Updating extends AbstractModel
         }
     }
 
-    //########################################
+    private function logListingProductMessage(\Ess\M2ePro\Model\Listing\Product $listingProduct, $logMessage)
+    {
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Log $listingLog */
+        $listingLog = $this->listingLogFactory->create();
+
+        $listingLog->addProductMessage(
+            $listingProduct->getListingId(),
+            $listingProduct->getProductId(),
+            $listingProduct->getId(),
+            \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
+            $this->listingLogResource->getNextActionId(),
+            \Ess\M2ePro\Model\Listing\Log::ACTION_UNKNOWN,
+            $logMessage,
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
+        );
+    }
 }

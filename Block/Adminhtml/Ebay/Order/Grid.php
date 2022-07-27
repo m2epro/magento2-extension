@@ -33,6 +33,9 @@ class Grid extends AbstractGrid
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Component\Ebay */
+    private $ebayHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -41,6 +44,7 @@ class Grid extends AbstractGrid
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Component\Ebay $ebayHelper,
         array $data = []
     ) {
         $this->resourceConnection = $resourceConnection;
@@ -48,6 +52,7 @@ class Grid extends AbstractGrid
         $this->componentEbayPickupStore = $componentEbayPickupStore;
         $this->databaseHelper = $databaseHelper;
         $this->dataHelper = $dataHelper;
+        $this->ebayHelper = $ebayHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -392,8 +397,6 @@ class Grid extends AbstractGrid
         return parent::_prepareMassaction();
     }
 
-    //########################################
-
     public function callbackColumnMagentoOrder($value, $row, $column, $isExport)
     {
         $magentoOrderId = $row['magento_order_id'];
@@ -420,8 +423,6 @@ class Grid extends AbstractGrid
 
         return $returnString;
     }
-
-    // ---------------------------------------
 
     public function callbackPurchaseCreateDate($value, $row, $column, $isExport)
     {
@@ -606,7 +607,7 @@ HTML;
 HTML;
             }
 
-            $itemUrl = $this->getHelper('Component\Ebay')->getItemUrl(
+            $itemUrl = $this->ebayHelper->getItemUrl(
                 $item->getChildObject()->getItemId(),
                 $row->getData('account_mode'),
                 (int)$row->getData('marketplace_id')
@@ -656,8 +657,6 @@ HTML;
 
         return $value;
     }
-
-    //########################################
 
     protected function callbackFilterEbayOrderId($collection, $column)
     {
@@ -768,8 +767,6 @@ HTML;
         }
     }
 
-    //########################################
-
     public function getGridUrl()
     {
         return $this->getUrl('*/ebay_order/grid', ['_current' => true]);
@@ -779,8 +776,6 @@ HTML;
     {
         return false;
     }
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -795,7 +790,7 @@ JS
         }
 
         $tempGridIds = [];
-        $this->getHelper('Component\Ebay')->isEnabled() && $tempGridIds[] = $this->getId();
+        $this->ebayHelper->isEnabled() && $tempGridIds[] = $this->getId();
         $tempGridIds = $this->dataHelper->jsonEncode($tempGridIds);
 
         $this->jsPhp->addConstants(
@@ -827,6 +822,4 @@ JS
 
         return parent::_toHtml();
     }
-
-    //########################################
 }

@@ -17,6 +17,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy $returnPolicyTemplate,
@@ -24,14 +26,14 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->returnPolicyTemplate = $returnPolicyTemplate;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -231,8 +233,6 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         return $this;
     }
 
-    //########################################
-
     protected function getMarketplaceDataToOptions($key)
     {
         if (empty($this->marketplaceData['info'][$key])) {
@@ -251,8 +251,6 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         return $optionsData;
     }
 
-    //########################################
-
     public function isCustom()
     {
         if (isset($this->_data['is_custom'])) {
@@ -268,7 +266,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             return isset($this->_data['custom_title']) ? $this->_data['custom_title'] : '';
         }
 
-        $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_return_policy');
+        $template = $this->globalDataHelper->getValue('ebay_template_return_policy');
 
         if ($template === null) {
             return '';
@@ -279,7 +277,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     public function getFormData()
     {
-        $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_return_policy');
+        $template = $this->globalDataHelper->getValue('ebay_template_return_policy');
 
         $default = $this->getDefault();
         if ($template === null || $template->getId() === null) {
@@ -296,7 +294,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     public function getMarketplaceData()
     {
-        $marketplace = $this->getHelper('Data\GlobalData')->getValue('ebay_marketplace');
+        $marketplace = $this->globalDataHelper->getValue('ebay_marketplace');
 
         if (!$marketplace instanceof \Ess\M2ePro\Model\Marketplace) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Marketplace is required for editing Return Policy.');
@@ -348,11 +346,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         return $data;
     }
 
-    //########################################
-
     public function canShowGeneralBlock()
     {
-        $marketplace = $this->getHelper('Data\GlobalData')->getValue('ebay_marketplace');
+        $marketplace = $this->globalDataHelper->getValue('ebay_marketplace');
 
         if (!$marketplace instanceof \Ess\M2ePro\Model\Marketplace) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Marketplace is required for editing Return Policy.');
@@ -360,8 +356,6 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         return $marketplace->getChildObject()->isReturnDescriptionEnabled();
     }
-
-    //########################################
 
     protected function getDictionaryInfo($key, \Ess\M2ePro\Model\Marketplace $marketplace)
     {
@@ -380,8 +374,6 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         return $this->getDictionaryInfo($key, $marketplace);
     }
 
-    //########################################
-
     protected function _toHtml()
     {
         $this->jsPhp->addConstants(
@@ -399,6 +391,4 @@ JS
 
         return parent::_toHtml();
     }
-
-    //########################################
 }

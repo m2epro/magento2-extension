@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1;
 
 use Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationFromMagento1\Database
- */
 class Database extends \Magento\Backend\App\Action
 {
     /** @var \Ess\M2ePro\Helper\Factory */
@@ -24,8 +21,6 @@ class Database extends \Magento\Backend\App\Action
     /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
-    //########################################
-
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\View\Result\PageFactory $resultPageFactory,
@@ -35,17 +30,14 @@ class Database extends \Magento\Backend\App\Action
         $this->helperFactory      = $helperFactory;
         $this->resultPageFactory  = $resultPageFactory;
         $this->resourceConnection = $resourceConnection;
+
         parent::__construct($context);
     }
-
-    //########################################
 
     protected function _isAllowed()
     {
         return $this->_auth->isLoggedIn();
     }
-
-    //########################################
 
     public function execute()
     {
@@ -100,6 +92,4 @@ class Database extends \Magento\Backend\App\Action
 
         return $result;
     }
-
-    //########################################
 }

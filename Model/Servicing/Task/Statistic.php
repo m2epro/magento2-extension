@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -15,11 +15,6 @@ use Magento\InventoryApi\Api\GetSourcesAssignedToStockOrderedByPriorityInterface
 use Magento\InventorySalesApi\Model\GetAssignedSalesChannelsForStockInterface;
 use Ess\M2ePro\Model\Cron\Task\System\Servicing\Statistic\InstructionType;
 
-// @codingStandardsIgnoreFile
-
-/**
- * Class \Ess\M2ePro\Model\Servicing\Task\Statistic
- */
 class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 {
     const RUN_INTERVAL = 604800; // 1 week
@@ -46,9 +41,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
     protected $objectManager;
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    protected $helperData;
-
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
 
@@ -71,8 +63,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         \Magento\Framework\App\ResourceConnection $resource,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
-        \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Ess\M2ePro\Helper\Data $helperData
+        \Magento\Framework\ObjectManagerInterface $objectManager
     ) {
         parent::__construct(
             $config,
@@ -96,7 +87,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $this->moduleManager                = $moduleManager;
         $this->objectManager                = $objectManager;
         $this->moduleConfiguration          = $moduleConfiguration;
-        $this->helperData                   = $helperData;
     }
 
     //########################################
@@ -120,12 +110,12 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
         if ($this->getInitiator() === \Ess\M2ePro\Helper\Data::INITIATOR_DEVELOPER ||
             $lastRun === null ||
-            $this->helperData->getCurrentGmtDate(true) >
-                (int)$this->helperData->createGmtDateTime($lastRun)->format('U') + self::RUN_INTERVAL
+            \Ess\M2ePro\Helper\Date::createCurrentGmt()->getTimestamp() >
+                (int)\Ess\M2ePro\Helper\Date::createDateGmt($lastRun)->format('U') + self::RUN_INTERVAL
         ) {
             $this->getHelper('Module')->getRegistry()->setValue(
                 '/servicing/statistic/last_run/',
-                $this->helperData->getCurrentGmtDate()
+                \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s')
             );
 
             return true;
@@ -237,7 +227,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
         $data['settings']['compilation']   = defined('COMPILER_INCLUDE_PATH');
         $data['settings']['secret_key']    = $this->getHelper('Magento')->isSecretKeyToUrl();
-        $data['settings']['timezone']    = $this->helperData->getConfigTimezone();
+        $data['settings']['timezone']    = \Ess\M2ePro\Helper\Date::getTimezone()->getConfigTimezone();
     }
 
     private function appendMagentoStoresInfo(&$data)
@@ -395,9 +385,9 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
               ->query()
               ->fetch();
 
-        $data['products']['price']['min'] = round($result['min_price'], 2);
-        $data['products']['price']['max'] = round($result['max_price'], 2);
-        $data['products']['price']['avg'] = round($result['avg_price'], 2);
+        $data['products']['price']['min'] = round((float)$result['min_price'], 2);
+        $data['products']['price']['max'] = round((float)$result['max_price'], 2);
+        $data['products']['price']['avg'] = round((float)$result['avg_price'], 2);
         // ---------------------------------------
     }
 
@@ -857,7 +847,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $instructionTypeTiming = $this->getHelper('Module')->getRegistry()
             ->getValueFromJson(InstructionType::REGISTRY_KEY_DATA);
 
-        $currentDateTime = $this->helperData->createCurrentGmtDateTime();
+        $currentDateTime = \Ess\M2ePro\Helper\Date::createCurrentGmt();
         $currentDate = $currentDateTime->format('Y-m-d');
         $currentHour = $currentDateTime->format('H-00');
 

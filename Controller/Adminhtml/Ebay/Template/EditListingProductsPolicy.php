@@ -13,7 +13,11 @@ class EditListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Template\Switcher\DataLoader */
     private $componentEbayTemplateSwitcherDataLoader;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $helperDataGlobal;
+
     public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $helperDataGlobal,
         \Ess\M2ePro\Helper\Component\Ebay\Template\Switcher\DataLoader $componentEbayTemplateSwitcherDataLoader,
         \Ess\M2ePro\Model\Ebay\Template\Manager $templateManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -22,6 +26,7 @@ class EditListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
         parent::__construct($templateManager, $ebayFactory, $context);
 
         $this->componentEbayTemplateSwitcherDataLoader = $componentEbayTemplateSwitcherDataLoader;
+        $this->helperDataGlobal = $helperDataGlobal;
     }
 
     public function execute()
@@ -50,15 +55,12 @@ class EditListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
         $dataLoader->load($collection);
         // ---------------------------------------
 
-        $initialization = $this->getLayout()
-                        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher\Initialization::class);
-        $initialization->setMode(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher::MODE_LISTING_PRODUCT);
-        $content = $this->getLayout()
-                        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Edit\Policy::class);
+        $this->helperDataGlobal->setValue('products_ids', $ids);
 
-        $this->setAjaxContent($initialization->toHtml() . $content->toHtml());
+        $content = $this->getLayout()
+                        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Template\Edit::class);
+
+        $this->setAjaxContent($content->toHtml());
         return $this->getResult();
     }
-
-    //########################################
 }

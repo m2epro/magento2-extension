@@ -22,16 +22,21 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -41,7 +46,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $this->setId('walmartTemplateDescriptionEditForm');
 
-        $this->templateModel = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
+        $this->templateModel = $this->globalDataHelper->getValue('tmp_template');
         $this->formData      = $this->getFormData();
 
         $allAttributes = $this->magentoAttributeHelper->getAll();
@@ -60,8 +65,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text_price' => $this->magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'price']),
         ];
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
@@ -880,8 +883,6 @@ HTML
         return parent::_prepareForm();
     }
 
-    // ---------------------------------------
-
     public function getBrandOptions()
     {
         $optionsResult = [
@@ -1092,8 +1093,6 @@ HTML
         ));
     }
 
-    //########################################
-
     protected function _beforeToHtml()
     {
         $this->jsPhp->addConstants(
@@ -1173,8 +1172,6 @@ JS
         return parent::_beforeToHtml();
     }
 
-    //########################################
-
     public function getFormData()
     {
         $default = $this->modelFactory->getObject('Walmart_Template_Description_Builder')->getDefaultData();
@@ -1203,8 +1200,6 @@ JS
 
         return array_merge($default, $data);
     }
-
-    //########################################
 
     public function appendKeywordsFields(
         \Magento\Framework\Data\Form\Element\Fieldset $fieldSet,
@@ -1402,8 +1397,6 @@ HTML
         ]);
     }
 
-    //########################################
-
     protected function getAttributeOptions($attributeMode, $attributeName, $attributeType)
     {
         $optionsResult = [];
@@ -1493,6 +1486,4 @@ HTML
 
         return $optionsResult;
     }
-
-    //########################################
 }

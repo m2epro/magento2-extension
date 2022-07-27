@@ -26,6 +26,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     const OWNER_LISTING         = 'Listing';
     const OWNER_LISTING_PRODUCT = 'Listing\Product';
 
+    const TEMPLATE_ALL_POLICY      = 'all_policy';
     const TEMPLATE_RETURN_POLICY   = 'return_policy';
     const TEMPLATE_SHIPPING        = 'shipping';
     const TEMPLATE_DESCRIPTION     = 'description';

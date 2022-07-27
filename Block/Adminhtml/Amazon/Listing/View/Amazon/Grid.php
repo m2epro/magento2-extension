@@ -11,9 +11,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Amazon;
 use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 use Ess\M2ePro\Model\Listing\Log;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Amazon\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
     private $lockedDataCache = [];
@@ -34,29 +31,32 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     /** @var \Ess\M2ePro\Helper\Data */
     protected $helperData;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    protected $amazonHelper;
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Repricing */
+    protected $amazonRepricingHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
+        \Ess\M2ePro\Helper\Component\Amazon\Repricing $amazonRepricingHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->amazonFactory = $amazonFactory;
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
-        $this->helperData = $helperData;
-        parent::__construct($context, $backendHelper, $dataHelper, $data);
+        $this->amazonHelper = $amazonHelper;
+        $this->amazonRepricingHelper = $amazonRepricingHelper;
+        parent::__construct($context, $backendHelper, $dataHelper, $globalDataHelper, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -64,7 +64,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->setDefaultSort(false);
 
-        $this->listing = $this->getHelper('Data\GlobalData')->getValue('view_listing');
+        $this->listing = $this->globalDataHelper->getValue('view_listing');
 
         $this->hideSwitchToIndividualConfirm =
             $this->listing->getSetting('additional_data', 'hide_switch_to_individual_confirm', 0);
@@ -274,7 +274,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'filter_condition_callback' => [$this, 'callbackFilterPrice']
         ];
 
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
+        if ($this->amazonRepricingHelper->isEnabled() &&
             $this->listing->getAccount()->getChildObject()->isRepricing()) {
             $priceColumn['filter'] = \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price::class;
         }
@@ -374,7 +374,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     public function callbackColumnProductTitle($productTitle, $row, $column, $isExport)
     {
-        $productTitle = $this->helperData->escapeHtml($productTitle);
+        $productTitle = $this->dataHelper->escapeHtml($productTitle);
 
         $value = '<span>'.$productTitle.'</span>';
 
@@ -383,7 +383,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             ->getSku();
 
         $value .= '<br/><strong>'.$this->__('SKU') .
-            ':</strong> '.$this->helperData->escapeHtml($sku) . '<br/>';
+            ':</strong> '.$this->dataHelper->escapeHtml($sku) . '<br/>';
 
         $listingProductId = (int)$row->getData('id');
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -426,11 +426,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
             if (empty($generalId) && !$amazonListingProduct->isGeneralIdOwner() &&
                 !empty($productAttributes) && $variationManager->getTypeModel()->isActualProductAttributes()) {
-                $popupTitle = $this->helperData->escapeJs($this->helperData->escapeHtml(
+                $popupTitle = $this->dataHelper->escapeJs($this->dataHelper->escapeHtml(
                     $this->__('Manage Magento Product Variations')
                 ));
 
-                $linkTitle = $this->helperData->escapeJs($this->helperData->escapeHtml(
+                $linkTitle = $this->dataHelper->escapeJs($this->dataHelper->escapeHtml(
                     $this->__('Change "Magento Variations" Mode')
                 ));
 
@@ -467,7 +467,7 @@ HTML;
                 $parentType = $variationManager->getTypeModel();
 
                 $linkContent = $this->__('Manage Variations');
-                $vpmt = $this->helperData->escapeJs(
+                $vpmt = $this->dataHelper->escapeJs(
                     $this->__('Manage Variations of "'. $productTitle . '" ')
                 );
 
@@ -510,7 +510,7 @@ HTML;
 <div style="float: left; margin: 0 0 0 7px">
     <a {$problemStyle}href="javascript:"
     onclick="ListingGridObj.variationProductManageHandler.openPopUp(
-            {$listingProductId}, '{$this->helperData->escapeHtml($vpmt)}'
+            {$listingProductId}, '{$this->dataHelper->escapeHtml($vpmt)}'
         )"
     title="{$linkTitle}">{$linkContent}</a>&nbsp;{$problemIcon}
 </div>
@@ -541,8 +541,8 @@ JS
                 if ($option === '' || $option === null) {
                     $option = '--';
                 }
-                $value .= '<strong>' . $this->helperData->escapeHtml($attribute) .
-                    '</strong>:&nbsp;' . $this->helperData->escapeHtml($option) . '<br/>';
+                $value .= '<strong>' . $this->dataHelper->escapeHtml($attribute) .
+                    '</strong>:&nbsp;' . $this->dataHelper->escapeHtml($option) . '<br/>';
             }
             $value .= '</div>';
         }
@@ -584,7 +584,7 @@ HTML;
 HTML;
 
         if (empty($generalId) && !$amazonListingProduct->isGeneralIdOwner()) {
-            $linkTitle = $this->helperData->escapeJs($this->helperData->escapeHtml(
+            $linkTitle = $this->dataHelper->escapeJs($this->dataHelper->escapeHtml(
                 $this->__('Change "Magento Variations" Mode')
             ));
 
@@ -643,9 +643,9 @@ HTML;
 
         $repricingHtml ='';
 
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() && $row->getData('is_repricing')) {
+        if ($this->amazonRepricingHelper->isEnabled() && $row->getData('is_repricing')) {
             if ($row->getData('is_variation_parent')) {
-                $additionalData = (array)$this->helperData->jsonDecode($row->getData('additional_data'));
+                $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
 
                 $repricingManagedCount = isset($additionalData['repricing_managed_count'])
                     ? $additionalData['repricing_managed_count'] : null;
@@ -691,7 +691,7 @@ HTML;
 
                 $filter = base64_encode('online_price[is_repricing]=1');
 
-                $productTitle = $this->helperData->escapeHtml($row->getData('name'));
+                $productTitle = $this->dataHelper->escapeHtml($row->getData('name'));
                 $vpmt = $this->__('Manage Variations of &quot;%s%&quot; ', $productTitle);
                 // @codingStandardsIgnoreLine
                 $vpmt = addslashes($vpmt);
@@ -812,14 +812,14 @@ HTML;
 
         $salePrice = $row->getData('online_regular_sale_price');
         if (!$row->getData('is_variation_parent') && (float)$salePrice > 0) {
-            $currentTimestamp = (int)$this->helperData->createGmtDateTime(
-                $this->helperData->getCurrentGmtDate(false, 'Y-m-d 00:00:00')
+            $currentTimestamp = (int)$this->dataHelper->createGmtDateTime(
+                $this->dataHelper->getCurrentGmtDate(false, 'Y-m-d 00:00:00')
             )->format('U');
 
-            $startDateTimestamp = (int)$this->helperData->createGmtDateTime(
+            $startDateTimestamp = (int)$this->dataHelper->createGmtDateTime(
                 $row->getData('online_regular_sale_price_start_date')
             )->format('U');
-            $endDateTimestamp = (int)$this->helperData->createGmtDateTime(
+            $endDateTimestamp = (int)$this->dataHelper->createGmtDateTime(
                 $row->getData('online_regular_sale_price_end_date')
             )->format('U');
 
@@ -1045,7 +1045,7 @@ HTML;
             $condition .= ')';
         }
 
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
+        if ($this->amazonRepricingHelper->isEnabled() &&
             (isset($value['is_repricing']) && $value['is_repricing'] !== '')) {
             if (!empty($condition)) {
                 $condition = '(' . $condition . ') OR ';
@@ -1151,9 +1151,9 @@ JS
         if (strlen($productTitle) > 60) {
             $productTitle = substr($productTitle, 0, 60) . '...';
         }
-        $productTitle = $this->helperData->escapeHtml($productTitle);
+        $productTitle = $this->dataHelper->escapeHtml($productTitle);
         $productTitle = $this->__('Assign ASIN/ISBN For &quot;%product_title%&quot;', $productTitle);
-        $productTitle = $this->helperData->escapeJs($productTitle);
+        $productTitle = $this->dataHelper->escapeJs($productTitle);
         // ---------------------------------------
 
         // ---------------------------------------
@@ -1179,7 +1179,7 @@ HTML;
 
         $suggestData = [];
         if ($searchSettingsData !== null) {
-            $searchSettingsData = $this->helperData->jsonDecode($searchSettingsData);
+            $searchSettingsData = $this->dataHelper->jsonDecode($searchSettingsData);
             !empty($searchSettingsData['data']) && $suggestData = $searchSettingsData['data'];
         }
         // ---------------------------------------
@@ -1201,7 +1201,7 @@ HTML;
             $tip = $this->__(
                 'There were no Products found on Amazon according to the Listing Search Settings.'
             );
-            $tip = $this->helperData->escapeJs($tip);
+            $tip = $this->dataHelper->escapeJs($tip);
 
             return <<<HTML
 {$na} &nbsp;
@@ -1227,7 +1227,7 @@ HTML;
     {
         $generalId = $row->getData('general_id');
 
-        $url = $this->getHelper('Component\Amazon')->getItemUrl($generalId, $this->listing->getMarketplaceId());
+        $url = $this->amazonHelper->getItemUrl($generalId, $this->listing->getMarketplaceId());
 
         $generalIdOwnerHtml = '';
         if ($row->getData('is_general_id_owner') == \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES) {
@@ -1245,7 +1245,7 @@ HTML;
         $generalIdSearchInfo = $row->getData('general_id_search_info');
 
         if (!empty($generalIdSearchInfo)) {
-            $generalIdSearchInfo = $this->helperData->jsonDecode($generalIdSearchInfo);
+            $generalIdSearchInfo = $this->dataHelper->jsonDecode($generalIdSearchInfo);
         }
 
         if (!empty($generalIdSearchInfo['is_set_automatic'])) {
@@ -1278,7 +1278,7 @@ HTML;
         $variationChildStatuses = $row->getData('variation_child_statuses');
 
         if ($variationManager->isVariationParent() && !empty($variationChildStatuses)) {
-            $variationChildStatuses = $this->helperData->jsonDecode($variationChildStatuses);
+            $variationChildStatuses = $this->dataHelper->jsonDecode($variationChildStatuses);
             unset($variationChildStatuses[\Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED]);
 
             foreach ($variationChildStatuses as $variationChildStatus) {

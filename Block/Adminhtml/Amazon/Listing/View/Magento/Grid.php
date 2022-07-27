@@ -35,6 +35,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
@@ -45,14 +46,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->type = $type;
         $this->visibility = $visibility;
         $this->magentoProductHelper = $magentoProductHelper;
-        parent::__construct($context, $backendHelper, $dataHelper, $data);
+        parent::__construct($context, $backendHelper, $dataHelper, $globalDataHelper, $data);
     }
 
     public function _construct()
     {
         parent::_construct();
 
-        $this->listing = $this->getHelper('Data\GlobalData')->getValue('view_listing');
+        $this->listing = $this->globalDataHelper->getValue('view_listing');
 
         // Initialization block
         // ---------------------------------------
@@ -302,8 +303,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         return parent::_prepareColumns();
     }
 
-    //########################################
-
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
         $rowVal = $row->getData();
@@ -323,14 +322,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         return $value;
     }
 
-    //########################################
-
     public function getRowUrl($row)
     {
         return false;
     }
-
-    //########################################
 
     protected function _addColumnFilterToCollection($column)
     {
@@ -348,8 +343,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
         return parent::_addColumnFilterToCollection($column);
     }
-
-    //########################################
 
     protected function _getStore()
     {
@@ -369,8 +362,6 @@ JS
         return parent::_toHtml();
     }
 
-    //########################################
-
     protected function getProductTypes()
     {
         $magentoProductTypes = $this->type->getOptionArray();
@@ -387,12 +378,10 @@ JS
         return $magentoProductTypes;
     }
 
-    //########################################
-
     protected function isShowRuleBlock()
     {
         /** @var \Ess\M2ePro\Model\Magento\Product\Rule $ruleModel */
-        $ruleModel = $this->getHelper('Data\GlobalData')->getValue('rule_model');
+        $ruleModel = $this->globalDataHelper->getValue('rule_model');
 
         if ($ruleModel->isEmpty()) {
             return false;
@@ -400,6 +389,4 @@ JS
 
         return parent::isShowRuleBlock();
     }
-
-    //########################################
 }

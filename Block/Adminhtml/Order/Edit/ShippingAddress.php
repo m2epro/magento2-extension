@@ -10,19 +10,27 @@ namespace Ess\M2ePro\Block\Adminhtml\Order\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Order\Edit\ShippingAddress
- */
 abstract class ShippingAddress extends AbstractBlock
 {
     protected $shippingAddress = null;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    protected $globalDataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        array $data = []
+    ) {
+        $this->globalDataHelper = $globalDataHelper;
+        parent::__construct($context, $data);
+    }
 
     /**
      * @return \Ess\M2ePro\Model\Order
      */
     public function getOrder()
     {
-        return $this->getHelper('Data\GlobalData')->getValue('order');
+        return $this->globalDataHelper->getValue('order');
     }
 
     public function getShippingAddress()

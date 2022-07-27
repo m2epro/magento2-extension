@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Model\Amazon\Order;
 
 use Ess\M2ePro\Model\AbstractModel;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Order\Builder
- */
 class Builder extends AbstractModel
 {
     const INSTRUCTION_INITIATOR = 'order_builder';
@@ -23,8 +20,6 @@ class Builder extends AbstractModel
 
     const UPDATE_STATUS = 'status';
     const UPDATE_EMAIL  = 'email';
-
-    //########################################
 
     protected $activeRecordFactory;
 
@@ -41,8 +36,6 @@ class Builder extends AbstractModel
     protected $items = [];
 
     protected $updates = [];
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -216,7 +209,34 @@ class Builder extends AbstractModel
             return true;
         }
 
+        if ($this->isSkipTaxForEEAShipmentFromUkSite($data['shipping_address']['country_code'])) {
+            return true;
+        }
+
         return false;
+    }
+
+    /**
+     * @param string $countryCode
+     *
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function isSkipTaxForEEAShipmentFromUkSite(string $countryCode): bool
+    {
+        if (!$this->account->getChildObject()->isAmazonCollectsTaxForEEAShipmentFromUkSite()) {
+            return false;
+        }
+
+        if (!in_array(
+            strtoupper($countryCode),
+            $this->account->getChildObject()->getExcludedCountries(),
+            true
+        )) {
+            return false;
+        }
+
+        return true;
     }
 
     protected function isSkipTaxForUkShipment(array $data)
@@ -497,26 +517,36 @@ class Builder extends AbstractModel
 
     protected function cancelMagentoOrder()
     {
-        if (!$this->order->canCancelMagentoOrder()) {
+        $magentoOrderComments = [];
+        $magentoOrderComments[] = '<b>Attention!</b> Order was canceled on Amazon.';
+        $result = $this->order->canCancelMagentoOrder();
+        if ($result === true) {
+            try {
+                $this->order->cancelMagentoOrder();
+            } catch (\Exception $e) {
+                $this->getHelper('Module_Exception')->process($e);
+            }
+            
+            $this->addCommentsToMagentoOrder($this->order, $magentoOrderComments);
+        }
+
+        if ($result === false) {
             return;
         }
 
-        $magentoOrderComments = [];
-        $magentoOrderComments[] = '<b>Attention!</b> Order was canceled on Amazon.';
-
-        try {
-            $this->order->cancelMagentoOrder();
-        } catch (\Exception $e) {
-            $magentoOrderComments[] = 'Order cannot be canceled in Magento. Reason: ' . $e->getMessage();
-        }
-
-        /** @var \Ess\M2ePro\Model\Magento\Order\Updater $magentoOrderUpdater */
-        $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
-        $magentoOrderUpdater->setMagentoOrder($this->order->getMagentoOrder());
-        $magentoOrderUpdater->updateComments($magentoOrderComments);
-        $magentoOrderUpdater->finishUpdate();
+        $magentoOrderComments[] = 'Order cannot be canceled in Magento. Reason: ' . $result;
+        $this->addCommentsToMagentoOrder($this->order, $magentoOrderComments);
     }
 
+    private function addCommentsToMagentoOrder(\Ess\M2ePro\Model\Order $order, $comments)
+    {
+        /** @var \Ess\M2ePro\Model\Magento\Order\Updater $magentoOrderUpdater */
+        $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
+        $magentoOrderUpdater->setMagentoOrder($order->getMagentoOrder());
+        $magentoOrderUpdater->updateComments($comments);
+        $magentoOrderUpdater->finishUpdate();
+    }
+    
     //########################################
 
     protected function processListingsProductsUpdates()

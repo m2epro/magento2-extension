@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -8,28 +8,29 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Connector\Dispatcher
- */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
-    protected $nameBuilder;
-    protected $ebayFactory;
-
-    //####################################
+    /** @var \Magento\Framework\Code\NameBuilder */
+    private $nameBuilder;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
+    private $ebayFactory;
+    /** @var \Ess\M2ePro\Model\Ebay\Connector\Protocol */
+    private $protocol;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Connector\Protocol $protocol,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
+        parent::__construct($helperFactory, $modelFactory);
         $this->nameBuilder = $nameBuilder;
         $this->ebayFactory = $ebayFactory;
-        parent::__construct($helperFactory, $modelFactory);
+        $this->protocol = $protocol;
     }
 
-    //####################################
+    // ----------------------------------------
 
     public function getConnector($entity, $type, $name, array $params = [], $marketplace = null, $account = null)
     {
@@ -61,7 +62,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             'marketplace' => $marketplace,
             'account'     => $account
         ]);
-        $connectorObject->setProtocol($this->getProtocol());
+        $connectorObject->setProtocol($this->protocol);
 
         return $connectorObject;
     }
@@ -82,7 +83,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             'marketplace' => $marketplace,
             'account'     => $account
         ]);
-        $connectorObject->setProtocol($this->getProtocol());
+        $connectorObject->setProtocol($this->protocol);
 
         return $connectorObject;
     }
@@ -123,7 +124,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     ) {
         /** @var \Ess\M2ePro\Model\Connector\Command\RealTime\Virtual $virtualConnector */
         $virtualConnector = $this->modelFactory->getObject($modelName);
-        $virtualConnector->setProtocol($this->getProtocol());
+        $virtualConnector->setProtocol($this->protocol);
         $virtualConnector->setCommand([$entity, $type, $name]);
         $virtualConnector->setResponseDataKey($responseDataKey);
         $requestTimeOut !== null && $virtualConnector->setRequestTimeOut($requestTimeOut);
@@ -155,19 +156,10 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         return $virtualConnector;
     }
 
-    //####################################
+    // ----------------------------------------
 
     public function process(\Ess\M2ePro\Model\Connector\Command\AbstractModel $connector)
     {
         $connector->process();
     }
-
-    //####################################
-
-    private function getProtocol()
-    {
-        return $this->modelFactory->getObject('Ebay_Connector_Protocol');
-    }
-
-    //####################################
 }

@@ -27,21 +27,24 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    private $amazonHelper;
+
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         array $data = []
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->amazonFactory = $amazonFactory;
         $this->dataHelper = $dataHelper;
+        $this->amazonHelper = $amazonHelper;
         parent::__construct($context, $backendHelper, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -61,8 +64,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setUseAjax(true);
         // ---------------------------------------
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -218,8 +219,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return parent::_prepareMassaction();
     }
 
-    //########################################
-
     public function callbackColumnProductTitle($productTitle, $row, $column, $isExport)
     {
         $productTitle = $this->dataHelper->escapeHtml($productTitle);
@@ -275,7 +274,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
             if (empty($attrValue)) {
                 $attrValue = $this->__('Not set');
-            } elseif (!$this->getHelper('Component\Amazon')->isASIN($attrValue) &&
+            } elseif (!$this->amazonHelper->isASIN($attrValue) &&
                         !$this->dataHelper->isISBN($attrValue)) {
                 $attrValue = $this->__('Inappropriate value');
             }
@@ -401,8 +400,6 @@ HTML;
         return strtoupper($searchType);
     }
 
-    //########################################
-
     private function getGeneralIdColumnValueEmptyGeneralId($row)
     {
         // ---------------------------------------
@@ -463,7 +460,7 @@ HTML;
         $generalId = $row->getData('general_id');
         $marketplaceId = $this->listing->getMarketplaceId();
 
-        $url = $this->getHelper('Component\Amazon')->getItemUrl(
+        $url = $this->amazonHelper->getItemUrl(
             $generalId,
             $marketplaceId
         );
@@ -510,8 +507,6 @@ HTML;
 
         return $text;
     }
-
-    //########################################
 
     protected function callbackFilterTitle($collection, $column)
     {
@@ -576,14 +571,10 @@ HTML;
         return $this->lockedDataCache[$listingProductId];
     }
 
-    //########################################
-
     public function getRowUrl($row)
     {
         return false;
     }
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -664,6 +655,4 @@ JS
                 parent::_toHtml() .
                 '</div>';
     }
-
-    //########################################
 }

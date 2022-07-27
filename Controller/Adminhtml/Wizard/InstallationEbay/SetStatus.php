@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay;
 
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay\SetStatus
- */
 class SetStatus extends InstallationEbay
 {
     public function execute()

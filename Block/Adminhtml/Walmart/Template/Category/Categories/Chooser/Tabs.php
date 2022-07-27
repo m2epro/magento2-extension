@@ -8,18 +8,26 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs
- */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTabs
 {
-    //########################################
 
     const TAB_ID_RECENT = 'recent';
     const TAB_ID_BROWSE = 'browse';
     const TAB_ID_SEARCH = 'search';
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Json\EncoderInterface $jsonEncoder,
+        \Magento\Backend\Model\Auth\Session $authSession,
+        array $data = []
+    ) {
+        $this->globalDataHelper = $globalDataHelper;
+        parent::__construct($context, $jsonEncoder, $authSession, $data);
+    }
 
     public function _construct()
     {
@@ -28,8 +36,6 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
         $this->setId('walmartTemplateCategoryCategoriesChooserTabs');
         $this->setDestElementId('chooser_tabs_container');
     }
-
-    //########################################
 
     protected function _prepareLayout()
     {
@@ -62,12 +68,8 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
         return parent::_prepareLayout();
     }
 
-    //########################################
-
     public function isNeedToHideRecent()
     {
-        return $this->getHelper('Data\GlobalData')->getValue('category_chooser_hide_recent', true);
+        return $this->globalDataHelper->getValue('category_chooser_hide_recent', true);
     }
-
-    //########################################
 }

@@ -8,12 +8,11 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay;
 
-use Ess\M2ePro\Controller\Adminhtml\Context;
-
 abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
 {
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
+
     /** @var \Ess\M2ePro\Helper\View\Ebay */
     protected $ebayViewHelper;
 
@@ -21,9 +20,10 @@ abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
-        Context $context
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($nameBuilder, $context);
+
         $this->ebayFactory = $ebayFactory;
         $this->ebayViewHelper = $ebayViewHelper;
     }
@@ -32,8 +32,6 @@ abstract class Wizard extends \Ess\M2ePro\Controller\Adminhtml\Wizard
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::ebay');
     }
-
-    //########################################
 
     protected function initResultPage()
     {

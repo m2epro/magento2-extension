@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Website
- */
 abstract class AbstractWebsite extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     public $formData = [];
@@ -20,14 +17,24 @@ abstract class AbstractWebsite extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\
     /** @var \Ess\M2ePro\Helper\Data */
     protected $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    /** @var \Ess\M2ePro\Helper\Magento\Store */
+    private $magentoStoreHelper;
+
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper,
         array $data = []
     ) {
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->magentoStoreHelper = $magentoStoreHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -37,8 +44,6 @@ abstract class AbstractWebsite extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\
         $this->setId('listingAutoActionModeWebsite');
         $this->formData = $this->getFormData();
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
@@ -126,8 +131,6 @@ abstract class AbstractWebsite extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\
         return parent::_prepareForm();
     }
 
-    //########################################
-
     public function hasFormData()
     {
         return $this->getListing()->getData('auto_mode') == \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE;
@@ -150,8 +153,6 @@ abstract class AbstractWebsite extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\
         ];
     }
 
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Listing
      * @throws \Exception
@@ -167,8 +168,6 @@ abstract class AbstractWebsite extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\
 
         return $this->listing;
     }
-
-    //########################################
 
     protected function _afterToHtml($html)
     {
@@ -198,21 +197,15 @@ JS
                 . '<div id="block-content-wrapper"><div id="data_container">'.parent::_toHtml().'</div></div>';
     }
 
-    // ---------------------------------------
-
     protected function getBlockTitle()
     {
         return $this->__('Website') . ": {$this->getWebsiteName()}";
     }
 
-    //########################################
-
     public function getWebsiteName()
     {
         /** @var \Ess\M2ePro\Model\Listing $listing */
-        $listing = $this->getHelper('Data\GlobalData')->getValue('listing');
-        return $this->getHelper('Magento\Store')->getWebsiteName($listing->getStoreId());
+        $listing = $this->globalDataHelper->getValue('listing');
+        return $this->magentoStoreHelper->getWebsiteName($listing->getStoreId());
     }
-
-    //########################################
 }

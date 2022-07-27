@@ -24,6 +24,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
+        \Ess\M2ePro\Helper\Component\Amazon\Repricing $amazonRepricingHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
@@ -38,6 +40,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
             $amazonFactory,
             $resourceConnection,
             $helperData,
+            $amazonHelper,
+            $amazonRepricingHelper,
             $context,
             $backendHelper,
             $data
@@ -278,7 +282,7 @@ HTML;
             }
         }
 
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
+        if ($this->amazonRepricingHelper->isEnabled() &&
             isset($value['is_repricing']) && $value['is_repricing'] !== '') {
             if (!empty($condition)) {
                 $condition = '(' . $condition . ') OR ';

@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\HealthStatus
- */
 abstract class HealthStatus extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
-    //########################################
-
     protected function getLayoutType()
     {
         return self::LAYOUT_TWO_COLUMNS;
@@ -25,8 +20,6 @@ abstract class HealthStatus extends \Ess\M2ePro\Controller\Adminhtml\Base
         return $this->_authorization->isAllowed('Ess_M2ePro::ebay_help_center_health_status') ||
                $this->_authorization->isAllowed('Ess_M2ePro::amazon_help_center_health_status');
     }
-
-    //########################################
 
     protected function initResultPage()
     {
@@ -54,6 +47,4 @@ abstract class HealthStatus extends \Ess\M2ePro\Controller\Adminhtml\Base
 
         return null;
     }
-
-    //########################################
 }

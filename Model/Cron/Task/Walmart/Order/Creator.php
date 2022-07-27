@@ -115,7 +115,10 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
             try {
                 $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
                 $order->addInfoLog(
-                    'Magento order creation rules are met. M2E Pro will attempt to create Magento order.'
+                    'Magento order creation rules are met. M2E Pro will attempt to create Magento order.',
+                    [],
+                    [],
+                    true
                 );
 
                 $order->createMagentoOrder();

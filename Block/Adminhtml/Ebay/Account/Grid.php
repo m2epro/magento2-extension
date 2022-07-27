@@ -24,6 +24,9 @@ class Grid extends AccountGrid
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -32,12 +35,14 @@ class Grid extends AccountGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
-        $this->ebayFactory              = $ebayFactory;
+        $this->ebayFactory = $ebayFactory;
         $this->componentEbayPickupStore = $componentEbayPickupStore;
-        $this->ebayViewHelper           = $ebayViewHelper;
+        $this->ebayViewHelper = $ebayViewHelper;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($viewHelper, $context, $backendHelper, $data);
     }
 
@@ -80,8 +85,8 @@ class Grid extends AccountGrid
             $header = $this->__('Feedbacks');
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('pickup_store_accounts', $pickupStoreAccounts);
-        $this->getHelper('Data\GlobalData')->setValue('feedbacks_enabled', $isFeedbacksEnabled);
+        $this->globalDataHelper->setValue('pickup_store_accounts', $pickupStoreAccounts);
+        $this->globalDataHelper->setValue('feedbacks_enabled', $isFeedbacksEnabled);
 
         if ($this->ebayViewHelper->isFeedbacksShouldBeShown() || !empty($pickupStoreAccounts)) {
             $this->addColumn('management', [
@@ -155,8 +160,8 @@ HTML;
 HTML;
         }
 
-        $pickupStoreAccounts = $this->getHelper('Data\GlobalData')->getValue('pickup_store_accounts');
-        $isFeedbacksEnabled = $this->getHelper('Data\GlobalData')->getValue('feedbacks_enabled');
+        $pickupStoreAccounts = $this->globalDataHelper->getValue('pickup_store_accounts');
+        $isFeedbacksEnabled = $this->globalDataHelper->getValue('feedbacks_enabled');
 
         if (empty($html) && (!$isFeedbacksEnabled || empty($pickupStoreAccounts))) {
             $html = '<strong style="color: gray;">' . $this->__("Disabled") . '</strong>';

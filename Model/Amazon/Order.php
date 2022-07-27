@@ -959,7 +959,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         /** @var \Magento\Sales\Model\Order\Creditmemo $creditmemo */
         $creditmemo = $creditmemos->getLastItem();
 
-        if ($this->getGrandTotalPrice() !== round($creditmemo->getGrandTotal(), 2)) {
+        if ($this->getGrandTotalPrice() !== round((float)$creditmemo->getGrandTotal(), 2)) {
             return false;
         }
 
@@ -1015,7 +1015,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         /** @var \Magento\Sales\Model\Order\Invoice $invoice */
         $invoice = $invoices->getLastItem();
 
-        if ($this->getGrandTotalPrice() !== round($invoice->getGrandTotal(), 2)) {
+        if ($this->getGrandTotalPrice() !== round((float)$invoice->getGrandTotal(), 2)) {
             return false;
         }
 

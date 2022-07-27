@@ -23,21 +23,32 @@ class AddItemGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $this->componentEbayMotors = $componentEbayMotors;
     }
 
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function execute()
     {
         $motorsType = $this->getRequest()->getParam('motors_type');
         $identifierType = $this->componentEbayMotors->getIdentifierKey($motorsType);
 
-        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item\Grid $block */
-        $block = $this->createBlock(
-            'Ebay\Listing\View\Settings\Motors\Add\Item\\' . ucfirst($identifierType) . '\Grid'
-        );
-        $block->setMotorsType($motorsType);
+        switch ($identifierType) {
+            case 'epid':
+                $block = \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item\Epid\Grid::class;
+                break;
+            case 'ktype':
+                $block = \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item\Ktype\Grid::class;
+                break;
+            default:
+                throw new \Ess\M2ePro\Model\Exception\Logic("Unknown motors type [{$motorsType}]");
+        }
 
-        $this->setAjaxContent($block);
+        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item\Grid $itemsGrid */
+        $itemsGrid = $this->getLayout()->createBlock($block);
+        $itemsGrid->setMotorsType($motorsType);
+
+        $this->setAjaxContent($itemsGrid);
 
         return $this->getResult();
     }
 
-    //########################################
 }

@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Settings;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Settings\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
     /** @var  \Ess\M2ePro\Model\Listing */
@@ -20,8 +17,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected $walmartFactory;
     protected $resourceConnection;
 
-    //########################################
-
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
@@ -29,21 +24,20 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->walmartFactory = $walmartFactory;
         $this->resourceConnection = $resourceConnection;
-        parent::__construct($context, $backendHelper, $dataHelper, $data);
+        parent::__construct($context, $backendHelper, $dataHelper, $globalDataHelper, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
         parent::_construct();
 
-        $this->listing = $this->getHelper('Data\GlobalData')->getValue('view_listing');
+        $this->listing = $this->globalDataHelper->getValue('view_listing');
 
         // Initialization block
         // ---------------------------------------
@@ -52,8 +46,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->showAdvancedFilterProductsOption = false;
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -203,8 +195,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         return parent::_prepareColumns();
     }
 
-    //########################################
-
     protected function getGroupOrder()
     {
         $groups = [
@@ -237,8 +227,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         return $actions;
     }
-
-    //########################################
 
     protected function _prepareMassaction()
     {
@@ -275,8 +263,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         return parent::_prepareMassaction();
     }
-
-    //########################################
 
     public function callbackColumnProductTitle($productTitle, $row, $column, $isExport)
     {
@@ -352,8 +338,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         return $value;
     }
 
-    // ---------------------------------------
-
     public function callbackColumnTemplateCategory($value, $row, $column, $isExport)
     {
         $html = $this->__('N/A');
@@ -373,8 +357,6 @@ HTML;
 
         return $html;
     }
-
-    //########################################
 
     protected function callbackFilterTitle($collection, $column)
     {
@@ -412,14 +394,10 @@ SQL;
         $collection->getSelect()->where($where);
     }
 
-    //########################################
-
     public function getRowUrl($row)
     {
         return false;
     }
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -433,6 +411,4 @@ JS
 
         return parent::_toHtml();
     }
-
-    //########################################
 }

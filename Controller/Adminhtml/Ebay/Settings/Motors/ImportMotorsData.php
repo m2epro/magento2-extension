@@ -10,8 +10,11 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Motors;
 
 class ImportMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
 {
-    protected $fileCsv;
-    protected $phpEnvironmentRequest;
+    /** @var \Magento\Framework\File\Csv */
+    private $fileCsv;
+
+    /** @var \Magento\Framework\HTTP\PhpEnvironment\Request */
+    private $phpEnvironmentRequest;
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
     private $componentEbayMotors;
@@ -156,6 +159,4 @@ class ImportMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
             'scope'        => $helper->getEpidsScopeByType($motorsType)
         ];
     }
-
-    //########################################
 }

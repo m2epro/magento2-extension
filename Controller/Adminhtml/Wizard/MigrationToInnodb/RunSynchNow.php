@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationToInnodb;
 
 use Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationToInnodb;
 
-/**
- * Class  \Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationToInnodb\RunSynchNow
- */
 class RunSynchNow extends MigrationToInnodb
 {
-    //########################################
-
     public function execute()
     {
         // @codingStandardsIgnoreLine
@@ -59,6 +54,4 @@ class RunSynchNow extends MigrationToInnodb
         $this->setJsonContent(['result' => 'success']);
         return $this->getResult();
     }
-
-    //########################################
 }

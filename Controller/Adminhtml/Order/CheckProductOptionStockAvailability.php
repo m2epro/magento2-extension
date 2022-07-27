@@ -20,6 +20,7 @@ class CheckProductOptionStockAvailability extends Order
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($context);
+
         $this->magentoProductHelper = $magentoProductHelper;
     }
 

@@ -17,12 +17,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     protected $websiteFactory;
     /** @var \Ess\M2ePro\Helper\Magento\Product */
     protected $magentoProductHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Catalog\Model\Product\Type $type,
         \Magento\Store\Model\WebsiteFactory $websiteFactory,
         \Ess\M2ePro\Helper\Magento\Product $magentoProductHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
@@ -32,6 +35,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         $this->type = $type;
         $this->websiteFactory = $websiteFactory;
         $this->magentoProductHelper = $magentoProductHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
 
@@ -39,7 +43,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     {
         parent::_construct();
 
-        $this->listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
+        $this->listing = $this->globalDataHelper->getValue('listing_for_products_add');
 
         // Initialization block
         // ---------------------------------------
@@ -433,6 +437,4 @@ JS
 
         return $magentoProductTypes;
     }
-
-    //########################################
 }

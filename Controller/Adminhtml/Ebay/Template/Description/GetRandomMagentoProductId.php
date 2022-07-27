@@ -10,16 +10,38 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description\GetRandomMagentoProductId
- */
 class GetRandomMagentoProductId extends Description
 {
     public function execute()
     {
-        $listingProductCollection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
+        $storeId = $this->getRequest()->getPost('store_id', \Magento\Store\Model\Store::DEFAULT_STORE_ID);
+        $productId = $this->getProductIdFromListing($storeId) ?? $this->getProductIdFromMagento();
 
-        $offset = rand(0, $listingProductCollection->getSize() - 1);
+        if ($productId) {
+            $this->setJsonContent([
+                'success'    => true,
+                'product_id' => $productId,
+            ]);
+        } else {
+            $this->setJsonContent([
+                'success' => false,
+                'message' => $this->__('You don\'t have any products in Magento catalog.'),
+            ]);
+        }
+
+        return $this->getResult();
+    }
+
+    private function getProductIdFromListing($storeId): ?int
+    {
+        $listingProductCollection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
+        $collectionSize = $listingProductCollection->getSize();
+
+        if ($collectionSize == 0) {
+            return null;
+        }
+
+        $offset = rand(0, $collectionSize - 1);
         $listingProductCollection
             ->getSelect()
             ->reset(\Magento\Framework\DB\Select::COLUMNS)
@@ -31,24 +53,24 @@ class GetRandomMagentoProductId extends Description
             )
             ->limit(1, $offset);
 
-        $storeId = $this->getRequest()->getPost('store_id', \Magento\Store\Model\Store::DEFAULT_STORE_ID);
-
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         $listingProduct = $listingProductCollection
             ->addFieldToFilter('store_id', $storeId)
             ->getFirstItem();
 
-        if ($listingProduct->getId() !== null) {
-            $this->setJsonContent([
-                'success' => true,
-                'product_id' => $listingProduct->getProductId()
-            ]);
-            return $this->getResult();
+       return $listingProduct->getId();
+    }
+
+    private function getProductIdFromMagento(): ?int
+    {
+        $productCollection = $this->productModel->getCollection();
+        $collectionSize = $productCollection->getSize();
+
+        if ($collectionSize == 0) {
+            return null;
         }
 
-        $productCollection = $this->productModel->getCollection();
-
-        $offset = rand(0, $productCollection->getSize() - 1);
+        $offset = rand(0, $collectionSize - 1);
         $productCollection
             ->getSelect()
             ->reset(\Magento\Framework\DB\Select::COLUMNS)
@@ -57,19 +79,6 @@ class GetRandomMagentoProductId extends Description
 
         /** @var \Magento\Catalog\Model\Product $product */
         $product = $productCollection->getFirstItem();
-
-        if ($product->getId() !== null) {
-            $this->setJsonContent([
-                'success' => true,
-                'product_id' => $product->getId()
-            ]);
-        } else {
-            $this->setJsonContent([
-                'success' => false,
-                'message' => $this->__('You don\'t have any products in Magento catalog.')
-            ]);
-        }
-
-        return $this->getResult();
+        return $product->getId();
     }
 }

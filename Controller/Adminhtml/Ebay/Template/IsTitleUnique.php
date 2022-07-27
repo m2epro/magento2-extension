@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\IsTitleUnique
- */
 class IsTitleUnique extends Template
 {
-    //########################################
-
     public function execute()
     {
         $id = $this->getRequest()->getParam('id_value');
@@ -42,6 +37,4 @@ class IsTitleUnique extends Template
         $this->setJsonContent(['unique' => !(bool)count($collection)]);
         return $this->getResult();
     }
-
-    //########################################
 }

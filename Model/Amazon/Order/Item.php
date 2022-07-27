@@ -11,6 +11,8 @@
  */
 namespace Ess\M2ePro\Model\Amazon\Order;
 
+use Ess\M2ePro\Model\Order\Exception\ProductCreationDisabled;
+
 /**
  * Class \Ess\M2ePro\Model\Amazon\Order\Item
  */
@@ -399,7 +401,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     protected function createProduct()
     {
         if (!$this->getAmazonAccount()->isMagentoOrdersListingsOtherProductImportEnabled()) {
-            throw new \Ess\M2ePro\Model\Exception($this->getHelper('Module\Translation')->__(
+            throw new ProductCreationDisabled($this->getHelper('Module\Translation')->__(
                 'Product creation is disabled in "Account > Orders > Product Not Found".'
             ));
         }

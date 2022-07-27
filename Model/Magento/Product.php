@@ -922,13 +922,11 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
      */
     public function isSpecialPriceActual()
     {
-        $fromDate = (int)$this->helperData
-            ->createGmtDateTime($this->getSpecialPriceFromDate())
+        $fromDate = (int)\Ess\M2ePro\Helper\Date::createDateGmt($this->getSpecialPriceFromDate())
             ->format('U');
-        $toDate = (int)$this->helperData
-            ->createGmtDateTime($this->getSpecialPriceToDate())
+        $toDate = (int)\Ess\M2ePro\Helper\Date::createDateGmt($this->getSpecialPriceToDate())
             ->format('U');
-        $currentTimeStamp = $this->helperData->getCurrentGmtDate(true);
+        $currentTimeStamp = \Ess\M2ePro\Helper\Date::createCurrentGmt()->getTimestamp();
 
         return $currentTimeStamp >= $fromDate && $currentTimeStamp < $toDate &&
            (float)$this->getProduct()->getSpecialPrice() > 0;
@@ -941,12 +939,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $fromDate = $this->getProduct()->getSpecialFromDate();
 
         if ($fromDate === null || $fromDate === false || $fromDate == '') {
-            $fromDate = $this->helperData
-                ->createCurrentGmtDateTime()
+            $fromDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()
                 ->format('Y-01-01 00:00:00');
         } else {
-            $fromDate = $this->helperData
-                ->createGmtDateTime($fromDate)
+            $fromDate = \Ess\M2ePro\Helper\Date::createDateGmt($fromDate)
                 ->format('Y-m-d 00:00:00');
         }
 
@@ -958,15 +954,14 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $toDate = $this->getProduct()->getSpecialToDate();
 
         if ($toDate === null || $toDate === false || $toDate == '') {
-            $toDate = $this->helperData->createCurrentGmtDateTime();
+            $toDate = \Ess\M2ePro\Helper\Date::createCurrentGmt();
             $toDate->modify('+1 year');
             $toDate = $toDate->format('Y-01-01 00:00:00');
         } else {
-            $toDate = $this->helperData
-                ->createGmtDateTime($toDate)
+            $toDate = \Ess\M2ePro\Helper\Date::createDateGmt($toDate)
                 ->format('Y-m-d 00:00:00');
 
-            $toDate = $this->helperData->createGmtDateTime($toDate);
+            $toDate = \Ess\M2ePro\Helper\Date::createDateGmt($toDate);
             $toDate->modify('+1 day');
             $toDate = $toDate->format('Y-m-d 00:00:00');
         }

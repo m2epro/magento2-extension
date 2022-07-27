@@ -35,6 +35,40 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     private $synchronizationTemplateModel = null;
 
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
+    
+    //########################################
+    
+    public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        parent::__construct(
+            $walmartFactory,
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
+
+        $this->moduleConfiguration = $moduleConfiguration;
+    }
+
     //########################################
 
     public function _construct()
@@ -256,10 +290,6 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             $variationManager->switchModeToAnother();
         }
 
-        $walmartListingProduct->getWalmartItem()
-            ->setData('store_id', $this->getParentObject()->getStoreId())
-            ->save();
-
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Other $walmartListingOther */
         $walmartListingOther = $listingOtherProduct->getChildObject();
 
@@ -290,6 +320,13 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             $listingProduct::MOVING_LISTING_OTHER_SOURCE_KEY,
             $listingOtherProduct->getId()
         );
+        
+        if ($listingProduct->getMagentoProduct()->isGroupedType() &&
+            $this->moduleConfiguration->isGroupedProductModeSet()
+        ) {
+            $listingProduct->setSetting('additional_data', 'grouped_product_mode', 1);
+        }
+        
         $listingProduct->addData($dataForUpdate);
         $walmartListingProduct->addData($dataForUpdate);
         $listingProduct->save();
@@ -302,6 +339,15 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
 
         $listingOtherProduct->save();
 
+        $walmartItem = $walmartListingProduct->getWalmartItem();
+        if ($listingProduct->getMagentoProduct()->isGroupedType() &&
+            $this->moduleConfiguration->isGroupedProductModeSet()
+        ) {
+            $walmartItem->setAdditionalData(json_encode(['grouped_product_mode' => 1]));
+        }
+        $walmartItem->setData('store_id', $this->getParentObject()->getStoreId())
+                    ->save();
+        
         $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
         $instruction->setData(
             [

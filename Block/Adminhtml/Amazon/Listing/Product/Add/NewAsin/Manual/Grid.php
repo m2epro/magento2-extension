@@ -19,9 +19,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
@@ -29,16 +33,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->amazonFactory = $amazonFactory;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
         parent::_construct();
 
-        $this->listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
+        $this->listing = $this->globalDataHelper->getValue('listing_for_products_add');
 
         // Initialization block
         // ---------------------------------------
@@ -54,8 +57,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
         $this->useAdvancedFilter = false;
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -202,8 +203,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         return parent::_prepareMassaction();
     }
 
-    //########################################
-
     public function callbackColumnProductTitle($productTitle, $row, $column, $isExport)
     {
         if (strlen($productTitle) > 60) {
@@ -276,8 +275,6 @@ HTML;
 HTML;
     }
 
-    //########################################
-
     protected function callbackFilterProductTitle($collection, $column)
     {
         $value = $column->getFilter()->getValue();
@@ -311,14 +308,10 @@ HTML;
         }
     }
 
-    //########################################
-
     public function getRowUrl($row)
     {
         return false;
     }
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -360,8 +353,6 @@ JS
         return parent::_toHtml();
     }
 
-    //########################################
-
     protected function isNotExistProductsWithDescriptionTemplate()
     {
         /** @var \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection $collection */
@@ -377,6 +368,4 @@ JS
 
         return !$collection->getConnection()->fetchOne($countSelect);
     }
-
-    //########################################
 }

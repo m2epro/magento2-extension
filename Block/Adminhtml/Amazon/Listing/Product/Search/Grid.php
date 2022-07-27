@@ -34,6 +34,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    private $amazonHelper;
+
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -41,16 +47,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         array $data = []
     ) {
         $this->customCollectionFactory = $customCollectionFactory;
         $this->resourceConnection = $resourceConnection;
         $this->localeCurrency = $localeCurrency;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->amazonHelper = $amazonHelper;
         parent::__construct($context, $backendHelper, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -58,7 +66,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $this->_isExport = true;
 
-        $this->productId = $this->getHelper('Data\GlobalData')->getValue('product_id');
+        $this->productId = $this->globalDataHelper->getValue('product_id');
         $this->listingProduct = $this->parentFactory->getObjectLoaded(
             \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'Listing\Product',
@@ -72,7 +80,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ->getCachedObjectLoaded(
                 \Ess\M2ePro\Helper\Component\Amazon::NICK,
                 'Marketplace',
-                $this->getHelper('Data\GlobalData')->getValue('marketplace_id')
+                $this->globalDataHelper->getValue('marketplace_id')
             )
             ->getChildObject()
             ->getDefaultCurrency();
@@ -95,7 +103,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareCollection()
     {
-        $data = $this->getHelper('Data\GlobalData')->getValue('search_data');
+        $data = $this->globalDataHelper->getValue('search_data');
 
         $collection = $this->customCollectionFactory->create();
 
@@ -195,8 +203,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
     }
 
-    //########################################
-
     public function callbackColumnImage($value, $product, $column, $isExport)
     {
         return '<img src="'.$value.'" />';
@@ -204,8 +210,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnGeneralId($value, $product, $column, $isExport)
     {
-        $url = $this->getHelper('Component\Amazon')
-            ->getItemUrl($value, $this->getHelper('Data\GlobalData')->getValue('marketplace_id'));
+        $url = $this->amazonHelper
+            ->getItemUrl($value, $this->globalDataHelper->getValue('marketplace_id'));
 
         $parentAsinText = $this->__('parent ASIN/ISBN');
 
@@ -595,8 +601,6 @@ HTML;
 HTML;
     }
 
-    //########################################
-
     public function getTooltipHtml($content, $id = '')
     {
         return <<<HTML
@@ -608,8 +612,6 @@ HTML;
 </div>
 HTML;
     }
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -638,7 +640,7 @@ HTML;
             'change_option' => $this->__('Change option'),
         ]);
 
-        $searchData = $this->getHelper('Data\GlobalData')->getValue('search_data');
+        $searchData = $this->globalDataHelper->getValue('search_data');
 
         $searchParamsHtml = <<<HTML
         <input id="amazon_asin_search_type" type="hidden" value="{$searchData['type']}">
@@ -658,8 +660,6 @@ HTML;
         return parent::_toHtml() . $searchParamsHtml;
     }
 
-    //########################################
-
     public function getGridUrl()
     {
         return $this->getUrl('*/amazon_listing/getSuggestedAsinGrid', ['_current'=>true]);
@@ -669,8 +669,6 @@ HTML;
     {
         return false;
     }
-
-    //########################################
 
     private function getChannelVariationsTree($variations)
     {
@@ -771,6 +769,4 @@ HTML;
 
         return $return;
     }
-
-    //########################################
 }

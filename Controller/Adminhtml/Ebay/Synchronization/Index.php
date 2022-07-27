@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Settings;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Synchronization\Index
- */
 class Index extends Settings
 {
-    //########################################
-
     public function execute()
     {
         $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Synchronization\Tabs::class);
@@ -29,6 +24,4 @@ class Index extends Settings
 
         return $this->resultPage;
     }
-
-    //########################################
 }

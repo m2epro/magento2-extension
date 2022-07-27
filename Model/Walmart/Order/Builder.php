@@ -354,26 +354,36 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     private function cancelMagentoOrder()
     {
-        if (!$this->order->canCancelMagentoOrder()) {
+        $magentoOrderComments = [];
+        $magentoOrderComments[] = '<b>Attention!</b> Order was canceled on Amazon.';
+        $result = $this->order->canCancelMagentoOrder();
+        if ($result === true) {
+            try {
+                $this->order->cancelMagentoOrder();
+            } catch (\Exception $e) {
+                $this->getHelper('Module_Exception')->process($e);
+            }
+
+            $this->addCommentsToMagentoOrder($this->order, $magentoOrderComments);
+        }
+
+        if ($result === false) {
             return;
         }
 
-        $magentoOrderComments = [];
-        $magentoOrderComments[] = '<b>Attention!</b> Order was canceled on Walmart.';
-
-        try {
-            $this->order->cancelMagentoOrder();
-        } catch (\Exception $e) {
-            $magentoOrderComments[] = 'Order cannot be canceled in Magento. Reason: ' . $e->getMessage();
-        }
-
-        /** @var \Ess\M2ePro\Model\Magento\Order\Updater $magentoOrderUpdater */
-        $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
-        $magentoOrderUpdater->setMagentoOrder($this->order->getMagentoOrder());
-        $magentoOrderUpdater->updateComments($magentoOrderComments);
-        $magentoOrderUpdater->finishUpdate();
+        $magentoOrderComments[] = 'Order cannot be canceled in Magento. Reason: ' . $result;
+        $this->addCommentsToMagentoOrder($this->order, $magentoOrderComments);
     }
 
+    private function addCommentsToMagentoOrder(\Ess\M2ePro\Model\Order $order, $comments)
+    {
+        /** @var \Ess\M2ePro\Model\Magento\Order\Updater $magentoOrderUpdater */
+        $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
+        $magentoOrderUpdater->setMagentoOrder($order->getMagentoOrder());
+        $magentoOrderUpdater->updateComments($comments);
+        $magentoOrderUpdater->finishUpdate();
+    }
+    
     //########################################
 
     private function processListingsProductsUpdates()

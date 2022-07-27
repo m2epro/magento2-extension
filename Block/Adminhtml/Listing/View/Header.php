@@ -8,15 +8,23 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\View;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Listing\View\Header
- */
 class Header extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
+    /** @var bool */
     protected $isListingViewMode = false;
+    /** @var string */
     protected $_template = 'listing/view/header.phtml';
+    /** @var \Ess\M2ePro\Helper\Magento\Store */
+    private $magentoStoreHelper;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        array $data = []
+    ) {
+        $this->magentoStoreHelper = $magentoStoreHelper;
+        parent::__construct($context, $data);
+    }
 
     public function isListingViewMode()
     {
@@ -28,8 +36,6 @@ class Header extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $this->isListingViewMode = $mode;
         return $this;
     }
-
-    //########################################
 
     public function getComponent()
     {
@@ -61,12 +67,10 @@ class Header extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     public function getStoreViewBreadcrumb($cutLongValues = true)
     {
-        $breadcrumb = $this->getHelper('Magento\Store')->getStorePath($this->getListing()->getStoreId());
+        $breadcrumb = $this->magentoStoreHelper->getStorePath($this->getListing()->getStoreId());
 
         return $cutLongValues ? $this->cutLongLines($breadcrumb) : $breadcrumb;
     }
-
-    //########################################
 
     private function cutLongLines($line)
     {
@@ -77,8 +81,6 @@ class Header extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         return substr($line, 0, 50) . '...';
     }
 
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Listing
      */
@@ -86,6 +88,4 @@ class Header extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     {
         return $this->getData('listing');
     }
-
-    //########################################
 }

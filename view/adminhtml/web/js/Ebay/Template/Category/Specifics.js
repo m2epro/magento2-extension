@@ -5,6 +5,7 @@ define([
     window.EbayTemplateCategorySpecifics = Class.create(Common, {
 
         maxSelectedSpecifics: 45,
+        specificsSnapshot: {},
 
         // ---------------------------------------
 
@@ -54,6 +55,16 @@ define([
             $$('.remove_custom_specific_button').each(function(el){
                 el.simulate('click');
             });
+        },
+
+        // ---------------------------------------
+
+        createSpecificsSnapshot: function () {
+            this.specificsSnapshot = this.collectSpecifics();
+        },
+
+        isSpecificsChanged: function () {
+            return JSON.stringify(this.specificsSnapshot) !== JSON.stringify(this.collectSpecifics())
         },
 
         collectSpecifics: function()

@@ -29,6 +29,9 @@ class Price extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
     /** @var \Ess\M2ePro\Helper\Module\Translation */
     private $translationHelper;
 
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Repricing */
+    private $amazonRepricingHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
@@ -36,6 +39,7 @@ class Price extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Backend\Block\Context $context,
         \Ess\M2ePro\Helper\Module\Translation $translationHelper,
+        \Ess\M2ePro\Helper\Component\Amazon\Repricing $amazonRepricingHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -45,9 +49,8 @@ class Price extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         $this->localeCurrency = $localeCurrency;
         $this->helperData = $helperData;
         $this->translationHelper = $translationHelper;
+        $this->amazonRepricingHelper = $amazonRepricingHelper;
     }
-
-    //########################################
 
     public function render(\Magento\Framework\DataObject $row)
     {
@@ -73,7 +76,7 @@ class Price extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 
         $repricingHtml ='';
 
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
+        if ($this->amazonRepricingHelper->isEnabled() &&
             (bool)(int)$rowObject->getData('is_repricing')) {
             $icon = 'repricing-enabled';
             $text = $this->translationHelper->__(

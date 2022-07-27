@@ -14,14 +14,10 @@ class Save extends Support
 {
     /** @var \Ess\M2ePro\Helper\Module\Support\Form */
     private $supportHelper;
+
     /** @var \Ess\M2ePro\Helper\Component */
     private $componentHelper;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Module\Support\Form   $supportHelper
-     * @param \Ess\M2ePro\Helper\Component             $componentHelper
-     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
-     */
     public function __construct(
         \Ess\M2ePro\Helper\Module\Support\Form $supportHelper,
         \Ess\M2ePro\Helper\Component $componentHelper,

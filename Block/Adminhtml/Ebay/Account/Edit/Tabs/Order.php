@@ -27,6 +27,12 @@ class Order extends AbstractForm
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
+
     public function __construct(
         \Magento\Tax\Model\ClassModel $taxClass,
         \Magento\Customer\Model\Group $customerGroup,
@@ -37,6 +43,8 @@ class Order extends AbstractForm
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsite,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
         array $data = []
     ) {
         $this->orderConfig = $orderConfig;
@@ -45,13 +53,15 @@ class Order extends AbstractForm
         $this->supportHelper = $supportHelper;
         $this->storeWebsite = $storeWebsite;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->magentoHelper = $magentoHelper;
 
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
     protected function _prepareForm()
     {
-        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
+        $account = $this->globalDataHelper->getValue('edit_account');
 
         $websites = $this->storeWebsite->getWebsites(true);
 
@@ -325,7 +335,7 @@ HTML
             'sample_magento_order_id',
             'hidden',
             [
-                'value' => $this->getHelper('Magento')->getNextMagentoOrderId()
+                'value' => $this->magentoHelper->getNextMagentoOrderId()
             ]
         );
 
@@ -624,13 +634,9 @@ HTML
                 ],
                 'value'   => $formData['magento_orders_settings']['tax']['mode'],
                 'tooltip' => $this->__(
-                    'Choose the Tax Settings for your Magento Order:
-                    <br/>
-                    <br/><b>eBay</b> - Magento Orders use Tax Settings from the eBay Listing.
-                    <br/><b>Magento</b> - Magento Orders use Magento Tax Settings.
-                    <br/><b>eBay & Magento</b> - Magento Orders use Tax Settings from the eBay Listing.
-                    If there are no Tax Settings set in eBay, Magento Tax Settings are used.
-                    <br/><b>None</b> - No Tax Settings are set.'
+                    'Choose where the tax settings for your Magento Order will be taken from. See
+                    <a href="%url%" target="_blank">this article</a> for more details.',
+                    $this->supportHelper->getDocumentationArticleUrl('x/r4VcBQ#TaxCalculationSettings-TaxSource')
                 )
             ]
         );

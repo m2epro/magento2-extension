@@ -729,9 +729,9 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     // ---------------------------------------
 
     /**
-     * @return boolean
+     * @return bool
      */
-    public function isAmazonCollectsEnabled()
+    public function isAmazonCollectsEnabled(): bool
     {
         return (bool)$this->getSetting('magento_orders_settings', ['tax', 'amazon_collects'], 0);
     }
@@ -739,23 +739,47 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return array
      */
-    public function getExcludedStates()
+    public function getExcludedStates(): array
     {
         return $this->getSetting('magento_orders_settings', ['tax', 'excluded_states'], []);
     }
 
-    public function isAmazonCollectsTaxForUKShipmentAvailable()
+    /**
+     * @return bool
+     */
+    public function isAmazonCollectsTaxForUKShipmentAvailable(): bool
     {
         $setting = $this->getSetting('magento_orders_settings', ['tax', 'amazon_collect_for_uk'], 0);
 
         return $setting == self::SKIP_TAX_FOR_UK_SHIPMENT;
     }
 
-    public function isAmazonCollectsTaxForUKShipmentWithCertainPrice()
+    /**
+     * @return bool
+     */
+    public function isAmazonCollectsTaxForUKShipmentWithCertainPrice(): bool
     {
         $setting = $this->getSetting('magento_orders_settings', ['tax', 'amazon_collect_for_uk'], 0);
 
         return $setting == self::SKIP_TAX_FOR_UK_SHIPMENT_WITH_CERTAIN_PRICE;
+    }
+
+    /**
+     * @return array
+     */
+    public function getExcludedCountries(): array
+    {
+        return $this->getSetting('magento_orders_settings', ['tax', 'excluded_countries'], []);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAmazonCollectsTaxForEEAShipmentFromUkSite(): bool
+    {
+        $setting = $this->getSetting('magento_orders_settings', ['tax', 'amazon_collect_for_eea'], 0);
+
+        return $setting == 1;
     }
 
     // ---------------------------------------

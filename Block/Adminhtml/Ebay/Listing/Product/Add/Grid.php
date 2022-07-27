@@ -8,7 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add;
 
-
 abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
     /** @var \Ess\M2ePro\Model\Listing */
@@ -23,6 +22,12 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     /** @var \Magento\Catalog\Model\Product\Type */
     protected $type;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module */
+    private $moduleHelper;
+
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Catalog\Model\Product\Type $type,
@@ -30,11 +35,15 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Module $moduleHelper,
         array $data = []
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->type = $type;
         $this->magentoProductHelper = $magentoProductHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->moduleHelper = $moduleHelper;
         parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
 
@@ -44,7 +53,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
         // Initialization block
         // ---------------------------------------
-        $this->listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
+        $this->listing = $this->globalDataHelper->getValue('listing_for_products_add');
 
         $this->setId('ebayListingProductGrid'.$this->listing->getId());
         // ---------------------------------------
@@ -253,8 +262,6 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         return parent::_prepareMassaction();
     }
 
-    //########################################
-
     protected function _addColumnFilterToCollection($column)
     {
         if ($this->getCollection()) {
@@ -288,11 +295,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         return $this->_storeManager->getStore($storeId);
     }
 
-    //########################################
-
     abstract protected function getSelectedProductsCallback();
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -352,7 +355,7 @@ JS
 
         // ---------------------------------------
         $showAutoActionPopup = $this->dataHelper->jsonEncode(
-            !$this->getHelper('Module')->getRegistry()->getValue('/ebay/listing/autoaction_popup/is_shown/')
+            !$this->moduleHelper->getRegistry()->getValue('/ebay/listing/autoaction_popup/is_shown/')
         );
 
         // ---------------------------------------
@@ -389,8 +392,6 @@ JS
         return parent::_toHtml();
     }
 
-    //########################################
-
     protected function getProductTypes()
     {
         $magentoProductTypes = $this->type->getOptionArray();
@@ -406,6 +407,4 @@ JS
 
         return $magentoProductTypes;
     }
-
-    //########################################
 }

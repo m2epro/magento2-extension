@@ -55,6 +55,6 @@ class ResendInvoiceCreditmemo extends Order
             );
         }
 
-        return $this->_redirect($this->_redirect->getRefererUrl());
+        return $this->_redirect($this->redirect->getRefererUrl());
     }
 }

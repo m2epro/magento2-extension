@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Delete
- */
 class Delete extends Template
 {
-    //########################################
-
     public function execute()
     {
         $ids = $this->getRequestIds();
@@ -54,8 +49,6 @@ class Delete extends Template
         $this->_redirect('*/*/index');
     }
 
-    //########################################
-
     private function getTemplateObject($type, $id)
     {
         switch ($type) {
@@ -76,6 +69,4 @@ class Delete extends Template
 
         return $model;
     }
-
-    //########################################
 }

@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\RunStopAndRemoveProducts
- */
 class RunStopAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\ActionAbstract
 {
     public function execute()

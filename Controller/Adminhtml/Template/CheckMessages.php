@@ -10,21 +10,14 @@ namespace Ess\M2ePro\Controller\Adminhtml\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Base;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Template\CheckMessages
- */
 class CheckMessages extends Base
 {
-    //########################################
-
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::ebay_configuration_templates') ||
                $this->_authorization->isAllowed('Ess_M2ePro::amazon_configuration_templates') ||
                $this->_authorization->isAllowed('Ess_M2ePro::walmart_configuration_templates');
     }
-
-    //########################################
 
     public function execute()
     {
@@ -84,6 +77,4 @@ class CheckMessages extends Base
         $this->setJsonContent(['messages' => $messagesBlock->getMessagesHtml()]);
         return $this->getResult();
     }
-
-    //########################################
 }

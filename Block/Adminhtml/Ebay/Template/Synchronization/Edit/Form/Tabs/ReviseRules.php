@@ -22,13 +22,14 @@ class ReviseRules extends AbstractTab
      */
     public function __construct(
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
         $this->supportHelper = $supportHelper;
-        parent::__construct($context, $registry, $formFactory, $data);
+        parent::__construct($globalDataHelper, $context, $registry, $formFactory, $data);
     }
 
     protected function _prepareForm()

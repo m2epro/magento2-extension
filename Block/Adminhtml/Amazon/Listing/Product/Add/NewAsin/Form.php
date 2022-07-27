@@ -16,14 +16,19 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
         array $data = []
     ) {
         $this->dataHelper = $dataHelper;
+        $this->sessionDataHelper = $sessionDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -37,8 +42,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $this->getRequest()->getParam('id')
         );
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
@@ -154,14 +157,10 @@ HTML
         return parent::_prepareForm();
     }
 
-    //########################################
-
     public function getProductsIds()
     {
         return $this->listing->getSetting('additional_data', 'adding_new_asin_listing_products_ids');
     }
-
-    //########################################
 
     public function getDescriptionTemplateMode()
     {
@@ -170,7 +169,7 @@ HTML
 
         $mode = 'same';
 
-        $sessionMode = $this->getHelper('Data\Session')->getValue('products_source');
+        $sessionMode = $this->sessionDataHelper->getValue('products_source');
         if ($sessionMode == 'category') {
             $mode = $sessionMode;
         }
@@ -181,8 +180,6 @@ HTML
 
         return $mode;
     }
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -320,6 +317,4 @@ JS
 
         return parent::_toHtml();
     }
-
-    //########################################
 }

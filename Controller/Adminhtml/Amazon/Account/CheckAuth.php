@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Account\CheckAuth
- */
 class CheckAuth extends Account
 {
     /** @var \Ess\M2ePro\Helper\Module */

@@ -10,24 +10,17 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationToInnodb;
 
 use Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationToInnodb;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationToInnodb\RunSynchNow
- */
 class MarketplacesSynchronization extends MigrationToInnodb
 {
-    //########################################
-
     public function execute()
     {
         $this->addContent(
-            $this->createBlock($this->nameBuilder->buildClassName([
-                'Wizard', 'MigrationToInnodb_Installation_MarketplacesSynchronization'
-            ]))->setData([
+            $this->getLayout()->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationToInnodb\Installation\MarketplacesSynchronization::class
+            )->setData([
                 'nick' => $this->getNick()
             ])
         );
         return $this->getResult();
     }
-
-    //########################################
 }

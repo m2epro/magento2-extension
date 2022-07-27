@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard;
 
 use Ess\M2ePro\Controller\Adminhtml\Wizard;
 
-/**
- * Class  \Ess\M2ePro\Controller\Adminhtml\Wizard\MigrationToInnodb
- */
 abstract class MigrationToInnodb extends Wizard
 {
     protected function _isAllowed()

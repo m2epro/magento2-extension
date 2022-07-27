@@ -30,6 +30,9 @@ class Grid extends AbstractGrid
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Component\Walmart */
+    private $walmartHelper;
+
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
@@ -37,12 +40,14 @@ class Grid extends AbstractGrid
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
         array $data = []
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->walmartFactory = $walmartFactory;
         $this->databaseHelper = $databaseHelper;
         $this->dataHelper = $dataHelper;
+        $this->walmartHelper = $walmartHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -271,8 +276,6 @@ class Grid extends AbstractGrid
         return parent::_prepareMassaction();
     }
 
-    //########################################
-
     public function callbackPurchaseCreateDate($value, $row, $column, $isExport)
     {
         return $this->_localeDate->formatDate(
@@ -350,8 +353,6 @@ HTML;
 
         return $returnString;
     }
-
-    // ---------------------------------------
 
     public function callbackColumnItems($value, $row, $column, $isExport)
     {
@@ -513,8 +514,6 @@ HTML;
         return $value;
     }
 
-    //########################################
-
     protected function callbackFilterItems($collection, $column)
     {
         $value = $column->getFilter()->getValue();
@@ -546,8 +545,6 @@ HTML;
             ->where('buyer_email LIKE ? OR buyer_name LIKE ?', '%' . $value . '%');
     }
 
-    //########################################
-
     public function getGridUrl()
     {
         return $this->getUrl('*/walmart_order/grid', ['_current' => true]);
@@ -571,7 +568,7 @@ JS
         }
 
         $tempGridIds = [];
-        $this->getHelper('Component\Walmart')->isEnabled() && $tempGridIds[] = $this->getId();
+        $this->walmartHelper->isEnabled() && $tempGridIds[] = $this->getId();
 
         $tempGridIds = $this->dataHelper->jsonEncode($tempGridIds);
 
@@ -604,6 +601,4 @@ JS
 
         return parent::_toHtml();
     }
-
-    //########################################
 }

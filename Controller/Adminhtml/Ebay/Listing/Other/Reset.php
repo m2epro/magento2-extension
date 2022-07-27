@@ -21,7 +21,7 @@ class Reset extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
 
         $this->messageManager->addSuccess($this->__('eBay Unmanaged Listings were reset.'));
 
-        $this->_redirect($this->_redirect->getRefererUrl());
+        $this->_redirect($this->redirect->getRefererUrl());
     }
 
     //########################################

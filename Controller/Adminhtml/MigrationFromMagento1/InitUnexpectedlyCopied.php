@@ -10,12 +10,20 @@ namespace Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1;
 
 use Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1\InitUnexpectedlyCopied
- */
 class InitUnexpectedlyCopied extends Base
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Maintenance */
+    private $moduleMaintenanceHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Maintenance $moduleMaintenanceHelper,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context,
+        \Ess\M2ePro\Setup\MigrationFromMagento1\Runner $migrationRunner
+    ) {
+        parent::__construct($context, $migrationRunner);
+
+        $this->moduleMaintenanceHelper = $moduleMaintenanceHelper;
+    }
 
     public function execute()
     {
@@ -23,10 +31,8 @@ class InitUnexpectedlyCopied extends Base
         $wizard = $this->helperFactory->getObject('Module_Wizard')->getWizard(MigrationFromMagento1::NICK);
         $wizard->setCurrentStatus(MigrationFromMagento1::STATUS_UNEXPECTEDLY_COPIED);
 
-        $this->getHelper('Module\Maintenance')->enable();
+        $this->moduleMaintenanceHelper->enable();
 
         return $this->_redirect($this->getUrl('m2epro/wizard_migrationFromMagento1/database'));
     }
-
-    //########################################
 }

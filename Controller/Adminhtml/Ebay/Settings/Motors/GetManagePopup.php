@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Motors;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Motors\GetManagePopup
- */
 class GetManagePopup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
 {
-    //########################################
-
     public function execute()
     {
         $popup = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Motors\Manage::class);
@@ -22,6 +17,4 @@ class GetManagePopup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
         $this->setAjaxContent($popup);
         return $this->getResult();
     }
-
-    //########################################
 }

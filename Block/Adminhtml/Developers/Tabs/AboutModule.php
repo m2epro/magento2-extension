@@ -8,12 +8,25 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Developers\Tabs;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Developers\Tabs\AboutModule
- */
 class AboutModule extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
+    /** @var \Ess\M2ePro\Helper\Module */
+    private $moduleHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
+        \Ess\M2ePro\Helper\Module $moduleHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        $this->magentoHelper = $magentoHelper;
+        $this->moduleHelper = $moduleHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
 
     protected function _prepareForm()
     {
@@ -32,7 +45,7 @@ class AboutModule extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'note',
             [
                 'label' => $this->__('Version'),
-                'text' => $this->getHelper('Module')->getPublicVersion()
+                'text' => $this->moduleHelper->getPublicVersion()
             ]
         );
 
@@ -49,7 +62,7 @@ class AboutModule extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'note',
             [
                 'label' => $this->__('Edition'),
-                'text' => ucfirst($this->getHelper('Magento')->getEditionName())
+                'text' => ucfirst($this->magentoHelper->getEditionName())
             ]
         );
 
@@ -58,13 +71,11 @@ class AboutModule extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'note',
             [
                 'label' => $this->__('Version'),
-                'text' => $this->getHelper('Magento')->getVersion()
+                'text' => $this->magentoHelper->getVersion()
             ]
         );
 
         $this->setForm($form);
         return parent::_prepareForm();
     }
-
-    //########################################
 }

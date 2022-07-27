@@ -18,9 +18,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     /** @var \Ess\M2ePro\Helper\Magento\Attribute */
     protected $magentoAttributeHelper;
-
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Component\Walmart */
+    private $walmartHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
@@ -28,10 +31,14 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
         array $data = []
     ) {
         $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->walmartHelper = $walmartHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -44,9 +51,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $this->setId('walmartTemplateDescriptionEditForm');
         // ---------------------------------------
 
-        $this->templateModel = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
+        $this->templateModel = $this->globalDataHelper->getValue('tmp_template');
         $this->formData = $this->getFormData();
-        $marketplaces = $this->getHelper('Component\Walmart')->getMarketplacesAvailableForApiCreation();
+        $marketplaces = $this->walmartHelper->getMarketplacesAvailableForApiCreation();
         $marketplaces = $marketplaces->toArray();
         $this->marketplaceData = $marketplaces['items'];
 
@@ -56,8 +63,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text_select' => $this->magentoAttributeHelper->filterByInputTypes($this->allAttributes, ['text', 'select'])
         ];
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
@@ -328,8 +333,6 @@ JS
         return parent::_beforeToHtml();
     }
 
-    // ---------------------------------------
-
     public function getMarketplaceDataOptions()
     {
         $optionsResult = [
@@ -344,8 +347,6 @@ JS
 
         return $optionsResult;
     }
-
-    //########################################
 
     public function getFormData()
     {
@@ -383,8 +384,6 @@ JS
 
         return false;
     }
-
-    //########################################
 
     public function getCategoryHtml()
     {
@@ -534,6 +533,4 @@ HTML;
     <!-- ########################################################## -->
 HTML;
     }
-
-    //########################################
 }

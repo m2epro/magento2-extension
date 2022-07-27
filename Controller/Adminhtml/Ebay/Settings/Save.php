@@ -37,6 +37,4 @@ class Save extends Settings
         $this->setJsonContent(['success' => true]);
         return $this->getResult();
     }
-
-    //########################################
 }

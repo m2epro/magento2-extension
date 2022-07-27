@@ -8,25 +8,19 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing\Product;
 
-use Ess\M2ePro\Controller\Adminhtml\Context;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing\Product\Index
- */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing
 {
-    //########################################
-
-    protected $filterManager;
+    /** @var \Magento\Framework\Filter\FilterManager */
+    private $filterManager;
 
     public function __construct(
         \Magento\Framework\Filter\FilterManager $filterManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
-        Context $context
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        $this->filterManager = $filterManager;
-
         parent::__construct($ebayFactory, $context);
+
+        $this->filterManager = $filterManager;
     }
 
     public function execute()

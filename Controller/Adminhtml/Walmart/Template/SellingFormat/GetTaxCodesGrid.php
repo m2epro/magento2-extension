@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\SellingFormat\GetTaxCodesGrid
- */
 class GetTaxCodesGrid extends Template
 {
-    //########################################
-
     public function execute()
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\TaxCodes\Grid $grid */
@@ -29,6 +24,4 @@ class GetTaxCodesGrid extends Template
 
         return $this->getResult();
     }
-
-    //########################################
 }

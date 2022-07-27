@@ -34,6 +34,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Component\Walmart */
+    private $walmartHelper;
+
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
@@ -42,6 +45,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
         array $data = []
     ) {
         $this->walmartFactory = $walmartFactory;
@@ -49,6 +53,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->resourceConnection = $resourceConnection;
         $this->walmartViewHelper = $walmartViewHelper;
         $this->dataHelper = $dataHelper;
+        $this->walmartHelper = $walmartHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -61,8 +66,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setDefaultDir('ASC');
         $this->setUseAjax(true);
     }
-
-    //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
@@ -79,8 +82,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         return $this->listingProduct;
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -296,8 +297,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return parent::_prepareMassaction();
     }
 
-    //########################################
-
     public function callbackColumnProductOptions($additionalData, $row, $column, $isExport)
     {
         $html = '';
@@ -422,10 +421,9 @@ HTML;
         $html = '<div class="m2ePro-variation-attributes" style="color: grey; margin-left: 7px">';
 
         if (!empty($gtin) && !empty($itemId)) {
-            $walmartHelper = $this->getHelper('Component\Walmart');
             $marketplaceId = $this->getListingProduct()->getListing()->getMarketplaceId();
-            $url = $walmartHelper->getItemUrl(
-                $walmartListingProduct->getData($walmartHelper->getIdentifierForItemUrl($marketplaceId)),
+            $url = $this->walmartHelper->getItemUrl(
+                $walmartListingProduct->getData($this->walmartHelper->getIdentifierForItemUrl($marketplaceId)),
                 $marketplaceId
             );
 
@@ -485,8 +483,6 @@ HTML;
 
         return $priceValue;
     }
-
-    // ---------------------------------------
 
     public function callbackProductOptions($collection, $column)
     {
@@ -605,8 +601,6 @@ HTML;
         }
     }
 
-    //########################################
-
     public function getMainButtonsHtml()
     {
         $html = '';
@@ -699,8 +693,6 @@ HTML;
             ->getUsedChannelOptions();
     }
 
-    // ---------------------------------------
-
     public function getGridUrl()
     {
         return $this->getUrl('*/walmart_listing_product_variation_manage/viewVariationsGridAjax', [
@@ -712,8 +704,6 @@ HTML;
     {
         return false;
     }
-
-    //########################################
 
     public function getTooltipHtml($content, $id = '', $classes = [])
     {
@@ -728,8 +718,6 @@ HTML;
     </div>
 HTML;
     }
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -767,8 +755,6 @@ JS
 
         return parent::_toHtml();
     }
-
-    //########################################
 
     private function canChangeProductVariation(\Ess\M2ePro\Model\Listing\Product $childListingProduct)
     {
@@ -813,8 +799,6 @@ JS
 
         return $this->lockedDataCache[$listingProductId];
     }
-
-    //########################################
 
     public function getProductVariationsTree($childProduct, $attributes)
     {
@@ -919,8 +903,6 @@ JS
         return $return;
     }
 
-    //########################################
-
     public function getCurrentProductVariations()
     {
 
@@ -961,8 +943,6 @@ JS
         return $this->usedProductVariations;
     }
 
-    //########################################
-
     public function getUnusedProductVariations()
     {
         return $this->getListingProduct()
@@ -971,8 +951,6 @@ JS
             ->getTypeModel()
             ->getUnusedProductOptions();
     }
-
-    //########################################
 
     public function getChildListingProducts()
     {
@@ -1002,8 +980,6 @@ JS
         return $attributesOptions;
     }
 
-    //########################################
-
     private function parseGroupedData($data)
     {
         $result = [];
@@ -1021,12 +997,8 @@ JS
         return $result;
     }
 
-    //########################################
-
     private function convertAndFormatPriceCurrency($price, $currency)
     {
         return $this->localeCurrency->getCurrency($currency)->toCurrency($price);
     }
-
-    //########################################
 }

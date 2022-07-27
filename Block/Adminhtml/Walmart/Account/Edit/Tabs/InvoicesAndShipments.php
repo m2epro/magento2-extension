@@ -15,14 +15,19 @@ class InvoicesAndShipments extends AbstractForm
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -180,8 +185,6 @@ HTML
         return parent::_prepareForm();
     }
 
-    //########################################
-
     protected function _prepareLayout()
     {
         $this->css->add(
@@ -215,18 +218,14 @@ JS
         return parent::_prepareLayout();
     }
 
-    //########################################
-
     protected function getFormData()
     {
         /** @var \Ess\M2ePro\Model\Account $account */
-        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
+        $account = $this->globalDataHelper->getValue('edit_account');
 
         $formData = $account ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
         $defaults = $this->modelFactory->getObject('Walmart_Account_Builder')->getDefaultData();
 
         return array_merge($defaults, $formData);
     }
-
-    //########################################
 }

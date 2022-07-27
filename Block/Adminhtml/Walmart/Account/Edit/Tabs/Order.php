@@ -32,6 +32,12 @@ class Order extends AbstractForm
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
+
     public function __construct(
         \Magento\Tax\Model\ClassModel $taxClass,
         \Magento\Customer\Model\Group $customerGroup,
@@ -42,6 +48,8 @@ class Order extends AbstractForm
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsite,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
         array $data = []
     ) {
         $this->orderConfig = $orderConfig;
@@ -50,13 +58,15 @@ class Order extends AbstractForm
         $this->supportHelper = $supportHelper;
         $this->storeWebsite = $storeWebsite;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->magentoHelper = $magentoHelper;
 
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
     protected function _prepareForm()
     {
-        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
+        $account = $this->globalDataHelper->getValue('edit_account');
         $ordersSettings = $account !== null ? $account->getChildObject()->getData('magento_orders_settings') : [];
         $ordersSettings = !empty($ordersSettings) ? $this->dataHelper->jsonDecode($ordersSettings) : [];
 
@@ -337,7 +347,7 @@ HTML
             'sample_magento_order_id',
             'hidden',
             [
-                'value' => $this->getHelper('Magento')->getNextMagentoOrderId()
+                'value' => $this->magentoHelper->getNextMagentoOrderId()
             ]
         );
 
@@ -533,16 +543,9 @@ HTML
                 ],
                 'value'   => $formData['magento_orders_settings']['tax']['mode'],
                 'tooltip' => $this->__(
-                    'Select the Tax settings that should be applied to Magento Order:
-                    <ul class="list">
-                        <li>
-                        <b>Walmart</b> - the Tax settings configured in your Walmart Seller Center will be used.
-                        </li>
-                        <li><b>Magento</b> - the Tax settings configured in your Magento will be used.</li>
-                        <li><b>Walmart & Magento</b> - Walmart Tax settings will be applied if specified.
-                        Otherwise, Magento Tax settings will be used.</li>
-                        <li><b>None</b> - no Taxes will be applied.</li>
-                    </ul>'
+                    'Choose where the tax settings for your Magento Order will be taken from. See
+                    <a href="%url%" target="_blank">this article</a> for more details.',
+                    $this->supportHelper->getDocumentationArticleUrl('x/3oVcBQ#CalculationTaxSettings-TaxSource')
                 )
             ]
         );

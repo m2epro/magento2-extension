@@ -248,6 +248,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         $keys = [
             'mode',
             'amazon_collect_for_uk',
+            'amazon_collect_for_eea',
             'import_tax_id_in_magento_order'
         ];
         foreach ($keys as $key) {
@@ -268,6 +269,13 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             $data['magento_orders_settings'][$tempKey]['excluded_states'] = explode(
                 ',',
                 $tempSettings['excluded_states']
+            );
+        }
+
+        if (isset($tempSettings['excluded_countries'])) {
+            $data['magento_orders_settings'][$tempKey]['excluded_countries'] = explode(
+                ',',
+                $tempSettings['excluded_countries']
             );
         }
 
@@ -387,7 +395,9 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                     'mode'                           => Account::MAGENTO_ORDERS_TAX_MODE_MIXED,
                     'amazon_collects'                => 1,
                     'excluded_states'                => $this->getGeneralExcludedStates(),
+                    'excluded_countries'             => [],
                     'amazon_collect_for_uk'          => Account::SKIP_TAX_FOR_UK_SHIPMENT_NONE,
+                    'amazon_collect_for_eea'         => 0,
                     'import_tax_id_in_magento_order' => 0,
                 ],
                 'customer'                => [
@@ -499,6 +509,4 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'WY',
         ];
     }
-
-    //########################################
 }

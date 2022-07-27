@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Developers
- */
 abstract class Developers extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
-    //########################################
-
     protected function initResultPage()
     {
         if ($this->resultPage !== null) {
@@ -52,6 +47,4 @@ abstract class Developers extends \Ess\M2ePro\Controller\Adminhtml\Base
     {
         return true;
     }
-
-    //########################################
 }

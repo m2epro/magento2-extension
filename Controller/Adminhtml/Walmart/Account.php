@@ -8,21 +8,12 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart;
 
-use Ess\M2ePro\Model\Walmart\Account as WalmartAccount;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Account
- */
 abstract class Account extends Main
 {
-    //########################################
-
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::walmart_configuration_accounts');
     }
-
-    //########################################
 
     protected function addAccount($data)
     {
@@ -118,8 +109,6 @@ abstract class Account extends Main
         return $account;
     }
 
-    //########################################
-
     protected function getDataForServer($data)
     {
         $params = [
@@ -150,6 +139,4 @@ abstract class Account extends Main
 
         return $collection->getSize();
     }
-
-    //########################################
 }

@@ -27,6 +27,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
     public function __construct(
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -34,22 +37,22 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->localeCurrency = $localeCurrency;
         $this->ebayFactory = $ebayFactory;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
         parent::_construct();
 
-        $this->listing = $this->getHelper('Data\GlobalData')->getValue('temp_data');
+        $this->listing = $this->globalDataHelper->getValue('temp_data');
 
         // Initialization block
         // ---------------------------------------
@@ -61,8 +64,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // ---------------------------------------
     }
 
-    //########################################
-
     protected function _setCollectionOrder($column)
     {
         $collection = $this->getCollection();
@@ -73,8 +74,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
         return $this;
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -452,8 +451,6 @@ CSS
         $collection->getSelect()->where($condition);
     }
 
-    //########################################
-
     protected function _toHtml()
     {
         $this->css->add(<<<CSS
@@ -492,14 +489,10 @@ JS
         return parent::_toHtml();
     }
 
-    //########################################
-
     public function getGridUrl()
     {
         return $this->getUrl('*/ebay_listing_pickupStore/productsStepGrid', [
             'id' => $this->listing->getId()
         ]);
     }
-
-    //########################################
 }

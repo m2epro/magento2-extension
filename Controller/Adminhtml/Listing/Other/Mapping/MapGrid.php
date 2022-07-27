@@ -8,12 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping;
 
-use Ess\M2ePro\Controller\Adminhtml\Listing;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping\MapGrid
- */
-class MapGrid extends Listing
+class MapGrid extends \Ess\M2ePro\Controller\Adminhtml\Listing
 {
     public function execute()
     {

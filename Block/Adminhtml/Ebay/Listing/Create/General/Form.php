@@ -23,20 +23,23 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
         array $data = []
     ) {
         $this->ebayFactory = $ebayFactory;
         $this->dataHelper = $dataHelper;
+        $this->sessionDataHelper = $sessionDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
@@ -72,7 +75,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         $storeId = '';
-        $sessionData = $this->getHelper('Data_Session')->getValue(
+        $sessionData = $this->sessionDataHelper->getValue(
             \Ess\M2ePro\Model\Ebay\Listing::CREATE_LISTING_SESSION_DATA
         );
 
@@ -252,8 +255,6 @@ HTML
         return parent::_prepareForm();
     }
 
-    //########################################
-
     protected function _prepareLayout()
     {
         $this->jsPhp->addConstants(
@@ -320,8 +321,6 @@ JS
         return parent::_prepareLayout();
     }
 
-    //########################################
-
     protected function getMarketplaces()
     {
         if ($this->marketplaces === null) {
@@ -344,6 +343,4 @@ JS
 
         return $this->marketplaces;
     }
-
-    //########################################
 }

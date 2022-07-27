@@ -8,19 +8,12 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Order
- */
 abstract class Order extends Main
 {
-    //########################################
-
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::walmart_sales_orders');
     }
-
-    //########################################
 
     protected function init()
     {
@@ -31,6 +24,4 @@ abstract class Order extends Main
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Sales'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Orders'));
     }
-
-    //########################################
 }

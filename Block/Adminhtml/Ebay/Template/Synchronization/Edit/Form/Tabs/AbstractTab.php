@@ -10,14 +10,25 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tab
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs\AbstractTab
- */
 abstract class AbstractTab extends AbstractForm
 {
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    protected $globalDataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        array $data = []
+    ) {
+        $this->globalDataHelper = $globalDataHelper;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     public function isCustom()
     {
-        $isCustom = $this->getHelper('Data\GlobalData')->getValue('is_custom');
+        $isCustom = $this->globalDataHelper->getValue('is_custom');
         if ($isCustom !== null) {
             return (bool)$isCustom;
         }
@@ -28,11 +39,11 @@ abstract class AbstractTab extends AbstractForm
     public function getTitle()
     {
         if ($this->isCustom()) {
-            $customTitle = $this->getHelper('Data\GlobalData')->getValue('custom_title');
+            $customTitle = $this->globalDataHelper->getValue('custom_title');
             return $customTitle !== null ? $customTitle : '';
         }
 
-        $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_synchronization');
+        $template = $this->globalDataHelper->getValue('ebay_template_synchronization');
 
         if ($template === null) {
             return '';
@@ -41,11 +52,9 @@ abstract class AbstractTab extends AbstractForm
         return $template->getTitle();
     }
 
-    //########################################
-
     public function getFormData()
     {
-        $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_synchronization');
+        $template = $this->globalDataHelper->getValue('ebay_template_synchronization');
 
         if ($template === null || $template->getId() === null) {
             return [];

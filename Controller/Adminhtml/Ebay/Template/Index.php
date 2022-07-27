@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Index
- */
 class Index extends Template
 {
-    //########################################
-
     public function execute()
     {
         $content = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template::class);
@@ -27,6 +22,4 @@ class Index extends Template
 
         return $this->getResult();
     }
-
-    //########################################
 }

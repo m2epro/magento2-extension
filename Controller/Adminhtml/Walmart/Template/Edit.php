@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Edit
- */
 class Edit extends Template
 {
-    //########################################
-
     public function execute()
     {
         $id = $this->getRequest()->getParam('id');
@@ -35,8 +30,6 @@ class Edit extends Template
         );
     }
 
-    //########################################
-
     private function prepareTemplateType($type)
     {
         if ($type == \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_SELLING_FORMAT) {
@@ -45,6 +38,4 @@ class Edit extends Template
 
         return $type;
     }
-
-    //########################################
 }

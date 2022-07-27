@@ -12,12 +12,19 @@ use Ess\M2ePro\Model\Cron\Task\Amazon\Order\UploadByUser\Manager as AmazonManage
 use Ess\M2ePro\Model\Cron\Task\Ebay\Order\UploadByUser\Manager as EbayManager;
 use Ess\M2ePro\Model\Cron\Task\Walmart\Order\UploadByUser\Manager as WalmartManager;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Order\UploadByUser\Configure
- */
 class Configure extends \Ess\M2ePro\Controller\Adminhtml\Order
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+
+        $this->dataHelper = $dataHelper;
+    }
 
     public function execute()
     {
@@ -42,15 +49,15 @@ class Configure extends \Ess\M2ePro\Controller\Adminhtml\Order
         $account = $this->parentFactory->getCachedObjectLoaded($component, 'Account', $accountId);
         $manager = $this->getManager($account);
 
-        $fromDate = $this->getHelper('Data')->timezoneDateToGmt(
+        $fromDate = $this->dataHelper->timezoneDateToGmt(
             $this->getRequest()->getParam('from_date')
         );
-        $toDate = $this->getHelper('Data')->timezoneDateToGmt(
+        $toDate = $this->dataHelper->timezoneDateToGmt(
             $this->getRequest()->getParam('to_date')
         );
 
         if ($this->isMoreThanCurrentDate($toDate)) {
-            $toDate = $this->getHelper('Data')->getCurrentGmtDate();
+            $toDate = $this->dataHelper->getCurrentGmtDate();
         }
 
         try {
@@ -80,14 +87,12 @@ class Configure extends \Ess\M2ePro\Controller\Adminhtml\Order
     {
         $to   = new \DateTime($toDate, new \DateTimeZone('UTC'));
 
-        if ($to->getTimestamp() > $this->getHelper('Data')->getCurrentGmtDate(true)) {
+        if ($to->getTimestamp() > $this->dataHelper->getCurrentGmtDate(true)) {
             return true;
         }
 
         return false;
     }
-
-    //########################################
 
     protected function getManager(\Ess\M2ePro\Model\Account $account)
     {
@@ -109,6 +114,4 @@ class Configure extends \Ess\M2ePro\Controller\Adminhtml\Order
         $manager->setIdentifierByAccount($account);
         return $manager;
     }
-
-    //########################################
 }

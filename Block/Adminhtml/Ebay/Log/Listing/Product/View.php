@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Log\Listing\Product;
 
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractView;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Log\Listing\Product\View
- */
 class View extends AbstractView
 {
     /** @var \Ess\M2ePro\Helper\Module\Support */
@@ -25,11 +22,12 @@ class View extends AbstractView
      */
     public function __construct(
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         array $data = []
     ) {
         $this->supportHelper = $supportHelper;
-        parent::__construct($context, $data);
+        parent::__construct($sessionDataHelper, $context, $data);
     }
 
     protected function getComponentMode()

@@ -10,13 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Settings;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Settings;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Settings\Save
- */
 class Save extends Settings
 {
-    //########################################
-
     public function execute()
     {
         $post = $this->getRequest()->getPostValue();
@@ -29,6 +24,4 @@ class Save extends Settings
         $this->setJsonContent(['success' => true]);
         return $this->getResult();
     }
-
-    //########################################
 }

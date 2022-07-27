@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\MigrationToInnodb;
 
 use Ess\M2ePro\Block\Adminhtml\Wizard\AbstractWizard;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationToInnodb\Installation
- */
 abstract class Installation extends AbstractWizard
 {
     /** @var \Ess\M2ePro\Helper\Data */
@@ -91,8 +88,6 @@ JS
         return parent::_prepareLayout();
     }
 
-    //########################################
-
     protected function _toHtml()
     {
         $helpBlock = $this->getLayout()
@@ -104,10 +99,10 @@ JS
                               ]
                           );
 
-        $contentBlock = $this->createBlock(
+        $contentBlock = $this->getLayout()->createBlock(
             $this->nameBuilder->buildClassName(
                 [
-                    'Wizard',
+                    '\Ess\M2ePro\Block\Adminhtml\Wizard',
                     $this->getNick(),
                     'Installation',
                     $this->getStep(),

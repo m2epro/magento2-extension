@@ -13,9 +13,13 @@ namespace Ess\M2ePro\Model\Amazon\Repricing\Action;
  */
 class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
 {
-    protected $resourceCatalogProduct;
+    private $listingLogFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Log */
+    private $listingLogResource;
+    private $translation;
+
+    protected $resourceCatalogProduct;
 
     public function __construct(
         \Magento\Catalog\Model\ResourceModel\Product $resourceCatalogProduct,
@@ -23,13 +27,18 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\Amazon\Listing\LogFactory $listingLogFactory,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Log $listingLogResource,
+        \Ess\M2ePro\Helper\Module\Translation $translation
     ) {
         $this->resourceCatalogProduct = $resourceCatalogProduct;
+        $this->listingLogFactory = $listingLogFactory;
+        $this->listingLogResource = $listingLogResource;
+        $this->translation = $translation;
+
         parent::__construct($activeRecordFactory, $amazonFactory, $resourceConnection, $helperFactory, $modelFactory);
     }
-
-    //########################################
 
     public function sendAddProductsActionData(array $listingsProductsIds, $backUrl)
     {
@@ -67,8 +76,6 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
         );
     }
 
-    //########################################
-
     public function getActionResponseData($responseToken)
     {
         try {
@@ -88,8 +95,6 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
         $this->processErrorMessages($result['response']);
         return $result['response'];
     }
-
-    //########################################
 
     private function sendData($command, array $offersData, $backUrl)
     {
@@ -127,8 +132,6 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
 
         return !empty($response['request_token']) ? $response['request_token'] : false;
     }
-
-    //########################################
 
     /**
      * @param array $listingProductIds
@@ -222,6 +225,28 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
             $minPrice     = $listingProductRepricingObject->getMinPrice();
             $maxPrice     = $listingProductRepricingObject->getMaxPrice();
 
+            if ($regularPrice > $maxPrice) {
+                $this->logListingProductMessage(
+                    $listingProduct,
+                    $this->translation->__(
+                        'Item price was not updated. Regular Price must be equal to or lower than the Max Price value.'
+                    )
+                );
+
+                continue;
+            }
+
+            if ($regularPrice < $minPrice) {
+                $this->logListingProductMessage(
+                    $listingProduct,
+                    $this->translation->__(
+                        'Item price was not updated. Regular Price must be equal to or higher than the Min Price value.'
+                    )
+                );
+
+                continue;
+            }
+
             $isDisabled   = $listingProductRepricingObject->isDisabled();
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
@@ -242,5 +267,20 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
         return $offersData;
     }
 
-    //########################################
+    private function logListingProductMessage(\Ess\M2ePro\Model\Listing\Product $listingProduct, $logMessage)
+    {
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Log $listingLog */
+        $listingLog = $this->listingLogFactory->create();
+
+        $listingLog->addProductMessage(
+            $listingProduct->getListingId(),
+            $listingProduct->getProductId(),
+            $listingProduct->getId(),
+            \Ess\M2ePro\Helper\Data::INITIATOR_USER,
+            $this->listingLogResource->getNextActionId(),
+            \Ess\M2ePro\Model\Listing\Log::ACTION_UNKNOWN,
+            $logMessage,
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
+        );
+    }
 }

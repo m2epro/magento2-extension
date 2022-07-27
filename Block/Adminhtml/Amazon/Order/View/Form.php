@@ -27,16 +27,20 @@ class Form extends AbstractContainer
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
     public function __construct(
         \Magento\Store\Model\StoreManager $storeManager,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->storeManager = $storeManager;
-
-        parent::__construct($context, $data);
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        parent::__construct($context, $data);
     }
 
     public function _construct()
@@ -48,7 +52,7 @@ class Form extends AbstractContainer
         $this->setId('amazonOrderViewForm');
         // ---------------------------------------
 
-        $this->order = $this->getHelper('Data\GlobalData')->getValue('order');
+        $this->order = $this->globalDataHelper->getValue('order');
     }
 
     protected function _beforeToHtml()
@@ -263,6 +267,4 @@ JS
 
         return parent::_toHtml();
     }
-
-    //########################################
 }

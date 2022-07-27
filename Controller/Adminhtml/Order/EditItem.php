@@ -8,15 +8,22 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Order;
 
-use Ess\M2ePro\Controller\Adminhtml\Order;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Order\EditItem
- */
-class EditItem extends Order
+class EditItem extends \Ess\M2ePro\Controller\Adminhtml\Order
 {
     const MAPPING_PRODUCT = 'product';
     const MAPPING_OPTIONS = 'options';
+
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalData,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+
+        $this->globalData = $globalData;
+    }
 
     public function execute()
     {
@@ -32,7 +39,7 @@ class EditItem extends Order
             return $this->getResult();
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('order_item', $item);
+        $this->globalData->setValue('order_item', $item);
 
         if ($item->getProductId() === null || !$item->getMagentoProduct()->exists()) {
             $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Mapping::class);

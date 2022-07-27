@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order\Grid
- */
 class Grid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order
 {
-    //########################################
-
     public function execute()
     {
         $response = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Log\Order\Grid::class)->toHtml();
@@ -22,6 +17,4 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order
 
         return $this->getResult();
     }
-
-    //########################################
 }

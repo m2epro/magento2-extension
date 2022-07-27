@@ -10,7 +10,18 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Transferring;
 
 class GetListings extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($ebayFactory, $context);
+
+        $this->dataHelper = $dataHelper;
+    }
 
     public function execute()
     {
@@ -24,12 +35,10 @@ class GetListings extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
         foreach ($collection->getItems() as $listing) {
             $listings[] = [
                 'id' => $listing->getId(),
-                'title' => $this->getHelper('Data')->escapeHtml($listing->getTitle())
+                'title' => $this->dataHelper->escapeHtml($listing->getTitle())
             ];
         }
 
         $this->getResponse()->setBody($this->getHelper('Data')->jsonEncode($listings));
     }
-
-    //########################################
 }

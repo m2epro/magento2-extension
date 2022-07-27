@@ -94,6 +94,4 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
         );
         return $this->getResult();
     }
-
-    //########################################
 }

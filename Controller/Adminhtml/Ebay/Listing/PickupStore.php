@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
- */
 abstract class PickupStore extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
-    //########################################
-
     protected function initListing()
     {
         $id = $this->getRequest()->getParam('id');
@@ -29,6 +24,4 @@ abstract class PickupStore extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $this->getHelper('Data\GlobalData')->setValue('temp_data', $listing);
         return $listing;
     }
-
-    //########################################
 }

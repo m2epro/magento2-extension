@@ -8,15 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
 
-use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Order\UpdatePaymentStatus
- */
-class UpdatePaymentStatus extends Order
+class UpdatePaymentStatus extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Order
 {
-    //########################################
-
     public function execute()
     {
         $ids = $this->getRequestIds();
@@ -53,8 +46,6 @@ class UpdatePaymentStatus extends Order
             );
         }
 
-        return $this->_redirect($this->_redirect->getRefererUrl());
+        return $this->_redirect($this->redirect->getRefererUrl());
     }
-
-    //########################################
 }

@@ -8,6 +8,7 @@
 
 namespace Ess\M2ePro\Model\Order;
 
+use Ess\M2ePro\Model\Order\Exception\ProductCreationDisabled;
 use Magento\InventoryConfigurationApi\Model\IsSourceItemManagementAllowedForProductTypeInterface;
 use Magento\InventorySalesApi\Model\StockByWebsiteIdResolverInterface;
 
@@ -124,12 +125,15 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
                 return false;
             }
         } catch (\Exception $e) {
-            $this->order->addErrorLog(
-                'QTY was not reserved. Reason: %msg%',
-                [
-                    'msg' => $e->getMessage()
-                ]
-            );
+            $message = 'QTY was not reserved. Reason: %msg%';
+            if ($e instanceof ProductCreationDisabled) {
+                $this->order->addInfoLog($message, ['msg' => $e->getMessage()], [], true);
+
+                return false;
+            }
+
+            $this->order->addErrorLog($message, ['msg' => $e->getMessage()]);
+
             return false;
         }
 

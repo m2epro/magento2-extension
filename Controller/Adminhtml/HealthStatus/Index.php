@@ -8,15 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\HealthStatus;
 
-use Ess\M2ePro\Controller\Adminhtml\HealthStatus;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\HealthStatus\Index
- */
-class Index extends HealthStatus
+class Index extends \Ess\M2ePro\Controller\Adminhtml\HealthStatus
 {
-    //########################################
-
     public function execute()
     {
         $activeTab = $this->getRequest()->getParam('active_tab', null);
@@ -60,6 +53,4 @@ class Index extends HealthStatus
 
         return $this->getResult();
     }
-
-    //########################################
 }

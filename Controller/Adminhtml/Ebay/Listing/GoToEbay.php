@@ -8,20 +8,26 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\GoToEbay
- */
 class GoToEbay extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay */
+    private $ebayHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay $ebayHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($ebayFactory, $context);
+
+        $this->ebayHelper = $ebayHelper;
+    }
 
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::ebay_listings_m2epro') ||
                $this->_authorization->isAllowed('Ess_M2ePro::ebay_listings_other');
     }
-
-    //########################################
 
     public function execute()
     {
@@ -39,7 +45,7 @@ class GoToEbay extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             ->getChildObject()
             ->getMode();
 
-        $url = $this->getHelper('Component\Ebay')->getItemUrl(
+        $url = $this->ebayHelper->getItemUrl(
             $itemId,
             $accountMode,
             $marketplaceId
@@ -47,6 +53,4 @@ class GoToEbay extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         return $this->_redirect($url);
     }
-
-    //########################################
 }

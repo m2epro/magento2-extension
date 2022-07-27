@@ -8,14 +8,24 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Developers\Tabs\SynchronizationLog;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Developers\Tabs\SynchronizationLog\Grid
- */
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 {
     protected $actionsTitles;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component */
+    private $componentHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component $componentHelper,
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\View $viewHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
+        array $data = []
+    ) {
+        parent::__construct($resourceConnection, $viewHelper, $context, $backendHelper, $data);
+        $this->componentHelper = $componentHelper;
+    }
 
     public function _construct()
     {
@@ -41,8 +51,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         $this->actionsTitles = $this->activeRecordFactory->getObject('Synchronization\Log')->getActionsTitles();
     }
 
-    //########################################
-
     protected function _getLogTypeList()
     {
         return [
@@ -52,11 +60,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         ];
     }
 
-    //########################################
-
     protected function _prepareCollection()
     {
-        $components = $this->getHelper('Component')->getEnabledComponents();
+        $components = $this->componentHelper->getEnabledComponents();
 
         $collection = $this->activeRecordFactory->getObject('Synchronization\Log')->getCollection();
         $collection->getSelect()->where(
@@ -146,8 +152,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         $this->getMassactionBlock()->setFormFieldName('ids');
     }
 
-    //########################################
-
     protected function callbackFilterTask($collection, $column)
     {
         $value = $column->getFilter()->getValue();
@@ -162,8 +166,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         );
     }
 
-    //########################################
-
     public function getGridUrl()
     {
         return $this->getUrl('*/*/SynchronizationLogGrid', ['_current' => true]);
@@ -173,8 +175,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
     {
         return false;
     }
-
-    //########################################
 
     protected function getActionTitles()
     {
@@ -217,6 +217,4 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             ['label' => $this->__('Walmart Task'), 'value' => $walmartTitles]
         ];
     }
-
-    //########################################
 }

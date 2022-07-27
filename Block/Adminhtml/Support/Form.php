@@ -14,15 +14,23 @@ class Form extends AbstractForm
 {
     /** @var \Ess\M2ePro\Helper\Module\Support */
     private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    private $amazonHelper;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay */
+    private $ebayHelper;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
+        \Ess\M2ePro\Helper\Component\Ebay $ebayHelper,
         array $data = []
     ) {
         $this->supportHelper = $supportHelper;
+        $this->amazonHelper = $amazonHelper;
+        $this->ebayHelper = $ebayHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -113,14 +121,14 @@ HTML
             'none' => $this->__('General Issue')
         ];
 
-        if ($this->getHelper('Component\Ebay')->isEnabled()) {
+        if ($this->ebayHelper->isEnabled()) {
             $values[\Ess\M2ePro\Helper\Component\Ebay::NICK]
-                = $this->getHelper('Component\Ebay')->getChannelTitle() . ' ' . $this->__('Issue');
+                = $this->ebayHelper->getChannelTitle() . ' ' . $this->__('Issue');
         }
 
-        if ($this->getHelper('Component\Amazon')->isEnabled()) {
+        if ($this->amazonHelper->isEnabled()) {
             $values[\Ess\M2ePro\Helper\Component\Amazon::NICK]
-                = $this->getHelper('Component\Amazon')->getChannelTitle() . ' ' . $this->__('Issue');
+                = $this->amazonHelper->getChannelTitle() . ' ' . $this->__('Issue');
         }
 
         $referrer = $this->getRequest()->getParam('referrer', false);

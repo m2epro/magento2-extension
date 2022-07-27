@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Description\Delete
- */
 class Delete extends Template
 {
     public function execute()

@@ -12,9 +12,6 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 use Ess\M2ePro\Model\Amazon\Account;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\Order
- */
 class Order extends AbstractForm
 {
     protected $orderConfig;
@@ -97,6 +94,10 @@ class Order extends AbstractForm
             unset($defaults['magento_orders_settings']['tax']['excluded_states']);
         }
 
+        if (isset($formData['magento_orders_settings']['tax']['excluded_countries'])) {
+            unset($defaults['magento_orders_settings']['tax']['excluded_countries']);
+        }
+
         $isEdit = !!$this->getRequest()->getParam('id');
 
         $isEdit && $defaults['magento_orders_settings']['refund_and_cancellation']['refund_mode'] = 0;
@@ -107,6 +108,13 @@ class Order extends AbstractForm
             $formData['magento_orders_settings']['tax']['excluded_states'] = implode(
                 ',',
                 $formData['magento_orders_settings']['tax']['excluded_states']
+            );
+        }
+
+        if (is_array($formData['magento_orders_settings']['tax']['excluded_countries'])) {
+            $formData['magento_orders_settings']['tax']['excluded_countries'] = implode(
+                ',',
+                $formData['magento_orders_settings']['tax']['excluded_countries']
             );
         }
 
@@ -689,21 +697,16 @@ HTML
                 ],
                 'value'   => $formData['magento_orders_settings']['tax']['mode'],
                 'tooltip' => $this->__(
-                    'This Section allows you to choose Tax Settings for Magento Order:
-                    <ul class="list">
-                        <li><b>Amazon</b> - Magento Order(s) uses Tax Settings from Amazon Listing(s).</li>
-                        <li><b>Magento</b> - Magento Order(s) uses Magento Tax Settings.</li>
-                        <li><b>Amazon & Magento</b> - if there are Tax Settings in Amazon Order,
-                        they are used in Magento Order(s), otherwise, Magento Tax Settings are used.</li>
-                        <li><b>None</b> - Amazon and Magento Tax Settings are ignored.</li>
-                    </ul>'
+                    'Choose where the tax settings for your Magento Order will be taken from. See
+                    <a href="%url%" target="_blank">this article</a> for more details.',
+                    $this->supportHelper->getDocumentationArticleUrl('x/r4VcBQ')
                 )
             ]
         );
 
         $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->addData(
             [
-                'label'   => $this->__('Show States'),
+                'label'   => $this->__('Select states'),
                 'onclick' => 'AmazonAccountObj.openExcludedStatesPopup()',
                 'class'   => 'action-primary',
                 'style'   => 'margin-left: 70px;',
@@ -717,19 +720,17 @@ HTML
             [
                 'container_id'       => 'magento_orders_tax_amazon_collects_container',
                 'name'               => 'magento_orders_settings[tax][amazon_collects]',
-                'label'              => $this->__('Amazon Collects Tax'),
+                'label'              => $this->__('Exclude tax collected by Amazon'),
                 'values'             => [
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
                 'value'              => $formData['magento_orders_settings']['tax']['amazon_collects'],
                 'after_element_html' => $this->getTooltipHtml(
-                        $this->__(
-                            'Please specify if Amazon is responsible for tax calculation/collection in certain States.
-                        More information you can find <a href="%url%" target="_blank">here</a>.',
-                            'https://www.amazon.com/gp/help/customer/display.html?nodeId=202211260'
-                        )
-                    ) . $button->toHtml()
+                    $this->__(
+                        "Tax won't be included in orders shipped to the selected states."
+                    )
+                ) . $button->toHtml()
             ]
         );
 
@@ -739,7 +740,7 @@ HTML
             [
                 'container_id'       => 'magento_orders_tax_amazon_collects_for_uk_shipment_container',
                 'name'               => 'magento_orders_settings[tax][amazon_collect_for_uk]',
-                'label'              => $this->__('Skip Tax in UK Orders'),
+                'label'              => $this->__('Exclude UK VAT collected by Amazon'),
                 'values'             => [
                     Account::SKIP_TAX_FOR_UK_SHIPMENT_NONE               => $this->__('None'),
                     Account::SKIP_TAX_FOR_UK_SHIPMENT                    => $this->__('All orders with UK shipments'),
@@ -750,11 +751,11 @@ HTML
                 'value'              => $formData['magento_orders_settings']['tax']['amazon_collect_for_uk'],
                 'after_element_html' => $this->getTooltipHtml(
                     $this->__(
-                        'The option allows skipping tax for orders with UK shipment.</br></br>
-<strong>None</strong> - the tax won\'t be skipped and will be displayed in all orders.</br></br>
-<strong>All orders with UK shipments</strong> - M2E Pro will skip tax for all orders with UK shipments.</br></br>
-<strong>Orders under 135GBP price</strong> -
-M2E Pro will skip tax only for orders with a total price of all products under 135GBP price.'
+                        "VAT won't be included in orders with UK shipment. Find more info "
+                        . '<a href="%url%" target="_blank">here</a>.',
+                        $this->supportHelper->getDocumentationArticleUrl(
+                            'x/r4VcBQ#TaxCalculationSettings-SkipTaxinUKOrders'
+                        )
                     )
                 )
             ]
@@ -766,6 +767,46 @@ M2E Pro will skip tax only for orders with a total price of all products under 1
             [
                 'name'  => 'magento_orders_settings[tax][excluded_states]',
                 'value' => $formData['magento_orders_settings']['tax']['excluded_states'],
+            ]
+        );
+
+        $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->addData(
+            [
+                'label'   => $this->__('Select countries'),
+                'onclick' => 'AmazonAccountObj.openExcludedCountriesPopup()',
+                'class'   => 'action-primary',
+                'style'   => 'margin-left: 70px;',
+                'id'      => 'show_excluded_countries_button'
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_tax_amazon_collects_for_eea_shipment',
+            'select',
+            [
+                'container_id'       => 'magento_orders_tax_amazon_collects_for_eea_shipment_container',
+                'name'               => 'magento_orders_settings[tax][amazon_collect_for_eea]',
+                'label'              => $this->__('Exclude EEA VAT collected by Amazon'),
+                'style'              => 'max-width: 240px;',
+                'values'             => [
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
+                ],
+                'value'              => $formData['magento_orders_settings']['tax']['amazon_collect_for_eea'],
+                'after_element_html' => $this->getTooltipHtml(
+                    $this->__(
+                        "VAT won't be included in orders shipped to the selected countries."
+                    )
+                ) . $button->toHtml()
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_tax_excluded_countries',
+            'hidden',
+            [
+                'name'  => 'magento_orders_settings[tax][excluded_countries]',
+                'value' => $formData['magento_orders_settings']['tax']['excluded_countries'],
             ]
         );
 
@@ -864,14 +905,15 @@ in the Shipping Address of your Magento Order.'
                 'No Customer entry is found for specified ID.'                             => $this->__(
                     'No Customer entry is found for specified ID.'
                 ),
-                'Select States where Amazon is responsible for tax calculation/collection' => $this->__(
-                    'Select States where Amazon is responsible for tax calculation/collection'
+                'Select states where tax will be excluded' => $this->__(
+                    'Select states where tax will be excluded'
+                ),
+                'Select countries where VAT will be excluded' => $this->__(
+                    'Select countries where VAT will be excluded'
                 ),
             ]
         );
 
         return parent::_prepareForm();
     }
-
-    //########################################
 }

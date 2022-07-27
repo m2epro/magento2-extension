@@ -8,14 +8,21 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\Other\View;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Listing\Other\View\Header
- */
 class Header extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
+    /** @var string */
     protected $_template = 'listing/other/view/header.phtml';
+    /** @var \Ess\M2ePro\Helper\Magento\Store */
+    private $magentoStoreHelper;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        $this->magentoStoreHelper = $magentoStoreHelper;
+        parent::__construct($context, $data);
+    }
 
     public function getAccountTitle()
     {
@@ -37,12 +44,10 @@ class Header extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
             $relatedStoreId = $this->getAccount()->getRelatedStoreId();
         }
 
-        $breadcrumb = $this->getHelper('Magento\Store')->getStorePath($relatedStoreId);
+        $breadcrumb = $this->magentoStoreHelper->getStorePath($relatedStoreId);
 
         return $this->cutLongLines($breadcrumb);
     }
-
-    //########################################
 
     private function cutLongLines($line)
     {
@@ -53,8 +58,6 @@ class Header extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         return substr($line, 0, 50) . '...';
     }
 
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Account
      */
@@ -63,8 +66,6 @@ class Header extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         return $this->getData('account');
     }
 
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Marketplace
      */
@@ -72,6 +73,4 @@ class Header extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     {
         return $this->getData('marketplace');
     }
-
-    //########################################
 }

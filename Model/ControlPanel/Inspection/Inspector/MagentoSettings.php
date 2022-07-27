@@ -9,23 +9,18 @@ class MagentoSettings implements InspectorInterface
     /** @var \Ess\M2ePro\Helper\Client\Cache */
     private $cacheHelper;
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
     /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory */
     private $issueFactory;
 
     public function __construct(
         \Ess\M2ePro\Helper\Client\Cache $cacheHelper,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory $issueFactory
     ) {
         $this->cacheHelper = $cacheHelper;
-        $this->dataHelper = $dataHelper;
         $this->issueFactory = $issueFactory;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function process()
     {
@@ -37,10 +32,10 @@ class MagentoSettings implements InspectorInterface
             );
         }
 
-        if ($this->dataHelper->getDefaultTimeZone() !== 'UTC') {
+        if (\Ess\M2ePro\Helper\Date::getTimezone()->getDefaultTimezone() !== 'UTC') {
             $issues[] = $this->issueFactory->create(
                 'Non-default Magento timezone set.',
-                $this->dataHelper->getDefaultTimeZone()
+                \Ess\M2ePro\Helper\Date::getTimezone()->getDefaultTimezone()
             );
         }
 
@@ -64,6 +59,4 @@ class MagentoSettings implements InspectorInterface
 
         return $issues;
     }
-
-    //########################################
 }

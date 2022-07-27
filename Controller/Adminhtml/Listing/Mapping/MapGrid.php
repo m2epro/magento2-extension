@@ -8,12 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Listing\Mapping;
 
-use Ess\M2ePro\Controller\Adminhtml\Listing;
-
-/**
- * Class  \Ess\M2ePro\Controller\Adminhtml\Listing\Mapping\MapGrid
- */
-class MapGrid extends Listing
+class MapGrid extends \Ess\M2ePro\Controller\Adminhtml\Listing
 {
     public function execute()
     {
@@ -33,8 +28,6 @@ class MapGrid extends Listing
         return $this->getResult();
     }
 
-    //########################################
-
     protected function getMovingHandlerJs()
     {
         if ($this->getRequest()->getParam('component_mode') == \Ess\M2ePro\Helper\Component\Ebay::NICK) {
@@ -43,6 +36,4 @@ class MapGrid extends Listing
 
         return 'ListingGridObj.mappingHandler';
     }
-
-    //########################################
 }

@@ -12,12 +12,17 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $data);
     }
 
@@ -65,7 +70,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
 
     public function getGridHtml()
     {
-        $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
+        $listing = $this->globalDataHelper->getValue('listing_for_products_add');
 
         $viewHeaderBlock = $this->getLayout()->createBlock(
             \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
@@ -132,6 +137,4 @@ JS
                 parent::_toHtml() .
             '</div>';
     }
-
-    //########################################
 }

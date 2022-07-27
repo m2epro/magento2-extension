@@ -452,7 +452,7 @@ abstract class Settings extends Listing
     {
         $key = '';
 
-        switch (strtolower($this->getSessionValue('mode'))) {
+        switch ((string)strtolower($this->getSessionValue('mode'))) {
             case CategoryTemplateBlock::MODE_SAME:
                 $key = 'mode_same';
                 break;

@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\GetListingProductBids
- */
 class GetListingProductBids extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     public function execute()
@@ -51,6 +48,4 @@ class GetListingProductBids extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listin
         $this->setAjaxContent($grid);
         return $this->getResult();
     }
-
-    //########################################
 }

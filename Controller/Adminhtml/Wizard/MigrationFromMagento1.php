@@ -14,8 +14,10 @@ abstract class MigrationFromMagento1 extends Wizard
 {
     /** @var \Ess\M2ePro\Helper\View\Ebay */
     protected $ebayViewHelper;
+
     /** @var \Ess\M2ePro\Helper\View\Amazon */
     protected $amazonViewHelper;
+
     /** @var \Ess\M2ePro\Helper\View\Walmart */
     protected $walmartViewHelper;
 
@@ -27,6 +29,7 @@ abstract class MigrationFromMagento1 extends Wizard
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($nameBuilder, $context);
+
         $this->ebayViewHelper = $ebayViewHelper;
         $this->amazonViewHelper = $amazonViewHelper;
         $this->walmartViewHelper = $walmartViewHelper;
@@ -102,11 +105,9 @@ abstract class MigrationFromMagento1 extends Wizard
 
     protected function createCongratulationBlock()
     {
-        return $this->createBlock(
-            $this->nameBuilder->buildClassName(['Wizard', $this->getNick(), 'Installation', 'Congratulation'])
+        return $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\Congratulation::class
         )
         ->setData(['nick' => $this->getNick()]);
     }
-
-    //########################################
 }

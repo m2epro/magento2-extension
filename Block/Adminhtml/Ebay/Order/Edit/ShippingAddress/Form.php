@@ -14,22 +14,30 @@ class Form extends AbstractForm
 {
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
         array $data = []
     ) {
         parent::__construct($context, $registry, $formFactory, $data);
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->magentoHelper = $magentoHelper;
     }
 
     protected function _prepareForm()
     {
         /** @var \Ess\M2ePro\Model\Ebay\Order $order */
-        $order = $this->getHelper('Data\GlobalData')->getValue('order')->getChildObject();
+        $order = $this->globalDataHelper->getValue('order')->getChildObject();
 
         $buyerEmail = $order->getData('buyer_email');
         if (stripos($buyerEmail, 'Invalid Request') !== false) {
@@ -139,7 +147,7 @@ class Form extends AbstractForm
             [
                 'name'     => 'country_code',
                 'label'    => $this->__('Country'),
-                'values'   => $this->getHelper('Magento')->getCountries(),
+                'values'   => $this->magentoHelper->getCountries(),
                 'value'    => $address['country_code'],
                 'required' => true,
             ]

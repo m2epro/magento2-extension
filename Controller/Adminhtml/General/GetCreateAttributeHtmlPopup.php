@@ -8,15 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\General;
 
-use Ess\M2ePro\Controller\Adminhtml\General;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\General\GetCreateAttributeHtmlPopup
- */
-class GetCreateAttributeHtmlPopup extends General
+class GetCreateAttributeHtmlPopup extends \Ess\M2ePro\Controller\Adminhtml\General
 {
-    //########################################
-
     public function execute()
     {
         $post = $this->getRequest()->getPostValue();
@@ -36,6 +29,4 @@ class GetCreateAttributeHtmlPopup extends General
         $this->setAjaxContent($block);
         return $this->getResult();
     }
-
-    //########################################
 }

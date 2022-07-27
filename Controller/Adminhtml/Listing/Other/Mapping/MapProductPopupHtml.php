@@ -2,15 +2,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping;
 
-use Ess\M2ePro\Controller\Adminhtml\Listing;
-
-/**
- * Class  \Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping\MapProductPopupHtml
- */
-class MapProductPopupHtml extends Listing
+class MapProductPopupHtml extends \Ess\M2ePro\Controller\Adminhtml\Listing
 {
-    //########################################
-
     public function execute()
     {
         $block = $this->getLayout()->createBlock(
@@ -28,6 +21,4 @@ class MapProductPopupHtml extends Listing
         $this->setAjaxContent($block);
         return $this->getResult();
     }
-
-    //########################################
 }

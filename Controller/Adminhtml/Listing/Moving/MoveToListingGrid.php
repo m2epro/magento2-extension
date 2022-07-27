@@ -8,28 +8,38 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Listing\Moving;
 
-use Ess\M2ePro\Controller\Adminhtml\Listing;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Listing\Moving\MoveToListingGrid
- */
-class MoveToListingGrid extends Listing
+class MoveToListingGrid extends \Ess\M2ePro\Controller\Adminhtml\Listing
 {
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalData,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+
+        $this->globalData = $globalData;
+    }
+
     public function execute()
     {
-        $this->getHelper('Data\GlobalData')->setValue(
+        $this->globalData->setValue(
             'componentMode',
             $this->getRequest()->getParam('componentMode')
         );
-        $this->getHelper('Data\GlobalData')->setValue(
+
+        $this->globalData->setValue(
             'accountId',
             $this->getRequest()->getParam('accountId')
         );
-        $this->getHelper('Data\GlobalData')->setValue(
+
+        $this->globalData->setValue(
             'marketplaceId',
             $this->getRequest()->getParam('marketplaceId')
         );
-        $this->getHelper('Data\GlobalData')->setValue(
+
+        $this->globalData->setValue(
             'ignoreListings',
             $this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('ignoreListings'))
         );

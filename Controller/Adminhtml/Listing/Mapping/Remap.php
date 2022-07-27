@@ -8,24 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Listing\Mapping;
 
-use Ess\M2ePro\Controller\Adminhtml\Context;
-use Ess\M2ePro\Controller\Adminhtml\Listing;
-
-/**
- * Class  \Ess\M2ePro\Controller\Adminhtml\Listing\Mapping\Remap
- */
-class Remap extends Listing
+class Remap extends \Ess\M2ePro\Controller\Adminhtml\Listing
 {
-    protected $magentoProductCollectionFactory;
-
-    public function __construct(
-        \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
-        Context $context
-    ) {
-        parent::__construct($context);
-        $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
-    }
-
     public function execute()
     {
         $componentMode = $this->getRequest()->getParam('component_mode');
@@ -102,6 +86,4 @@ class Remap extends Listing
 
         return $this->getResult();
     }
-
-    //########################################
 }

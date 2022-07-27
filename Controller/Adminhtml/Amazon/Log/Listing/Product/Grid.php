@@ -11,15 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing\Product;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Block\Adminhtml\Log\Listing\View;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing\Product\Grid
- */
 class Grid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing
 {
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $helperDataSession;
-
-    //########################################
 
     protected $nameBuilder;
 
@@ -86,18 +81,16 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Listing
             $sessionViewMode
         );
 
-        $gridClass = $this->nameBuilder->buildClassName([
-            \Ess\M2ePro\Helper\View\Amazon::NICK,
-            'Log_Listing_Product_View',
-            $viewMode,
-            'Grid'
-        ]);
+        if ($viewMode === View\Switcher::VIEW_MODE_GROUPED) {
+            $gridClass = \Ess\M2ePro\Block\Adminhtml\Amazon\Log\Listing\Product\View\Grouped\Grid::class;
+        }
+        else {
+            $gridClass = \Ess\M2ePro\Block\Adminhtml\Amazon\Log\Listing\Product\View\Separated\Grid::class;
+        }
 
-        $block = $this->createBlock($gridClass);
+        $block = $this->getLayout()->createBlock($gridClass);
         $this->setAjaxContent($block->toHtml());
 
         return $this->getResult();
     }
-
-    //########################################
 }

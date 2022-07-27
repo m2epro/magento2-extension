@@ -8,14 +8,22 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Listing;
 
-use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Listing\Edit
- */
 class Edit extends Listing
 {
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalData;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalData,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+
+        $this->globalData = $globalData;
+    }
+
     public function execute()
     {
         $params = $this->getRequest()->getParams();
@@ -32,13 +40,12 @@ class Edit extends Listing
             return $this->getResult();
         }
 
-        $global = $this->getHelper('Data\GlobalData');
-
-        $global->setValue('edit_listing', $listing);
+        $this->globalData->setValue('edit_listing', $listing);
 
         $this->setAjaxContent(
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\Edit::class)
         );
+
         return $this->getResult();
     }
 }

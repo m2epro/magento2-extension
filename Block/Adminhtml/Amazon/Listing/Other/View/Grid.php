@@ -22,6 +22,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    private $amazonHelper;
+
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Repricing */
+    private $amazonRepricingHelper;
+
     public function __construct(
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -29,12 +35,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
+        \Ess\M2ePro\Helper\Component\Amazon\Repricing $amazonRepricingHelper,
         array $data = []
     ) {
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         $this->amazonFactory = $amazonFactory;
         $this->dataHelper = $dataHelper;
+        $this->amazonHelper = $amazonHelper;
+        $this->amazonRepricingHelper = $amazonRepricingHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -55,8 +65,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setUseAjax(true);
         // ---------------------------------------
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -153,7 +161,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $account = $this->amazonFactory->getObjectLoaded('Account', $this->getRequest()->getParam('account'));
 
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
+        if ($this->amazonRepricingHelper->isEnabled() &&
             $account->getChildObject()->isRepricing()) {
             $priceColumn['filter'] = \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price::class;
         }
@@ -222,8 +230,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return parent::_prepareLayout();
     }
 
-    //########################################
-
     public function callbackColumnProductId($value, $row, $column, $isExport)
     {
         if (empty($value)) {
@@ -283,7 +289,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnGeneralId($value, $row, $column, $isExport)
     {
-        $url = $this->getHelper('Component\Amazon')
+        $url = $this->amazonHelper
             ->getItemUrl($row->getChildObject()->getData('general_id'), $row->getData('marketplace_id'));
         return '<a href="'.$url.'" target="_blank">'.$row->getChildObject()->getData('general_id').'</a>';
     }
@@ -330,7 +336,7 @@ HTML;
         $html ='';
         $value = $row->getChildObject()->getData('online_price');
 
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
+        if ($this->amazonRepricingHelper->isEnabled() &&
             (int)$row->getChildObject()->getData('is_repricing') == 1) {
             $icon = 'repricing-enabled';
             $text = $this->__(
@@ -409,8 +415,6 @@ HTML;
 
         return $value;
     }
-
-    //########################################
 
     protected function callbackFilterProductId($collection, $column)
     {
@@ -512,7 +516,7 @@ HTML;
             $where .= 'online_price <= ' . (float)$value['to'];
         }
 
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
+        if ($this->amazonRepricingHelper->isEnabled() &&
             (isset($value['is_repricing']) && $value['is_repricing'] !== '')) {
             if (!empty($where)) {
                 $where = '(' . $where . ') OR ';
@@ -522,8 +526,6 @@ HTML;
 
         $collection->getSelect()->where($where);
     }
-
-    //########################################
 
     protected function _beforeToHtml()
     {
@@ -540,8 +542,6 @@ JS
         return parent::_beforeToHtml();
     }
 
-    //########################################
-
     public function getGridUrl()
     {
         return $this->getUrl('*/amazon_listing_other/grid', ['_current' => true]);
@@ -551,6 +551,4 @@ JS
     {
         return false;
     }
-
-    //########################################
 }

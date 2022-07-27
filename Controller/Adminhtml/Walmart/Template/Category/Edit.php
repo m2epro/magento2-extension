@@ -10,12 +10,30 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category\Edit
- */
 class Edit extends Category
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalData;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    /** @var \Ess\M2ePro\Helper\Component\Walmart */
+    private $walmartHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalData,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->globalData = $globalData;
+        $this->dataHelper = $dataHelper;
+        $this->walmartHelper = $walmartHelper;
+    }
 
     public function execute()
     {
@@ -27,14 +45,14 @@ class Edit extends Category
             $templateModel->load($id);
         }
 
-        $marketplaces = $this->getHelper('Component\Walmart')->getMarketplacesAvailableForApiCreation();
+        $marketplaces = $this->walmartHelper->getMarketplacesAvailableForApiCreation();
         if ($marketplaces->getSize() <= 0) {
             $message = 'You should select and update at least one Walmart Marketplace.';
             $this->messageManager->addError($this->__($message));
             return $this->_redirect('*/*/index');
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('tmp_template', $templateModel);
+        $this->globalData->setValue('tmp_template', $templateModel);
 
         $this->addContent(
             $this->getLayout()
@@ -43,7 +61,7 @@ class Edit extends Category
 
         if ($templateModel->getId()) {
             $headerText = $this->__("Edit Category Policy");
-            $headerText .= ' "'.$this->getHelper('Data')->escapeHtml(
+            $headerText .= ' "'.$this->dataHelper->escapeHtml(
                 $templateModel->getTitle()
             ).'"';
         } else {
@@ -55,6 +73,4 @@ class Edit extends Category
 
         return $this->getResultPage();
     }
-
-    //########################################
 }

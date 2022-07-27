@@ -22,16 +22,21 @@ class Data extends AbstractForm
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->dataHelper = $dataHelper;
+        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -1647,7 +1652,7 @@ JS
 
     public function isEdit()
     {
-        $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_description');
+        $template = $this->globalDataHelper->getValue('ebay_template_description');
 
         if ($template === null || $template->getId() === null) {
             return false;
@@ -1662,7 +1667,7 @@ JS
             return isset($this->_data['custom_title']) ? $this->_data['custom_title'] : '';
         }
 
-        $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_description');
+        $template = $this->globalDataHelper->getValue('ebay_template_description');
 
         if (!$this->isEdit()) {
             return '';
@@ -1677,7 +1682,7 @@ JS
             return [];
         }
 
-        $template = $this->getHelper('Data\GlobalData')->getValue('ebay_template_description');
+        $template = $this->globalDataHelper->getValue('ebay_template_description');
 
         $data = array_merge($template->getData(), $template->getChildObject()->getData());
 

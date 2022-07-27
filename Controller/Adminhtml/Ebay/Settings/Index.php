@@ -8,19 +8,12 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Settings;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings\Index
- */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
 {
-    //########################################
-
     protected function getLayoutType()
     {
         return self::LAYOUT_TWO_COLUMNS;
     }
-
-    //########################################
 
     public function execute()
     {
@@ -56,6 +49,4 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
 
         return $this->getResult();
     }
-
-    //########################################
 }
