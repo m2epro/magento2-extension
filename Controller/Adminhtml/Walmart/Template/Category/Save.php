@@ -19,7 +19,7 @@ class Save extends Category
     private $dbStructureHelper;
 
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private \Ess\M2ePro\Helper\Data\GlobalData $globalData;
+    private $globalData;
 
     public function __construct(
         \Ess\M2ePro\Helper\Data $dataHelper,

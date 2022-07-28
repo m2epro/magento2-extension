@@ -10,7 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Order;
 
 class ViewLogGrid extends \Ess\M2ePro\Controller\Adminhtml\Order
 {
-    private \Ess\M2ePro\Helper\Data\GlobalData $globalData;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalData;
 
     public function __construct(
         \Ess\M2ePro\Helper\Data\GlobalData $globalData,
