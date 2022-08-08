@@ -38,7 +38,6 @@ define([
                     generated: true,
                     style: 'position: absolute;' +
                     'width: ' + width + 'px;' +
-                    'left: ' + currentElement.position().left + 'px;' +
                     'z-index: 300'
                 })
                 .addClass(this.settings.errorClass)

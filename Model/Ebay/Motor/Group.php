@@ -47,8 +47,6 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Motor\Group::class);
     }
 
-    //########################################
-
     public function delete()
     {
         /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors $ebayMotorsHelper */
@@ -69,8 +67,6 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return true;
     }
 
-    //########################################
-
     /**
      * @return int
      */
@@ -79,8 +75,6 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return (int)$this->getData('title');
     }
 
-    // ---------------------------------------
-
     /**
      * @return int
      */
@@ -88,8 +82,6 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     {
         return (int)$this->getData('mode');
     }
-
-    // ---------------------------------------
 
     /**
      * @return bool
@@ -107,8 +99,6 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return $this->getMode() == self::MODE_FILTER;
     }
 
-    // ---------------------------------------
-
     /**
      * @return int
      */
@@ -116,8 +106,6 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     {
         return (int)$this->getData('type');
     }
-
-    // ---------------------------------------
 
     /**
      * @return bool
@@ -129,6 +117,7 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_UK,
             \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_DE,
             \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_AU,
+            \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_IT
         ]);
     }
 
@@ -140,14 +129,10 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return $this->getType() == \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE;
     }
 
-    //########################################
-
     public function getItemsData()
     {
         return $this->getData('items_data');
     }
-
-    //########################################
 
     public function getItems()
     {
@@ -168,8 +153,6 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
         return $connection->fetchCol($select);
     }
-
-    //########################################
 
     /**
      * @param array $itemsIds
@@ -251,12 +234,8 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         $ebayMotorsHelper->resetOnlinePartsData($associatedProductsIds);
     }
 
-    //########################################
-
     public function getNote()
     {
         return $this->getData('note');
     }
-
-    //########################################
 }

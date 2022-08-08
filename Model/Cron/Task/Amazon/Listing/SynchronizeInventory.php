@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -8,20 +8,18 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Listing;
 
-use \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\SynchronizeInventory\ProcessingRunner as ProcessingRunner;
+use Ess\M2ePro\Model\Cron\Task\Amazon\Listing\SynchronizeInventory\ProcessingRunner;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\SynchronizeInventory
- */
 class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/listing/synchronize_inventory';
+    public const NICK = 'amazon/listing/synchronize_inventory';
 
-    const DEFAULT_INTERVAL_PER_ACCOUNT = 86400;
+    private const DEFAULT_INTERVAL_PER_ACCOUNT = 86400;
 
-    //####################################
-
-    public function isPossibleToRun()
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isPossibleToRun(): bool
     {
         if ($this->getHelper('Server\Maintenance')->isNow()) {
             return false;
@@ -30,12 +28,10 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         return parent::isPossibleToRun();
     }
 
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Synchronization\Log
      */
-    protected function getSynchronizationLog()
+    protected function getSynchronizationLog(): \Ess\M2ePro\Model\Synchronization\Log
     {
         $synchronizationLog = parent::getSynchronizationLog();
 
@@ -45,9 +41,8 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         return $synchronizationLog;
     }
 
-    //########################################
-
     /**
+     * @return void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
      */
@@ -70,24 +65,22 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         );
 
         try {
-
             $params = [];
 
-            if ($account->getChildObject()->getOtherListingsSynchronization() &&
-                !$this->isFullItemsDataAlreadyReceived($account)
+            if (
+                $account->getChildObject()->getOtherListingsSynchronization()
+                && !$this->isFullItemsDataAlreadyReceived($account)
             ) {
                 $params['full_items_data'] = true;
 
-                $additionalData = (array)$this->getHelper('Data')->jsonDecode($account->getAdditionalData());
-                $additionalData['is_amazon_other_listings_full_items_data_already_received'] = true;
-                $account->setSettings('additional_data', $additionalData)->save();
+                $this->setFullItemsDataAlreadyReceived($account);
             }
 
             /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getCustomConnector(
                 'Cron_Task_Amazon_Listing_SynchronizeInventory_Requester',
-                [],
+                $params,
                 $account
             );
             $dispatcherObject->process($connectorObj);
@@ -103,26 +96,21 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->getOperationHistory()->saveTimePoint(__METHOD__ . 'process' . $account->getId());
     }
 
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Account
      * @throws \Ess\M2ePro\Model\Exception\Logic
-     * @throws \Exception
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    protected function getAccountForProcess()
+    private function getAccountForProcess(): \Ess\M2ePro\Model\Account
     {
-        $interval = $this->getConfigValue('interval_per_account') !== null
-            ? $this->getConfigValue('interval_per_account')
-            : self::DEFAULT_INTERVAL_PER_ACCOUNT;
+        $interval = $this->getConfigValue('interval_per_account') ?? self::DEFAULT_INTERVAL_PER_ACCOUNT;
 
         $date = new \DateTime('now', new \DateTimeZone('UTC'));
         $date->modify('-' . $interval . ' seconds');
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $collection */
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Account')
-            ->getCollection();
+                                          ->getCollection();
         $collection->getSelect()->joinLeft(
             ['l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
             'main_table.id = l.account_id',
@@ -139,6 +127,7 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection->getSelect()->group('main_table.id');
         $collection->getSelect()->order(new \Zend_Db_Expr('second_table.inventory_last_synchronization ASC'));
 
+        /** @var \Ess\M2ePro\Model\Account */
         return $collection->getFirstItem();
     }
 
@@ -174,12 +163,23 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function isFullItemsDataAlreadyReceived(\Ess\M2ePro\Model\Account $account)
+    private function isFullItemsDataAlreadyReceived(\Ess\M2ePro\Model\Account $account): bool
     {
-        $additionalData = (array)$this->getHelper('Data')->jsonDecode($account->getAdditionalData());
+        $additionalData = (array)\Ess\M2ePro\Helper\Json::decode($account->getAdditionalData());
 
         return !empty($additionalData['is_amazon_other_listings_full_items_data_already_received']);
     }
 
-    //########################################
+    /**
+     * @param \Ess\M2ePro\Model\Account $account
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function setFullItemsDataAlreadyReceived(\Ess\M2ePro\Model\Account $account): void
+    {
+        $additionalData = (array)\Ess\M2ePro\Helper\Json::decode($account->getAdditionalData());
+        $additionalData['is_amazon_other_listings_full_items_data_already_received'] = true;
+        $account->setSettings('additional_data', $additionalData)
+                ->save();
+    }
 }

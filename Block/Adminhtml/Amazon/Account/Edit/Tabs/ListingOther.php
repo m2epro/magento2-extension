@@ -20,13 +20,10 @@ class ListingOther extends AbstractForm
     private $supportHelper;
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
 
     /**
      * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
      * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
-     * @param \Ess\M2ePro\Helper\Data $dataHelper
      * @param \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper
      * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
      * @param \Magento\Framework\Registry $registry
@@ -36,7 +33,6 @@ class ListingOther extends AbstractForm
     public function __construct(
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
@@ -46,7 +42,6 @@ class ListingOther extends AbstractForm
         $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->supportHelper = $supportHelper;
         $this->globalDataHelper = $globalDataHelper;
-        $this->dataHelper = $dataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -68,7 +63,7 @@ class ListingOther extends AbstractForm
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         if (isset($formData['other_listings_mapping_settings'])) {
-            $formData['other_listings_mapping_settings'] = (array)$this->dataHelper->jsonDecode(
+            $formData['other_listings_mapping_settings'] = (array)\Ess\M2ePro\Helper\Json::decode(
                 $formData['other_listings_mapping_settings']
             );
         }

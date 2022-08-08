@@ -94,7 +94,7 @@ class Categories extends AbstractModel
     /**
      * @return array
      */
-    public function getItemSpecificsData()
+    public function getItemSpecificsData(): array
     {
         $data = [];
 
@@ -109,13 +109,13 @@ class Categories extends AbstractModel
             $tempAttributeValues = $specific->getSource($this->getMagentoProduct())
                 ->getValues();
 
-            if (!$this->processNotFoundAttributes('Specifics')) {
+            if (empty($tempAttributeValues) || !$this->processNotFoundAttributes('Specifics')) {
                 continue;
             }
 
             $values = [];
             foreach ($tempAttributeValues as $tempAttributeValue) {
-                if ($tempAttributeValue == '--') {
+                if ($tempAttributeValue === '--') {
                     continue;
                 }
 

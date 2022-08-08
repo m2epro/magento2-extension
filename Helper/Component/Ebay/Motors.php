@@ -15,11 +15,13 @@ class Motors
     public const TYPE_EPID_UK = 3;
     public const TYPE_EPID_DE = 4;
     public const TYPE_EPID_AU = 5;
+    public const TYPE_EPID_IT = 6;
 
     public const EPID_SCOPE_MOTORS = 1;
     public const EPID_SCOPE_UK = 2;
     public const EPID_SCOPE_DE = 3;
     public const EPID_SCOPE_AU = 4;
+    public const EPID_SCOPE_IT = 5;
 
     public const PRODUCT_TYPE_VEHICLE = 0;
     public const PRODUCT_TYPE_MOTORCYCLE = 1;
@@ -69,8 +71,6 @@ class Motors
         $this->dbStructure = $dbStructure;
     }
 
-    // ----------------------------------------
-
     public function getAttribute($type)
     {
         switch ($type) {
@@ -88,6 +88,9 @@ class Motors
 
             case self::TYPE_EPID_AU:
                 return $this->componentEbayConfiguration->getAuEpidsAttribute();
+
+            case self::TYPE_EPID_IT:
+                return $this->componentEbayConfiguration->getItEpidsAttribute();
         }
 
         return '';
@@ -189,8 +192,6 @@ class Motors
         return implode(',', $strs);
     }
 
-    // ---------------------------------------
-
     public function buildItemsAttributeValue(array $items)
     {
         if (empty($items)) {
@@ -241,16 +242,14 @@ class Motors
         return implode(',', $values);
     }
 
-    //########################################
-
     public function isTypeBasedOnEpids($type)
     {
-        if (
-            in_array($type, [
+        if (in_array($type, [
                 self::TYPE_EPID_MOTOR,
                 self::TYPE_EPID_UK,
                 self::TYPE_EPID_DE,
                 self::TYPE_EPID_AU,
+                self::TYPE_EPID_IT,
             ])
         ) {
             return true;
@@ -263,8 +262,6 @@ class Motors
     {
         return $type == self::TYPE_KTYPE;
     }
-
-    //########################################
 
     public function getDictionaryTable($type)
     {
@@ -296,8 +293,6 @@ class Motors
         return '';
     }
 
-    //########################################
-
     public function getEpidsScopeByType($type)
     {
         switch ($type) {
@@ -312,6 +307,9 @@ class Motors
 
             case self::TYPE_EPID_AU:
                 return self::EPID_SCOPE_AU;
+
+            case self::TYPE_EPID_IT:
+                return self::EPID_SCOPE_IT;
 
             default:
                 return null;
@@ -333,12 +331,13 @@ class Motors
             case \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_AU:
                 return self::TYPE_EPID_AU;
 
+            case \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_IT:
+                return self::TYPE_EPID_IT;
+
             default:
                 return null;
         }
     }
-
-    //########################################
 
     /**
      * @param int $type
@@ -404,8 +403,6 @@ class Motors
 
         return (bool)$marketplaceCollection->getSize();
     }
-
-    //########################################
 
     public function getGroupsAssociatedWithFilter($filterId)
     {
@@ -496,6 +493,7 @@ class Motors
             'uk_epids_attribute',
             'de_epids_attribute',
             'au_epids_attribute',
+            'it_epids_attribute',
             'ktypes_attribute',
         ];
 
@@ -510,6 +508,4 @@ class Motors
 
         return $result;
     }
-
-    //########################################
 }

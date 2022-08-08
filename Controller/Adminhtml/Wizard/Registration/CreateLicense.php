@@ -129,7 +129,7 @@ class CreateLicense extends \Ess\M2ePro\Controller\Adminhtml\Wizard\Registration
 
         try {
             $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
-                $this->modelFactory->getObject('Servicing_Task_License')->getPublicNick()
+                \Ess\M2ePro\Model\Servicing\Task\License::NAME
             );
         } catch (\Exception $e) {
         }

@@ -15,22 +15,31 @@ class Attribute extends AbstractHelper
 
     /** @var \Ess\M2ePro\Model\Factory */
     private $modelFactory;
+
     /** @var \Magento\Catalog\Model\ResourceModel\Product */
     private $productResource;
+
     /** @var \Magento\Framework\App\ResourceConnection */
     private $resourceConnection;
+
     /** @var \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory */
     private $attributeColFactory;
+
     /** @var \Magento\Eav\Model\ResourceModel\Entity\Attribute\CollectionFactory */
     private $eavEntityAttributeColFactory;
+
     /** @var \Magento\Eav\Model\Config */
     private $eavConfig;
+
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
+
     /** @var \Ess\M2ePro\Helper\Magento\AttributeSet */
     private $magentoAttributeSetHelper;
+
     /** @var \Ess\M2ePro\Helper\Magento */
     private $magentoHelper;
+
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $dbStructureHelper;
 
@@ -402,6 +411,17 @@ class Attribute extends AbstractHelper
         }
 
         return $resultAttributes;
+    }
+
+    public function filterAllAttrByInputTypes(
+        array $frontendInputTypes = [],
+        array $backendInputTypes = []
+    ) {
+        return $this->filterByInputTypes(
+            $this->getAll(),
+            $frontendInputTypes,
+            $backendInputTypes
+        );
     }
 
     //########################################

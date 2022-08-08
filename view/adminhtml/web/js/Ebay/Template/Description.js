@@ -100,16 +100,6 @@ define([
                 .observe('change', EbayTemplateDescriptionObj.variation_images_change)
                 .simulate('change');
 
-            $(
-                'product_details_ean',
-                'product_details_upc',
-                'product_details_epid',
-                'product_details_isbn'
-            ).each(function(element) {
-                element.observe('change', EbayTemplateDescriptionObj.product_details_specification_visibility_change)
-                    .simulate('change');
-            });
-
             $('product_details_brand')
                 .observe('change', EbayTemplateDescriptionObj.product_details_brand_change)
                 .simulate('change');
@@ -413,24 +403,23 @@ define([
             }.bind(this));
         },
 
-        product_details_specification_visibility_change: function() {
+        product_details_brand_change: function() {
             var self = EbayTemplateDescriptionObj,
                 modeNone = M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::PRODUCT_DETAILS_MODE_NONE'),
                 modeDoesNotApply = M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::PRODUCT_DETAILS_MODE_DOES_NOT_APPLY');
 
-            var isNotAttributeMode = function(element) {
-                return element.value == modeNone || element.value == modeDoesNotApply;
-            };
-
-            if ($('product_details_ean', 'product_details_upc', 'product_details_isbn', 'product_details_brand')
-                .every(isNotAttributeMode) && $('product_details_epid').value == modeNone
-            ) {
+            if (this.value == modeNone || this.value == modeDoesNotApply) {
+                $('product_details_mpn_tr').hide();
+                $('product_details_mpn').selectedIndex = 0;
                 $('product_details_specification_separator').hide();
                 $$('.product-details-specification').each(function(element) {
                     element.hide();
                     element.down('.select').down().selectedIndex = 1;
                 });
             } else {
+                $('product_details_mpn_tr').show();
+                $$('.product-details-specification').invoke('show');
+                self.updateHiddenValue(this, $(this.id + '_attribute'));
                 $('product_details_specification_separator').show();
                 var hiddenElement = $(this.id + '_attribute');
                 if (!hiddenElement) {
@@ -439,22 +428,6 @@ define([
                 $$('.product-details-specification').invoke('show');
                 self.updateHiddenValue(this, hiddenElement);
             }
-        },
-
-        product_details_brand_change: function() {
-            var self = EbayTemplateDescriptionObj;
-
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::PRODUCT_DETAILS_MODE_NONE') ||
-                this.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::PRODUCT_DETAILS_MODE_DOES_NOT_APPLY')) {
-                $('product_details_mpn_tr').hide();
-                $('product_details_mpn').selectedIndex = 0;
-            } else {
-                $('product_details_mpn_tr').show();
-                $$('.product-details-specification').invoke('show');
-                self.updateHiddenValue(this, $(this.id + '_attribute'));
-            }
-
-            self.product_details_specification_visibility_change();
         },
 
         product_details_mpn_change: function() {

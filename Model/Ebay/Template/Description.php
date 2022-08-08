@@ -553,7 +553,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     public function getProductDetailsMode($type)
     {
-        if (!in_array($type, ['isbn', 'epid', 'upc', 'ean', 'brand', 'mpn'])) {
+        if (!in_array($type, ['brand', 'mpn'])) {
             throw new \InvalidArgumentException('Unknown Product details name');
         }
 
@@ -569,7 +569,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     public function getProductDetailAttribute($type)
     {
-        if (!in_array($type, ['isbn', 'epid', 'upc', 'ean', 'brand', 'mpn'])) {
+        if (!in_array($type, ['brand', 'mpn'])) {
             throw new \InvalidArgumentException('Unknown Product details name');
         }
 
@@ -581,34 +581,6 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         }
 
         return $productDetails[$type]['attribute'];
-    }
-
-    /**
-     * @return array
-     */
-    public function getProductDetailAttributes()
-    {
-        $attributes = [];
-
-        $temp = $this->getProductDetailAttribute('isbn');
-        $temp && $attributes[] = $temp;
-
-        $temp = $this->getProductDetailAttribute('epid');
-        $temp && $attributes[] = $temp;
-
-        $temp = $this->getProductDetailAttribute('upc');
-        $temp && $attributes[] = $temp;
-
-        $temp = $this->getProductDetailAttribute('ean');
-        $temp && $attributes[] = $temp;
-
-        $temp = $this->getProductDetailAttribute('brand');
-        $temp && $attributes[] = $temp;
-
-        $temp = $this->getProductDetailAttribute('mpn');
-        $temp && $attributes[] = $temp;
-
-        return $attributes;
     }
 
     //########################################

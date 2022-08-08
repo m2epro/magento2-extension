@@ -8,18 +8,17 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges;
 
-use \Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges\ItemsProcessor\StatusResolver;
+use Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges\ItemsProcessor\StatusResolver;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges\ItemsProcessor
- */
 class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 {
-    const INSTRUCTION_INITIATOR = 'channel_changes_synchronization';
+    private const INSTRUCTION_INITIATOR = 'channel_changes_synchronization';
 
-    const INCREASE_SINCE_TIME_MAX_ATTEMPTS     = 10;
-    const INCREASE_SINCE_TIME_BY               = 2;
-    const INCREASE_SINCE_TIME_MIN_INTERVAL_SEC = 10;
+    private const INCREASE_SINCE_TIME_MAX_ATTEMPTS     = 10;
+    private const INCREASE_SINCE_TIME_BY               = 2;
+    private const INCREASE_SINCE_TIME_MIN_INTERVAL_SEC = 10;
+
+    private const MESSAGE_CODE_RESULT_SET_TOO_LARGE    = 21917062;
 
     protected $logsActionId = null;
 
@@ -31,21 +30,35 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
     protected $ebayFactory;
     protected $activeRecordFactory;
 
-    //####################################
+    /** @var bool */
+    private $isResultSetTooLarge = false;
+    /** @var bool */
+    private $isErrorMessageReceived = false;
+
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $exceptionHelper;
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay */
+    private $ebayHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
+        \Ess\M2ePro\Helper\Component\Ebay $ebayHelper,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
         $this->ebayFactory = $ebayFactory;
         $this->activeRecordFactory = $activeRecordFactory;
+        $this->exceptionHelper = $exceptionHelper;
+        $this->translationHelper = $translationHelper;
+        $this->ebayHelper = $ebayHelper;
         parent::__construct($helperFactory, $modelFactory, $data);
     }
-
-    //####################################
 
     public function setSynchronizationLog(\Ess\M2ePro\Model\Synchronization\Log $log)
     {
@@ -59,8 +72,6 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         return $this;
     }
 
-    //####################################
-
     public function process()
     {
         $accounts = $this->ebayFactory->getObject('Account')->getCollection()->getItems();
@@ -69,13 +80,11 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             try {
                 $this->processAccount($account);
             } catch (\Exception $e) {
-                $this->getHelper('Module\Exception')->process($e);
+                $this->exceptionHelper->process($e);
                 $this->synchronizationLog->addMessageFromException($e);
             }
         }
     }
-
-    // ---------------------------------------
 
     protected function processAccount(\Ess\M2ePro\Model\Account $account)
     {
@@ -176,8 +185,6 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         $account->getChildObject()->setData('inventory_last_synchronization', $changesByAccount['to_time'])->save();
     }
 
-    //########################################
-
     /**
      * @param \Ess\M2ePro\Model\Account $account
      * @return array
@@ -214,6 +221,10 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             return (array)$response;
         }
 
+        if ($this->isErrorMessageReceived) {
+            return [];
+        }
+
         // -- to many changes are received. try to receive changes for the latest day
         $currentInterval = $toTime->diff($sinceTime);
         if ($currentInterval->days >= 1) {
@@ -230,6 +241,10 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 
             if ($response) {
                 return (array)$response;
+            }
+
+            if ($this->isErrorMessageReceived) {
+                return [];
             }
         }
 
@@ -258,15 +273,28 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
                 [
                     'since_time' => $sinceTime->format('Y-m-d H:i:s'),
                     'to_time'    => $toTime->format('Y-m-d H:i:s')
-                ],
-                $iteration
+                ]
             );
 
             if ($response) {
                 return (array)$response;
             }
+
+            if ($this->isErrorMessageReceived && !$this->isResultSetTooLarge) {
+                return [];
+            }
         } while ($iteration <= self::INCREASE_SINCE_TIME_MAX_ATTEMPTS);
         // --
+
+        if ($this->isResultSetTooLarge) {
+            $this->synchronizationLog->addMessage(
+                $this->translationHelper->__(
+                    'Some Channel updates failed to be processed due to eBay limitations. '
+                    . 'M2E Pro will reattempt to import them.'
+                ),
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
+            );
+        }
 
         return [];
     }
@@ -293,12 +321,9 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         return $toTime;
     }
 
-    //########################################
-
     protected function receiveChangesFromEbay(
         \Ess\M2ePro\Model\Account $account,
-        array $paramsConnector = [],
-        $tryNumber = 0
+        array $paramsConnector = []
     ) {
         $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
         $connectorObj = $dispatcherObj->getVirtualConnector(
@@ -314,21 +339,11 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         $dispatcherObj->process($connectorObj);
         $this->processResponseMessages($connectorObj->getResponseMessages());
 
-        $responseData = $connectorObj->getResponseData();
-
-        if (!isset($responseData['items']) || !isset($responseData['to_time'])) {
-            $logData = [
-                'params'            => $paramsConnector,
-                'account_id'        => $account->getId(),
-                'response_data'     => $responseData,
-                'response_messages' => $connectorObj->getResponseMessages()
-            ];
-            $this->getHelper('Module\Logger')->process($logData, "ebay no changes received - #{$tryNumber} try");
-
+        if ($this->isErrorMessageReceived) {
             return null;
         }
 
-        return $responseData;
+        return $connectorObj->getResponseData();
     }
 
     protected function processResponseMessages(array $messages)
@@ -337,32 +352,37 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         $messagesSet = $this->modelFactory->getObject('Connector_Connection_Response_Message_Set');
         $messagesSet->init($messages);
 
+        $this->isResultSetTooLarge = false;
+        $this->isErrorMessageReceived = false;
         foreach ($messagesSet->getEntities() as $message) {
-            if ($message->getCode() == 21917062) {
-                continue;
-            }
-
             if (!$message->isError() && !$message->isWarning()) {
                 continue;
             }
 
-            $logType = $message->isError() ? \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
-                : \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
+            if ($message->isError()) {
+                $this->isErrorMessageReceived = true;
+                if ($message->getCode() == self::MESSAGE_CODE_RESULT_SET_TOO_LARGE) {
+                    $this->isResultSetTooLarge = true;
+                    continue;
+                }
+
+                $logType = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;
+            } else {
+                $logType = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
+            }
 
             $this->synchronizationLog->addMessage(
-                $this->getHelper('Module\Translation')->__($message->getText()),
+                $this->translationHelper->__($message->getText()),
                 $logType
             );
         }
     }
 
-    //########################################
-
     protected function getProductDatesChanges(array $change)
     {
         return [
-            'start_date' => $this->getHelper('Component\Ebay')->timeToString($change['startTime']),
-            'end_date' => $this->getHelper('Component\Ebay')->timeToString($change['endTime'])
+            'start_date' => $this->ebayHelper->timeToString($change['startTime']),
+            'end_date' => $this->ebayHelper->timeToString($change['endTime'])
         ];
     }
 
@@ -387,15 +407,15 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 
         $data['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT;
 
-        $statusChangedFrom = $this->getHelper('Component\Ebay')
+        $statusChangedFrom = $this->ebayHelper
             ->getHumanTitleByListingProductStatus($listingProduct->getStatus());
-        $statusChangedTo = $this->getHelper('Component\Ebay')
+        $statusChangedTo = $this->ebayHelper
             ->getHumanTitleByListingProductStatus($data['status']);
 
         if (!empty($statusChangedFrom) && !empty($statusChangedTo)) {
             $this->logReportChange(
                 $listingProduct,
-                $this->getHelper('Module\Translation')->__(
+                $this->translationHelper->__(
                     'Item Status was changed from "%from%" to "%to%" .',
                     $statusChangedFrom,
                     $statusChangedTo
@@ -437,7 +457,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             $ebayListingProduct->getOnlineQtySold() != $data['online_qty_sold']) {
             $this->logReportChange(
                 $listingProduct,
-                $this->getHelper('Module\Translation')->__(
+                $this->translationHelper->__(
                     'Item QTY was changed from %from% to %to% .',
                     ($ebayListingProduct->getOnlineQty() - $ebayListingProduct->getOnlineQtySold()),
                     ($data['online_qty'] - $data['online_qty_sold'])
@@ -453,8 +473,6 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 
         return $data;
     }
-
-    // ---------------------------------------
 
     protected function getSimpleProductPriceChanges(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $change)
     {
@@ -477,7 +495,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             if ($ebayListingProduct->getOnlineCurrentPrice() != $data['online_current_price']) {
                 $this->logReportChange(
                     $listingProduct,
-                    $this->getHelper('Module\Translation')->__(
+                    $this->translationHelper->__(
                         'Item Price was changed from %from% to %to% .',
                         $ebayListingProduct->getOnlineCurrentPrice(),
                         $data['online_current_price']
@@ -494,8 +512,6 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 
         return $data;
     }
-
-    // ---------------------------------------
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
@@ -531,8 +547,6 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 
         return ['online_current_price' => $onlineCurrentPrice];
     }
-
-    //########################################
 
     protected function processVariationChanges(
         \Ess\M2ePro\Model\Listing\Product $listingProduct,
@@ -589,7 +603,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         if ($hasVariationPriceChanges) {
             $this->logReportChange(
                 $listingProduct,
-                $this->getHelper('Module\Translation')->__(
+                $this->translationHelper->__(
                     'Price of some Variations was changed.'
                 )
             );
@@ -604,7 +618,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         if ($hasVariationQtyChanges) {
             $this->logReportChange(
                 $listingProduct,
-                $this->getHelper('Module\Translation')->__(
+                $this->translationHelper->__(
                     'QTY of some Variations was changed.'
                 )
             );
@@ -616,8 +630,6 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             );
         }
     }
-
-    //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product\Variation[] $variations
@@ -693,8 +705,6 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         return true;
     }
 
-    //########################################
-
     protected function prepareSinceTime($sinceTime)
     {
         if (empty($sinceTime)) {
@@ -722,8 +732,6 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 
         return $sinceTime;
     }
-
-    // ---------------------------------------
 
     protected function getLogsActionId()
     {
@@ -757,8 +765,6 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 
         return $result;
     }
-
-    //########################################
 
     protected function addInstruction(\Ess\M2ePro\Model\Listing\Product $listingProduct, $type, $priority)
     {
@@ -795,6 +801,4 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS
         );
     }
-
-    //########################################
 }

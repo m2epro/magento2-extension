@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -8,22 +8,20 @@
 
 namespace Ess\M2ePro\Model\Servicing\Task;
 
-/**
- * Class \Ess\M2ePro\Model\Servicing\Task\License
- */
+
 class License extends \Ess\M2ePro\Model\Servicing\Task
 {
-    //########################################
+    public const NAME = 'license';
 
     /**
      * @return string
      */
-    public function getPublicNick()
+    public function getPublicNick(): string
     {
-        return 'license';
+        return self::NAME;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return array
@@ -56,7 +54,7 @@ class License extends \Ess\M2ePro\Model\Servicing\Task
         }
     }
 
-    //########################################
+    // ----------------------------------------
 
     private function updateInfoData(array $infoData)
     {
@@ -111,6 +109,4 @@ class License extends \Ess\M2ePro\Model\Servicing\Task
         $config = $this->getHelper('Module')->getConfig();
         $config->setGroupValue('/license/', 'status', (int)$status);
     }
-
-    //########################################
 }

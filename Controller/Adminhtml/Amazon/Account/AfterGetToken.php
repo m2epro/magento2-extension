@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -8,18 +8,24 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Account\AfterGetToken
- */
 class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
 {
     /** @var \Ess\M2ePro\Helper\Module\Exception */
     private $helperException;
-
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $helperDataSession;
+    /** @var \Ess\M2ePro\Model\Amazon\Account\Server\Update */
+    private $accountServerUpdate;
 
+    /**
+     * @param \Ess\M2ePro\Model\Amazon\Account\Server\Update $accountServerUpdate
+     * @param \Ess\M2ePro\Helper\Module\Exception $helperException
+     * @param \Ess\M2ePro\Helper\Data\Session $helperDataSession
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
+     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
+     */
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Account\Server\Update $accountServerUpdate,
         \Ess\M2ePro\Helper\Module\Exception $helperException,
         \Ess\M2ePro\Helper\Data\Session $helperDataSession,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -29,9 +35,10 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
 
         $this->helperException = $helperException;
         $this->helperDataSession = $helperDataSession;
+        $this->accountServerUpdate = $accountServerUpdate;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function execute()
     {
@@ -59,25 +66,23 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
             }
         }
 
-        $this->helperDataSession->setValue('merchant_id', $params['Merchant']);
-        $this->helperDataSession->setValue('mws_token', $params['MWSAuthToken']);
-
         $id = $this->helperDataSession->getValue('account_id');
 
+        // new account
         if ((int)$id <= 0) {
+            $this->helperDataSession->setValue('merchant_id', $params['Merchant']);
+            $this->helperDataSession->setValue('mws_token', $params['MWSAuthToken']);
+
             return $this->_redirect('*/*/new', [
                 'close_on_save' => $this->getRequest()->getParam('close_on_save')
             ]);
         }
 
         try {
-            $this->updateAccount(
-                $id,
-                [
-                    'merchant_id' => $params['Merchant'],
-                    'token'       => $params['MWSAuthToken']
-                ]
-            );
+            /** @var \Ess\M2ePro\Model\Account $account */
+            $account = $this->amazonFactory->getObjectLoaded('Account', $id);
+
+            $this->accountServerUpdate->process($account->getChildObject(), $params['MWSAuthToken']);
         } catch (\Exception $exception) {
             $this->helperException->process($exception);
 
@@ -95,6 +100,4 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
             'id' => $id, 'close_on_save' => $this->getRequest()->getParam('close_on_save')
         ]);
     }
-
-    //########################################
 }

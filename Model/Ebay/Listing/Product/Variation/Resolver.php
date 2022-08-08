@@ -32,12 +32,16 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
     /** @var \Ess\M2ePro\Model\Response\Message\Set */
     protected $messagesSet;
+
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory */
     protected $parentFactory;
+
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
+
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Configuration */
     private $componentEbayConfiguration;
+
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
     private $componentEbayCategoryEbay;
 
@@ -203,7 +207,8 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
                 $tempVariation['specifics'][$optionName] = $optionValue;
             }
 
-            $this->insertVariationDetails($variation, $tempVariation);
+            $this->insertVariationIdentifiersData($variation, $tempVariation);
+            $this->insertVariationMPNDetails($variation, $tempVariation);
             //--------------------------------
 
             //-- MPN Specific has been changed
@@ -254,54 +259,25 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
         }
     }
 
-    private function insertVariationDetails(\Ess\M2ePro\Model\Listing\Product\Variation $variation, &$tempVariation)
-    {
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct      = $this->listingProduct->getChildObject();
-        $ebayDescriptionTemplate = $ebayListingProduct->getEbayDescriptionTemplate();
-
+    private function insertVariationIdentifiersData(
+        \Ess\M2ePro\Model\Listing\Product\Variation $variation,
+        &$tempVariation
+    ) {
         $additionalData = $variation->getAdditionalData();
 
-        foreach (['isbn', 'upc', 'ean', 'mpn', 'epid'] as $tempType) {
-            if ($tempType == 'mpn' && !empty($additionalData['online_product_details']['mpn'])) {
-                if ($variation->getListingProduct()
-                        ->getSetting('additional_data', 'is_variation_mpn_filled') === false) {
-                    continue;
-                }
+        foreach (['isbn', 'upc', 'ean', 'epid'] as $identifier) {
 
-                $tempVariation['details']['mpn'] = $additionalData['online_product_details']['mpn'];
-
-                $isMpnCanBeChanged = $this->componentEbayConfiguration->getVariationMpnCanBeChanged();
-
-                if (!$isMpnCanBeChanged) {
-                    continue;
-                }
-
-                $tempVariation['details']['mpn_previous'] = $additionalData['online_product_details']['mpn'];
-            }
-
-            if (isset($additionalData['product_details'][$tempType])) {
-                $tempVariation['details'][$tempType] = $additionalData['product_details'][$tempType];
+            if (isset($additionalData['product_details'][$identifier])) {
+                $tempVariation['details'][$identifier] = $additionalData['product_details'][$identifier];
                 continue;
             }
 
-            if ($tempType == 'mpn') {
-                if ($ebayDescriptionTemplate->isProductDetailsModeNone('brand')) {
-                    continue;
-                }
-
-                if ($ebayDescriptionTemplate->isProductDetailsModeDoesNotApply('brand')) {
-                    $tempVariation['details'][$tempType] = DataBuilderGeneral::PRODUCT_DETAILS_DOES_NOT_APPLY;
-                    continue;
-                }
-            }
-
-            if ($ebayDescriptionTemplate->isProductDetailsModeNone($tempType)) {
+            if ($this->componentEbayConfiguration->isProductIdModeNone($identifier)) {
                 continue;
             }
 
-            if ($ebayDescriptionTemplate->isProductDetailsModeDoesNotApply($tempType)) {
-                $tempVariation['details'][$tempType] = DataBuilderGeneral::PRODUCT_DETAILS_DOES_NOT_APPLY;
+            if ($this->componentEbayConfiguration->isProductIdModeDoesNotApply($identifier)) {
+                $tempVariation['details'][$identifier] = DataBuilderGeneral::PRODUCT_DETAILS_DOES_NOT_APPLY;
                 continue;
             }
 
@@ -310,27 +286,24 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            $attribute = $ebayDescriptionTemplate->getProductDetailAttribute($tempType);
+            $attribute = $this->componentEbayConfiguration->getProductIdAttribute($identifier);
             if (!$attribute) {
                 continue;
             }
 
             /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
             $options = $variation->getOptions(true);
-            $option  = reset($options);
+            $option = reset($options);
 
-            $tempValue = $option->getMagentoProduct()->getAttributeValue($attribute);
-            if (!$tempValue) {
-                continue;
+            if ($attributeValue = $option->getMagentoProduct()->getAttributeValue($attribute)) {
+                $tempVariation['details'][$identifier] = $attributeValue;
             }
-
-            $tempVariation['details'][$tempType] = $tempValue;
         }
 
-        $this->deleteNotAllowedIdentifiers($tempVariation['details']);
+        $this->deleteNotAllowedIdentifier($tempVariation['details']);
     }
 
-    private function deleteNotAllowedIdentifiers(array &$data)
+    private function deleteNotAllowedIdentifier(array &$data)
     {
         if (empty($data)) {
             return;
@@ -359,6 +332,62 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
             if (isset($data[$identifier])) {
                 unset($data[$identifier]);
             }
+        }
+    }
+
+    private function insertVariationMPNDetails(\Ess\M2ePro\Model\Listing\Product\Variation $variation, &$tempVariation)
+    {
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+        $ebayListingProduct = $this->listingProduct->getChildObject();
+        $ebayDescriptionTemplate = $ebayListingProduct->getEbayDescriptionTemplate();
+
+        $additionalData = $variation->getAdditionalData();
+
+        if (!empty($additionalData['online_product_details']['mpn'])) {
+            if ($variation->getListingProduct()->getSetting('additional_data', 'is_variation_mpn_filled') === false) {
+                return;
+            }
+
+            $tempVariation['details']['mpn'] = $additionalData['online_product_details']['mpn'];
+            if (!$this->componentEbayConfiguration->getVariationMpnCanBeChanged()) {
+                return;
+            }
+
+            $tempVariation['details']['mpn_previous'] = $additionalData['online_product_details']['mpn'];
+        }
+
+        if (isset($additionalData['product_details']['mpn'])) {
+            $tempVariation['details']['mpn'] = $additionalData['product_details']['mpn'];
+            return;
+        }
+
+        if ($ebayDescriptionTemplate->isProductDetailsModeNone('mpn') ||
+            $ebayDescriptionTemplate->isProductDetailsModeNone('brand')) {
+            return;
+        }
+
+        if ($ebayDescriptionTemplate->isProductDetailsModeDoesNotApply('mpn') ||
+            $ebayDescriptionTemplate->isProductDetailsModeDoesNotApply('brand')) {
+            $tempVariation['details']['mpn'] = DataBuilderGeneral::PRODUCT_DETAILS_DOES_NOT_APPLY;
+            return;
+        }
+
+        if (!$this->listingProduct->getMagentoProduct()->isConfigurableType() &&
+            !$this->listingProduct->getMagentoProduct()->isGroupedType()) {
+            return;
+        }
+
+        $attribute = $ebayDescriptionTemplate->getProductDetailAttribute('mpn');
+        if (!$attribute) {
+            return;
+        }
+
+        /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+        $options = $variation->getOptions(true);
+        $option = reset($options);
+
+        if ($attributeValue = $option->getMagentoProduct()->getAttributeValue($attribute)) {
+            $tempVariation['details']['mpn'] = $attributeValue;
         }
     }
 

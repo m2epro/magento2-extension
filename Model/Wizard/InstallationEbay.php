@@ -10,14 +10,12 @@ namespace Ess\M2ePro\Model\Wizard;
 
 use Ess\M2ePro\Model\Wizard;
 
-/**
- * Class \Ess\M2ePro\Model\Wizard\InstallationEbay
- */
 class InstallationEbay extends Wizard
 {
     protected $steps = [
         'registration',
         'account',
+        'settings',
 
         'listingTutorial',
         'listingGeneral',
@@ -31,8 +29,6 @@ class InstallationEbay extends Wizard
         'categoryStepTwo',
         'categoryStepThree',
     ];
-
-    //########################################
 
     /**
      * @return bool
@@ -49,6 +45,4 @@ class InstallationEbay extends Wizard
     {
         return \Ess\M2ePro\Helper\View\Ebay::WIZARD_INSTALLATION_NICK;
     }
-
-    //########################################
 }

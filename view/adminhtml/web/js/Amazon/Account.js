@@ -272,8 +272,10 @@ define([
 
             title.removeClassName('required-entry M2ePro-account-title');
             $('merchant_id').removeClassName('M2ePro-marketplace-merchant');
-            $('token').removeClassName('M2ePro-marketplace-merchant');
             $('other_listings_mapping_mode').removeClassName('M2ePro-require-select-attribute');
+            if ($('token')) {
+                $('token').removeClassName('M2ePro-marketplace-merchant');
+            }
 
             this.submitForm(M2ePro.url.get(
                 'amazon_account/beforeGetToken',
@@ -295,7 +297,9 @@ define([
             $$('[id^="marketplaces_developer_key_container_"],[id^="marketplaces_register_url_container_"]').invoke('hide');
 
             $('marketplaces_merchant_id_container').show();
-            $('marketplaces_token_container').show();
+            if ($('marketplaces_token_container')) {
+                $('marketplaces_token_container').show();
+            }
 
             self.showGetAccessData(id);
             self.magentoOrdersTaxModeChange();

@@ -73,7 +73,7 @@ class BeforeToken extends InstallationEbay
             $this->exceptionHelper->process($exception);
 
             $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
-                $this->modelFactory->getObject('Servicing_Task_License')->getPublicNick()
+                \Ess\M2ePro\Model\Servicing\Task\License::NAME
             );
 
             $error = 'The eBay token obtaining is currently unavailable.<br/>Reason: %error_message%';

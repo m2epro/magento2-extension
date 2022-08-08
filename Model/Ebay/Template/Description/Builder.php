@@ -10,15 +10,19 @@ namespace Ess\M2ePro\Model\Ebay\Template\Description;
 
 use Ess\M2ePro\Model\Ebay\Template\Description as Description;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Template\Description\Builder
- */
 class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 {
-    protected $driverPool;
-    protected $phpEnvironmentRequest;
+    /** @var \Magento\Framework\Filesystem\DriverPool */
+    private $driverPool;
+
+    /** @var \Magento\Framework\HTTP\PhpEnvironment\Request */
+    private $phpEnvironmentRequest;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
         \Magento\Framework\Filesystem\DriverPool $driverPool,
         \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -26,9 +30,11 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
+        parent::__construct($activeRecordFactory, $ebayFactory, $helperFactory, $modelFactory);
+
         $this->driverPool = $driverPool;
         $this->phpEnvironmentRequest = $phpEnvironmentRequest;
-        parent::__construct($activeRecordFactory, $ebayFactory, $helperFactory, $modelFactory);
+        $this->dataHelper = $dataHelper;
     }
 
     //########################################
@@ -39,7 +45,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 
         $defaultData = $this->getDefaultData();
 
-        $data = $this->getHelper('Data')->arrayReplaceRecursive($defaultData, $data);
+        $data = $this->dataHelper->arrayReplaceRecursive($defaultData, $data);
 
         if (isset($this->rawData['title_mode'])) {
             $data['title_mode'] = (int)$this->rawData['title_mode'];
@@ -257,7 +263,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $watermarkSettings['hashes']['current'] = $this->rawData['old_watermark_settings']['hashes']['current'];
         }
 
-        $data['watermark_settings'] = $this->getHelper('Data')->jsonEncode($watermarkSettings);
+        $data['watermark_settings'] = $this->dataHelper->jsonEncode($watermarkSettings);
 
         // ---------------------------------------
 
@@ -269,7 +275,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
     public function getDefaultData()
     {
         return [
-
             'title_mode' => Description::TITLE_MODE_PRODUCT,
             'title_template' => '',
 
@@ -288,10 +293,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 
             'product_details' => $this->getHelper('Data')->jsonEncode(
                 [
-                    'isbn'  => ['mode' => Description::PRODUCT_DETAILS_MODE_NONE, 'attribute' => ''],
-                    'epid'  => ['mode' => Description::PRODUCT_DETAILS_MODE_NONE, 'attribute' => ''],
-                    'upc'   => ['mode' => Description::PRODUCT_DETAILS_MODE_NONE, 'attribute' => ''],
-                    'ean'   => ['mode' => Description::PRODUCT_DETAILS_MODE_NONE, 'attribute' => ''],
                     'brand' => ['mode' => Description::PRODUCT_DETAILS_MODE_NONE, 'attribute' => ''],
                     'mpn'   => ['mode' => Description::PRODUCT_DETAILS_MODE_DOES_NOT_APPLY, 'attribute' => ''],
                     'include_ebay_details' => 1,
@@ -316,12 +317,12 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'variation_images_attribute' => '',
             'default_image_url' => '',
 
-            'variation_configurable_images' => $this->getHelper('Data')->jsonEncode([]),
+            'variation_configurable_images' => $this->dataHelper->jsonEncode([]),
             'use_supersize_images' => Description::USE_SUPERSIZE_IMAGES_NO,
 
             'watermark_mode' => Description::WATERMARK_MODE_NO,
 
-            'watermark_settings' => $this->getHelper('Data')->jsonEncode(
+            'watermark_settings' => $this->dataHelper->jsonEncode(
                 [
                     'position' => Description::WATERMARK_POSITION_TOP,
                     'scale' => Description::WATERMARK_SCALE_MODE_NONE,
@@ -338,6 +339,4 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'watermark_image' => null
         ];
     }
-
-    //########################################
 }

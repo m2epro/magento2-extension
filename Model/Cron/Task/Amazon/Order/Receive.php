@@ -8,14 +8,12 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Receive
- */
 class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'amazon/order/receive';
 
-    //####################################
+    /** @var bool */
+    private $isErrorMessageReceived = false;
 
     /**
      * @return \Ess\M2ePro\Model\Synchronization\Log
@@ -30,8 +28,6 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         return $synchronizationLog;
     }
 
-    //########################################
-
     public function isPossibleToRun()
     {
         if ($this->getHelper('Server\Maintenance')->isNow()) {
@@ -40,8 +36,6 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         return parent::isPossibleToRun();
     }
-
-    //########################################
 
     protected function performActions()
     {
@@ -67,8 +61,6 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
     }
 
-    //########################################
-
     protected function getPermittedAccounts()
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
@@ -91,8 +83,6 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         return $accounts;
     }
-
-    // ---------------------------------------
 
     protected function processAccounts($merchantId, array $accounts)
     {
@@ -191,17 +181,7 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $this->processResponseMessages($connectorObj->getResponseMessages());
 
-        if (!isset($responseData['items']) || !isset($responseData['to_update_date'])) {
-            $logData = [
-                'from_update_date'  => $fromDate,
-                'to_update_date'    => $toDate,
-                'jobToken'          => $jobToken,
-                'account_id'        => $merchantId,
-                'response_data'     => $responseData,
-                'response_messages' => $connectorObj->getResponseMessages()
-            ];
-            $this->getHelper('Module\Logger')->process($logData, 'Amazon orders receive task - empty response');
-
+        if ($this->isErrorMessageReceived) {
             return [];
         }
 
@@ -214,13 +194,18 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $messagesSet = $this->modelFactory->getObject('Connector_Connection_Response_Message_Set');
         $messagesSet->init($messages);
 
+        $this->isErrorMessageReceived = false;
         foreach ($messagesSet->getEntities() as $message) {
             if (!$message->isError() && !$message->isWarning()) {
                 continue;
             }
 
-            $logType = $message->isError() ? \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
-                                           : \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
+            if ($message->isError()) {
+                $logType = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;
+                $this->isErrorMessageReceived = true;
+            } else {
+                $logType = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
+            }
 
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module\Translation')->__($message->getText()),
@@ -228,8 +213,6 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             );
         }
     }
-
-    //########################################
 
     protected function prepareFromDate($lastFromDate)
     {
@@ -272,6 +255,4 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         return $toDate;
     }
-
-    //########################################
 }

@@ -6607,11 +6607,20 @@ class Installer
         $moduleConfig->insert('/ebay/configuration/', 'uk_epids_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'de_epids_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'au_epids_attribute');
+        $moduleConfig->insert('/ebay/configuration/', 'it_epids_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'ktypes_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'upload_images_mode', 2);
         $moduleConfig->insert('/ebay/configuration/', 'view_template_selling_format_show_tax_category', '0');
         $moduleConfig->insert('/ebay/configuration/', 'feedback_notification_mode', '0');
         $moduleConfig->insert('/ebay/configuration/', 'feedback_notification_last_check');
+        $moduleConfig->insert('/ebay/configuration/', 'upc_mode', '0');
+        $moduleConfig->insert('/ebay/configuration/', 'upc_custom_attribute');
+        $moduleConfig->insert('/ebay/configuration/', 'ean_mode', '0');
+        $moduleConfig->insert('/ebay/configuration/', 'ean_custom_attribute');
+        $moduleConfig->insert('/ebay/configuration/', 'isbn_mode', '0');
+        $moduleConfig->insert('/ebay/configuration/', 'isbn_custom_attribute');
+        $moduleConfig->insert('/ebay/configuration/', 'epid_mode', '0');
+        $moduleConfig->insert('/ebay/configuration/', 'epid_custom_attribute');
 
         $this->getConnection()->insertMultiple(
             $this->getFullTableName('marketplace'),
@@ -7165,7 +7174,7 @@ class Installer
                     'is_charity'                           => 1,
                     'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 1,
-                    'is_epid'                              => 0,
+                    'is_epid'                              => 1,
                     'is_ktype'                             => 1
                 ],
                 [
@@ -7514,12 +7523,6 @@ class Installer
                 Table::TYPE_TEXT,
                 255,
                 ['nullable' => false]
-            )
-            ->addColumn(
-                'token',
-                Table::TYPE_TEXT,
-                255,
-                ['default' => null]
             )
             ->addColumn(
                 'related_store_id',
@@ -8947,18 +8950,11 @@ class Installer
                 null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
-            ->addColumn(
-                'is_automatic_token_retrieving_available',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
             ->addIndex('is_new_asin_available', 'is_new_asin_available')
             ->addIndex('is_merchant_fulfillment_available', 'is_merchant_fulfillment_available')
             ->addIndex('is_business_available', 'is_business_available')
             ->addIndex('is_vat_calculation_service_available', 'is_vat_calculation_service_available')
             ->addIndex('is_product_tax_code_policy_available', 'is_product_tax_code_policy_available')
-            ->addIndex('is_automatic_token_retrieving_available', 'is_automatic_token_retrieving_available')
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci')
@@ -10885,7 +10881,6 @@ class Installer
                     'is_business_available'                   => 0,
                     'is_vat_calculation_service_available'    => 0,
                     'is_product_tax_code_policy_available'    => 0,
-                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 25,
@@ -10896,7 +10891,6 @@ class Installer
                     'is_business_available'                   => 1,
                     'is_vat_calculation_service_available'    => 1,
                     'is_product_tax_code_policy_available'    => 1,
-                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 26,
@@ -10907,7 +10901,6 @@ class Installer
                     'is_business_available'                   => 1,
                     'is_vat_calculation_service_available'    => 1,
                     'is_product_tax_code_policy_available'    => 1,
-                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 28,
@@ -10918,7 +10911,6 @@ class Installer
                     'is_business_available'                   => 1,
                     'is_vat_calculation_service_available'    => 1,
                     'is_product_tax_code_policy_available'    => 1,
-                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 29,
@@ -10929,7 +10921,6 @@ class Installer
                     'is_business_available'                   => 1,
                     'is_vat_calculation_service_available'    => 0,
                     'is_product_tax_code_policy_available'    => 0,
-                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 30,
@@ -10940,7 +10931,6 @@ class Installer
                     'is_business_available'                   => 1,
                     'is_vat_calculation_service_available'    => 1,
                     'is_product_tax_code_policy_available'    => 1,
-                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 31,
@@ -10951,7 +10941,6 @@ class Installer
                     'is_business_available'                   => 1,
                     'is_vat_calculation_service_available'    => 1,
                     'is_product_tax_code_policy_available'    => 1,
-                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 34,
@@ -10962,7 +10951,6 @@ class Installer
                     'is_business_available'                   => 0,
                     'is_vat_calculation_service_available'    => 0,
                     'is_product_tax_code_policy_available'    => 0,
-                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 35,
@@ -10973,7 +10961,6 @@ class Installer
                     'is_business_available'                   => 0,
                     'is_vat_calculation_service_available'    => 0,
                     'is_product_tax_code_policy_available'    => 0,
-                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 39,
@@ -10984,7 +10971,6 @@ class Installer
                     'is_business_available'                   => 1,
                     'is_vat_calculation_service_available'    => 0,
                     'is_product_tax_code_policy_available'    => 1,
-                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 40,
@@ -10995,7 +10981,6 @@ class Installer
                     'is_business_available'                   => 0,
                     'is_vat_calculation_service_available'    => 0,
                     'is_product_tax_code_policy_available'    => 0,
-                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 41,
@@ -11006,7 +10991,6 @@ class Installer
                     'is_business_available'                   => 0,
                     'is_vat_calculation_service_available'    => 0,
                     'is_product_tax_code_policy_available'    => 0,
-                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 42,
@@ -11017,7 +11001,6 @@ class Installer
                     'is_business_available'                   => 0,
                     'is_vat_calculation_service_available'    => 0,
                     'is_product_tax_code_policy_available'    => 0,
-                    'is_automatic_token_retrieving_available' => 1
                 ],
                 [
                     'marketplace_id'                          => 43,
@@ -11028,7 +11011,6 @@ class Installer
                     'is_business_available'                   => 0,
                     'is_vat_calculation_service_available'    => 0,
                     'is_product_tax_code_policy_available'    => 0,
-                    'is_automatic_token_retrieving_available' => 1
                 ]
             ]
         );

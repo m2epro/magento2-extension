@@ -90,7 +90,7 @@ class Motors extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
         ]);
 
         $motorsMarketplace = $this->ebayFactory->getObjectLoaded('Marketplace', EbayHelper::MARKETPLACE_MOTORS);
-        if ($motorsMarketplace->isStatusEnabled() && $motorsMarketplace->getChildObject()->isEpidEnabled()) {
+        if ($motorsMarketplace->isStatusEnabled()) {
             $fieldset = $form->addFieldset(
                 'motors_epids_motor',
                 [
@@ -156,7 +156,7 @@ HTML
         }
 
         $ukMarketplace = $this->ebayFactory->getObjectLoaded('Marketplace', EbayHelper::MARKETPLACE_UK);
-        if ($ukMarketplace->isStatusEnabled() && $ukMarketplace->getChildObject()->isEpidEnabled()) {
+        if ($ukMarketplace->isStatusEnabled()) {
             $fieldset = $form->addFieldset(
                 'motors_epids_uk',
                 [
@@ -226,7 +226,7 @@ HTML
         }
 
         $deMarketplace = $this->ebayFactory->getObjectLoaded('Marketplace', EbayHelper::MARKETPLACE_DE);
-        if ($deMarketplace->isStatusEnabled() && $deMarketplace->getChildObject()->isEpidEnabled()) {
+        if ($deMarketplace->isStatusEnabled()) {
             $fieldset = $form->addFieldset(
                 'motors_epids_de',
                 [
@@ -296,7 +296,7 @@ HTML
         }
 
         $auMarketplace = $this->ebayFactory->getObjectLoaded('Marketplace', EbayHelper::MARKETPLACE_AU);
-        if ($auMarketplace->isStatusEnabled() && $auMarketplace->getChildObject()->isEpidEnabled()) {
+        if ($auMarketplace->isStatusEnabled()) {
             $fieldset = $form->addFieldset(
                 'motors_epids_au',
                 [
@@ -355,6 +355,76 @@ HTML
 
 <span style="padding-right: 2px; padding-left: 10px;">{$this->__('Custom Added')}: </span>
 <span id="epids_au_custom_count" style="font-weight: bold; padding-right: 2px;">{$customCount}</span>
+
+<span>
+    (<a href="javascript:void(0);"
+        onclick="EbaySettingsMotorsObj.manageMotorsRecords('{$motorsType}','{$popupTitle}');">{$this->__('manage')}</a>)
+</span>
+HTML
+                ]
+            );
+        }
+
+        $itMarketplace = $this->ebayFactory->getObjectLoaded('Marketplace', EbayHelper::MARKETPLACE_IT);
+        if ($itMarketplace->isStatusEnabled()) {
+            $fieldset = $form->addFieldset(
+                'motors_epids_it',
+                [
+                    'legend'      => $this->__('Parts Compatibility [ePIDs IT]'),
+                    'collapsable' => false,
+                    'tooltip'     => $this->__(
+                        'In this Section, you can provide a Magento Attribute where ePID values for IT marketplace
+                        will be saved.
+                        <br/>
+                        Also you can Add/Update ePID Database manually by clicking <strong>Manage Option</strong>
+                        in Database line.
+                        <br/>
+                        You have an ability to choose either ePID or kType values should be used on eBay IT.
+                        Specify the appropriate <strong>Parts Compatibility Mode</strong> for your Listing in M2E Pro
+                        Listings grid.'
+                    )
+                ]
+            );
+
+            $fieldset->addField(
+                'it_epids_attribute',
+                self::SELECT,
+                [
+                    'name'    => 'it_epids_attribute',
+                    'label'   => $this->__('Attribute'),
+                    'values'  => $preparedAttributes,
+                    'value'   => $configurationHelper->getItEpidsAttribute(),
+                    'class'   => 'M2ePro-custom-attribute-can-be-created',
+                    'tooltip' => $this->__(
+                        'Choose the Attribute that contains the Product Reference IDs (ePIDs) of compatible vehicles
+                         for the parts.
+                         In the M2E Pro Listing, use the <strong>Add Compatible Vehicles</strong> tool to find
+                         necessary compatible Items.
+                         <br/>
+                         Only Textarea Attributes are shown.'
+                    )
+                ]
+            )
+                     ->addCustomAttribute('allowed_attribute_types', 'textarea')
+                     ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
+
+            $motorsType = \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_IT;
+            $popupTitle = $this->__('Manage Custom Compatibility [ePIDs IT]');
+            [$count, $customCount] = $eBayMotorsHelper->getDictionaryRecordCount(
+                \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_IT
+            );
+
+            $fieldset->addField(
+                'motors_epids_it_database',
+                self::CUSTOM_CONTAINER,
+                [
+                    'label' => $this->__('Database'),
+                    'text' => <<<HTML
+<span style="padding-right: 2px;">{$this->__('From eBay')}: </span>
+<span style="font-weight: bold; display: inline-block; width: 40px;">{$count}</span>
+
+<span style="padding-right: 2px; padding-left: 10px;">{$this->__('Custom Added')}: </span>
+<span id="epids_it_custom_count" style="font-weight: bold; padding-right: 2px;">{$customCount}</span>
 
 <span>
     (<a href="javascript:void(0);"

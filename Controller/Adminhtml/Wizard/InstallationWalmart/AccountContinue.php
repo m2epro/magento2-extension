@@ -129,7 +129,7 @@ class AccountContinue extends InstallationWalmart
             $account->delete();
 
             $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
-                $this->modelFactory->getObject('Servicing_Task_License')->getPublicNick()
+                \Ess\M2ePro\Model\Servicing\Task\License::NAME
             );
 
             $error = 'The Walmart access obtaining is currently unavailable.<br/>Reason: %error_message%';

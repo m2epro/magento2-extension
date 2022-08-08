@@ -237,10 +237,7 @@ HTML;
             ]);
         }
 
-        if ($specific['required']) {
-            $element->addClass('M2ePro-required-when-visible');
-        }
-
+        $element->addClass('M2ePro-required-when-visible');
         $element->setNoSpan(true);
         $element->setForm($this->getForm());
         $element->setId('specific_dictionary_value_ebay_recommended_' . $index);

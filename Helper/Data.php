@@ -845,9 +845,9 @@ class Data
         $a = 0;
         for ($i = 0; $i < 10; $i++) {
             if ($string[$i] === "X" || $string[$i] === "x") {
-                $a += 10 * 10 - $i;
+                $a += 10 * (10 - $i);
             } elseif (is_numeric($string[$i])) {
-                $a += (int)$string[$i] * 10 - $i;
+                $a += (int)$string[$i] * (10 - $i);
             } else {
                 return false;
             }

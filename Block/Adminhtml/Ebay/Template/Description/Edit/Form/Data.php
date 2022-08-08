@@ -13,9 +13,6 @@ use Ess\M2ePro\Model\Ebay\Template\Description;
 
 class Data extends AbstractForm
 {
-    protected $attributes = [];
-    protected $M2eProAttributes = [];
-
     /** @var \Ess\M2ePro\Helper\Magento\Attribute */
     protected $magentoAttributeHelper;
 
@@ -24,6 +21,8 @@ class Data extends AbstractForm
 
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
+
+    private $attributes = [];
 
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
@@ -37,6 +36,7 @@ class Data extends AbstractForm
         $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->dataHelper = $dataHelper;
         $this->globalDataHelper = $globalDataHelper;
+
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -984,6 +984,58 @@ HTML
             ]
         );
 
+        $preparedAttributes = [];
+        foreach ($allAttributesByTypes['text_select'] as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if ($formData['product_details']['brand']['mode'] == Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
+                && $formData['product_details']['brand']['attribute'] == $attribute['code']
+            ) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => Description::PRODUCT_DETAILS_MODE_ATTRIBUTE,
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $fieldset->addField(
+            'product_details_brand',
+            self::SELECT,
+            [
+                'container_id'             => 'product_details_brand_tr',
+                'label'                    => $this->__('Brand'),
+                'name'                     => 'description[product_details][brand][mode]',
+                'values'                   => [
+                    Description::PRODUCT_DETAILS_MODE_NONE           => $this->__('None'),
+                    Description::PRODUCT_DETAILS_MODE_DOES_NOT_APPLY => $this->__('Unbranded'),
+                    [
+                        'label' => $this->__('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true
+                        ]
+                    ]
+                ],
+                'value' => $formData['product_details']['brand']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
+                    ? $formData['product_details']['brand']['mode'] : '',
+                'create_magento_attribute' => true,
+                'tooltip'                  => $this->__(
+                    'Choose the Magento Attribute that contains the Brand for a Product or use an
+                    "Unbranded" Option in case your Product does not have an Brand Value.'
+                )
+            ]
+        )->addCustomAttribute('allowed_attribute_types', 'text,select');
+
+        $fieldset->addField(
+            'product_details_brand_attribute',
+            'hidden',
+            [
+                'name'  => 'description[product_details][brand][attribute]',
+                'value' => $formData['product_details']['brand']['attribute'],
+            ]
+        );
+
         $fieldset = $form->addFieldset(
             'magento_block_ebay_template_description_form_data_description',
             [
@@ -1100,305 +1152,6 @@ HTML
             ]
         );
 
-        $fieldset = $form->addFieldset(
-            'magento_block_ebay_template_description_form_data_product_details',
-            [
-                'legend'      => $this->__('eBay Catalog Identifiers'),
-                'collapsable' => true,
-                'tooltip'     => $this->__(
-                    '
-                    In this section you can specify a <strong>Magento Attribute</strong> that contains Product
-                    UPC/EAN/ISBN/Brand/MPN Value.
-                    If selected Value will be sent on eBay and according Product will be found in eBay Catalog, Title,
-                    Subtitle, Images and other data will be taken from eBay Catalog.<br/><br/>
-
-                    If you are going to list Variational Item, Brand Value will be the same for all Item. However,
-                    UPC/EAN/ISBN/MPN Value will be taken for each Variation separately.<br/>
-                    If your Item is Configurable Magento Product or Grouped Magento Product, the Value will be taken as
-                    an Attribute Value for each Child Product.<br/>
-                    If your Item is Bundle Magento Product or Simple Magento Product with Custom Options, the Value
-                    should be provided in Manage Variations Grid, which you can find by clicking on Manage Variations
-                    Option for your Product on eBay View Mode of the Listing.<br/><br/>
-
-                    <strong>Note:</strong> if UPC/EAN/ISBN etc. Value is specified for particular Variation in Manage
-                    Variations pop-up, only for that Variation the Settings of this section will be ignored.<br/><br/>
-
-                    <strong>Note:</strong> some eBay Categories require some of these Values. Once you select such
-                    eBay Catalog Primary Category, you will see a notification which will
-                    show what Identifier(s) must be specified.
-                '
-                )
-            ]
-        );
-
-        $preparedAttributes = [];
-        foreach ($allAttributesByTypes['text'] as $attribute) {
-            $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['product_details']['upc']['mode'] == Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
-                && $formData['product_details']['upc']['attribute'] == $attribute['code']
-            ) {
-                $attrs['selected'] = 'selected';
-            }
-            $preparedAttributes[] = [
-                'attrs' => $attrs,
-                'value' => Description::PRODUCT_DETAILS_MODE_ATTRIBUTE,
-                'label' => $attribute['label'],
-            ];
-        }
-
-        $fieldset->addField(
-            'product_details_upc',
-            self::SELECT,
-            [
-                'container_id'             => 'product_details_upc_tr',
-                'label'                    => $this->__('UPC'),
-                'name'                     => 'description[product_details][upc][mode]',
-                'values'                   => [
-                    Description::PRODUCT_DETAILS_MODE_NONE           => $this->__('None'),
-                    Description::PRODUCT_DETAILS_MODE_DOES_NOT_APPLY => $this->__('Does Not Apply'),
-                    [
-                        'label' => $this->__('Magento Attributes'),
-                        'value' => $preparedAttributes,
-                        'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
-                ],
-                'create_magento_attribute' => true,
-                'value' => $formData['product_details']['upc']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
-                    ? $formData['product_details']['upc']['mode'] : '',
-                'tooltip'                  => $this->__(
-                    '
-                    Choose the Magento Attribute that contains the UPC for a Product or use a
-                    "Does not apply" Option in case your Product does not have an UPC Value.<br/><br/>
-                    The UPC or Universal Product Code is a 12 digit unique Identifier for a Product.
-                '
-                )
-            ]
-        )->addCustomAttribute('allowed_attribute_types', 'text');
-
-        $fieldset->addField(
-            'product_details_upc_attribute',
-            'hidden',
-            [
-                'name'  => 'description[product_details][upc][attribute]',
-                'value' => $formData['product_details']['upc']['attribute'],
-            ]
-        );
-
-        $preparedAttributes = [];
-        foreach ($allAttributesByTypes['text'] as $attribute) {
-            $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['product_details']['ean']['mode'] == Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
-                && $formData['product_details']['ean']['attribute'] == $attribute['code']
-            ) {
-                $attrs['selected'] = 'selected';
-            }
-            $preparedAttributes[] = [
-                'attrs' => $attrs,
-                'value' => Description::PRODUCT_DETAILS_MODE_ATTRIBUTE,
-                'label' => $attribute['label'],
-            ];
-        }
-
-        $fieldset->addField(
-            'product_details_ean',
-            self::SELECT,
-            [
-                'container_id'             => 'product_details_ean_tr',
-                'label'                    => $this->__('EAN'),
-                'name'                     => 'description[product_details][ean][mode]',
-                'values'                   => [
-                    Description::PRODUCT_DETAILS_MODE_NONE           => $this->__('None'),
-                    Description::PRODUCT_DETAILS_MODE_DOES_NOT_APPLY => $this->__('Does Not Apply'),
-                    [
-                        'label' => $this->__('Magento Attributes'),
-                        'value' => $preparedAttributes,
-                        'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
-                ],
-                'value' => $formData['product_details']['ean']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
-                    ? $formData['product_details']['ean']['mode'] : '',
-                'create_magento_attribute' => true,
-                'tooltip'                  => $this->__(
-                    '
-                    Choose the Magento Attribute that contains the EAN for a Product or use a
-                    "Does not apply" Option in case your Product does not have an EAN Value.<br/><br/>
-                    The EAN or European Article Number, now renamed International Article Number, is
-                    the 13 digit unique Identifier for a Product.
-                '
-                )
-            ]
-        )->addCustomAttribute('allowed_attribute_types', 'text');
-
-        $fieldset->addField(
-            'product_details_ean_attribute',
-            'hidden',
-            [
-                'name'  => 'description[product_details][ean][attribute]',
-                'value' => $formData['product_details']['ean']['attribute'],
-            ]
-        );
-
-        $preparedAttributes = [];
-        foreach ($allAttributesByTypes['text'] as $attribute) {
-            $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['product_details']['isbn']['mode'] == Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
-                && $formData['product_details']['isbn']['attribute'] == $attribute['code']
-            ) {
-                $attrs['selected'] = 'selected';
-            }
-            $preparedAttributes[] = [
-                'attrs' => $attrs,
-                'value' => Description::PRODUCT_DETAILS_MODE_ATTRIBUTE,
-                'label' => $attribute['label'],
-            ];
-        }
-
-        $fieldset->addField(
-            'product_details_isbn',
-            self::SELECT,
-            [
-                'container_id'             => 'product_details_isbn_tr',
-                'label'                    => $this->__('ISBN'),
-                'name'                     => 'description[product_details][isbn][mode]',
-                'values'                   => [
-                    Description::PRODUCT_DETAILS_MODE_NONE           => $this->__('None'),
-                    Description::PRODUCT_DETAILS_MODE_DOES_NOT_APPLY => $this->__('Does Not Apply'),
-                    [
-                        'label' => $this->__('Magento Attributes'),
-                        'value' => $preparedAttributes,
-                        'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
-                ],
-                'value' => $formData['product_details']['isbn']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
-                    ? $formData['product_details']['isbn']['mode'] : '',
-                'create_magento_attribute' => true,
-                'tooltip'                  => $this->__(
-                    '
-                    Choose the Magento Attribute that contains the ISBN for a Product or use a
-                    "Does not apply" Option in case your Product does not have an ISBN Value.<br/><br/>
-                    The ISBN or International Standard Book Number is a unique Identifier for a book.
-                    '
-                )
-            ]
-        )->addCustomAttribute('allowed_attribute_types', 'text');
-
-        $fieldset->addField(
-            'product_details_isbn_attribute',
-            'hidden',
-            [
-                'name'  => 'description[product_details][isbn][attribute]',
-                'value' => $formData['product_details']['isbn']['attribute'],
-            ]
-        );
-
-        $preparedAttributes = [];
-        foreach ($allAttributesByTypes['text'] as $attribute) {
-            $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['product_details']['epid']['mode'] == Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
-                && $formData['product_details']['epid']['attribute'] == $attribute['code']
-            ) {
-                $attrs['selected'] = 'selected';
-            }
-            $preparedAttributes[] = [
-                'attrs' => $attrs,
-                'value' => Description::PRODUCT_DETAILS_MODE_ATTRIBUTE,
-                'label' => $attribute['label'],
-            ];
-        }
-
-        $fieldset->addField(
-            'product_details_epid',
-            self::SELECT,
-            [
-                'container_id'             => 'product_details_epid_tr',
-                'label'                    => $this->__('ePID (Product Reference ID)'),
-                'name'                     => 'description[product_details][epid][mode]',
-                'values'                   => [
-                    Description::PRODUCT_DETAILS_MODE_NONE => $this->__('None'),
-                    [
-                        'label' => $this->__('Magento Attributes'),
-                        'value' => $preparedAttributes,
-                        'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
-                ],
-                'value' => $formData['product_details']['epid']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
-                    ? $formData['product_details']['epid']['mode'] : '',
-                'create_magento_attribute' => true,
-                'tooltip'                  => $this->__(
-                    'An eBay Product ID is eBay\'s global reference ID for a Catalog Product.'
-                )
-            ]
-        )->addCustomAttribute('allowed_attribute_types', 'text');
-
-        $fieldset->addField(
-            'product_details_epid_attribute',
-            'hidden',
-            [
-                'name'  => 'description[product_details][epid][attribute]',
-                'value' => $formData['product_details']['epid']['attribute'],
-            ]
-        );
-
-        $preparedAttributes = [];
-        foreach ($allAttributesByTypes['text_select'] as $attribute) {
-            $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['product_details']['brand']['mode'] == Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
-                && $formData['product_details']['brand']['attribute'] == $attribute['code']
-            ) {
-                $attrs['selected'] = 'selected';
-            }
-            $preparedAttributes[] = [
-                'attrs' => $attrs,
-                'value' => Description::PRODUCT_DETAILS_MODE_ATTRIBUTE,
-                'label' => $attribute['label'],
-            ];
-        }
-
-        $fieldset->addField(
-            'product_details_brand',
-            self::SELECT,
-            [
-                'container_id'             => 'product_details_brand_tr',
-                'label'                    => $this->__('Brand'),
-                'name'                     => 'description[product_details][brand][mode]',
-                'values'                   => [
-                    Description::PRODUCT_DETAILS_MODE_NONE           => $this->__('None'),
-                    Description::PRODUCT_DETAILS_MODE_DOES_NOT_APPLY => $this->__('Unbranded'),
-                    [
-                        'label' => $this->__('Magento Attributes'),
-                        'value' => $preparedAttributes,
-                        'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
-                ],
-                'value' => $formData['product_details']['brand']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
-                    ? $formData['product_details']['brand']['mode'] : '',
-                'create_magento_attribute' => true,
-                'tooltip'                  => $this->__(
-                    'Choose the Magento Attribute that contains the Brand for a Product or use an
-                    "Unbranded" Option in case your Product does not have an Brand Value.'
-                )
-            ]
-        )->addCustomAttribute('allowed_attribute_types', 'text,select');
-
-        $fieldset->addField(
-            'product_details_brand_attribute',
-            'hidden',
-            [
-                'name'  => 'description[product_details][brand][attribute]',
-                'value' => $formData['product_details']['brand']['attribute'],
-            ]
-        );
-
         $preparedAttributes = [];
         foreach ($allAttributesByTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
@@ -1457,8 +1210,7 @@ HTML
         $fieldset->addField(
             'product_details_specification_separator',
             self::SEPARATOR,
-            [
-            ]
+            []
         );
 
         $fieldset->addField(

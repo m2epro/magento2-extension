@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -14,21 +14,24 @@ class BeforeToken extends InstallationAmazon
 {
     /** @var \Ess\M2ePro\Helper\View\Configuration */
     private $configurationHelper;
-
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $sessionHelper;
-
     /** @var \Ess\M2ePro\Helper\Module\Exception */
     private $exceptionHelper;
-
     /** @var \Ess\M2ePro\Helper\Module\License */
     private $licenseHelper;
+    /** @var \Ess\M2ePro\Model\Servicing\Dispatcher */
+    private $servicingDispatcher;
+    /** @var \Magento\Framework\Controller\Result\JsonFactory */
+    private $jsonResultFactory;
 
     public function __construct(
         \Ess\M2ePro\Helper\Data\Session $sessionHelper,
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
         \Ess\M2ePro\Helper\Module\License $licenseHelper,
         \Ess\M2ePro\Helper\View\Configuration $configurationHelper,
+        \Ess\M2ePro\Model\Servicing\Dispatcher $servicingDispatcher,
+        \Magento\Framework\Controller\Result\JsonFactory $jsonResultFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\View\Amazon $amazonViewHelper,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
@@ -40,6 +43,8 @@ class BeforeToken extends InstallationAmazon
         $this->sessionHelper = $sessionHelper;
         $this->exceptionHelper = $exceptionHelper;
         $this->licenseHelper = $licenseHelper;
+        $this->servicingDispatcher = $servicingDispatcher;
+        $this->jsonResultFactory = $jsonResultFactory;
     }
 
     public function execute()
@@ -52,7 +57,7 @@ class BeforeToken extends InstallationAmazon
         $marketplace = $this->activeRecordFactory->getObjectLoaded('Marketplace', $marketplaceId);
 
         try {
-            $backUrl = $this->getUrl('*/*/afterGetTokenAutomatic');
+            $backUrl = $this->getUrl('*/*/afterToken');
 
             $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(
@@ -67,14 +72,14 @@ class BeforeToken extends InstallationAmazon
         } catch (\Exception $exception) {
             $this->exceptionHelper->process($exception);
 
-            $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
-                $this->modelFactory->getObject('Servicing_Task_License')->getPublicNick()
-            );
+            $this->servicingDispatcher->processTask(\Ess\M2ePro\Model\Servicing\Task\License::NAME);
 
             $error = 'The Amazon token obtaining is currently unavailable.<br/>Reason: %error_message%';
 
-            if (!$this->licenseHelper->isValidDomain() ||
-                !$this->licenseHelper->isValidIp()) {
+            if (
+                !$this->licenseHelper->isValidDomain()
+                || !$this->licenseHelper->isValidIp()
+            ) {
                 $error .= '</br>Go to the <a href="%url%" target="_blank">License Page</a>.';
                 $error = $this->__(
                     $error,
@@ -85,19 +90,11 @@ class BeforeToken extends InstallationAmazon
                 $error = $this->__($error, $exception->getMessage());
             }
 
-            $this->setJsonContent([
-                'message' => $error
-            ]);
-            return $this->getResult();
+            return $this->jsonResultFactory->create()->setData(['message' => $error]);
         }
 
         $this->sessionHelper->setValue('marketplace_id', $marketplaceId);
 
-        $this->setJsonContent([
-            'url' => $response['url']
-        ]);
-        return $this->getResult();
-
-        // ---------------------------------------
+        return $this->jsonResultFactory->create()->setData(['url' => $response['url']]);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -10,14 +10,33 @@ namespace Ess\M2ePro\Model\Amazon\Account;
 
 use Ess\M2ePro\Model\Amazon\Account;
 
-/**
- * Class Ess\M2ePro\Model\Amazon\Account\Builder
- */
 class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento\Store */
+    private $magentoStoreHelper;
 
-    protected function prepareData()
+    /**
+     * @param \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper
+     * @param \Ess\M2ePro\Helper\Factory $helperFactory
+     * @param \Ess\M2ePro\Model\Factory $modelFactory
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->magentoStoreHelper = $magentoStoreHelper;
+    }
+
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function prepareData(): array
     {
         $data = [];
 
@@ -27,7 +46,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'title',
             'marketplace_id',
             'merchant_id',
-            'token',
         ];
         foreach ($keys as $key) {
             if (isset($this->rawData[$key])) {
@@ -41,7 +59,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'related_store_id',
 
             'other_listings_synchronization',
-            'other_listings_mapping_mode'
+            'other_listings_mapping_mode',
         ];
         foreach ($keys as $key) {
             if (isset($this->rawData[$key])) {
@@ -63,7 +81,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
             'mapping_title_mode',
             'mapping_title_priority',
-            'mapping_title_attribute'
+            'mapping_title_attribute',
         ];
         foreach ($keys as $key) {
             if (isset($this->rawData[$key])) {
@@ -81,9 +99,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         if (isset($tempData['mapping_general_id_mode'])) {
             $mappingSettings['general_id']['mode'] = (int)$tempData['mapping_general_id_mode'];
 
-            if ($tempData['mapping_general_id_mode'] ==
-                Account::OTHER_LISTINGS_MAPPING_GENERAL_ID_MODE_CUSTOM_ATTRIBUTE
-            ) {
+            if ($tempData['mapping_general_id_mode'] == Account::OTHER_LISTINGS_MAPPING_GENERAL_ID_MODE_CUSTOM_ATTRIBUTE) {
                 $mappingSettings['general_id']['priority'] = (int)$tempData['mapping_general_id_priority'];
                 $mappingSettings['general_id']['attribute'] = (string)$tempData['mapping_general_id_attribute'];
             }
@@ -92,9 +108,10 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         if (isset($tempData['mapping_sku_mode'])) {
             $mappingSettings['sku']['mode'] = (int)$tempData['mapping_sku_mode'];
 
-            if ($tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT ||
-                $tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE ||
-                $tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID
+            if (
+                $tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT
+                || $tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE
+                || $tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID
             ) {
                 $mappingSettings['sku']['priority'] = (int)$tempData['mapping_sku_priority'];
             }
@@ -107,8 +124,9 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         if (isset($tempData['mapping_title_mode'])) {
             $mappingSettings['title']['mode'] = (int)$tempData['mapping_title_mode'];
 
-            if ($tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT ||
-                $tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE
+            if (
+                $tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT
+                || $tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE
             ) {
                 $mappingSettings['title']['priority'] = (int)$tempData['mapping_title_priority'];
             }
@@ -118,7 +136,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
-        $data['other_listings_mapping_settings'] = $this->getHelper('Data')->jsonEncode($mappingSettings);
+        $data['other_listings_mapping_settings'] = \Ess\M2ePro\Helper\Json::encode($mappingSettings);
 
         // tab: orders
         // ---------------------------------------
@@ -138,7 +156,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         $keys = [
             'mode',
             'store_mode',
-            'store_id'
+            'store_id',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -156,7 +174,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'mode',
             'product_mode',
             'product_tax_class_id',
-            'store_id'
+            'store_id',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -231,7 +249,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'mode',
             'store_mode',
             'store_id',
-            'stock_mode'
+            'stock_mode',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -249,7 +267,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'mode',
             'amazon_collect_for_uk',
             'amazon_collect_for_eea',
-            'import_tax_id_in_magento_order'
+            'import_tax_id_in_magento_order',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -300,7 +318,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
         $notificationsKeys = [
             'order_created',
-            'invoice_created'
+            'invoice_created',
         ];
         $tempSettings = !empty($tempSettings['notifications']) ? $tempSettings['notifications'] : [];
         foreach ($notificationsKeys as $key) {
@@ -316,7 +334,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         $keys = [
             'mode',
             'processing',
-            'shipped'
+            'shipped',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -327,9 +345,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         $data['magento_orders_settings']['shipping_information']['ship_by_date']
             = (int)($this->rawData['magento_orders_settings']['shipping_information']['ship_by_date'] ?? 1);
 
-        $data['magento_orders_settings'] = $this
-            ->getHelper('Data')
-            ->jsonEncode($data['magento_orders_settings']);
+        $data['magento_orders_settings'] = \Ess\M2ePro\Helper\Json::encode($data['magento_orders_settings']);
 
         // tab: vat calculation service
         // ---------------------------------------
@@ -345,6 +361,17 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
+        // region server data
+        if (isset($this->rawData['server_hash'])) {
+            $data['server_hash'] = $this->rawData['server_hash'];
+        }
+
+        if (isset($this->rawData['info'])) {
+            $data['info'] = \Ess\M2ePro\Helper\Json::encode($this->rawData['info']);
+        }
+
+        // endregion
+
         return $data;
     }
 
@@ -358,13 +385,12 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'title'            => '',
             'marketplace_id'   => 0,
             'merchant_id'      => '',
-            'token'            => '',
 
             // listing_other
             'related_store_id' => 0,
 
-            'other_listings_synchronization'  => 1,
-            'other_listings_mapping_mode'     => 1,
+            'other_listings_synchronization'  => 1, // yes
+            'other_listings_mapping_mode'     => 0, // no
             'other_listings_mapping_settings' => [],
 
             // order
@@ -372,13 +398,13 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                 'listing'                 => [
                     'mode'       => 1,
                     'store_mode' => Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
-                    'store_id'   => null
+                    'store_id'   => null,
                 ],
                 'listing_other'           => [
                     'mode'                 => 1,
                     'product_mode'         => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE,
                     'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
-                    'store_id'             => null,
+                    'store_id'             => $this->magentoStoreHelper->getDefaultStoreId(),
                 ],
                 'number'                  => [
                     'source'          => Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO,
@@ -389,7 +415,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                         'prime-prefix' => '',
                         'b2b-prefix'   => '',
                     ],
-                    'apply_to_amazon' => 0
+                    'apply_to_amazon' => 0,
                 ],
                 'tax'                     => [
                     'mode'                           => Account::MAGENTO_ORDERS_TAX_MODE_MIXED,
@@ -407,10 +433,10 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                     'group_id'             => null,
                     'notifications'        => [
                         'invoice_created' => false,
-                        'order_created'   => false
+                        'order_created'   => false,
                     ],
                     'billing_address_mode' =>
-                        Account::USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT
+                        Account::USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT,
                 ],
                 'status_mapping'          => [
                     'mode'       => Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT,
@@ -418,7 +444,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                     'shipped'    => Account::MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED,
                 ],
                 'qty_reservation'         => [
-                    'days' => 1
+                    'days' => 1,
                 ],
                 'refund_and_cancellation' => [
                     'refund_mode' => 1,
@@ -427,9 +453,9 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                     'mode'       => 1,
                     'store_mode' => 0,
                     'store_id'   => null,
-                    'stock_mode' => 0
+                    'stock_mode' => 0,
                 ],
-                'shipping_information' => [
+                'shipping_information'    => [
                     'ship_by_date' => 1,
                 ],
             ],
@@ -438,18 +464,23 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'auto_invoicing'                  => 0,
             'invoice_generation'              => 0,
             'create_magento_invoice'          => 1,
-            'create_magento_shipment'         => 1
+            'create_magento_shipment'         => 1,
         ];
     }
 
-    private function isNeedExcludeStates()
+    /**
+     * @return bool
+     */
+    private function isNeedExcludeStates(): bool
     {
         if ($this->rawData['marketplace_id'] != \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_US) {
             return false;
         }
 
-        if ($this->rawData['magento_orders_settings']['listing']['mode'] == 0 &&
-            $this->rawData['magento_orders_settings']['listing_other']['mode'] == 0) {
+        if (
+            $this->rawData['magento_orders_settings']['listing']['mode'] == 0
+            && $this->rawData['magento_orders_settings']['listing_other']['mode'] == 0
+        ) {
             return false;
         }
 
@@ -460,7 +491,10 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         return true;
     }
 
-    private function getGeneralExcludedStates()
+    /**
+     * @return string[]
+     */
+    private function getGeneralExcludedStates(): array
     {
         return [
             'AL',

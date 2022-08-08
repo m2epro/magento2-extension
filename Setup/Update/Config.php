@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -10,14 +10,12 @@ namespace Ess\M2ePro\Setup\Update;
 
 use Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractConfig;
 
-/**
- * Class \Ess\M2ePro\Setup\Update\Config
- */
 class Config extends AbstractConfig
 {
-    //########################################
-
-    public function getFeaturesList()
+    /**
+     * @return \string[][]
+     */
+    public function getFeaturesList(): array
     {
         return [
             'dev'     => [
@@ -27,12 +25,12 @@ class Config extends AbstractConfig
                 'ModuleConfigs',
                 'AddAmazonCollects',
                 'AddGermanyInStorePickUpForDevelop',
-                'DisableInStorePickUpCanadaFr'
+                'DisableInStorePickUpCanadaFr',
             ],
             'y19_m01' => [
                 'NewUpgradesEngine',
                 'AmazonOrdersUpdateDetails',
-                'NewCronRunner'
+                'NewCronRunner',
             ],
             'y19_m04' => [
                 'Walmart',
@@ -40,13 +38,13 @@ class Config extends AbstractConfig
                 'WalmartAuthenticationForCA',
                 'WalmartOptionImagesURL',
                 'WalmartOrdersReceiveOn',
-                'MigrationFromMagento1'
+                'MigrationFromMagento1',
             ],
             'y19_m05' => [
-                'WalmartAddMissingColumn'
+                'WalmartAddMissingColumn',
             ],
             'y19_m07' => [
-                'WalmartSynchAdvancedConditions'
+                'WalmartSynchAdvancedConditions',
             ],
             'y19_m10' => [
                 'ConfigsNoticeRemoved',
@@ -57,7 +55,7 @@ class Config extends AbstractConfig
                 'EbayInStorePickup',
                 'DropAutoMove',
                 'Configs',
-                'ProductVocabulary'
+                'ProductVocabulary',
             ],
             'y19_m11' => [
                 'AddEpidsAu',
@@ -71,7 +69,7 @@ class Config extends AbstractConfig
                 'SynchDataFromM1',
                 'RenameTableIndexerVariationParent',
                 'WalmartReviseDescription',
-                'EbayReturnPolicyM1'
+                'EbayReturnPolicyM1',
             ],
             'y20_m01' => [
                 'WebsitesActions',
@@ -79,13 +77,13 @@ class Config extends AbstractConfig
                 'WalmartRemoveChannelUrl',
                 'RemoveOutOfStockControl',
                 'EbayLotSize',
-                'EbayOrderUpdates'
+                'EbayOrderUpdates',
             ],
             'y20_m02' => [
                 'RepricingCount',
                 'OrderNote',
                 'ReviewPriorityCoefficients',
-                'Configs'
+                'Configs',
             ],
             'y20_m03' => [
                 'CronStrategy',
@@ -93,11 +91,11 @@ class Config extends AbstractConfig
                 'AmazonSendInvoice',
                 'AmazonNL',
                 'RemoveVersionsHistory',
-                'EbayCategories'
+                'EbayCategories',
             ],
             'y20_m04' => [
                 'SaveEbayCategory',
-                'BrowsenodeIdFix'
+                'BrowsenodeIdFix',
             ],
             'y20_m05' => [
                 'DisableUploadInvoicesAvailableNl',
@@ -107,7 +105,7 @@ class Config extends AbstractConfig
                 'PrimaryConfigs',
                 'CacheConfigs',
                 'ModuleConfigs',
-                'ConvertIntoInnoDB'
+                'ConvertIntoInnoDB',
             ],
             'y20_m06' => [
                 'WalmartConsumerId',
@@ -115,26 +113,26 @@ class Config extends AbstractConfig
                 'GeneralConfig',
                 'EbayConfig',
                 'AmazonConfig',
-                'RefundShippingCost'
+                'RefundShippingCost',
             ],
             'y20_m07' => [
                 'EbayTemplateStoreCategory',
                 'HashLongtextFields',
                 'EbayTemplateCustomTemplateId',
                 'WalmartKeywordsFields',
-                'WalmartOrderItemQty'
+                'WalmartOrderItemQty',
             ],
             'y20_m08' => [
                 'EbayManagedPayments',
                 'GroupedProduct',
                 'AmazonSkipTax',
                 'AmazonTR',
-                'VCSLiteInvoices'
+                'VCSLiteInvoices',
             ],
             'y20_m09' => [
                 'AmazonSE',
                 'SellOnAnotherSite',
-                'InventorySynchronization'
+                'InventorySynchronization',
             ],
             'y20_m10' => [
                 'ChangeSingleItemOption',
@@ -143,7 +141,7 @@ class Config extends AbstractConfig
                 'AddShipmentToAmazonListing',
                 'AddGermanyInStorePickUp',
                 'AddITCAShippingRateTable',
-                'DefaultValuesInSyncPolicy'
+                'DefaultValuesInSyncPolicy',
             ],
             'y20_m11' => [
                 'WalmartCustomCarrier',
@@ -153,42 +151,42 @@ class Config extends AbstractConfig
                 'DisableVCSOnNL',
                 'AmazonDuplicatedMarketplaceFeature',
                 'AddSkipEvtinSetting',
-                'EbayOrderCancelRefund'
+                'EbayOrderCancelRefund',
             ],
             'y21_m01' => [
                 'AmazonJP',
                 'WalmartCancelRefundOption',
-                'EbayRemoveClickAndCollect'
+                'EbayRemoveClickAndCollect',
             ],
             'y21_m02' => [
                 'MoveAUtoAsiaPacific',
                 'AmazonPL',
-                'EbayManagedPayments'
+                'EbayManagedPayments',
             ],
             'y21_m03' => [
                 'IncludeeBayProductDetails',
-                'EbayMotorsAddManagedPayments'
+                'EbayMotorsAddManagedPayments',
             ],
             'y21_m04' => [
                 'AmazonRelistPrice',
-                'AddShipByDate'
+                'AddShipByDate',
             ],
             'y21_m05' => [
-                'EbayStoreCategoryIDs'
+                'EbayStoreCategoryIDs',
             ],
             'y21_m06' => [
                 'FixBrokenUrl',
-                'EbayTaxReference'
+                'EbayTaxReference',
             ],
             'y21_m07' => [
-                'AmazonIossNumber'
+                'AmazonIossNumber',
             ],
             'y21_m08' => [
-                'FixedStuckedManualPriceRevise'
+                'FixedStuckedManualPriceRevise',
             ],
             'y21_m10' => [
                 'UpdateWatermarkImage',
-                'PartsCompatibilityImprovement'
+                'PartsCompatibilityImprovement',
             ],
             'y21_m11' => [
                 'EbayAddVatMode',
@@ -214,31 +212,35 @@ class Config extends AbstractConfig
                 'AmazonOrderCancellationNewFlow',
                 'DropListingColumns',
                 'RemoveEbayPayment',
-                'AddFeeColumnForEbayOrder'
+                'AddFeeColumnForEbayOrder',
             ],
             'y22_m06' => [
                 'FixMistakenConfigs',
-                'EbayFixedPriceModifier'
+                'EbayFixedPriceModifier',
             ],
             'y22_m07' => [
-                'FixFieldBuyerCancellationRequested'
-            ]
+                'AddEpidsForItaly',
+                'FixFieldBuyerCancellationRequested',
+                'AmazonAccountRemoveToken',
+                'AmazonMarketplaceRemoveAutomaticTokenColumn',
+                'MoveEbayProductIdentifiers',
+                'FixRemovedPolicyInScheduledActions'
+            ],
         ];
     }
 
-    //########################################
-
-    public function getMultiRunFeaturesList()
+    /**
+     * @return \string[][]
+     */
+    public function getMultiRunFeaturesList(): array
     {
         return [
             'y20_m07' => [
-                'WalmartOrderItemQty'
+                'WalmartOrderItemQty',
             ],
             'y22_m06' => [
-                'WalmartOrderItemBuyerCancellation'
+                'WalmartOrderItemBuyerCancellation',
             ],
         ];
     }
-
-    //########################################
 }

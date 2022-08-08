@@ -48,6 +48,17 @@ define([
             });
         },
 
+        settingsStep: function ()
+        {
+            this.initFormValidation();
+
+            if (!this.isValidForm()) {
+                return false;
+            }
+
+            this.submitForm(M2ePro.url.get('wizard_installationEbay/settingsContinue'));
+        },
+
         listingTutorialStep: function ()
         {
             WizardObj.setStep(WizardObj.getNextStep(), function (){

@@ -59,7 +59,7 @@ class RunSynchNow extends Marketplace
             $synchronization->getLockItemManager()->remove();
 
             $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
-                $this->modelFactory->getObject('Servicing_Task_License')->getPublicNick()
+                \Ess\M2ePro\Model\Servicing\Task\License::NAME
             );
 
             $this->setJsonContent(['result' => 'error']);

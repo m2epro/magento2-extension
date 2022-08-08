@@ -44,8 +44,6 @@ class Filter extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Motor\Filter::class);
     }
 
-    //########################################
-
     public function delete()
     {
         /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors $ebayMotorsHelper */
@@ -74,8 +72,6 @@ class Filter extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return true;
     }
 
-    //########################################
-
     /**
      * @return int
      */
@@ -84,8 +80,6 @@ class Filter extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return (int)$this->getData('title');
     }
 
-    // ---------------------------------------
-
     /**
      * @return int
      */
@@ -93,8 +87,6 @@ class Filter extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     {
         return (int)$this->getData('type');
     }
-
-    // ---------------------------------------
 
     /**
      * @return bool
@@ -106,6 +98,7 @@ class Filter extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_UK,
             \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_DE,
             \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_AU,
+            \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_IT
         ]);
     }
 
@@ -117,8 +110,6 @@ class Filter extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return $this->getType() == \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE;
     }
 
-    //########################################
-
     public function getConditions($asObject = true)
     {
         if ($asObject) {
@@ -127,12 +118,8 @@ class Filter extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return $this->getData('conditions');
     }
 
-    //########################################
-
     public function getNote()
     {
         return $this->getData('note');
     }
-
-    //########################################
 }

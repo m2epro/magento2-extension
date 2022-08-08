@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -8,62 +8,35 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Account\Update;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Connector\Account\Update\EntityRequester
- */
 class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 {
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
-    protected $amazonFactory;
-
-    //########################################
-
-    public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-                                                                       $account,
-        array $params
-    ) {
-        $this->amazonFactory = $amazonFactory;
-        parent::__construct($helperFactory, $modelFactory, $account, $params);
-    }
-
-    //########################################
-
     /**
      * @return array
      */
-    protected function getRequestData()
+    protected function getRequestData(): array
     {
-        /** @var \Ess\M2ePro\Model\Marketplace $marketplaceObject */
-
-        $marketplaceObject = $this->amazonFactory->getCachedObjectLoaded(
-            'Marketplace',
-            $this->params['marketplace_id']
-        );
-
         return [
+            'account'        => $this->params['account_server_hash'],
             'merchant_id'    => $this->params['merchant_id'],
             'token'          => $this->params['token'],
-            'marketplace_id' => $marketplaceObject->getNativeId(),
+            'marketplace_id' => $this->params['marketplace_id'],
         ];
     }
 
     /**
      * @return array
      */
-    protected function getCommand()
+    protected function getCommand(): array
     {
-        return ['account','update','entity'];
+        return ['account', 'update', 'entity'];
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return bool
      */
-    protected function validateResponse()
+    protected function validateResponse(): bool
     {
         $responseData = $this->getResponse()->getResponseData();
         if (!isset($responseData['info']) && !$this->getResponse()->getMessages()->hasErrorEntities()) {
@@ -76,7 +49,7 @@ class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTim
     /**
      * @throws \Exception
      */
-    protected function processResponseData()
+    protected function processResponseData(): void
     {
         foreach ($this->getResponse()->getMessages()->getEntities() as $message) {
             if (!$message->isError()) {
@@ -88,6 +61,4 @@ class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTim
 
         $this->responseData = $this->getResponse()->getResponseData();
     }
-
-    //########################################
 }

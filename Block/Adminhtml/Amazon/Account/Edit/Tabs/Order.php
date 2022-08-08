@@ -11,29 +11,33 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 use Ess\M2ePro\Model\Amazon\Account;
+use Magento\Framework\Data\Form\Element\Fieldset;
 
 class Order extends AbstractForm
 {
-    protected $orderConfig;
-    protected $customerGroup;
-    protected $taxClass;
+    /** @var \Magento\Sales\Model\Order\Config */
+    private $orderConfig;
+    /** @var \Magento\Customer\Model\Group */
+    private $customerGroup;
+    /** @var \Magento\Tax\Model\ClassModel */
+    private $taxClass;
     /** @var \Ess\M2ePro\Helper\Module\Support */
     private $supportHelper;
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
     /** @var \Ess\M2ePro\Helper\Magento\Store\Website */
     private $storeWebsiteHelper;
+    /** @var \Ess\M2ePro\Model\Amazon\Account\Builder */
+    private $accountBuilder;
 
     /**
      * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
-     * @param \Ess\M2ePro\Helper\Data $dataHelper
      * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
      * @param \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsiteHelper
      * @param \Magento\Tax\Model\ClassModel $taxClass
      * @param \Magento\Customer\Model\Group $customerGroup
      * @param \Magento\Sales\Model\Order\Config $orderConfig
+     * @param \Ess\M2ePro\Model\Amazon\Account\Builder $accountBuilder
      * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\Data\FormFactory $formFactory
@@ -41,12 +45,12 @@ class Order extends AbstractForm
      */
     public function __construct(
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsiteHelper,
         \Magento\Tax\Model\ClassModel $taxClass,
         \Magento\Customer\Model\Group $customerGroup,
         \Magento\Sales\Model\Order\Config $orderConfig,
+        \Ess\M2ePro\Model\Amazon\Account\Builder $accountBuilder,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
@@ -56,17 +60,63 @@ class Order extends AbstractForm
         $this->customerGroup = $customerGroup;
         $this->taxClass = $taxClass;
         $this->supportHelper = $supportHelper;
-        $this->dataHelper = $dataHelper;
         $this->globalDataHelper = $globalDataHelper;
         $this->storeWebsiteHelper = $storeWebsiteHelper;
+        $this->accountBuilder = $accountBuilder;
         parent::__construct($context, $registry, $formFactory, $data);
+    }
+
+    /**
+     * @param array $formData
+     * @param \Magento\Framework\Data\Form\Element\Fieldset $fieldset
+     * @param \Ess\M2ePro\Model\Account|null $account
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function addImportTaxRegistrationNumber(
+        array $formData,
+        Fieldset $fieldset,
+        ?\Ess\M2ePro\Model\Account $account
+    ): void {
+        $type = 'hidden';
+        $value = 0;
+        $tooltip = '';
+
+        if (
+            isset($account)
+            && $account->getChildObject()->getMarketplaceId() == \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_TR
+        ) {
+            $type = 'select';
+            $value = $formData['magento_orders_settings']['tax']['import_tax_id_in_magento_order'];
+            $tooltip = $this->getTooltipHtml(
+                $this->__(
+                    'Once enabled, find the Tax Registration Number displayed as VAT
+in the Shipping Address of your Magento Order.'
+                )
+            );
+        }
+
+        $fieldset->addField(
+            'magento_orders_tax_import_tax_id_in_magento_order',
+            $type,
+            [
+                'name'    => 'magento_orders_settings[tax][import_tax_id_in_magento_order]',
+                'label'   => $this->__('Import Tax Registration Number to Magento Order'),
+                'values'  => [
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
+                ],
+                'value' => $value,
+                'after_element_html' => $tooltip
+            ]
+        );
     }
 
     protected function _prepareForm()
     {
+        /** @var \Ess\M2ePro\Model\Account|null $account */
         $account = $this->globalDataHelper->getValue('edit_account');
-        $ordersSettings = $account !== null ? $account->getChildObject()->getData('magento_orders_settings') : [];
-        $ordersSettings = !empty($ordersSettings) ? $this->dataHelper->jsonDecode($ordersSettings) : [];
 
         // ---------------------------------------
         $websites = $this->storeWebsiteHelper->getWebsites(true);
@@ -86,9 +136,9 @@ class Order extends AbstractForm
 
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
         $formData['magento_orders_settings'] = !empty($formData['magento_orders_settings'])
-            ? $this->dataHelper->jsonDecode($formData['magento_orders_settings']) : [];
+            ? \Ess\M2ePro\Helper\Json::decode($formData['magento_orders_settings']) : [];
 
-        $defaults = $this->modelFactory->getObject('Amazon_Account_Builder')->getDefaultData();
+        $defaults = $this->accountBuilder->getDefaultData();
 
         if (isset($formData['magento_orders_settings']['tax']['excluded_states'])) {
             unset($defaults['magento_orders_settings']['tax']['excluded_states']);
@@ -98,9 +148,11 @@ class Order extends AbstractForm
             unset($defaults['magento_orders_settings']['tax']['excluded_countries']);
         }
 
-        $isEdit = !!$this->getRequest()->getParam('id');
+        $isEdit = !empty($this->getRequest()->getParam('id'));
 
-        $isEdit && $defaults['magento_orders_settings']['refund_and_cancellation']['refund_mode'] = 0;
+        if ($isEdit) {
+            $defaults['magento_orders_settings']['refund_and_cancellation']['refund_mode'] = 0;
+        }
 
         $formData = array_replace_recursive($defaults, $formData);
 
@@ -197,8 +249,8 @@ HTML
                 'name'               => 'magento_orders_settings[listing][store_id]',
                 'label'              => $this->__('Magento Store View'),
                 'required'           => true,
-                'value'              => !empty($ordersSettings['listing']['store_id'])
-                    ? $ordersSettings['listing']['store_id'] : '',
+                'value'              => !empty($formData['magento_orders_settings']['listing']['store_id'])
+                    ? $formData['magento_orders_settings']['listing']['store_id'] : '',
                 'has_empty_option'   => true,
                 'has_default_option' => false,
                 'tooltip'            => $this->__('The Magento Store View that Orders will be placed in.')
@@ -238,8 +290,8 @@ HTML
                 'container_id'       => 'magento_orders_listings_other_store_id_container',
                 'name'               => 'magento_orders_settings[listing_other][store_id]',
                 'label'              => $this->__('Magento Store View'),
-                'value'              => !empty($ordersSettings['listing_other']['store_id'])
-                    ? $ordersSettings['listing_other']['store_id'] : '',
+                'value'              => !empty($formData['magento_orders_settings']['listing_other']['store_id'])
+                    ? $formData['magento_orders_settings']['listing_other']['store_id'] : '',
                 'required'           => true,
                 'has_empty_option'   => true,
                 'has_default_option' => false,
@@ -357,8 +409,8 @@ HTML
                 'container_id'       => 'magento_orders_fba_store_id_container',
                 'name'               => 'magento_orders_settings[fba][store_id]',
                 'label'              => $this->__('Magento Store View'),
-                'value'              => !empty($ordersSettings['fba']['store_id'])
-                    ? $ordersSettings['fba']['store_id'] : '',
+                'value'              => !empty($formData['magento_orders_settings']['fba']['store_id'])
+                    ? $formData['magento_orders_settings']['fba']['store_id'] : '',
                 'required'           => true,
                 'has_empty_option'   => true,
                 'has_default_option' => false
@@ -810,25 +862,7 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'magento_orders_tax_import_tax_id_in_magento_order',
-            'select',
-            [
-                'name'    => 'magento_orders_settings[tax][import_tax_id_in_magento_order]',
-                'label'   => $this->__('Import Tax Registration Number to Magento Order'),
-                'values'  => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
-                ],
-                'value'   => $formData['magento_orders_settings']['tax']['import_tax_id_in_magento_order'],
-                'after_element_html' => $this->getTooltipHtml(
-                    $this->__(
-                        'Once enabled, find the Tax Registration Number displayed as VAT
-in the Shipping Address of your Magento Order.'
-                    )
-                )
-            ]
-        );
+        $this->addImportTaxRegistrationNumber($formData, $fieldset, $account);
 
         $fieldset = $form->addFieldset(
             'magento_block_amazon_accounts_magento_orders_status_mapping',

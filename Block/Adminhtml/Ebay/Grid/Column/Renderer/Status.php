@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -8,8 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer;
 
-use \Ess\M2ePro\Block\Adminhtml\Traits;
-use Ess\M2ePro\Model\Listing\Log;
+use Ess\M2ePro\Block\Adminhtml\Traits;
 
 class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
 {
@@ -36,9 +35,6 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
     /** @var \Ess\M2ePro\Helper\Module\Translation */
     private $translationHelper;
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -48,7 +44,6 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
         \Magento\Backend\Block\Context $context,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Helper\Module\Translation $translationHelper,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -59,7 +54,6 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
         $this->resourceConnection = $resourceConnection;
         $this->viewHelper = $viewHelper;
         $this->translationHelper = $translationHelper;
-        $this->dataHelper = $dataHelper;
     }
 
     public function render(\Magento\Framework\DataObject $row)
@@ -78,7 +72,7 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
             );
             $html = $viewLogIcon->render($row);
 
-            $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
+            $additionalData = (array)\Ess\M2ePro\Helper\Json::decode($row->getData('additional_data'));
             $synchNote = (isset($additionalData['synch_template_list_rules_note']))
                                 ? $additionalData['synch_template_list_rules_note']
                                 : [];
@@ -125,7 +119,7 @@ HTML;
         return $html;
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function getCurrentStatus($row)
     {
@@ -228,7 +222,6 @@ HTML;
         }
 
         switch ($scheduledAction->getActionType()) {
-
             case \Ess\M2ePro\Model\Listing\Product::ACTION_LIST:
                 $html .= '<br/><span style="color: #605fff">[List is Scheduled...]</span>';
                 break;
@@ -279,10 +272,6 @@ HTML;
                             $reviseParts[] = 'Shipping';
                         }
 
-                        if ($configurator->isPaymentAllowed()) {
-                            $reviseParts[] = 'Payment';
-                        }
-
                         if ($configurator->isReturnAllowed()) {
                             $reviseParts[] = 'Return';
                         }
@@ -312,6 +301,4 @@ HTML;
 
         return $html;
     }
-
-    //########################################
 }

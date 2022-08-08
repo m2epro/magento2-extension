@@ -10,16 +10,25 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder;
 
 class Variations extends AbstractModel
 {
-    protected $variationsThatCanNotBeDeleted = [];
-
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Configuration */
     private $componentEbayConfiguration;
+
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
     private $componentEbayCategoryEbay;
+
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translation;
+
+    private $variationsThatCanNotBeDeleted = [];
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Module\Translation $translation,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
@@ -28,6 +37,8 @@ class Variations extends AbstractModel
 
         $this->componentEbayConfiguration = $componentEbayConfiguration;
         $this->componentEbayCategoryEbay  = $componentEbayCategoryEbay;
+        $this->dataHelper = $dataHelper;
+        $this->translation = $translation;
     }
 
     public function getBuilderData()
@@ -55,13 +66,7 @@ class Variations extends AbstractModel
         return $data;
     }
 
-    //########################################
-
-    /**
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    protected function getVariationsData()
+    private function getVariationsData(): array
     {
         $data = [];
 
@@ -165,7 +170,7 @@ class Variations extends AbstractModel
         return $data;
     }
 
-    protected function getSku(\Ess\M2ePro\Model\Listing\Product\Variation $variation)
+    private function getSku(\Ess\M2ePro\Model\Listing\Product\Variation $variation)
     {
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation $ebayVariation */
         $ebayVariation = $variation->getChildObject();
@@ -177,7 +182,7 @@ class Variations extends AbstractModel
         $sku = $ebayVariation->getSku();
 
         if (strlen($sku) >= \Ess\M2ePro\Helper\Component\Ebay::VARIATION_SKU_MAX_LENGTH) {
-            $sku = $this->getHelper('Data')->hashString($sku, 'sha1', 'RANDOM_');
+            $sku = $this->dataHelper->hashString($sku, 'sha1', 'RANDOM_');
         }
 
         return $sku;
@@ -186,7 +191,7 @@ class Variations extends AbstractModel
     /**
      * @return bool|array
      */
-    protected function getSetsData()
+    private function getSetsData()
     {
         $additionalData = $this->getListingProduct()->getAdditionalData();
 
@@ -197,7 +202,7 @@ class Variations extends AbstractModel
         return false;
     }
 
-    protected function getVariationsThatCanNotBeDeleted()
+    private function getVariationsThatCanNotBeDeleted()
     {
         $canNotBeDeleted = $this->variationsThatCanNotBeDeleted;
         $additionalData = $this->getListingProduct()->getAdditionalData();
@@ -212,9 +217,7 @@ class Variations extends AbstractModel
         return $canNotBeDeleted;
     }
 
-    //########################################
-
-    protected function getVariationPriceData(\Ess\M2ePro\Model\Listing\Product\Variation $variation)
+    private function getVariationPriceData(\Ess\M2ePro\Model\Listing\Product\Variation $variation)
     {
         $priceData = [];
 
@@ -267,7 +270,7 @@ class Variations extends AbstractModel
 
         if (!$this->getEbayMarketplace()->isMultivariationEnabled()) {
             $this->addWarningMessage(
-                $this->getHelper('Module\Translation')->__(
+                $this->translation->__(
                     'The Product was Listed as a Simple Product as it has limitation for Multi-Variation Items. ' .
                     'Reason: Marketplace allows to list only Simple Items.'
                 )
@@ -282,7 +285,7 @@ class Variations extends AbstractModel
 
         if ($isVariationEnabled !== null && !$isVariationEnabled) {
             $this->addWarningMessage(
-                $this->getHelper('Module\Translation')->__(
+                $this->translation->__(
                     'The Product was Listed as a Simple Product as it has limitation for Multi-Variation Items. ' .
                     'Reason: eBay Primary Category allows to list only Simple Items.'
                 )
@@ -292,7 +295,7 @@ class Variations extends AbstractModel
 
         if ($this->getEbayListingProduct()->getEbaySellingFormatTemplate()->isIgnoreVariationsEnabled()) {
             $this->addWarningMessage(
-                $this->getHelper('Module\Translation')->__(
+                $this->translation->__(
                     'The Product was Listed as a Simple Product as it has limitation for Multi-Variation Items. ' .
                     'Reason: ignore Variation Option is enabled in Selling Policy.'
                 )
@@ -302,26 +305,21 @@ class Variations extends AbstractModel
 
         if (!$this->getEbayListingProduct()->isListingTypeFixed()) {
             $this->addWarningMessage(
-                $this->getHelper('Module\Translation')->__(
+                $this->translation->__(
                     'The Product was Listed as a Simple Product as it has limitation for Multi-Variation Items. ' .
                     'Reason: Listing type "Auction" does not support Multi-Variations.'
                 )
             );
-            return;
         }
     }
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Ebay\Template\Category\Source
      */
-    protected function getCategorySource()
+    private function getCategorySource()
     {
         return $this->getEbayListingProduct()->getCategoryTemplateSource();
     }
-
-    //########################################
 
     public function checkQtyWarnings($productsIds)
     {
@@ -375,54 +373,34 @@ class Variations extends AbstractModel
         }
     }
 
-    //########################################
+    private function getVariationDetails(\Ess\M2ePro\Model\Listing\Product\Variation $variation): array
+    {
+        return array_merge(
+            $this->getIdentifiersData($variation),
+            $this->getMPNData($variation)
+        );
+    }
 
-    protected function getVariationDetails(\Ess\M2ePro\Model\Listing\Product\Variation $variation)
+    private function getIdentifiersData(\Ess\M2ePro\Model\Listing\Product\Variation $variation): array
     {
         $data = [];
-
-        /** @var \Ess\M2ePro\Model\Ebay\Template\Description $ebayDescriptionTemplate */
-        $ebayDescriptionTemplate = $this->getEbayListingProduct()->getEbayDescriptionTemplate();
-
         $options = null;
         $additionalData = $variation->getAdditionalData();
 
-        foreach (['isbn', 'upc', 'ean', 'mpn', 'epid'] as $tempType) {
-            if ($tempType == 'mpn' && !empty($additionalData['online_product_details']['mpn'])) {
-                $data['mpn'] = $additionalData['online_product_details']['mpn'];
+        foreach (['isbn', 'upc', 'ean', 'epid'] as $identifier) {
 
-                $isMpnCanBeChanged = $this->componentEbayConfiguration->getVariationMpnCanBeChanged();
-
-                if (!$isMpnCanBeChanged) {
-                    continue;
-                }
-
-                $data['mpn_previous'] = $additionalData['online_product_details']['mpn'];
-            }
-
-            if (isset($additionalData['product_details'][$tempType])) {
-                $data[$tempType] = $additionalData['product_details'][$tempType];
+            if (isset($additionalData['product_details'][$identifier])) {
+                $data[$identifier] = $additionalData['product_details'][$identifier];
                 continue;
             }
 
-            if ($tempType == 'mpn') {
-                if ($ebayDescriptionTemplate->isProductDetailsModeNone('brand')) {
-                    continue;
-                }
 
-                if ($ebayDescriptionTemplate->isProductDetailsModeDoesNotApply('brand')) {
-                    $data[$tempType] = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\General::
-                    PRODUCT_DETAILS_DOES_NOT_APPLY;
-                    continue;
-                }
-            }
-
-            if ($ebayDescriptionTemplate->isProductDetailsModeNone($tempType)) {
+            if ($this->componentEbayConfiguration->isProductIdModeNone($identifier)) {
                 continue;
             }
 
-            if ($ebayDescriptionTemplate->isProductDetailsModeDoesNotApply($tempType)) {
-                $data[$tempType] = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\General::
+            if ($this->componentEbayConfiguration->isProductIdModeDoesNotApply($identifier)) {
+                $data[$identifier] = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\General::
                 PRODUCT_DETAILS_DOES_NOT_APPLY;
                 continue;
             }
@@ -432,7 +410,7 @@ class Variations extends AbstractModel
                 continue;
             }
 
-            $attribute = $ebayDescriptionTemplate->getProductDetailAttribute($tempType);
+            $attribute = $this->componentEbayConfiguration->getProductIdAttribute($identifier);
 
             if (!$attribute) {
                 continue;
@@ -446,13 +424,17 @@ class Variations extends AbstractModel
             $option = reset($options);
 
             $this->searchNotFoundAttributes();
-            $tempValue = $option->getMagentoProduct()->getAttributeValue($attribute);
+            $attributeValue = $option->getMagentoProduct()->getAttributeValue($attribute);
 
-            if (!$this->processNotFoundAttributes(strtoupper($tempType)) || !$tempValue) {
+            if (!$this->processNotFoundAttributes(strtoupper($identifier)) || !$attributeValue) {
                 continue;
             }
 
-            $data[$tempType] = $tempValue;
+            $data[$identifier] = $attributeValue;
+        }
+
+        if (empty($data)) {
+            return $data;
         }
 
         return $this->deleteNotAllowedIdentifier($data);
@@ -460,10 +442,6 @@ class Variations extends AbstractModel
 
     protected function deleteNotAllowedIdentifier(array $data)
     {
-        if (empty($data)) {
-            return $data;
-        }
-
         $categoryId = $this->getCategorySource()->getCategoryId();
         $marketplaceId = $this->getMarketplace()->getId();
         $categoryFeatures = $this->componentEbayCategoryEbay->getFeatures($categoryId, $marketplaceId);
@@ -484,9 +462,9 @@ class Variations extends AbstractModel
                 unset($data[$identifier]);
 
                 $this->addWarningMessage(
-                    $this->getHelper('Module\Translation')->__(
+                    $this->translation->__(
                         'The value of %type% was not sent because it is not allowed in this Category',
-                        $this->getHelper('Module\Translation')->__(strtoupper($identifier))
+                        $this->translation->__(strtoupper($identifier))
                     )
                 );
             }
@@ -495,5 +473,71 @@ class Variations extends AbstractModel
         return $data;
     }
 
-    //########################################
+    private function getMPNData(\Ess\M2ePro\Model\Listing\Product\Variation $variation): array
+    {
+        $data = [];
+
+        /** @var \Ess\M2ePro\Model\Ebay\Template\Description $ebayDescriptionTemplate */
+        $ebayDescriptionTemplate = $this->getEbayListingProduct()->getEbayDescriptionTemplate();
+
+        $options = null;
+        $additionalData = $variation->getAdditionalData();
+
+        if (!empty($additionalData['online_product_details']['mpn'])) {
+            $data['mpn'] = $additionalData['online_product_details']['mpn'];
+
+            $isMpnCanBeChanged = $this->componentEbayConfiguration->getVariationMpnCanBeChanged();
+            if (!$isMpnCanBeChanged) {
+                return $data;
+            }
+
+            $data['mpn_previous'] = $additionalData['online_product_details']['mpn'];
+        }
+
+        if (isset($additionalData['product_details']['mpn'])) {
+            $data['mpn'] = $additionalData['product_details']['mpn'];
+            return $data;
+        }
+
+        if ($ebayDescriptionTemplate->isProductDetailsModeNone('mpn') ||
+            $ebayDescriptionTemplate->isProductDetailsModeNone('brand')) {
+            return $data;
+        }
+
+        if ($ebayDescriptionTemplate->isProductDetailsModeDoesNotApply('mpn') ||
+            $ebayDescriptionTemplate->isProductDetailsModeDoesNotApply('brand')) {
+            $data['mpn'] = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\General::
+            PRODUCT_DETAILS_DOES_NOT_APPLY;
+            return $data;
+        }
+
+        if (!$this->getMagentoProduct()->isConfigurableType() &&
+            !$this->getMagentoProduct()->isGroupedType()) {
+            return $data;
+        }
+
+        $attribute = $ebayDescriptionTemplate->getProductDetailAttribute('mpn');
+
+        if (!$attribute) {
+            return $data;
+        }
+
+        if ($options === null) {
+            $options = $variation->getOptions(true);
+        }
+
+        /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+        $option = reset($options);
+
+        $this->searchNotFoundAttributes();
+        $attributeValue = $option->getMagentoProduct()->getAttributeValue($attribute);
+
+        if (!$this->processNotFoundAttributes('MPN') || !$attributeValue) {
+            return $data;
+        }
+
+        $data['mpn'] = $attributeValue;
+
+        return $data;
+    }
 }
