@@ -128,6 +128,10 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
 
     protected function processSuccessReviseBusinessPrice()
     {
+        if ($this->getRequestDataObject()->hasDeleteBusinessPriceFlag()) {
+            $this->logSuccessMessage('Business Price was removed');
+        }
+
         if (!$this->getConfigurator()->isBusinessPriceAllowed()) {
             return;
         }
@@ -157,7 +161,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
         $amazonListingProduct = $this->listingProduct->getChildObject();
-        
+
         $handlingTimeFrom = $amazonListingProduct->getOrigData('online_handling_time');
         $handlingTimeTo = $amazonListingProduct->getOnlineHandlingTime();
 
@@ -175,7 +179,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
     }
 
     //########################################
-    
+
     protected function logSuccessMessage($text)
     {
         /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
@@ -183,6 +187,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
         $message->initFromPreparedData($text, \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS);
         $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
     }
-    
+
     //########################################
 }

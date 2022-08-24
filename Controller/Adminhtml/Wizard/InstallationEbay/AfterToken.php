@@ -114,7 +114,6 @@ class AfterToken extends InstallationEbay
     {
         $data = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
         $data['marketplaces_data'] = [];
-        $data['other_listings_synchronization'] = 0;
         $data['magento_orders_settings']['listing_other']['store_id'] = $this->magentoStoreHelper->getDefaultStoreId();
         $data['magento_orders_settings']['qty_reservation']['days'] = 0;
 

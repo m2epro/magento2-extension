@@ -31,6 +31,18 @@ class Amazon
     public const MARKETPLACE_SE = 41;
     public const MARKETPLACE_JP = 42;
     public const MARKETPLACE_PL = 43;
+    public const MARKETPLACE_BR = 44;
+    public const MARKETPLACE_SG = 45;
+    public const MARKETPLACE_IN = 46;
+    public const MARKETPLACE_AE = 47;
+
+    private const MARKETPLACE_WITHOUT_DATA = [
+        self::MARKETPLACE_JP,
+        self::MARKETPLACE_BR,
+        self::MARKETPLACE_SG,
+        self::MARKETPLACE_IN,
+        self::MARKETPLACE_AE,
+    ];
 
     public const EEA_COUNTRY_CODES = [
         'AT', 'BE', 'BG', 'HR', 'CY',
@@ -348,5 +360,18 @@ class Amazon
     public function clearCache(): void
     {
         $this->cachePermanent->removeTagValues(self::NICK);
+    }
+
+    /**
+     * @param mixed $marketplaceId
+     * @return bool
+     */
+    public function isMarketplacesWithoutData($marketplaceId): bool
+    {
+        if (in_array((int)$marketplaceId, self::MARKETPLACE_WITHOUT_DATA, true)) {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -8,9 +8,9 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs;
 
-use \Ess\M2ePro\Helper\Component\Ebay as EbayHelper;
+use Ess\M2ePro\Helper\Component\Ebay as EbayHelper;
 
-class Motors extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
+class Motors extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory */
     protected $attributeColFactory;

@@ -109,6 +109,13 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
 
     // ---------------------------------------
 
+    public function hasDeleteBusinessPriceFlag()
+    {
+        return isset($this->getData()['delete_business_price_flag']);
+    }
+
+    // ---------------------------------------
+
     /**
      * @return bool
      */

@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs;
 use Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs;
 use Magento\Framework\Message\MessageInterface;
 
-class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
+class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;

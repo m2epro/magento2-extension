@@ -8,9 +8,9 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs;
 
-use \Ess\M2ePro\Helper\Component\Ebay\Configuration as ConfigurationHelper;
+use Ess\M2ePro\Helper\Component\Ebay\Configuration as ConfigurationHelper;
 
-class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
+class Main extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Configuration */
     private $config;
@@ -39,17 +39,19 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 
     protected function _prepareForm()
     {
-        $form = $this->_formFactory->create([
-            'data' => [
-                'method' => 'post',
-                'action' => $this->getUrl('*/*/save')
+        $form = $this->_formFactory->create(
+            [
+                'data' => [
+                    'method' => 'post',
+                    'action' => $this->getUrl('*/*/save')
+                ]
             ]
-        ]);
+        );
 
         $fieldset = $form->addFieldset(
             'images',
             [
-                'legend' => $this->__('Images Uploading'),
+                'legend'      => $this->__('Images Uploading'),
                 'collapsable' => false,
             ]
         );

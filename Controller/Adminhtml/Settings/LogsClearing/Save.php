@@ -24,37 +24,6 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
 
     public function execute()
     {
-        $post = $this->getRequest()->getPostValue();
-
-        // Save settings
-        // ---------------------------------------
-        if ($post) {
-            $this->modelFactory->getObject('Log\Clearing')->saveSettings(
-                \Ess\M2ePro\Model\Log\Clearing::LOG_LISTINGS,
-                $post['listings_log_mode'],
-                $post['listings_log_days']
-            );
-            $this->modelFactory->getObject('Log\Clearing')->saveSettings(
-                \Ess\M2ePro\Model\Log\Clearing::LOG_SYNCHRONIZATIONS,
-                $post['synchronizations_log_mode'],
-                $post['synchronizations_log_days']
-            );
-            $this->modelFactory->getObject('Log\Clearing')->saveSettings(
-                \Ess\M2ePro\Model\Log\Clearing::LOG_ORDERS,
-                $post['orders_log_mode'],
-                90
-            );
-
-            if ($this->componentEbayPickupStore->isFeatureEnabled()) {
-                $this->modelFactory->getObject('Log\Clearing')->saveSettings(
-                    \Ess\M2ePro\Model\Log\Clearing::LOG_EBAY_PICKUP_STORE,
-                    $post['ebay_pickup_store_log_mode'],
-                    $post['ebay_pickup_store_log_days']
-                );
-            }
-        }
-        // ---------------------------------------
-
         // Get actions
         // ---------------------------------------
         $task = $this->getRequest()->getParam('task');

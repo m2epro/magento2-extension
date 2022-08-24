@@ -17,7 +17,6 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
     const TAB_ID_SYSTEM_REQUIREMENTS = 'system_requirements';
     const TAB_ID_CRON_JOB_INFO = 'cron_job_info';
     const TAB_ID_SYNCHRONIZATION_LOG = 'synchronization_log';
-    const TAB_ID_DIRECT_DATABASE_CHANGES = 'direct_database_changes';
     const TAB_ID_PERFORMANCE_NOTES = 'performance_notes';
 
     //########################################
@@ -89,19 +88,6 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         ];
 
         $this->addTab(self::TAB_ID_SYNCHRONIZATION_LOG, $tab);
-
-        // ---------------------------------------
-
-        // ---------------------------------------
-        $tab = [
-            'label' => $this->__('Direct Database Changes'),
-            'title' => $this->__('Direct Database Changes'),
-            'content' => $this->getLayout()
-                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Developers\Tabs\DirectDatabaseChanges::class)
-                              ->toHtml()
-        ];
-
-        $this->addTab(self::TAB_ID_DIRECT_DATABASE_CHANGES, $tab);
 
         // ---------------------------------------
 

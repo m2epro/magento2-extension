@@ -8,18 +8,9 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Settings;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
- */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 {
     const TAB_ID_SYNCHRONIZATION   = 'synchronization';
-    const TAB_ID_INTERFACE         = 'interface';
-    const TAB_ID_MAGENTO_INVENTORY = 'magento_inventory';
-    const TAB_ID_LOGS_CLEARING     = 'logs_clearing';
-    const TAB_ID_LICENSE           = 'license';
-
-    //########################################
 
     protected function _construct()
     {
@@ -28,83 +19,22 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $this->setDestElementId('tabs_container');
     }
 
-    //########################################
-
     protected function _prepareLayout()
     {
         $this->css->addFile('settings.css');
-
-        // ---------------------------------------
-
-        $tab = [
-            'label' => $this->__('Interface'),
-            'title' => $this->__('Interface'),
-            'content' => $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Settings\Tabs\InterfaceTab::class)
-                                           ->toHtml()
-        ];
-
-        $this->addTab(self::TAB_ID_INTERFACE, $tab);
-
-        // ---------------------------------------
-
-        // ---------------------------------------
-
-        $tab = [
-            'label' => $this->__('Magento Inventory'),
-            'title' => $this->__('Magento Inventory'),
-            'content' => $this->getLayout()
-                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Settings\Tabs\MagentoInventory::class)
-                              ->toHtml()
-        ];
-
-        $this->addTab(self::TAB_ID_MAGENTO_INVENTORY, $tab);
-
-        // ---------------------------------------
-
-        // ---------------------------------------
-
-        $tab = [
-            'label' => $this->__('Logs Clearing'),
-            'title' => $this->__('Logs Clearing'),
-            'content' => $this->getLayout()
-                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Settings\Tabs\LogsClearing::class)
-                              ->toHtml()
-        ];
-
-        $this->addTab(self::TAB_ID_LOGS_CLEARING, $tab);
-
-        // ---------------------------------------
-
-        // ---------------------------------------
-
-        $tab = [
-            'label' => $this->__('License'),
-            'title' => $this->__('License'),
-            'content' => $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Settings\Tabs\License::class)
-                                           ->toHtml()
-        ];
-
-        $this->addTab(self::TAB_ID_LICENSE, $tab);
-
-        // ---------------------------------------
 
         $this->setActiveTab($this->getData('active_tab'));
 
         return parent::_prepareLayout();
     }
 
-    //########################################
-
     public function getActiveTabById($id)
     {
         return isset($this->_tabs[$id]) ? $this->_tabs[$id] : null;
     }
 
-    //########################################
-
     protected function _beforeToHtml()
     {
-        $this->jsUrl->add($this->getUrl('*/*/index', ['active_tab' => self::TAB_ID_LICENSE]), 'licenseTab');
         $this->jsTranslator->addTranslations([
             'Settings saved' => $this->__('Settings saved'),
             'Error' => $this->__('Error'),
@@ -119,6 +49,4 @@ JS
 
         return parent::_beforeToHtml();
     }
-
-    //########################################
 }

@@ -61,12 +61,9 @@ class Single extends \Ess\M2ePro\Model\Connector\Connection\AbstractModel
         if ($this->getResponse()->getMessages()->hasSystemErrorEntity()) {
             throw new \Ess\M2ePro\Model\Exception(
                 $this->getHelper('Module\Translation')->__(
-                    "Internal Server Error(s) [%error_message%]",
+                    'Internal Server Error(s) [%error_message%]',
                     $this->getResponse()->getMessages()->getCombinedSystemErrorsString()
-                ),
-                [],
-                0,
-                !$this->getResponse()->isServerInMaintenanceMode()
+                )
             );
         }
     }

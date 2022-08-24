@@ -62,7 +62,7 @@ class Change extends \Ess\M2ePro\Controller\Adminhtml\Base
         }
 
         $this->setAjaxContent(
-            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Settings\Tabs\License\Change::class)
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\System\Config\Sections\License\Change::class)
         );
         return $this->getResult();
     }

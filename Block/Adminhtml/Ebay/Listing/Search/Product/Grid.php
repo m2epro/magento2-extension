@@ -248,8 +248,10 @@ HTML;
             ]
         );
 
-        $collection->addFieldToFilter('entity_id', $cond);
-        $collection->getSelect()->orWhere("(product_id_subQuery.searched_by_child = '1')");
+        $collection->addFieldToFilter([
+            ['attribute' => 'entity_id', $cond],
+            ['attribute' => 'product_sku_subQuery.searched_by_child', 'eq' => '1', 'raw' => true]
+        ]);
     }
 
     protected function callbackFilterTitle($collection, $column)
@@ -280,13 +282,13 @@ HTML;
         );
 
         $collection->addFieldToFilter([
-            ['attribute'=>'sku','like'=>'%'.$value.'%'],
-            ['attribute'=>'online_sku','like'=>'%'.$value.'%'],
-            ['attribute'=>'name', 'like'=>'%'.$value.'%'],
-            ['attribute'=>'online_title','like'=>'%'.$value.'%'],
-            ['attribute'=>'listing_title','like'=>'%'.$value.'%'],
+            ['attribute' => 'sku', 'like' => '%' . $value . '%'],
+            ['attribute' => 'online_sku', 'like' => '%' . $value . '%'],
+            ['attribute' => 'name', 'like' => '%' . $value . '%'],
+            ['attribute' => 'online_title', 'like' => '%' . $value . '%'],
+            ['attribute' => 'listing_title', 'like' => '%' . $value . '%'],
+            ['attribute' => 'product_sku_subQuery.searched_by_child', 'eq' => '1', 'raw' => true],
         ]);
-        $collection->getSelect()->orWhere("(product_sku_subQuery.searched_by_child = '1')");
     }
 
     protected function callbackFilterOnlineQty($collection, $column)

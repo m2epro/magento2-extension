@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Magento\Quote;
 
+use Ess\M2ePro\Helper\Module\Configuration;
+
 /**
  * Builds the quote object, which then can be converted to magento order
  */
@@ -37,6 +39,9 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Magento\Sales\Model\OrderIncrementIdChecker */
     protected $orderIncrementIdChecker;
 
+    /** @var \Ess\M2ePro\Helper\Module\Configuration  */
+    private $configurationHelper;
+
     //########################################
 
     public function __construct(
@@ -49,7 +54,8 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Catalog\Model\ResourceModel\Product $productResource,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Magento\Quote\Manager $quoteManager,
-        \Magento\Sales\Model\OrderIncrementIdChecker $orderIncrementIdChecker
+        \Magento\Sales\Model\OrderIncrementIdChecker $orderIncrementIdChecker,
+        Configuration $configurationHelper
     ) {
         $this->proxyOrder = $proxyOrder;
         $this->currency = $currency;
@@ -59,6 +65,8 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $this->productResource = $productResource;
         $this->quoteManager = $quoteManager;
         $this->orderIncrementIdChecker = $orderIncrementIdChecker;
+        $this->configurationHelper = $configurationHelper;
+
         parent::__construct($helperFactory, $modelFactory);
     }
 
@@ -291,6 +299,9 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function initializeQuoteItems()
     {
+        $this->quote->setUseM2eProDiscount(false);
+        $discountAmount = 0;
+
         foreach ($this->proxyOrder->getItems() as $item) {
             $this->clearQuoteItemsCache();
 
@@ -333,6 +344,14 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                 $productPriceInItem = (($item->getOriginalPrice() * $productPriceInSetPercent) / 100);
                 $item->setPrice($productPriceInItem / $associatedProduct->getQty());
 
+                if ($this->configurationHelper->isGroupedProductModeSet()) {
+                    $discountAmount += $this->getDiscount(
+                        $productPriceInItem,
+                        $associatedProduct->getQty(),
+                        $item->getOriginalQty()
+                    );
+                }
+
                 /** @var \Ess\M2ePro\Model\Magento\Quote\Item $quoteItemBuilder */
                 $quoteItemBuilder = $this->modelFactory->getObject(
                     'Magento_Quote_Item',
@@ -358,6 +377,23 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             $item->save();
             $this->quote->getItemsCollection()->addItem($item);
         }
+
+        if ($this->quote->getUseM2eProDiscount()) {
+            $this->quote->setCoinDiscount($discountAmount);
+        }
+    }
+
+    private function getDiscount($productPriceInItem, $associatedProductQty, $OriginalQty)
+    {
+        $total = 0;
+        $roundPrice = round(($productPriceInItem / $associatedProductQty), 2) * $associatedProductQty;
+
+        if ($productPriceInItem !== $roundPrice) {
+            $this->quote->setUseM2eProDiscount(true);
+            $total = ($roundPrice - $productPriceInItem) * $OriginalQty;
+        }
+
+        return $total;
     }
 
     /**

@@ -18,6 +18,7 @@ class ControlPanel
     public const TAB_TOOLS_MODULE = 'tools_module';
     public const TAB_CRON = 'cron';
     public const TAB_DEBUG = 'debug';
+    public const TAB_CHANGE_TRACKER = 'change_tracker';
 
     /** @var \Magento\Backend\Model\Url */
     private $backendUrlBuilder;

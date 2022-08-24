@@ -28,10 +28,9 @@ class FailDuringEventProcessing extends Exception
         \Magento\Sales\Api\Data\OrderInterface $order,
         $message = "",
         $additionalData = [],
-        $code = 0,
-        $sendToServer = true
+        $code = 0
     ) {
-        parent::__construct($message, $additionalData, $code, $sendToServer);
+        parent::__construct($message, $additionalData, $code);
         $this->order = $order;
     }
 

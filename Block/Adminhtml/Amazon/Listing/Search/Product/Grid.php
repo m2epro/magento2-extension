@@ -564,8 +564,10 @@ HTML;
             ]
         );
 
-        $collection->addFieldToFilter('entity_id', $cond);
-        $collection->getSelect()->orWhere("(product_id_subQuery.searched_by_child = '1')");
+        $collection->addFieldToFilter([
+            ['attribute' => 'entity_id', $cond],
+            ['attribute' => 'product_id_subQuery.searched_by_child', 'eq' => '1', 'raw' => true],
+        ]);
     }
 
     protected function callbackFilterTitle($collection, $column)
@@ -597,12 +599,12 @@ HTML;
 
         $collection->addFieldToFilter(
             [
-                ['attribute'=>'sku','like'=>'%'.$value.'%'],
-                ['attribute'=>'name', 'like'=>'%'.$value.'%'],
-                ['attribute'=>'listing_title','like'=>'%'.$value.'%'],
+                ['attribute' => 'sku', 'like' => '%' . $value . '%'],
+                ['attribute' => 'name', 'like' => '%' . $value . '%'],
+                ['attribute' => 'listing_title', 'like' => '%' . $value . '%'],
+                ['attribute' => 'product_sku_subQuery.searched_by_child', 'eq' => '1', 'raw' => true],
             ]
         );
-        $collection->getSelect()->orWhere("(product_sku_subQuery.searched_by_child = '1')");
     }
 
     protected function callbackFilterOnlineSku($collection, $column)
@@ -614,7 +616,7 @@ HTML;
         }
 
         $childCollection = $this->getChildProductsCollection();
-        $childCollection->addFieldToFilter('sku', ['like' => '%'.$value.'%']);
+        $childCollection->addFieldToFilter('sku', ['like' => '%' . $value . '%']);
 
         $collection->getSelect()->joinLeft(
             ['online_sku_subQuery' => $childCollection->getSelect()],
@@ -625,8 +627,10 @@ HTML;
             ]
         );
 
-        $collection->addFieldToFilter('online_sku', ['like' => '%'.$value.'%']);
-        $collection->getSelect()->orWhere("(online_sku_subQuery.searched_by_child = '1')");
+        $collection->addFieldToFilter([
+            ['attribute' => 'online_sku', 'like' => '%' . $value . '%'],
+            ['attribute' => 'online_sku_subQuery.searched_by_child', 'eq' => '1', 'raw' => true],
+        ]);
     }
 
     protected function callbackFilterAsinIsbn($collection, $column)
@@ -638,7 +642,7 @@ HTML;
         }
 
         $childCollection = $this->getChildProductsCollection();
-        $childCollection->addFieldToFilter('general_id', ['like' => '%'.$value.'%']);
+        $childCollection->addFieldToFilter('general_id', ['like' => '%' . $value . '%']);
 
         $collection->getSelect()->joinLeft(
             ['asin_subQuery' => $childCollection->getSelect()],
@@ -649,8 +653,10 @@ HTML;
             ]
         );
 
-        $collection->addFieldToFilter('general_id', ['like' => '%'.$value.'%']);
-        $collection->getSelect()->orWhere("(asin_subQuery.searched_by_child = '1')");
+        $collection->addFieldToFilter([
+            ['attribute' => 'general_id', 'like' => '%' . $value . '%'],
+            ['attribute' => 'asin_subQuery.searched_by_child', 'eq' => '1', 'raw' => true],
+        ]);
     }
 
     protected function callbackFilterPrice($collection, $column)

@@ -350,8 +350,8 @@ abstract class Main extends Base
     {
         if (!$this->getHelper('Module_Cron')->isModeEnabled()) {
             return $this->getMessageManager()->addWarning(
-                'Automatic Synchronization is disabled. You can enable it under <i>Stores > Settings > Configuration
-                    > M2E Pro > Advanced Settings > Automatic Synchronization</i>.',
+                'Automatic Synchronization is disabled. You can enable it under <i>Stores > Settings >
+                        Configuration > M2E Pro > Module & Channels > Automatic Synchronization</i>.',
                 \Ess\M2ePro\Controller\Adminhtml\Base::GLOBAL_MESSAGES_GROUP
             );
         }

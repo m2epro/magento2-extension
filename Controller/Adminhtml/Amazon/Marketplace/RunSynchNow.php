@@ -10,12 +10,20 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Marketplace;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Marketplace;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Marketplace\RunSynchNow
- */
 class RunSynchNow extends Marketplace
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    protected $amazonHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+
+        $this->amazonHelper = $amazonHelper;
+    }
 
     public function execute()
     {
@@ -28,8 +36,7 @@ class RunSynchNow extends Marketplace
             (int)$this->getRequest()->getParam('marketplace_id')
         );
 
-        // Japan only for beta, he have not marketplace build.
-        if ($marketplace->getId() == \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_JP) {
+        if ($this->amazonHelper->isMarketplacesWithoutData($marketplace->getId())) {
             $this->setJsonContent(['result' => 'success']);
             return $this->getResult();
         }
@@ -70,5 +77,4 @@ class RunSynchNow extends Marketplace
         return $this->getResult();
     }
 
-    //########################################
 }

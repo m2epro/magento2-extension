@@ -40,6 +40,6 @@ class ListingTutorialContinue extends InstallationWalmart
 
         $this->magentoHelper->clearMenuCache();
 
-        return $this->_redirect('*/walmart_listing_create');
+        return $this->_redirect('*/walmart_listing_create', ['wizard' => true]);
     }
 }

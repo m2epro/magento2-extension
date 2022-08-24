@@ -104,7 +104,7 @@ HTML
         $otherCarriers = empty($formData['other_carriers']) ? [] : $this->dataHelper->jsonDecode(
             $formData['other_carriers']
         );
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 30; $i++) {
             $code = $url = '';
 
             if (!empty($otherCarriers[$i])) {
@@ -208,7 +208,7 @@ CSS
     require([
         'M2ePro/Walmart/Account',
     ], function() {
-        WalmartAccountObj.otherCarrierInit(5);
+        WalmartAccountObj.otherCarrierInit(30);
     });
 JS
             ,

@@ -27,17 +27,17 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @var \Ess\M2ePro\Model\Listing\Product
      */
-    private $listingProduct = null;
+    private $listingProduct;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator
      */
-    private $configurator = null;
+    private $configurator;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData
      */
-    protected $requestData = null;
+    protected $requestData;
 
     /**
      * @var array
@@ -281,6 +281,13 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
     protected function appendBusinessPriceValues($data)
     {
+        if ($this->getRequestData()->hasDeleteBusinessPriceFlag()) {
+            $data['online_business_price'] = null;
+            $data['online_business_discounts'] = null;
+
+            return $data;
+        }
+
         if (!$this->getRequestData()->hasBusinessPrice()) {
             return $data;
         }
@@ -289,7 +296,8 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
         if ($this->getRequestData()->hasBusinessDiscounts()) {
             $businessDiscounts = $this->getRequestData()->getBusinessDiscounts();
-            $data['online_business_discounts'] = $this->getHelper('Data')->jsonEncode($businessDiscounts['values']);
+
+            $data['online_business_discounts'] = \Ess\M2ePro\Helper\Json::encode($businessDiscounts['values']);
         } else {
             $data['online_business_discounts'] = null;
         }
@@ -305,7 +313,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $data['online_details_data'] = $this->getHelper('Data')->hashString(
-            $this->getHelper('Data')->jsonEncode($requestMetadata['details_data']),
+            \Ess\M2ePro\Helper\Json::encode($requestMetadata['details_data']),
             'md5'
         );
 
@@ -320,7 +328,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $data['online_images_data'] = $this->getHelper('Data')->hashString(
-            $this->getHelper('Data')->jsonEncode($requestMetadata['images_data']),
+            \Ess\M2ePro\Helper\Json::encode($requestMetadata['images_data']),
             'md5'
         );
 
@@ -359,11 +367,13 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         $additionalData = $this->getListingProduct()->getAdditionalData();
 
         if ($this->getConfigurator()->isQtyAllowed()) {
-            $additionalData['last_synchronization_dates']['qty'] = $this->getHelper('Data')->getCurrentGmtDate();
+            $additionalData['last_synchronization_dates']['qty']
+                = \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s');
         }
 
         if ($this->getConfigurator()->isRegularPriceAllowed()) {
-            $additionalData['last_synchronization_dates']['price'] = $this->getHelper('Data')->getCurrentGmtDate();
+            $additionalData['last_synchronization_dates']['price']
+                = \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s');
         }
 
         $this->getListingProduct()->setSettings('additional_data', $additionalData);

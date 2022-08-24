@@ -1,0 +1,33 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+/** @var \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\ChangeTracker\ExecutedTime $block */
+
+?>
+
+<div>
+    <h2>Executed time</h2>
+    <hr>
+    <div class="executed_time_table">
+        <table>
+            <tr>
+                <th>#</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Executed time</th>
+            </tr>
+            <?php foreach ($block->tableData as $index => $row) : ?>
+                <tr>
+                    <td><?= ++$index ?></td>
+                    <td><?= $row['start'] ?></td>
+                    <td><?= $row['end'] ?></td>
+                    <td><?= $row['executed_time'] ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+    </div>
+</div>

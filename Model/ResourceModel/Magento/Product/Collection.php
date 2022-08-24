@@ -636,5 +636,22 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         return parent::joinTable($table, $bind, $fields, $cond, $joinType);
     }
 
-    //########################################
+    /**
+     * Extension for self::addFieldToFilter() with attribute for sub query
+     *
+     * @see self::addFieldToFilter()
+     * @param string $attribute
+     * @param mixed $condition
+     * @param string $joinType
+     *
+     * @return string
+     */
+    protected function _getAttributeConditionSql($attribute, $condition, $joinType = 'inner')
+    {
+        if (!empty($condition['raw'])) {
+            return $this->_getConditionSql($attribute, $condition);
+        }
+
+        return parent::_getAttributeConditionSql($attribute, $condition, $joinType);
+    }
 }

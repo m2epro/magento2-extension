@@ -68,8 +68,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
     private $componentEbayCategory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping\CollectionFactory */
+    private $shippingTemplateCollectionFactory;
 
     public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping\CollectionFactory $shippingTemplateCollectionFactory,
         \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
@@ -93,6 +96,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             $data
         );
 
+        $this->shippingTemplateCollectionFactory = $shippingTemplateCollectionFactory;
         $this->componentEbayCategory = $componentEbayCategory;
     }
     public function _construct()
@@ -151,12 +155,19 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             $pickupStore->delete();
         }
 
+        $shippingTemplateCollection = $this->shippingTemplateCollectionFactory
+            ->create()
+            ->applyLinkedAccountFilter($this->getId());
+        /** @var \Ess\M2ePro\Model\Ebay\Template\Shipping $item */
+        foreach ($shippingTemplateCollection->getItems() as $item) {
+            $item->deleteShippingRateTables($this->getParentObject());
+            $item->save();
+        }
+
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('account');
 
         return parent::delete();
     }
-
-    //########################################
 
     /**
      * @param bool $asObjects
@@ -1272,7 +1283,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
                     'text'      => $node['title'],
                     'allowDrop' => false,
                     'allowDrag' => false,
-                    'children'  => []
+                    'children'  => [],
                 ];
             }
         }

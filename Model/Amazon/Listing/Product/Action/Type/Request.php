@@ -136,6 +136,10 @@ abstract class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
      */
     public function getBusinessPriceData()
     {
+        if (array_key_exists('delete_business_price_flag', $this->cachedData)) {
+            return ['delete_business_price_flag' => true];
+        }
+
         if (!$this->getConfigurator()->isBusinessPriceAllowed()) {
             return [];
         }

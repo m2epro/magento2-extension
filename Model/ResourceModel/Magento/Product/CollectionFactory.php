@@ -10,28 +10,21 @@ namespace Ess\M2ePro\Model\ResourceModel\Magento\Product;
 
 use Ess\M2ePro\Model\ResourceModel\MSI\Magento\Product\Collection as MSICollection;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory
- */
 class CollectionFactory
 {
     /** @var \Magento\Framework\ObjectManagerInterface */
-    protected $objectManager;
+    private $objectManager;
 
-    /** @var \Ess\M2ePro\Helper\Factory */
-    protected $helperFactory;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Ess\M2ePro\Helper\Factory $helperFactory
+        \Ess\M2ePro\Helper\Magento $magentoHelper
     ) {
         $this->objectManager = $objectManager;
-        $this->helperFactory = $helperFactory;
+        $this->magentoHelper = $magentoHelper;
     }
-
-    //########################################
 
     /**
      * @param array $data
@@ -39,10 +32,8 @@ class CollectionFactory
      */
     public function create(array $data = [])
     {
-        return $this->helperFactory->getObject('Magento')->isMSISupportingVersion()
+        return $this->magentoHelper->isMSISupportingVersion()
             ? $this->objectManager->create(MSICollection::class, $data)
             : $this->objectManager->create(Collection::class, $data);
     }
-
-    //########################################
 }

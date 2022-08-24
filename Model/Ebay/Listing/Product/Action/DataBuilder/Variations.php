@@ -15,6 +15,8 @@ class Variations extends AbstractModel
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
     private $componentEbayCategoryEbay;
+    /** @var bool */
+    private $isSomeVariationChangeQtyFromZero = false;
 
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
@@ -61,6 +63,10 @@ class Variations extends AbstractModel
 
         if ($variationsThatCanNotBeDeleted = $this->getVariationsThatCanNotBeDeleted()) {
             $data['variations_that_can_not_be_deleted'] = $variationsThatCanNotBeDeleted;
+        }
+
+        if ($this->isSomeVariationChangeQtyFromZero) {
+            $data['is_some_variation_change_qty_from_zero'] = true;
         }
 
         return $data;
@@ -152,6 +158,13 @@ class Variations extends AbstractModel
 
             if (isset($item['qty']) && $variation->getChildObject()->getOnlineQty() == $item['qty']) {
                 $item['qty_not_changed'] = true;
+            }
+
+            if (
+                $item['qty'] > 0
+                && $variation->getChildObject()->getOnlineQty() - $variation->getChildObject()->getOnlineQtySold() === 0
+            ) {
+                $this->isSomeVariationChangeQtyFromZero = true;
             }
 
             $data[] = $item;

@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs;
 
 use Ess\M2ePro\Helper\Component\Walmart\Configuration as ConfigurationHelper;
 
-class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
+class Main extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var \Ess\M2ePro\Helper\Magento\Attribute */
     protected $magentoAttributeHelper;

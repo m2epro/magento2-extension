@@ -39,31 +39,30 @@ define([
 
             new Ajax.Request(M2ePro.url.get('settings_license/change'), {
                 method: 'post',
-                asynchronous: false,
+                asynchronous: true,
                 parameters: formData,
-                onSuccess: function(transport) {
-                    var result = transport.responseText;
-
-                    if (!result.isJSON()) {
-                        MessagesObj.addError(result);
-                    }
-
-                    result = JSON.parse(result);
-
-                    MessagesObj.clear();
-                    self.appendGlobalMessages();
-
-                    if (result.success) {
-                        MessagesObj.addSuccess(result.message);
-                    } else {
-                        MessagesObj.addError(result.message);
-                    }
-                    CommonObj.scrollPageToTop();
-                    self.reloadLicenseTab();
-                }
+                onSuccess: self.processOnSuccess
             });
 
             return true;
+        },
+
+        processOnSuccess: function(transport) {
+            var self = window.LicenseObj;
+            var result = transport.responseText;
+            if (!result.isJSON()) {
+                MessagesObj.addError(result);
+            }
+
+            result = JSON.parse(result);
+            MessagesObj.clear();
+
+            if (result.success) {
+                MessagesObj.addSuccess(result.message);
+            } else {
+                MessagesObj.addError(result.message);
+            }
+            self.reloadLicenseTab();
         },
 
         // ---------------------------------------
@@ -90,11 +89,11 @@ define([
 
         // ---------------------------------------
 
-        openPopup: function(title, content, confirmCallback, type)
-        {
-            var type = type || 'popup';
-            if ($('modal_popup')) {
-                $('modal_popup').remove();
+        openPopup: function(title, content, confirmCallback, type) {
+            type = type || 'popup';
+            var modalPopup = $('modal_popup');
+            if (modalPopup) {
+                modalPopup.remove();
             }
 
             var modalDialogMessage = new Element('div', {
@@ -103,15 +102,15 @@ define([
 
             var popup = jQuery(modalDialogMessage).modal({
                 title: title,
-                modalClass: type == 'popup' ? 'width-500' : '',
+                modalClass: type === 'popup' ? 'width-500' : '',
                 type: type,
                 buttons: [{
                     text: M2ePro.translator.translate('Cancel'),
-                    class: type == 'popup' ? 'action-secondary action-dismiss' : 'action-default action-dismiss',
-                    click: function () {
+                    class: type === 'popup' ? 'action-secondary action-dismiss' : 'action-default action-dismiss',
+                    click: function() {
                         this.closeModal();
                     }
-                },{
+                }, {
                     text: M2ePro.translator.translate('Confirm'),
                     class: 'action-primary action-accept',
                     id: 'save_popup_button',
@@ -149,72 +148,25 @@ define([
             new Ajax.Request(M2ePro.url.get('settings_license/refreshStatus'), {
                 method: 'post',
                 asynchronous: true,
-                onSuccess: function(transport) {
-                    var result = transport.responseText;
-
-                    if (!result.isJSON()) {
-                        MessagesObj.addError(result);
-                    }
-
-                    result = JSON.parse(result);
-                    MessagesObj.clear();
-                    self.appendGlobalMessages();
-
-                    if (result.success) {
-                        MessagesObj.addSuccess(result.message);
-                    } else {
-                        MessagesObj.addError(result.message);
-                    }
-
-                    CommonObj.scrollPageToTop();
-                    self.reloadLicenseTab();
-                }
+                onSuccess: self.processOnSuccess
             });
         },
 
         // ---------------------------------------
-
-        appendGlobalMessages: function()
-        {
-            new Ajax.Request(M2ePro.url.get('getGlobalMessages'), {
-                method: 'get',
-                asynchronous: true,
-                onSuccess: function(transport) {
-                    var result = transport.responseText;
-
-                    if (!result.isJSON()) {
-                        return;
-                    }
-
-                    result = JSON.parse(result);
-
-                    if (result && Array.isArray(result)) {
-                        MessagesObj.clearGlobal();
-                        result.forEach(function(item) {
-                            var key = Object.keys(item)[0];
-                            MessagesObj['addGlobal'+key.capitalize()](item[key]);
-                        });
-                    }
-                }
-            });
-        },
 
         reloadLicenseTab: function()
         {
             BlockNoticeObj.removeInitializedBlock('block_notice_configuration_license');
-
-            new Ajax.Request(M2ePro.url.get('licenseTab'), {
+            new Ajax.Request(M2ePro.url.get('settings_license/section'), {
                 method: 'get',
                 asynchronous: true,
                 onSuccess: function(transport) {
-                    var result = transport.responseText;
-
-                    $('configuration_settings_tabs_license_content').innerHTML = result;
-                    $('configuration_settings_tabs_license_content').innerHTML.evalScripts();
+                    var container = $$('#container > div.admin__scope-old')[0];
+                    container.innerHTML = transport.responseText;
+                    container.innerHTML.evalScripts();
+                    CommonObj.scrollPageToTop();
                 }
             });
         }
-
-        // ---------------------------------------
     });
 });

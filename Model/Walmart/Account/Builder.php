@@ -246,13 +246,17 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
-        $notificationsKeys = [
-            'order_created',
-            'invoice_created'
-        ];
-        $tempSettings = !empty($tempSettings['notifications']) ? $tempSettings['notifications'] : [];
-        foreach ($notificationsKeys as $key) {
-            $data['magento_orders_settings'][$tempKey]['notifications'][$key] = in_array($key, $tempSettings);
+        // Check if input data contains another field from customer settings.
+        // It's used to determine if account data changed by user interface, or during token re-new.
+        if (isset($tempSettings['mode'])) {
+            $notificationsKeys = [
+                'order_created',
+                'invoice_created'
+            ];
+            $tempSettings = !empty($tempSettings['notifications']) ? $tempSettings['notifications'] : [];
+            foreach ($notificationsKeys as $key) {
+                $data['magento_orders_settings'][$tempKey]['notifications'][$key] = in_array($key, $tempSettings);
+            }
         }
 
         // status mapping settings
@@ -338,7 +342,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'related_store_id' => 0,
 
             'other_listings_synchronization'  => 1,
-            'other_listings_mapping_mode'     => 1,
+            'other_listings_mapping_mode'     => 0,
             'other_listings_mapping_settings' => [],
 
             'magento_orders_settings' => [

@@ -45,6 +45,7 @@ class Tabs extends AbstractHorizontalTabs
             HelperControlPanel::TAB_TOOLS_MODULE,
             HelperControlPanel::TAB_CRON,
             HelperControlPanel::TAB_DEBUG,
+            HelperControlPanel::TAB_CHANGE_TRACKER,
         ];
 
         if (!in_array($activeTab, $allowedTabs)) {
@@ -100,6 +101,14 @@ class Tabs extends AbstractHorizontalTabs
             'label'   => $this->translationHelper->__('Debug'),
             'content' => $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Debug::class)
                                            ->toHtml(),
+        ]);
+
+        $this->addTab(HelperControlPanel::TAB_CHANGE_TRACKER, [
+            'label'   => $this->translationHelper->__('Change Tracker'),
+            'content' => $this
+                ->getLayout()
+                ->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\ChangeTracker::class)
+                ->toHtml(),
         ]);
 
         $this->setActiveTab($activeTab);

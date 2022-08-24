@@ -143,6 +143,11 @@
                   instance="Ess\M2ePro\Observer\Order\Service\Quote\Submit\Before"
                   shared="false" />
     </event>
+    <event name="sales_quote_address_collect_totals_after">
+        <observer name="m2epro_observer_order_quote_address_collect_totals_after"
+                  instance="Ess\M2ePro\Observer\Order\Quote\Address\Collect\Totals\After"
+                  shared="false" />
+    </event>
 
     <!-- internal orders -->
 

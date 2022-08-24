@@ -96,12 +96,9 @@ class Multiple extends \Ess\M2ePro\Model\Connector\Connection\AbstractModel
             if ($response->getMessages()->hasSystemErrorEntity()) {
                 $exception = new \Ess\M2ePro\Model\Exception(
                     $this->getHelper('Module\Translation')->__(
-                        "Internal Server Error(s) [%error_message%]",
+                        'Internal Server Error(s) [%error_message%]',
                         $response->getMessages()->getCombinedSystemErrorsString()
-                    ),
-                    [],
-                    0,
-                    !$response->isServerInMaintenanceMode()
+                    )
                 );
 
                 $this->getHelper('Module\Exception')->process($exception);

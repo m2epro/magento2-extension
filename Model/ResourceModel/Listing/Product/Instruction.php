@@ -23,7 +23,8 @@ class Instruction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
     //########################################
 
     /**
-     * @param array $instructionsData
+     * @param array $instructionsData array of arrays
+     * {listing_product_id:int, type:string, initiator:string, priority:int}
      *
      * @return void
      * @throws \Ess\M2ePro\Model\Exception\Logic

@@ -585,8 +585,10 @@ HTML;
             ]
         );
 
-        $collection->addFieldToFilter('entity_id', $cond);
-        $collection->getSelect()->orWhere("(product_id_subQuery.searched_by_child = '1')");
+        $collection->addFieldToFilter([
+            ['attribute' => 'entity_id', $cond],
+            ['attribute' => 'product_id_subQuery.searched_by_child', 'eq' => '1', 'raw' => true]
+        ]);
     }
 
     protected function callbackFilterTitle($collection, $column)
@@ -618,12 +620,12 @@ HTML;
 
         $collection->addFieldToFilter(
             [
-                ['attribute' => 'sku', 'like' => '%'.$value.'%'],
-                ['attribute' => 'name', 'like' => '%'.$value.'%'],
-                ['attribute' => 'listing_title', 'like' => '%'.$value.'%']
+                ['attribute' => 'sku', 'like' => '%' . $value . '%'],
+                ['attribute' => 'name', 'like' => '%' . $value . '%'],
+                ['attribute' => 'listing_title', 'like' => '%' . $value . '%'],
+                ['attribute' => 'product_sku_subQuery.searched_by_child', 'eq' => '1', 'raw' => true],
             ]
         );
-        $collection->getSelect()->orWhere("(product_sku_subQuery.searched_by_child = '1')");
     }
 
     protected function callbackFilterOnlineSku($collection, $column)
@@ -635,7 +637,7 @@ HTML;
         }
 
         $childCollection = $this->getChildProductsCollection();
-        $childCollection->addFieldToFilter('sku', ['like' => '%'.$value.'%']);
+        $childCollection->addFieldToFilter('sku', ['like' => '%' . $value . '%']);
 
         $collection->getSelect()->joinLeft(
             ['online_sku_subQuery' => $childCollection->getSelect()],
@@ -646,8 +648,10 @@ HTML;
             ]
         );
 
-        $collection->addFieldToFilter('online_sku', ['like' => '%'.$value.'%']);
-        $collection->getSelect()->orWhere("(online_sku_subQuery.searched_by_child = '1')");
+        $collection->addFieldToFilter([
+            ['attribute' => 'online_sku', 'like' => '%' . $value . '%'],
+            ['attribute' => 'online_sku_subQuery.searched_by_child', 'eq' => '1', 'raw' => true]
+        ]);
     }
 
     protected function callbackFilterGtin($collection, $column)
@@ -681,15 +685,15 @@ SQL;
 
         $collection->addFieldToFilter(
             [
-                ['attribute' => 'gtin', 'like' => '%'.$value.'%'],
-                ['attribute' => 'upc', 'like' => '%'.$value.'%'],
-                ['attribute' => 'ean', 'like' => '%'.$value.'%'],
-                ['attribute' => 'isbn', 'like' => '%'.$value.'%'],
-                ['attribute' => 'wpid', 'like' => '%'.$value.'%'],
-                ['attribute' => 'item_id', 'like' => '%'.$value.'%']
+                ['attribute' => 'gtin', 'like' => '%' . $value . '%'],
+                ['attribute' => 'upc', 'like' => '%' . $value . '%'],
+                ['attribute' => 'ean', 'like' => '%' . $value . '%'],
+                ['attribute' => 'isbn', 'like' => '%' . $value . '%'],
+                ['attribute' => 'wpid', 'like' => '%' . $value . '%'],
+                ['attribute' => 'item_id', 'like' => '%' . $value . '%'],
+                ['attribute' => 'gtin_subQuery.searched_by_child', 'eq' => '1', 'raw' => true]
             ]
         );
-        $collection->getSelect()->orWhere("(gtin_subQuery.searched_by_child = '1')");
     }
 
     protected function callbackFilterQty($collection, $column)

@@ -1,0 +1,31 @@
+<?php
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+/** @var \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\ChangeTracker\Logs $block */
+
+?>
+<div>
+    <h2>Logs</h2>
+    <hr>
+    <?php foreach ($block->logs as $logsIndex => $logs) : ?>
+    <div style="margin-bottom: 20px">
+        <h3>Logs #<?= ++$logsIndex ?></h3>
+        <?php foreach ($logs as $i => $log) : ?>
+            <div class="log-box <?= $i%2 === 0 ? 'even' : 'odd' ?>">
+                <div>
+                    <span class="log-datetime"><?= $log['date'] ?></span>
+                    <span class="log-level">[<?= $log['level'] ?? '' ?>]</span>
+                    <span class="log-message"><?= $log['message'] ?></span>
+                </div>
+                <?php if ($log['context'] !== '[]') : ?>
+                    <textarea rows="10" class="log-context"><?= $log['context'] ?></textarea>
+                <?php endif; ?>
+            </div>
+        <?php endforeach; ?>
+    </div>
+    <?php endforeach; ?>
+</div>

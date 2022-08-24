@@ -53,12 +53,8 @@ class Form extends AbstractForm
 
             foreach ($group['marketplaces'] as $marketplace) {
                 $afterElementHtml = '';
-                if ($marketplace['instance']->getId() == \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_JP) {
-                    $afterElementHtml .= <<<HTML
-                    <span id="beta_{$marketplace['instance']->getId()}"
-                        class="value" style=color:gray;">&nbsp; {$this->__('Beta')}</span>
-HTML;
-                } else {
+
+                if (!$this->amazonHelper->isMarketplacesWithoutData($marketplace['instance']->getId())) {
                     $afterElementHtml .= '
                 <div id="run_single_button_'.$marketplace['instance']->getId().'" class="control-value"';
                     $marketplace['instance']->getStatus() == \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE &&

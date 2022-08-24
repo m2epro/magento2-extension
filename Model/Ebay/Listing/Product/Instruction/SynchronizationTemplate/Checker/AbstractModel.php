@@ -60,6 +60,7 @@ abstract class AbstractModel extends CheckerAbstractModel
             \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel::
             INSTRUCTION_TYPE_MAGMI_PLUGIN_PRODUCT_CHANGED,
             \Ess\M2ePro\Model\Cron\Task\Listing\Product\InspectDirectChanges::INSTRUCTION_TYPE,
+            \Ess\M2ePro\Model\ChangeTracker\Base\ChangeHolder::INSTRUCTION_TYPE_CHANGE_TRACKER_QTY,
         ];
     }
 
@@ -82,6 +83,7 @@ abstract class AbstractModel extends CheckerAbstractModel
             \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel::
             INSTRUCTION_TYPE_MAGMI_PLUGIN_PRODUCT_CHANGED,
             \Ess\M2ePro\Model\Cron\Task\Listing\Product\InspectDirectChanges::INSTRUCTION_TYPE,
+            \Ess\M2ePro\Model\ChangeTracker\Base\ChangeHolder::INSTRUCTION_TYPE_CHANGE_TRACKER_PRICE,
         ];
     }
 

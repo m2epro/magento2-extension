@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs;
 
-class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
+class Main extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Configuration */
     protected $configuration;
@@ -62,11 +62,11 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
                     1 => $this->__('Enabled')
                 ],
                 'value' => $this->configuration->isEnabledBusinessMode(),
-                'tooltip' => $this->__(
-                    'After you <strong>Enable</strong> this option, you can provide the settings for
-                    <strong>Business Price</strong> and <strong >Quantity Discounts</strong>
-                    within M2E Pro Selling Policy.<br />
-                    <strong>Note:</strong> your Business Account must be approved by Amazon.'
+                'tooltip' => __('
+                    If you have an approved Amazon Business account, enable this option to set
+                    Business Price and Quantity Discounts in the Selling Policy.<br />
+                    To remove business prices and QTY discounts from your Amazon offers,
+                    please be sure to disable the configurations in the Selling Policy.'
                 )
             ]
         );

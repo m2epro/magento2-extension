@@ -29,8 +29,11 @@ class Order extends AbstractForm
     private $storeWebsiteHelper;
     /** @var \Ess\M2ePro\Model\Amazon\Account\Builder */
     private $accountBuilder;
+    /** @var \Ess\M2ePro\Helper\Magento\Store */
+    private $storeHelper;
 
     /**
+     * @param \Ess\M2ePro\Helper\Magento\Store $storeHelper
      * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
      * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
      * @param \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsiteHelper
@@ -44,6 +47,7 @@ class Order extends AbstractForm
      * @param array $data
      */
     public function __construct(
+        \Ess\M2ePro\Helper\Magento\Store $storeHelper,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsiteHelper,
@@ -56,13 +60,15 @@ class Order extends AbstractForm
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
-        $this->orderConfig = $orderConfig;
-        $this->customerGroup = $customerGroup;
-        $this->taxClass = $taxClass;
-        $this->supportHelper = $supportHelper;
-        $this->globalDataHelper = $globalDataHelper;
-        $this->storeWebsiteHelper = $storeWebsiteHelper;
-        $this->accountBuilder = $accountBuilder;
+        $this->orderConfig          = $orderConfig;
+        $this->customerGroup        = $customerGroup;
+        $this->taxClass             = $taxClass;
+        $this->supportHelper        = $supportHelper;
+        $this->globalDataHelper     = $globalDataHelper;
+        $this->storeWebsiteHelper   = $storeWebsiteHelper;
+        $this->accountBuilder       = $accountBuilder;
+        $this->storeHelper          = $storeHelper;
+
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -290,8 +296,9 @@ HTML
                 'container_id'       => 'magento_orders_listings_other_store_id_container',
                 'name'               => 'magento_orders_settings[listing_other][store_id]',
                 'label'              => $this->__('Magento Store View'),
-                'value'              => !empty($formData['magento_orders_settings']['listing_other']['store_id'])
-                    ? $formData['magento_orders_settings']['listing_other']['store_id'] : '',
+                'value'              => !empty($formData['magento_orders_settings']['listing_other']['store_id']) ?
+                    $formData['magento_orders_settings']['listing_other']['store_id'] :
+                    $this->storeHelper->getDefaultStoreId(),
                 'required'           => true,
                 'has_empty_option'   => true,
                 'has_default_option' => false,

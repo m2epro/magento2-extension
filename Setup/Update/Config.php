@@ -217,6 +217,7 @@ class Config extends AbstractConfig
             'y22_m06' => [
                 'FixMistakenConfigs',
                 'EbayFixedPriceModifier',
+                'WalmartOrderItemBuyerCancellation',
             ],
             'y22_m07' => [
                 'AddEpidsForItaly',
@@ -224,7 +225,12 @@ class Config extends AbstractConfig
                 'AmazonAccountRemoveToken',
                 'AmazonMarketplaceRemoveAutomaticTokenColumn',
                 'MoveEbayProductIdentifiers',
-                'FixRemovedPolicyInScheduledActions'
+                'FixRemovedPolicyInScheduledActions',
+                'ClearPolicyLinkingToDeletedAccount',
+            ],
+            'y22_m08' => [
+                'AddAmazonMarketplacesBrSgInAe',
+                'FixDevKeyForJapanAmazonMarketplace',
             ],
         ];
     }
@@ -237,9 +243,6 @@ class Config extends AbstractConfig
         return [
             'y20_m07' => [
                 'WalmartOrderItemQty',
-            ],
-            'y22_m06' => [
-                'WalmartOrderItemBuyerCancellation',
             ],
         ];
     }

@@ -36,7 +36,7 @@ class Connection extends \Ess\M2ePro\Model\Exception
         $this->helperFactory = $objectManager->get(\Ess\M2ePro\Helper\Factory::class);
         $this->helperData = $objectManager->get(\Ess\M2ePro\Helper\Data::class);
 
-        parent::__construct($message, $additionalData, 0, false);
+        parent::__construct($message, $additionalData);
     }
 
     //########################################

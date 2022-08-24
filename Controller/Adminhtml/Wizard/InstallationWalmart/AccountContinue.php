@@ -177,12 +177,13 @@ class AccountContinue extends InstallationWalmart
         return true;
     }
 
-    private function getAccountDefaultSettings()
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function getAccountDefaultSettings(): array
     {
         $data = $this->modelFactory->getObject('Walmart_Account_Builder')->getDefaultData();
 
-        $data['other_listings_synchronization'] = 0;
-        $data['other_listings_mapping_mode'] = 0;
         $data['magento_orders_settings']['listing_other']['store_id'] = $this->storeHelper->getDefaultStoreId();
 
         return $data;

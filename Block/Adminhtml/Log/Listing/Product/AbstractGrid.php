@@ -65,8 +65,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
         // Set listing filter
         // ---------------------------------------
         if ($this->getEntityId()) {
-            if ($this->isListingProductLog() && $this->getListingProduct()->isComponentModeAmazon() &&
-                $this->getListingProduct()->getChildObject()->getVariationManager()->isRelationParentType()) {
+            if ($this->checkVariations()) {
                 $collection->addFieldToFilter(
                     [
                         self::LISTING_PRODUCT_ID_FIELD,
@@ -118,6 +117,23 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
             );
             $collection->addFieldToFilter('marketplace_table.status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
         }
+    }
+
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function checkVariations(): bool
+    {
+        if ($this->isListingProductLog() && $this->getListingProduct()->isComponentModeEbay() &&
+            $this->getListingProduct()->getChildObject()->isVariationsReady()) {
+            return true;
+        } elseif ($this->isListingProductLog() && !$this->getListingProduct()->isComponentModeEbay() &&
+            $this->getListingProduct()->getChildObject()->getVariationManager()->isRelationParentType()){
+            return true;
+        }
+
+        return false;
     }
 
     protected function _prepareColumns()

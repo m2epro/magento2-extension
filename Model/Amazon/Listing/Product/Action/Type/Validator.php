@@ -212,7 +212,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         $clearQty = $this->getClearQty();
 
         if ($clearQty > 0 && $qty <= 0) {
-            $message = 'You’re submitting an item with QTY contradicting the QTY settings in your Selling Policy. 
+            $message = 'You’re submitting an item with QTY contradicting the QTY settings in your Selling Policy.
             Please check Minimum Quantity to Be Listed and Quantity Percentage options.';
 
             $this->addMessage($message);
@@ -306,16 +306,23 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             return true;
         }
 
-        if (!$this->getAmazonListingProduct()->isAllowedForBusinessCustomers()) {
-            $this->getConfigurator()->disallowBusinessPrice();
+        $isAllowedBusinessCustomers = $this
+            ->getAmazonListingProduct()
+            ->isAllowedForBusinessCustomers();
 
-            if ($this->getAmazonListingProduct()->getOnlineBusinessPrice()) {
-                $this->addMessage(
-                    'B2B Price can not be disabled by Revise/Relist action due to Amazon restrictions.
-                    Both B2B and B2C Price values will be available on the Channel.',
-                    \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_WARNING
-                );
-            }
+        $onlineBusinessPrice = $this
+            ->getAmazonListingProduct()
+            ->getOnlineBusinessPrice();
+
+        if ($isAllowedBusinessCustomers === false && $onlineBusinessPrice > 0) {
+            $this->getConfigurator()->disallowBusinessPrice();
+            $this->setData('delete_business_price_flag', true);
+
+            return true;
+        }
+
+        if ($isAllowedBusinessCustomers === false) {
+            $this->getConfigurator()->disallowBusinessPrice();
 
             return true;
         }

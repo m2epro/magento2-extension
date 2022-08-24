@@ -16,29 +16,40 @@ class Order extends AbstractForm
 {
     /** @var \Magento\Sales\Model\Order\Config */
     protected $orderConfig;
-
     /** @var \Magento\Customer\Model\Group */
     protected $customerGroup;
-
     /** @var \Magento\Tax\Model\ClassModel */
     protected $taxClass;
-
     /** @var \Ess\M2ePro\Helper\Module\Support */
     private $supportHelper;
-
     /** @var \Ess\M2ePro\Helper\Magento\Store\Website */
     private $storeWebsite;
-
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
-
     /** @var \Ess\M2ePro\Helper\Magento */
     private $magentoHelper;
+    /** @var \Ess\M2ePro\Helper\Magento\Store */
+    private $storeHelper;
 
+    /**
+     * @param \Ess\M2ePro\Helper\Magento\Store $storeHelper
+     * @param \Magento\Tax\Model\ClassModel $taxClass
+     * @param \Magento\Customer\Model\Group $customerGroup
+     * @param \Magento\Sales\Model\Order\Config $orderConfig
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsite
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
+     * @param \Ess\M2ePro\Helper\Magento $magentoHelper
+     * @param array $data
+     */
     public function __construct(
+        \Ess\M2ePro\Helper\Magento\Store $storeHelper,
         \Magento\Tax\Model\ClassModel $taxClass,
         \Magento\Customer\Model\Group $customerGroup,
         \Magento\Sales\Model\Order\Config $orderConfig,
@@ -52,14 +63,15 @@ class Order extends AbstractForm
         \Ess\M2ePro\Helper\Magento $magentoHelper,
         array $data = []
     ) {
-        $this->orderConfig = $orderConfig;
-        $this->customerGroup = $customerGroup;
-        $this->taxClass = $taxClass;
-        $this->supportHelper = $supportHelper;
-        $this->storeWebsite = $storeWebsite;
-        $this->dataHelper = $dataHelper;
+        $this->orderConfig      = $orderConfig;
+        $this->customerGroup    = $customerGroup;
+        $this->taxClass         = $taxClass;
+        $this->supportHelper    = $supportHelper;
+        $this->storeWebsite     = $storeWebsite;
+        $this->dataHelper       = $dataHelper;
         $this->globalDataHelper = $globalDataHelper;
-        $this->magentoHelper = $magentoHelper;
+        $this->magentoHelper    = $magentoHelper;
+        $this->storeHelper      = $storeHelper;
 
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -213,7 +225,7 @@ HTML
                 'name'               => 'magento_orders_settings[listing_other][store_id]',
                 'label'              => $this->__('Magento Store View'),
                 'value'              => !empty($ordersSettings['listing_other']['store_id'])
-                    ? $ordersSettings['listing_other']['store_id'] : '',
+                    ? $ordersSettings['listing_other']['store_id'] : $this->storeHelper->getDefaultStoreId(),
                 'required'           => true,
                 'has_empty_option'   => true,
                 'has_default_option' => false,

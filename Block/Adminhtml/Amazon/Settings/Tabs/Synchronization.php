@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs;
 
-class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
+class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;

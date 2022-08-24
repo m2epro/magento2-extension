@@ -593,6 +593,32 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         );
     }
 
+    /**
+     * @param \Ess\M2ePro\Model\Account $account
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function deleteShippingRateTables(\Ess\M2ePro\Model\Account $account): void
+    {
+        $this->deleteShippingRateTable($account->getId(), 'local_shipping_rate_table');
+        $this->deleteShippingRateTable($account->getId(), 'international_shipping_rate_table');
+    }
+
+    /**
+     * @param int|string $accountId
+     * @param string $settingsField
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function deleteShippingRateTable($accountId, string $settingsField): void
+    {
+        $rateTables = $this->getSettings($settingsField);
+        unset($rateTables[$accountId]);
+        $this->setSettings($settingsField, $rateTables);
+    }
+
     //########################################
 
     /**
@@ -860,6 +886,4 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     {
         return true;
     }
-
-    //########################################
 }
