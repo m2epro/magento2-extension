@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -156,6 +156,8 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 
                 $order['buyer_name'] = trim((string)$orderData['buyer']['name']);
                 $order['buyer_email'] = trim((string)$orderData['buyer']['email']);
+
+                $order['is_replacement'] = (int)$orderData['is_replacement'];
 
                 $order['qty_shipped'] = (int)$orderData['qty']['shipped'];
                 $order['qty_unshipped'] = (int)$orderData['qty']['unshipped'];

@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -17,8 +17,9 @@ abstract class HealthStatus extends \Ess\M2ePro\Controller\Adminhtml\Base
 
     protected function _isAllowed()
     {
-        return $this->_authorization->isAllowed('Ess_M2ePro::ebay_help_center_health_status') ||
-               $this->_authorization->isAllowed('Ess_M2ePro::amazon_help_center_health_status');
+        return $this->_authorization->isAllowed('Ess_M2ePro::ebay_help_center_health_status')
+            || $this->_authorization->isAllowed('Ess_M2ePro::amazon_help_center_health_status')
+            || $this->_authorization->isAllowed('Ess_M2ePro::walmart_help_center_health_status');
     }
 
     protected function initResultPage()
@@ -43,6 +44,9 @@ abstract class HealthStatus extends \Ess\M2ePro\Controller\Adminhtml\Base
         }
         if ($referrer == \Ess\M2ePro\Helper\View\Amazon::NICK) {
             return \Ess\M2ePro\Helper\View\Amazon::MENU_ROOT_NODE_NICK;
+        }
+        if ($referrer == \Ess\M2ePro\Helper\View\Walmart::NICK) {
+            return \Ess\M2ePro\Helper\View\Walmart::MENU_ROOT_NODE_NICK;
         }
 
         return null;

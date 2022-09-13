@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -8,71 +8,96 @@
 
 namespace Ess\M2ePro\Model\Registry;
 
-/**
- * Class \Ess\M2ePro\Model\Registry\Manager
- */
-class Manager extends \Ess\M2ePro\Model\AbstractModel
+class Manager
 {
-    protected $activeRecordFactory;
-
-    //########################################
+    /** @var \Ess\M2ePro\Model\RegistryFactory */
+    private $registryFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Registry */
+    private $registryResource;
 
     public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
+        \Ess\M2ePro\Model\RegistryFactory $registryFactory,
+        \Ess\M2ePro\Model\ResourceModel\Registry $registryResource
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
-        parent::__construct($helperFactory, $modelFactory);
+        $this->registryFactory = $registryFactory;
+        $this->registryResource = $registryResource;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function setValue($key, $value)
+    /**
+     * @param $key
+     * @param $value
+     *
+     * @return bool
+     */
+    public function setValue($key, $value): bool
     {
-        is_array($value) && $value = $this->getHelper('Data')->jsonEncode($value);
+        if (is_array($value)) {
+            $value = json_encode($value);
+        }
 
         $registryModel = $this->loadByKey($key);
-        $registryModel->setData('value', $value);
+        $registryModel->setValue($value);
         $registryModel->save();
 
         return true;
     }
 
-    public function getValue($key)
+    /**
+     * @param string $key
+     *
+     * @return array|mixed|null
+     */
+    public function getValue(string $key)
     {
-        return $this->loadByKey($key)->getData('value');
+        return $this->loadByKey($key)->getValue();
     }
 
+    /**
+     * @param $key
+     *
+     * @return array|bool|null
+     */
     public function getValueFromJson($key)
     {
         $registryModel = $this->loadByKey($key);
-        return !$registryModel->getId()
-            ? []
-            : $this->getHelper('Data')->jsonDecode($registryModel->getData('value'));
-    }
-
-    public function deleteValue($key)
-    {
-        $registryModel = $this->loadByKey($key);
-        if ($registryModel->getId()) {
-            $registryModel->delete();
+        if (!$registryModel->getId()) {
+            return [];
         }
+
+        return json_decode($registryModel->getValue(), true);
     }
 
-    //########################################
-
-    private function loadByKey($key)
+    /**
+     * @param $key
+     *
+     * @return void
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function deleteValue($key): void
     {
-        $registryModel = $this->activeRecordFactory->getObject('Registry');
-        $registryModel->getResource()->load($registryModel, $key, 'key');
+        $this->registryResource->deleteByKey($key);
+    }
+
+    // ----------------------------------------
+
+    /**
+     * @param string $key
+     *
+     * @return \Ess\M2ePro\Model\Registry
+     */
+    private function loadByKey(string $key): \Ess\M2ePro\Model\Registry
+    {
+        $registryModel = $this->registryFactory->create();
+        $this->registryResource->load($registryModel, $key, 'key');
 
         if (!$registryModel->getId()) {
-            $registryModel->setData('key', $key);
+            $registryModel->setKey($key);
         }
 
         return $registryModel;
     }
 
-    //########################################
+    // ----------------------------------------
 }

@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -180,9 +180,8 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
         if (!empty($warningMessageReasons)) {
             $this->addWarningMessage(
                 $this->getHelper('Module\Translation')->__(
-                    '%field_title% field(s) were ignored because eBay doesn\'t allow Revise the Item if it has ' .
-                    'sales, bids for Auction Type or less than 12 hours remain before the Item end.',
-                    implode(', ', $warningMessageReasons)
+                    'Title, Subtitle, Duration and Private Listing setting can be revised only if the listing has ' .
+                    'no pending bids, previous sales and does not end within 12 hours.'
                 )
             );
         }

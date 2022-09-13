@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -90,20 +90,18 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             ]
         ];
 
-        $editBackUrl = $this->dataHelper->makeBackUrlParam(
-            $this->getUrl(
-                '*/amazon_listing/edit',
-                [
-                    'id'   => $this->getListing()->getId(),
-                    'back' => $backUrl
-                ]
-            )
-        );
-
         $url = $this->getUrl(
             '*/amazon_listing/save',
             [
                 'id'   => $this->getListing()->getId(),
+            ]
+        );
+
+        $editBackUrl = $this->getUrl(
+            '*/amazon_listing/edit',
+            [
+                'id' => $this->getListing()->getId(),
+                'back' => $backUrl,
             ]
         );
 
@@ -113,7 +111,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             'class'        => 'add',
             'button_class' => '',
             'onclick'      =>
-                'AmazonListingSettingsObj.saveAndEditClick(\'' . $url . '\', 1, \'' . $editBackUrl . '\')',
+                "AmazonListingSettingsObj.saveAndEditClick('$url', '$editBackUrl')",
             'class_name'   => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
             'options'      => $saveButtonsProps
         ];
@@ -125,9 +123,6 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
     protected function _prepareLayout()
     {
-        $tabs = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Edit\Tabs::class);
-        $this->setChild('tabs', $tabs);
-
         $this->css->addFile('listing/autoAction.css');
 
         $this->jsPhp->addConstants(
@@ -190,9 +185,11 @@ JS
             ]
         );
 
-        $tabs = $this->getChildBlock('tabs');
+        $sellingForm = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling\Form::class
+        );
 
-        return $viewHeaderBlock->toHtml() . $tabs->toHtml() . parent::getFormHtml();
+        return $viewHeaderBlock->toHtml() . $sellingForm->toHtml() . parent::getFormHtml();
     }
 
     //########################################

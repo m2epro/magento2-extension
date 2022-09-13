@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -74,6 +74,7 @@ class Builder extends AbstractModel
         $this->setData('is_afn_channel', $data['is_afn_channel']);
         $this->setData('is_prime', $data['is_prime']);
         $this->setData('is_business', $data['is_business']);
+        $this->setData('is_replacement', $data['is_replacement']);
 
         $this->setData('purchase_update_date', $data['purchase_update_date']);
         $this->setData('purchase_create_date', $data['purchase_create_date']);
@@ -526,7 +527,7 @@ class Builder extends AbstractModel
             } catch (\Exception $e) {
                 $this->getHelper('Module_Exception')->process($e);
             }
-            
+
             $this->addCommentsToMagentoOrder($this->order, $magentoOrderComments);
         }
 
@@ -546,7 +547,7 @@ class Builder extends AbstractModel
         $magentoOrderUpdater->updateComments($comments);
         $magentoOrderUpdater->finishUpdate();
     }
-    
+
     //########################################
 
     protected function processListingsProductsUpdates()

@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -16,9 +16,6 @@ use \Ess\M2ePro\Model\Amazon\Template\Description\Definition;
  */
 class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
-    const WORLDWIDE_ID_MODE_NONE             = 0;
-    const WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE = 1;
-
     /**
      * @var \Ess\M2ePro\Model\Marketplace
      */
@@ -277,58 +274,6 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
 
     // ---------------------------------------
 
-    /**
-     * @return int
-     */
-    public function getWorldwideIdMode()
-    {
-        return (int)$this->getData('worldwide_id_mode');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isWorldwideIdModeNone()
-    {
-        return $this->getWorldwideIdMode() == self::WORLDWIDE_ID_MODE_NONE;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isWorldwideIdModeCustomAttribute()
-    {
-        return $this->getWorldwideIdMode() == self::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE;
-    }
-
-    /**
-     * @return array
-     */
-    public function getWorldwideIdSource()
-    {
-        return [
-            'mode'      => $this->getWorldwideIdMode(),
-            'attribute' => $this->getData('worldwide_id_custom_attribute')
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getWorldwideIdAttributes()
-    {
-        $attributes = [];
-        $src = $this->getWorldwideIdSource();
-
-        if ($src['mode'] == self::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE) {
-            $attributes[] = $src['attribute'];
-        }
-
-        return $attributes;
-    }
-
-    // ---------------------------------------
-
     public function getCategoryPath()
     {
         return $this->getData('category_path');
@@ -342,13 +287,6 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     public function getProductDataNick()
     {
         return $this->getData('product_data_nick');
-    }
-
-    // ---------------------------------------
-
-    public function getRegisteredParameter()
-    {
-        return $this->getData('registered_parameter');
     }
 
     //########################################

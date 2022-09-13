@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -483,15 +483,15 @@ SQL
         // ---------------------------------------
 
         $this->installer->run(<<<SQL
-INSERT INTO `{$amazonOrderActionProcessingTable}` 
+INSERT INTO `{$amazonOrderActionProcessingTable}`
 (`order_id`, `processing_id`, `request_pending_single_id`, `type`, `request_data`, `update_date`, `create_date`)
-SELECT 
+SELECT
 `listing_product_id`,
-`processing_id`, 
-`request_pending_single_id`, 
+`processing_id`,
+`request_pending_single_id`,
 `type`, `request_data`,
- `update_date`, 
- `create_date` 
+ `update_date`,
+ `create_date`
 FROM `{$amazonListingActionProcessingTable}` WHERE `type` IN (3, 4, 5);
 SQL
         );

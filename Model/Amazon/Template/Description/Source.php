@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -69,29 +69,6 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     public function getAmazonDescriptionTemplate()
     {
         return $this->getDescriptionTemplate()->getChildObject();
-    }
-
-    //########################################
-
-    /**
-     * @return null|string
-     */
-    public function getWorldwideId()
-    {
-        $result = '';
-        $src = $this->getAmazonDescriptionTemplate()->getWorldwideIdSource();
-
-        if ($src['mode'] == \Ess\M2ePro\Model\Amazon\Template\Description::WORLDWIDE_ID_MODE_NONE) {
-            $result = null;
-        }
-
-        if ($src['mode'] == \Ess\M2ePro\Model\Amazon\Template\Description::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE) {
-            $result = $this->getMagentoProduct()->getAttributeValue($src['attribute']);
-        }
-
-        is_string($result) && $result = trim($result);
-
-        return $result;
     }
 
     //########################################

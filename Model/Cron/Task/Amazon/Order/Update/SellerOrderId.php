@@ -1,12 +1,14 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order\Update;
+
+use Ess\M2ePro\Model\Amazon\Order;
 
 /**
  * Class \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Update\SellerOrderId
@@ -17,17 +19,21 @@ class SellerOrderId extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     const ORDERS_PER_MERCHANT = 1000;
 
-    /**
-     * @var int (in seconds)
-     */
+    /** @var int (in seconds) */
     protected $interval = 3600;
-
-    protected $orderResourceFactory;
+    /** @var \Magento\Sales\Model\ResourceModel\Order */
+    private $orderResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Order\CollectionFactory */
+    private $orderCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Order */
+    private $orderAmazonResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Account */
+    private $amazonAccountResource;
 
     //####################################
 
     public function __construct(
-        \Magento\Sales\Model\ResourceModel\OrderFactory $orderResourceFactory,
+        \Magento\Sales\Model\ResourceModel\Order $orderResource,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -35,9 +41,16 @@ class SellerOrderId extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\ResourceConnection $resource,
-        \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo
+        \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo,
+        \Ess\M2ePro\Model\ResourceModel\Order\CollectionFactory $orderCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Amazon\Order $orderAmazonResource,
+        \Ess\M2ePro\Model\ResourceModel\Amazon\Account $amazonAccountResource
     ) {
-        $this->orderResourceFactory = $orderResourceFactory;
+        $this->orderResource = $orderResource;
+        $this->orderCollectionFactory = $orderCollectionFactory;
+        $this->orderAmazonResource = $orderAmazonResource;
+        $this->amazonAccountResource = $amazonAccountResource;
+
         parent::__construct(
             $helperData,
             $eventManager,
@@ -92,57 +105,27 @@ class SellerOrderId extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $backToDate = new \DateTime('now', new \DateTimeZone('UTC'));
         $backToDate->modify('-1 day');
 
-        $amazonOrderTable = $this->activeRecordFactory->getObject('Amazon\Order')->getResource()->getMainTable();
+        // Processing orders from last 7 days for orders of replacement
+        $backToReplacementDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        $backToReplacementDate->modify('-7 day');
+
         $connection = $this->resource->getConnection();
 
         $enabledMerchantIds = array_unique($enabledMerchantIds);
 
         foreach ($enabledMerchantIds as $enabledMerchantId) {
-            /** @var \Ess\M2ePro\Model\ResourceModel\Order\Collection $ordersCollection */
-            $ordersCollection = $this->parentFactory->getObject(
-                \Ess\M2ePro\Helper\Component\Amazon::NICK,
-                'Order'
-            )->getCollection();
-
-            $ordersCollection->addFieldToFilter('main_table.account_id', ['in' => $enabledAccountIds]);
-            $ordersCollection->addFieldToFilter('main_table.magento_order_id', ['notnull' => true]);
-            $ordersCollection->addFieldToFilter(
-                'main_table.create_date',
-                ['gt' => $backToDate->format('Y-m-d H:i:s')]
-            );
-            $ordersCollection->addFieldToFilter(
-                'second_table.status',
-                ['neq' => \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED]
-            );
-            $ordersCollection->addFieldToFilter('second_table.seller_order_id', ['null' => true]);
-
-            $ordersCollection->getSelect()->join(
-                ['sfo' => $this->orderResourceFactory->create()->getMainTable()],
-                '(`main_table`.`magento_order_id` = `sfo`.`entity_id`)',
-                [
-                    'increment_id' => 'sfo.increment_id',
-                ]
-            );
-
-            $ordersCollection->getSelect()->join(
-                ['maa' => $this->activeRecordFactory->getObject('Amazon\Account')->getResource()->getMainTable()],
-                '(`main_table`.`account_id` = `maa`.`account_id`)',
-                [
-                    'merchant_id' => 'maa.merchant_id',
-                    'server_hash' => 'maa.server_hash',
-                ]
-            );
-
-            $ordersCollection->addFieldToFilter('maa.merchant_id', ['eq' => $enabledMerchantId]);
-
-            $ordersCollection->getSelect()->limit(self::ORDERS_PER_MERCHANT);
-
             // Preparing data structure for calls
             $orders = [];
             $accounts = [];
             $ordersToUpdate = [];
+            $collection = $this->getOrderCollection(
+                $enabledAccountIds,
+                $enabledMerchantId,
+                $backToDate->format('Y-m-d H:i:s'),
+                $backToReplacementDate->format('Y-m-d H:i:s')
+            );
 
-            foreach ($ordersCollection->getData() as $orderData) {
+            foreach ($collection->getItems() as $orderData) {
                 $orders[$orderData['order_id']] = [
                     'amazon_order_id' => $orderData['amazon_order_id'],
                     'seller_order_id' => $orderData['increment_id']
@@ -182,7 +165,7 @@ class SellerOrderId extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
                 foreach ($ordersToUpdate as $orderId => $orderData) {
                     $connection->update(
-                        $amazonOrderTable,
+                        $this->orderAmazonResource->getMainTable(),
                         [
                             'seller_order_id' => $orderData['seller_order_id']
                         ],
@@ -201,5 +184,52 @@ class SellerOrderId extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
     }
 
-    //####################################
+    /**
+     * @param array $enabledAccountIds
+     * @param string $enabledMerchantId
+     * @param string $date
+     * @param string $replacementDate
+     *
+     * @return \Ess\M2ePro\Model\ResourceModel\Order\Collection
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function getOrderCollection($enabledAccountIds, $enabledMerchantId, $date, $replacementDate)
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Order\Collection $collection */
+        $collection =  $this->orderCollectionFactory->create();
+        $collection->joinInner(
+            ['second_table' => $this->orderAmazonResource->getMainTable()],
+            'second_table.order_id = main_table.id'
+        );
+
+        $collection->joinInner(
+            ['sfo' => $this->orderResource->getMainTable()],
+            '(`main_table`.`magento_order_id` = `sfo`.`entity_id`)',
+            [
+                'increment_id' => 'sfo.increment_id',
+            ]
+        );
+
+        $collection->joinInner(
+            ['maa' => $this->amazonAccountResource->getMainTable()],
+            '(`main_table`.`account_id` = `maa`.`account_id`)',
+            [
+                'merchant_id' => 'maa.merchant_id',
+                'server_hash' => 'maa.server_hash',
+            ]
+        );
+
+        $collection->addFieldToFilter('main_table.component_mode', \Ess\M2ePro\Helper\Component\Amazon::NICK);
+        $collection->addFieldToFilter('main_table.account_id', ['in' => $enabledAccountIds]);
+        $collection->addFieldToFilter('main_table.magento_order_id', ['notnull' => true]);
+        $collection->addFieldToFilter('second_table.status', ['neq' => Order::STATUS_CANCELED]);
+        $collection->addFieldToFilter('second_table.seller_order_id', ['null' => true]);
+        $collection->addFieldToFilter('maa.merchant_id', ['eq' => $enabledMerchantId]);
+        $where = "(`main_table`.`create_date` > '{$date}' AND `second_table`.`is_replacement` = 0)";
+        $where .= " OR (`main_table`.`create_date` > '{$replacementDate}' AND `second_table`.`is_replacement` = 1)";
+        $collection->getSelect()->where($where);
+        $collection->getSelect()->limit(self::ORDERS_PER_MERCHANT);
+
+        return $collection;
+    }
 }

@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -18,6 +18,14 @@ $block->css->add("
         margin-bottom: .5em;
     }
 ");
+
+$countOfFoundProducts = $block->getCountOfFoundProducts();
+$productsFoundMessage = '';
+if ($countOfFoundProducts > 0) {
+    $productsFoundMessage = "<b>Note</b>: ";
+    $productsCountMessage = $countOfFoundProducts > 1 ? "$countOfFoundProducts Products" : "the Product";
+    $productsFoundMessage .= "Several ASINs were found for $productsCountMessage during the automatic search. <br><br>";
+}
 ?>
 
 <?php echo $block->getChildHtml('view_header'); ?>
@@ -37,8 +45,10 @@ $block->css->add("
 
             <b>Note:</b> This method can only be used by M2E Pro in case there is no way to link your Magento Product to the existing Amazon Product, i.e.  ASIN/ISBN was not set by via the Search Tool and the Listing Search Settings are not set.
             <br/><br/>
-            <div>%1% &nbsp; or &nbsp; %2%</div>
+            %1%
+            <div>%2% &nbsp; or &nbsp; %3%</div>
             ',
+            $productsFoundMessage,
             $block->getChildHtml('review'),
             $block->getChildHtml('list')
         );

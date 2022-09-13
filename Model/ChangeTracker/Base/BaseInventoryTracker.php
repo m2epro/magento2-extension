@@ -164,7 +164,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->addSelect('percentage', 'sp.qty_percentage')
             ->addSelect('custom_value', 'sp.qty_custom_value')
             ->addSelect('custom_attribute', 'sp.qty_custom_attribute')
-            ->addSelect('custom_attribute_default_value', 'CAST(ea.default_value AS INTEGER)')
+            ->addSelect('custom_attribute_default_value', 'CAST(ea.default_value AS UNSIGNED)')
             ->addSelect('conditional_quantity', 'sp.qty_modification_mode')
             ->addSelect('min_qty', 'sp.qty_min_posted_value')
             ->addSelect('max_qty', 'sp.qty_max_posted_value')

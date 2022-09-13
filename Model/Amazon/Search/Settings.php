@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -8,25 +8,36 @@
 
 namespace Ess\M2ePro\Model\Amazon\Search;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Search\Settings
- */
+use Ess\M2ePro\Helper\Data\Product\Identifier;
+
 class Settings extends \Ess\M2ePro\Model\AbstractModel
 {
-    const STEP_GENERAL_ID    = 1;
-    const STEP_WORLDWIDE_ID  = 2;
-    const STEP_MAGENTO_TITLE = 3;
+    private const SEARCH_BY_ASIN = 'byAsin';
+    private const SEARCH_BY_IDENTIFIER = 'byIdentifier';
 
-    //########################################
+    private const STEP_GENERAL_ID    = 1;
+    private const STEP_WORLDWIDE_ID  = 2;
 
-    private $step = null;
-
-    private $stepData = [];
+    /** @var \Ess\M2ePro\Model\Amazon\Search\Settings\CounterOfFind */
+    private $counterOfFind;
 
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     private $listingProduct = null;
+    /** @var string|null */
+    private $step = null;
+    /** @var array */
+    private $stepData = [];
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Model\Amazon\Search\Settings\CounterOfFind $counterOfFind,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->counterOfFind = $counterOfFind;
+    }
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
@@ -82,8 +93,6 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
         return $this;
     }
 
-    //########################################
-
     private function getListingProduct()
     {
         return $this->listingProduct;
@@ -102,16 +111,16 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
         return $this->getAmazonListingProduct()->getVariationManager();
     }
 
-    private function getAllowedSteps()
+    /**
+     * @return int[]
+     */
+    private function getAllowedSteps(): array
     {
         return [
             self::STEP_GENERAL_ID,
-            self::STEP_WORLDWIDE_ID,
-            self::STEP_MAGENTO_TITLE
+            self::STEP_WORLDWIDE_ID
         ];
     }
-
-    //########################################
 
     public function process()
     {
@@ -137,9 +146,17 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
             return $this->process();
         }
 
+        // @codingStandardsIgnoreStart
+        $requesters = [
+            self::SEARCH_BY_ASIN       => 'Amazon\Search\Settings\ByAsin\Requester',
+            self::SEARCH_BY_IDENTIFIER => 'Amazon\Search\Settings\ByIdentifier\Requester'
+        ];
+        // @codingStandardsIgnoreEnd
+
+        /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
         $connectorObj = $dispatcherObject->getCustomConnector(
-            'Amazon\Search\Settings\\'.ucfirst($this->getSearchMethod()).'\Requester',
+            $requesters[$this->getSearchMethod()],
             $this->getConnectorParams(),
             $this->getListingProduct()->getAccount()
         );
@@ -149,24 +166,16 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
         return $connectorObj->getPreparedResponseData();
     }
 
-    //########################################
-
     private function processResult()
     {
         $result = $this->stepData['result'];
         $params = $this->stepData['params'];
 
-        $params['search_method'] == 'byAsin' && $result = [$result];
-
-        if ($this->step == self::STEP_MAGENTO_TITLE) {
-            $tempResult = $this->filterReceivedItemsFullTitleMatch($result);
-            count($tempResult) == 1 && $result = $tempResult;
+        if ($params['search_method'] == self::SEARCH_BY_ASIN) {
+            $result = [$result];
         }
 
-        $type = 'string';
-        if ($this->step != self::STEP_MAGENTO_TITLE) {
-            $type = $this->getIdentifierType($params['query']);
-        }
+        $type = $this->getIdentifierType($params['query']);
 
         $searchSettingsData = [
             'type'  => $type,
@@ -175,17 +184,15 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
         if ($this->canPutResultToSuggestData($result)) {
             $searchSettingsData['data'] = $result;
-
             $amazonListingProduct = $this->getListingProduct()->getChildObject();
-
             $amazonListingProduct->setData(
                 'search_settings_status',
                 \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_ACTION_REQUIRED
             );
             $amazonListingProduct->setSettings('search_settings_data', $searchSettingsData);
-
             $amazonListingProduct->save();
 
+            $this->counterOfFind->increment();
             return;
         }
 
@@ -193,27 +200,25 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
         $generalId = $this->getGeneralIdFromResult($result);
 
-        if ($this->step == self::STEP_MAGENTO_TITLE && $result['title'] !== $params['query']) {
-            $this->setNotFoundSearchStatus();
-            return;
-        }
-
-        if ($this->step == self::STEP_GENERAL_ID && $generalId !== $params['query'] &&
-            (!$this->getHelper('Data')->isISBN($generalId) || !$this->getHelper('Data')->isISBN($params['query']))) {
+        if (
+            $this->step == self::STEP_GENERAL_ID
+            && $generalId !== $params['query']
+            && (!Identifier::isISBN($generalId) || !Identifier::isISBN($params['query']))
+        ) {
             $this->setNotFoundSearchStatus();
             return;
         }
 
         $generalIdSearchInfo = [
             'is_set_automatic' => true,
-            'type'  => $searchSettingsData['type'],
-            'value' => $searchSettingsData['value'],
+            'type'             => $searchSettingsData['type'],
+            'value'            => $searchSettingsData['value'],
         ];
 
         $dataForUpdate = [
-            'general_id' => $generalId,
-            'general_id_search_info' => $this->getHelper('Data')->jsonEncode($generalIdSearchInfo),
-            'is_isbn_general_id' => $this->getHelper('Data')->isISBN($generalId),
+            'general_id'             => $generalId,
+            'general_id_search_info' => \Ess\M2ePro\Helper\Json::encode($generalIdSearchInfo),
+            'is_isbn_general_id'     => Identifier::isISBN($generalId),
             'search_settings_status' => null,
             'search_settings_data'   => null,
         ];
@@ -252,8 +257,6 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
         }
     }
 
-    //########################################
-
     private function validate()
     {
         if ($this->step !== null && !in_array($this->step, $this->getAllowedSteps())) {
@@ -261,9 +264,10 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->getVariationManager()->isIndividualType()) {
-            if ($this->getListingProduct()->getMagentoProduct()->isBundleType() ||
-                $this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions() ||
-                $this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()
+            if (
+                $this->getListingProduct()->getMagentoProduct()->isBundleType()
+                || $this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions()
+                || $this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()
             ) {
                 return false;
             }
@@ -332,88 +336,98 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
         return true;
     }
 
-    private function getQueryParam()
+    /**
+     * @return string|null
+     */
+    private function getQueryParam(): ?string
     {
-        $validationHelper = $this->getHelper('Data');
-        $amazonHelper = $this->getHelper('Component\Amazon');
-
-        switch ($this->step) {
-            case self::STEP_GENERAL_ID:
-                $query = $this->getAmazonListingProduct()->getGeneralId();
-                empty($query) && $query = $this->getAmazonListingProduct()->getListingSource()->getSearchGeneralId();
-
-                if (!$amazonHelper->isASIN($query) && !$validationHelper->isISBN($query)) {
-                    $query = null;
-                }
-
-                break;
-
-            case self::STEP_WORLDWIDE_ID:
-                $query = $this->getAmazonListingProduct()->getListingSource()->getSearchWorldwideId();
-
-                if (!$validationHelper->isEAN($query) && !$validationHelper->isUPC($query)) {
-                    $query = null;
-                }
-
-                break;
-
-            case self::STEP_MAGENTO_TITLE:
-                $query = null;
-
-                if ($this->getAmazonListingProduct()->getAmazonListing()->isSearchByMagentoTitleModeEnabled()) {
-                    $query = $this->getAmazonListingProduct()->getActualMagentoProduct()->getName();
-                }
-
-                break;
-
-            default:
-                $query = null;
+        if ($this->step == self::STEP_GENERAL_ID) {
+            return $this->getGeneralId();
         }
 
-        return $query;
+        if ($this->step == self::STEP_WORLDWIDE_ID) {
+            return $this->getWorldwideId();
+        }
+
+        return null;
     }
 
-    private function getSearchMethod()
+    /**
+     * @return string|null
+     */
+    private function getGeneralId(): ?string
     {
-        $searchMethods = array_combine(
-            $this->getAllowedSteps(),
-            ['byAsin', 'byIdentifier', 'byQuery']
-        );
+        if ($productGeneralId = $this->getAmazonListingProduct()->getGeneralId()) {
+            $generalIdHasResolvedType = Identifier::isASIN($productGeneralId) || Identifier::isISBN($productGeneralId);
+            return $generalIdHasResolvedType ? $productGeneralId : null;
+        }
+
+        if ($searchGeneralId = $this->getAmazonListingProduct()->getIdentifiers()->getGeneralId()) {
+            return $searchGeneralId->hasResolvedType() ? $searchGeneralId->getIdentifier() : null;
+        }
+
+        return null;
+    }
+
+    /**
+     * @return string|null
+     */
+    private function getWorldwideId(): ?string
+    {
+        $worldwideId = $this->getAmazonListingProduct()->getIdentifiers()->getWorldwideId();
+        if ($worldwideId && $worldwideId->hasResolvedType()) {
+            return $worldwideId->getIdentifier();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return string
+     */
+    private function getSearchMethod(): string
+    {
+        $searchMethods = [
+            self::STEP_GENERAL_ID   => self::SEARCH_BY_ASIN,
+            self::STEP_WORLDWIDE_ID => self::SEARCH_BY_IDENTIFIER
+        ];
 
         $searchMethod = $searchMethods[$this->step];
 
-        if ($searchMethod == 'byAsin' && $this->getHelper('Data')->isISBN($this->getQueryParam())) {
-            $searchMethod = 'byIdentifier';
+        if (
+            $searchMethod == self::SEARCH_BY_ASIN
+            && Identifier::isISBN($this->getQueryParam())
+        ) {
+            $searchMethod = self::SEARCH_BY_IDENTIFIER;
         }
 
         return $searchMethod;
     }
 
-    private function getIdentifierType($identifier)
+    /**
+     * @param string|null $identifier
+     *
+     * @return false|string
+     */
+    private function getIdentifierType(?string $identifier)
     {
-        $validation = $this->getHelper('Data');
-
-        return ($this->getHelper('Component\Amazon')->isASIN($identifier) ? 'ASIN' :
-               ($validation->isISBN($identifier)                          ? 'ISBN' :
-               ($validation->isUPC($identifier)                           ? 'UPC'  :
-               ($validation->isEAN($identifier)                           ? 'EAN'  : false))));
-    }
-
-    private function filterReceivedItemsFullTitleMatch($results)
-    {
-        $return = [];
-
-        $magentoProductTitle = $this->getAmazonListingProduct()->getActualMagentoProduct()->getName();
-        $magentoProductTitle = trim(strtolower($magentoProductTitle));
-
-        foreach ($results as $item) {
-            $itemTitle = trim(strtolower($item['title']));
-            if ($itemTitle == $magentoProductTitle) {
-                $return[] = $item;
-            }
+        if (Identifier::isASIN($identifier)) {
+            return Identifier::ASIN;
         }
 
-        return $return;
+        if (Identifier::isISBN($identifier)) {
+            return Identifier::ISBN;
+        }
+
+        if (Identifier::isUPC($identifier)) {
+            return Identifier::UPC;
+        }
+
+        if (Identifier::isEAN($identifier)) {
+            return Identifier::EAN;
+        }
+
+        return false;
     }
 
     private function getAttributeMatcher($result)
@@ -425,8 +439,6 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
         return $attributeMatcher;
     }
-
-    //########################################
 
     private function setNotFoundSearchStatus()
     {
@@ -440,6 +452,4 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
         $amazonListingProduct->save();
     }
-
-    //########################################
 }

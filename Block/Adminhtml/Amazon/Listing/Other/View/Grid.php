@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -10,6 +10,9 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Other\View;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
+    private const ACTUAL_QTY_EXPRESSION =
+        'IF(second_table.is_afn_channel = 1, second_table.online_afn_qty, second_table.online_qty)';
+
     /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
 
@@ -96,6 +99,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             );
         }
 
+        $collection->getSelect()->columns(
+            ['online_actual_qty' => self::ACTUAL_QTY_EXPRESSION]
+        );
+
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
@@ -141,8 +148,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'align' => 'right',
             'width' => '100px',
             'type' => 'number',
-            'index' => 'online_qty',
-            'filter_index' => 'online_qty',
+            'index' => 'online_actual_qty',
+            'filter_index' => 'online_actual_qty',
             'frame_callback' => [$this, 'callbackColumnAvailableQty'],
             'filter'   => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty::class,
             'filter_condition_callback' => [$this, 'callbackFilterQty']
@@ -296,30 +303,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnAvailableQty($value, $row, $column, $isExport)
     {
-        $value = $row->getChildObject()->getData('online_qty');
-        if ((bool)$row->getChildObject()->getData('is_afn_channel')) {
-            $sku = $row->getChildObject()->getData('sku');
-
-            $afn = $this->__('AFN');
-            $total = $this->__('Total');
-            $inStock = $this->__('In Stock');
-            $productId = $row->getData('id');
-            $accountId = $row->getData('account_id');
-
-            return <<<HTML
-<div id="m2ePro_afn_qty_value_{$productId}">
-    <span class="m2ePro-online-sku-value" productId="{$productId}" style="display: none">{$sku}</span>
-    <span class="m2epro-empty-afn-qty-data" style="display: none">{$afn}</span>
-    <div class="m2epro-afn-qty-data" style="display: none">
-        <div class="total">{$total}: <span></span></div>
-        <div class="in-stock">{$inStock}: <span></span></div>
-    </div>
-    <a href="javascript:void(0)"
-        onclick="AmazonListingAfnQtyObj.showAfnQty(this,'{$sku}',{$productId}, {$accountId})">{$afn}</a>
-</div>
-HTML;
+        if ($row->getChildObject()->getData('is_afn_channel')) {
+            $qty = $row->getChildObject()->getData('online_afn_qty') ?? $this->__('N/A');
+            return "AFN ($qty)";
         }
 
+        $value = $row->getChildObject()->getData('online_qty');
         if ($value === null || $value === '') {
             return $this->__('N/A');
         }
@@ -475,19 +464,19 @@ HTML;
         $where = '';
 
         if (isset($value['from']) && $value['from'] != '') {
-            $where .= 'online_qty >= ' . (int)$value['from'];
+            $where .= self::ACTUAL_QTY_EXPRESSION . ' >= ' . (int)$value['from'];
         }
 
         if (isset($value['to']) && $value['to'] != '') {
             if (isset($value['from']) && $value['from'] != '') {
                 $where .= ' AND ';
             }
-            $where .= 'online_qty <= ' . (int)$value['to'];
+            $where .= self::ACTUAL_QTY_EXPRESSION . ' <= ' . (int)$value['to'];
         }
 
         if (isset($value['afn']) && $value['afn'] !== '') {
             if (!empty($where)) {
-                $where = '(' . $where . ') OR ';
+                $where .= ' AND ';
             }
             $where .= 'is_afn_channel = ' . (int)$value['afn'];
         }

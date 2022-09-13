@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -187,6 +187,7 @@ class Data
                 $result[] = $this->escapeHtml($item, $allowedTags, $flags);
             }
         } else {
+            $data = (string)$data;
             // process single item
             if ($data !== '') {
                 if (is_array($allowedTags) && !empty($allowedTags)) {
@@ -822,136 +823,47 @@ class Data
      * @param string $string
      *
      * @return bool
+     * @see \Ess\M2ePro\Helper\Data\Product\Identifier::isISBN
+     * @deprecated
      */
     public function isISBN($string): bool
     {
-        return $this->isISBN10($string) || $this->isISBN13($string);
+        return \Ess\M2ePro\Helper\Data\Product\Identifier::isISBN($string);
     }
-
-    // ---------------------------------------
-
-    /**
-     * @param string $string
-     *
-     * @return bool
-     */
-    public function isISBN10($string): bool
-    {
-        $string = (string)$string;
-        if (strlen($string) !== 10) {
-            return false;
-        }
-
-        $a = 0;
-        for ($i = 0; $i < 10; $i++) {
-            if ($string[$i] === "X" || $string[$i] === "x") {
-                $a += 10 * (10 - $i);
-            } elseif (is_numeric($string[$i])) {
-                $a += (int)$string[$i] * (10 - $i);
-            } else {
-                return false;
-            }
-        }
-
-        return $a % 11 === 0;
-    }
-
-    /**
-     * @param string $string
-     *
-     * @return bool
-     */
-    public function isISBN13($string): bool
-    {
-        $string = (string)$string;
-        if (strlen($string) !== 13) {
-            return false;
-        }
-
-        if (strpos($string, '978') !== 0) {
-            return false;
-        }
-
-        $check = 0;
-        for ($i = 0; $i < 13; $i += 2) {
-            $check += (int)$string[$i];
-        }
-        for ($i = 1; $i < 12; $i += 2) {
-            $check += 3 * $string[$i];
-        }
-
-        return $check % 10 === 0;
-    }
-
-    // ----------------------------------------
 
     /**
      * @param string $gtin
      *
      * @return bool
+     * @see \Ess\M2ePro\Helper\Data\Product\Identifier::isGTIN
+     * @deprecated
      */
     public function isGTIN($gtin): bool
     {
-        return $this->isWorldWideId($gtin, 'GTIN');
+        return \Ess\M2ePro\Helper\Data\Product\Identifier::isGTIN($gtin);
     }
 
     /**
      * @param string $upc
      *
      * @return bool
+     * @see \Ess\M2ePro\Helper\Data\Product\Identifier::isUPC
+     * @deprecated
      */
     public function isUPC($upc): bool
     {
-        return $this->isWorldWideId($upc, 'UPC');
+        return \Ess\M2ePro\Helper\Data\Product\Identifier::isUPC($upc);
     }
 
     /**
      * @param string $ean
      *
      * @return bool
+     * @see \Ess\M2ePro\Helper\Data\Product\Identifier::isEAN
+     * @deprecated
      */
     public function isEAN($ean): bool
     {
-        return $this->isWorldWideId($ean, 'EAN');
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @param string $worldWideId
-     * @param string $type
-     *
-     * @return bool
-     */
-    private function isWorldWideId($worldWideId, $type): bool
-    {
-        $adapters = [
-            'UPC' => [
-                12 => 'Upca',
-            ],
-            'EAN' => [
-                13 => 'Ean13',
-            ],
-            'GTIN' => [
-                12 => 'Gtin12',
-                13 => 'Gtin13',
-                14 => 'Gtin14',
-            ]
-        ];
-
-        $length = strlen((string)$worldWideId);
-
-        if (!isset($adapters[$type][$length])) {
-            return false;
-        }
-
-        try {
-            $validator = new \Zend_Validate_Barcode($adapters[$type][$length]);
-            $result = $validator->isValid($worldWideId);
-        } catch (\Zend_Validate_Exception $e) {
-            return false;
-        }
-
-        return $result;
+        return \Ess\M2ePro\Helper\Data\Product\Identifier::isEAN($ean);
     }
 }

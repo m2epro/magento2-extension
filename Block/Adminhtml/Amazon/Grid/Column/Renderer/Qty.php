@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -68,33 +68,9 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
                 return '<span style="color: gray;">' . $translator->__('Not Listed') . '</span>';
             }
 
-            if ((bool)$rowObject->getData('is_afn_channel')) {
-                $sku = $rowObject->getData('amazon_sku');
-
-                if (empty($sku)) {
-                    return $translator->__('AFN');
-                }
-
-                /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-                $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $listingProductId);
-
-                $afn = $translator->__('AFN');
-                $total = $translator->__('Total');
-                $inStock = $translator->__('In Stock');
-                $accountId = $listingProduct->getListing()->getAccountId();
-
-                return <<<HTML
-<div id="m2ePro_afn_qty_value_{$listingProductId}">
-    <span class="m2ePro-online-sku-value" productId="{$listingProductId}" style="display: none">{$sku}</span>
-    <span class="m2epro-empty-afn-qty-data" style="display: none">{$afn}</span>
-    <div class="m2epro-afn-qty-data" style="display: none">
-        <div class="total">{$total}: <span></span></div>
-        <div class="in-stock">{$inStock}: <span></span></div>
-    </div>
-    <a href="javascript:void(0)"
-        onclick="AmazonListingAfnQtyObj.showAfnQty(this,'{$sku}',{$listingProductId}, {$accountId})">{$afn}</a>
-</div>
-HTML;
+            if ($rowObject->getData('is_afn_channel')) {
+                $qty = $rowObject->getData('online_afn_qty') ?? $translator->__('N/A');
+                return "AFN ($qty)";
             }
 
             $showReceiving = ($this->getColumn()->getData('show_receiving') !== null)

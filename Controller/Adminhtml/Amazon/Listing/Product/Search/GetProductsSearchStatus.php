@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -10,11 +10,11 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Search;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Search\GetProductsSearchStatus
- */
 class GetProductsSearchStatus extends Main
 {
+    /**
+     * @inerhitDoc
+     */
     public function execute()
     {
         $productsIds = $this->getRequest()->getParam('products_ids');
@@ -96,6 +96,11 @@ class GetProductsSearchStatus extends Main
                 )
             ];
         }
+
+        $messages[] = [
+            'type' => 'warning',
+            'text' => $this->__('You can check Product Identifiers settings in Amazon > Configuration > Main.')
+        ];
 
         $this->setJsonContent([
             'messages' => $messages

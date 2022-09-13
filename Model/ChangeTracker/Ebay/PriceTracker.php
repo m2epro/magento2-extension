@@ -78,21 +78,19 @@ class PriceTracker extends BasePriceTracker
 
         $queryData = [];
         foreach ($sellingPolicyQuery->fetchAll() as $sellingPolicy) {
-            $hash = hash('md5', $sellingPolicy['modifier']);
-            if (array_key_exists($hash, $queryData) === false) {
-                $queryData[$hash]['then'] = $this->makeCalculatedThen(
+            $queryData[] = [
+                'when' => (int)$sellingPolicy['id'],
+                'then' => $this->makeCalculatedThen(
                     $sellingPolicy['modifier'],
                     $this->getPriceColumn((int)$sellingPolicy['mode'], $sellingPolicy['mode_attribute']),
                     $sellingPolicy['vat']
-                );
-            }
-            $queryData[$hash]['when'][] = (int)$sellingPolicy['id'];
+                ),
+            ];
         }
 
         $caseBody = '';
         foreach ($queryData as $qd) {
-            $ids = implode(',', $qd['when']);
-            $caseBody .= " WHEN product.selling_template_id IN ($ids) THEN {$qd['then']} ";
+            $caseBody .= " WHEN product.selling_template_id = {$qd['when']} THEN {$qd['then']} ";
         }
 
         return "CASE $caseBody END";
@@ -129,43 +127,16 @@ class PriceTracker extends BasePriceTracker
                     break;
                 case 5:
                     $attrQ = $this->attributesQueryBuilder
-                        ->getQueryForAttribute($attributeCode, 'product.product_id');
+                        ->getQueryForAttribute(
+                            $attributeCode,
+                            'product.store_id',
+                            'product.product_id'
+                        );
                     $sql = "( $sql + IFNULL(({$attrQ}), 0))";
                     break;
             }
         }
 
         return "ROUND( $sql * (1+$vat/100), 2)";
-    }
-
-    /**
-     * @param int $mode
-     * @param string $modeAttribute
-     *
-     * @return string
-     */
-    protected function getPriceColumn(int $mode, string $modeAttribute = ''): string
-    {
-        if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL) {
-            return '(CASE
-            WHEN product.special_price IS NOT NULL
-                AND product.special_from_date IS NOT NULL
-                AND product.special_to_date IS NOT NULL
-                AND NOW() BETWEEN product.special_from_date AND product.special_to_date
-            THEN product.special_price
-            WHEN product.special_price IS NOT NULL
-                AND product.special_from_date IS NOT NULL
-                AND product.special_from_date + INTERVAL 1 YEAR > NOW()
-            THEN product.special_price
-            ELSE product.price
-          END)';
-        }
-
-        if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
-            $attributeQuery = $this->attributesQueryBuilder->getQueryForAttribute($modeAttribute);
-            return "(IFNULL(($attributeQuery), product.price))";
-        }
-
-        return 'product.price';
     }
 }

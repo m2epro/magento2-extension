@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -66,17 +66,6 @@ class SearchAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
             'onclick'   => 'ListingGridObj.backClick(\'' . $url . '\')',
             'class'     => 'back'
         ]);
-
-        // ---------------------------------------
-        $this->addButton('edit_search_settings', [
-            'label'     => $this->__('Edit Search Settings'),
-            'class'     => 'action-primary next',
-            'onclick'   => 'ListingGridObj.editSearchSettings(\'' .
-                $this->__('Listing Search Settings') . '\' ,' .
-                $this->listing['id'] .
-            ');'
-        ]);
-        // ---------------------------------------
 
         // ---------------------------------------
         $this->addButton('add_products_search_asin_continue', [

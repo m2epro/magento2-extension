@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -8,123 +8,87 @@
 
 namespace Ess\M2ePro\Model\Amazon\Search;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Search\Custom
- */
-class Custom extends \Ess\M2ePro\Model\AbstractModel
+use Ess\M2ePro\Helper\Data\Product\Identifier;
+
+class Custom
 {
-    /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-    private $listingProduct = null;
+    private const SEARCH_BY_ASIN = 'byAsin';
+    private const SEARCH_BY_IDENTIFIER = 'byIdentifier';
 
-    private $query = null;
+    /** @var string */
+    private $query;
+    /** @var \Ess\M2ePro\Model\Listing\Product */
+    private $listingProduct;
+    /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
+    private $connectorDispatcher;
 
-    //########################################
-
-    /**
-     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
-     * @return $this
-     */
-    public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
-    {
+    public function __construct(
+        string $query,
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $connectorDispatcher
+    ) {
+        $this->query = str_replace('-', '', $query);
         $this->listingProduct = $listingProduct;
-        return $this;
+        $this->connectorDispatcher = $connectorDispatcher;
     }
 
     /**
-     * @param $query
-     * @return $this
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function setQuery($query)
+    public function process(): array
     {
-        $this->query = (string)$query;
-        return $this;
-    }
+        // @codingStandardsIgnoreStart
+        $requesters = [
+            self::SEARCH_BY_ASIN       => 'Amazon\Search\Custom\ByAsin\Requester',
+            self::SEARCH_BY_IDENTIFIER => 'Amazon\Search\Custom\ByIdentifier\Requester',
+        ];
+        // @codingStandardsIgnoreEnd
 
-    //########################################
-
-    public function process()
-    {
-        $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
-        $connectorObj = $dispatcherObject->getCustomConnector(
-            'Amazon\Search\Custom\\'.ucfirst($this->getSearchMethod()).'\Requester',
+        $connector = $this->connectorDispatcher->getCustomConnector(
+            $requesters[$this->getSearchMethod()],
             $this->getConnectorParams(),
             $this->listingProduct->getAccount()
         );
 
-        $dispatcherObject->process($connectorObj);
-        return $this->prepareResult($connectorObj->getPreparedResponseData());
+        $this->connectorDispatcher->process($connector);
+        return $this->prepareResult($connector->getPreparedResponseData());
     }
 
-    //########################################
-
-    private function getConnectorParams()
+    /**
+     * @return array {}
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function getConnectorParams(): array
     {
-        $searchMethod = $this->getSearchMethod();
-
         /** @var \Ess\M2ePro\Model\Listing\Product $amazonListingProduct */
         $amazonListingProduct = $this->listingProduct->getChildObject();
         $isModifyChildToSimple = !$amazonListingProduct->getVariationManager()->isRelationParentType();
 
         $params = [
             'variation_bad_parent_modify_child_to_simple' => $isModifyChildToSimple,
+            'query'                                       => $this->query,
         ];
 
-        if ($searchMethod == 'byQuery') {
-            $params['query'] = $this->query;
-        } else {
-            $params['query'] = $this->getStrippedQuery();
-        }
-
-        if ($searchMethod == 'byIdentifier') {
+        if ($this->getSearchMethod() == self::SEARCH_BY_IDENTIFIER) {
             $params['query_type'] = $this->getIdentifierType();
         }
 
         return $params;
     }
 
-    private function getSearchMethod()
-    {
-        $validationHelper = $this->getHelper('Data');
-        $amazonHelper     = $this->getHelper('Component\Amazon');
-        $strippedQuery    = $this->getStrippedQuery();
-
-        if ($amazonHelper->isASIN($strippedQuery)) {
-            return 'byAsin';
-        }
-
-        if ($validationHelper->isEAN($strippedQuery) ||
-            $validationHelper->isUPC($strippedQuery) ||
-            $validationHelper->isISBN($strippedQuery)
-        ) {
-            return 'byIdentifier';
-        }
-
-        return 'byQuery';
-    }
-
-    private function getIdentifierType()
-    {
-        $query = $this->getStrippedQuery();
-
-        $validationHelper = $this->getHelper('Data');
-
-        return ($this->getHelper('Component\Amazon')->isASIN($query) ? 'ASIN' :
-               ($validationHelper->isISBN($query)                    ? 'ISBN' :
-               ($validationHelper->isUPC($query)                     ? 'UPC'  :
-               ($validationHelper->isEAN($query)                     ? 'EAN'  : false))));
-    }
-
-    private function prepareResult($searchData)
+    /**
+     * @param $searchData
+     *
+     * @return array{type:false|string, value:string, data:array|mixed}
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function prepareResult($searchData): array
     {
         $connectorParams = $this->getConnectorParams();
+        $searchMethod = $this->getSearchMethod();
 
-        if ($this->getSearchMethod() == 'byQuery') {
-            $type = 'string';
-        } else {
-            $type = $this->getIdentifierType();
-        }
-
-        if ($searchData !== false && $this->getSearchMethod() == 'byAsin') {
+        if ($searchData !== false && $searchMethod == self::SEARCH_BY_ASIN) {
             if (is_array($searchData) && !empty($searchData)) {
                 $searchData = [$searchData];
             } elseif ($searchData === null) {
@@ -133,16 +97,44 @@ class Custom extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return [
-            'type'  => $type,
+            'type'  => $this->getIdentifierType(),
             'value' => $connectorParams['query'],
             'data'  => $searchData,
         ];
     }
 
-    private function getStrippedQuery()
+    /**
+     * @return string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function getSearchMethod(): string
     {
-        return str_replace('-', '', $this->query);
+        return Identifier::isASIN($this->query)
+            ? self::SEARCH_BY_ASIN
+            : self::SEARCH_BY_IDENTIFIER;
     }
 
-    //########################################
+    /**
+     * @return string|bool
+     */
+    private function getIdentifierType()
+    {
+        if (Identifier::isASIN($this->query)) {
+            return Identifier::ASIN;
+        }
+
+        if (Identifier::isISBN($this->query)) {
+            return Identifier::ISBN;
+        }
+
+        if (Identifier::isUPC($this->query)) {
+            return Identifier::UPC;
+        }
+
+        if (Identifier::isEAN($this->query)) {
+            return Identifier::EAN;
+        }
+
+        return false;
+    }
 }

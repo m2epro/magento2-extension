@@ -75,14 +75,6 @@ define([
             $('edit_category_link').observe('click', AmazonTemplateDescriptionObj.onClickEditCategory);
             $('product_data_nick_select').observe('change', AmazonTemplateDescriptionObj.onChangeProductDataNick);
 
-            $('worldwide_id_mode')
-                .observe('change', AmazonTemplateDescriptionObj.onChangeWorldwideId)
-                .simulate('change');
-
-            $('registered_parameter')
-                .observe('change', AmazonTemplateDescriptionObj.onChangeRegisteredParameter)
-                .simulate('change');
-
             $('amazonTemplateDescriptionEditTabs_specifics').observe('click', AmazonTemplateDescriptionObj.checkSpecificsReady);
         },
 
@@ -226,15 +218,6 @@ define([
             if (this.value == 1) {
 
                 onlyAsinBlocks.invoke('show');
-
-                var worldWideIdMode = $('worldwide_id_mode');
-                worldWideIdMode.simulate('change');
-
-                if ($('registered_parameter').value == '' &&
-                    $('worldwide_id_custom_attribute').value == '') {
-                    worldWideIdMode.value = -1;
-                }
-
                 $('item_package_quantity_mode').simulate('change');
                 $('number_of_items_mode').simulate('change');
             }
@@ -261,41 +244,6 @@ define([
                 self.updateFieldRequirements(chooser, this.value, 'M2ePro-required-when-visible');
             }
             // ---------------------------------------
-        },
-
-        // ---------------------------------------
-
-        onChangeWorldwideId: function()
-        {
-            var target = $('worldwide_id_custom_attribute');
-
-            target.value = '';
-            if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Template\\Description::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE')) {
-                AmazonTemplateDescriptionObj.updateHiddenValue(this, target);
-            }
-        },
-
-        onChangeRegisteredParameter: function()
-        {
-            var worldwideIdMode = $('worldwide_id_mode'),
-                noneOption      = worldwideIdMode.down('option'),
-                currentValue    = worldwideIdMode.getAttribute('data-current-value');
-
-            if (!this.value) {
-                noneOption.hide();
-                worldwideIdMode.simulate('change');
-
-                if ($('worldwide_id_custom_attribute').value == '') {
-                    worldwideIdMode.selectedIndex = -1;
-                }
-            } else {
-                noneOption.show();
-                if (currentValue == '') {
-                    worldwideIdMode.value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Template\\Description::WORLDWIDE_ID_MODE_NONE');
-                }
-                $('worldwide_id_custom_attribute').value = ''
-            }
-            worldwideIdMode.setAttribute('data-current-value', '');
         },
 
         // ---------------------------------------

@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -247,7 +247,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         $clearQty = $this->getClearQty();
 
         if ($clearQty > 0 && $qty <= 0) {
-            $message = 'You’re submitting an item with QTY contradicting the QTY settings in your Selling Policy. 
+            $message = 'You’re submitting an item with QTY contradicting the QTY settings in your Selling Policy.
             Please check Minimum Quantity to Be Listed and Quantity Percentage options.';
 
             $this->addMessage($message);

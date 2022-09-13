@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -132,7 +132,7 @@ class Mapper
          */
         $sql = <<<SQL
 UPDATE `{$this->resourceConnection->getTableName('m2epro_order')}` AS `mo`
-LEFT JOIN `{$this->resourceConnection->getTableName('sales_order')}` AS `so` 
+LEFT JOIN `{$this->resourceConnection->getTableName('sales_order')}` AS `so`
 ON `mo`.`magento_order_id` = `so`.`entity_id`
 SET `mo`.`magento_order_id` = 0
 WHERE `so`.`entity_id` IS NULL

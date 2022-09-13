@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -46,7 +46,6 @@ class General extends AbstractModel
             'duration'   => $this->getEbayListingProduct()->getSellingFormatTemplateSource()->getDuration(),
             'is_private' => $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->isPrivateListing(),
             'currency'   => $this->getEbayMarketplace()->getCurrency(),
-            'hit_counter'          => $this->getEbayListingProduct()->getEbayDescriptionTemplate()->getHitCounterType(),
             'listing_enhancements' => $this->getEbayListingProduct()->getEbayDescriptionTemplate()->getEnhancements(),
             'product_details'      => $this->getProductDetailsData()
         ];

@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -14,6 +14,9 @@ namespace Ess\M2ePro\Model\Synchronization;
 class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 {
     const TYPE_FATAL_ERROR = 100;
+
+    const TASK_ALL = 100;
+    const _TASK_ALL = 'All';
 
     const TASK_OTHER = 0;
     const _TASK_OTHER = 'Other';

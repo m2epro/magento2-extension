@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -109,7 +109,7 @@ automatically link them to Magento Product, etc.</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/VP8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('x/FP8UB')
                 )
             ]
         );

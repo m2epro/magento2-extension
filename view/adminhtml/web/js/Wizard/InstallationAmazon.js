@@ -53,6 +53,17 @@ define([
             });
         },
 
+        settingsStep: function ()
+        {
+            this.initFormValidation();
+
+            if (!this.isValidForm()) {
+                return false;
+            }
+
+            this.submitForm(M2ePro.url.get('wizard_installationAmazon/settingsContinue'));
+        },
+
         listingTutorialStep: function ()
         {
             WizardObj.setStep(WizardObj.getNextStep(), setLocation.bind(window, location.href))

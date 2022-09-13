@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -75,7 +75,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
                     INNER JOIN `{$m2eproEbayListing}` AS `el` ON l.id = el.listing_id
                     LEFT JOIN `{$m2eproListingProduct}` AS `lp` ON l.id = lp.listing_id
                     LEFT JOIN `{$m2eproEbayListingProduct}` AS `elp` ON lp.id = elp.listing_product_id
-                GROUP BY lp.listing_id";
+                GROUP BY listing_id";
 
         $collection->getSelect()->joinLeft(
             new \Zend_Db_Expr('('.$sql.')'),

@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -31,11 +31,6 @@ class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Widget\Breadcrumb
                 'id' => 2,
                 'title' => $this->__('Step 2'),
                 'description' => $this->__('Selling Settings')
-            ],
-            [
-                'id' => 3,
-                'title' => $this->__('Step 3'),
-                'description' => $this->__('Search Settings')
             ],
         ]);
 

@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -94,7 +94,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
-    
+
     //########################################
 
     public function __construct(

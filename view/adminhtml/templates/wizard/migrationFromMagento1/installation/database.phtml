@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -32,7 +32,7 @@ if ($block->getCurrentWizardStatus() === \Ess\M2ePro\Model\Wizard\MigrationFromM
     </p>
     <li>
         <?php echo $block->__("
-            In Magento v1.x, create a dump of all the tables with '<strong>m2epro_</strong>' prefix 
+            In Magento v1.x, create a dump of all the tables with '<strong>m2epro_</strong>' prefix
             <strong>including both the structure and data</strong>. You can use the mysqldump utility or phpMyAdmin options.
         "); ?>
     </li>
@@ -43,14 +43,14 @@ if ($block->getCurrentWizardStatus() === \Ess\M2ePro\Model\Wizard\MigrationFromM
 
     <li>
         <?php echo $block->__('
-            In Magento v2.x, click <strong>Continue</strong> at Wizard Step 2. The imported data will be adapted 
+            In Magento v2.x, click <strong>Continue</strong> at Wizard Step 2. The imported data will be adapted
             to the Magento v2.x environment. Once the process is completed, you will be redirected to the next step.
         '); ?>
     </li>
 
     <p style="margin-top: 5px;">
         <?php echo $block->__('
-            <strong>Note</strong>: The step is rather time-consuming. If you are logged out from Magento, log in again 
+            <strong>Note</strong>: The step is rather time-consuming. If you are logged out from Magento, log in again
             and go to <i>Stores > Settings > Configuration > M2E Pro > Advanced Settings > Migration from Magento v1.x</i>.'
         ); ?>
     </p>

@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -452,7 +452,7 @@ abstract class Settings extends Listing
     {
         $key = '';
 
-        switch ((string)strtolower($this->getSessionValue('mode'))) {
+        switch (strtolower((string)$this->getSessionValue('mode'))) {
             case CategoryTemplateBlock::MODE_SAME:
                 $key = 'mode_same';
                 break;

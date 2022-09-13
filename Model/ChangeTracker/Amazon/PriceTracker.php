@@ -29,10 +29,10 @@ class PriceTracker extends BasePriceTracker
         $sellingPolicyQuery = $this->queryBuilder->makeSubQuery();
         $sellingPolicyQuery
             ->addSelect('id', 'template_selling_format_id')
-            ->addSelect('mode', 'regular_map_price_mode')
+            ->addSelect('mode', 'regular_price_mode')
             ->addSelect('modifier', 'regular_price_coefficient')
             ->addSelect('vat', 'regular_price_vat_percent')
-            ->addSelect('attr', 'regular_price_custom_attribute')
+            ->addSelect('mode_attribute', 'regular_price_custom_attribute')
             ->from(
                 't',
                 $this->setChannelToTableName('m2epro_%s_template_selling_format')
@@ -42,12 +42,12 @@ class PriceTracker extends BasePriceTracker
         $queryData = [];
         foreach ($sellingPolicyQuery->fetchAll() as $sellingPolicy) {
             $queryData[] = [
-                // TODO обработка regular_map_price_mode
+                'when' => (int)$sellingPolicy['id'],
                 'then' => $this->buildFormula(
                     $sellingPolicy['modifier'],
-                    $sellingPolicy['vat']
+                    $sellingPolicy['vat'],
+                    $this->getPriceColumn((int)$sellingPolicy['mode'], $sellingPolicy['mode_attribute'])
                 ),
-                'when' => (int)$sellingPolicy['id'],
             ];
         }
 
@@ -68,9 +68,8 @@ class PriceTracker extends BasePriceTracker
      *
      * @return string
      */
-    protected function buildFormula(string $modifier, float $vat = 0.0): string
+    protected function buildFormula(string $modifier, float $vat, string $priceColumn): string
     {
-        $priceColumn = 'product.price';
         $pattern = '/(?<sing>[+\-])?(?<number>[0-9\.]+)(?<percent>\%)?/';
         $matchesCount = preg_match($pattern, $modifier, $m);
         if ($matchesCount === false || $matchesCount === 0) {

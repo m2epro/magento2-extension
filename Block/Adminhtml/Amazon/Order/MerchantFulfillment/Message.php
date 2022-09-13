@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -64,8 +64,8 @@ HTML
             case 'markAsShipped':
                 $message = $this->__(
                     <<<HTML
-You cannot mark this Order as Shipped because this is the Amazon Prime Order. You should use 
-<a href="#" onclick="AmazonOrderMerchantFulfillmentObj.useMerchantFulfillmentAction()">Amazon's Shipping Services</a> 
+You cannot mark this Order as Shipped because this is the Amazon Prime Order. You should use
+<a href="#" onclick="AmazonOrderMerchantFulfillmentObj.useMerchantFulfillmentAction()">Amazon's Shipping Services</a>
 feature instead.
 HTML
                 );

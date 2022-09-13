@@ -118,7 +118,7 @@ define([
             this.submitForm(url);
         },
 
-        saveAndEditClick: function(url, lastActiveTab, backUrl) {
+        saveAndEditClick: function(url, backUrl) {
             if (typeof categories_selected_items != 'undefined' && !this.isValidForm()) {
                 array_unique(categories_selected_items);
 
@@ -127,10 +127,8 @@ define([
                 $('selected_categories').value = selectedCategories;
             }
 
-            if (url && lastActiveTab && backUrl) {
-                var activeTab = 'tab/' + jQuery('#amazonListingEditTabs').data().mageTabs.active.find('a')[0].id.split('_').pop();
-                var backUrlTab = base64_decode(backUrl) + activeTab + '/';
-                url = url + 'back/' + base64_encode(backUrlTab) + '/';
+            if (url && backUrl) {
+                url = url + 'back/' + base64_encode(backUrl) + '/';
             }
 
             this.submitForm(url);

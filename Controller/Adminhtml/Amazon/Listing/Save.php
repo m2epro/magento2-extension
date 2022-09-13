@@ -93,13 +93,6 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
             'sku_modification_custom_value',
             'generate_sku_mode',
 
-            'general_id_mode',
-            'general_id_custom_attribute',
-            'worldwide_id_mode',
-            'worldwide_id_custom_attribute',
-
-            'search_by_magento_title_mode',
-
             'condition_mode',
             'condition_value',
             'condition_custom_attribute',

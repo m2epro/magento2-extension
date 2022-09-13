@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -66,7 +66,7 @@ class TablesStructure extends IssueType
             $taskResult->setTaskResult(TaskResult::STATE_CRITICAL);
             $taskResult->setTaskMessage($this->getHelper('Module\Translation')->translate([
             <<<HTML
-Some MySQL tables or their columns are missing. It can cause critical issues in Module work. 
+Some MySQL tables or their columns are missing. It can cause critical issues in Module work.
 Please contact Support at <a href="mailto:support@m2epro.com">support@m2epro.com</a> for a solution.
 HTML
             ]));
@@ -78,7 +78,7 @@ HTML
             $taskResult->setTaskResult(TaskResult::STATE_WARNING);
             $taskResult->setTaskMessage($this->getHelper('Module\Translation')->translate([
             <<<HTML
-Some MySQL tables or their columns may have incorrect definitions. 
+Some MySQL tables or their columns may have incorrect definitions.
 If you face any unusual behavior of the Module, please contact Support at
 <a href="mailto:support@m2epro.com">support@m2epro.com</a>
 HTML

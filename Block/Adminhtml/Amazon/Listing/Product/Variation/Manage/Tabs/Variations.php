@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -93,8 +93,7 @@ class Variations extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
         $this->js->add(
             <<<JS
     require([
-        'M2ePro/Amazon/Listing/Product/Variation/Manage/Tabs/Variations/Grid',
-        'M2ePro/Amazon/Listing/AfnQty'
+        'M2ePro/Amazon/Listing/Product/Variation/Manage/Tabs/Variations/Grid'
     ], function(){
 
         ListingProductVariationManageVariationsGridObj = new AmazonListingProductVariationManageTabsVariationsGrid(

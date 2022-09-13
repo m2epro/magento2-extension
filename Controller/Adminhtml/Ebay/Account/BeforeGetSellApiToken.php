@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -17,22 +17,26 @@ class BeforeGetSellApiToken extends Account
 {
     /** @var \Ess\M2ePro\Helper\Module\Exception */
     private $helperException;
-
-    /** @var \Ess\M2ePro\Helper\Data\Session */
-    private $helperDataSession;
+    /** @var \Ess\M2ePro\Model\Ebay\Account\TemporaryStorage */
+    private $temporaryStorage;
 
     public function __construct(
         \Ess\M2ePro\Helper\Module\Exception $helperException,
-        \Ess\M2ePro\Helper\Data\Session $helperDataSession,
+        \Ess\M2ePro\Model\Ebay\Account\TemporaryStorage $temporaryStorage,
         \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update $storeCategoryUpdate,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        parent::__construct($storeCategoryUpdate, $componentEbayCategoryStore, $ebayFactory, $context);
+        parent::__construct(
+            $storeCategoryUpdate,
+            $componentEbayCategoryStore,
+            $ebayFactory,
+            $context
+        );
 
         $this->helperException = $helperException;
-        $this->helperDataSession = $helperDataSession;
+        $this->temporaryStorage = $temporaryStorage;
     }
 
     public function execute()
@@ -69,14 +73,13 @@ class BeforeGetSellApiToken extends Account
             $error = 'The eBay Sell token obtaining is currently unavailable.<br/>Reason: %error_message%';
             $error = $this->__($error, $exception->getMessage());
 
-            $this->getMessageManager()->addError($error);
+            $this->getMessageManager()->addErrorMessage($error);
 
             $this->_redirect($this->getUrl('*/*/index'));
             return;
         }
 
-        $this->helperDataSession->setValue('get_sell_api_token_account_id', $accountId);
-        $this->helperDataSession->setValue('get_sell_api_token_account_mode', $accountMode);
+        $this->temporaryStorage->setAccountId($accountId);
 
         $this->_redirect($response['url']);
         // ---------------------------------------

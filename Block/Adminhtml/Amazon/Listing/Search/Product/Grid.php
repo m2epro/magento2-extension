@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -10,6 +10,8 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\Product;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGrid
 {
+    private const ACTUAL_QTY_EXPRESSION = 'IF(alp.is_afn_channel = 1, alp.online_afn_qty, alp.online_qty)';
+
     private $parentAndChildReviseScheduledCache = [];
 
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
@@ -85,6 +87,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
                 'additional_data' => 'additional_data',
             ]
         );
+
+        $collection->addExpressionAttributeToSelect(
+            'online_actual_qty',
+            self::ACTUAL_QTY_EXPRESSION,
+            []
+        );
+
         $collection->joinTable(
             [
                 'alp' => $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable()
@@ -101,6 +110,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
                 'variation_child_statuses'     => 'variation_child_statuses',
                 'online_sku'                   => 'sku',
                 'online_qty'                   => 'online_qty',
+                'online_afn_qty'               => 'online_afn_qty',
                 'online_regular_price'         => 'online_regular_price',
                 'online_regular_sale_price'    => 'online_regular_sale_price',
                 'online_regular_sale_price_start_date' => 'online_regular_sale_price_start_date',
@@ -725,7 +735,7 @@ HTML;
 
         if (isset($value['from']) && $value['from'] != '') {
             $quoted = $collection->getConnection()->quote($value['from']);
-            $where .= 'online_qty >= ' . $quoted;
+            $where .= self::ACTUAL_QTY_EXPRESSION . ' >= ' . $quoted;
         }
 
         if (isset($value['to']) && $value['to'] != '') {
@@ -733,12 +743,12 @@ HTML;
                 $where .= ' AND ';
             }
             $quoted = $collection->getConnection()->quote($value['to']);
-            $where .= 'online_qty <= ' . $quoted;
+            $where .= self::ACTUAL_QTY_EXPRESSION . ' <= ' . $quoted;
         }
 
         if (isset($value['afn']) && $value['afn'] !== '') {
             if (!empty($where)) {
-                $where = '(' . $where . ') OR ';
+                $where .= ' AND ';
             }
 
             if ((int)$value['afn'] == 1) {

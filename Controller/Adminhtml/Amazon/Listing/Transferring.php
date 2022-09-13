@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -180,15 +180,6 @@ HTML
         $sessionData['restock_date_source'] = $amazonListing->getRestockDateMode();
         $sessionData['restock_date_value'] = $amazonListing->getData('restock_date_value');
         $sessionData['restock_date_custom_attribute'] = $amazonListing->getData('restock_date_custom_attribute');
-
-        // Search Settings
-        $sessionData['general_id_mode'] = $amazonListing->getGeneralIdMode();
-        $sessionData['general_id_custom_attribute'] = $amazonListing->getData('general_id_custom_attribute');
-
-        $sessionData['worldwide_id_mode'] = $amazonListing->getWorldwideIdMode();
-        $sessionData['worldwide_id_custom_attribute'] = $amazonListing->getData('worldwide_id_custom_attribute');
-
-        $sessionData['search_by_magento_title_mode'] = $amazonListing->getSearchByMagentoTitleMode();
 
         $this->getHelper('Data_Session')->setValue(
             \Ess\M2ePro\Model\Amazon\Listing::CREATE_LISTING_SESSION_DATA,

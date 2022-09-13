@@ -1,6 +1,6 @@
 <?php
 // @codingStandardsIgnoreFile
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -5375,12 +5375,6 @@ class Installer
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'hit_counter',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
                 'editor_type',
                 Table::TYPE_SMALLINT,
                 null,
@@ -8211,36 +8205,6 @@ class Installer
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'general_id_mode',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
-                'general_id_custom_attribute',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'worldwide_id_mode',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
-                'worldwide_id_custom_attribute',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'search_by_magento_title_mode',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 1]
-            )
-            ->addColumn(
                 'condition_mode',
                 Table::TYPE_SMALLINT,
                 null,
@@ -8438,6 +8402,12 @@ class Installer
                 ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
+                'online_afn_qty',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
                 'is_afn_channel',
                 Table::TYPE_SMALLINT,
                 null,
@@ -8618,6 +8588,12 @@ class Installer
             )
             ->addColumn(
                 'online_qty',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'online_afn_qty',
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'default' => null]
@@ -8994,6 +8970,12 @@ class Installer
             )
             ->addColumn(
                 'is_business',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'is_replacement',
                 Table::TYPE_SMALLINT,
                 null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
@@ -9636,24 +9618,6 @@ class Installer
                 Table::TYPE_DECIMAL,
                 [20, 0],
                 ['unsigned' => true, 'default' => null]
-            )
-            ->addColumn(
-                'registered_parameter',
-                Table::TYPE_TEXT,
-                25,
-                ['default' => null]
-            )
-            ->addColumn(
-                'worldwide_id_mode',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'default' => 0]
-            )
-            ->addColumn(
-                'worldwide_id_custom_attribute',
-                Table::TYPE_TEXT,
-                255,
-                ['default' => null]
             )
             ->addIndex('marketplace_id', 'marketplace_id')
             ->addIndex('is_new_asin_accepted', 'is_new_asin_accepted')
@@ -10680,6 +10644,11 @@ class Installer
         $moduleConfig->insert('/amazon/repricing/', 'mode', '1');
         $moduleConfig->insert('/amazon/repricing/', 'base_url', 'https://repricer.m2epro.com/connector/m2epro/');
         $moduleConfig->insert('/amazon/configuration/', 'business_mode', '0');
+        $moduleConfig->insert('/amazon/configuration/', 'worldwide_id_mode', '0');
+        $moduleConfig->insert('/amazon/configuration/', 'worldwide_id_custom_attribute');
+        $moduleConfig->insert('/amazon/configuration/', 'product_id_override_mode', '0');
+        $moduleConfig->insert('/amazon/configuration/', 'general_id_mode', '0');
+        $moduleConfig->insert('/amazon/configuration/', 'general_id_custom_attribute');
 
         $this->getConnection()->insertMultiple(
             $this->getFullTableName('marketplace'),
@@ -10918,6 +10887,19 @@ class Installer
                     'update_date'    => '2022-08-15 00:00:00',
                     'create_date'    => '2022-08-15 00:00:00'
                 ],
+                [
+                    'id'             => 48,
+                    'native_id'      => 20,
+                    'title'          => 'Belgium',
+                    'code'           => 'BE',
+                    'url'            => 'amazon.com.be',
+                    'status'         => 0,
+                    'sorder'         => 22,
+                    'group_title'    => 'Europe',
+                    'component_mode' => 'amazon',
+                    'update_date'    => '2022-09-01 00:00:00',
+                    'create_date'    => '2022-09-01 00:00:00'
+                ],
             ]
         );
 
@@ -11098,6 +11080,16 @@ class Installer
                     'marketplace_id'                          => 47,
                     'developer_key'                           => '7078-7205-1944',
                     'default_currency'                        => 'AED',
+                    'is_new_asin_available'                   => 0,
+                    'is_merchant_fulfillment_available'       => 1,
+                    'is_business_available'                   => 1,
+                    'is_vat_calculation_service_available'    => 0,
+                    'is_product_tax_code_policy_available'    => 0,
+                ],
+                [
+                    'marketplace_id'                          => 48,
+                    'developer_key'                           => '7078-7205-1944',
+                    'default_currency'                        => 'EUR',
                     'is_new_asin_available'                   => 0,
                     'is_merchant_fulfillment_available'       => 1,
                     'is_business_available'                   => 1,

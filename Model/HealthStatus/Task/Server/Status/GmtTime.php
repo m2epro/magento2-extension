@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -66,8 +66,8 @@ class GmtTime extends IssueType
             $result->setTaskResult(TaskResult::STATE_WARNING);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
             <<<HTML
-Your Server Time <b>%time%</b> (UTC) needs to be updated based on the actual local time. 
-It is important for the correct data synchronization with Channels.  
+Your Server Time <b>%time%</b> (UTC) needs to be updated based on the actual local time.
+It is important for the correct data synchronization with Channels.
 Please consult your Server Administrator/Developer to adjust the settings.
 HTML
                 ,
@@ -80,7 +80,7 @@ HTML
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
             <<<HTML
 Your Server Time <b>%time%</b> (UTC) needs to be updated based on the actual local time.
- It is important for the correct data synchronization with Channels.  
+ It is important for the correct data synchronization with Channels.
 Please consult your Server Administrator/Developer to adjust the settings.
 HTML
                 ,

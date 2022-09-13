@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -1314,28 +1314,6 @@ HTML
                 'tooltip' => $this->__(
                     'Find out about <a href="http://pages.ebay.com/help/sell/fees.html#optional" target="_blank">
                     eBay optional Listing features</a>'
-                )
-            ]
-        );
-
-        $fieldset->addField(
-            'hit_counter',
-            self::SELECT,
-            [
-                'label'   => $this->__('Hit Counter'),
-                'name'    => 'description[hit_counter]',
-                'values'  => [
-                    Description::HIT_COUNTER_NONE          => $this->__('No Hit Counter'),
-                    Description::HIT_COUNTER_BASIC_STYLE   => $this->__('Basic Style'),
-                    Description::HIT_COUNTER_GREEN_LED     => $this->__('Green LED'),
-                    Description::HIT_COUNTER_HIDDEN_STYLE  => $this->__('Hidden Style'),
-                    Description::HIT_COUNTER_HONESTY_STYLE => $this->__('Honesty Style'),
-                    Description::HIT_COUNTER_RETRO_STYLE   => $this->__('Retro Style'),
-                ],
-                'value'   => $formData['hit_counter'],
-                'tooltip' => $this->__(
-                    'Count the number of visitors to your eBay Listing.
-                     <br/><b>Note:</b> Green LED and Honesty Style styles are available only in the US.'
                 )
             ]
         );

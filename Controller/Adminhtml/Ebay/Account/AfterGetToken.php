@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -17,36 +17,40 @@ class AfterGetToken extends Account
 {
     /** @var \Ess\M2ePro\Helper\Module\Exception */
     private $helperException;
-
-    /** @var \Ess\M2ePro\Helper\Data\Session */
-    private $helperDataSession;
+    /** @var \Ess\M2ePro\Model\Ebay\Account\TemporaryStorage */
+    private $temporaryStorage;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Account\TemporaryStorage $temporaryStorage,
         \Ess\M2ePro\Helper\Module\Exception $helperException,
-        \Ess\M2ePro\Helper\Data\Session $helperDataSession,
         \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update $storeCategoryUpdate,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        parent::__construct($storeCategoryUpdate, $componentEbayCategoryStore, $ebayFactory, $context);
+        parent::__construct(
+            $storeCategoryUpdate,
+            $componentEbayCategoryStore,
+            $ebayFactory,
+            $context
+        );
 
         $this->helperException = $helperException;
-        $this->helperDataSession = $helperDataSession;
+        $this->temporaryStorage = $temporaryStorage;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function execute()
     {
-        $sessionId = $this->helperDataSession->getValue('get_token_session_id', true);
-        $sessionId === null && $this->_redirect('*/*/index');
+        $sessionId = $this->temporaryStorage->getSessionId();
+        if ($sessionId === null) {
+            $this->_redirect('*/*/index');
+        }
 
-        $this->helperDataSession->setValue('get_token_account_token_session', $sessionId);
+        $accountId = (int)$this->temporaryStorage->getAccountId();
 
-        $id = (int)$this->helperDataSession->getValue('get_token_account_id', true);
-
-        if ((int)$id <= 0) {
+        if ($accountId <= 0) {
             return $this->_redirect(
                 '*/*/new',
                 [
@@ -57,13 +61,14 @@ class AfterGetToken extends Account
         }
 
         $data = [
-            'mode' => $this->helperDataSession->getValue('get_token_account_mode'),
+            'mode' => $this->temporaryStorage->getAccountMode(),
             'token_session' => $sessionId
         ];
 
         try {
-            $this->updateAccount($id, $data);
+            $this->updateAccount($accountId, $data);
         } catch (\Exception $exception) {
+            $this->temporaryStorage->deleteAllValues();
             $this->helperException->process($exception);
 
             $this->messageManager->addError($this->__(
@@ -74,10 +79,10 @@ class AfterGetToken extends Account
             return $this->_redirect('*/ebay_account');
         }
 
-        $this->messageManager->addSuccess($this->__('Token was saved'));
+        $this->messageManager->addSuccessMessage($this->__('Token was saved'));
 
-        return $this->_redirect('*/*/edit', ['id' => $id, '_current' => true]);
+        return $this->_redirect('*/*/edit', ['id' => $accountId, '_current' => true]);
     }
 
-    //########################################
+    // ----------------------------------------
 }

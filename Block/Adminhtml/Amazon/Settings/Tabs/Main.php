@@ -8,38 +8,52 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs;
 
+use Ess\M2ePro\Helper\Component\Amazon\Configuration;
+
 class Main extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Configuration */
-    protected $configuration;
+    private $config;
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $support;
+    /** @var \Ess\M2ePro\Helper\Magento\Attribute */
+    private $attributeHelper;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Component\Amazon\Configuration $configuration,
+        \Ess\M2ePro\Helper\Component\Amazon\Configuration $config,
+        \Ess\M2ePro\Helper\Module\Support $support,
+        \Ess\M2ePro\Helper\Magento\Attribute $attributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
-        $this->configuration = $configuration;
+        $this->config = $config;
+        $this->support = $support;
+        $this->attributeHelper = $attributeHelper;
+
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
-    //########################################
-
+    /**
+     * @return \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs\Main
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create();
 
         $form->addField(
-            'block_notice_general',
+            'amazon_settings_main_help',
             self::HELP_BLOCK,
             [
-                'content' => $this->__('This section allows you to configure the general settings for the interaction
-                                        between M2E Pro Module and Amazon marketplaces.<br />
-                                        You can enable Amazon Business (B2B) to use Business Price and
-                                        QTY Discounts for your Offers.<br /><br />
-                                        <strong>Note:</strong> Amazon Business is available for the <strong>US</strong>,
-                                        <strong>UK</strong>, <strong>DE</strong> marketplaces only.')
+                'content' => $this->__('
+                In this section, you can configure the general settings for the interaction between M2E Pro and
+                Amazon Marketplaces.<br/><br/>
+                Enable <a href="%url%" target="_blank" class="external-link">Amazon Business (B2B)</a> to apply the
+                Business Price and QTY Discounts to your offers on the selected marketplaces.
+                ', $this->support->getDocumentationArticleUrl('x/qQ03B')),
             ]
         );
 
@@ -61,13 +75,181 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     0 => $this->__('Disabled'),
                     1 => $this->__('Enabled')
                 ],
-                'value' => $this->configuration->isEnabledBusinessMode(),
-                'tooltip' => __('
-                    If you have an approved Amazon Business account, enable this option to set
-                    Business Price and Quantity Discounts in the Selling Policy.<br />
-                    To remove business prices and QTY discounts from your Amazon offers,
-                    please be sure to disable the configurations in the Selling Policy.'
+                'value' => $this->config->isEnabledBusinessMode(),
+                'tooltip' => $this->__(
+                    'After you <strong>Enable</strong> this option, you can provide the settings for
+                    <strong>Business Price</strong> and <strong >Quantity Discounts</strong>
+                    within M2E Pro Selling Policy.<br />
+                    <strong>Note:</strong> your Business Account must be approved by Amazon.'
                 )
+            ]
+        );
+
+        $fieldset = $form->addFieldset(
+            'product_identifiers',
+            [
+                'legend' => $this->__('Product Identifiers'),
+                'collapsable' => false,
+            ]
+        );
+
+        $attributesTextType = $this->attributeHelper->filterAllAttrByInputTypes(['text']);
+        $preparedAttributes = [];
+        $warningToolTip = '';
+
+        if (
+            $this->config->isGeneralIdModeCustomAttribute() &&
+            !$this->attributeHelper->isExistInAttributesArray(
+                $this->config->getGeneralIdCustomAttribute(),
+                $attributesTextType
+            )
+        ) {
+            $warningToolTip = $this->getAttributeWarningTooltip();
+        }
+
+        foreach ($attributesTextType as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if (
+                $this->config->isGeneralIdModeCustomAttribute() &&
+                $this->config->getGeneralIdCustomAttribute() == $attribute['code']
+            ) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => Configuration::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE,
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $fieldset->addField(
+            'general_id',
+            self::SELECT,
+            [
+                'name'                     => 'general_id_mode',
+                'label'                    => $this->__('ASIN / ISBN'),
+                'title'                    => $this->__('ASIN / ISBN'),
+                'values'                   => [
+                    Configuration::GENERAL_ID_MODE_NONE => $this->__('None'),
+                    [
+                        'label' => $this->__('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => ['is_magento_attribute' => true],
+                    ],
+                ],
+                'value' => !$this->config->isGeneralIdModeCustomAttribute() ? $this->config->getGeneralIdMode() : '',
+                'create_magento_attribute' => true,
+                'tooltip'                  => $this->__(
+                    'This setting is a source for ASIN/ISBN value which will be used at the time
+                    of Automatic Search of Amazon Products.'
+                ),
+                'after_element_html'       => $warningToolTip,
+            ]
+        )->addCustomAttribute('allowed_attribute_types', 'text');
+
+        $fieldset->addField(
+            'general_id_custom_attribute',
+            'hidden',
+            [
+                'name'  => 'general_id_custom_attribute',
+                'value' => $this->config->getGeneralIdCustomAttribute(),
+            ]
+        );
+
+        $fieldset->addField(
+            'product_id_override',
+            self::SELECT,
+            [
+                'name' => 'product_id_override_mode',
+                'label' => $this->__('Product ID Override'),
+                'title' => $this->__('Product ID Override'),
+                'values' => [
+                    [
+                        'value' => Configuration::PRODUCT_ID_OVERRIDE_MODE_NONE,
+                        'label' => $this->__('None')],
+                    [
+                        'value' => Configuration::PRODUCT_ID_OVERRIDE_MODE_ALL,
+                        'label' => $this->__('All Products')
+                    ],
+                    [
+                        'value' => Configuration::PRODUCT_ID_OVERRIDE_MODE_SPECIFIC_PRODUCTS,
+                        'label' => $this->__('Specific Products')
+                    ],
+                ],
+                'value' => $this->config->getProductIdOverrideMode(),
+                'tooltip' => $this->__('
+                     Choose one of the options from the dropdown if your Products do not imply <b>UPCs/EANs</b>.<br><br>
+                     <b>None</b> - all Products will be listed with the standard Product IDs.<br>
+                     <b>All Products</b> - Product ID exemption will be applied to all Products.<br>
+                     <b>Specific Products</b> - Product ID exemption will be applied to Products with ‘CUSTOM’ value
+                     in the Product ID attribute.
+                     Find more details <a href="%url%" target="_blank" class="external-link">here.</a><br><br>
+                     <b>Note:</b> You need to have Amazon approval for listing products without Product Identifiers.
+                    ', $this->support->getKnowledgebaseUrl('1620775-product-id-override-options')),
+            ]
+        );
+
+        $attributesTextType = $this->attributeHelper->filterAllAttrByInputTypes(['text']);
+        $preparedAttributes = [];
+        $warningToolTip = '';
+
+        if (
+            $this->config->isWorldwideIdModeCustomAttribute()
+            && !$this->attributeHelper->isExistInAttributesArray(
+                $this->config->getWorldwideCustomAttribute(),
+                $attributesTextType
+            )
+        ) {
+            $warningToolTip = $this->getAttributeWarningTooltip();
+        }
+
+        foreach ($attributesTextType as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if (
+                $this->config->isWorldwideIdModeCustomAttribute()
+                && $this->config->getWorldwideCustomAttribute() == $attribute['code']
+            ) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => Configuration::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE,
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $fieldset->addField(
+            'worldwide_id',
+            self::SELECT,
+            [
+                'name'   => 'worldwide_id_mode',
+                'label'  => $this->__('UPC / EAN'),
+                'title'  => $this->__('UPC / EAN'),
+                'values' => [
+                    Configuration::WORLDWIDE_ID_MODE_NONE => $this->__('None'),
+                    [
+                        'label' => $this->__('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => ['is_magento_attribute' => true]
+                    ]
+                ],
+                'value'                    => !$this->config->isWorldwideIdModeCustomAttribute() ?
+                    $this->config->getWorldwideIdMode() : '',
+                'create_magento_attribute' => true,
+                'tooltip'                  => $this->__(
+                    'Amazon uses these Product IDs to associate your Item with its catalog or to create a new
+                    <b>ASIN/ISBN</b>.<br>Select the attribute where the <b>UPC/EAN</b> values are stored.'
+                ),
+                'after_element_html'       => $warningToolTip
+            ]
+        )->addCustomAttribute('allowed_attribute_types', 'text');
+
+        $fieldset->addField(
+            'worldwide_id_custom_attribute',
+            'hidden',
+            [
+                'name' => 'worldwide_id_custom_attribute',
+                'value' => $this->config->getWorldwideCustomAttribute(),
             ]
         );
 
@@ -77,8 +259,32 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         return parent::_prepareForm();
     }
 
-    //########################################
+    /**
+     * @return mixed
+     */
+    private function getAttributeWarningTooltip()
+    {
+        $warningText = $this->__(
+            <<<HTML
+    Selected Magento Attribute is invalid.
+    Please ensure that the Attribute exists in your Magento, has a relevant Input Type and it
+    is included in all Attribute Sets.
+    Otherwise, select a different Attribute from the drop-down.
+HTML
+        );
 
+        return $this->__(
+            <<<HTML
+<span class="fix-magento-tooltip m2e-tooltip-grid-warning">
+    {$this->getTooltipHtml($warningText)}
+</span>
+HTML
+        );
+    }
+
+    /**
+     * @return \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs\Main
+     */
     protected function _beforeToHtml()
     {
         $this->jsUrl->add(
@@ -86,15 +292,24 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs::TAB_ID_MAIN
         );
 
+        $this->js->add(<<<JS
+            require([
+                'M2ePro/Amazon/Settings/Main'
+            ], function(){
+                window.AmazonSettingsMainObj = new AmazonSettingsMain();
+                window.AmazonSettingsMainObj.initObservers();
+            });
+JS
+        );
+
         return parent::_beforeToHtml();
     }
 
-    //########################################
-
+    /**
+     * @return string
+     */
     protected function getGlobalNotice()
     {
         return '';
     }
-
-    //########################################
 }

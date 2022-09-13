@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -63,6 +63,16 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                 $receivedItem = $this->responseData[$existingItem['sku']];
                 unset($this->responseData[$existingItem['sku']]);
 
+                $existingData = [
+                    'general_id'           => (string)$existingItem['general_id'],
+                    'online_regular_price' => !empty($existingItem['online_regular_price'])
+                        ? (float)$existingItem['online_regular_price'] : null,
+                    'online_qty'           => (int)$existingItem['online_qty'],
+                    'is_afn_channel'       => (bool)$existingItem['is_afn_channel'],
+                    'is_isbn_general_id'   => (bool)$existingItem['is_isbn_general_id'],
+                    'status'               => (int)$existingItem['status']
+                ];
+
                 $newData = [
                     'general_id'           => (string)$receivedItem['identifiers']['general_id'],
                     'online_regular_price' => !empty($receivedItem['price']) ? (float)$receivedItem['price'] : null,
@@ -73,24 +83,19 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
 
                 if ($newData['is_afn_channel']) {
                     $newData['online_qty'] = null;
-                    $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
+                    $newData['status'] = $existingData['is_afn_channel'] ?
+                        $existingData['status'] : \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
                 } else {
+                    if ($existingItem['online_afn_qty'] !== null) {
+                        $newData['online_afn_qty'] = null;
+                    }
+
                     if ($newData['online_qty'] > 0) {
                         $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
                     } else {
                         $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
                     }
                 }
-
-                $existingData = [
-                    'general_id'           => (string)$existingItem['general_id'],
-                    'online_regular_price' => !empty($existingItem['online_regular_price'])
-                        ? (float)$existingItem['online_regular_price'] : null,
-                    'online_qty'           => (int)$existingItem['online_qty'],
-                    'is_afn_channel'       => (bool)$existingItem['is_afn_channel'],
-                    'is_isbn_general_id'   => (bool)$existingItem['is_isbn_general_id'],
-                    'status'               => (int)$existingItem['status']
-                ];
 
                 $existingAdditionalData = $dataHelper->jsonDecode($existingItem['additional_data']);
                 $lastSynchDates = !empty($existingAdditionalData['last_synchronization_dates'])
@@ -267,6 +272,7 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                 'second_table.general_id',
                 'second_table.online_regular_price',
                 'second_table.online_qty',
+                'second_table.online_afn_qty',
                 'second_table.is_afn_channel',
                 'second_table.is_isbn_general_id',
                 'second_table.listing_product_id',
@@ -328,6 +334,4 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
     {
         return \Ess\M2ePro\Helper\Component\Amazon::NICK;
     }
-
-    //########################################
 }

@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -13,24 +13,26 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public const SEARCH_SETTINGS_STATUS_NONE = 'none';
     public const SEARCH_SETTINGS_STATUS_COMPLETED = 'completed';
 
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\Configuration */
+    private $config;
     /** @var \Ess\M2ePro\Model\Listing */
     private $listing;
-
     /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     protected $magentoProductCollectionFactory;
-
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
-
-    protected $lockedDataCache = [];
-
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-
     /** @var \Ess\M2ePro\Helper\Component\Amazon */
     private $amazonHelper;
 
+    protected $lockedDataCache = [];
+
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Component\Amazon\Configuration $config,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -39,6 +41,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         array $data = []
     ) {
+        $this->supportHelper = $supportHelper;
+        $this->config = $config;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->amazonFactory = $amazonFactory;
         $this->dataHelper = $dataHelper;
@@ -161,8 +165,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'frame_callback' => [$this, 'callbackColumnGeneralId']
         ]);
 
-        if ($this->listing->getChildObject()->isGeneralIdAttributeMode() ||
-            $this->listing->getChildObject()->isWorldwideIdAttributeMode()) {
+        if (
+            $this->config->isGeneralIdModeCustomAttribute()
+            || $this->config->isWorldwideIdModeCustomAttribute()
+        ) {
             $this->addColumn('settings', [
                 'header' => $this->__('Search Settings Values'),
                 'align' => 'left',
@@ -268,27 +274,31 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $value = '';
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $listingProduct */
         $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $id)->getChildObject();
+        $identifiers = $listingProduct->getIdentifiers();
 
-        if ($this->listing->getChildObject()->isGeneralIdAttributeMode()) {
-            $attrValue = $listingProduct->getListingSource()->getSearchGeneralId();
+        if ($this->config->isGeneralIdModeCustomAttribute()) {
+            $generalId = $identifiers->getGeneralId();
 
-            if (empty($attrValue)) {
+            if (empty($generalId)) {
                 $attrValue = $this->__('Not set');
-            } elseif (!$this->amazonHelper->isASIN($attrValue) &&
-                        !$this->dataHelper->isISBN($attrValue)) {
+            } elseif ($generalId->hasUnresolvedType()) {
                 $attrValue = $this->__('Inappropriate value');
+            } else {
+                $attrValue = $generalId->getIdentifier();
             }
 
             $value .= '<b>' . $this->__('ASIN/ISBN') . '</b>: ' . $attrValue . '<br/>';
         }
 
-        if ($this->listing->getChildObject()->isWorldwideIdAttributeMode()) {
-            $attrValue = $listingProduct->getListingSource()->getSearchWorldwideId();
+        if ($this->config->isWorldwideIdModeCustomAttribute()) {
+            $worldwideId = $identifiers->getWorldwideId();
 
-            if (empty($attrValue)) {
+            if (empty($worldwideId)) {
                 $attrValue = $this->__('Not Set');
-            } elseif (!$this->dataHelper->isUPC($attrValue) && !$this->dataHelper->isEAN($attrValue)) {
+            } elseif ($worldwideId->hasUnresolvedType()) {
                 $attrValue = $this->__('Inappropriate value');
+            } else {
+                $attrValue = $worldwideId->getIdentifier();
             }
 
             $value .= '<b>' . $this->__('UPC/EAN') . '</b>: ' . $attrValue;
@@ -315,7 +325,7 @@ HTML;
 
         switch ($searchSettingsStatus) {
             case \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_IN_PROGRESS:
-                $searchData = $this->dataHelper->jsonDecode($row->getData('search_settings_data'));
+                $searchData = \Ess\M2ePro\Helper\Json::decode($row->getData('search_settings_data'));
 
                 $msg = $this->__('In Progress');
                 $tip = $this->__(
@@ -339,7 +349,7 @@ HTML;
 {$this->getTooltipHtml($tip)}
 HTML;
             case \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_ACTION_REQUIRED:
-                $searchData = $this->dataHelper->jsonDecode($row->getData('search_settings_data'));
+                $searchData = \Ess\M2ePro\Helper\Json::decode($row->getData('search_settings_data'));
 
                 $lpId = $row->getData('id');
 
@@ -376,7 +386,7 @@ HTML;
 HTML;
         }
 
-        $searchInfo = $this->dataHelper->jsonDecode($row->getData('general_id_search_info'));
+        $searchInfo = \Ess\M2ePro\Helper\Json::decode($row->getData('general_id_search_info'));
 
         $msg = $this->__('Completed');
         $tip = $this->__(
@@ -468,7 +478,7 @@ HTML;
         $generalIdSearchInfo = $row->getData('general_id_search_info');
 
         if (!empty($generalIdSearchInfo)) {
-            $generalIdSearchInfo = $this->dataHelper->jsonDecode($generalIdSearchInfo);
+            $generalIdSearchInfo = \Ess\M2ePro\Helper\Json::decode($generalIdSearchInfo);
         }
 
         if (!empty($generalIdSearchInfo['is_set_automatic'])) {
@@ -612,24 +622,23 @@ JS
 JS
         );
 
-        if (!$this->listing->getChildObject()->isGeneralIdAttributeMode() &&
-            !$this->listing->getChildObject()->isWorldwideIdAttributeMode()) {
-            if (!$this->listing->getChildObject()->isSearchByMagentoTitleModeEnabled()) {
-                $gridId = $this->getId();
+        if ($this->config->isGeneralIdModeNone() && $this->config->isWorldwideIdModeNone()) {
+            $warningNotification = $this->__(
+                "To have your products assigned to the existing ASIN/ISBN in the Amazon catalog, please configure"
+                . " Product Identifiers settings in Amazon > Configuration > Main"
+                . " or use <a href='%url%' target='_blank' class='external-link'>New ASIN creation</a> option.",
+                $this->supportHelper->getDocumentationArticleUrl('x/nwMVB')
+            );
 
-                $this->js->add(
-                    <<<JS
-    var mmassActionEl = $("{$gridId}_massaction-select");
-
-    if (mmassActionEl &&  mmassActionEl.select('option[value="assignGeneralId"]').length > 0) {
-        var assignGeneralIdOption = mmassActionEl.select('option[value="assignGeneralId"]')[0];
-        assignGeneralIdOption.disabled = true;
-
-        mmassActionEl.insert({bottom: assignGeneralIdOption.remove()});
-    }
+            $this->js->add(
+                <<<JS
+require([
+    'M2ePro/Plugin/Messages'
+], function(MessageObj) {
+    MessageObj.addWarning("$warningNotification")
+});
 JS
-                );
-            }
+            );
         } else {
             $autoSearchSetting = $this->listing->getSetting('additional_data', 'auto_search_was_performed');
 

@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -115,8 +115,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'align'          => 'right',
             'width'          => '70px',
             'type'           => 'number',
-            'index'          => 'online_qty',
-            'filter_index'   => 'online_qty',
+            'index'          => 'online_actual_qty',
+            'filter_index'   => 'online_actual_qty',
             'frame_callback' => [$this, 'callbackColumnAvailableQty'],
             'filter'         => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty::class,
             'filter_condition_callback' => [$this, 'callbackFilterQty']
@@ -213,32 +213,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
                 return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
             }
 
-            if ((bool)$row->getData('is_afn_channel')) {
-                $sku = $row->getData('online_sku');
-
-                if (empty($sku)) {
-                    return $this->__('AFN');
-                }
-
-                $productId = $this->helperData->generateUniqueHash();
-
-                $afnWord     = $this->__('AFN');
-                $totalWord   = $this->__('Total');
-                $inStockWord = $this->__('In Stock');
-                $accountId   = $row->getData('account_id');
-
-                return <<<HTML
-<div id="m2ePro_afn_qty_value_{$productId}">
-    <span class="m2ePro-online-sku-value" productId="{$productId}" style="display: none">{$sku}</span>
-    <span class="m2epro-empty-afn-qty-data" style="display: none">{$afnWord}</span>
-    <div class="m2epro-afn-qty-data" style="display: none">
-        <div class="total">{$totalWord}: <span></span></div>
-        <div class="in-stock">{$inStockWord}: <span></span></div>
-    </div>
-    <a href="javascript:void(0)"
-        onclick="AmazonListingAfnQtyObj.showAfnQty(this,'{$sku}','{$productId}',{$accountId})">{$afnWord}</a>
-</div>
-HTML;
+            if ($row->getData('is_afn_channel')) {
+                $qty = $row->getData('online_afn_qty') ?? $this->__('N/A');
+                return "AFN ($qty)";
             }
 
             if ($value === null || $value === '') {
@@ -588,17 +565,14 @@ HTML;
     protected function _toHtml()
     {
         $this->jsUrl->addUrls([
-            'amazon_listing/getAFNQtyBySku' => $this->getUrl('*/amazon_listing/getAFNQtyBySku'),
             'amazon_listing_product_repricing/getUpdatedPriceBySkus' => $this->getUrl(
                 '*/amazon_listing_product_repricing/getUpdatedPriceBySkus'
             )
         ]);
 
         $this->js->addRequireJs([
-            'alq' => 'M2ePro/Amazon/Listing/AfnQty',
             'alprp' => 'M2ePro/Amazon/Listing/Product/Repricing/Price'
         ], <<<JS
-        window.AmazonListingAfnQtyObj = new AmazonListingAfnQty();
         window.AmazonListingProductRepricingPriceObj = new AmazonListingProductRepricingPrice();
 JS
         );

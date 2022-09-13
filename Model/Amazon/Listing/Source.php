@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -124,52 +124,6 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $sku;
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return mixed
-     */
-    public function getSearchGeneralId()
-    {
-        $result = '';
-        $src = $this->getAmazonListing()->getGeneralIdSource();
-
-        if ($src['mode'] == \Ess\M2ePro\Model\Amazon\Listing::GENERAL_ID_MODE_NOT_SET) {
-            $result = null;
-        }
-
-        if ($src['mode'] == \Ess\M2ePro\Model\Amazon\Listing::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE) {
-            $result = $this->getMagentoProduct()->getAttributeValue($src['attribute']);
-            $result = str_replace('-', '', $result);
-        }
-
-        is_string($result) && $result = trim($result);
-
-        return $result;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSearchWorldwideId()
-    {
-        $result = '';
-        $src = $this->getAmazonListing()->getWorldwideIdSource();
-
-        if ($src['mode'] == \Ess\M2ePro\Model\Amazon\Listing::WORLDWIDE_ID_MODE_NOT_SET) {
-            $result = null;
-        }
-
-        if ($src['mode'] == \Ess\M2ePro\Model\Amazon\Listing::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE) {
-            $result = $this->getMagentoProduct()->getAttributeValue($src['attribute']);
-            $result = str_replace('-', '', $result);
-        }
-
-        is_string($result) && $result = trim($result);
-
-        return $result;
     }
 
     //########################################

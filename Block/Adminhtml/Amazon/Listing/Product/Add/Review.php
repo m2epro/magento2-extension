@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -13,13 +13,19 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
 
+    /** @var \Ess\M2ePro\Model\Amazon\Search\Settings\CounterOfFind */
+    private $counterOfFind;
+
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Search\Settings\CounterOfFind $counterOfFind,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         array $data = []
     ) {
-        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $data);
+
+        $this->globalDataHelper = $globalDataHelper;
+        $this->counterOfFind = $counterOfFind;
     }
 
     public function _construct()
@@ -82,5 +88,13 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
             ]);
         $this->setChild('list', $buttonBlock);
         // ---------------------------------------
+    }
+
+    /**
+     * @return int
+     */
+    public function getCountOfFoundProducts(): int
+    {
+        return $this->counterOfFind->getCountAndReset();
     }
 }

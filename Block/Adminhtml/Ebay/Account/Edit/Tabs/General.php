@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -20,16 +20,16 @@ class General extends AbstractForm
     private $supportHelper;
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
-    /** @var \Ess\M2ePro\Helper\Data\Session */
-    private $sessionHelper;
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
     /** @var \Ess\M2ePro\Helper\Component\Ebay */
     private $ebayHelper;
+    /** @var \Ess\M2ePro\Model\Ebay\Account\TemporaryStorage */
+    private $temporaryStorage;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Account\TemporaryStorage $temporaryStorage,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
-        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Component\Ebay $ebayHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -40,40 +40,42 @@ class General extends AbstractForm
     ) {
         $this->supportHelper = $supportHelper;
         $this->globalDataHelper = $globalDataHelper;
-        $this->sessionHelper = $sessionHelper;
         $this->dataHelper = $dataHelper;
         $this->ebayHelper = $ebayHelper;
+        $this->temporaryStorage = $temporaryStorage;
         parent::__construct($context, $registry, $formFactory, $data);
     }
+
+    // ----------------------------------------
 
     protected function _prepareForm()
     {
         $account = $this->globalDataHelper->getValue('edit_account');
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
-        $ebayUserId = null;
         if (empty($formData['user_id']) && isset($formData['info']) &&
             $ebayInfo = $this->dataHelper->jsonDecode($formData['info'])
         ) {
             !empty($ebayInfo['UserID']) && $formData['user_id'] = (string)$ebayInfo['UserID'];
         }
 
-        $temp = $this->sessionHelper->getValue('get_token_account_title', true);
-        $temp !== null && $formData['title'] = $temp;
+        $fillFormDataFunction = static function ($formKey, $tempValue) use (&$formData) {
+            if ($tempValue === null) {
+                return;
+            }
+            $formData[$formKey] = $tempValue;
+        };
 
-        $temp = $this->sessionHelper->getValue('get_token_account_mode', true);
-        $temp !== null && $formData['mode'] = $temp;
-
-        $temp = $this->sessionHelper->getValue('get_token_account_token_session', true);
-        $temp !== null && $formData['token_session'] = $temp;
-
-        $temp = $this->sessionHelper->getValue('get_sell_api_token_account_token_session', true);
-        $temp !== null && $formData['sell_api_token_session'] = $temp;
+        $fillFormDataFunction('title', $this->temporaryStorage->getAccountTitle());
+        $fillFormDataFunction('mode', $this->temporaryStorage->getAccountMode());
+        $fillFormDataFunction('token_session', $this->temporaryStorage->getSessionId());
+        $fillFormDataFunction('sell_api_token_session', $this->temporaryStorage->getSellApiToken());
+        $this->temporaryStorage->deleteAllValues();
 
         $defaults = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
         $formData = array_merge($defaults, $formData);
 
-        $isEdit = !!$this->getRequest()->getParam('id');
+        $isEdit = (bool)$this->getRequest()->getParam('id');
 
         $form = $this->_formFactory->create();
 

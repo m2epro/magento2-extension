@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -61,8 +61,8 @@ class Ebay extends IssueType
             $result->setTaskResult(TaskResult::STATE_WARNING);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
                 <<<HTML
-Channel orders have not been imported into M2E Pro for the last %interval% hours. 
-Please make sure that the Cron Service and Server connection are properly configured, 
+Channel orders have not been imported into M2E Pro for the last %interval% hours.
+Please make sure that the Cron Service and Server connection are properly configured,
 and the last M2E Pro installation/upgrade went well.
 If you need assistance, contact Support at <a href="support@m2epro.com">support@m2epro.com</a>.
 HTML
@@ -77,8 +77,8 @@ HTML
             $result->setTaskResult(TaskResult::STATE_CRITICAL);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
                 <<<HTML
-Channel orders have not been imported into M2E Pro for the last %interval% hours. 
-Please make sure that the Cron Service and Server connection are properly configured, 
+Channel orders have not been imported into M2E Pro for the last %interval% hours.
+Please make sure that the Cron Service and Server connection are properly configured,
 and the last M2E Pro installation/upgrade went well.
 If you need assistance, contact Support at <a href="support@m2epro.com">support@m2epro.com</a>.
 HTML

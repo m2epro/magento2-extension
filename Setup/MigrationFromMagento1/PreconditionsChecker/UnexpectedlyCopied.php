@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -80,7 +80,7 @@ class UnexpectedlyCopied extends AbstractModel
             ->from($setupTableWithPrefix, 'version_to')
             ->order('id DESC')
             ->limit(1);
-       
+
         $lastUpgradeVersion = $this->resourceConnection->getConnection()->fetchOne($select);
 
         if (!$this->compareVersions($lastUpgradeVersion)) {

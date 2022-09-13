@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -8,16 +8,16 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Request
- */
+use Ess\M2ePro\Helper\Data\Product\Identifier;
+
 class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Request
 {
-    const LIST_TYPE_EXIST = 'exist';
-    const LIST_TYPE_NEW   = 'new';
+    public const LIST_TYPE_EXIST = 'exist';
+    public const LIST_TYPE_NEW   = 'new';
 
-    const PARENTAGE_PARENT = 'parent';
-    const PARENTAGE_CHILD  = 'child';
+    public const PARENTAGE_PARENT = 'parent';
+    public const PARENTAGE_CHILD  = 'child';
+
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
 
@@ -28,7 +28,6 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
         array $data = []
     ) {
         parent::__construct($helperFactory, $modelFactory, $data);
-
         $this->moduleConfiguration = $moduleConfiguration;
     }
 
@@ -47,8 +46,6 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
 
         parent::beforeBuildDataEvent();
     }
-
-    //########################################
 
     protected function getActionData()
     {
@@ -74,49 +71,38 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
             return $data;
         }
 
-        if ($this->cachedData['list_type'] == self::LIST_TYPE_NEW) {
-            $data = array_merge($data, $this->getNewProductIdentifierData());
-        } else {
-            $data = array_merge($data, $this->getExistProductIdentifierData());
-        }
+        $productIdentifierData = $this->cachedData['list_type'] == self::LIST_TYPE_NEW
+            ? $this->getNewProductIdentifierData()
+            : $this->getExistProductIdentifierData();
 
-        return $data;
+        return array_merge($data, $productIdentifierData);
     }
-
-    //########################################
 
     private function getExistProductIdentifierData()
     {
         return [
-            'product_id' => $this->cachedData['general_id'],
-            'product_id_type' => $this->getHelper('Data')->isISBN($this->cachedData['general_id'])
-                ? 'ISBN' : 'ASIN',
+            'product_id'      => $this->cachedData['general_id'],
+            'product_id_type' => Identifier::isISBN($this->cachedData['general_id'])
+                ? Identifier::ISBN : Identifier::ASIN,
         ];
     }
 
     private function getNewProductIdentifierData()
     {
+        $productIdentifiers = $this->getAmazonListingProduct()->getIdentifiers();
         $data = [];
 
-        $worldwideId = $this->getAmazonListingProduct()->getDescriptionTemplateSource()->getWorldwideId();
-
-        if (!empty($worldwideId)) {
-            $data['product_id']      = $worldwideId;
-            $data['product_id_type'] = $this->getHelper('Data')->isUPC($worldwideId) ? 'UPC' : 'EAN';
+        if ($registeredParameter = $productIdentifiers->getRegisteredParameter()) {
+            $data['registered_parameter'] = $registeredParameter;
         }
 
-        $registeredParameter = $this->getAmazonListingProduct()
-            ->getAmazonDescriptionTemplate()
-            ->getRegisteredParameter();
-
-        if (!empty($registeredParameter)) {
-            $data['registered_parameter'] = $registeredParameter;
+        if ($worldwideId = $productIdentifiers->getWorldwideId()) {
+            $data['product_id']      = $worldwideId->getIdentifier();
+            $data['product_id_type'] = $worldwideId->isUPC() ? Identifier::UPC : Identifier::EAN;
         }
 
         return $data;
     }
-
-    // ---------------------------------------
 
     private function getRelationData()
     {
@@ -167,8 +153,6 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
         return $data;
     }
 
-    //########################################
-
     private function getChannelTheme()
     {
         if (!$this->getVariationManager()->isRelationMode()) {
@@ -188,6 +172,4 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
 
         return $parentVariationManager->getTypeModel()->getChannelTheme();
     }
-
-    //########################################
 }

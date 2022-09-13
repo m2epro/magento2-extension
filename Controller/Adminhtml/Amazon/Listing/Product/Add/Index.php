@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -61,7 +61,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             case 5:
                 $this->review();
                 break;
-            // ....
             default:
                 return $this->_redirect('*/*/index', ['_current' => true,'step' => 1]);
         }

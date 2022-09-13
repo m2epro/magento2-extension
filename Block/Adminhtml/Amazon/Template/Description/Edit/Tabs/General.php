@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -249,74 +249,6 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             )
         );
 
-        $fieldSet->addField('asin_options', self::SEPARATOR, ['class' => 'hide-when-asin-is-disabled']);
-
-        $fieldSet->addField(
-            'worldwide_id_custom_attribute',
-            'hidden',
-            [
-                'name' => 'general[worldwide_id_custom_attribute]',
-                'value' => $this->formData['worldwide_id_custom_attribute'],
-                'css_class' => 'hide-when-asin-is-disabled'
-            ]
-        );
-
-        $defaultValue = '';
-        if ($this->formData['worldwide_id_mode'] == Description::WORLDWIDE_ID_MODE_NONE) {
-            $defaultValue = Description::WORLDWIDE_ID_MODE_NONE;
-        }
-
-        $fieldSet->addField(
-            'registered_parameter',
-            self::SELECT,
-            [
-                'name' => 'general[registered_parameter]',
-                'label' => $this->__('Product ID Override'),
-                'title' => $this->__('Product ID Override'),
-                'values' => [
-                    ['value' => '', 'label' => $this->__('None')],
-                    ['value' => 'PrivateLabel', 'label' => $this->__('Private Label')],
-                    ['value' => 'Specialized', 'label' => $this->__('Specialized')],
-                    ['value' => 'NonConsumer', 'label' => $this->__('Non Consumer')],
-                    ['value' => 'PreConfigured', 'label' => $this->__('Pre Configured')],
-                ],
-                'value' => $this->formData['registered_parameter'],
-                'tooltip' => $this->__('
-                    In case your Product has no UPC/EAN, you can try to set this
-                    Option to one of the values from the Dropdown. <br/>
-                    You have to be approved by Amazon in order to use it. <br/><br/>
-                    <b>Note:</b> Those approvals can be received only for the specific Categories.
-                    Please, contact Amazon Support to apply for approval. '),
-                'css_class' => 'hide-when-asin-is-disabled'
-            ]
-        );
-
-        $fieldSet->addField(
-            'worldwide_id_mode',
-            self::SELECT,
-            [
-                'name' => 'general[worldwide_id_mode]',
-                'label' => $this->__('UPC / EAN'),
-                'title' => $this->__('UPC / EAN'),
-                'values' => $this->getUpcEanOptions(),
-                'value' => $defaultValue,
-                'class' => 'M2ePro-required-when-visible',
-                'css_class' => 'hide-when-asin-is-disabled',
-                'required' => true,
-                'create_magento_attribute' => true,
-                'field_extra_attributes' => 'allowed_attribute_types="text"
-                                             data-current-value="'.$this->formData['worldwide_id_custom_attribute'].'"',
-                'tooltip' => $this->__(
-                    'For Creating New ASIN/ISBN it is required to provide valid UPC or EAN of the respective Product.
-                     <br/><br/>
-                     UPC/EAN for which ASIN/ISBN has already been Created in Amazon
-                     Catalog cannot be used for Creating New ASIN/ISBN.<br/><br/>
-                     In this case you need to assign Item to the Existing ASIN/ISBN.
-                     In case UPC/EAN doesn’t exist for your Product you can try to use Product ID Override Option.'
-                )
-            ]
-        )->addCustomAttribute('allowed_attribute_types', 'text');
-
         // ---------------------------------------
 
         $this->setForm($form);
@@ -431,59 +363,6 @@ HTML;
         return $optionsResult;
     }
 
-    public function getUpcEanOptions()
-    {
-        $optionsResult = [
-            ['value' => Description::WORLDWIDE_ID_MODE_NONE, 'label' => $this->__('None')],
-            'opt_group' => [
-                'value' => [],
-                'label' => 'Magento Attribute',
-                'attrs' => ['is_magento_attribute' => true]
-            ]
-        ];
-
-        $allAttributes = $this->magentoAttributeHelper->getAll();
-        $allAttributesByInputTypes = [
-            'text' => $this->magentoAttributeHelper->filterByInputTypes($allAttributes, ['text']),
-            'text_select' => $this->magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'select']),
-        ];
-
-        $isExistInAttributesArray = $this->magentoAttributeHelper->isExistInAttributesArray(
-            $this->formData['worldwide_id_custom_attribute'],
-            $allAttributesByInputTypes['text']
-        );
-
-        if ($this->formData['worldwide_id_custom_attribute'] != '' && !$isExistInAttributesArray) {
-            $optionsResult['opt_group']['value'][] = [
-                'value' => Description::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE,
-                'label' => $this->dataHelper->escapeHtml(
-                    $this->magentoAttributeHelper->getAttributeLabel($this->formData['worldwide_id_custom_attribute'])
-                ),
-                'attrs' => [
-                    'attribute_code' => $this->formData['worldwide_id_custom_attribute'],
-                    'selected' => 'selected'
-                ]
-            ];
-        }
-
-        foreach ($allAttributesByInputTypes['text'] as $attribute) {
-            $tmpOption = [
-                'value' => Description::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE,
-                'label' => $this->dataHelper->escapeHtml($attribute['label']),
-                'attrs' => ['attribute_code' => $attribute['code']]
-            ];
-
-            if (!empty($this->formData['worldwide_id_custom_attribute'])
-                && $attribute['code'] == $this->formData['worldwide_id_custom_attribute']) {
-                $tmpOption['attrs']['selected'] = 'selected';
-            }
-
-            $optionsResult['opt_group']['value'][] = $tmpOption;
-        }
-
-        return $optionsResult;
-    }
-
     public function getFormData()
     {
         $default = array_merge(
@@ -556,18 +435,18 @@ HTML;
             'Recent'      => $this->__('Recent'),
         ]);
 
-        $formData = $this->dataHelper->jsonEncode($this->formData);
+        $formData = \Ess\M2ePro\Helper\Json::encode($this->formData);
         $isEdit = $this->templateModel->getId() ? 'true' : 'false';
         $isCategoryLocked = $this->isCategoryLocked() ? 'true' : 'false';
         $isMarketplaceLocked = $this->isMarketplaceLocked() ? 'true' : 'false';
-        $marketplaceForceSet = $this->dataHelper->jsonEncode(
+        $marketplaceForceSet =  \Ess\M2ePro\Helper\Json::encode(
             (bool)(int)$this->getRequest()->getParam('marketplace_id')
         );
         $isLockedNewAsin = $this->isNewAsinSwitcherLocked() ? 'true' : 'false';
-        $newAsinSwitcherForceSet = $this->dataHelper->jsonEncode(
+        $newAsinSwitcherForceSet = \Ess\M2ePro\Helper\Json::encode(
             (bool)(int)$this->getRequest()->getParam('is_new_asin_accepted')
         );
-        $allAttributes = $this->dataHelper->jsonEncode($this->magentoAttributeHelper->getAll());
+        $allAttributes = \Ess\M2ePro\Helper\Json::encode($this->magentoAttributeHelper->getAll());
 
         $this->js->addRequireJs([
             'jQuery' => 'jquery',

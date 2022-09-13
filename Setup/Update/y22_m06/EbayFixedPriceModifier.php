@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -17,6 +17,13 @@ class EbayFixedPriceModifier extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\Abst
 
     public function execute()
     {
+        if (
+            $this->getTableModifier('ebay_template_selling_format')
+                 ->isColumnExists('fixed_price_modifier')
+        ) {
+            return;
+        }
+
         $this->getTableModifier('ebay_template_selling_format')
              ->addColumn(
                  'fixed_price_modifier',

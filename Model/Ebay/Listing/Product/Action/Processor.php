@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -92,6 +92,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             []
         );
         $actionCollection->addFieldToFilter('p.id', ['null' => true]);
+        $actionCollection->removeAllFieldsFromSelect();
 
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Processing[] $actions */
         $actions = $actionCollection->getItems();

@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -54,18 +54,18 @@ class EbayStoreCategoryIDs extends AbstractFeature
 
         $listingProductsQuery = $this->getConnection()->query(
             <<<SQL
-SELECT `ml`.account_id, 
+SELECT `ml`.account_id,
        `ml`.marketplace_id ,
-       `mlp`.listing_id, 
-       `mlp`.product_id, 
-       `melp`.listing_product_id, 
+       `mlp`.listing_id,
+       `mlp`.product_id,
+       `melp`.listing_product_id,
        `ml`.title as listing_title,
        `melp`.online_title as product_title
 FROM `{$listingProductTable}` as `mlp`
-    JOIN `{$ebayListingProductTable}` as melp on `mlp`.id = melp.listing_product_id 
-    JOIN `{$listingTable}` as `ml` on `mlp`.listing_id = `ml`.id 
-WHERE `melp`.`template_store_category_id` IN ( 
-    SELECT * FROM ( SELECT id FROM `{$ebayTemplateStoreCategoryTable}` WHERE `category_id` = 4294967295 ) AS subquery 
+    JOIN `{$ebayListingProductTable}` as melp on `mlp`.id = melp.listing_product_id
+    JOIN `{$listingTable}` as `ml` on `mlp`.listing_id = `ml`.id
+WHERE `melp`.`template_store_category_id` IN (
+    SELECT * FROM ( SELECT id FROM `{$ebayTemplateStoreCategoryTable}` WHERE `category_id` = 4294967295 ) AS subquery
 )
 SQL
         );
@@ -84,7 +84,7 @@ SQL
                 <<<SQL
 SELECT `value`
 FROM `{$catalogProductEntityVarcharTable}` as `cpev`
-    LEFT JOIN `{$eavAttributeTable}` as `ea` ON `ea`.attribute_id = cpev.attribute_id 
+    LEFT JOIN `{$eavAttributeTable}` as `ea` ON `ea`.attribute_id = cpev.attribute_id
 WHERE `ea`.attribute_code = 'name' AND `cpev`.{$entityColumn} = {$row['product_id']}
 SQL
             )->fetch();

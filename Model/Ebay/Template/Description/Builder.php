@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -105,10 +105,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 
         if (isset($this->rawData['cut_long_titles'])) {
             $data['cut_long_titles'] = (int)$this->rawData['cut_long_titles'];
-        }
-
-        if (isset($this->rawData['hit_counter'])) {
-            $data['hit_counter'] = $this->rawData['hit_counter'];
         }
 
         if (isset($this->rawData['enhancement'])) {
@@ -302,7 +298,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 
             'editor_type' => Description::EDITOR_TYPE_SIMPLE,
             'cut_long_titles' => Description::CUT_LONG_TITLE_ENABLED,
-            'hit_counter' => Description::HIT_COUNTER_NONE,
 
             'enhancement' => '',
             'gallery_type' => Description::GALLERY_TYPE_EMPTY,

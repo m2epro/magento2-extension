@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Wizard\InstallationAmazon;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Wizard\InstallationAmazon\Breadcrumb
- */
 class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Widget\Breadcrumb
 {
     public function _construct()
@@ -29,8 +26,13 @@ class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Widget\Breadcrumb
                 'description' => $this->__('Account Onboarding'),
             ],
             [
-                'id' => 'listingTutorial',
+                'id' => 'settings',
                 'title' => $this->__('Step 3'),
+                'description' => $this->__('General Settings'),
+            ],
+            [
+                'id' => 'listingTutorial',
+                'title' => $this->__('Step 4'),
                 'description' => $this->__('First Listing Creation'),
             ],
         ]);

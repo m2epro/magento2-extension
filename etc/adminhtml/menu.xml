@@ -35,10 +35,9 @@
         <!-- ebay help center -->
 
         <add id="Ess_M2ePro::ebay_help_center" title="Help Center" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::ebay" resource="Ess_M2ePro::ebay_help_center" />
-        <add id="Ess_M2ePro::ebay_help_center_documentation" title="Documentation" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::ebay_help_center" resource="Ess_M2ePro::ebay_help_center_documentation" />
-        <add id="Ess_M2ePro::ebay_help_center_knowledge_base" title="Knowledge Base" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::ebay_help_center" resource="Ess_M2ePro::ebay_help_center_knowledge_base" />
-        <add id="Ess_M2ePro::ebay_help_center_health_status" title="Health Status" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::ebay_help_center" action="m2epro/healthStatus/index/referrer/ebay" resource="Ess_M2ePro::ebay_help_center_health_status" />
-        <add id="Ess_M2ePro::ebay_help_center_contact_us" title="Contact Us" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::ebay_help_center" action="m2epro/support/index/referrer/ebay" resource="Ess_M2ePro::ebay_help_center_contact_us" />
+        <add id="Ess_M2ePro::ebay_help_center_health_status" title="Health Status" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::ebay_help_center" action="m2epro/healthStatus/index/referrer/ebay" resource="Ess_M2ePro::ebay_help_center_health_status" />
+        <add id="Ess_M2ePro::ebay_help_center_synchronization_log" title="Synchronization Logs" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::ebay_help_center" action="m2epro/synchronization_log/index/referrer/ebay" resource="Ess_M2ePro::ebay_help_center_synchronization_log" />
+        <add id="Ess_M2ePro::ebay_help_center_m2e_support" title="M2E Support" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::ebay_help_center" action="m2epro/support/index/referrer/ebay" resource="Ess_M2ePro::ebay_help_center_m2e_support" />
 
         <!-- amazon menu -->
 
@@ -69,10 +68,9 @@
         <!-- amazon help center -->
 
         <add id="Ess_M2ePro::amazon_help_center" title="Help Center" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::amazon" resource="Ess_M2ePro::amazon_help_center" />
-        <add id="Ess_M2ePro::amazon_help_center_documentation" title="Documentation" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::amazon_help_center" resource="Ess_M2ePro::amazon_help_center_documentation" />
-        <add id="Ess_M2ePro::amazon_help_center_knowledge_base" title="Knowledge Base" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::amazon_help_center" resource="Ess_M2ePro::amazon_help_center_knowledge_base" />
-        <add id="Ess_M2ePro::amazon_help_center_health_status" title="Health Status" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::amazon_help_center" action="m2epro/healthStatus/index/referrer/amazon" resource="Ess_M2ePro::amazon_help_center_health_status" />
-        <add id="Ess_M2ePro::amazon_help_center_contact_us" title="Contact Us" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::amazon_help_center" action="m2epro/support/index/referrer/amazon" resource="Ess_M2ePro::amazon_help_center_contact_us" />
+        <add id="Ess_M2ePro::amazon_help_center_health_status" title="Health Status" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::amazon_help_center" action="m2epro/healthStatus/index/referrer/amazon" resource="Ess_M2ePro::amazon_help_center_health_status" />
+        <add id="Ess_M2ePro::amazon_help_center_synchronization_log" title="Synchronization Logs" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::amazon_help_center" action="m2epro/synchronization_log/index/referrer/amazon" resource="Ess_M2ePro::amazon_help_center_synchronization_log" />
+        <add id="Ess_M2ePro::amazon_help_center_m2e_support" title="M2E Support" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::amazon_help_center" action="m2epro/support/index/referrer/amazon" resource="Ess_M2ePro::amazon_help_center_m2e_support" />
 
         <!-- walmart menu -->
 
@@ -103,10 +101,9 @@
         <!-- walmart help center -->
 
         <add id="Ess_M2ePro::walmart_help_center" title="Help Center" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::walmart" resource="Ess_M2ePro::walmart_help_center" />
-        <add id="Ess_M2ePro::walmart_help_center_documentation" title="Documentation" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::walmart_help_center" resource="Ess_M2ePro::walmart_help_center_documentation" />
-        <add id="Ess_M2ePro::walmart_help_center_knowledge_base" title="Knowledge Base" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::walmart_help_center" resource="Ess_M2ePro::walmart_help_center_knowledge_base" />
-        <add id="Ess_M2ePro::walmart_help_center_health_status" title="Health Status" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::walmart_help_center" action="m2epro/healthStatus/index/referrer/walmart" resource="Ess_M2ePro::walmart_help_center_health_status" />
-        <add id="Ess_M2ePro::walmart_help_center_contact_us" title="Contact Us" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::walmart_help_center" action="m2epro/support/index/referrer/walmart" resource="Ess_M2ePro::walmart_help_center_contact_us" />
+        <add id="Ess_M2ePro::walmart_help_center_health_status" title="Health Status" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::walmart_help_center" action="m2epro/healthStatus/index/referrer/walmart" resource="Ess_M2ePro::walmart_help_center_health_status" />
+        <add id="Ess_M2ePro::walmart_help_center_synchronization_log" title="Synchronization Logs" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::walmart_help_center" action="m2epro/synchronization_log/index/referrer/walmart" resource="Ess_M2ePro::walmart_help_center_synchronization_log" />
+        <add id="Ess_M2ePro::walmart_help_center_m2e_support" title="M2E Support" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::walmart_help_center" action="m2epro/support/index/referrer/walmart" resource="Ess_M2ePro::walmart_help_center_m2e_support" />
 
     </menu>
 

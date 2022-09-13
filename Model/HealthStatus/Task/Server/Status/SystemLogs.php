@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -11,24 +11,26 @@ namespace Ess\M2ePro\Model\HealthStatus\Task\Server\Status;
 use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
 
-/**
- * Class \Ess\M2ePro\Model\HealthStatus\Task\Server\Status\SystemLogs
- */
 class SystemLogs extends IssueType
 {
-    const COUNT_CRITICAL_LEVEL = 1500;
-    const COUNT_WARNING_LEVEL  = 500;
-    const SEE_TO_BACK_INTERVAL = 3600;
+    private const COUNT_CRITICAL_LEVEL = 1500;
+    private const COUNT_WARNING_LEVEL  = 500;
+    private const SEE_TO_BACK_INTERVAL = 3600;
 
     /** @var \Ess\M2ePro\Model\HealthStatus\Task\Result\Factory */
     private $resultFactory;
-
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     private $activeRecordFactory;
-
+    /** @var \Magento\Framework\UrlInterface */
     private $urlBuilder;
-    //########################################
 
+    /**
+     * @param \Ess\M2ePro\Model\HealthStatus\Task\Result\Factory $resultFactory
+     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
+     * @param \Ess\M2ePro\Helper\Factory $helperFactory
+     * @param \Ess\M2ePro\Model\Factory $modelFactory
+     * @param \Magento\Framework\UrlInterface $urlBuilder
+     */
     public function __construct(
         \Ess\M2ePro\Model\HealthStatus\Task\Result\Factory $resultFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -42,8 +44,6 @@ class SystemLogs extends IssueType
         $this->urlBuilder = $urlBuilder;
     }
 
-    //########################################
-
     public function process()
     {
         $exceptionsCount = $this->getExceptionsCountByBackInterval(self::SEE_TO_BACK_INTERVAL);
@@ -55,33 +55,31 @@ class SystemLogs extends IssueType
         if ($exceptionsCount >= self::COUNT_WARNING_LEVEL) {
             $result->setTaskResult(TaskResult::STATE_WARNING);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
-            <<<HTML
+                <<<HTML
 M2E Pro has recorded <b>%exceptions%</b>
 messages to the System Log during the last hour. <a target="_blank" href="%url%">Click here</a> for the details.
 HTML
                 ,
                 $exceptionsCount,
-                $this->urlBuilder->getUrl('m2epro/developers/index')
+                $this->urlBuilder->getUrl('m2epro/synchronization_log/index')
             ]));
         }
 
         if ($exceptionsCount >= self::COUNT_CRITICAL_LEVEL) {
             $result->setTaskResult(TaskResult::STATE_CRITICAL);
             $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
-            <<<HTML
+                <<<HTML
 M2E Pro has recorded <b>%exceptions%</b> messages to the System Log during the last hour.
 <a href="%url%">Click here</a> for the details.
 HTML
                 ,
                 $exceptionsCount,
-                $this->urlBuilder->getUrl('m2epro/developers/index')
+                $this->urlBuilder->getUrl('m2epro/synchronization_log/index')
             ]));
         }
 
         return $result;
     }
-
-    //########################################
 
     private function getExceptionsCountByBackInterval($inSeconds)
     {
@@ -95,6 +93,4 @@ HTML
 
         return $collection->getSize();
     }
-
-    //########################################
 }

@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -123,8 +123,6 @@ HTML
 
             'removingProducts' => $this->getUrl('*/amazon_listing_other/removing'),
             'unmappingProducts' => $this->getUrl('*/listing_other_mapping/unmapping'),
-
-            'amazon_listing/getAFNQtyBySku' => $this->getUrl('*/amazon_listing/getAFNQtyBySku')
         ]);
 
         $this->jsUrl->add($this->getUrl('*/amazon_listing_product_repricing/getUpdatedPriceBySkus'));
@@ -193,7 +191,6 @@ HTML
             'lou' => 'M2ePro/Listing/Other/Unmapping',
 
             'alog' => 'M2ePro/Amazon/Listing/Other/Grid',
-            'aloa' => 'M2ePro/Amazon/Listing/AfnQty',
             'alprp' => 'M2ePro/Amazon/Listing/Product/Repricing/Price'
         ], <<<JS
 
@@ -209,7 +206,6 @@ HTML
         AmazonListingOtherGridObj.autoMappingHandler.setProgressBar('listing_other_progress_bar');
         AmazonListingOtherGridObj.autoMappingHandler.setGridWrapper('listing_other_content_container');
 
-        window.AmazonListingAfnQtyObj = new AmazonListingAfnQty();
         window.AmazonListingProductRepricingPriceObj = new AmazonListingProductRepricingPrice();
 
         jQuery(function() {

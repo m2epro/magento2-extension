@@ -64,7 +64,9 @@ abstract class BasePriceTracker implements TrackerInterface
             ->distinct()
             ->addSelect('listing_product_id', 'base.listing_product_id')
             ->from('base', $query)
-            ->andWhere('calculated_price != online_price');
+            ->andWhere('calculated_price != online_price')
+            ->andWhere('base.status = ?', \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED)
+            ->andWhere('base.revise_update_price = 1');
 
         $message = sprintf(
             'Data query %s %s',
@@ -115,6 +117,7 @@ abstract class BasePriceTracker implements TrackerInterface
             $alias = $attribute['alias'];
             $attributeQuery = $this->attributesQueryBuilder->getQueryForAttribute(
                 $attribute['name'],
+                'l.store_id',
                 $productIdExpression
             );
 
@@ -170,6 +173,7 @@ abstract class BasePriceTracker implements TrackerInterface
         return $this->queryBuilder
             ->makeSubQuery()
             ->addSelect('template_synchronization_id', 'ts.template_synchronization_id')
+            ->addSelect('revise_update_price', 'ts.revise_update_price')
             ->addSelect(
                 'revise_threshold',
                 'IF(
@@ -201,6 +205,7 @@ abstract class BasePriceTracker implements TrackerInterface
             ->addSelect('sync_template_id', 'product.sync_template_id')
             ->addSelect('selling_template_id', 'product.selling_template_id')
             ->addSelect('online_price', 'product.online_price')
+            ->addSelect('revise_update_price', 'sync_policy.revise_update_price')
         ;
 
         /* Tables */
@@ -239,5 +244,35 @@ abstract class BasePriceTracker implements TrackerInterface
     protected function setChannelToTableName(string $tableName): string
     {
         return sprintf($tableName, $this->getChannel());
+    }
+
+    protected function getPriceColumn(int $mode, $modeAttribute)
+    {
+        if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL) {
+            return '(CASE
+            WHEN product.special_price IS NOT NULL
+                AND product.special_from_date IS NOT NULL
+                AND product.special_to_date IS NOT NULL
+                AND NOW() BETWEEN product.special_from_date AND product.special_to_date
+            THEN product.special_price
+            WHEN product.special_price IS NOT NULL
+                AND product.special_from_date IS NOT NULL
+                AND product.special_from_date + INTERVAL 1 YEAR > NOW()
+            THEN product.special_price
+            ELSE product.price
+          END)';
+        }
+
+        if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
+            $attributeQuery = $this->attributesQueryBuilder
+                ->getQueryForAttribute(
+                    $modeAttribute,
+                    'product.store_id',
+                    'product.product_id'
+                );
+            return "(IFNULL(($attributeQuery), product.price))";
+        }
+
+        return 'product.price';
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Model\Amazon\Template\Description;
 
-/**
- * Class Ess\M2ePro\Model\Amazon\Template\Description\Builder
- */
 class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 {
-    //########################################
-
     protected function prepareData()
     {
         $data = [];
@@ -44,12 +39,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'category_path'     => '',
             'product_data_nick' => '',
             'browsenode_id'     => '',
-
-            'registered_parameter'          => '',
-            'worldwide_id_mode'             => \Ess\M2ePro\Model\Amazon\Template\Description::WORLDWIDE_ID_MODE_NONE,
-            'worldwide_id_custom_attribute' => ''
         ];
     }
-
-    //########################################
 }

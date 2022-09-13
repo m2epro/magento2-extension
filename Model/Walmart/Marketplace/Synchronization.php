@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -43,7 +43,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
         $this->resourceConnection = $resourceConnection;
         parent::__construct($helperFactory, $modelFactory, $data);
     }
-    
+
     //########################################
 
     public function setMarketplace(\Ess\M2ePro\Model\Marketplace $marketplace)

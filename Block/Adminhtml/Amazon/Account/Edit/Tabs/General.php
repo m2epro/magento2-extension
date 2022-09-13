@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -16,19 +16,19 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     private $globalDataHelper;
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-    /** @var \Ess\M2ePro\Helper\Data\Session */
-    private $sessionHelper;
     /** @var \Ess\M2ePro\Helper\Component\Amazon */
     private $amazonHelper;
     /** @var \Ess\M2ePro\Helper\Module\Support */
     private $supportHelper;
     /** @var \Ess\M2ePro\Model\Amazon\Account\Builder */
     private $accountBuilder;
+    /** @var \Ess\M2ePro\Model\Amazon\Account\TemporaryStorage */
+    private $temporaryStorage;
 
     /**
+     * @param \Ess\M2ePro\Model\Amazon\Account\TemporaryStorage $temporaryStorage
      * @param \Ess\M2ePro\Model\Amazon\Account\Builder $accountBuilder
      * @param \Ess\M2ePro\Helper\Data $dataHelper
-     * @param \Ess\M2ePro\Helper\Data\Session $sessionHelper
      * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
      * @param \Ess\M2ePro\Helper\Component\Amazon $amazonHelper
      * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
@@ -39,9 +39,9 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
      * @param array $data
      */
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Account\TemporaryStorage $temporaryStorage,
         \Ess\M2ePro\Model\Amazon\Account\Builder $accountBuilder,
         \Ess\M2ePro\Helper\Data $dataHelper,
-        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
@@ -54,10 +54,10 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $this->amazonFactory = $amazonFactory;
         $this->globalDataHelper = $globalDataHelper;
         $this->dataHelper = $dataHelper;
-        $this->sessionHelper = $sessionHelper;
         $this->amazonHelper = $amazonHelper;
         $this->supportHelper = $supportHelper;
         $this->accountBuilder = $accountBuilder;
+        $this->temporaryStorage = $temporaryStorage;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -87,13 +87,14 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $marketplaces[] = array_merge($item->getData(), $item->getChildObject()->getData());
         }
 
-        $accountTitle = $this->sessionHelper->getValue('account_title', true);
-        $merchantId = $this->sessionHelper->getValue('merchant_id', true);
-        $mwsToken = $this->sessionHelper->getValue('mws_token', true);
+        $accountTitle = $this->temporaryStorage->getAccountTitle();
+        $merchantId = $this->temporaryStorage->getMerchant();
+        $mwsToken = $this->temporaryStorage->getMWSToken();
 
         $isAuthMode = !empty($merchantId) && !empty($mwsToken);
 
-        $authMarketplaceId = $this->sessionHelper->getValue('marketplace_id', true);
+        $authMarketplaceId = $this->temporaryStorage->getMarketplaceId();
+        $this->temporaryStorage->removeAllValues();
 
         $form = $this->_formFactory->create();
 

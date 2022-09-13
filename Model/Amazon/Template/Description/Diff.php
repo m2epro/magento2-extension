@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -8,30 +8,21 @@
 
 namespace Ess\M2ePro\Model\Amazon\Template\Description;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Template\Description\Diff
- */
 class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
 {
-    //########################################
-
     public function isDifferent()
     {
         return $this->isDetailsDifferent() ||
                $this->isImagesDifferent();
     }
 
-    //########################################
-
     public function isDetailsDifferent()
     {
         $mainKeys = [
             'is_new_asin_accepted',
-            'worldwide_id_mode',
             'category_path',
             'browsenode_id',
             'product_data_nick',
-            'registered_parameter',
             'specifics'
         ];
 
@@ -127,6 +118,4 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
 
         return $this->isSettingsDifferent($definitionKeys, 'definition');
     }
-
-    //########################################
 }

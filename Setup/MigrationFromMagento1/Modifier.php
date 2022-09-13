@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -45,7 +45,9 @@ class Modifier
         $this->migrateConfig();
         $this->migrateWizards();
         $this->migrateWalmartAccount();
+        $this->actualizeConfigs();
         $this->actualizeTablesStructure();
+        $this->executeSomeFeatures();
     }
 
     //########################################
@@ -175,6 +177,20 @@ class Modifier
 
     /**
      * @return void
+     */
+    private function actualizeConfigs()
+    {
+        $configModifier = $this->getConfigModifier();
+
+        $documentationUrlEntity = $configModifier->getEntity('/support/', 'documentation_url');
+        $oldUrl = $documentationUrlEntity->getValue();
+        $newUrl = str_ends_with($oldUrl, '/') ?
+            $oldUrl : "$oldUrl/";
+        $documentationUrlEntity->updateValue($newUrl);
+    }
+
+    /**
+     * @return void
      * @throws \Ess\M2ePro\Model\Exception\Setup
      */
     private function actualizeTablesStructure()
@@ -187,6 +203,25 @@ class Modifier
                  'NULL',
                  'saved_amount'
              );
+    }
+
+    /**
+     * @return void
+     */
+    private function executeSomeFeatures(): void
+    {
+        $featureClasses = [
+            \Ess\M2ePro\Setup\Update\y22_m06\EbayFixedPriceModifier::class,
+            \Ess\M2ePro\Setup\Update\y22_m07\AddEpidsForItaly::class,
+            \Ess\M2ePro\Setup\Update\y22_m07\MoveEbayProductIdentifiers::class,
+            \Ess\M2ePro\Setup\Update\y22_m08\MoveAmazonProductIdentifiers::class,
+        ];
+
+        foreach ($featureClasses as $featureClass) {
+            /** @var \Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractFeature $feature */
+            $feature = \Magento\Framework\App\ObjectManager::getInstance()->create($featureClass);
+            $feature->execute();
+        }
     }
 
     //########################################

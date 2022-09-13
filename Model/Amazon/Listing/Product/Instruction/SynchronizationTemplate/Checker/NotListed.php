@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -8,13 +8,13 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\SynchronizationTemplate\Checker;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\SynchronizationTemplate\Checker\NotListed
- */
 class NotListed extends AbstractModel
 {
-    //########################################
-
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function isAllowed()
     {
         if (!parent::isAllowed()) {
@@ -31,46 +31,57 @@ class NotListed extends AbstractModel
         $amazonListingProduct = $listingProduct->getChildObject();
         $variationManager = $amazonListingProduct->getVariationManager();
 
-        $searchGeneralId   = $amazonListingProduct->getListingSource()->getSearchGeneralId();
-        $searchWorldwideId = $amazonListingProduct->getListingSource()->getSearchWorldwideId();
+        $identifiers = $amazonListingProduct->getIdentifiers();
+        $generalId = $identifiers->getGeneralId();
+        $worldwideId = $identifiers->getWorldwideId();
 
         if ($variationManager->isVariationProduct()) {
-            if ($variationManager->isPhysicalUnit() &&
-                !$variationManager->getTypeModel()->isVariationProductMatched()
+            if (
+                $variationManager->isPhysicalUnit()
+                && !$variationManager->getTypeModel()->isVariationProductMatched()
             ) {
                 return false;
             }
 
-            if ($variationManager->isRelationParentType() && $amazonListingProduct->getGeneralId()) {
+            if (
+                $variationManager->isRelationParentType()
+                && $amazonListingProduct->getGeneralId()
+            ) {
                 return false;
             }
 
-            if ($variationManager->isRelationChildType()) {
-                if (!$amazonListingProduct->getGeneralId() && !$amazonListingProduct->isGeneralIdOwner()) {
-                    return false;
-                }
+            if (
+                $variationManager->isRelationChildType()
+                && !$amazonListingProduct->getGeneralId()
+                && !$amazonListingProduct->isGeneralIdOwner()
+            ) {
+                return false;
             }
 
-            if ($variationManager->isIndividualType()) {
-                if (!$amazonListingProduct->getGeneralId() &&
-                    ($listingProduct->getMagentoProduct()->isSimpleTypeWithCustomOptions() ||
-                        $listingProduct->getMagentoProduct()->isBundleType() ||
-                        $listingProduct->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks())
-                ) {
-                    return false;
-                }
+            if (
+                $variationManager->isIndividualType()
+                && !$amazonListingProduct->getGeneralId()
+                && ($listingProduct->getMagentoProduct()->isSimpleTypeWithCustomOptions()
+                    || $listingProduct->getMagentoProduct()->isBundleType()
+                    || $listingProduct->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks())
+            ) {
+                return false;
             }
 
-            if ($variationManager->isRelationParentType() &&
-                empty($searchGeneralId) &&
-                !$amazonListingProduct->isGeneralIdOwner()
+            if (
+                $variationManager->isRelationParentType()
+                && empty($generalId)
+                && !$amazonListingProduct->isGeneralIdOwner()
             ) {
                 return false;
             }
         }
 
-        if (!$amazonListingProduct->getGeneralId() && !$amazonListingProduct->isGeneralIdOwner() &&
-            empty($searchGeneralId) && empty($searchWorldwideId)
+        if (
+            !$amazonListingProduct->getGeneralId()
+            && !$amazonListingProduct->isGeneralIdOwner()
+            && empty($generalId)
+            && empty($worldwideId)
         ) {
             return false;
         }
@@ -78,8 +89,12 @@ class NotListed extends AbstractModel
         return true;
     }
 
-    //########################################
-
+    /**
+     * @param array $params
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function process(array $params = [])
     {
         if (!$this->isMeetListRequirements()) {
@@ -115,8 +130,11 @@ class NotListed extends AbstractModel
         }
     }
 
-    //########################################
-
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function isMeetListRequirements()
     {
         $listingProduct = $this->input->getListingProduct();
@@ -147,8 +165,9 @@ class NotListed extends AbstractModel
                 $listingProduct->setSettings('additional_data', $additionalData)->save();
 
                 return false;
-            } elseif ($variationManager->isPhysicalUnit() &&
-                $variationManager->getTypeModel()->isVariationProductMatched()
+            } elseif (
+                $variationManager->isPhysicalUnit()
+                && $variationManager->getTypeModel()->isVariationProductMatched()
             ) {
                 $temp = $variationResource->isAllStatusesDisabled(
                     $listingProduct->getId(),
@@ -180,8 +199,9 @@ class NotListed extends AbstractModel
                 $listingProduct->setSettings('additional_data', $additionalData)->save();
 
                 return false;
-            } elseif ($variationManager->isPhysicalUnit() &&
-                $variationManager->getTypeModel()->isVariationProductMatched()
+            } elseif (
+                $variationManager->isPhysicalUnit()
+                && $variationManager->getTypeModel()->isVariationProductMatched()
             ) {
                 $temp = $variationResource->isAllDoNotHaveStockAvailabilities(
                     $listingProduct->getId(),
@@ -202,12 +222,13 @@ class NotListed extends AbstractModel
             }
         }
 
-        if ($amazonSynchronizationTemplate->isListWhenQtyCalculatedHasValue() &&
-            !$variationManager->isRelationParentType()
+        if (
+            $amazonSynchronizationTemplate->isListWhenQtyCalculatedHasValue()
+            && !$variationManager->isRelationParentType()
         ) {
             $result = false;
             $productQty = (int)$amazonListingProduct->getQty(false);
-            $minQty  = (int)$amazonSynchronizationTemplate->getListWhenQtyCalculatedHasValue();
+            $minQty = (int)$amazonSynchronizationTemplate->getListWhenQtyCalculatedHasValue();
 
             $note = '';
 
@@ -255,6 +276,4 @@ class NotListed extends AbstractModel
 
         return true;
     }
-
-    //########################################
 }

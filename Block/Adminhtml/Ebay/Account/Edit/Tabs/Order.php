@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -602,7 +602,7 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_ebay_accounts_magento_orders_refund_and_cancellation',
             [
-                'legend'      => $this->__('Refund & Cancellation') . ' [Beta]',
+                'legend'      => $this->__('Refund & Cancellation'),
                 'collapsable' => true
             ]
         );

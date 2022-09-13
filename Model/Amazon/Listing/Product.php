@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -14,54 +14,58 @@ namespace Ess\M2ePro\Model\Amazon\Listing;
  */
 class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
-    const INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED        = 'channel_status_changed';
-    const INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED           = 'channel_qty_changed';
-    const INSTRUCTION_TYPE_CHANNEL_REGULAR_PRICE_CHANGED = 'channel_regular_price_changed';
+    public const INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED        = 'channel_status_changed';
+    public const INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED           = 'channel_qty_changed';
+    public const INSTRUCTION_TYPE_CHANNEL_REGULAR_PRICE_CHANGED = 'channel_regular_price_changed';
 
-    const IS_AFN_CHANNEL_NO  = 0;
-    const IS_AFN_CHANNEL_YES = 1;
+    public const IS_AFN_CHANNEL_NO  = 0;
+    public const IS_AFN_CHANNEL_YES = 1;
 
-    const IS_REPRICING_NO  = 0;
-    const IS_REPRICING_YES = 1;
+    public const IS_REPRICING_NO  = 0;
+    public const IS_REPRICING_YES = 1;
 
-    const VARIATION_PARENT_IS_AFN_STATE_ALL_NO  = 0;
-    const VARIATION_PARENT_IS_AFN_STATE_PARTIAL = 1;
-    const VARIATION_PARENT_IS_AFN_STATE_ALL_YES = 2;
+    public const VARIATION_PARENT_IS_AFN_STATE_ALL_NO  = 0;
+    public const VARIATION_PARENT_IS_AFN_STATE_PARTIAL = 1;
+    public const VARIATION_PARENT_IS_AFN_STATE_ALL_YES = 2;
 
-    const VARIATION_PARENT_IS_REPRICING_STATE_ALL_NO  = 0;
-    const VARIATION_PARENT_IS_REPRICING_STATE_PARTIAL = 1;
-    const VARIATION_PARENT_IS_REPRICING_STATE_ALL_YES = 2;
+    public const VARIATION_PARENT_IS_REPRICING_STATE_ALL_NO  = 0;
+    public const VARIATION_PARENT_IS_REPRICING_STATE_PARTIAL = 1;
+    public const VARIATION_PARENT_IS_REPRICING_STATE_ALL_YES = 2;
 
-    const IS_ISBN_GENERAL_ID_NO  = 0;
-    const IS_ISBN_GENERAL_ID_YES = 1;
+    public const IS_ISBN_GENERAL_ID_NO  = 0;
+    public const IS_ISBN_GENERAL_ID_YES = 1;
 
-    const IS_GENERAL_ID_OWNER_NO  = 0;
-    const IS_GENERAL_ID_OWNER_YES = 1;
+    public const IS_GENERAL_ID_OWNER_NO  = 0;
+    public const IS_GENERAL_ID_OWNER_YES = 1;
 
-    const SEARCH_SETTINGS_STATUS_IN_PROGRESS     = 1;
-    const SEARCH_SETTINGS_STATUS_NOT_FOUND       = 2;
-    const SEARCH_SETTINGS_STATUS_ACTION_REQUIRED = 3;
+    public const SEARCH_SETTINGS_STATUS_IN_PROGRESS     = 1;
+    public const SEARCH_SETTINGS_STATUS_NOT_FOUND       = 2;
+    public const SEARCH_SETTINGS_STATUS_ACTION_REQUIRED = 3;
 
-    const GENERAL_ID_STATE_SET = 0;
-    const GENERAL_ID_STATE_NOT_SET = 1;
-    const GENERAL_ID_STATE_ACTION_REQUIRED = 2;
-    const GENERAL_ID_STATE_READY_FOR_NEW_ASIN = 3;
+    public const GENERAL_ID_STATE_SET = 0;
+    public const GENERAL_ID_STATE_NOT_SET = 1;
+    public const GENERAL_ID_STATE_ACTION_REQUIRED = 2;
+    public const GENERAL_ID_STATE_READY_FOR_NEW_ASIN = 3;
 
-    const BUSINESS_DISCOUNTS_MAX_RULES_COUNT_ALLOWED = 5;
+    public const BUSINESS_DISCOUNTS_MAX_RULES_COUNT_ALLOWED = 5;
 
+    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Identifiers\Factory */
+    private $identifiersFactory;
+    /** @var \Ess\M2ePro\Model\Amazon\Search\Dispatcher */
+    private $searchDispatcher;
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Configuration */
-    protected $configuration;
-
-    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager */
-    protected $variationManager = null;
-
-    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing */
-    protected $repricingModel = null;
-
+    private $configuration;
     /** @var \Ess\M2ePro\Helper\Data */
-    protected $helperData;
+    private $helperData;
+
+    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager|null */
+    private $variationManager = null;
+    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing|null */
+    private $repricingModel = null;
 
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Listing\Product\Identifiers\Factory $identifiesFactory,
+        \Ess\M2ePro\Model\Amazon\Search\Dispatcher $searchDispatcher,
         \Ess\M2ePro\Helper\Component\Amazon\Configuration $configuration,
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -74,6 +78,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
+        $this->identifiersFactory = $identifiesFactory;
+        $this->searchDispatcher = $searchDispatcher;
         $this->configuration = $configuration;
         $this->helperData = $helperData;
         parent::__construct(
@@ -176,6 +182,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function afterSaveNewEntity()
     {
+        $this->searchDispatcher->runSettings([$this->getParentObject()]);
+
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager $variationManager */
         $variationManager = $this->getVariationManager();
         if ($variationManager->isVariationProduct() || !$this->isVariationMode()) {
@@ -188,8 +196,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $variationManager->getTypeModel()->resetProductAttributes(false);
         $variationManager->getTypeModel()->getProcessor()->process();
     }
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Account
@@ -251,6 +257,15 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getListingSource()
     {
         return $this->getAmazonListing()->getSource($this->getActualMagentoProduct());
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Identifiers
+     * @throws \Ess\M2ePro\Model\Exception
+     */
+    public function getIdentifiers(): \Ess\M2ePro\Model\Amazon\Listing\Product\Identifiers
+    {
+        return $this->identifiersFactory->create($this->getActualMagentoProduct());
     }
 
     // ---------------------------------------

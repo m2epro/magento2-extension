@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -44,19 +44,19 @@ class After extends \Ess\M2ePro\Observer\AbstractModel
 
         if ($quote->getIsM2eProQuote() && $quote->getUseM2eProDiscount()) {
             $discountAmount = $this->priceCurrency->convert($quote->getCoinDiscount());
-        
+
             if ($total->getTotalAmount('subtotal')) {
                 $total->setTotalAmount('subtotal', $total->getTotalAmount('subtotal') - $discountAmount);
             }
-        
+
             if ($total->getBaseTotalAmount('subtotal')) {
                 $total->setTotalAmount('subtotal', $total->getBaseTotalAmount('subtotal') - $discountAmount);
             }
-        
+
             if ($total->hasData('grand_total') && $total->getGrandTotal()) {
                 $total->setGrandTotal($total->getGrandTotal() - $discountAmount);
             }
-        
+
             if ($total->hasData('base_grand_total') && $total->getBaseGrandTotal()) {
                 $total->setBaseGrandTotal($total->getBaseGrandTotal() - $discountAmount);
             }

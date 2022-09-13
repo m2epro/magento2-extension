@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -57,10 +57,11 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
      */
     public function setGeneralId($generalId)
     {
-        if (!$this->getHelper('Component\Amazon')->isASIN($generalId) &&
-            !$this->getHelper('Data')->isISBN10($generalId)
+        if (
+            !\Ess\M2ePro\Helper\Data\Product\Identifier::isASIN($generalId)
+            && !\Ess\M2ePro\Helper\Data\Product\Identifier::isISBN10($generalId)
         ) {
-            throw new \InvalidArgumentException('General ID "'.$generalId.'" is invalid.');
+            throw new \InvalidArgumentException('General ID "' . $generalId . '" is invalid.');
         }
 
         $this->generalId = $generalId;

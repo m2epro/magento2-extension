@@ -67,9 +67,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
                 break;
             case 2:
                 $this->stepTwo();
-                break;
-            case 3:
-                $this->stepThree();
                 if ($this->getRequest()->isPost() && $this->isCreationModeListingOnly()) {
                     // closing window for Unmanaged products moving in new listing creation
 
@@ -138,39 +135,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
                 $this->setSessionValue($key, $post[$key]);
             }
 
-            $this->_redirect('*/*/index', ['_current' => true, 'step'=>'3']);
-            return;
-        }
-
-        $this->setWizardStep('listingSelling');
-
-        $this->addContent($this->getLayout()
-                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling::class));
-    }
-
-    // ---------------------------------------
-
-    protected function stepThree()
-    {
-        if ($this->getSessionValue('account_id') === null) {
-            $this->clearSession();
-            return $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
-        }
-
-        if ($this->getRequest()->isPost()) {
-            $dataKeys = array_keys(
-                $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Search\Form::class)
-                                  ->getDefaultFieldsValues()
-            );
-
-            $post = $this->getRequest()->getPost();
-            foreach ($dataKeys as $key) {
-                $this->setSessionValue($key, $post[$key]);
-            }
-
             $listing = $this->createListing();
 
-            //todo Transferring move in another place?
             if ($listingId = $this->getRequest()->getParam('listing_id')) {
                 $this->transferring->setListing(
                     $this->amazonFactory->getCachedObjectLoaded('Listing', $listingId)
@@ -199,17 +165,17 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             return $this->_redirect(
                 '*/amazon_listing_product_add/index',
                 [
-                    'id' => $listing->getId(),
+                    'id'          => $listing->getId(),
                     'new_listing' => 1,
-                    'wizard' => $this->getRequest()->getParam('wizard')
+                    'wizard'      => $this->getRequest()->getParam('wizard')
                 ]
             );
         }
 
-        $this->setWizardStep('listingSearch');
+        $this->setWizardStep('listingSelling');
 
         $this->addContent(
-            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Search::class)
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling::class)
         );
     }
 

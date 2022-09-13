@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -35,8 +35,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'required' => true,
                 'value' => '',
                 'tooltip' => $this->__(
-                    '<p style="color: #41362f">If your Magento v2.x is staging yet, it is recommended to 
-                    keep synchronization disabled. It can be enabled later under 
+                    '<p style="color: #41362f">If your Magento v2.x is staging yet, it is recommended to
+                    keep synchronization disabled. It can be enabled later under
                     <i>Stores > Settings > Configuration > M2E Pro > Advanced Settings > Automatic Synchronization</i>.
                     </p>'
                 )

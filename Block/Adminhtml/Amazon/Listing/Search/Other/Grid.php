@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -8,10 +8,13 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\Other;
 
-use \Ess\M2ePro\Model\Amazon\Listing\Product;
+use Ess\M2ePro\Model\Amazon\Listing\Product;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGrid
 {
+    private const ACTUAL_QTY_EXPRESSION =
+        'IF(second_table.is_afn_channel = 1, second_table.online_afn_qty, second_table.online_qty)';
+
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $databaseHelper;
 
@@ -108,6 +111,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
                 'online_sku'                   => 'second_table.sku',
                 'online_title'                 => new \Zend_Db_Expr('NULL'),
                 'online_qty'                   => 'second_table.online_qty',
+                'online_afn_qty'               => 'second_table.online_afn_qty',
+                'online_actual_qty'            => self::ACTUAL_QTY_EXPRESSION,
                 'online_price'                 => 'second_table.online_price',
                 'online_sale_price'            => new \Zend_Db_Expr('NULL'),
                 'online_sale_price_start_date' => new \Zend_Db_Expr('NULL'),
@@ -305,7 +310,7 @@ HTML;
 
         if (isset($value['from']) && $value['from'] != '') {
             $quoted = $collection->getConnection()->quote($value['from']);
-            $where .= 'second_table.online_qty >= ' . $quoted;
+            $where .= self::ACTUAL_QTY_EXPRESSION . ' >= ' . $quoted;
         }
 
         if (isset($value['to']) && $value['to'] != '') {
@@ -313,12 +318,12 @@ HTML;
                 $where .= ' AND ';
             }
             $quoted = $collection->getConnection()->quote($value['to']);
-            $where .= 'second_table.online_qty <= ' . $quoted;
+            $where .= self::ACTUAL_QTY_EXPRESSION . ' <= ' . $quoted;
         }
 
         if (isset($value['afn']) && $value['afn'] !== '') {
             if (!empty($where)) {
-                $where = '(' . $where . ') OR ';
+                $where .= ' AND ';
             }
             $where .= 'second_table.is_afn_channel = ' . (int)$value['afn'];
         }

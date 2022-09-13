@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -410,7 +410,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             <<<JS
     require([
         'M2ePro/Amazon/Listing/View/Grid',
-        'M2ePro/Amazon/Listing/AfnQty',
         'M2ePro/Amazon/Listing/AutoAction',
         'M2ePro/Amazon/Listing/Product/Variation',
         'M2ePro/Amazon/Listing/Product/Repricing/Price'
@@ -449,8 +448,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             ListingAutoActionObj.loadAutoActionHtml();
         }
 
-        AmazonListingAfnQtyObj = new AmazonListingAfnQty();
-
         AmazonListingProductRepricingPriceObj = new AmazonListingProductRepricingPrice();
     });
 JS
@@ -470,52 +467,35 @@ JS
         // ---------------------------------------
 
         return $viewHeaderBlock->toHtml()
-//            . $listingSwitcher->toHtml()
             . $productSearchBlock->toHtml()
             . parent::getGridHtml();
     }
 
-    protected function getSettingsButtonDropDownItems()
+    /**
+     * @return array
+     */
+    protected function getSettingsButtonDropDownItems(): array
     {
-        $items = [];
-
         $backUrl = $this->dataHelper->makeBackUrlParam('*/amazon_listing/view', [
-            'id' => $this->listing['id']
-        ]);
-
-        // ---------------------------------------
-        $url = $this->getUrl('*/amazon_listing/edit', [
             'id' => $this->listing['id'],
-            'back' => $backUrl,
-            'tab' => 'selling'
         ]);
-        $items[] = [
-            'label' => $this->__('Selling'),
-            'onclick' => 'window.open(\'' . $url . '\',\'_blank\');',
-            'default' => true
-        ];
-        // ---------------------------------------
 
-        // ---------------------------------------
         $url = $this->getUrl('*/amazon_listing/edit', [
-            'id' => $this->listing['id'],
+            'id'   => $this->listing['id'],
             'back' => $backUrl,
-            'tab' => 'search'
         ]);
-        $items[] = [
-            'label' => $this->__('Search'),
-            'onclick' => 'window.open(\'' . $url . '\',\'_blank\');'
-        ];
-        // ---------------------------------------
 
-        // ---------------------------------------
-        $items[] = [
-            'onclick' => 'ListingAutoActionObj.loadAutoActionHtml();',
-            'label' => $this->__('Auto Add/Remove Rules')
+        return [
+            [
+                'label'   => $this->__('Selling'),
+                'onclick' => "window.open('$url', '_blank');",
+                'default' => true,
+            ],
+            [
+                'onclick' => 'ListingAutoActionObj.loadAutoActionHtml();',
+                'label'   => $this->__('Auto Add/Remove Rules'),
+            ],
         ];
-        // ---------------------------------------
-
-        return $items;
     }
 
     public function getAddProductsDropDownItems()

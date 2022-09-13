@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -101,7 +101,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
             return $this->getResult();
         }
 
-        $this->setPageHelpLink('x/tv8UB');
+        $this->setPageHelpLink('x/n-8UB');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Select Magento Products'));
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add::class));
@@ -150,7 +150,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
             return $this->getResult();
         }
 
-        $this->setPageHelpLink('x/EgQVB');
+        $this->setPageHelpLink('x/n-8UB');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Select Magento Products'));
 

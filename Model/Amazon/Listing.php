@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -14,97 +14,78 @@ namespace Ess\M2ePro\Model\Amazon;
  */
 class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
-    const SKU_MODE_PRODUCT_ID       = 3;
-    const SKU_MODE_DEFAULT          = 1;
-    const SKU_MODE_CUSTOM_ATTRIBUTE = 2;
+    public const SKU_MODE_PRODUCT_ID       = 3;
+    public const SKU_MODE_DEFAULT          = 1;
+    public const SKU_MODE_CUSTOM_ATTRIBUTE = 2;
 
-    const SKU_MODIFICATION_MODE_NONE     = 0;
-    const SKU_MODIFICATION_MODE_PREFIX   = 1;
-    const SKU_MODIFICATION_MODE_POSTFIX  = 2;
-    const SKU_MODIFICATION_MODE_TEMPLATE = 3;
+    public const SKU_MODIFICATION_MODE_NONE     = 0;
+    public const SKU_MODIFICATION_MODE_PREFIX   = 1;
+    public const SKU_MODIFICATION_MODE_POSTFIX  = 2;
+    public const SKU_MODIFICATION_MODE_TEMPLATE = 3;
 
-    const GENERATE_SKU_MODE_NO  = 0;
-    const GENERATE_SKU_MODE_YES = 1;
+    public const GENERATE_SKU_MODE_NO  = 0;
+    public const GENERATE_SKU_MODE_YES = 1;
 
-    const GENERAL_ID_MODE_NOT_SET          = 0;
-    const GENERAL_ID_MODE_CUSTOM_ATTRIBUTE = 1;
+    public const CONDITION_MODE_DEFAULT          = 1;
+    public const CONDITION_MODE_CUSTOM_ATTRIBUTE = 2;
 
-    const WORLDWIDE_ID_MODE_NOT_SET          = 0;
-    const WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE = 1;
+    public const CONDITION_NEW                    = 'New';
+    public const CONDITION_USED_LIKE_NEW          = 'UsedLikeNew';
+    public const CONDITION_USED_VERY_GOOD         = 'UsedVeryGood';
+    public const CONDITION_USED_GOOD              = 'UsedGood';
+    public const CONDITION_USED_ACCEPTABLE        = 'UsedAcceptable';
+    public const CONDITION_COLLECTIBLE_LIKE_NEW   = 'CollectibleLikeNew';
+    public const CONDITION_COLLECTIBLE_VERY_GOOD  = 'CollectibleVeryGood';
+    public const CONDITION_COLLECTIBLE_GOOD       = 'CollectibleGood';
+    public const CONDITION_COLLECTIBLE_ACCEPTABLE = 'CollectibleAcceptable';
+    public const CONDITION_REFURBISHED            = 'Refurbished';
+    public const CONDITION_CLUB                   = 'Club';
 
-    const SEARCH_BY_MAGENTO_TITLE_MODE_NONE = 0;
-    const SEARCH_BY_MAGENTO_TITLE_MODE_YES  = 1;
+    public const CONDITION_NOTE_MODE_NONE         = 3;
+    public const CONDITION_NOTE_MODE_CUSTOM_VALUE = 1;
 
-    const CONDITION_MODE_DEFAULT          = 1;
-    const CONDITION_MODE_CUSTOM_ATTRIBUTE = 2;
+    public const IMAGE_MAIN_MODE_NONE      = 0;
+    public const IMAGE_MAIN_MODE_PRODUCT   = 1;
+    public const IMAGE_MAIN_MODE_ATTRIBUTE = 2;
 
-    const CONDITION_NEW                    = 'New';
-    const CONDITION_USED_LIKE_NEW          = 'UsedLikeNew';
-    const CONDITION_USED_VERY_GOOD         = 'UsedVeryGood';
-    const CONDITION_USED_GOOD              = 'UsedGood';
-    const CONDITION_USED_ACCEPTABLE        = 'UsedAcceptable';
-    const CONDITION_COLLECTIBLE_LIKE_NEW   = 'CollectibleLikeNew';
-    const CONDITION_COLLECTIBLE_VERY_GOOD  = 'CollectibleVeryGood';
-    const CONDITION_COLLECTIBLE_GOOD       = 'CollectibleGood';
-    const CONDITION_COLLECTIBLE_ACCEPTABLE = 'CollectibleAcceptable';
-    const CONDITION_REFURBISHED            = 'Refurbished';
-    const CONDITION_CLUB                   = 'Club';
+    public const GALLERY_IMAGES_MODE_NONE      = 0;
+    public const GALLERY_IMAGES_MODE_PRODUCT   = 1;
+    public const GALLERY_IMAGES_MODE_ATTRIBUTE = 2;
 
-    const CONDITION_NOTE_MODE_NONE         = 3;
-    const CONDITION_NOTE_MODE_CUSTOM_VALUE = 1;
+    public const GALLERY_IMAGES_COUNT_MAX = 5;
 
-    const IMAGE_MAIN_MODE_NONE      = 0;
-    const IMAGE_MAIN_MODE_PRODUCT   = 1;
-    const IMAGE_MAIN_MODE_ATTRIBUTE = 2;
+    public const HANDLING_TIME_MODE_NONE             = 3;
+    public const HANDLING_TIME_MODE_RECOMMENDED      = 1;
+    public const HANDLING_TIME_MODE_CUSTOM_ATTRIBUTE = 2;
 
-    const GALLERY_IMAGES_MODE_NONE      = 0;
-    const GALLERY_IMAGES_MODE_PRODUCT   = 1;
-    const GALLERY_IMAGES_MODE_ATTRIBUTE = 2;
+    public const RESTOCK_DATE_MODE_NONE             = 1;
+    public const RESTOCK_DATE_MODE_CUSTOM_VALUE     = 2;
+    public const RESTOCK_DATE_MODE_CUSTOM_ATTRIBUTE = 3;
 
-    const GALLERY_IMAGES_COUNT_MAX = 5;
+    public const GIFT_WRAP_MODE_NO        = 0;
+    public const GIFT_WRAP_MODE_YES       = 1;
+    public const GIFT_WRAP_MODE_ATTRIBUTE = 2;
 
-    const HANDLING_TIME_MODE_NONE             = 3;
-    const HANDLING_TIME_MODE_RECOMMENDED      = 1;
-    const HANDLING_TIME_MODE_CUSTOM_ATTRIBUTE = 2;
+    public const GIFT_MESSAGE_MODE_NO        = 0;
+    public const GIFT_MESSAGE_MODE_YES       = 1;
+    public const GIFT_MESSAGE_MODE_ATTRIBUTE = 2;
 
-    const RESTOCK_DATE_MODE_NONE             = 1;
-    const RESTOCK_DATE_MODE_CUSTOM_VALUE     = 2;
-    const RESTOCK_DATE_MODE_CUSTOM_ATTRIBUTE = 3;
+    public const ADDING_MODE_ADD_AND_CREATE_NEW_ASIN_NO  = 0;
+    public const ADDING_MODE_ADD_AND_CREATE_NEW_ASIN_YES = 1;
 
-    const GIFT_WRAP_MODE_NO        = 0;
-    const GIFT_WRAP_MODE_YES       = 1;
-    const GIFT_WRAP_MODE_ATTRIBUTE = 2;
-
-    const GIFT_MESSAGE_MODE_NO        = 0;
-    const GIFT_MESSAGE_MODE_YES       = 1;
-    const GIFT_MESSAGE_MODE_ATTRIBUTE = 2;
-
-    const ADDING_MODE_ADD_AND_CREATE_NEW_ASIN_NO  = 0;
-    const ADDING_MODE_ADD_AND_CREATE_NEW_ASIN_YES = 1;
-
-    const CREATE_LISTING_SESSION_DATA = 'amazon_listing_create';
-
-    //########################################
-
-    /**
-     * @var \Ess\M2ePro\Model\Template\SellingFormat
-     */
-    private $sellingFormatTemplateModel = null;
-
-    /**
-     * @var \Ess\M2ePro\Model\Template\Synchronization
-     */
-    private $synchronizationTemplateModel = null;
-
-    /** @var \Ess\M2ePro\Model\Amazon\Listing\Source[] */
-    private $listingSourceModels = [];
+    public const CREATE_LISTING_SESSION_DATA = 'amazon_listing_create';
 
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
-
+    /** @var \Ess\M2ePro\Model\Currency */
     protected $currencyModel;
 
-    //########################################
+    /** @var \Ess\M2ePro\Model\Template\SellingFormat */
+    private $sellingFormatTemplateModel = null;
+    /** @var \Ess\M2ePro\Model\Template\Synchronization */
+    private $synchronizationTemplateModel = null;
+    /** @var \Ess\M2ePro\Model\Amazon\Listing\Source[] */
+    private $listingSourceModels = [];
 
     public function __construct(
         \Ess\M2ePro\Model\Currency $currencyModel,
@@ -135,15 +116,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         );
     }
 
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Listing::class);
     }
-
-    //########################################
 
     public function save()
     {
@@ -501,98 +478,6 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function isGenerateSkuModeYes()
     {
         return $this->getGenerateSkuMode() == self::GENERATE_SKU_MODE_YES;
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return int
-     */
-    public function getGeneralIdMode()
-    {
-        return (int)$this->getData('general_id_mode');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isGeneralIdNotSetMode()
-    {
-        return $this->getGeneralIdMode() == self::GENERAL_ID_MODE_NOT_SET;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isGeneralIdAttributeMode()
-    {
-        return $this->getGeneralIdMode() == self::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE;
-    }
-
-    /**
-     * @return array
-     */
-    public function getGeneralIdSource()
-    {
-        return [
-            'mode'      => $this->getGeneralIdMode(),
-            'attribute' => $this->getData('general_id_custom_attribute')
-        ];
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return int
-     */
-    public function getWorldwideIdMode()
-    {
-        return (int)$this->getData('worldwide_id_mode');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isWorldwideIdNotSetMode()
-    {
-        return $this->getWorldwideIdMode() == self::WORLDWIDE_ID_MODE_NOT_SET;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isWorldwideIdAttributeMode()
-    {
-        return $this->getWorldwideIdMode() == self::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE;
-    }
-
-    /**
-     * @return array
-     */
-    public function getWorldwideIdSource()
-    {
-        return [
-            'mode'      => $this->getWorldwideIdMode(),
-            'attribute' => $this->getData('worldwide_id_custom_attribute')
-        ];
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return int
-     */
-    public function getSearchByMagentoTitleMode()
-    {
-        return (int)$this->getData('search_by_magento_title_mode');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSearchByMagentoTitleModeEnabled()
-    {
-        return $this->getSearchByMagentoTitleMode() == self::SEARCH_BY_MAGENTO_TITLE_MODE_YES;
     }
 
     // ---------------------------------------
@@ -1166,7 +1051,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
         $amazonItem->setData('store_id', $this->getParentObject()->getStoreId());
         $amazonItem ->save();
-        
+
         if ($amazonListingOther->isRepricing()) {
             $listingProductRepricing = $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing');
             $listingProductRepricing->setData(

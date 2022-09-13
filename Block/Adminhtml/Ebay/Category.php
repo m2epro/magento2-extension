@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -54,7 +54,7 @@ Any changes you make on this page will affect M2E Pro Listings where these Categ
 Read the <a href="%url%" target="_blank">article</a> to learn how to manage eBay Categories.
 HTML
                 ,
-                $this->supportHelper->getDocumentationArticleUrl('x/c4FkB')
+                $this->supportHelper->getDocumentationArticleUrl('x/PX5qB')
             )
         ]);
 

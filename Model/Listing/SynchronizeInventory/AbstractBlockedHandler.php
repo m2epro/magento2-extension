@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -138,15 +138,15 @@ abstract class AbstractBlockedHandler extends AbstractHandler
 
         $sql = <<<SQL
 UPDATE {$structureHelper->getTableNameWithPrefix('m2epro_listing_other')} AS `lo`
-    INNER JOIN {$this->getComponentOtherListingTable()} AS `clo` 
+    INNER JOIN {$this->getComponentOtherListingTable()} AS `clo`
         ON `lo`.`id` = `clo`.`listing_other_id`
-    LEFT JOIN {$this->getComponentInventoryTable()} AS `it` 
-        ON `clo`.`{$this->getInventoryIdentifier()}` = `it`.`{$this->getInventoryIdentifier()}` 
+    LEFT JOIN {$this->getComponentInventoryTable()} AS `it`
+        ON `clo`.`{$this->getInventoryIdentifier()}` = `it`.`{$this->getInventoryIdentifier()}`
         AND `lo`.`account_id` = `it`.`account_id`
 SET `lo`.`status` = {$statusBlocked}, `lo`.`status_changer` = {$statusChangerComponent}
 WHERE `lo`.`account_id` = {$this->getAccount()->getId()}
-  AND `lo`.`status` != {$statusBlocked} 
-  AND `lo`.`status` != {$statusNotListed} 
+  AND `lo`.`status` != {$statusBlocked}
+  AND `lo`.`status` != {$statusNotListed}
   AND `it`.`{$this->getInventoryIdentifier()}` IS NULL
 SQL;
 

@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -35,6 +35,7 @@ class Amazon
     public const MARKETPLACE_SG = 45;
     public const MARKETPLACE_IN = 46;
     public const MARKETPLACE_AE = 47;
+    public const MARKETPLACE_BE = 48;
 
     private const MARKETPLACE_WITHOUT_DATA = [
         self::MARKETPLACE_JP,
@@ -42,6 +43,7 @@ class Amazon
         self::MARKETPLACE_SG,
         self::MARKETPLACE_IN,
         self::MARKETPLACE_AE,
+        self::MARKETPLACE_BE,
     ];
 
     public const EEA_COUNTRY_CODES = [
@@ -200,19 +202,12 @@ class Amazon
      * @param string $string
      *
      * @return bool
+     * @see \Ess\M2ePro\Helper\Data\Product\Identifier::isASIN
+     * @deprecated
      */
     public function isASIN($string): bool
     {
-        $string = (string)$string;
-        if (strlen($string) !== 10) {
-            return false;
-        }
-
-        if (!preg_match('/^B[A-Z\d]{9}$/', $string)) {
-            return false;
-        }
-
-        return true;
+        return \Ess\M2ePro\Helper\Data\Product\Identifier::isASIN($string);
     }
 
     public function getApplicationName()

@@ -26,19 +26,22 @@ class ProductAttributesQueryBuilder
 
     /**
      * @param string $attributeCode
+     * @param string $storeIdAttribute
      * @param mixed $productAttribute
      *
      * @return \Magento\Framework\DB\Select
      */
     public function getQueryForAttribute(
         string $attributeCode,
-        $productAttribute = null
+        string $storeIdAttribute,
+        ?string $productAttribute = null
     ): \Magento\Framework\DB\Select {
         $table = $this->getAttributeTable($attributeCode);
         $attributeId = $this->getAttributeId($attributeCode);
         $select = $this->resourceConnection->getConnection()->select();
         $select->from(['t' => $this->dbHelper->getTableNameWithPrefix($table)], ['value']);
         $select->where('t.attribute_id = ?', $attributeId);
+        $select->where('t.store_id = ?', $storeIdAttribute);
 
         if ($productAttribute !== null) {
             $select->where('t.entity_id = ?', new \Zend_Db_Expr($productAttribute));

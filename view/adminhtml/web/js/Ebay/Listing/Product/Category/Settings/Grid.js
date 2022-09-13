@@ -207,7 +207,7 @@ define([
                 button.addClassName('disabled');
                 button.disable();
                 if (parseInt(showErrorMessage)) {
-                    MessageObj.addError(M2ePro.translator.translate('select_relevant_category'));
+                    MessageObj.addWarning(M2ePro.translator.translate('select_relevant_category'));
                 }
             } else {
                 button.removeClassName('disabled');

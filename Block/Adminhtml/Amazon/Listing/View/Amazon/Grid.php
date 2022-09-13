@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -13,6 +13,8 @@ use Ess\M2ePro\Model\Listing\Log;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
+    private const ACTUAL_QTY_EXPRESSION = 'IF(alp.is_afn_channel = 1, alp.online_afn_qty, alp.online_qty)';
+
     private $lockedDataCache = [];
 
     private $childProductsWarningsData;
@@ -111,6 +113,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             ]
         );
 
+        $collection->addExpressionAttributeToSelect(
+            'online_actual_qty',
+            self::ACTUAL_QTY_EXPRESSION,
+            []
+        );
+
         $alpTable = $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable();
         $collection->joinTable(
             ['alp' => $alpTable],
@@ -123,6 +131,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'variation_child_statuses'       => 'variation_child_statuses',
                 'amazon_sku'                     => 'sku',
                 'online_qty'                     => 'online_qty',
+                'online_afn_qty'                 => 'online_afn_qty',
                 'online_regular_price'           => 'online_regular_price',
                 'online_regular_sale_price'      => 'IF(
                   `alp`.`online_regular_sale_price_start_date` IS NOT NULL AND
@@ -248,8 +257,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'align'        => 'right',
             'width'        => '70px',
             'type'         => 'number',
-            'index'        => 'online_qty',
-            'filter_index' => 'online_qty',
+            'index'        => 'online_actual_qty',
+            'filter_index' => 'online_actual_qty',
             'renderer'     => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Qty::class,
             'filter'       => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty::class,
             'filter_condition_callback' => [$this, 'callbackFilterQty']
@@ -943,19 +952,19 @@ HTML;
         $where = '';
 
         if (isset($value['from']) && $value['from'] != '') {
-            $where .= 'online_qty >= ' . (int)$value['from'];
+            $where .= self::ACTUAL_QTY_EXPRESSION . ' >= ' . (int)$value['from'];
         }
 
         if (isset($value['to']) && $value['to'] != '') {
             if (isset($value['from']) && $value['from'] != '') {
                 $where .= ' AND ';
             }
-            $where .= 'online_qty <= ' . (int)$value['to'];
+            $where .= self::ACTUAL_QTY_EXPRESSION . ' <= ' . (int)$value['to'];
         }
 
         if (isset($value['afn']) && $value['afn'] !== '') {
             if (!empty($where)) {
-                $where = '(' . $where . ') OR ';
+                $where .= ' AND ';
             }
 
             if ((int)$value['afn'] == 1) {

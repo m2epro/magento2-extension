@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -37,9 +37,9 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
 
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
-    
+
     //########################################
-    
+
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -320,13 +320,13 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             $listingProduct::MOVING_LISTING_OTHER_SOURCE_KEY,
             $listingOtherProduct->getId()
         );
-        
+
         if ($listingProduct->getMagentoProduct()->isGroupedType() &&
             $this->moduleConfiguration->isGroupedProductModeSet()
         ) {
             $listingProduct->setSetting('additional_data', 'grouped_product_mode', 1);
         }
-        
+
         $listingProduct->addData($dataForUpdate);
         $walmartListingProduct->addData($dataForUpdate);
         $listingProduct->save();
@@ -347,7 +347,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         }
         $walmartItem->setData('store_id', $this->getParentObject()->getStoreId())
                     ->save();
-        
+
         $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
         $instruction->setData(
             [

@@ -231,6 +231,15 @@ class Config extends AbstractConfig
             'y22_m08' => [
                 'AddAmazonMarketplacesBrSgInAe',
                 'FixDevKeyForJapanAmazonMarketplace',
+                'ClearPartListingAdditionalData',
+                'AddIsReplacementColumnToAmazonOrder',
+                'AddAfnProductActualQty',
+                'FixNullableGroupsInConfigs',
+                'MoveAmazonProductIdentifiers',
+            ],
+            'y22_m09' => [
+                'AddAmazonMarketplaceBelgium',
+                'RemoveHitCounterFromEbayDescriptionPolicy',
             ],
         ];
     }

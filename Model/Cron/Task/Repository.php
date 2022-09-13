@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
@@ -185,6 +185,10 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
             'group'     => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\Defected::NICK => [
+            'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'group'     => self::GROUP_AMAZON,
+        ],
+        \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\AfnQty::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'group'     => self::GROUP_AMAZON,
         ],
