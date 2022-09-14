@@ -8,16 +8,17 @@
 
 namespace Ess\M2ePro\Model\HealthStatus\Notification;
 
-/**
- * Class \Ess\M2ePro\Model\HealthStatus\Notification\MessageBuilder
- */
 class MessageBuilder extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Magento\Framework\UrlInterface */
     private $urlBuilder;
 
-    //########################################
-
+    /**
+     * @param \Magento\Framework\UrlInterface $urlBuilder
+     * @param \Ess\M2ePro\Helper\Factory $helperFactory
+     * @param \Ess\M2ePro\Model\Factory $modelFactory
+     * @param array $data
+     */
     public function __construct(
         \Magento\Framework\UrlInterface $urlBuilder,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -28,29 +29,32 @@ class MessageBuilder extends \Ess\M2ePro\Model\AbstractModel
         $this->urlBuilder = $urlBuilder;
     }
 
-    //########################################
-
-    public function build()
+    /**
+     * @return string
+     */
+    public function build(): string
     {
-        return $this->getHeader() .': '. $this->getMessage();
+        return $this->getHeader() . ': ' . $this->getMessage();
     }
 
-    //########################################
-
-    public function getHeader()
+    /**
+     * @return string
+     */
+    public function getHeader(): string
     {
-        return __('M2E Pro Health Status Notification');
+        return (string)__('M2E Pro Health Status Notification');
     }
 
-    public function getMessage()
+    /**
+     * @return string
+     */
+    public function getMessage(): string
     {
         $manageUrl = $this->urlBuilder->getUrl('m2epro/healthStatus/index');
-        return __(<<<HTML
+        return (string)__(<<<HTML
 Something went wrong with your M2E Pro running and some actions from your side are required.
  A detailed information you can find in <a target="_blank" href="{$manageUrl}">M2E Pro Health Status Center</a>.
 HTML
         );
     }
-
-    //########################################
 }

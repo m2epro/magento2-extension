@@ -250,7 +250,7 @@ HTML;
 
         $collection->addFieldToFilter([
             ['attribute' => 'entity_id', $cond],
-            ['attribute' => 'product_sku_subQuery.searched_by_child', 'eq' => '1', 'raw' => true]
+            ['attribute' => 'product_id_subQuery.searched_by_child', 'eq' => '1', 'raw' => true]
         ]);
     }
 
