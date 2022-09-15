@@ -48,13 +48,7 @@ class Factory
         // fix for Magento2 sniffs that forcing to use ::class
         $modelName = str_replace('_', '\\', $modelName);
 
-        $model = $this->objectManager->create('\Ess\M2ePro\Model\\'.$modelName, $arguments);
-
-        if (!$model instanceof \Ess\M2ePro\Model\AbstractModel) {
-            throw new \Ess\M2ePro\Model\Exception\Logic(
-                __('%1 doesn\'t extends \Ess\M2ePro\Model\AbstractModel', $modelName)
-            );
-        }
+        $model = $this->objectManager->create('\Ess\M2ePro\Model\\' . $modelName, $arguments);
 
         return $model;
     }
