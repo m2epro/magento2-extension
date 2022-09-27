@@ -26,10 +26,12 @@ if (empty($currency)) {
             <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
                 <strong class="admin__collapsible-title">
                 <span>
-                    <span>
-                        <?php echo $block->__('Walmart Order'); ?> # <?php echo $block->order->getChildObject()
-                            ->getData('walmart_order_id'); ?>
-                    </span>
+                    <?= $block->__('Walmart Order #') ?>
+                        <?= $block->order->getChildObject()->getData('walmart_order_id') ?>
+                    <?php $customerOrderId = $block->order->getChildObject()->getData('customer_order_id') ?>
+                    <?php if (!empty($customerOrderId)) { ?>
+                        [ <?php echo $block->__('Customer order #') . ' ' . $customerOrderId ?> ]
+                    <?php } ?>
                 </span>
                 </strong>
                 <div style="float: right;">

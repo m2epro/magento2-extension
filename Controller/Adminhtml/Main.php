@@ -360,7 +360,7 @@ abstract class Main extends Base
             $this->getHelper('Module\Cron')->isLastRunMoreThan(1, true) &&
             !$this->getHelper('Module')->isDevelopmentEnvironment()
         ) {
-            $url = $this->getHelper('Module\Support')->getKnowledgebaseArticleUrl('cron-running');
+            $url = $this->getHelper('Module\Support')->getSupportUrl('/support/solutions/articles/9000200402');
 
             $message  = 'Attention! AUTOMATIC Synchronization is not running at the moment.';
             $message .= ' It does not allow M2E Pro to work correctly.';

@@ -80,37 +80,15 @@ class Support
     }
 
     /**
-     * @param string $articleUrl
-     *
-     * @return string
-     */
-    public function getHowToGuideUrl(string $articleUrl): string
-    {
-        $urlParts[] = $this->getSupportUrl() . '/how-to-guide';
-
-        if ($articleUrl) {
-            $urlParts[] = trim($articleUrl, '/');
-        }
-
-        return implode('/', $urlParts);
-    }
-
-    /**
      * @param string $urlPart
      *
      * @return string
      */
-    public function getSupportUrl(string $urlPart = ''): string
+    public function getSupportUrl(string $urlPart): string
     {
         $baseSupportUrl = $this->config->getGroupValue('/support/', 'support_url');
 
-        $urlParts[] = trim($baseSupportUrl, '/');
-
-        if ($urlPart !== '') {
-            $urlParts[] = trim($urlPart, '/');
-        }
-
-        return implode('/', $urlParts);
+        return rtrim($baseSupportUrl, '/') . '/' . ltrim($urlPart, '/');
     }
 
     /**
@@ -160,22 +138,6 @@ class Support
     }
 
     /**
-     * @param string $articleUrl
-     *
-     * @return string
-     */
-    public function getKnowledgebaseUrl(string $articleUrl = ''): string
-    {
-        $urlParts[] = $this->getSupportUrl('knowledgebase');
-
-        if ($articleUrl !== '') {
-            $urlParts[] = trim($articleUrl, '/');
-        }
-
-        return implode('/', $urlParts);
-    }
-
-    /**
      * @param string $component
      *
      * @return string
@@ -185,24 +147,14 @@ class Support
     {
         switch ($component) {
             case \Ess\M2ePro\Helper\Component\Ebay::NICK:
-                return $this->getKnowledgebaseUrl() . 'ebay/';
+                return $this->getSupportUrl('/support/solutions/folders/9000194666');
             case \Ess\M2ePro\Helper\Component\Amazon::NICK:
-                return $this->getKnowledgebaseUrl() . 'amazon/';
+                return $this->getSupportUrl('/support/solutions/folders/9000194663');
             case \Ess\M2ePro\Helper\Component\Walmart::NICK:
-                return $this->getKnowledgebaseUrl() . 'category/1561695-walmart-integration/';
+                return $this->getSupportUrl('/support/solutions/folders/9000194662');
             default:
                 throw new \Ess\M2ePro\Model\Exception\Logic('Invalid Channel.');
         }
-    }
-
-    /**
-     * @param string $articleLink
-     *
-     * @return string
-     */
-    public function getKnowledgebaseArticleUrl(string $articleLink): string
-    {
-        return $this->getKnowledgebaseUrl() . trim($articleLink, '/') . '/';
     }
 
     /**

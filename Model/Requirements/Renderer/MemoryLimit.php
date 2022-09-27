@@ -70,7 +70,7 @@ HTML;
         $helper = $this->getHelper('Module\Translation');
         $testUrl = $this->urlBuilder->getUrl('*/support/testMemoryLimit');
         $testResultUrl = $this->urlBuilder->getUrl('*/support/testMemoryLimitResult');
-        $knowledgeBaseUrl = $this->getHelper('Module\Support')->getKnowledgeBaseUrl('1535371');
+        $knowledgeBaseUrl = $this->getHelper('Module\Support')->getSupportUrl('/support/solutions/articles/9000200884');
 
         $button = $this->layout->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->setData([
             'label'   => $helper->__('Check'),

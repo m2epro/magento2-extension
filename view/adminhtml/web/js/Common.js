@@ -400,7 +400,7 @@ define([
             // bind as you normally would
             jQuery(domElement).bind(eventName, callable);
 
-            var handlers = jQuery(domElement).data('events')[eventName.split('.')[0]];
+            var handlers = jQuery._data( domElement, "events" )[eventName.split('.')[0]];
             var handler = handlers.pop();
 
             handlers.splice(0, 0, handler);

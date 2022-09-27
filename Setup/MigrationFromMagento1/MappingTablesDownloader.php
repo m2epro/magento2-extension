@@ -127,7 +127,7 @@ class MappingTablesDownloader
                 Please ensure you enter the correct URL, then click Continue to try again.
                 If the issue persists, follow <a href="%url%" target="_blank">these instructions</a> to complete
                 the migration process.',
-                $this->supportHelper->getKnowledgebaseArticleUrl('1600682')
+                $this->supportHelper->getSupportUrl('/support/solutions/articles/9000219396')
             ])
         );
     }

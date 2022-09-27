@@ -22,11 +22,17 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
     private $logger;
     /** @var \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\AfnQty\MerchantManager */
     private $merchantManager;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing */
+    private $listingResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Account */
+    private $amazonAccountResource;
 
     /**
      * @param \Ess\M2ePro\Helper\Module\Translation $translationHelper
      * @param \Ess\M2ePro\Helper\Module\Logger $logger
      * @param MerchantManager $merchantManager
+     * @param \Ess\M2ePro\Model\ResourceModel\Listing $listingResource
+     * @param \Ess\M2ePro\Model\ResourceModel\Amazon\Account $amazonAccountResource
      * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
      * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
      * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory
@@ -42,6 +48,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
         \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         \Ess\M2ePro\Helper\Module\Logger $logger,
         MerchantManager $merchantManager,
+        \Ess\M2ePro\Model\ResourceModel\Listing $listingResource,
+        \Ess\M2ePro\Model\ResourceModel\Amazon\Account $amazonAccountResource,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
@@ -65,6 +73,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
         $this->logger = $logger;
         $this->merchantManager = $merchantManager;
         $this->merchantManager->init();
+        $this->listingResource = $listingResource;
+        $this->amazonAccountResource = $amazonAccountResource;
     }
 
     /**
@@ -152,6 +162,14 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
             return;
         }
 
+        $merchantId = $this->merchantManager->getMerchantIdByAccountId((int)$this->params['account_id']);
+        // $this->params['account_id'] is always available
+        // next lines is for possible situation with deleted account
+        if (!$merchantId) {
+            $this->refreshLastUpdate(true);
+            return;
+        }
+
         $keys = array_map(
             function ($value) {
                 return (string)$value;
@@ -163,13 +181,40 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
         $m2eproListingProductCollection = $this->amazonFactory
             ->getObject('Listing_Product')
             ->getCollection();
-        $m2eproListingProductCollection->addFieldToFilter('sku', ['in' => $keys]);
+        $m2eproListingProductCollection
+            ->addFieldToFilter('sku', ['in' => $keys])
+            ->getSelect()
+            ->joinInner(
+                [
+                    'l' => $this->listingResource->getMainTable(),
+                ],
+                'l.id=main_table.listing_id',
+                []
+            )
+            ->joinInner(
+                [
+                    'aa' => $this->amazonAccountResource->getMainTable(),
+                ],
+                'aa.account_id=l.account_id',
+                []
+            )
+            ->where('aa.merchant_id = ?', $merchantId);
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other\Collection $unmanagedListingProductCollection */
         $unmanagedListingProductCollection = $this->amazonFactory
             ->getObject('Listing_Other')
             ->getCollection();
-        $unmanagedListingProductCollection->addFieldToFilter('sku', ['in' => $keys]);
+        $unmanagedListingProductCollection
+            ->addFieldToFilter('sku', ['in' => $keys])
+            ->getSelect()
+            ->joinInner(
+                [
+                    'aa' => $this->amazonAccountResource->getMainTable(),
+                ],
+                'aa.account_id=main_table.account_id',
+                []
+            )
+            ->where('aa.merchant_id = ?', $merchantId);
 
         /** @var \Ess\M2ePro\Model\Listing\Product $item */
         foreach ($m2eproListingProductCollection->getItems() as $item) {

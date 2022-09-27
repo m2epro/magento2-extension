@@ -136,7 +136,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     {
         return $this->helperFactory->getObject('Module_Translation')->__(
             'M2E Pro Server connection failed. Find the solution <a target="_blank" href="%url%">here</a>',
-            $this->helperFactory->getObject('Module_Support')->getKnowledgebaseArticleUrl('664870')
+            $this->helperFactory->getObject('Module_Support')->getSupportUrl('/support/solutions/articles/9000200887')
         );
     }
 

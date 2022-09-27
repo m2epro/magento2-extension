@@ -8,7 +8,7 @@ use Psr\Log\LoggerInterface;
 
 class TrackerLogger implements LoggerInterface
 {
-    private const REGISTRY_KEY = '/change_tracker/logs';
+    public const REGISTRY_KEY = '/change_tracker/logs';
 
     /** @var int */
     private $level;

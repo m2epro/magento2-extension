@@ -185,7 +185,7 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                      in the Product ID attribute.
                      Find more details <a href="%url%" target="_blank" class="external-link">here.</a><br><br>
                      <b>Note:</b> You need to have Amazon approval for listing products without Product Identifiers.
-                    ', $this->support->getKnowledgebaseUrl('1620775-product-id-override-options')),
+                    ', $this->support->getSupportUrl('/support/solutions/articles/9000219393')),
             ]
         );
 

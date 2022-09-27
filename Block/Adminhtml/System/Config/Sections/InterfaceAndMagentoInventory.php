@@ -214,7 +214,7 @@ Customers can purchase each option of Variational Product separately.
 HTML
                     ,
                     $this->supportHelper->getSupportUrl(
-                        'knowledgebase/1585305-listing-magento-grouped-product-as-product-set'
+                        '/support/solutions/articles/9000218437'
                     )
                 )
             ]

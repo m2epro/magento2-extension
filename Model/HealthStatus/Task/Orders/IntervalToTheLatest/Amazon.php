@@ -68,8 +68,8 @@ If you need assistance, contact Support at <a href="support@m2epro.com">support@
 HTML
                 ,
                 ceil($currentInterval / 3600),
-                $this->getHelper('Module_Support')->getKnowledgebaseArticleUrl('692955'),
-                $this->getHelper('Module_Support')->getKnowledgebaseArticleUrl('664870')
+                $this->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000200402'),
+                $this->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000200887')
             ]));
         }
 
@@ -84,8 +84,8 @@ If you need assistance, contact Support at <a href="support@m2epro.com">support@
 HTML
                 ,
                 ceil($currentInterval / 3600),
-                $this->getHelper('Module_Support')->getKnowledgebaseArticleUrl('692955'),
-                $this->getHelper('Module_Support')->getKnowledgebaseArticleUrl('664870')
+                $this->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000200402'),
+                $this->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000200887')
             ]));
         }
 

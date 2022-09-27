@@ -13,6 +13,9 @@
     <hr>
     <?php foreach ($block->logs as $logsIndex => $logs) : ?>
     <div style="margin-bottom: 20px">
+        <?php if ($logs === []) {
+            continue;
+        } ?>
         <h3>Logs #<?= ++$logsIndex ?></h3>
         <?php foreach ($logs as $i => $log) : ?>
             <div class="log-box <?= $i%2 === 0 ? 'even' : 'odd' ?>">

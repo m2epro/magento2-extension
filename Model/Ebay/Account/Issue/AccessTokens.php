@@ -117,7 +117,7 @@ TEXT
                     $this->helperData->escapeHtml($account->getTitle())
                 ),
                 Issue::KEY_TEXT  => $tempMessage,
-                Issue::KEY_URL   => $this->getHelper('Module_Support')->getSupportUrl('error-guide/1584346') .'/?'.
+                Issue::KEY_URL   => $this->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000218991') .'/?'.
                                     $editHash
             ]];
         }
@@ -151,7 +151,7 @@ TEXT
                     $this->helperData->escapeHtml($account->getTitle())
                 ),
                 Issue::KEY_TEXT  => $tempMessage,
-                Issue::KEY_URL   => $this->getHelper('Module_Support')->getSupportUrl('error-guide/1584346') .'/?'.
+                Issue::KEY_URL   => $this->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000218991') .'/?'.
                                     $editHash
             ]];
         }
@@ -198,7 +198,7 @@ TEXT
                     $this->helperData->escapeHtml($account->getTitle())
                 ),
                 Issue::KEY_TEXT  => $tempMessage,
-                Issue::KEY_URL   => $this->getHelper('Module_Support')->getSupportUrl('error-guide/1584346') .'/?'.
+                Issue::KEY_URL   => $this->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000218991') .'/?'.
                                     $editHash
             ]];
         }
@@ -232,7 +232,7 @@ TEXT
                     $this->helperData->escapeHtml($account->getTitle())
                 ),
                 Issue::KEY_TEXT  => $tempMessage,
-                Issue::KEY_URL   => $this->getHelper('Module_Support')->getSupportUrl('error-guide/1584346') .'/?'.
+                Issue::KEY_URL   => $this->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000218991') .'/?'.
                                     $editHash
             ]];
         }

@@ -36,18 +36,31 @@ class ProductAttributesQueryBuilder
         string $storeIdAttribute,
         ?string $productAttribute = null
     ): \Magento\Framework\DB\Select {
-        $table = $this->getAttributeTable($attributeCode);
+        $attributeTable = $this->getAttributeTable($attributeCode);
         $attributeId = $this->getAttributeId($attributeCode);
-        $select = $this->resourceConnection->getConnection()->select();
-        $select->from(['t' => $this->dbHelper->getTableNameWithPrefix($table)], ['value']);
-        $select->where('t.attribute_id = ?', $attributeId);
-        $select->where('t.store_id = ?', $storeIdAttribute);
+
+        $valueQuery = sprintf(
+            "SUBSTRING_INDEX(GROUP_CONCAT(value ORDER BY IF(store_id = %s, 0, 1)), ',', 1)",
+            $storeIdAttribute
+        );
+
+        $attributeSelect = $this->resourceConnection->getConnection()->select();
+        $attributeSelect->from(
+            ['attr' => $this->dbHelper->getTableNameWithPrefix($attributeTable)],
+            null
+        );
+        $attributeSelect->columns([
+            'value' => new \Zend_Db_Expr($valueQuery)
+        ]);
+        $attributeSelect->where('attr.attribute_id = ?', $attributeId);
+        $attributeSelect->where('attr.store_id = 0 OR attr.store_id = ?', new \Zend_Db_Expr($storeIdAttribute));
+        $attributeSelect->group('attr.entity_id');
 
         if ($productAttribute !== null) {
-            $select->where('t.entity_id = ?', new \Zend_Db_Expr($productAttribute));
+            $attributeSelect->where('attr.entity_id = ?', new \Zend_Db_Expr($productAttribute));
         }
 
-        return $select;
+        return $attributeSelect;
     }
 
     /**

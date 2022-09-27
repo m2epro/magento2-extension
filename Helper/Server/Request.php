@@ -109,7 +109,7 @@ class Request
             throw new \Ess\M2ePro\Model\Exception\Connection(
                 $this->helperModuleTranslation->__(
                     'M2E Pro Server connection failed. Find the solution <a target="_blank" href="%url%">here</a>',
-                    $this->helperModuleSupport->getKnowledgebaseArticleUrl('664870')
+                    $this->helperModuleSupport->getSupportUrl('/support/solutions/articles/9000200887')
                 ),
                 [
                     'curl_error_number'  => $response['curl_error_number'],

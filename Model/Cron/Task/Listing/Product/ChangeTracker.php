@@ -115,7 +115,7 @@ class ChangeTracker extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $this->priceTrackerFactory,
             $this->inventoryTrackerFactory,
         ]);
-        $this->profiler->end();
+        $this->profiler->stop();
 
         $this->logger->info('Prepare builders. ' . $this->profiler->logString());
 

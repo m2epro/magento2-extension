@@ -165,11 +165,12 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'walmart_order_id',
             [
-                'header'         => $this->__('Walmart Order #'),
+                'header'         => $this->__('Walmart Purchase Order #'),
                 'align'          => 'left',
                 'width'          => '110px',
                 'index'          => 'walmart_order_id',
-                'frame_callback' => [$this, 'callbackColumnWalmartOrderId']
+                'frame_callback' => [$this, 'callbackColumnWalmartOrderId'],
+                'filter_condition_callback' => [$this, 'callbackFilterOrders'],
             ]
         );
 
@@ -300,9 +301,12 @@ class Grid extends AbstractGrid
         $itemUrl = $this->getUrl('*/walmart_order/view', ['id' => $row->getId(), 'back' => $back]);
         $walmartOrderId = $this->dataHelper->escapeHtml($row->getChildObject()->getData('walmart_order_id'));
 
-        $returnString = <<<HTML
-<a href="{$itemUrl}">{$walmartOrderId}</a>
-HTML;
+        $returnString = "<a href=\"{$itemUrl}\">{$walmartOrderId}</a>";
+
+        $customerOrderId = $this->dataHelper->escapeHtml($row->getChildObject()->getData('customer_order_id'));
+        if (!empty($customerOrderId)) {
+            $returnString .= sprintf('<br>[ <b>%s</b> %s ]', $this->__('CO #'), $customerOrderId);
+        }
 
         /** @var \Ess\M2ePro\Model\Order\Note[] $notes */
         $notes = $this->notesCollection->getItemsByColumnValue('order_id', $row->getData('id'));
@@ -512,6 +516,19 @@ HTML;
         }
 
         return $value;
+    }
+
+    protected function callbackFilterOrders($collection, $column)
+    {
+        $value = $column->getFilter()->getValue();
+        if ($value == null) {
+            return;
+        }
+
+        $collection->getSelect()->where(
+            "second_table.walmart_order_id LIKE ? OR second_table.customer_order_id LIKE ?",
+            '%' . $value . '%'
+        );
     }
 
     protected function callbackFilterItems($collection, $column)

@@ -67,7 +67,7 @@ M2E Pro provides an automatic order synchronization as basic functionality.
 Use manual order import as an alternative only in <a href="%url%" target="_blank">these cases</a>.
 HTML
                     ,
-                    $this->supportHelper->getHowToGuideUrl('1594828')
+                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000199899')
                 ),
                 'style'   => 'margin-top: 15px;',
                 'title'   => $this->__('Order Reimport'),

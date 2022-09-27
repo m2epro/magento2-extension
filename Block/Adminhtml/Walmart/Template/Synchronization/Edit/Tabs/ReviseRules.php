@@ -196,7 +196,7 @@ HTML
                 'text' => $this->__(
                     '<br/>Disabling this option might affect synchronization performance. Please read
              <a href="%url%" target="_blank">this article</a> before using the option.',
-                    $this->supportHelper->getSupportUrl('knowledgebase/1579746/')
+                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000200401')
                 ),
                 'style' => 'display: none;'
             ]

@@ -47,13 +47,13 @@ class ChangeHolder
         $this->logger->info("Hold tracker. Type: {$tracker->getType()}, channel: {$tracker->getChannel()}");
         $this->profiler->start();
         $trackerQuery = $tracker->getDataQuery();
-        $this->profiler->end();
+        $this->profiler->stop();
         $this->logger->info('Build data query: ' . $this->profiler->logString());
 
         $this->profiler->start();
         $statement = $this->resource->getConnection()->query($trackerQuery);
         $statement->execute();
-        $this->profiler->end();
+        $this->profiler->stop();
         $this->logger->info('Executed data query: ' . $this->profiler->logString());
 
         $this->profiler->start();
@@ -80,7 +80,7 @@ class ChangeHolder
         }
 
         $this->instruction->add($instructions);
-        $this->profiler->end();
+        $this->profiler->stop();
         $this->logger->info('Insert instruction: ' . $this->profiler->logString());
         $this->logger->info('Added instructions: ' . $instructionCounter);
     }

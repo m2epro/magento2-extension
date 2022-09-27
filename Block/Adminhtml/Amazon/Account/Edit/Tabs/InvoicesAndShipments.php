@@ -65,7 +65,7 @@ HTML
     target="_blank">article</a> for more details.</p>
 HTML
                 ,
-                $this->supportHelper->getHowToGuideUrl('1586245')
+                $this->supportHelper->getSupportUrl('/support/solutions/articles/9000219394')
             );
         }
 

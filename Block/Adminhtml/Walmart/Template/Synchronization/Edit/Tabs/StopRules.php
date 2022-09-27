@@ -152,7 +152,7 @@ Disabling this option might affect actual product data updates.
 Please read <a href="%url%" target="_blank">this article</a> before disabling the option.
 HTML
                     ,
-                    $this->supportHelper->getKnowledgebaseUrl('1606824')
+                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000199813')
                 ),
                 'style' => 'display: none;'
             ]

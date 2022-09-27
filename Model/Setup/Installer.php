@@ -2476,7 +2476,7 @@ class Installer
         $moduleConfig->insert('/support/', 'documentation_url', 'https://m2e.atlassian.net/wiki/');
         $moduleConfig->insert('/support/', 'clients_portal_url', 'https://clients.m2epro.com/');
         $moduleConfig->insert('/support/', 'website_url', 'https://m2epro.com/');
-        $moduleConfig->insert('/support/', 'support_url', 'https://support.m2epro.com/');
+        $moduleConfig->insert('/support/', 'support_url', 'https://m2epro.freshdesk.com');
         $moduleConfig->insert('/support/', 'magento_marketplace_url', $magentoMarketplaceUrl);
         $moduleConfig->insert('/support/', 'contact_email', 'support@m2epro.com');
         $moduleConfig->insert('/general/configuration/', 'listing_product_inspector_mode', '0');
@@ -12225,6 +12225,12 @@ class Installer
                 ['nullable' => false]
             )
             ->addColumn(
+                'customer_order_id',
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false, 'default' => '']
+            )
+            ->addColumn(
                 'status',
                 Table::TYPE_SMALLINT,
                 null,
@@ -12303,6 +12309,7 @@ class Installer
                 ['default' => null]
             )
             ->addIndex('walmart_order_id', 'walmart_order_id')
+            ->addIndex('customer_order_id', 'customer_order_id')
             ->addIndex('buyer_email', 'buyer_email')
             ->addIndex('buyer_name', 'buyer_name')
             ->addIndex('paid_amount', 'paid_amount')

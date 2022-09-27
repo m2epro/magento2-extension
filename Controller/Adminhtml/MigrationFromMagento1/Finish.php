@@ -108,8 +108,8 @@ Otherwise, it may <a href="%url_2%" target="_blank">affect actual product data u
 <a href="%url_skip%"><b>skip this message</b></a>.
 HTML
                     ,
-                    $this->supportHelper->getKnowledgebaseUrl('1560897'),
-                    $this->supportHelper->getKnowledgebaseUrl('1606824')
+                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000218949'),
+                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000199813')
                 ),
                 'url_reset' => 'm2epro/template/setDefaultValuesInSyncPolicy',
                 'url_skip'  => 'm2epro/template/skipDefaultValuesInSyncPolicy',

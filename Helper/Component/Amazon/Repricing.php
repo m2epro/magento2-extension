@@ -94,7 +94,7 @@ class Repricing
             throw new Connection(
                 $this->moduleTranslation->__(
                     'M2E Pro Server connection failed. Find the solution <a target="_blank" href="%url%">here</a>',
-                    $this->moduleSupport->getKnowledgebaseArticleUrl('664870')
+                    $this->moduleSupport->getSupportUrl('/support/solutions/articles/9000200887')
                 ),
                 [
                     'curl_error_number' => $errorNumber,

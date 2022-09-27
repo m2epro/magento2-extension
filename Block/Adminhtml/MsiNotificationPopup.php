@@ -42,7 +42,7 @@ class MsiNotificationPopup extends AbstractBlock
                     "Magento Inventory (MSI) is enabled.
                 M2E Pro will update your product quantity based on Product Salable QTY. Read more
                 <a target='_blank' href='%url%'>here</a>.",
-                    $this->supportHelper->getSupportUrl('knowledgebase/1560897/')
+                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000218949')
                 )
             )}"
 

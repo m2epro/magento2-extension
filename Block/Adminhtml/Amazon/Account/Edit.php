@@ -163,7 +163,7 @@ class Edit extends AbstractContainer
         </ul>
 HTML
                 ,
-                $this->supportHelper->getHowToGuideUrl('1602134')
+                $this->supportHelper->getSupportUrl('/support/solutions/articles/9000219394')
             ),
         ]);
 

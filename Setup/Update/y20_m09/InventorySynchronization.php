@@ -84,6 +84,9 @@ class InventorySynchronization extends AbstractFeature
             ->query();
 
         while ($row = $accountStmt->fetch()) {
+            if (empty($row['additional_data'])) {
+                continue;
+            }
             $additionalData = (array)json_decode($row['additional_data'], true);
             unset(
                 $additionalData['last_other_listing_products_synchronization'],

@@ -3,6 +3,7 @@
 namespace Ess\M2ePro\Model\ChangeTracker\Base;
 
 use Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger;
+use Ess\M2ePro\Model\ChangeTracker\Common\PriceCondition\PriceConditionFactory;
 use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder;
 use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\QueryBuilderFactory;
 use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder;
@@ -17,22 +18,27 @@ abstract class BasePriceTracker implements TrackerInterface
     protected $logger;
     /** @var \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder */
     protected $attributesQueryBuilder;
+    /** @var \Ess\M2ePro\Model\ChangeTracker\Common\PriceCondition\AbstractPriceCondition */
+    private $priceConditionBuilder;
 
     /**
      * @param string $channel
      * @param \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\QueryBuilderFactory $queryBuilderFactory
      * @param \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder $attributesQueryBuilder
+     * @param \Ess\M2ePro\Model\ChangeTracker\Common\PriceCondition\PriceConditionFactory $conditionFactory
      * @param \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger $logger
      */
     public function __construct(
         string $channel,
         QueryBuilderFactory $queryBuilderFactory,
         ProductAttributesQueryBuilder $attributesQueryBuilder,
+        PriceConditionFactory $conditionFactory,
         TrackerLogger $logger
     ) {
         $this->channel = $channel;
         $this->queryBuilder = $queryBuilderFactory->make();
         $this->attributesQueryBuilder = $attributesQueryBuilder;
+        $this->priceConditionBuilder = $conditionFactory->create($channel);
         $this->logger = $logger;
     }
 
@@ -53,6 +59,11 @@ abstract class BasePriceTracker implements TrackerInterface
     }
 
     /**
+     * @return string
+     */
+    abstract protected function getOnlinePriceCondition(): string;
+
+    /**
      * @return \Magento\Framework\DB\Select
      */
     public function getDataQuery(): \Magento\Framework\DB\Select
@@ -63,7 +74,9 @@ abstract class BasePriceTracker implements TrackerInterface
             ->makeSubQuery()
             ->distinct()
             ->addSelect('listing_product_id', 'base.listing_product_id')
-            ->from('base', $query)
+            ->from('base', $query);
+
+        $mainQuery->andWhere('calculated_price IS NOT NULL')
             ->andWhere('calculated_price != online_price')
             ->andWhere('base.status = ?', \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED)
             ->andWhere('base.revise_update_price = 1');
@@ -92,7 +105,7 @@ abstract class BasePriceTracker implements TrackerInterface
 
         $query->addSelect('listing_product_id', 'lp.id');
 
-        $productIdExpression = 'IFNULL(IFNULL(lpvo.product_id, lp.product_id), 0)';
+        $productIdExpression = 'IFNULL(lpvo.product_id, lp.product_id)';
         $query->addSelect('product_id', $productIdExpression);
 
         $query
@@ -102,18 +115,17 @@ abstract class BasePriceTracker implements TrackerInterface
             ->addSelect('selling_template_id', 'c_l.template_selling_format_id')
         ;
 
-        $onlinePriceExpression = 'COALESCE(c_lp.online_regular_price, 0)';
-        $query->addSelect('online_price', $onlinePriceExpression);
+        $query->addSelect('online_price', $this->getOnlinePriceCondition());
 
+        /* Select base attributes */
         $attributes = [
-            ['name' => 'price', 'alias' => 'price', 'aggregate_function' => 'SUM'],
-            ['name' => 'special_price', 'alias' => 'special_price', 'aggregate_function' => 'SUM'],
-            ['name' => 'special_from_date', 'alias' => 'special_from_date', 'aggregate_function' => 'MAX'],
-            ['name' => 'special_to_date', 'alias' => 'special_to_date', 'aggregate_function' => 'MAX'],
+            ['name' => 'price', 'alias' => 'price',],
+            ['name' => 'special_price', 'alias' => 'special_price',],
+            ['name' => 'special_from_date', 'alias' => 'special_from_date',],
+            ['name' => 'special_to_date', 'alias' => 'special_to_date',],
         ];
 
         foreach ($attributes as $attribute) {
-            $aggFunc = $attribute['aggregate_function'];
             $alias = $attribute['alias'];
             $attributeQuery = $this->attributesQueryBuilder->getQueryForAttribute(
                 $attribute['name'],
@@ -121,10 +133,7 @@ abstract class BasePriceTracker implements TrackerInterface
                 $productIdExpression
             );
 
-            $subQuery = "IF(" .
-                "lpvo.product_type = 'bundle', $aggFunc( ($attributeQuery) ), ($attributeQuery))";
-
-            $query->addSelect($alias, $subQuery);
+            $query->addSelect($alias, $attributeQuery);
         }
 
         $query
@@ -159,8 +168,12 @@ abstract class BasePriceTracker implements TrackerInterface
             )
         ;
 
+        /* Не включаем в выборку grouped and bundle товары */
+        $query->andWhere('lpvo.product_type != ?', 'grouped');
+        $query->andWhere('lpvo.product_type != ?', 'bundle');
+
         $query->addGroup('lp.id');
-        $query->addGroup('COALESCE(lpvo.product_id, lp.product_id)');
+        $query->addGroup('IFNULL(lpvo.product_id, lp.product_id)');
 
         return $query;
     }
@@ -196,10 +209,11 @@ abstract class BasePriceTracker implements TrackerInterface
     {
         $query = $this->queryBuilder;
 
-        /* Selects */
-        $query
-            ->addSelect('listing_product_id', 'product.listing_product_id')
-            ->addSelect('product_id', 'product.product_id')
+        /* Required selects */
+        $query->addSelect('listing_product_id', 'product.listing_product_id');
+        $query->addSelect('calculated_price', $this->priceConditionBuilder->getCondition());
+
+        $query->addSelect('product_id', 'product.product_id')
             ->addSelect('status', 'product.status')
             ->addSelect('store_id', 'product.store_id')
             ->addSelect('sync_template_id', 'product.sync_template_id')
@@ -216,18 +230,9 @@ abstract class BasePriceTracker implements TrackerInterface
                 $this->synchronizationPolicySubQuery(),
                 'sync_policy.template_synchronization_id = product.sync_template_id'
             )
-            ->leftJoin(
-                'cped',
-                'catalog_product_entity_decimal',
-                'cped.entity_id = product.product_id'
-            )
-            ->innerJoin(
-                'ea',
-                'eav_attribute',
-                'ea.attribute_id = cped.attribute_id AND ea.attribute_code = \'price\''
-            )
         ;
 
+        /* Groups */
         $query
             ->addGroup('product.listing_product_id')
             ->addGroup('product.product_id')
@@ -246,7 +251,7 @@ abstract class BasePriceTracker implements TrackerInterface
         return sprintf($tableName, $this->getChannel());
     }
 
-    protected function getPriceColumn(int $mode, $modeAttribute)
+    protected function getPriceColumnCondition(int $mode, $modeAttribute): string
     {
         if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL) {
             return '(CASE
@@ -270,7 +275,7 @@ abstract class BasePriceTracker implements TrackerInterface
                     'product.store_id',
                     'product.product_id'
                 );
-            return "(IFNULL(($attributeQuery), product.price))";
+            return "($attributeQuery)";
         }
 
         return 'product.price';

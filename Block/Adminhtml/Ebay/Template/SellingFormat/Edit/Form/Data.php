@@ -296,7 +296,7 @@ class Data extends AbstractForm
                             <b>Note:</b> By using eBay out-of-stock feature, your item with zero quantity stays active
                             but is hidden from search results until you increase the quantity.
                             Read more <a href="%url%" target="_blank">here</a>.',
-                $this->supportHelper->getKnowledgebaseArticleUrl('332094')
+                $this->supportHelper->getSupportUrl('/support/solutions/articles/9000218905')
             )
             . '</span><span class="duration_note duration_attribute_note" style="display: none;">'
             . $this->__(

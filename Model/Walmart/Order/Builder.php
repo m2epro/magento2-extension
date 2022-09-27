@@ -79,6 +79,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         // ---------------------------------------
         $this->setData('account_id', $this->account->getId());
         $this->setData('walmart_order_id', $data['walmart_order_id']);
+        $this->setData('customer_order_id', $data['customer_order_id']);
         $this->setData('marketplace_id', $this->account->getChildObject()->getMarketplaceId());
 
         $itemsStatuses = [];

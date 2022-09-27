@@ -240,6 +240,8 @@ class Config extends AbstractConfig
             'y22_m09' => [
                 'AddAmazonMarketplaceBelgium',
                 'RemoveHitCounterFromEbayDescriptionPolicy',
+                'AddWalmartCustomerOrderId',
+                'UpdateConfigAttrSupportUrl'
             ],
         ];
     }

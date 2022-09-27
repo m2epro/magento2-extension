@@ -49,6 +49,8 @@ class Logs extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
      */
     private function loadLogs(): array
     {
-        return $this->registry->getValueFromJson('/change_tracker/logs');
+        return $this->registry->getValueFromJson(
+            \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger::REGISTRY_KEY
+        );
     }
 }

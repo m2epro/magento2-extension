@@ -48,7 +48,7 @@ class Support extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 HTML
                 ,
                 $this->moduleSupportHelper->getDocumentationArticleUrl('x/O310B'),
-                $this->moduleSupportHelper->getKnowledgebaseUrl(),
+                $this->moduleSupportHelper->getSupportUrl('/support/solutions/9000117126'),
                 $this->moduleSupportHelper->getYoutubeChannelUrl()
             )
         ]);

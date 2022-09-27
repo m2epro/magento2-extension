@@ -117,7 +117,7 @@ Set <b>Yes</b> if you want to exclude
 <a href="%url%" target="_blank">eVTN</a> from your Magento orders.
 HTML
                     ,
-                    $this->supportHelper->getKnowledgebaseUrl('1608273')
+                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000199785')
                 )
             ]
         );

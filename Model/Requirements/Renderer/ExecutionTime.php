@@ -60,7 +60,7 @@ HTML;
         $color = $this->getCheckObject()->isMeet() ? 'green' : 'red';
 
         if ($this->getCheckObject()->getReal() === null) {
-            $url = $this->getHelper('Module_Support')->getKnowledgebaseArticleUrl('1563888');
+            $url = $this->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000200880');
             $html = <<<HTML
 <span style="color: orange;">
     <span>{$helper->__('unknown')}</span>&nbsp;
@@ -90,7 +90,7 @@ HTML;
         $helper = $this->getHelper('Module\Translation');
         $testUrl = $this->urlBuilder->getUrl('*/support/testExecutionTime');
         $testResultUrl = $this->urlBuilder->getUrl('*/support/testExecutionTimeResult');
-        $knowledgeBaseUrl = $this->getHelper('Module\Support')->getKnowledgeBaseUrl('1535371');
+        $knowledgeBaseUrl = $this->getHelper('Module\Support')->getSupportUrl('/support/solutions/articles/9000200884');
 
         $button = $this->layout->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->setData([
             'label'   => $helper->__('Check'),
