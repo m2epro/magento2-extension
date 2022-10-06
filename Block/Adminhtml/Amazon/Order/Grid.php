@@ -425,6 +425,14 @@ HTML;
 HTML;
         }
 
+        $isSoldByAmazonImageHtml = '';
+        if ($row->getChildObject()->getData('is_sold_by_amazon')) {
+            $imageURL = $this->getViewFileUrl('Ess_M2ePro::images/invoice-by-amazon.png');
+            $isSoldByAmazonImageHtml = <<<HTML
+<div style="margin-top: 2px;"><img height="22px" src="{$imageURL}" /></div>
+HTML;
+        }
+
         $returnString .= <<<HTML
 <a title="{$this->__('View on Amazon')}" target="_blank" href="{$url}">
 <img style="margin-bottom: -3px; float: right"
@@ -432,6 +440,7 @@ HTML;
 HTML;
         $returnString .= $primeImageHtml;
         $returnString .= $businessImageHtml;
+        $returnString .= $isSoldByAmazonImageHtml;
 
         /** @var \Ess\M2ePro\Model\Order\Note[] $notes */
         $notes = $this->notesCollection->getItemsByColumnValue('order_id', $row->getData('id'));

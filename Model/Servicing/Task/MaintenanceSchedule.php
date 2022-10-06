@@ -8,32 +8,55 @@
 
 namespace Ess\M2ePro\Model\Servicing\Task;
 
-/**
- * Class \Ess\M2ePro\Model\Servicing\Task\ProductVariationVocabulary
- */
-class MaintenanceSchedule extends \Ess\M2ePro\Model\Servicing\Task
+class MaintenanceSchedule  implements \Ess\M2ePro\Model\Servicing\TaskInterface
 {
-    //########################################
+    public const NAME = 'maintenance_schedule';
+
+    /** @var \Ess\M2ePro\Helper\Server\Maintenance */
+    private $serverMaintenance;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Server\Maintenance $serverMaintenance
+     */
+    public function __construct(\Ess\M2ePro\Helper\Server\Maintenance $serverMaintenance)
+    {
+        $this->serverMaintenance = $serverMaintenance;
+    }
 
     /**
      * @return string
      */
-    public function getPublicNick()
+    public function getServerTaskName(): string
     {
-        return 'maintenance_schedule';
+        return self::NAME;
     }
 
-    //########################################
+    // ----------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isAllowed(): bool
+    {
+        return true;
+    }
+
+    // ----------------------------------------
 
     /**
      * @return array
      */
-    public function getRequestData()
+    public function getRequestData(): array
     {
         return [];
     }
 
-    public function processResponseData(array $data)
+    /**
+     * @param array $data
+     *
+     * @throws \Exception
+     */
+    public function processResponseData(array $data): void
     {
         $dateEnabledFrom = false;
         $dateEnabledTo = false;
@@ -43,16 +66,12 @@ class MaintenanceSchedule extends \Ess\M2ePro\Model\Servicing\Task
             $dateEnabledTo = $data['date_enabled_to'];
         }
 
-        $helper = $this->getHelper('Server_Maintenance');
-
-        if ($helper->getDateEnabledFrom() != $dateEnabledFrom) {
-            $helper->setDateEnabledFrom($dateEnabledFrom);
+        if ($this->serverMaintenance->getDateEnabledFrom() != $dateEnabledFrom) {
+            $this->serverMaintenance->setDateEnabledFrom($dateEnabledFrom);
         }
 
-        if ($helper->getDateEnabledTo() != $dateEnabledTo) {
-            $helper->setDateEnabledTo($dateEnabledTo);
+        if ($this->serverMaintenance->getDateEnabledTo() != $dateEnabledTo) {
+            $this->serverMaintenance->setDateEnabledTo($dateEnabledTo);
         }
     }
-
-    //########################################
 }

@@ -198,7 +198,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
                 'aa.account_id=l.account_id',
                 []
             )
-            ->where('aa.merchant_id = ?', $merchantId);
+            ->where('aa.merchant_id = ? AND is_afn_channel = 1', $merchantId);
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other\Collection $unmanagedListingProductCollection */
         $unmanagedListingProductCollection = $this->amazonFactory
@@ -214,7 +214,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
                 'aa.account_id=main_table.account_id',
                 []
             )
-            ->where('aa.merchant_id = ?', $merchantId);
+            ->where('aa.merchant_id = ? AND is_afn_channel = 1', $merchantId);
 
         /** @var \Ess\M2ePro\Model\Listing\Product $item */
         foreach ($m2eproListingProductCollection->getItems() as $item) {

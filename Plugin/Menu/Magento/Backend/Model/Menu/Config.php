@@ -176,8 +176,18 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
         $menuModel->remove(Walmart::MENU_ROOT_NODE_NICK);
     }
 
-    private function processWizard(\Magento\Backend\Model\Menu\Item $menu, $viewNick)
+    /**
+     * @param \Magento\Backend\Model\Menu\Item|null $menu
+     * @param string $viewNick
+     *
+     * @return void
+     */
+    private function processWizard(?\Magento\Backend\Model\Menu\Item $menu, string $viewNick): void
     {
+        if ($menu === null) {
+            return;
+        }
+
         /** @var \Ess\M2ePro\Model\Wizard $activeBlocker */
         $activeBlocker = $this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard($viewNick);
 

@@ -8,69 +8,71 @@
 
 namespace Ess\M2ePro\Model\Servicing\Task;
 
-/**
- * Class \Ess\M2ePro\Model\Servicing\Task\Settings
- */
-class Settings extends \Ess\M2ePro\Model\Servicing\Task
+class Settings implements \Ess\M2ePro\Model\Servicing\TaskInterface
 {
-    /** @var \Ess\M2ePro\Model\Servicing\Task\Analytics\Registry $registry */
-    protected $registry;
+    public const NAME = 'settings';
 
-    /** @var \Ess\M2ePro\Model\Servicing\Task\Statistic\Manager $statisticManager */
+    /** @var \Ess\M2ePro\Model\Servicing\Task\Analytics\Registry */
+    private $registry;
+    /** @var \Ess\M2ePro\Model\Servicing\Task\Statistic\Manager */
     private $statisticManager;
+    /** @var \Ess\M2ePro\Model\Registry\Manager */
+    private $registryManager;
+    /** @var \Ess\M2ePro\Model\Config\Manager */
+    private $configManager;
 
-    //########################################
-
+    /**
+     * @param \Ess\M2ePro\Model\Servicing\Task\Analytics\Registry $registry
+     * @param \Ess\M2ePro\Model\Servicing\Task\Statistic\Manager $statisticManager
+     * @param \Ess\M2ePro\Model\Registry\Manager $registryManager
+     * @param \Ess\M2ePro\Model\Config\Manager $configManager
+     */
     public function __construct(
         \Ess\M2ePro\Model\Servicing\Task\Analytics\Registry $registry,
-        \Magento\Eav\Model\Config $config,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\ResourceConnection $resource,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
-        \Ess\M2ePro\Model\Servicing\Task\Statistic\Manager $statisticManager
+        \Ess\M2ePro\Model\Servicing\Task\Statistic\Manager $statisticManager,
+        \Ess\M2ePro\Model\Registry\Manager $registryManager,
+        \Ess\M2ePro\Model\Config\Manager $configManager
     ) {
         $this->registry = $registry;
         $this->statisticManager = $statisticManager;
-
-        parent::__construct(
-            $config,
-            $storeManager,
-            $modelFactory,
-            $helperFactory,
-            $resource,
-            $activeRecordFactory,
-            $parentFactory
-        );
+        $this->registryManager = $registryManager;
+        $this->configManager = $configManager;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return string
      */
-    public function getPublicNick()
+    public function getServerTaskName(): string
     {
-        return 'settings';
+        return self::NAME;
     }
 
-    //########################################
+    // ----------------------------------------
+
+    /**
+     * @return bool
+     */
+    function isAllowed(): bool
+    {
+        return true;
+    }
+
+    // ----------------------------------------
 
     /**
      * @return array
      */
-    public function getRequestData()
+    public function getRequestData(): array
     {
         $requestData = [];
 
-        $tempValue = $this->getHelper('Module')->getRegistry()->getValue(
+        $tempValue = $this->registryManager->getValue(
             '/server/location/default_index_given_by_server_at/'
         );
         if ($tempValue) {
-            $config = $this->getHelper('Module')->getConfig();
-            $requestData['current_default_server_baseurl_index'] = $config->getGroupValue(
+            $requestData['current_default_server_baseurl_index'] = $this->configManager->getGroupValue(
                 '/server/location/',
                 'default_index'
             );
@@ -79,7 +81,14 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
         return $requestData;
     }
 
-    public function processResponseData(array $data)
+    // ----------------------------------------
+
+    /**
+     * @param array $data
+     *
+     * @return void
+     */
+    public function processResponseData(array $data): void
     {
         $this->updateServersBaseUrls($data);
         $this->updateDefaultServerBaseUrlIndex($data);
@@ -88,9 +97,14 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
         $this->updateStatistic($data);
     }
 
-    //########################################
+    // ----------------------------------------
 
-    private function updateServersBaseUrls(array $data)
+    /**
+     * @param array $data
+     *
+     * @return void
+     */
+    private function updateServersBaseUrls(array $data): void
     {
         if (!is_array($data['servers_baseurls']) || empty($data['servers_baseurls'])) {
             return;
@@ -99,16 +113,14 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
         $index = 1;
         $configUpdates = [];
 
-        $config = $this->getHelper('Module')->getConfig();
-
         foreach ($data['servers_baseurls'] as $newHostName => $newBaseUrl) {
-            $oldHostName = $config->getGroupValue('/server/location/'.$index.'/', 'hostname');
-            $oldBaseUrl  = $config->getGroupValue('/server/location/'.$index.'/', 'baseurl');
+            $oldHostName = $this->configManager->getGroupValue('/server/location/' . $index . '/', 'hostname');
+            $oldBaseUrl = $this->configManager->getGroupValue('/server/location/' . $index . '/', 'baseurl');
 
             if ($oldHostName != $newHostName || $oldBaseUrl != $newBaseUrl) {
                 $configUpdates[$index] = [
                     'hostname' => $newHostName,
-                    'baseurl' => $newBaseUrl
+                    'baseurl'  => $newBaseUrl,
                 ];
             }
 
@@ -116,15 +128,18 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
         }
 
         for ($deletedIndex = $index; $deletedIndex < 100; $deletedIndex++) {
-            $deletedHostName = $config->getGroupValue('/server/location/'.$deletedIndex.'/', 'hostname');
-            $deletedBaseUrl  = $config->getGroupValue('/server/location/'.$deletedIndex.'/', 'baseurl');
+            $deletedHostName = $this->configManager->getGroupValue(
+                '/server/location/' . $deletedIndex . '/',
+                'hostname'
+            );
+            $deletedBaseUrl = $this->configManager->getGroupValue('/server/location/' . $deletedIndex . '/', 'baseurl');
 
             if ($deletedHostName === null && $deletedBaseUrl === null) {
                 break;
             }
 
-            $config->deleteGroupValue('/server/location/'.$deletedIndex.'/', 'hostname');
-            $config->deleteGroupValue('/server/location/'.$deletedIndex.'/', 'baseurl');
+            $this->configManager->deleteGroupValue('/server/location/' . $deletedIndex . '/', 'hostname');
+            $this->configManager->deleteGroupValue('/server/location/' . $deletedIndex . '/', 'baseurl');
         }
 
         if (empty($configUpdates)) {
@@ -151,74 +166,90 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
                     return;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return;
         }
 
         foreach ($configUpdates as $index => $change) {
-            $config->setGroupValue('/server/location/'.$index.'/', 'hostname', $change['hostname']);
-            $config->setGroupValue('/server/location/'.$index.'/', 'baseurl', $change['baseurl']);
+            $this->configManager->setGroupValue('/server/location/' . $index . '/', 'hostname', $change['hostname']);
+            $this->configManager->setGroupValue('/server/location/' . $index . '/', 'baseurl', $change['baseurl']);
         }
     }
 
-    private function cleaningBaseUrl($baseUrl)
-    {
-        $baseUrl = str_replace('index.php', '', $baseUrl);
-
-        return rtrim($baseUrl, '/');
-    }
-
-    private function updateDefaultServerBaseUrlIndex(array $data)
+    /**
+     * @param array $data
+     *
+     * @return void
+     * @throws \Exception
+     */
+    private function updateDefaultServerBaseUrlIndex(array $data): void
     {
         if (!isset($data['default_server_baseurl_index']) || (int)$data['default_server_baseurl_index'] <= 0) {
             return;
         }
 
-        $this->getHelper('Module')->getConfig()->setGroupValue(
+        $this->configManager->setGroupValue(
             '/server/location/',
             'default_index',
             (int)$data['default_server_baseurl_index']
         );
 
-        $this->getHelper('Module')->getRegistry()->setValue(
+        $this->registryManager->setValue(
             '/server/location/default_index_given_by_server_at/',
-            $this->getHelper('Data')->getCurrentGmtDate()
+            \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s')
         );
     }
 
-    private function updateLastVersion(array $data)
+    /**
+     * @param array $data
+     *
+     * @return void
+     */
+    private function updateLastVersion(array $data): void
     {
         if (empty($data['last_version'])) {
             return;
         }
 
-        $this->getHelper('Module')->getRegistry()->setValue(
+        $this->registryManager->setValue(
             '/installation/public_last_version/',
             $data['last_version']['magento_2']['public']
         );
-        $this->getHelper('Module')->getRegistry()->setValue(
+        $this->registryManager->setValue(
             '/installation/build_last_version/',
             $data['last_version']['magento_2']['build']
         );
     }
 
-    private function updateAnalytics(array $data)
+    /**
+     * @param array $data
+     *
+     * @return void
+     */
+    private function updateAnalytics(array $data): void
     {
         if (empty($data['analytics'])) {
             return;
         }
 
-        if (isset($data['analytics']['planned_at']) &&
-            $data['analytics']['planned_at'] !== $this->registry->getPlannedAt()) {
+        if (
+            isset($data['analytics']['planned_at']) &&
+            $data['analytics']['planned_at'] !== $this->registry->getPlannedAt()
+        ) {
             $this->registry->markPlannedAt($data['analytics']['planned_at']);
         }
     }
 
-    private function updateStatistic(array $data)
+    /**
+     * @param array $data
+     *
+     * @return void
+     */
+    private function updateStatistic(array $data): void
     {
         // A list of tasks to be enabled/disabled from the server
         $tasks = [
-            \Ess\M2ePro\Model\Servicing\Task\Statistic\Manager::TASK_LISTING_PRODUCT_INSTRUCTION_TYPE => false
+            \Ess\M2ePro\Model\Servicing\Task\Statistic\Manager::TASK_LISTING_PRODUCT_INSTRUCTION_TYPE => false,
         ];
 
         if (isset($data['statistic']['tasks'])) {
@@ -232,5 +263,18 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
         $this->statisticManager->setTasksStates($tasks);
     }
 
-    //########################################
+    // ----------------------------------------
+
+    /**
+     * @param string $baseUrl
+     *
+     * @return string
+     */
+    private function cleaningBaseUrl(string $baseUrl): string
+    {
+        $baseUrl = str_replace('index.php', '', $baseUrl);
+
+        return rtrim($baseUrl, '/');
+    }
+
 }

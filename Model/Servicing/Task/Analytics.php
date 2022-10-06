@@ -8,87 +8,92 @@
 
 namespace Ess\M2ePro\Model\Servicing\Task;
 
-/**
- * Class \Ess\M2ePro\Model\Servicing\Task\Analytics
- */
-class Analytics extends \Ess\M2ePro\Model\Servicing\Task
+class Analytics implements \Ess\M2ePro\Model\Servicing\TaskInterface
 {
+    public const NAME = 'analytics';
+
     /** In bytes. It is equal 1 Mb */
-    const REQUEST_SIZE_MAX = 1048576;
+    private const REQUEST_SIZE_MAX = 1048576;
 
-    protected $registry;
-    protected $serializer;
+    /** @var \Ess\M2ePro\Model\Servicing\Task\Analytics\Registry */
+    private $registry;
+    /** @var \Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManager\Serializer */
+    private $serializer;
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $helperException;
+    /** @var \Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManagerFactory */
+    private $entityManagerFactory;
 
-    //########################################
-
+    /**
+     * @param \Ess\M2ePro\Model\Servicing\Task\Analytics\Registry $registry
+     * @param \Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManager\Serializer $serializer
+     * @param \Ess\M2ePro\Helper\Module\Exception $helperException
+     * @param \Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManagerFactory $entityManagerFactory
+     */
     public function __construct(
         \Ess\M2ePro\Model\Servicing\Task\Analytics\Registry $registry,
         \Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManager\Serializer $serializer,
-        \Magento\Eav\Model\Config $config,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\ResourceConnection $resource,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
+        \Ess\M2ePro\Helper\Module\Exception $helperException,
+        \Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManagerFactory $entityManagerFactory
     ) {
         $this->registry = $registry;
         $this->serializer = $serializer;
-
-        parent::__construct(
-            $config,
-            $storeManager,
-            $modelFactory,
-            $helperFactory,
-            $resource,
-            $activeRecordFactory,
-            $parentFactory
-        );
+        $this->helperException = $helperException;
+        $this->entityManagerFactory = $entityManagerFactory;
     }
 
-    //########################################
+    //----------------------------------------
 
     /**
      * @return string
      */
-    public function getPublicNick()
+    public function getServerTaskName(): string
     {
-        return 'analytics';
+        return self::NAME;
     }
 
-    //########################################
+    //----------------------------------------
 
     /**
      * @return bool
      */
-    public function isAllowed()
+    public function isAllowed(): bool
     {
         return $this->registry->isPlannedNow();
     }
 
-    //########################################
+    //----------------------------------------
 
     /**
-     * @return array
+     * @return array[]
      */
-    public function getRequestData()
+    public function getRequestData(): array
     {
         try {
             return $this->collectAnalytics();
-        } catch (\Exception $e) {
-            $this->getHelper('Module_Exception')->process($e);
+        } catch (\Throwable $e) {
+            $this->helperException->process($e);
+
             return ['analytics' => []];
         }
     }
 
-    public function processResponseData(array $data)
+    /**
+     * @param array $data
+     *
+     * @return void
+     */
+    public function processResponseData(array $data): void
     {
-        return null;
     }
 
-    //########################################
+    //----------------------------------------
 
-    protected function collectAnalytics()
+    /**
+     * @return array[]
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function collectAnalytics(): array
     {
         if (!$this->registry->getStartedAt()) {
             $this->registry->markStarted();
@@ -99,11 +104,9 @@ class Analytics extends \Ess\M2ePro\Model\Servicing\Task
 
         foreach ($this->getEntitiesTypes() as $component => $entitiesTypes) {
             foreach ($entitiesTypes as $entityType) {
-
                 /** @var \Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManager $manager */
-                $manager = $this->modelFactory->getObject(
-                    'Servicing_Task_Analytics_EntityManager',
-                    ['params' => ['component'  => $component, 'entityType' => $entityType]]
+                $manager = $this->entityManagerFactory->create(
+                    ['params' => ['component' => $component, 'entityType' => $entityType]]
                 );
 
                 $progress[$manager->getEntityKey()] = false;
@@ -138,16 +141,19 @@ class Analytics extends \Ess\M2ePro\Model\Servicing\Task
                 'planned_at'  => $this->registry->getPlannedAt(),
                 'started_at'  => $this->registry->getStartedAt(),
                 'finished_at' => $this->registry->getFinishedAt(),
-            ]
+            ],
         ];
     }
 
-    //########################################
+    //----------------------------------------
 
-    protected function getEntitiesTypes()
+    /**
+     * @return array[]
+     */
+    private function getEntitiesTypes(): array
     {
         return [
-            \Ess\M2ePro\Helper\Component\Amazon::NICK => [
+            \Ess\M2ePro\Helper\Component\Amazon::NICK  => [
                 'Account',
                 'Listing',
                 'Template_Synchronization',
@@ -156,7 +162,7 @@ class Analytics extends \Ess\M2ePro\Model\Servicing\Task
                 'Amazon_Template_ProductTaxCode',
                 'Amazon_Template_Shipping',
             ],
-            \Ess\M2ePro\Helper\Component\Ebay::NICK => [
+            \Ess\M2ePro\Helper\Component\Ebay::NICK    => [
                 'Account',
                 'Listing',
                 'Template_Synchronization',
@@ -172,16 +178,21 @@ class Analytics extends \Ess\M2ePro\Model\Servicing\Task
                 'Template_Synchronization',
                 'Template_Description',
                 'Template_SellingFormat',
-                'Walmart_Template_Category'
-            ]
+                'Walmart_Template_Category',
+            ],
         ];
     }
 
-    protected function isEntitiesPackFull(&$entities)
+    /**
+     * @param $entities
+     *
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function isEntitiesPackFull(&$entities): bool
     {
-        $dataSize = strlen($this->getHelper('Data')->jsonEncode($entities));
+        $dataSize = strlen(\Ess\M2ePro\Helper\Json::encode($entities));
+
         return $dataSize > self::REQUEST_SIZE_MAX;
     }
-
-    //########################################
 }

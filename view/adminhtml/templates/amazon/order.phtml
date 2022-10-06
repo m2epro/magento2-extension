@@ -48,6 +48,11 @@ if (empty($currency)) {
                             src="<?php echo $block->getViewFileUrl('Ess_M2ePro::images/amazon-business.png'); ?>"
                             style="margin-left: 5px; vertical-align: middle;"/>
                     <?php endif; ?>
+                    <?php if ($block->order->getChildObject()->isSoldByAmazon()) : ?>
+                        <img height="22px"
+                            src="<?php echo $block->getViewFileUrl('Ess_M2ePro::images/invoice-by-amazon.png'); ?>"
+                            style="margin-left: 5px; vertical-align: middle;"/>
+                    <?php endif; ?>
                 </span>
                 </strong>
                 <div style="float: right;">

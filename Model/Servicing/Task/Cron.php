@@ -8,81 +8,80 @@
 
 namespace Ess\M2ePro\Model\Servicing\Task;
 
-/**
- * Class \Ess\M2ePro\Model\Servicing\Task\Cron
- */
-class Cron extends \Ess\M2ePro\Model\Servicing\Task
+class Cron implements \Ess\M2ePro\Model\Servicing\TaskInterface
 {
-    /** @var \Ess\M2ePro\Helper\Data */
-    protected $helperData;
+    public const NAME = 'cron';
 
+    /** @var \Magento\Store\Model\StoreManagerInterface */
+    private $storeManager;
+    /** @var \Ess\M2ePro\Helper\Module\Cron */
+    private $helperCron;
+    /** @var \Ess\M2ePro\Model\Registry\Manager */
+    private $registryManager;
+    /** @var \Ess\M2ePro\Model\Config\Manager */
+    private $configManager;
+
+    /**
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Ess\M2ePro\Helper\Module\Cron $helperCron
+     * @param \Ess\M2ePro\Model\Registry\Manager $registryManager
+     * @param \Ess\M2ePro\Model\Config\Manager $configManager
+     */
     public function __construct(
-        \Ess\M2ePro\Helper\Data $helperData,
-        \Magento\Eav\Model\Config $config,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\ResourceConnection $resource,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
+        \Ess\M2ePro\Helper\Module\Cron $helperCron,
+        \Ess\M2ePro\Model\Registry\Manager $registryManager,
+        \Ess\M2ePro\Model\Config\Manager $configManager
     ) {
-        $this->helperData = $helperData;
-        parent::__construct(
-            $config,
-            $storeManager,
-            $modelFactory,
-            $helperFactory,
-            $resource,
-            $activeRecordFactory,
-            $parentFactory
-        );
+        $this->storeManager = $storeManager;
+        $this->helperCron = $helperCron;
+        $this->registryManager = $registryManager;
+        $this->configManager = $configManager;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return string
      */
-    public function getPublicNick()
+    public function getServerTaskName(): string
     {
-        return 'cron';
+        return self::NAME;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return bool
+     * @throws \Exception
      */
-    public function isAllowed()
+    public function isAllowed(): bool
     {
-        $helper = $this->getHelper('Module\Cron');
-
-        if ($this->getInitiator() === \Ess\M2ePro\Helper\Data::INITIATOR_DEVELOPER) {
+        if ($this->helperCron->getLastRun() === null) {
             return true;
         }
 
-        if ($helper->getLastRun() === null) {
+        if ($this->helperCron->isRunnerService() && $this->helperCron->isLastRunMoreThan(900)) {
             return true;
         }
 
-        if ($helper->isRunnerService() && $helper->isLastRunMoreThan(900)) {
-            return true;
-        }
+        if ($this->helperCron->isRunnerMagento()) {
+            $currentTimeStamp = \Ess\M2ePro\Helper\Date::createCurrentGmt()->getTimestamp();
+            $lastTypeChange = $this->helperCron->getLastRunnerChange();
+            $lastRun = $this->registryManager->getValue('/servicing/cron/last_run/');
 
-        if ($helper->isRunnerMagento()) {
-            $currentTimeStamp = $this->helperData->getCurrentGmtDate(true);
-            $lastTypeChange = $helper->getLastRunnerChange();
-            $lastRun = $this->getHelper('Module')->getRegistry()->getValue('/servicing/cron/last_run/');
-
-            if (($lastTypeChange === null ||
-                    $currentTimeStamp > (int)$this->helperData->createGmtDateTime($lastTypeChange)->format('U') + 86400
+            if (
+                ($lastTypeChange === null ||
+                    $currentTimeStamp > (int)\Ess\M2ePro\Helper\Date::createDateGmt($lastTypeChange)->format(
+                        'U'
+                    ) + 86400
                 ) &&
                 ($lastRun === null ||
-                    $currentTimeStamp > (int)$this->helperData->createGmtDateTime($lastRun)->format('U') + 86400)
+                    $currentTimeStamp > (int)\Ess\M2ePro\Helper\Date::createDateGmt($lastRun)->format('U') + 86400)
             ) {
-                $this->getHelper('Module')->getRegistry()->setValue(
+                $this->registryManager->setValue(
                     '/servicing/cron/last_run/',
-                    $this->helperData->getCurrentGmtDate()
+                    \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s')
                 );
 
                 return true;
@@ -98,23 +97,23 @@ class Cron extends \Ess\M2ePro\Model\Servicing\Task
      * @return array
      * @throws \Exception
      */
-    public function getRequestData()
+    public function getRequestData(): array
     {
         return [
             'base_url' => $this->storeManager->getStore(\Magento\Store\Model\Store::DEFAULT_STORE_ID)
-                ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_WEB, null)
+                                             ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_WEB, null),
         ];
     }
 
-    public function processResponseData(array $data)
+    /**
+     * @param array $data
+     */
+    public function processResponseData(array $data): void
     {
         if (!isset($data['auth_key'])) {
             return;
         }
 
-        $this->getHelper('Module')->getConfig()
-                                  ->setGroupValue('/cron/service/', 'auth_key', $data['auth_key']);
+        $this->configManager->setGroupValue('/cron/service/', 'auth_key', $data['auth_key']);
     }
-
-    //########################################
 }

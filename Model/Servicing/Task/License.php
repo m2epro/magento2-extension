@@ -8,15 +8,28 @@
 
 namespace Ess\M2ePro\Model\Servicing\Task;
 
-
-class License extends \Ess\M2ePro\Model\Servicing\Task
+class License implements \Ess\M2ePro\Model\Servicing\TaskInterface
 {
     public const NAME = 'license';
+
+    /** @var \Ess\M2ePro\Model\Config\Manager */
+    private $configManager;
+
+    /**
+     * @param \Ess\M2ePro\Model\Config\Manager $configManager
+     */
+    public function __construct(
+        \Ess\M2ePro\Model\Config\Manager $configManager
+    ) {
+        $this->configManager = $configManager;
+    }
+
+    // ----------------------------------------
 
     /**
      * @return string
      */
-    public function getPublicNick(): string
+    public function getServerTaskName(): string
     {
         return self::NAME;
     }
@@ -24,14 +37,31 @@ class License extends \Ess\M2ePro\Model\Servicing\Task
     // ----------------------------------------
 
     /**
+     * @return bool
+     */
+    public function isAllowed(): bool
+    {
+        return true;
+    }
+
+    // ----------------------------------------
+
+    /**
      * @return array
      */
-    public function getRequestData()
+    public function getRequestData(): array
     {
         return [];
     }
 
-    public function processResponseData(array $data)
+    // ----------------------------------------
+
+    /**
+     * @param array $data
+     *
+     * @return void
+     */
+    public function processResponseData(array $data): void
     {
         if (isset($data['info']) && is_array($data['info'])) {
             $this->updateInfoData($data['info']);
@@ -56,57 +86,73 @@ class License extends \Ess\M2ePro\Model\Servicing\Task
 
     // ----------------------------------------
 
-    private function updateInfoData(array $infoData)
+    /**
+     * @param array $infoData
+     *
+     * @return void
+     */
+    private function updateInfoData(array $infoData): void
     {
-        $config = $this->getHelper('Module')->getConfig();
-
         if (array_key_exists('email', $infoData)) {
-            $config->setGroupValue('/license/info/', 'email', $infoData['email']);
+            $this->configManager->setGroupValue('/license/info/', 'email', $infoData['email']);
         }
     }
 
-    private function updateValidationMainData(array $validationData)
+    /**
+     * @param array $validationData
+     *
+     * @return void
+     */
+    private function updateValidationMainData(array $validationData): void
     {
-        $config = $this->getHelper('Module')->getConfig();
-
         if (array_key_exists('domain', $validationData)) {
-            $config->setGroupValue('/license/domain/', 'valid', $validationData['domain']);
+            $this->configManager->setGroupValue('/license/domain/', 'valid', $validationData['domain']);
         }
 
         if (array_key_exists('ip', $validationData)) {
-            $config->setGroupValue('/license/ip/', 'valid', $validationData['ip']);
+            $this->configManager->setGroupValue('/license/ip/', 'valid', $validationData['ip']);
         }
     }
 
-    private function updateValidationValidData(array $isValidData)
+    /**
+     * @param array $isValidData
+     *
+     * @return void
+     */
+    private function updateValidationValidData(array $isValidData): void
     {
-        $config = $this->getHelper('Module')->getConfig();
-
         if (array_key_exists('domain', $isValidData)) {
-            $config->setGroupValue('/license/domain/', 'is_valid', (int)$isValidData['domain']);
+            $this->configManager->setGroupValue('/license/domain/', 'is_valid', (int)$isValidData['domain']);
         }
 
         if (array_key_exists('ip', $isValidData)) {
-            $config->setGroupValue('/license/ip/', 'is_valid', (int)$isValidData['ip']);
+            $this->configManager->setGroupValue('/license/ip/', 'is_valid', (int)$isValidData['ip']);
         }
     }
 
-    private function updateConnectionData(array $data)
+    /**
+     * @param array $data
+     *
+     * @return void
+     */
+    private function updateConnectionData(array $data): void
     {
-        $config = $this->getHelper('Module')->getConfig();
-
         if (array_key_exists('domain', $data)) {
-            $config->setGroupValue('/license/domain/', 'real', $data['domain']);
+            $this->configManager->setGroupValue('/license/domain/', 'real', $data['domain']);
         }
 
         if (array_key_exists('ip', $data)) {
-            $config->setGroupValue('/license/ip/', 'real', $data['ip']);
+            $this->configManager->setGroupValue('/license/ip/', 'real', $data['ip']);
         }
     }
 
-    private function updateStatus($status)
+    /**
+     * @param $status
+     *
+     * @return void
+     */
+    private function updateStatus($status): void
     {
-        $config = $this->getHelper('Module')->getConfig();
-        $config->setGroupValue('/license/', 'status', (int)$status);
+        $this->configManager->setGroupValue('/license/', 'status', (int)$status);
     }
 }

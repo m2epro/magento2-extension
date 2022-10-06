@@ -243,6 +243,9 @@ class Config extends AbstractConfig
                 'AddWalmartCustomerOrderId',
                 'UpdateConfigAttrSupportUrl'
             ],
+            'y22_m10' => [
+                'AddIsSoldByAmazonColumnToAmazonOrder',
+            ]
         ];
     }
 

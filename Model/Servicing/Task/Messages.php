@@ -10,27 +10,58 @@ namespace Ess\M2ePro\Model\Servicing\Task;
 
 use Ess\M2ePro\Model\Issue\DataObject as Issue;
 
-/**
- * Class \Ess\M2ePro\Model\Servicing\Task\Messages
- */
-class Messages extends \Ess\M2ePro\Model\Servicing\Task
+class Messages implements \Ess\M2ePro\Model\Servicing\TaskInterface
 {
-    //########################################
+    public const NAME = 'messages';
+
+    /** @var \Ess\M2ePro\Model\Registry\Manager */
+    private $registryManager;
+    /** @var \Ess\M2ePro\Model\Issue\Notification\Channel\Magento\GlobalMessage */
+    private $globalMessage;
+    /** @var \Ess\M2ePro\Model\Issue\DataObjectFactory */
+    private $dataObjectFactory;
+
+    /**
+     * @param \Ess\M2ePro\Model\Registry\Manager $registryManager
+     * @param \Ess\M2ePro\Model\Issue\Notification\Channel\Magento\GlobalMessage $globalMessage
+     * @param \Ess\M2ePro\Model\Issue\DataObjectFactory $dataObjectFactory
+     */
+    public function __construct(
+        \Ess\M2ePro\Model\Registry\Manager $registryManager,
+        \Ess\M2ePro\Model\Issue\Notification\Channel\Magento\GlobalMessage $globalMessage,
+        \Ess\M2ePro\Model\Issue\DataObjectFactory $dataObjectFactory
+    ) {
+        $this->registryManager = $registryManager;
+        $this->globalMessage = $globalMessage;
+        $this->dataObjectFactory = $dataObjectFactory;
+    }
+
+    // ----------------------------------------
 
     /**
      * @return string
      */
-    public function getPublicNick()
+    public function getServerTaskName(): string
     {
-        return 'messages';
+        return self::NAME;
     }
 
-    //########################################
+    // ----------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isAllowed(): bool
+    {
+        return true;
+    }
+
+    // ----------------------------------------
 
     /**
      * @return array
      */
-    public function getRequestData()
+    public function getRequestData(): array
     {
         return [];
     }
@@ -39,57 +70,68 @@ class Messages extends \Ess\M2ePro\Model\Servicing\Task
      * @param array $data
      *
      * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Exception
      */
-    public function processResponseData(array $data)
+    public function processResponseData(array $data): void
     {
         $this->updateMagentoMessages($data);
         $this->updateModuleMessages($data);
         $this->updateUpgradeMessages();
     }
 
-    //########################################
+    // ----------------------------------------
 
-    private function updateMagentoMessages(array $messages)
+    /**
+     * @param array $messages
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function updateMagentoMessages(array $messages): void
     {
         $messages = array_filter($messages, function ($message) {
             return isset($message['is_global']) && (bool)$message['is_global'];
         });
 
-        /** @var \Ess\M2ePro\Model\Issue\Notification\Channel\Magento\GlobalMessage $notificationChannel */
-        $notificationChannel = $this->modelFactory->getObject('Issue_Notification_Channel_Magento_GlobalMessage');
-
         foreach ($messages as $messageData) {
             /** @var \Ess\M2ePro\Model\Issue\DataObject $issue */
-            $issue = $this->modelFactory->getObject('Issue_DataObject', [
+            $issue = $this->dataObjectFactory->create([
                 Issue::KEY_TYPE  => (int)$messageData['type'],
-                Issue::KEY_TITLE => isset($messageData['title']) ? $messageData['title'] : 'M2E Pro Notification',
-                Issue::KEY_TEXT  => isset($messageData['text']) ? $messageData['text'] : null,
-                Issue::KEY_URL   => isset($messageData['url']) ? $messageData['url'] : null
+                Issue::KEY_TITLE => $messageData['title'] ?? 'M2E Pro Notification',
+                Issue::KEY_TEXT  => $messageData['text'] ?? null,
+                Issue::KEY_URL   => $messageData['url'] ?? null,
             ]);
-            $notificationChannel->addMessage($issue);
+
+            $this->globalMessage->addMessage($issue);
         }
     }
 
-    //########################################
+    // ----------------------------------------
 
-    private function updateModuleMessages(array $messages)
+    /**
+     * @param array $messages
+     *
+     * @return void
+     */
+    private function updateModuleMessages(array $messages): void
     {
         $messages = array_filter($messages, function ($message) {
             return !isset($message['is_global']) || !(bool)$message['is_global'];
         });
 
-        $this->getHelper('Module')->getRegistry()->setValue('/server/messages/', $messages);
+        $this->registryManager->setValue('/server/messages/', $messages);
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
+     * @return void
      * @throws \Exception
      */
-    private function updateUpgradeMessages()
+    private function updateUpgradeMessages(): void
     {
-        $messages = $this->getHelper('Module')->getRegistry()->getValueFromJson('/upgrade/messages/');
+        $messages = $this->registryManager->getValueFromJson('/upgrade/messages/');
         if (empty($messages)) {
             return;
         }
@@ -108,8 +150,6 @@ class Messages extends \Ess\M2ePro\Model\Servicing\Task
             return true;
         });
 
-        $this->getHelper('Module')->getRegistry()->setValue('/upgrade/messages/', $messages);
+        $this->registryManager->setValue('/upgrade/messages/', $messages);
     }
-
-    //########################################
 }

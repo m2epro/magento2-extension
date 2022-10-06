@@ -383,6 +383,14 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return (bool)$this->getData('is_business');
     }
 
+    /**
+     * @return bool
+     */
+    public function isSoldByAmazon(): bool
+    {
+        return (bool)$this->getData('is_sold_by_amazon');
+    }
+
     //########################################
 
     /**

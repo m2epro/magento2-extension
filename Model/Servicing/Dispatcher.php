@@ -8,105 +8,156 @@
 
 namespace Ess\M2ePro\Model\Servicing;
 
-/**
- * Class \Ess\M2ePro\Model\Servicing\Dispatcher
- */
-class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
+use Ess\M2ePro\Model\Servicing\Task\ {Messages,
+    License,
+    Settings,
+    Marketplaces,
+    Cron,
+    Statistic,
+    Analytics,
+    MaintenanceSchedule,
+    ProductVariationVocabulary};
+
+class Dispatcher
 {
-    const DEFAULT_INTERVAL = 3600;
-    const MAX_MEMORY_LIMIT = 256;
+    private const DEFAULT_INTERVAL = 3600;
+    private const MAX_MEMORY_LIMIT = 256;
+    private const SERVER_TASKS_CLASS = [
+        Messages::NAME                   => Messages::class,
+        License::NAME                    => License::class,
+        Settings::NAME                   => Settings::class,
+        Marketplaces::NAME               => Marketplaces::class,
+        Cron::NAME                       => Cron::class,
+        Statistic::NAME                  => Statistic::class,
+        Analytics::NAME                  => Analytics::class,
+        MaintenanceSchedule::NAME        => MaintenanceSchedule::class,
+        ProductVariationVocabulary::NAME => ProductVariationVocabulary::class,
+    ];
 
-    private $params = [];
-    private $initiator;
+    /** @var \Ess\M2ePro\Helper\Client */
+    private $helperClient;
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $helperException;
+    /** @var \Ess\M2ePro\Model\Registry\Manager */
+    private $registryManager;
+    /** @var \Magento\Framework\ObjectManagerInterface */
+    private $objectManager;
+    /** @var \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher */
+    private $connectorDispatcher;
 
-    //########################################
-
-    public function setInitiator($initiator)
-    {
-        $this->initiator = $initiator;
-        return $this;
-    }
-
-    public function getInitiator()
-    {
-        return $this->initiator;
+    /**
+     * @param \Ess\M2ePro\Helper\Client $helperClient
+     * @param \Ess\M2ePro\Helper\Module\Exception $helperException
+     * @param \Ess\M2ePro\Model\Registry\Manager $registryManager
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager
+     * @param \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher $connectorDispatcher
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Client $helperClient,
+        \Ess\M2ePro\Helper\Module\Exception $helperException,
+        \Ess\M2ePro\Model\Registry\Manager $registryManager,
+        \Magento\Framework\ObjectManagerInterface $objectManager,
+        \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher $connectorDispatcher
+    ) {
+        $this->helperClient = $helperClient;
+        $this->helperException = $helperException;
+        $this->registryManager = $registryManager;
+        $this->objectManager = $objectManager;
+        $this->connectorDispatcher = $connectorDispatcher;
     }
 
     // ---------------------------------------
 
     /**
-     * @return array
+     * @param $taskCodes
+     *
+     * @return void
+     * @throws \Exception
      */
-    public function getParams()
+    public function process($taskCodes = null): void
     {
-        return $this->params;
-    }
+        if (!is_array($taskCodes)) {
+            $taskCodes = $this->getRegisteredTasks();
+        }
 
-    /**
-     * @param array $params
-     */
-    public function setParams(array $params = [])
-    {
-        $this->params = $params;
-    }
-
-    //########################################
-
-    public function process($taskCodes = null)
-    {
         $lastUpdate = $this->getLastUpdateDate();
-        $currentDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        $currentDate = \Ess\M2ePro\Helper\Date::createCurrentGmt();
 
-        if ($this->getInitiator() !== \Ess\M2ePro\Helper\Data::INITIATOR_DEVELOPER &&
-            $lastUpdate !== null &&
-            $lastUpdate->getTimestamp() + self::DEFAULT_INTERVAL > $currentDate->getTimestamp()
+        if (
+            $lastUpdate !== null
+            && $lastUpdate->getTimestamp() + self::DEFAULT_INTERVAL > $currentDate->getTimestamp()
         ) {
-            return false;
+            return;
         }
 
         $this->setLastUpdateDateTime();
+        $this->processTasks($taskCodes);
+    }
 
-        !is_array($taskCodes) && $taskCodes = $this->getRegisteredTasks();
-        return $this->processTasks($taskCodes);
+    /**
+     * @param string $taskCode
+     *
+     * @return void
+     */
+    public function processTask(string $taskCode): void
+    {
+        $this->processTasks([$taskCode]);
+    }
+
+    /**
+     * @param array $taskCodes
+     *
+     * @return void
+     */
+    private function processTasks(array $taskCodes): void
+    {
+        $this->helperClient->setMemoryLimit(self::MAX_MEMORY_LIMIT);
+        $this->helperException->setFatalErrorHandler();
+        $tasksModel = $this->getTasksModel($taskCodes);
+
+        $connectorObj = $this->connectorDispatcher->getConnector(
+            'server',
+            'servicing',
+            'updateData',
+            $this->getRequestData($tasksModel)
+        );
+
+        $this->connectorDispatcher->process($connectorObj);
+        $responseData = $connectorObj->getResponseData();
+
+        if (is_array($responseData)) {
+            $this->dispatchResponseData($responseData, $tasksModel);
+        }
     }
 
     // ---------------------------------------
 
-    public function processTask($taskCode)
-    {
-        return $this->processTasks([$taskCode]);
-    }
-
-    public function processTasks(array $taskCodes)
-    {
-        $this->getHelper('Client')->setMemoryLimit(self::MAX_MEMORY_LIMIT);
-        $this->getHelper('Module\Exception')->setFatalErrorHandler();
-
-        $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getConnector(
-            'server',
-            'servicing',
-            'updateData',
-            $this->getRequestData($taskCodes)
-        );
-
-        $dispatcherObject->process($connectorObj);
-        $responseData = $connectorObj->getResponseData();
-
-        if (!is_array($responseData)) {
-            return false;
-        }
-
-        $this->dispatchResponseData($responseData, $taskCodes);
-
-        return true;
-    }
-
-    //########################################
-
-    private function getRequestData(array $taskCodes)
+    /**
+     * @param array $tasksModel
+     *
+     * @return array
+     */
+    private function getRequestData(array $tasksModel): array
     {
         $requestData = [];
+
+        /** @var \Ess\M2ePro\Model\Servicing\TaskInterface $taskModel */
+
+        foreach ($tasksModel as $taskModel) {
+            $requestData[$taskModel->getServerTaskName()] = $taskModel->getRequestData();
+        }
+
+        return $requestData;
+    }
+
+    /**
+     * @param array $taskCodes
+     *
+     * @return array
+     */
+    private function getTasksModel(array $taskCodes): array
+    {
+        $tasksModel = [];
 
         foreach ($this->getRegisteredTasks() as $taskName) {
             if (!in_array($taskName, $taskCodes)) {
@@ -118,106 +169,118 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             if (!$taskModel->isAllowed()) {
                 continue;
             }
-
-            $requestData[$taskModel->getPublicNick()] = $taskModel->getRequestData();
+            $tasksModel[] = $taskModel;
         }
 
-        return $requestData;
+        return $tasksModel;
     }
 
-    private function dispatchResponseData(array $responseData, array $taskCodes)
+    // ---------------------------------------
+
+    /**
+     * @param array $responseData
+     * @param array $tasksModel
+     *
+     * @return void
+     */
+    private function dispatchResponseData(array $responseData, array $tasksModel): void
     {
-        foreach ($this->getRegisteredTasks() as $taskName) {
-            if (!in_array($taskName, $taskCodes)) {
+        /** @var \Ess\M2ePro\Model\Servicing\TaskInterface $taskModel */
+
+        foreach ($tasksModel as $taskModel) {
+            if (
+                !isset($responseData[$taskModel->getServerTaskName()])
+                || !is_array($responseData[$taskModel->getServerTaskName()])
+            ) {
                 continue;
             }
 
-            $taskModel = $this->getTaskModel($taskName);
-
-            if (!isset($responseData[$taskModel->getPublicNick()]) ||
-                !is_array($responseData[$taskModel->getPublicNick()])) {
-                continue;
-            }
-
-            $taskModel->processResponseData($responseData[$taskModel->getPublicNick()]);
+            $taskModel->processResponseData($responseData[$taskModel->getServerTaskName()]);
         }
     }
 
-    //########################################
+    // ---------------------------------------
 
-    private function getTaskModel($taskName)
+    /**
+     * @param string $taskName
+     *
+     * @return \Ess\M2ePro\Model\Servicing\TaskInterface
+     */
+    private function getTaskModel(string $taskName): TaskInterface
     {
-        $taskName = preg_replace_callback('/_([a-z])/i', function ($matches) {
-            return ucfirst($matches[1]);
-        }, $taskName);
+        $taskName = $this->getTaskClass($taskName);
 
-        /** @var \Ess\M2ePro\Model\Servicing\Task $taskModel */
-        $taskModel = $this->modelFactory->getObject('Servicing\Task\\'.ucfirst($taskName));
-        $taskModel->setParams($this->getParams());
-        $taskModel->setInitiator($this->getInitiator());
+        /** @var \Ess\M2ePro\Model\Servicing\TaskInterface $taskModel */
+        $taskModel = $this->objectManager->create($taskName);
 
         return $taskModel;
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * @return array
      */
-    public function getRegisteredTasks()
+    public function getRegisteredTasks(): array
+    {
+        return array_keys(self::SERVER_TASKS_CLASS);
+    }
+
+    /**
+     * @param string $taskName
+     *
+     * @return string
+     */
+    private function getTaskClass(string $taskName): string
+    {
+        return self::SERVER_TASKS_CLASS[$taskName];
+    }
+
+    /**
+     * @return array
+     */
+    public function getSlowTasks(): array
     {
         return [
-            'license',
-            'messages',
-            'settings',
-            'marketplaces',
-            'cron',
             'statistic',
             'analytics',
-            'maintenance_schedule',
-            'product_variation_vocabulary'
         ];
     }
 
     /**
      * @return array
      */
-    public function getSlowTasks()
-    {
-        return [
-            'statistic',
-            'analytics'
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getFastTasks()
+    public function getFastTasks(): array
     {
         return array_diff($this->getRegisteredTasks(), $this->getSlowTasks());
     }
 
     // ---------------------------------------
 
-    private function getLastUpdateDate()
+    /**
+     * @return \DateTime|null
+     * @throws \Exception
+     */
+    private function getLastUpdateDate(): ?\DateTime
     {
-        $lastUpdateDate = $this->getHelper('Module')->getRegistry()->getValue('/servicing/last_update_time/');
+        $lastUpdateDate = $this->registryManager->getValue('/servicing/last_update_time/');
 
         if ($lastUpdateDate !== null) {
-            $lastUpdateDate = new \DateTime($lastUpdateDate, new \DateTimeZone('UTC'));
+            $lastUpdateDate = \Ess\M2ePro\Helper\Date::createDateGmt($lastUpdateDate);
         }
 
         return $lastUpdateDate;
     }
 
-    private function setLastUpdateDateTime()
+    /**
+     * @return void
+     * @throws \Exception
+     */
+    private function setLastUpdateDateTime(): void
     {
-        $this->getHelper('Module')->getRegistry()->setValue(
+        $this->registryManager->setValue(
             '/servicing/last_update_time/',
-            $this->getHelper('Data')->getCurrentGmtDate()
+            \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s')
         );
     }
-
-    //########################################
 }

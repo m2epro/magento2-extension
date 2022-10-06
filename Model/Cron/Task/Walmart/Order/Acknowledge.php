@@ -8,21 +8,17 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Walmart\Order;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Walmart\Order\Acknowledge
- */
 class Acknowledge extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'walmart/order/acknowledge';
+    public const NICK = 'walmart/order/acknowledge';
 
-    const MAX_ORDERS_COUNT = 50;
-
-    //####################################
+    private const MAX_ORDERS_COUNT = 50;
 
     /**
+     * @return void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function performActions()
+    protected function performActions(): void
     {
         $ordersForProcess = $this->getOrdersForProcess();
         if (empty($ordersForProcess)) {
@@ -39,18 +35,18 @@ class Acknowledge extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 $actionHandler->process();
             }
 
-            $order->setData('is_tried_to_acknowledge', 1);
-            $order->save();
+            /** @var \Ess\M2ePro\Model\Walmart\Order $walmartOrder */
+            $walmartOrder = $order->getChildObject();
+            $walmartOrder->setData('is_tried_to_acknowledge', 1);
+            $walmartOrder->save();
         }
     }
-
-    //####################################
 
     /**
      * @return \Ess\M2ePro\Model\Order[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function getOrdersForProcess()
+    protected function getOrdersForProcess(): array
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Order\Collection $collection */
         $collection = $this->parentFactory->getObject(
@@ -64,6 +60,4 @@ class Acknowledge extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         return $collection->getItems();
     }
-
-    //####################################
 }

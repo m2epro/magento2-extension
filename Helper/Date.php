@@ -32,7 +32,7 @@ class Date
      * @return \DateTime
      * @throws \Exception
      */
-    public static function createDateGmt($date): \DateTime
+    public static function createDateGmt(?string $date): \DateTime
     {
         // for backward compatibility
         if ($date === null) {

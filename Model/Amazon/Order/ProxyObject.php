@@ -158,6 +158,10 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             $additionalData .= 'Is Business | ';
         }
 
+        if ($this->order->isSoldByAmazon()) {
+            $additionalData .= 'Invoice by Amazon | ';
+        }
+
         if ($this->order->isMerchantFulfillmentApplied()) {
             $merchantFulfillmentInfo = $this->order->getMerchantFulfillmentData();
 

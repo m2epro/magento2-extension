@@ -8,21 +8,19 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\System\Servicing;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\System\Servicing\Synchronize
- */
 class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'system/servicing/synchronize';
 
-    //########################################
+    // ----------------------------------------
 
-    protected function performActions()
+    /**
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function performActions(): void
     {
         $dispatcher = $this->modelFactory->getObject('Servicing\Dispatcher');
-        $dispatcher->setInitiator($this->getInitiator());
         $dispatcher->process();
     }
-
-    //########################################
 }

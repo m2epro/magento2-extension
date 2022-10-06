@@ -149,6 +149,7 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
                 $order['marketplace_id'] = $marketplace->getId();
                 $order['is_afn_channel'] = (int)$orderData['channel']['is_afn'];
                 $order['is_prime'] = (int)$orderData['is_prime'];
+                $order['is_sold_by_amazon'] = (int)$orderData['is_sold_by_amazon'];
                 $order['is_business'] = (int)$orderData['is_business'];
 
                 $order['purchase_create_date'] = $orderData['purchase_date'];

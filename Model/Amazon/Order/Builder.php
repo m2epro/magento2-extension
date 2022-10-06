@@ -73,6 +73,7 @@ class Builder extends AbstractModel
         $this->setData('status', $this->modelFactory->getObject('Amazon_Order_Helper')->getStatus($data['status']));
         $this->setData('is_afn_channel', $data['is_afn_channel']);
         $this->setData('is_prime', $data['is_prime']);
+        $this->setData('is_sold_by_amazon', $data['is_sold_by_amazon']);
         $this->setData('is_business', $data['is_business']);
         $this->setData('is_replacement', $data['is_replacement']);
 

@@ -8969,6 +8969,12 @@ class Installer
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
+                'is_sold_by_amazon',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
                 'is_business',
                 Table::TYPE_SMALLINT,
                 null,

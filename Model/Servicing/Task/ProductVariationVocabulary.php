@@ -8,46 +8,70 @@
 
 namespace Ess\M2ePro\Model\Servicing\Task;
 
-/**
- * Class \Ess\M2ePro\Model\Servicing\Task\ProductVariationVocabulary
- */
-class ProductVariationVocabulary extends \Ess\M2ePro\Model\Servicing\Task
+class ProductVariationVocabulary implements \Ess\M2ePro\Model\Servicing\TaskInterface
 {
-    //########################################
+    public const NAME = 'product_variation_vocabulary';
+
+    /** @var \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary */
+    private $variationVocabulary;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary $variationVocabulary
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary $variationVocabulary
+    ) {
+        $this->variationVocabulary = $variationVocabulary;
+    }
+
+    // ----------------------------------------
 
     /**
      * @return string
      */
-    public function getPublicNick()
+    public function getServerTaskName(): string
     {
-        return 'product_variation_vocabulary';
+        return self::NAME;
     }
 
-    //########################################
+    // ----------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isAllowed(): bool
+    {
+        return true;
+    }
+
+    // ----------------------------------------
 
     /**
      * @return array
      */
-    public function getRequestData()
+    public function getRequestData(): array
     {
-        $metadata = $this->helperFactory->getObject('Module_Product_Variation_Vocabulary')->getServerMetaData();
-        !isset($metadata['version']) && $metadata['version'] = null;
+        $metadata = $this->variationVocabulary->getServerMetaData();
+        if (!isset($metadata['version'])) {
+            $metadata['version'] = null;
+        }
 
         return ['metadata' => $metadata];
     }
 
-    public function processResponseData(array $data)
+    /**
+     * @param array $data
+     *
+     * @return void
+     */
+    public function processResponseData(array $data): void
     {
-        $helper = $this->helperFactory->getObject('Module_Product_Variation_Vocabulary');
-
         if (isset($data['data']) && is_array($data['data'])) {
-            $helper->setServerData($data['data']);
+            $this->variationVocabulary->setServerData($data['data']);
         }
 
         if (isset($data['metadata']) && is_array($data['metadata'])) {
-            $helper->setServerMetadata($data['metadata']);
+            $this->variationVocabulary->setServerMetadata($data['metadata']);
         }
     }
-
-    //########################################
 }
