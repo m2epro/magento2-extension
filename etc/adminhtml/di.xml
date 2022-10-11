@@ -117,4 +117,11 @@
                 type="Ess\M2ePro\Plugin\Order\Magento\View" />
     </type>
 
+    <!-- order -->
+
+    <type name="Magento\Framework\App\Config">
+        <plugin name="m2epro_plugin_order_magento_framework_app_config"
+                type="Ess\M2ePro\Plugin\Order\Magento\Framework\App\Config" />
+    </type>
+
 </config>
