@@ -19,11 +19,6 @@
 
     <!-- order -->
 
-    <type name="Magento\Framework\App\Config">
-        <plugin name="m2epro_plugin_order_magento_framework_app_config"
-                type="Ess\M2ePro\Plugin\Order\Magento\Framework\App\Config" />
-    </type>
-
     <type name="Magento\Quote\Model\Quote\Item\ToOrderItem">
         <plugin name="m2epro_plugin_order_magento_quote_model_quote_item_toorderitem"
                 type="Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote\Item\ToOrderItem" />
