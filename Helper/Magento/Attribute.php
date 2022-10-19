@@ -373,11 +373,18 @@ class Attribute extends AbstractHelper
         return false;
     }
 
+    /**
+     * @param array $attributes
+     * @param array $frontendInputTypes
+     * @param array $backendInputTypes
+     *
+     * @return array
+     */
     public function filterByInputTypes(
         array $attributes,
         array $frontendInputTypes = [],
         array $backendInputTypes = []
-    ) {
+    ): array {
         if (empty($attributes)) {
             return [];
         }
@@ -413,10 +420,16 @@ class Attribute extends AbstractHelper
         return $resultAttributes;
     }
 
+    /**
+     * @param array $frontendInputTypes
+     * @param array $backendInputTypes
+     *
+     * @return array
+     */
     public function filterAllAttrByInputTypes(
         array $frontendInputTypes = [],
         array $backendInputTypes = []
-    ) {
+    ): array {
         return $this->filterByInputTypes(
             $this->getAll(),
             $frontendInputTypes,

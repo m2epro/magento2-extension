@@ -760,11 +760,18 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     /**
      * @param array $trackingDetails
      * @param array $items
+     *
      * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function updateShippingStatus(array $trackingDetails = [], array $items = [])
     {
         if (!$this->canUpdateShippingStatus($trackingDetails)) {
+            return false;
+        }
+
+        if (empty($trackingDetails['carrier_code'])
+            && !$this->getAmazonAccount()->isUpdateWithoutTrackToMagentoOrder()) {
             return false;
         }
 
@@ -775,15 +782,13 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         if (!empty($trackingDetails['carrier_code'])) {
             $trackingDetails['carrier_title'] = $this->getHelper('Component_Amazon')->getCarrierTitle(
                 $trackingDetails['carrier_code'],
-                isset($trackingDetails['carrier_title']) ? $trackingDetails['carrier_title'] : ''
+                $trackingDetails['carrier_title'] ?? ''
             );
         }
 
-        if (!empty($trackingDetails['carrier_title'])) {
-            if ($trackingDetails['carrier_title'] == \Ess\M2ePro\Model\Order\Shipment\Handler::CUSTOM_CARRIER_CODE &&
-                !empty($trackingDetails['shipping_method'])) {
-                $trackingDetails['carrier_title'] = $trackingDetails['shipping_method'];
-            }
+        if ($trackingDetails['carrier_title'] == \Ess\M2ePro\Model\Order\Shipment\Handler::CUSTOM_CARRIER_CODE &&
+            !empty($trackingDetails['shipping_method'])) {
+            $trackingDetails['carrier_title'] = $trackingDetails['shipping_method'];
         }
 
         $params = array_merge([

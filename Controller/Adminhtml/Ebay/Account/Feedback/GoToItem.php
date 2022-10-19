@@ -41,11 +41,11 @@ class GoToItem extends Account
 
         /** @var \Ess\M2ePro\Model\Ebay\Feedback $feedback */
         $feedback = $this->activeRecordFactory->getObjectLoaded('Ebay\Feedback', $feedbackId);
-        $itemId = $feedback->getData('ebay_item_id');
+        $itemId = $feedback->getEbayItemId();
 
         $listingProduct = $this->helperEbay->getListingProductByEbayItem(
-            $feedback->getData('ebay_item_id'),
-            $feedback->getData('account_id')
+            $feedback->getEbayItemId(),
+            $feedback->getAccountId()
         );
 
         if ($listingProduct !== null) {

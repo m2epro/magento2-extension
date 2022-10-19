@@ -8,85 +8,98 @@
 
 namespace Ess\M2ePro\Model\Issue;
 
-use \Magento\Framework\Message\MessageInterface as Message;
+use Magento\Framework\Message\MessageInterface;
 
-/**
- * Class \Ess\M2ePro\Model\Issue\DataObject
- */
-class DataObject extends \Ess\M2ePro\Model\AbstractModel
+class DataObject
 {
-    const KEY_TITLE = 'title';
-    const KEY_TEXT  = 'text';
-    const KEY_TYPE  = 'type';
-    const KEY_URL   = 'url';
+    /** @var string|int */
+    private $type;
+    /** @var string */
+    private $title;
+    /** @var string */
+    private $text;
+    /** @var string */
+    private $url;
 
-    protected $type;
-    protected $title;
-    protected $text;
-    protected $url;
-
-    //########################################
-
+    /**
+     * @param string|int $type
+     * @param string $title
+     * @param string|null $text
+     * @param string|null $url
+     */
     public function __construct(
         $type,
-        $title,
-        $text,
-        $url,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        array $data = []
+        string $title,
+        ?string $text,
+        ?string $url
     ) {
-        $this->type  = $type;
+        $this->type = $type;
         $this->title = $title;
-        $this->text  = $text;
-        $this->url   = $url;
-
-        parent::__construct($helperFactory, $modelFactory, $data);
+        $this->text = $text;
+        $this->url = $url;
     }
 
-    //########################################
-
+    /**
+     * @return string|int
+     */
     public function getType()
     {
         return $this->type;
     }
 
-    public function getTitle()
+    /**
+     * @return string
+     */
+    public function getTitle(): string
     {
         return $this->title;
     }
 
-    public function getText()
+    /**
+     * @return string|null
+     */
+    public function getText(): ?string
     {
         return $this->text;
     }
 
-    public function getUrl()
+    /**
+     * @return string|null
+     */
+    public function getUrl(): ?string
     {
         return $this->url;
     }
 
-    //########################################
-
-    public function isNotice()
+    /**
+     * @return bool
+     */
+    public function isNotice(): bool
     {
-        return $this->getType() === Message::TYPE_NOTICE;
+        return $this->getType() === MessageInterface::TYPE_NOTICE;
     }
 
-    public function isSuccess()
+    /**
+     * @return bool
+     */
+    public function isSuccess(): bool
     {
-        return $this->getType() === Message::TYPE_SUCCESS;
+        return $this->getType() === MessageInterface::TYPE_SUCCESS;
     }
 
-    public function isError()
+    /**
+     * @return bool
+     */
+    public function isError(): bool
     {
-        return $this->getType() === Message::TYPE_ERROR;
+        return $this->getType() === MessageInterface::TYPE_ERROR;
     }
 
-    public function isWarning()
+    /**
+     * @return bool
+     */
+    public function isWarning(): bool
     {
-        return $this->getType() === Message::TYPE_WARNING;
+        return $this->getType() === MessageInterface::TYPE_WARNING;
     }
-
-    //########################################
 }

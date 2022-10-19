@@ -97,9 +97,10 @@ class GetProductsSearchStatus extends Main
             ];
         }
 
+        $text = $this->__('You can check Product Identifiers settings in Amazon > Configuration > Settings > Main.');
         $messages[] = [
             'type' => 'warning',
-            'text' => $this->__('You can check Product Identifiers settings in Amazon > Configuration > Main.')
+            'text' => $text,
         ];
 
         $this->setJsonContent([

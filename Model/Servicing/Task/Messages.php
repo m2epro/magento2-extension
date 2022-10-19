@@ -87,21 +87,21 @@ class Messages implements \Ess\M2ePro\Model\Servicing\TaskInterface
      *
      * @return void
      * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Exception
      */
     private function updateMagentoMessages(array $messages): void
     {
         $messages = array_filter($messages, function ($message) {
-            return isset($message['is_global']) && (bool)$message['is_global'];
+            return isset($message['is_global']) && $message['is_global'];
         });
 
         foreach ($messages as $messageData) {
-            /** @var \Ess\M2ePro\Model\Issue\DataObject $issue */
-            $issue = $this->dataObjectFactory->create([
-                Issue::KEY_TYPE  => (int)$messageData['type'],
-                Issue::KEY_TITLE => $messageData['title'] ?? 'M2E Pro Notification',
-                Issue::KEY_TEXT  => $messageData['text'] ?? null,
-                Issue::KEY_URL   => $messageData['url'] ?? null,
-            ]);
+            $issue = $this->dataObjectFactory->create(
+                (int)$messageData['type'],
+                $messageData['title'] ?? 'M2E Pro Notification',
+                $messageData['text'] ?? null,
+                $messageData['url'] ?? null
+            );
 
             $this->globalMessage->addMessage($issue);
         }

@@ -8,69 +8,66 @@
 
 namespace Ess\M2ePro\Model\Issue\Notification\Channel\Magento;
 
-use \Ess\M2ePro\Model\AbstractModel;
-use \Ess\M2ePro\Model\Issue\Notification\Channel\ChannelInterface;
-use \Magento\Framework\Message\MessageInterface as Message;
+use Ess\M2ePro\Controller\Adminhtml\Base;
+use Ess\M2ePro\Model\Exception\Logic;
+use Ess\M2ePro\Model\Issue\DataObject;
+use Ess\M2ePro\Model\Issue\Notification\ChannelInterface;
+use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\Message\MessageInterface as Message;
 
-/**
- * Class \Ess\M2ePro\Model\Issue\Notification\Channel\Magento\Session
- */
-class Session extends AbstractModel implements ChannelInterface
+class Session implements ChannelInterface
 {
-    /** @var \Magento\Framework\Message\ManagerInterface */
-    protected $messageManager;
+    /** @var ManagerInterface */
+    private $messageManager;
 
-    //########################################
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Magento\Framework\Message\ManagerInterface $messageManager
-    ) {
+    /**
+     * @param \Magento\Framework\Message\ManagerInterface $messageManager
+     */
+    public function __construct(ManagerInterface $messageManager)
+    {
         $this->messageManager = $messageManager;
-
-        parent::__construct($helperFactory, $modelFactory);
     }
 
-    //########################################
-
-    public function addMessage(\Ess\M2ePro\Model\Issue\DataObject $issue)
+    /**
+     * @inheritDoc
+     *
+     * @throws Logic
+     */
+    public function addMessage(DataObject $message): void
     {
-        switch ($issue->getType()) {
+        switch ($message->getType()) {
             case Message::TYPE_NOTICE:
                 $this->messageManager->addNotice(
-                    $issue->getText(),
-                    \Ess\M2ePro\Controller\Adminhtml\Base::GLOBAL_MESSAGES_GROUP
+                    $message->getText(),
+                    Base::GLOBAL_MESSAGES_GROUP
                 );
                 break;
 
             case Message::TYPE_SUCCESS:
                 $this->messageManager->addSuccess(
-                    $issue->getText(),
-                    \Ess\M2ePro\Controller\Adminhtml\Base::GLOBAL_MESSAGES_GROUP
+                    $message->getText(),
+                    Base::GLOBAL_MESSAGES_GROUP
                 );
                 break;
 
             case Message::TYPE_WARNING:
                 $this->messageManager->addWarning(
-                    $issue->getText(),
-                    \Ess\M2ePro\Controller\Adminhtml\Base::GLOBAL_MESSAGES_GROUP
+                    $message->getText(),
+                    Base::GLOBAL_MESSAGES_GROUP
                 );
                 break;
 
             case Message::TYPE_ERROR:
                 $this->messageManager->addError(
-                    $issue->getText(),
-                    \Ess\M2ePro\Controller\Adminhtml\Base::GLOBAL_MESSAGES_GROUP
+                    $message->getText(),
+                    Base::GLOBAL_MESSAGES_GROUP
                 );
                 break;
 
             default:
-                throw new \Ess\M2ePro\Model\Exception\Logic(
-                    sprintf('Unsupported message type [%s]', $issue->getType())
+                throw new Logic(
+                    sprintf('Unsupported message type [%s]', $message->getType())
                 );
         }
     }
-
-    //########################################
 }

@@ -3519,6 +3519,12 @@ class Installer
                 ['default' => null]
             )
             ->addColumn(
+                'is_critical_error_received',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
                 'update_date',
                 Table::TYPE_DATETIME,
                 null,
@@ -6600,7 +6606,6 @@ class Installer
         $moduleConfig->insert('/ebay/configuration/', 'motors_epids_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'uk_epids_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'de_epids_attribute');
-        $moduleConfig->insert('/ebay/configuration/', 'au_epids_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'it_epids_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'ktypes_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'upload_images_mode', 2);
@@ -7012,7 +7017,7 @@ class Installer
                     'is_charity'                           => 1,
                     'is_in_store_pickup'                   => 1,
                     'is_return_description'                => 0,
-                    'is_epid'                              => 1,
+                    'is_epid'                              => 0,
                     'is_ktype'                             => 1
                 ],
                 [
@@ -11009,7 +11014,7 @@ class Installer
                     'is_new_asin_available'                   => 1,
                     'is_merchant_fulfillment_available'       => 1,
                     'is_business_available'                   => 1,
-                    'is_vat_calculation_service_available'    => 0,
+                    'is_vat_calculation_service_available'    => 1,
                     'is_product_tax_code_policy_available'    => 1,
                 ],
                 [
@@ -11099,7 +11104,7 @@ class Installer
                     'is_new_asin_available'                   => 0,
                     'is_merchant_fulfillment_available'       => 1,
                     'is_business_available'                   => 1,
-                    'is_vat_calculation_service_available'    => 0,
+                    'is_vat_calculation_service_available'    => 1,
                     'is_product_tax_code_policy_available'    => 0,
                 ],
             ]

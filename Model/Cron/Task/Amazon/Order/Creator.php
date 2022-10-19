@@ -127,6 +127,17 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
             }
         }
 
+        $magentoOrder = $order->getMagentoOrder();
+        if (
+            $magentoOrder !== null
+            && (
+                $magentoOrder->getState() === \Magento\Sales\Model\Order::STATE_CLOSED
+                || $magentoOrder->getState() === \Magento\Sales\Model\Order::STATE_CANCELED
+            )
+        ) {
+            return;
+        }
+
         if ($order->getReserve()->isNotProcessed() && $order->isReservable()) {
             $order->getReserve()->place();
         }

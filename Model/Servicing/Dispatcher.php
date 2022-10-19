@@ -8,30 +8,22 @@
 
 namespace Ess\M2ePro\Model\Servicing;
 
-use Ess\M2ePro\Model\Servicing\Task\ {Messages,
-    License,
-    Settings,
-    Marketplaces,
-    Cron,
-    Statistic,
-    Analytics,
-    MaintenanceSchedule,
-    ProductVariationVocabulary};
+use Ess\M2ePro\Model\Servicing\Task;
 
 class Dispatcher
 {
     private const DEFAULT_INTERVAL = 3600;
     private const MAX_MEMORY_LIMIT = 256;
     private const SERVER_TASKS_CLASS = [
-        Messages::NAME                   => Messages::class,
-        License::NAME                    => License::class,
-        Settings::NAME                   => Settings::class,
-        Marketplaces::NAME               => Marketplaces::class,
-        Cron::NAME                       => Cron::class,
-        Statistic::NAME                  => Statistic::class,
-        Analytics::NAME                  => Analytics::class,
-        MaintenanceSchedule::NAME        => MaintenanceSchedule::class,
-        ProductVariationVocabulary::NAME => ProductVariationVocabulary::class,
+        Task\Messages::NAME                   => Task\Messages::class,
+        Task\License::NAME                    => Task\License::class,
+        Task\Settings::NAME                   => Task\Settings::class,
+        Task\Marketplaces::NAME               => Task\Marketplaces::class,
+        Task\Cron::NAME                       => Task\Cron::class,
+        Task\Statistic::NAME                  => Task\Statistic::class,
+        Task\Analytics::NAME                  => Task\Analytics::class,
+        Task\MaintenanceSchedule::NAME        => Task\MaintenanceSchedule::class,
+        Task\ProductVariationVocabulary::NAME => Task\ProductVariationVocabulary::class,
     ];
 
     /** @var \Ess\M2ePro\Helper\Client */
@@ -242,8 +234,8 @@ class Dispatcher
     public function getSlowTasks(): array
     {
         return [
-            'statistic',
-            'analytics',
+            Task\Statistic::NAME,
+            Task\Analytics::NAME,
         ];
     }
 

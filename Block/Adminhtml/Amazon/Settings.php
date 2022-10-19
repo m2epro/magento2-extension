@@ -30,7 +30,7 @@ class Settings extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
         $this->addButton('save', [
             'label'     => $this->__('Save'),
-            'onclick'   => 'SettingsObj.saveSettingsTab()',
+            'onclick'   => 'SettingsObj.saveSettings()',
             'class'     => 'primary'
         ]);
     }

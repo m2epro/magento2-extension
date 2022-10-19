@@ -625,9 +625,9 @@ JS
         if ($this->config->isGeneralIdModeNone() && $this->config->isWorldwideIdModeNone()) {
             $warningNotification = $this->__(
                 "To have your products assigned to the existing ASIN/ISBN in the Amazon catalog, please configure"
-                . " Product Identifiers settings in Amazon > Configuration > Main"
+                . " Product Identifiers settings in Amazon > Configuration > Settings > Main"
                 . " or use <a href='%url%' target='_blank' class='external-link'>New ASIN creation</a> option.",
-                $this->supportHelper->getDocumentationArticleUrl('x/nwMVB')
+                $this->supportHelper->getDocumentationArticleUrl('x/1QkVB')
             );
 
             $this->js->add(

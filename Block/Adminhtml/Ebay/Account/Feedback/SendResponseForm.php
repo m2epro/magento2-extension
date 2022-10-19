@@ -12,20 +12,25 @@ class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
 {
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Feedback\Template\CollectionFactory */
+    private $feedbackTemplateCollectionFactory;
 
     public function __construct(
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Model\ResourceModel\Ebay\Feedback\Template\CollectionFactory $feedbackTemplateCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
         $this->globalDataHelper = $globalDataHelper;
+        $this->feedbackTemplateCollectionFactory = $feedbackTemplateCollectionFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
     protected function _prepareForm()
     {
+        /** @var \Ess\M2ePro\Model\Ebay\Feedback $feedback */
         $feedback = $this->globalDataHelper->getValue('feedback');
 
         $form = $this->_formFactory->create(
@@ -51,7 +56,7 @@ class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
             []
         );
 
-        $transaction = $feedback->getEbayTransactionId() == 0 ?
+        $transaction = empty($feedback->getEbayTransactionId()) ?
             $this->__('No ID For Auction') : $feedback->getEbayTransactionId();
         $url = $this->getUrl('*/*/goToOrder/', ['feedback_id' => $feedback->getId()]);
 
@@ -86,12 +91,12 @@ class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
             'note',
             [
                 'label' => $this->__('Buyer\'s Feedback'),
-                'text' => $feedback->getData('buyer_feedback_text')
+                'text' => $feedback->getBuyerFeedbackText()
             ]
         );
 
-        $templates = $this->activeRecordFactory->getObject('Ebay_Feedback_Template')->getCollection()
-            ->addFieldToFilter('main_table.account_id', $feedback->getData('account_id'));
+        $templates = $this->feedbackTemplateCollectionFactory->create()
+            ->addFieldToFilter('main_table.account_id', $feedback->getAccountId());
 
         $fieldset->addField(
             'feedback_template_type',

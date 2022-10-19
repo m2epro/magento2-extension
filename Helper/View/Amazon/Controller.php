@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Helper\View\Amazon;
 
+use Ess\M2ePro\Model\Issue\LocatorInterface;
+
 class Controller
 {
     /** @var \Ess\M2ePro\Model\Factory */
@@ -35,7 +37,7 @@ class Controller
         ];
 
         foreach ($issueLocators as $locator) {
-            /** @var \Ess\M2ePro\Model\Issue\Locator\AbstractModel $locatorModel */
+            /** @var LocatorInterface $locatorModel */
             $locatorModel = $this->modelFactory->getObject($locator);
 
             foreach ($locatorModel->getIssues() as $issue) {

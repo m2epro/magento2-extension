@@ -241,10 +241,13 @@ class Config extends AbstractConfig
                 'AddAmazonMarketplaceBelgium',
                 'RemoveHitCounterFromEbayDescriptionPolicy',
                 'AddWalmartCustomerOrderId',
-                'UpdateConfigAttrSupportUrl'
+                'UpdateConfigAttrSupportUrl',
+                'AddIsCriticalErrorReceivedFlag',
             ],
             'y22_m10' => [
                 'AddIsSoldByAmazonColumnToAmazonOrder',
+                'UpdateAmazonMarketplace',
+                'RemoveEpidsForAustralia',
             ]
         ];
     }

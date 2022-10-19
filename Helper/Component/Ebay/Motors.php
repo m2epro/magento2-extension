@@ -14,13 +14,11 @@ class Motors
     public const TYPE_KTYPE = 2;
     public const TYPE_EPID_UK = 3;
     public const TYPE_EPID_DE = 4;
-    public const TYPE_EPID_AU = 5;
     public const TYPE_EPID_IT = 6;
 
     public const EPID_SCOPE_MOTORS = 1;
     public const EPID_SCOPE_UK = 2;
     public const EPID_SCOPE_DE = 3;
-    public const EPID_SCOPE_AU = 4;
     public const EPID_SCOPE_IT = 5;
 
     public const PRODUCT_TYPE_VEHICLE = 0;
@@ -85,9 +83,6 @@ class Motors
 
             case self::TYPE_EPID_DE:
                 return $this->componentEbayConfiguration->getDeEpidsAttribute();
-
-            case self::TYPE_EPID_AU:
-                return $this->componentEbayConfiguration->getAuEpidsAttribute();
 
             case self::TYPE_EPID_IT:
                 return $this->componentEbayConfiguration->getItEpidsAttribute();
@@ -248,7 +243,6 @@ class Motors
                 self::TYPE_EPID_MOTOR,
                 self::TYPE_EPID_UK,
                 self::TYPE_EPID_DE,
-                self::TYPE_EPID_AU,
                 self::TYPE_EPID_IT,
             ])
         ) {
@@ -305,9 +299,6 @@ class Motors
             case self::TYPE_EPID_DE:
                 return self::EPID_SCOPE_DE;
 
-            case self::TYPE_EPID_AU:
-                return self::EPID_SCOPE_AU;
-
             case self::TYPE_EPID_IT:
                 return self::EPID_SCOPE_IT;
 
@@ -327,9 +318,6 @@ class Motors
 
             case \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_DE:
                 return self::TYPE_EPID_DE;
-
-            case \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_AU:
-                return self::TYPE_EPID_AU;
 
             case \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_IT:
                 return self::TYPE_EPID_IT;
@@ -492,7 +480,6 @@ class Motors
             'motors_epids_attribute',
             'uk_epids_attribute',
             'de_epids_attribute',
-            'au_epids_attribute',
             'it_epids_attribute',
             'ktypes_attribute',
         ];

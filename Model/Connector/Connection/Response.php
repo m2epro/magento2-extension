@@ -62,6 +62,9 @@ class Response extends \Ess\M2ePro\Model\AbstractModel
         return $this->resultType;
     }
 
+    /**
+     * @return \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set|null
+     */
     public function getMessages()
     {
         return $this->messages;

@@ -221,7 +221,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             return (array)$response;
         }
 
-        if ($this->isErrorMessageReceived) {
+        if ($this->isErrorMessageReceived && !$this->isResultSetTooLarge) {
             return [];
         }
 
@@ -243,7 +243,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
                 return (array)$response;
             }
 
-            if ($this->isErrorMessageReceived) {
+            if ($this->isErrorMessageReceived && !$this->isResultSetTooLarge) {
                 return [];
             }
         }

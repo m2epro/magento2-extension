@@ -163,6 +163,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'width'        => '50px',
             'align'        => 'center',
             'type'         => 'options',
+            'index'        => 'buyer_feedback_type',
             'filter_index' => 'buyer_feedback_type',
             'sortable'     => false,
             'options'      => [

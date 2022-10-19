@@ -180,7 +180,7 @@ class Grid extends AbstractGrid
     public function callbackColumnActions($value, $row, $column, $isExport)
     {
         $productId = (int)$row->getId();
-        $productSku = $row->getSku();
+        $productSku = htmlspecialchars($row->getSku());
         $label = $this->__('Link To This Product');
 
         $js = <<<JS

@@ -346,8 +346,21 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
-        $data['magento_orders_settings']['shipping_information']['ship_by_date']
-            = (int)($this->rawData['magento_orders_settings']['shipping_information']['ship_by_date'] ?? 1);
+        // shipping information
+        // ---------------------------------------
+        $tempKey = 'shipping_information';
+        $tempSettings = !empty($this->rawData['magento_orders_settings'][$tempKey])
+            ? $this->rawData['magento_orders_settings'][$tempKey] : [];
+
+        $keys = [
+            'ship_by_date',
+            'update_without_track',
+        ];
+        foreach ($keys as $key) {
+            if (isset($tempSettings[$key])) {
+                $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
+            }
+        }
 
         $data['magento_orders_settings'] = \Ess\M2ePro\Helper\Json::encode($data['magento_orders_settings']);
 
@@ -460,7 +473,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                     'stock_mode' => 0,
                 ],
                 'shipping_information'    => [
-                    'ship_by_date' => 1,
+                    'ship_by_date'         => 1,
+                    'update_without_track' => 1,
                 ],
             ],
 

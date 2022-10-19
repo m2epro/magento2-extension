@@ -33,7 +33,7 @@ class Controller
         ];
 
         foreach ($issueLocators as $locator) {
-            /** @var \Ess\M2ePro\Model\Issue\Locator\AbstractModel $locatorModel */
+            /** @var \Ess\M2ePro\Model\Issue\LocatorInterface $locatorModel */
             $locatorModel = $this->modelFactory->getObject($locator);
 
             foreach ($locatorModel->getIssues() as $issue) {

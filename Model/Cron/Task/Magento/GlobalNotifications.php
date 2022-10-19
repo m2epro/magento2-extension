@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Magento;
 
+use Ess\M2ePro\Model\Issue\LocatorInterface;
+
 /**
  * Class \Ess\M2ePro\Model\Cron\Task\Magento\GlobalNotifications
  */
@@ -31,7 +33,7 @@ class GlobalNotifications extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         ];
 
         foreach ($issueLocators as $locator) {
-            /** @var \Ess\M2ePro\Model\Issue\Locator\AbstractModel $locatorModel */
+            /** @var LocatorInterface $locatorModel */
             $locatorModel = $this->modelFactory->getObject($locator);
 
             foreach ($locatorModel->getIssues() as $issue) {

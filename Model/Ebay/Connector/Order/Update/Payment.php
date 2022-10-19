@@ -41,7 +41,15 @@ class Payment extends \Ess\M2ePro\Model\Ebay\Connector\Order\Update\AbstractMode
 
         if (isset($responseData['is_already_paid']) && $responseData['is_already_paid']) {
             $this->order->setData('payment_status', \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED)->save();
-            $this->order->updateMagentoOrderStatus();
+
+            $magentoOrder = $this->order->getMagentoOrder();
+            if (
+                $magentoOrder !== null
+                && $magentoOrder->getState() !== \Magento\Sales\Model\Order::STATE_CLOSED
+                && $magentoOrder->getState() !== \Magento\Sales\Model\Order::STATE_CANCELED
+            ) {
+                $this->order->updateMagentoOrderStatus();
+            }
         }
 
         $orderChange->delete();

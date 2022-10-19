@@ -305,6 +305,18 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     }
 
     /**
+     * @return bool
+     */
+    public function isUpdateWithoutTrackToMagentoOrder(): bool
+    {
+        return (bool)$this->getSetting(
+            'magento_orders_settings',
+            ['shipping_information', 'update_without_track'],
+            true
+        );
+    }
+
+    /**
      * @return int
      */
     public function getOtherListingsMappingGeneralIdPriority()

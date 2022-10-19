@@ -464,6 +464,20 @@ HTML
             ]
         );
 
+        $shipByDateFieldset->addField(
+            'magento_orders_update_without_track_settings',
+            'select',
+            [
+                'name'    => 'magento_orders_settings[shipping_information][update_without_track]',
+                'label'   => $this->__('Update Order as Shipped without Tracking Info'),
+                'values'  => [
+                    1 => $this->__('Yes'),
+                    0 => $this->__('No'),
+                ],
+                'value'   => $formData['magento_orders_settings']['shipping_information']['update_without_track'] ?? 1,
+            ]
+        );
+
         $fieldset = $form->addFieldset(
             'magento_block_amazon_accounts_magento_orders_number',
             [

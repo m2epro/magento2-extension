@@ -246,6 +246,18 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     /**
+     * @param ?\Magento\Sales\Model\Order $magentoOrder
+     *
+     * @return bool
+     */
+    protected function isMagentoOrderUpdatable(?\Magento\Sales\Model\Order $magentoOrder): bool
+    {
+        return $magentoOrder !== null
+            && $magentoOrder->getState() !== \Magento\Sales\Model\Order::STATE_CLOSED
+            && $magentoOrder->getState() !== \Magento\Sales\Model\Order::STATE_CANCELED;
+    }
+
+    /**
      * @return bool
      */
     private function isNew()
@@ -326,7 +338,12 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     private function processMagentoOrderUpdates()
     {
-        if (!$this->hasUpdates() || $this->order->getMagentoOrder() === null) {
+        $magentoOrder = $this->order->getMagentoOrder();
+        if (
+            !$this->hasUpdates()
+            || $magentoOrder === null
+            || !$this->isMagentoOrderUpdatable($magentoOrder)
+        ) {
             return;
         }
 
@@ -337,7 +354,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
         /** @var \Ess\M2ePro\Model\Magento\Order\Updater $magentoOrderUpdater */
         $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
-        $magentoOrderUpdater->setMagentoOrder($this->order->getMagentoOrder());
+        $magentoOrderUpdater->setMagentoOrder($magentoOrder);
 
         if ($this->hasUpdate(self::UPDATE_STATUS)) {
             $this->order->setStatusUpdateRequired(true);
@@ -378,9 +395,14 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     private function addCommentsToMagentoOrder(\Ess\M2ePro\Model\Order $order, $comments)
     {
+        $magentoOrder = $order->getMagentoOrder();
+        if (!$this->isMagentoOrderUpdatable($magentoOrder)) {
+            return;
+        }
+
         /** @var \Ess\M2ePro\Model\Magento\Order\Updater $magentoOrderUpdater */
         $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
-        $magentoOrderUpdater->setMagentoOrder($order->getMagentoOrder());
+        $magentoOrderUpdater->setMagentoOrder($magentoOrder);
         $magentoOrderUpdater->updateComments($comments);
         $magentoOrderUpdater->finishUpdate();
     }

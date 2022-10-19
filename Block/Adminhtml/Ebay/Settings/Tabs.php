@@ -10,8 +10,8 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Settings;
 
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 {
-    const TAB_ID_MAIN = 'main';
-    const TAB_ID_MOTORS = 'motors';
+    public const TAB_ID_MAIN = 'main';
+    public const TAB_ID_MOTORS = 'motors';
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
     private $componentEbayMotors;
@@ -28,6 +28,11 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
         $this->componentEbayMotors = $componentEbayMotors;
     }
 
+    /**
+     * @return \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
     protected function _prepareLayout()
     {
         // ---------------------------------------
@@ -62,18 +67,18 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 
         if ($isMotorsEpidsMarketplaceEnabled || $isMotorsKtypesMarketplaceEnabled) {
             $tab = [
-                'label' => __('Parts Compatibility'),
-                'title' => __('Parts Compatibility'),
+                'label'   => __('Parts Compatibility'),
+                'title'   => __('Parts Compatibility'),
                 'content' => $this->getLayout()->createBlock(
                     \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Motors::class,
                     '',
                     [
-                    'data' => [
-                        'epids_enabled'  => $isMotorsEpidsMarketplaceEnabled,
-                        'ktypes_enabled' => $isMotorsKtypesMarketplaceEnabled
+                        'data' => [
+                            'epids_enabled'  => $isMotorsEpidsMarketplaceEnabled,
+                            'ktypes_enabled' => $isMotorsKtypesMarketplaceEnabled,
+                        ],
                     ]
-                    ]
-                )->toHtml()
+                )->toHtml(),
             ];
 
             $this->addTab(self::TAB_ID_MOTORS, $tab);
@@ -83,13 +88,12 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
         return parent::_prepareLayout();
     }
 
-    //########################################
-
+    /**
+     * @return \Ess\M2ePro\Block\Adminhtml\Settings\Tabs|\Magento\Backend\Block\Widget\Tabs
+     */
     protected function _beforeToHtml()
     {
         $this->jsUrl->add($this->getUrl('*/ebay/getGlobalMessages'), 'getGlobalMessages');
         return parent::_beforeToHtml();
     }
-
-    //########################################
 }

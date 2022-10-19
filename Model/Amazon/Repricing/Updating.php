@@ -55,7 +55,7 @@ class Updating extends AbstractModel
             }
         }
 
-        if (!$this->sendData($changesData)) {
+        if (empty($changeData) || !$this->sendData($changesData)) {
             return false;
         }
 

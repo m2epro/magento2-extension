@@ -21,31 +21,39 @@ define([
 
         // ---------------------------------------
 
-        saveSettingsTab: function()
+        saveSettings: function ()
         {
-            var tab = jQuery('div[aria-labelledby^=configuration_settings_tabs].ui-tabs-panel:visible');
+            var isFormValid = true;
+            var nameTabs = []
+            jQuery.find('.tab-item-link._changed').forEach(x => {
+                var name = x.getAttribute('name')
+                nameTabs.push(name)
+            })
+            var uiTabs = jQuery.find('div.ui-tabs-panel')
+            uiTabs.forEach(item => {
+                var elementId = item.getAttribute('data-ui-id').split('-').pop();
+                // check isFormValid and if tab changed
+                if (isFormValid && nameTabs.indexOf(elementId) != -1) {
+                    var form = jQuery(item).find('form');
 
-            var elementId = tab.attr('id').toLowerCase()
-                .replace(/^configuration_settings_tabs_/, '')
-                .replace(/_content$/, ''),
-                form = tab.find('form');
+                    if (form.length) {
 
-            if (form.length) {
-                if (!form.valid()) {
-                    return false;
+                        if (!form.valid()) {
+                            isFormValid = false;
+                            return;
+                        }
+
+                        if (!M2ePro.url.urls[elementId]) {
+                            return;
+                        }
+
+                        jQuery("a[name='" + elementId + "']").removeClass('_changed _error');
+                        var formData = form.serialize(true);
+                        formData.tab = elementId;
+                        this.submitTab(M2ePro.url.get(elementId), formData);
+                    }
                 }
-
-                if (!M2ePro.url.urls[elementId]) {
-                    return false;
-                }
-
-                jQuery('.ui-tabs-active > a').removeClass('_changed _error');
-
-                var formData = form[0].serialize(true);
-                formData.tab = elementId;
-
-                this.submitTab(M2ePro.url.get(elementId), formData);
-            }
+            })
         },
 
         restoreAllHelpsAndRememberedChoices: function ()
@@ -103,7 +111,7 @@ define([
 
             new Ajax.Request(url, {
                 method: 'post',
-                asynchronous: true,
+                asynchronous: false,
                 parameters: formData || {},
                 onSuccess: function(transport) {
                     var result = transport.responseText;

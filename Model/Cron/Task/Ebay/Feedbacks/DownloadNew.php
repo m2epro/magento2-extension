@@ -8,24 +8,17 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Ebay\Feedbacks;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Ebay\Feedbacks\DownloadNew
- */
 class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'ebay/feedbacks/download_new';
+    public const NICK = 'ebay/feedbacks/download_new';
 
-    /**
-     * @var int (in seconds)
-     */
+    /** @var int (in seconds) */
     protected $interval = 10800;
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Synchronization\Log
      */
-    protected function getSynchronizationLog()
+    protected function getSynchronizationLog(): \Ess\M2ePro\Model\Synchronization\Log
     {
         $synchronizationLog = parent::getSynchronizationLog();
 
@@ -35,8 +28,6 @@ class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         return $synchronizationLog;
     }
 
-    //########################################
-
     public function isPossibleToRun()
     {
         if ($this->getHelper('Server\Maintenance')->isNow()) {
@@ -45,8 +36,6 @@ class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         return parent::isPossibleToRun();
     }
-
-    //########################################
 
     protected function performActions()
     {
@@ -59,10 +48,10 @@ class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         foreach ($accounts as $account) {
             /** @var \Ess\M2ePro\Model\Account $account **/
 
-            $this->getOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
+            $this->getOperationHistory()->addText('Starting Account "' . $account->getTitle() . '"');
 
             $this->getOperationHistory()->addTimePoint(
-                __METHOD__.'get'.$account->getId(),
+                __METHOD__ . 'get' . $account->getId(),
                 'Get feedbacks from eBay'
             );
 
@@ -78,11 +67,9 @@ class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 $this->processTaskException($exception);
             }
 
-            $this->getOperationHistory()->saveTimePoint(__METHOD__.'get'.$account->getId());
+            $this->getOperationHistory()->saveTimePoint(__METHOD__ . 'get' . $account->getId());
         }
     }
-
-    //########################################
 
     protected function getPermittedAccounts()
     {
@@ -91,8 +78,6 @@ class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             ->addFieldToFilter('feedbacks_receive', 1);
         return $collection->getItems();
     }
-
-    // ---------------------------------------
 
     protected function processAccount(\Ess\M2ePro\Model\Account $account)
     {
@@ -129,12 +114,20 @@ class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $maxBuyerDate !== null && $paramsConnector['buyer_max_date'] = $maxBuyerDate;
         $result = $this->receiveFromEbay($account, $paramsConnector);
 
-        $this->getOperationHistory()->appendText('Total received Feedback from eBay: '.$result['total']);
-        $this->getOperationHistory()->appendText('Total only new Feedback from eBay: '.$result['new']);
+        $this->getOperationHistory()->appendText('Total received Feedback from eBay: ' . $result['total']);
+        $this->getOperationHistory()->appendText('Total only new Feedback from eBay: ' . $result['new']);
         $this->getOperationHistory()->saveBufferString();
     }
 
-    protected function receiveFromEbay(\Ess\M2ePro\Model\Account $account, array $paramsConnector = [])
+    /**
+     * @param \Ess\M2ePro\Model\Account $account
+     * @param array $paramsConnector
+     *
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Exception
+     */
+    protected function receiveFromEbay(\Ess\M2ePro\Model\Account $account, array $paramsConnector = []): array
     {
         $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
         $connectorObj = $dispatcherObj->getVirtualConnector(
@@ -155,50 +148,56 @@ class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $countNewFeedbacks = 0;
         foreach ($feedbacks as $feedback) {
-            $dbFeedback = [
-                'account_id' => $account->getId(),
-                'ebay_item_id' => $feedback['item_id'],
-                'ebay_transaction_id' => $feedback['transaction_id']
-            ];
-
-            if ($feedback['item_title'] != '') {
-                $dbFeedback['ebay_item_title'] = $feedback['item_title'];
-            }
-
-            if ($feedback['from_role'] == \Ess\M2ePro\Model\Ebay\Feedback::ROLE_BUYER) {
-                $dbFeedback['buyer_name'] = $feedback['user_sender'];
-                $dbFeedback['buyer_feedback_id'] = $feedback['id'];
-                $dbFeedback['buyer_feedback_text'] = $feedback['info']['text'];
-                $dbFeedback['buyer_feedback_date'] = $feedback['info']['date'];
-                $dbFeedback['buyer_feedback_type'] = $feedback['info']['type'];
-            } else {
-                $dbFeedback['seller_feedback_id'] = $feedback['id'];
-                $dbFeedback['seller_feedback_text'] = $feedback['info']['text'];
-                $dbFeedback['seller_feedback_date'] = $feedback['info']['date'];
-                $dbFeedback['seller_feedback_type'] = $feedback['info']['type'];
-            }
-
-            $existFeedback = $this->activeRecordFactory->getObject('Ebay\Feedback')->getCollection()
+            /** @var \Ess\M2ePro\Model\Ebay\Feedback $feedbackObject */
+            $feedbackObject = $this->activeRecordFactory->getObject('Ebay\Feedback')->getCollection()
                 ->addFieldToFilter('account_id', $account->getId())
                 ->addFieldToFilter('ebay_item_id', $feedback['item_id'])
                 ->addFieldToFilter('ebay_transaction_id', $feedback['transaction_id'])
                 ->getFirstItem();
 
-            if ($existFeedback->getId() !== null) {
-                if ($feedback['from_role'] == \Ess\M2ePro\Model\Ebay\Feedback::ROLE_BUYER &&
-                    !$existFeedback->getData('buyer_feedback_id')) {
+            $feedbackObject
+                ->setAccountId((int)$account->getId())
+                ->setEbayItemId($feedback['item_id'])
+                ->setEbayTransactionId($feedback['transaction_id']);
+
+            if ($feedback['item_title'] != '') {
+                $feedbackObject->setEbayItemTitle($feedback['item_title']);
+            }
+
+            if ($feedback['from_role'] == \Ess\M2ePro\Model\Ebay\Feedback::ROLE_BUYER) {
+                $feedbackObject
+                    ->setBuyerName($feedback['user_sender'])
+                    ->setBuyerFeedbackId($feedback['id'])
+                    ->setBuyerFeedbackText($feedback['info']['text'])
+                    ->setBuyerFeedbackDate(\Ess\M2ePro\Helper\Date::createDateGmt($feedback['info']['date']))
+                    ->setBuyerFeedbackType($feedback['info']['type']);
+            } else {
+                $feedbackObject
+                    ->setSellerFeedbackId($feedback['id'])
+                    ->setSellerFeedbackText($feedback['info']['text'])
+                    ->setSellerFeedbackDate(\Ess\M2ePro\Helper\Date::createDateGmt($feedback['info']['date']))
+                    ->setSellerFeedbackType($feedback['info']['type']);
+            }
+
+            if ($feedbackObject->getId() !== null) {
+                if (
+                    $feedback['from_role'] == \Ess\M2ePro\Model\Ebay\Feedback::ROLE_BUYER
+                    && !$feedbackObject->getBuyerFeedbackId()
+                ) {
                     $countNewFeedbacks++;
                 }
 
-                if ($feedback['from_role'] == \Ess\M2ePro\Model\Ebay\Feedback::ROLE_SELLER &&
-                    !$existFeedback->getData('seller_feedback_id')) {
+                if (
+                    $feedback['from_role'] == \Ess\M2ePro\Model\Ebay\Feedback::ROLE_SELLER
+                    && !$feedbackObject->getSellerFeedbackId()
+                ) {
                     $countNewFeedbacks++;
                 }
             } else {
                 $countNewFeedbacks++;
             }
 
-            $existFeedback->addData($dbFeedback)->save();
+            $feedbackObject->save();
         }
 
         return [
@@ -227,6 +226,4 @@ class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             );
         }
     }
-
-    //########################################
 }
