@@ -41,6 +41,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public const SEARCH_SETTINGS_STATUS_IN_PROGRESS     = 1;
     public const SEARCH_SETTINGS_STATUS_NOT_FOUND       = 2;
     public const SEARCH_SETTINGS_STATUS_ACTION_REQUIRED = 3;
+    public const SEARCH_SETTINGS_IDENTIFIER_INVALID     = 4;
 
     public const GENERAL_ID_STATE_SET = 0;
     public const GENERAL_ID_STATE_NOT_SET = 1;

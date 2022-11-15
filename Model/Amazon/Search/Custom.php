@@ -8,55 +8,83 @@
 
 namespace Ess\M2ePro\Model\Amazon\Search;
 
-use Ess\M2ePro\Helper\Data\Product\Identifier;
-
 class Custom
 {
-    private const SEARCH_BY_ASIN = 'byAsin';
-    private const SEARCH_BY_IDENTIFIER = 'byIdentifier';
-
-    /** @var string */
+    /** @var \Ess\M2ePro\Model\Amazon\Search\Custom\Query */
     private $query;
+    /** @var \Ess\M2ePro\Model\Amazon\Search\Custom\Result */
+    private $result;
     /** @var \Ess\M2ePro\Model\Listing\Product */
     private $listingProduct;
     /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
     private $connectorDispatcher;
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $exceptionHelper;
 
     public function __construct(
-        string $query,
+        \Ess\M2ePro\Model\Amazon\Search\Custom\Query $query,
+        \Ess\M2ePro\Model\Amazon\Search\Custom\Result $result,
         \Ess\M2ePro\Model\Listing\Product $listingProduct,
-        \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $connectorDispatcher
+        \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $connectorDispatcher,
+        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper
     ) {
-        $this->query = str_replace('-', '', $query);
+        $this->query = $query;
+        $this->result = $result;
         $this->listingProduct = $listingProduct;
         $this->connectorDispatcher = $connectorDispatcher;
+        $this->exceptionHelper = $exceptionHelper;
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Amazon\Search\Custom\Result
+     */
+    public function process(): Custom\Result
+    {
+        if ($this->query->getIdentifierType() === null) {
+            return $this->result->setStatus(Custom\Result::UNRESOLVED_IDENTIFIER_STATUS);
+        }
+
+        try {
+            $responseData = $this->query->isAsin()
+                ? $this->processForAsin()
+                : $this->processForOtherIdentifier();
+        } catch (\Exception $exception) {
+            $this->exceptionHelper->process($exception);
+            return $this->result->setStatus(Custom\Result::FAIL_STATUS);
+        }
+
+        if ($responseData = $this->prepareResponseData($responseData)) {
+            return $this->result->setResponseData($responseData);
+        }
+
+        return $this->result->setStatus(Custom\Result::IDENTIFIER_NOT_FOUND_STATUS);
+    }
+
+    /**
+     * @return array|null
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function processForAsin(): ?array
+    {
+        $requesterClassName = 'Amazon\Search\Custom\ByAsin\Requester'; // @codingStandardsIgnoreLine
+        $connectorParams = $this->getConnectorParams();
+        return $this->sendRequest($requesterClassName, $connectorParams);
+    }
+
+    /**
+     * @return array|null
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function processForOtherIdentifier(): ?array
+    {
+        $requesterClassName = 'Amazon\Search\Custom\ByIdentifier\Requester'; // @codingStandardsIgnoreLine
+        $connectorParams = $this->getConnectorParams();
+        $connectorParams['query_type'] = $this->query->getOtherIdentifierType();
+        return $this->sendRequest($requesterClassName, $connectorParams);
     }
 
     /**
      * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function process(): array
-    {
-        // @codingStandardsIgnoreStart
-        $requesters = [
-            self::SEARCH_BY_ASIN       => 'Amazon\Search\Custom\ByAsin\Requester',
-            self::SEARCH_BY_IDENTIFIER => 'Amazon\Search\Custom\ByIdentifier\Requester',
-        ];
-        // @codingStandardsIgnoreEnd
-
-        $connector = $this->connectorDispatcher->getCustomConnector(
-            $requesters[$this->getSearchMethod()],
-            $this->getConnectorParams(),
-            $this->listingProduct->getAccount()
-        );
-
-        $this->connectorDispatcher->process($connector);
-        return $this->prepareResult($connector->getPreparedResponseData());
-    }
-
-    /**
-     * @return array {}
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     private function getConnectorParams(): array
@@ -65,76 +93,49 @@ class Custom
         $amazonListingProduct = $this->listingProduct->getChildObject();
         $isModifyChildToSimple = !$amazonListingProduct->getVariationManager()->isRelationParentType();
 
-        $params = [
-            'variation_bad_parent_modify_child_to_simple' => $isModifyChildToSimple,
-            'query'                                       => $this->query,
-        ];
-
-        if ($this->getSearchMethod() == self::SEARCH_BY_IDENTIFIER) {
-            $params['query_type'] = $this->getIdentifierType();
-        }
-
-        return $params;
-    }
-
-    /**
-     * @param $searchData
-     *
-     * @return array{type:false|string, value:string, data:array|mixed}
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    private function prepareResult($searchData): array
-    {
-        $connectorParams = $this->getConnectorParams();
-        $searchMethod = $this->getSearchMethod();
-
-        if ($searchData !== false && $searchMethod == self::SEARCH_BY_ASIN) {
-            if (is_array($searchData) && !empty($searchData)) {
-                $searchData = [$searchData];
-            } elseif ($searchData === null) {
-                $searchData = [];
-            }
-        }
-
         return [
-            'type'  => $this->getIdentifierType(),
-            'value' => $connectorParams['query'],
-            'data'  => $searchData,
+            'variation_bad_parent_modify_child_to_simple' => $isModifyChildToSimple,
+            'query' => $this->query->getValue(),
         ];
     }
 
     /**
-     * @return string
-     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @param string $requesterClassName
+     * @param array $connectorParams
+     *
+     * @return array|null
      */
-    private function getSearchMethod(): string
+    private function sendRequest(string $requesterClassName, array $connectorParams): ?array
     {
-        return Identifier::isASIN($this->query)
-            ? self::SEARCH_BY_ASIN
-            : self::SEARCH_BY_IDENTIFIER;
+        $connector = $this->connectorDispatcher->getCustomConnector(
+            $requesterClassName,
+            $connectorParams,
+            $this->listingProduct->getAccount()
+        );
+
+        $this->connectorDispatcher->process($connector);
+        return $connector->getPreparedResponseData();
     }
 
     /**
-     * @return string|bool
+     * @param mixed $responseData
+     *
+     * @return array|null
      */
-    private function getIdentifierType()
+    private function prepareResponseData($responseData): ?array
     {
-        if (Identifier::isASIN($this->query)) {
-            return Identifier::ASIN;
+        if (empty($responseData)) {
+            return null;
         }
 
-        if (Identifier::isISBN($this->query)) {
-            return Identifier::ISBN;
+        if ($this->query->isAsin()) {
+            if (is_array($responseData)) {
+                return [$responseData];
+            }
+
+            return null;
         }
 
-        if (Identifier::isUPC($this->query)) {
-            return Identifier::UPC;
-        }
-
-        if (Identifier::isEAN($this->query)) {
-            return Identifier::EAN;
-        }
-
-        return false;
+        return $responseData;
     }
 }

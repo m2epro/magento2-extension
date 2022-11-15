@@ -288,7 +288,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         }
 
         foreach ($channelItem->getVariations() as $variation) {
-            if ($variation['channel_options'] !== $this->getVariationChannelOptions()) {
+            if ($this->isOptionsDifferent($variation['channel_options'], $this->getVariationChannelOptions())) {
                 continue;
             }
 
@@ -296,6 +296,28 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         }
 
         return $this->getVariationChannelOptions();
+    }
+
+    /**
+     * @param array $first
+     * @param array $second
+     *
+     * @return bool
+     */
+    private function isOptionsDifferent(array $first, array $second): bool
+    {
+        $comparator = function ($a, $b) {
+            if ($a === $b) {
+                return 0;
+            }
+
+            return $a > $b ? 1 : -1;
+        };
+
+        $firstDiff = array_udiff_uassoc($first, $second, $comparator, $comparator);
+        $secondDiff = array_udiff_uassoc($second, $first, $comparator, $comparator);
+
+        return count($firstDiff) !== 0 || count($secondDiff) !== 0;
     }
 
     /**

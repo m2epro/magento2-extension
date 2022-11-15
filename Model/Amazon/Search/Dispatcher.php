@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Amazon\Search;
 
+use Ess\M2ePro\Model\Amazon\Search\Custom\Result as CustomResult;
+
 class Dispatcher
 {
     /** @var \Ess\M2ePro\Model\Amazon\Search\Custom\Factory */
@@ -28,31 +30,16 @@ class Dispatcher
     }
 
     /**
-     * @param string $query
+     * @param string $queryValue
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
      *
-     * @return array|null
-     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @return \Ess\M2ePro\Model\Amazon\Search\Custom\Result
      */
-    public function runCustom(string $query, \Ess\M2ePro\Model\Listing\Product $listingProduct): ?array
+    public function runCustom(string $queryValue, \Ess\M2ePro\Model\Listing\Product $listingProduct): CustomResult
     {
-        if (empty($query)) {
-            return null;
-        }
-
-        try {
-            $customSearch = $this->customSearchFactory->create($query, $listingProduct);
-            $result = $customSearch->process();
-
-            if ($result['data'] === false) {
-                return null;
-            }
-
-            return $result;
-        } catch (\Exception $exception) {
-            $this->exceptionHelper->process($exception);
-            return null;
-        }
+        $query = $this->customSearchFactory->createQuery($queryValue);
+        $customSearch = $this->customSearchFactory->createHandler($query, $listingProduct);
+        return $customSearch->process();
     }
 
     /**
@@ -79,12 +66,13 @@ class Dispatcher
         }
 
         try {
-            /** @var \Ess\M2ePro\Model\Amazon\Search\Settings $settingsSearch */
             $settingsSearch = $this->settingsSearchFactory->create();
             foreach ($listingsProducts as $listingProduct) {
                 $settingsSearch->setListingProduct($listingProduct);
                 $settingsSearch->resetStep();
-                $settingsSearch->process();
+                if ($settingsSearch->checkIdentifierValidity()) {
+                    $settingsSearch->process();
+                }
             }
         } catch (\Exception $exception) {
             $this->exceptionHelper->process($exception);

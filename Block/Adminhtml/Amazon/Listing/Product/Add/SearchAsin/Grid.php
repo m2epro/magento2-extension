@@ -192,6 +192,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 self::SEARCH_SETTINGS_STATUS_NONE => $this->__('None'),
                 \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_IN_PROGRESS =>
                     $this->__('In Progress'),
+                \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_IDENTIFIER_INVALID =>
+                    $this->__('Product ID not found'),
                 \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_NOT_FOUND =>
                     $this->__('Not Found'),
                 \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_ACTION_REQUIRED =>
@@ -336,6 +338,14 @@ HTML;
 
                 return <<<HTML
 <span style="color: orange; {$style}">{$msg}</span>&nbsp;
+{$this->getTooltipHtml($tip)}
+HTML;
+            case \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_IDENTIFIER_INVALID:
+                $msg = $this->__('Invalid Product ID');
+                $tip = $this->__('Product ID is missing or has invalid format');
+
+                return <<<HTML
+<span style="color: red; {$style}">{$msg}</span>&nbsp;
 {$this->getTooltipHtml($tip)}
 HTML;
 

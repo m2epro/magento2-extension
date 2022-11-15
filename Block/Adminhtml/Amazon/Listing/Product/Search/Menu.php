@@ -73,13 +73,27 @@ class Menu extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
     public function getWarnings()
     {
-        if ($this->getListingProduct()->getChildObject()->getData('search_settings_status') ==
-            \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_NOT_FOUND) {
+        $status = $this->getListingProduct()->getChildObject()->getData('search_settings_status');
 
+        if ($status == \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_NOT_FOUND) {
             /** @var \Magento\Framework\View\Element\Messages $messages */
             $messages = $this->getLayout()->createBlock(\Magento\Framework\View\Element\Messages::class);
             $messages->addWarning(
                 'There were no Products found on Amazon according to the Listing Search Settings.'
+            );
+
+            return <<<HTML
+<div style="margin: 6px 0px">
+    {$messages->toHtml()}
+</div>
+HTML;
+        }
+
+        if ($status == \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_IDENTIFIER_INVALID) {
+            /** @var \Magento\Framework\View\Element\Messages $messages */
+            $messages = $this->getLayout()->createBlock(\Magento\Framework\View\Element\Messages::class);
+            $messages->addWarning(
+                'Please ensure a valid value is set for Product ID'
             );
 
             return <<<HTML

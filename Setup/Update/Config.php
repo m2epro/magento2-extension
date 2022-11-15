@@ -248,7 +248,10 @@ class Config extends AbstractConfig
                 'AddIsSoldByAmazonColumnToAmazonOrder',
                 'UpdateAmazonMarketplace',
                 'RemoveEpidsForAustralia',
-            ]
+            ],
+            'y22_m11' => [
+                'FixWalmartChildListingId'
+            ],
         ];
     }
 

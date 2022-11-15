@@ -71,8 +71,10 @@ class GetProductsSearchStatus extends Main
         }
 
         $searchStatusNotFound = \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_NOT_FOUND;
+        $searchStatusInvalidIdentifier = \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_IDENTIFIER_INVALID;
         $selectError->where(
-            'alp.search_settings_status = ' . $searchStatusNotFound
+            'alp.search_settings_status = ' . $searchStatusNotFound .
+            ' OR alp.search_settings_status = ' . $searchStatusInvalidIdentifier
         );
 
         $errorsCount = $this->resourceConnection->getConnection()->fetchCol($selectError);
@@ -81,8 +83,7 @@ class GetProductsSearchStatus extends Main
             $messages[] = [
                 'type' => 'error',
                 'text' => $this->__(
-                    'For %count% Items no Amazon Products were found. Please use Manual Search
-                     or create New ASIN/ISBN.',
+                    'No Amazon products were found for %count% item(s). Use manual search or create new ASIN/ISBN.',
                     count($errorsCount)
                 )
             ];

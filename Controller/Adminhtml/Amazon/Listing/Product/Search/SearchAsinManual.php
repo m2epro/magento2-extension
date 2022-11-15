@@ -35,7 +35,7 @@ class SearchAsinManual extends Main
     public function execute()
     {
         $productId = $this->getRequest()->getParam('product_id');
-        $query = trim($this->getRequest()->getParam('query'));
+        $query = $this->getRequest()->getParam('query');
 
         if (empty($productId)) {
             return $this->getResponse()->setBody('No product_id!');
@@ -52,7 +52,17 @@ class SearchAsinManual extends Main
             $marketplaceObj = $listingProduct->getListing()->getMarketplace();
             $result = $this->searchDispatcher->runCustom($query, $listingProduct);
 
-            if ($result === null) {
+            if ($result->isIdentifierUnresolved()) {
+                $this->setJsonContent(
+                    [
+                        'result' => 'error',
+                        'text'   => $this->__('Invalid Product ID format.'),
+                    ]
+                );
+                return $this->getResult();
+            }
+
+            if ($result->isFailed()) {
                 $this->setJsonContent(
                     [
                         'result' => 'error',
@@ -62,7 +72,13 @@ class SearchAsinManual extends Main
                 return $this->getResult();
             }
 
-            $this->helperDataGlobalData->setValue('search_data', $result);
+            $searchData = [
+                'type'  => $result->getType(),
+                'value' => $result->getValue(),
+                'data'  => $result->isIdentifierNotFound() ? [] : $result->getResponseData()
+            ];
+
+            $this->helperDataGlobalData->setValue('search_data', $searchData);
             $this->helperDataGlobalData->setValue('product_id', $productId);
             $this->helperDataGlobalData->setValue('marketplace_id', $marketplaceObj->getId());
         } else {

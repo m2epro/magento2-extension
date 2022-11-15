@@ -47,11 +47,16 @@ class AmazonGeneralIdState extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom
             return \Ess\M2ePro\Model\Amazon\Listing\Product::GENERAL_ID_STATE_READY_FOR_NEW_ASIN;
         }
 
+        $status = $product->getData('search_settings_status');
         $searchStatusActionRequired = \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_ACTION_REQUIRED;
         $searchStatusNotFound = \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_NOT_FOUND;
+        $searchStatusIdentifierInvalid = \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_IDENTIFIER_INVALID;
 
-        if ($product->getData('search_settings_status') == $searchStatusActionRequired ||
-            $product->getData('search_settings_status') == $searchStatusNotFound) {
+        if (
+            $status == $searchStatusActionRequired
+            || $status == $searchStatusNotFound
+            || $status == $searchStatusIdentifierInvalid
+        ) {
             return \Ess\M2ePro\Model\Amazon\Listing\Product::GENERAL_ID_STATE_ACTION_REQUIRED;
         }
 

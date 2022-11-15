@@ -6,35 +6,42 @@
  * @license    Commercial use is forbidden
  */
 
-/**
- * @method \Ess\M2ePro\Model\Listing\Product getParentObject()
- */
-
 namespace Ess\M2ePro\Model\Walmart\Listing;
 
-use Ess\M2ePro\Model\Listing\Product\PriceCalculator as PriceCalculator;
+use Ess\M2ePro\Model\Listing\Product\PriceCalculator;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
-use Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion as Promotion;
+use Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion;
 
 /**
- * Class \Ess\M2ePro\Model\Walmart\Listing\Product
+ * @method \Ess\M2ePro\Model\Listing\Product getParentObject()
+ * @method \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product getResource()
  */
 class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
-    const INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED = 'channel_status_changed';
-    const INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED    = 'channel_qty_changed';
-    const INSTRUCTION_TYPE_CHANNEL_PRICE_CHANGED  = 'channel_price_changed';
+    public const INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED = 'channel_status_changed';
+    public const INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED    = 'channel_qty_changed';
+    public const INSTRUCTION_TYPE_CHANNEL_PRICE_CHANGED  = 'channel_price_changed';
 
-    const PROMOTIONS_MAX_ALLOWED_COUNT = 10;
+    public const PROMOTIONS_MAX_ALLOWED_COUNT = 10;
+
+    /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager */
+    private $variationManager;
+    /** @var \Ess\M2ePro\Helper\Component\Walmart\Vocabulary */
+    private $vocabularyHelper;
 
     /**
-     * @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager
+     * @param \Ess\M2ePro\Helper\Component\Walmart\Vocabulary $vocabularyHelper
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
+     * @param \Ess\M2ePro\Model\Factory $modelFactory
+     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
+     * @param \Ess\M2ePro\Helper\Factory $helperFactory
+     * @param \Magento\Framework\Model\Context $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
+     * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
+     * @param array $data
      */
-    protected $variationManager = null;
-
-    /** @var \Ess\M2ePro\Helper\Component\Walmart\Vocabulary */
-    protected $vocabularyHelper;
-
     public function __construct(
         \Ess\M2ePro\Helper\Component\Walmart\Vocabulary $vocabularyHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
@@ -747,7 +754,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         $resultPromotions = [];
 
         foreach ($promotions as $promotion) {
-
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator $priceCalculator */
             $priceCalculator = $this->modelFactory->getObject('Walmart_Listing_Product_PriceCalculator');
             $priceCalculator->setSource($promotion->getPriceSource())->setProduct($this->getParentObject());

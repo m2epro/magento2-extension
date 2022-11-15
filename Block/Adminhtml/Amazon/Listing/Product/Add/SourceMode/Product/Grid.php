@@ -64,6 +64,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
     //########################################
 
+    /**
+     * @return \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Product\Grid
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
     protected function _prepareCollection()
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
@@ -139,30 +145,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             $hideParam = false;
         }
 
+        $excludeProductsExpr = null;
         if ($hideParam || isset($this->listing['id'])) {
-            $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
-            $dbExcludeSelect = $collection->getConnection()
-                                          ->select()
-                                          ->from($lpTable, new \Zend_Db_Expr('DISTINCT `product_id`'));
-
-            if ($hideParam) {
-                $lTable = $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable();
-                $dbExcludeSelect->join(
-                    ['l' => $lTable],
-                    '`l`.`id` = `listing_id`',
-                    null
-                );
-
-                $dbExcludeSelect->where('`l`.`account_id` = ?', $this->listing['account_id']);
-                $dbExcludeSelect->where('`l`.`marketplace_id` = ?', $this->listing['marketplace_id']);
-                $dbExcludeSelect->where('`l`.`component_mode` = ?', \Ess\M2ePro\Helper\Component\Amazon::NICK);
-            } else {
-                $dbExcludeSelect->where('`listing_id` = ?', (int)$this->listing['id']);
-            }
+            $excludeProductsExpr = $this->getExcludedProductsExpression($hideParam);
 
             $collection->getSelect()
-                       ->joinLeft(['sq' => $dbExcludeSelect], 'sq.product_id = e.entity_id', [])
-                       ->where('sq.product_id IS NULL');
+                ->joinLeft(
+                    $excludeProductsExpr,
+                    'true',
+                    []
+                )
+                ->where('lp.product_id IS NULL');
         }
         // ---------------------------------------
 
@@ -173,11 +166,59 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             ]]
         );
 
+        $collection->addWebsiteNamesToResult();
         $this->setCollection($collection);
 
-        $this->getCollection()->addWebsiteNamesToResult();
+        if ($excludeProductsExpr) {
+            $originalCollection = clone $collection;
+            $this->applyQueryFilters();
+            $countSelect = $collection->getSelectCountSql();
+            $countSelect
+                ->joinLeft(
+                    $excludeProductsExpr,
+                    'true',
+                    []
+                );
+
+            $originalCollection->setLeftJoinsImportant(true)
+                ->setCustomCountSelect($countSelect);
+            $this->setCollection($originalCollection);
+        }
 
         return parent::_prepareCollection();
+    }
+
+    /**
+     * @param bool $hideParam
+     *
+     * @return \Zend_Db_Expr
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function getExcludedProductsExpression(bool $hideParam): \Zend_Db_Expr
+    {
+        $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
+        $lTable = $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable();
+
+        if ($hideParam) {
+            return new \Zend_Db_Expr(
+                '(`' . $lpTable . '` AS `lp`
+INNER JOIN `' . $lTable . '` AS `l`
+ON l.id = lp.listing_id
+    AND l.account_id = ' . $this->listing['account_id'] . ' AND
+    l.marketplace_id = ' . $this->listing['marketplace_id'] . ' AND
+    l.component_mode = \'' . \Ess\M2ePro\Helper\Component\Amazon::NICK . '\')
+    ON lp.product_id = e.entity_id INNER JOIN (SELECT 1 AS t)'
+            );
+        }
+
+        return new \Zend_Db_Expr(
+            '(`' . $lpTable . '` AS `lp`
+INNER JOIN `' . $lTable . '` AS `l`
+ON l.id = lp.listing_id
+    AND l.id = ' . $this->listing['id'] . ')
+    ON lp.product_id = e.entity_id INNER JOIN (SELECT 1 AS t)'
+        );
     }
 
     protected function _prepareColumns()

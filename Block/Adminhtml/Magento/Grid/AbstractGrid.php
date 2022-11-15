@@ -11,9 +11,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Magento\Grid;
 use Magento\Backend\Block\Widget\Grid\Extended;
 use Ess\M2ePro\Block\Adminhtml\Traits;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
- */
 abstract class AbstractGrid extends Extended
 {
     use Traits\BlockTrait;
@@ -21,20 +18,23 @@ abstract class AbstractGrid extends Extended
 
     /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
-
     /** @var \Ess\M2ePro\Model\Factory */
     protected $modelFactory;
-
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
-
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory */
     protected $parentFactory;
 
+    /** @var string */
     protected $_template = 'magento/grid/extended.phtml';
-
+    /** @var bool */
     protected $customPageSize = false;
 
+    /**
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Backend\Helper\Data $backendHelper
+     * @param array $data
+     */
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
@@ -53,8 +53,6 @@ abstract class AbstractGrid extends Extended
 
         parent::__construct($context, $backendHelper, $data);
     }
-
-    //####################################
 
     public function addColumn($columnId, $column)
     {
@@ -87,14 +85,10 @@ abstract class AbstractGrid extends Extended
         return $this;
     }
 
-    //####################################
-
     public function getMassactionBlockName()
     {
         return \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Massaction::class;
     }
-
-    //####################################
 
     public function isAllowedCustomPageSize()
     {
@@ -107,5 +101,26 @@ abstract class AbstractGrid extends Extended
         return $this;
     }
 
-    //####################################
+    /**
+     * @return void
+     */
+    public function applyQueryFilters(): void
+    {
+        // See \Magento\Backend\Block\Widget\Grid::_prepareCollection()
+        $filter = $this->getParam($this->getVarNameFilter());
+
+        if ($filter === null) {
+            $filter = $this->_defaultFilter;
+        }
+
+        if (is_string($filter)) {
+            $data = $this->_backendHelper->prepareFilterString($filter);
+            $data = array_merge($data, (array)$this->getRequest()->getPost($this->getVarNameFilter()));
+            $this->_setFilterValues($data);
+        } elseif ($filter && is_array($filter)) {
+            $this->_setFilterValues($filter);
+        } elseif (count($this->_defaultFilter) !== 0) {
+            $this->_setFilterValues($this->_defaultFilter);
+        }
+    }
 }

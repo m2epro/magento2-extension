@@ -10,37 +10,56 @@ namespace Ess\M2ePro\Model\ResourceModel\Magento\Product;
 
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection
- */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 {
-    /** @var bool  */
-    protected $listingProductMode = false;
-
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
-
     /** @var string */
     protected $componentMode;
-
-    /** @var bool  */
-    protected $isNeedToInjectPrices = false;
-
     /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
-
     /** @var \Ess\M2ePro\Model\Factory */
     protected $modelFactory;
-
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
-
     /** @var \Magento\Framework\ObjectManagerInterface */
     protected $objectManager;
 
-    //########################################
+    /** @var bool */
+    private $isLeftJoinsImportant = false;
+    /** @var bool  */
+    protected $listingProductMode = false;
+    /** @var \Magento\Framework\DB\Select|null */
+    private $customCountSelect = null;
+    /** @var bool  */
+    protected $isNeedToInjectPrices = false;
 
+    /**
+     * @param \Ess\M2ePro\Helper\Factory $helperFactory
+     * @param \Ess\M2ePro\Model\Factory $modelFactory
+     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
+     * @param \Magento\Framework\Data\Collection\EntityFactory $entityFactory
+     * @param \Psr\Log\LoggerInterface $logger
+     * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy
+     * @param \Magento\Framework\Event\ManagerInterface $eventManager
+     * @param \Magento\Eav\Model\Config $eavConfig
+     * @param \Magento\Framework\App\ResourceConnection $resource
+     * @param \Magento\Eav\Model\EntityFactory $eavEntityFactory
+     * @param \Magento\Catalog\Model\ResourceModel\Helper $resourceHelper
+     * @param \Magento\Framework\Validator\UniversalFactory $universalFactory
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Magento\Framework\Module\Manager $moduleManager
+     * @param \Magento\Catalog\Model\Indexer\Product\Flat\State $catalogProductFlatState
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+     * @param \Magento\Catalog\Model\Product\OptionFactory $productOptionFactory
+     * @param \Magento\Catalog\Model\ResourceModel\Url $catalogUrl
+     * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate
+     * @param \Magento\Customer\Model\Session $customerSession
+     * @param \Magento\Framework\Stdlib\DateTime $dateTime
+     * @param \Magento\Customer\Api\GroupManagementInterface $groupManagement
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager
+     * @param \Magento\Framework\DB\Adapter\AdapterInterface|null $connection
+     */
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
@@ -149,7 +168,9 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             // some of filtered field using HAVING (QTY for ex.) so we can't reset selecting columns
             $idsSelect->columns('e.' . $this->getEntity()->getIdFieldName());
             $idsSelect->limit($limit, $offset);
-            $idsSelect->resetJoinLeft();
+            if (!$this->isLeftJoinsImportant) {
+                $idsSelect->resetJoinLeft();
+            }
 
             return $this->getConnection()->fetchCol($idsSelect, $this->_bindParams);
         }
@@ -653,5 +674,37 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         }
 
         return parent::_getAttributeConditionSql($attribute, $condition, $joinType);
+    }
+
+    /**
+     * @return \Magento\Framework\DB\Select
+     */
+    public function getSelectCountSql(): \Magento\Framework\DB\Select
+    {
+        return $this->customCountSelect ?? parent::getSelectCountSql();
+    }
+
+    /**
+     * @param \Magento\Framework\DB\Select $select
+     *
+     * @return $this
+     */
+    public function setCustomCountSelect(\Magento\Framework\DB\Select $select): Collection
+    {
+        $this->customCountSelect = $select;
+
+        return $this;
+    }
+
+    /**
+     * @param bool $value
+     *
+     * @return $this
+     */
+    public function setLeftJoinsImportant(bool $value): Collection
+    {
+        $this->isLeftJoinsImportant = $value;
+
+        return $this;
     }
 }

@@ -728,12 +728,13 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
 
     /**
      * @param string $component
-     * @param int $marketplaceId
+     * @param int|null $marketplaceId
      *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Zend_Db_Select_Exception
      */
-    protected function getUniqueProductsByMarketplace(string $component, int $marketplaceId): array
+    protected function getUniqueProductsByMarketplace(string $component, ?int $marketplaceId): array
     {
         $databaseHelper = $this->helperDatabaseStructure;
         $products = $this->parentFactory->getObject($component, 'Listing_Product')->getCollection();
@@ -776,15 +777,16 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
         $options->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $options->getSelect()->columns(['product_id']);
 
-        $unionStmt = $this->resource->getConnection()
-                                    ->select()
-                                    ->union(
-                                        [
-                                            $products->getSelect(),
-                                            $options->getSelect(),
-                                        ]
-                                    )
-                                    ->query();
+        $unionStmt = $this->resource
+            ->getConnection()
+            ->select()
+            ->union(
+                [
+                    $products->getSelect(),
+                    $options->getSelect(),
+                ]
+            )
+            ->query();
 
         $ids = [];
         while ($productId = $unionStmt->fetchColumn()) {

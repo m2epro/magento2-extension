@@ -1206,6 +1206,20 @@ HTML;
 HTML;
         }
 
+        if ($searchSettingsStatus == \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_IDENTIFIER_INVALID) {
+            $tip = $this->__('Product ID not found');
+            $tip = $this->dataHelper->escapeJs($tip);
+
+            return <<<HTML
+{$na} &nbsp;
+<a href="javascript: void(0);"
+   title="{$tip}"
+   class="amazon-listing-view-icon amazon-listing-view-generalId-search-error"
+    onclick="ListingGridObj.productSearchHandler.openPopUp(0,'{$productTitle}',{$lpId});">
+</a>
+HTML;
+        }
+
         if ($searchSettingsStatus == \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_NOT_FOUND) {
             $tip = $this->__(
                 'There were no Products found on Amazon according to the Listing Search Settings.'

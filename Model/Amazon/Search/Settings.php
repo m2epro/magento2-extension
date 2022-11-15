@@ -122,6 +122,21 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
         ];
     }
 
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function checkIdentifierValidity(): bool
+    {
+        if ($this->getGeneralId() === null && $this->getWorldwideId() === null) {
+            $this->setInvalidIdentifierStatus();
+            return false;
+        }
+
+        return true;
+    }
+
     public function process()
     {
         if (!$this->validate()) {
@@ -142,7 +157,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
         $query = $this->getQueryParam();
 
-        if (empty($query)) {
+        if (empty($query) || !$this->getIdentifierType($query)) {
             return $this->process();
         }
 
@@ -290,7 +305,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
             $params['variation_bad_parent_modify_child_to_simple'] = false;
         }
 
-        if ($this->getSearchMethod() == 'byIdentifier') {
+        if ($this->getSearchMethod() == self::SEARCH_BY_IDENTIFIER) {
             $params['query_type'] = $this->getIdentifierType($this->getQueryParam());
         }
 
@@ -354,6 +369,8 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @return string|null
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     private function getGeneralId(): ?string
     {
@@ -371,6 +388,8 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @return string|null
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     private function getWorldwideId(): ?string
     {
@@ -430,7 +449,13 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
         return false;
     }
 
-    private function getAttributeMatcher($result)
+    /**
+     * @param array $result
+     *
+     * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Attribute
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function getAttributeMatcher(array $result)
     {
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Attribute $attributeMatcher */
         $attributeMatcher = $this->modelFactory->getObject('Amazon_Listing_Product_Variation_Matcher_Attribute');
@@ -440,16 +465,39 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
         return $attributeMatcher;
     }
 
-    private function setNotFoundSearchStatus()
+    /**
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function setNotFoundSearchStatus(): void
     {
-        $amazonListingProduct = $this->getListingProduct()->getChildObject();
-
-        $amazonListingProduct->setData(
-            'search_settings_status',
+        $this->setSearchSettingsStatus(
             \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_NOT_FOUND
         );
-        $amazonListingProduct->setData('search_settings_data', null);
+    }
 
+    /**
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function setInvalidIdentifierStatus(): void
+    {
+        $this->setSearchSettingsStatus(
+            \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_IDENTIFIER_INVALID
+        );
+    }
+
+    /**
+     * @param int $status
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function setSearchSettingsStatus(int $status): void
+    {
+        $amazonListingProduct = $this->getListingProduct()->getChildObject();
+        $amazonListingProduct->setData('search_settings_status', $status);
+        $amazonListingProduct->setData('search_settings_data', null);
         $amazonListingProduct->save();
     }
 }

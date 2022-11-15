@@ -6,40 +6,36 @@
  * @license    Commercial use is forbidden
  */
 
+namespace Ess\M2ePro\Model\Walmart;
+
 /**
  * @method \Ess\M2ePro\Model\Listing getParentObject()
  * @method \Ess\M2ePro\Model\ResourceModel\Walmart\Listing getResource()
  */
-
-namespace Ess\M2ePro\Model\Walmart;
-
-/**
- * Class \Ess\M2ePro\Model\Walmart\Listing
- */
 class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
-    //########################################
-
-    /**
-     * @var \Ess\M2ePro\Model\Template\Description
-     */
-    private $descriptionTemplateModel = null;
-
-    /**
-     * @var \Ess\M2ePro\Model\Template\SellingFormat
-     */
-    private $sellingFormatTemplateModel = null;
-
-    /**
-     * @var \Ess\M2ePro\Model\Template\Synchronization
-     */
-    private $synchronizationTemplateModel = null;
-
+    /** @var \Ess\M2ePro\Model\Template\Description */
+    private $descriptionTemplateModel;
+    /** @var \Ess\M2ePro\Model\Template\SellingFormat */
+    private $sellingFormatTemplateModel;
+    /** @var \Ess\M2ePro\Model\Template\Synchronization */
+    private $synchronizationTemplateModel;
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
 
-    //########################################
-
+    /**
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
+     * @param \Ess\M2ePro\Model\Factory $modelFactory
+     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
+     * @param \Ess\M2ePro\Helper\Factory $helperFactory
+     * @param \Magento\Framework\Model\Context $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
+     * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
+     * @param array $data
+     */
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -378,6 +374,16 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
                     $item->save();
                 }
             }
+        }
+
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
+        $walmartListingProduct = $listingProduct->getChildObject();
+        $variationManager = $walmartListingProduct->getVariationManager();
+
+        if ($variationManager->isRelationParentType()) {
+            /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product $resourceModel */
+            $resourceModel = $this->activeRecordFactory->getObject('Walmart_Listing_Product')->getResource();
+            $resourceModel->moveChildrenToListing($listingProduct);
         }
 
         return true;

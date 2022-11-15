@@ -36,10 +36,12 @@ class DateTime extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Dateti
 
     public function render(\Magento\Framework\DataObject $row)
     {
-        $value = $this->_getValue($row);
+        $value = parent::render($row);
 
         if ($row->getChildObject() && ($value === null || $value === '')) {
             $value = $row->getChildObject()->getData($this->getColumn()->getData('index'));
+            $row->setData($this->getColumn()->getData('index'), $value);
+            $value = parent::render($row);
         }
 
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
