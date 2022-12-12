@@ -17,6 +17,16 @@ class Walmart extends Command
     private $csvParser;
     private $phpEnvironmentRequest;
     private $productFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory */
+    private $listingProductCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing */
+    private $listingResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Item */
+    private $walmartItemResource;
+    /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction\LinkingFactory */
+    private $walmartLinkingFactory;
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
+    private $moduleConfiguration;
 
     public function __construct(
         \Magento\Framework\Data\Form\FormKey $formKey,
@@ -24,6 +34,11 @@ class Walmart extends Command
         \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Ess\M2ePro\Helper\View\ControlPanel $controlPanelHelper,
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Listing $listingResource,
+        \Ess\M2ePro\Model\ResourceModel\Walmart\Item $walmartItemResource,
+        \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction\LinkingFactory $walmartLinkingFactory,
         Context $context
     ) {
         parent::__construct($controlPanelHelper, $context);
@@ -31,6 +46,11 @@ class Walmart extends Command
         $this->csvParser = $csvParser;
         $this->phpEnvironmentRequest = $phpEnvironmentRequest;
         $this->productFactory = $productFactory;
+        $this->listingProductCollectionFactory = $listingProductCollectionFactory;
+        $this->listingResource = $listingResource;
+        $this->walmartItemResource = $walmartItemResource;
+        $this->walmartLinkingFactory = $walmartLinkingFactory;
+        $this->moduleConfiguration = $moduleConfiguration;
     }
 
     /**
@@ -147,6 +167,110 @@ HTML;
 </html>
 HTML;
         return str_replace('#count#', count($duplicated), $html);
+    }
+
+    /**
+     * @title "Fix Walmart Items"
+     * @description "Insert records in walmart_items table"
+     */
+    public function fixWalmartItemsAction(): string
+    {
+        $listingProductCollection = $this->listingProductCollectionFactory->create([
+            'childMode' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+        ]);
+        $listingProductCollection->addFieldToFilter(
+            'status',
+            ['neq' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED]
+        );
+        $listingProductCollection->getSelect()->joinLeft(
+            ['l' => $this->listingResource->getMainTable()],
+            'main_table.listing_id = l.id',
+            []
+        );
+        $listingProductCollection->getSelect()->joinLeft(
+            ['wi' => $this->walmartItemResource->getMainTable()],
+            <<<CONDITION
+second_table.sku = wi.sku
+AND l.account_id = wi.account_id
+AND l.marketplace_id = wi.marketplace_id
+CONDITION
+            ,
+            []
+        );
+        $listingProductCollection->addFieldToFilter('wi.sku', ['null' => true]);
+
+        $startFix = (bool)$this->getRequest()->getParam('start_fix', false);
+        if ($startFix) {
+            $start = microtime(true);
+            $linkingObject = $this->walmartLinkingFactory->create();
+            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+            foreach ($listingProductCollection->getItems() as $listingProduct) {
+                if (
+                    $this->moduleConfiguration->isGroupedProductModeSet()
+                    && $listingProduct->getMagentoProduct()->isGroupedType()
+                ) {
+                    $listingProduct->setSetting('additional_data', 'grouped_product_mode', 1);
+                    $listingProduct->save();
+                }
+
+                $linkingObject->setListingProduct($listingProduct);
+                $linkingObject->createWalmartItem();
+            }
+
+            $message = sprintf(
+                'Listing product fixed. Executed time %01.4f sec',
+                microtime(true) - $start
+            );
+            $this->messageManager->addSuccessMessage($message, 'm2epro_walmart_item_fixer');
+            return $this->_redirect($this->redirect->getRefererUrl());
+        }
+
+        $messagesCollection = $this->messageManager->getMessages(true, 'm2epro_walmart_item_fixer');
+        $successMessage = '';
+        if ($messagesCollection->getCount() > 0) {
+            $successMessages = array_map(static function (\Magento\Framework\Message\MessageInterface $message) {
+                return $message->getText();
+            }, $messagesCollection->getItems());
+
+            $successMessage = '<p class="success">';
+            $successMessage .= implode('<br>', $successMessages);
+            $successMessage .= '</p>';
+        }
+
+        $backUrl = $this->controlPanelHelper->getPageModuleTabUrl();
+        $count = $listingProductCollection->getSize();
+
+        return <<<HTML
+<html>
+    <head>
+        <title>M2E Pro | Fix Walmart Items</title>
+        <style>
+            button {
+                border-radius: 3px;
+                padding: 7px;
+                border: 1px solid grey;
+                cursor: pointer;
+            }
+            button:hover {
+                background-color: lightgrey;
+            }
+            p.success {
+                color: darkgreen
+            }
+        </style>
+    </head>
+    <body>
+        <a href="$backUrl">⇦ Back to Control Panel</a>
+        <h2>Fix Walmart Items</h2>
+        <p>Listing products without record in <code>walmart_item</code> table: <strong>$count</strong></p>
+        $successMessage
+        <form method="get">
+            <input type="hidden" name="start_fix" value="1">
+            <button type="submit">Start Fix</button>
+        </form>
+    </body>
+</html>
+HTML;
     }
 
     //########################################
