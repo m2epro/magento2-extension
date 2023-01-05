@@ -23,8 +23,6 @@ class Vocabulary
 
     /** @var \Ess\M2ePro\Model\Factory */
     private $modelFactory;
-    /** @var \Ess\M2ePro\Helper\Module */
-    private $moduleHelper;
     /** @var \Ess\M2ePro\Helper\Module\Exception */
     private $exceptionHelper;
     /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
@@ -36,7 +34,6 @@ class Vocabulary
 
     /**
      * @param \Ess\M2ePro\Model\Factory $modelFactory
-     * @param \Ess\M2ePro\Helper\Module $moduleHelper
      * @param \Ess\M2ePro\Helper\Module\Exception $exceptionHelper
      * @param \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCacheHelper
      * @param \Ess\M2ePro\Model\Config\Manager $config
@@ -44,14 +41,12 @@ class Vocabulary
      */
     public function __construct(
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Helper\Module $moduleHelper,
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
         \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCacheHelper,
         \Ess\M2ePro\Model\Config\Manager $config,
         \Ess\M2ePro\Model\Registry\Manager $registry
     ) {
         $this->modelFactory = $modelFactory;
-        $this->moduleHelper = $moduleHelper;
         $this->exceptionHelper = $exceptionHelper;
         $this->permanentCacheHelper = $permanentCacheHelper;
         $this->config = $config;
@@ -527,21 +522,17 @@ class Vocabulary
 
     /**
      * @return array|null
+     * @throws \Ess\M2ePro\Model\Exception
      */
     public function getLocalData(): ?array
     {
-        if (!$this->moduleHelper->isDevelopmentEnvironment()) {
-            $cacheData = $this->getLocalDataCache();
-            if (is_array($cacheData)) {
-                return $cacheData;
-            }
+        $cacheData = $this->getLocalDataCache();
+        if (is_array($cacheData)) {
+            return $cacheData;
         }
 
         $vocabularyData = $this->registry->getValueFromJson(self::LOCAL_DATA_REGISTRY_KEY);
-
-        if (!$this->moduleHelper->isDevelopmentEnvironment()) {
-            $this->setLocalDataCache($vocabularyData);
-        }
+        $this->setLocalDataCache($vocabularyData);
 
         return $vocabularyData;
     }

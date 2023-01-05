@@ -30,6 +30,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
     const DATE_VALUE      = 0;
     const DATE_ATTRIBUTE  = 1;
 
+    public const PRICE_TYPE_REGULAR = 'regular_price';
+    public const PRICE_TYPE_REGULAR_SALE = 'regular_sale_price';
+    public const PRICE_TYPE_BUSINESS = 'business_price';
+    public const PRICE_TYPE_BUSINESS_DISCOUNTS_TIER = 'business_discounts_tier';
+
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
 
@@ -309,20 +314,28 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
         return $this->getRegularPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE;
     }
 
-    public function getRegularPriceCoefficient()
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getRegularPriceModifier(): array
     {
-        return $this->getData('regular_price_coefficient');
+        $value = $this->getData('regular_price_modifier');
+        if (empty($value)) {
+            return [];
+        }
+
+        return \Ess\M2ePro\Helper\Json::decode($value) ?: [];
     }
 
     /**
      * @return array
      */
-    public function getRegularPriceSource()
+    public function getRegularPriceSource(): array
     {
         return [
-            'mode'        => $this->getRegularPriceMode(),
-            'coefficient' => $this->getRegularPriceCoefficient(),
-            'attribute'   => $this->getData('regular_price_custom_attribute')
+            'mode' => $this->getRegularPriceMode(),
+            'attribute' => $this->getData('regular_price_custom_attribute'),
         ];
     }
 
@@ -451,20 +464,28 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
         return $this->getRegularSalePriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE;
     }
 
-    public function getRegularSalePriceCoefficient()
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getRegularSalePriceModifier(): array
     {
-        return $this->getData('regular_sale_price_coefficient');
+        $value = $this->getData('regular_sale_price_modifier');
+        if (empty($value)) {
+            return [];
+        }
+
+        return \Ess\M2ePro\Helper\Json::decode($value) ?: [];
     }
 
     /**
      * @return array
      */
-    public function getRegularSalePriceSource()
+    public function getRegularSalePriceSource(): array
     {
         return [
-            'mode'        => $this->getRegularSalePriceMode(),
-            'coefficient' => $this->getRegularSalePriceCoefficient(),
-            'attribute'   => $this->getData('regular_sale_price_custom_attribute')
+            'mode' => $this->getRegularSalePriceMode(),
+            'attribute' => $this->getData('regular_sale_price_custom_attribute')
         ];
     }
 
@@ -669,20 +690,28 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
         return $this->getRegularPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE;
     }
 
-    public function getBusinessPriceCoefficient()
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getBusinessPriceModifier(): array
     {
-        return $this->getData('business_price_coefficient');
+        $value = $this->getData('business_price_modifier');
+        if (empty($value)) {
+            return [];
+        }
+
+        return \Ess\M2ePro\Helper\Json::decode($value) ?: [];
     }
 
     /**
      * @return array
      */
-    public function getBusinessPriceSource()
+    public function getBusinessPriceSource(): array
     {
         return [
-            'mode'        => $this->getBusinessPriceMode(),
-            'coefficient' => $this->getBusinessPriceCoefficient(),
-            'attribute'   => $this->getData('business_price_custom_attribute')
+            'mode' => $this->getBusinessPriceMode(),
+            'attribute' => $this->getData('business_price_custom_attribute'),
         ];
     }
 
@@ -773,9 +802,18 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
 
     // ---------------------------------------
 
-    public function getBusinessDiscountsTierCoefficient()
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getBusinessDiscountsTierModifier(): array
     {
-        return $this->getData('business_discounts_tier_coefficient');
+        $value = $this->getData('business_discounts_tier_modifier');
+        if (empty($value)) {
+            return [];
+        }
+
+        return \Ess\M2ePro\Helper\Json::decode($value) ?: [];
     }
 
     /**
@@ -824,19 +862,26 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
             }
 
             if ($isPriceConvertEnabled) {
-                if ($this->isRegularPriceModeAttribute() &&
-                    $attributeHelper->isAttributeInputTypePrice($this->getData('regular_price_custom_attribute'))) {
-                    return true;
-                }
-
-                if ($this->isRegularSalePriceModeAttribute() &&
-                    $attributeHelper->isAttributeInputTypePrice($this->getData('regular_sale_price_custom_attribute'))
+                if (
+                    $this->isRegularPriceModeAttribute()
+                    && $attributeHelper->isAttributeInputTypePrice($this->getData('regular_price_custom_attribute'))
                 ) {
                     return true;
                 }
 
-                if ($this->isRegularMapPriceModeAttribute() &&
-                    $attributeHelper->isAttributeInputTypePrice($this->getData('regular_map_price_custom_attribute'))) {
+                if (
+                    $this->isRegularSalePriceModeAttribute()
+                    && $attributeHelper->isAttributeInputTypePrice(
+                        $this->getData('regular_sale_price_custom_attribute')
+                    )
+                ) {
+                    return true;
+                }
+
+                if (
+                    $this->isRegularMapPriceModeAttribute()
+                    && $attributeHelper->isAttributeInputTypePrice($this->getData('regular_map_price_custom_attribute'))
+                ) {
                     return true;
                 }
             }
@@ -848,8 +893,10 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
             }
 
             if ($isPriceConvertEnabled) {
-                if ($this->isBusinessPriceModeAttribute() &&
-                    $attributeHelper->isAttributeInputTypePrice($this->getData('business_price_custom_attribute'))) {
+                if (
+                    $this->isBusinessPriceModeAttribute()
+                    && $attributeHelper->isAttributeInputTypePrice($this->getData('business_price_custom_attribute'))
+                ) {
                     return true;
                 }
             }
@@ -859,8 +906,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
                     return true;
                 }
 
-                if ($isPriceConvertEnabled && $businessDiscount->isModeAttribute() &&
-                    $attributeHelper->isAttributeInputTypePrice($businessDiscount->getAttribute())) {
+                if (
+                    $isPriceConvertEnabled
+                    && $businessDiscount->isModeAttribute()
+                    && $attributeHelper->isAttributeInputTypePrice($businessDiscount->getAttribute())
+                ) {
                     return true;
                 }
             }
@@ -868,8 +918,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
 
         return false;
     }
-
-    //########################################
 
     public function isCacheEnabled()
     {
@@ -881,5 +929,16 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
         return array_merge(parent::getCacheGroupTags(), ['template']);
     }
 
-    //########################################
+    /**
+     * @return string[]
+     */
+    public static function getPriceTypes(): array
+    {
+        return [
+            self::PRICE_TYPE_REGULAR,
+            self::PRICE_TYPE_REGULAR_SALE,
+            self::PRICE_TYPE_BUSINESS,
+            self::PRICE_TYPE_BUSINESS_DISCOUNTS_TIER,
+        ];
+    }
 }

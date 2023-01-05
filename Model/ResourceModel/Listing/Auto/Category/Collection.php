@@ -8,13 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category\Collection
- */
+use Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category as ResourceCategory;
+
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
@@ -24,5 +21,29 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         );
     }
 
-    //########################################
+    /**
+     * @return void
+     */
+    public function selectCategoryId(): void
+    {
+        $this->addFieldToSelect(ResourceCategory::CATEGORY_ID_FIELD);
+    }
+
+    /**
+     * @return void
+     */
+    public function selectGroupId(): void
+    {
+        $this->addFieldToSelect(ResourceCategory::GROUP_ID_FIELD);
+    }
+
+    /**
+     * @param array $value
+     *
+     * @return void
+     */
+    public function whereCategoryIdIn(array $value): void
+    {
+        $this->getSelect()->where(ResourceCategory::CATEGORY_ID_FIELD . ' IN (?)', $value);
+    }
 }

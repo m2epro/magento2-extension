@@ -20,13 +20,10 @@ class LogsClearing extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
     private $dataHelper;
     /** @var \Ess\M2ePro\Helper\Module */
     private $moduleHelper;
-    /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
-    private $pickupStoreHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Module $moduleHelper,
-        \Ess\M2ePro\Helper\Component\Ebay\PickupStore $pickupStoreHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
@@ -36,7 +33,6 @@ class LogsClearing extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
 
         $this->dataHelper = $dataHelper;
         $this->moduleHelper = $moduleHelper;
-        $this->pickupStoreHelper = $pickupStoreHelper;
     }
 
     protected function _prepareForm()
@@ -227,65 +223,6 @@ HTML
             ]
         );
 
-        if ($this->pickupStoreHelper->isFeatureEnabled()) {
-            $fieldSet = $form->addFieldset(
-                'magento_block_configuration_logs_clearing_instore_pickup',
-                [
-                    'legend'      => $this->__('In-Store Pickup Log Clearing'),
-                    'collapsable' => false
-                ]
-            );
-
-            $mode = isset($this->modes[LogClearing::LOG_EBAY_PICKUP_STORE])
-                ? $this->modes[LogClearing::LOG_EBAY_PICKUP_STORE] : 1;
-            $tooltip = $this->getTooltipHtml(
-                $this->__('Enables automatic clearing of Log data. Can help reduce Database size.')
-            );
-            $logsType = LogClearing::LOG_EBAY_PICKUP_STORE;
-
-            $fieldSet->addField(
-                LogClearing::LOG_EBAY_PICKUP_STORE . '_log_mode',
-                self::SELECT,
-                [
-                    'name'     => 'groups[in_store_pickup_log_clearing][fields][in_store_pickup_log_mode_field][value]',
-                    'onchange' => "LogClearingObj.changeModeLog('" . LogClearing::LOG_EBAY_PICKUP_STORE . "')",
-                    'label'    => $this->__('Enabled'),
-                    'title'    => $this->__('Enabled'),
-                    'values'   => [
-                        0 => $this->__('No'),
-                        1 => $this->__('Yes'),
-                    ],
-                    'value'    => $mode,
-
-                    'field_extra_attributes' => 'id="' . LogClearing::LOG_EBAY_PICKUP_STORE . '_log_mode_container"',
-                    'after_element_html'     => <<<HTML
-$tooltip
-<span id="{$logsType}_log_button_clear_all_container">
-    {$this->getChildHtml('clear_all_' . LogClearing::LOG_EBAY_PICKUP_STORE)}
-</span>
-HTML
-                ]
-            );
-
-            $fieldSet->addField(
-                LogClearing::LOG_EBAY_PICKUP_STORE . '_log_days',
-                self::TEXT,
-                [
-                    'name'     => 'groups[in_store_pickup_log_clearing][fields][in_store_pickup_log_days_field][value]',
-                    'label'    => $this->__('Keep For (days)'),
-                    'title'    => $this->__('Keep For (days)'),
-                    'value'    => $this->days[LogClearing::LOG_EBAY_PICKUP_STORE],
-                    'class'    => 'M2ePro-logs-clearing-interval',
-                    'required' => true,
-                    'tooltip'  => $this->__(
-                        'Specify for how long you want to keep Log data before it is automatically cleared.'
-                    ),
-
-                    'field_extra_attributes' => 'id="' . LogClearing::LOG_EBAY_PICKUP_STORE . '_log_days_container"',
-                ]
-            );
-        }
-
         $form->setUseContainer(true);
         $this->setForm($form);
 
@@ -301,11 +238,6 @@ HTML
             LogClearing::LOG_ORDERS
         ];
 
-        if ($this->pickupStoreHelper->isFeatureEnabled()) {
-            $tasks[] = LogClearing::LOG_EBAY_PICKUP_STORE;
-        }
-
-        // ---------------------------------------
         $modes = [];
         $days = [];
 
@@ -358,13 +290,8 @@ HTML
             LogClearing::LOG_LISTINGS,
             LogClearing::LOG_SYNCHRONIZATIONS,
             LogClearing::LOG_ORDERS,
-            LogClearing::LOG_EBAY_PICKUP_STORE
         ];
 
-        $pickupStoreJs = '';
-        if ($this->pickupStoreHelper->isFeatureEnabled()) {
-            $pickupStoreJs = "LogClearingObj.changeModeLog('{$logData[3]}');";
-        }
 
         $this->js->addRequireJs(
             [
@@ -375,7 +302,6 @@ window.LogClearingObj = new SettingsLogClearing();
 LogClearingObj.changeModeLog('{$logData[0]}');
 LogClearingObj.changeModeLog('{$logData[1]}');
 LogClearingObj.changeModeLog('{$logData[2]}');
-{$pickupStoreJs}
 JS
         );
     }

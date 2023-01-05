@@ -506,17 +506,6 @@ define([
                 $('magento_orders_customer_new_notifications').value = '';
             }
         },
-
-        magentoOrdersInStorePickupStatusesModeChange: function() {
-            if ($('magento_orders_in_store_pickup_statuses_mode').value == 1) {
-                $('magento_orders_in_store_pickup_statuses_ready_for_pickup_tr').show();
-                $('magento_orders_in_store_pickup_statuses_picked_up_tr').show();
-            } else {
-                $('magento_orders_in_store_pickup_statuses_ready_for_pickup_tr').hide();
-                $('magento_orders_in_store_pickup_statuses_picked_up_tr').hide();
-            }
-        },
-
         magentoOrdersStatusMappingModeChange: function() {
             // Reset dropdown selected values to default
             $('magento_orders_status_mapping_new').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Account::MAGENTO_ORDERS_STATUS_MAPPING_NEW');

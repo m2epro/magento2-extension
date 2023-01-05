@@ -60,10 +60,6 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $this->getListingProduct()->save();
 
         $this->updateVariationsValues(false);
-
-        if ($this->getEbayAccount()->isPickupStoreEnabled()) {
-            $this->runAccountPickupStoreStateUpdater();
-        }
     }
 
     //########################################

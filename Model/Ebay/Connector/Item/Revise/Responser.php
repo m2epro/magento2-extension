@@ -19,8 +19,6 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
     /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
 
-    //########################################
-
     public function __construct(
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
@@ -49,7 +47,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         );
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return string
@@ -109,10 +107,11 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 
         if (count($sequenceStrings) == 1) {
             $verb = $isPlural ? 'were' : 'was';
-            return $sequenceStrings[0].' '.$verb.' Revised';
+
+            return $sequenceStrings[0] . ' ' . $verb . ' Revised';
         }
 
-        return implode(', ', $sequenceStrings).' were Revised';
+        return implode(', ', $sequenceStrings) . ' were Revised';
     }
 
     //########################################
@@ -130,6 +129,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
             );
 
             $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
+
             return;
         }
 
@@ -280,7 +280,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator $configurator */
             $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
 
-            if($this->isProductIdentifierNeeded($responseMessages)) {
+            if ($this->isProductIdentifierNeeded($responseMessages)) {
                 /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
                 $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
                 $message->initFromPreparedData(

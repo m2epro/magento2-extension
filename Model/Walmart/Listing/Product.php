@@ -12,10 +12,6 @@ use Ess\M2ePro\Model\Listing\Product\PriceCalculator;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 use Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion;
 
-/**
- * @method \Ess\M2ePro\Model\Listing\Product getParentObject()
- * @method \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product getResource()
- */
 class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
     public const INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED = 'channel_status_changed';
@@ -28,9 +24,12 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     private $variationManager;
     /** @var \Ess\M2ePro\Helper\Component\Walmart\Vocabulary */
     private $vocabularyHelper;
+    /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculatorFactory */
+    private $walmartPriceCalculatorFactory;
 
     /**
      * @param \Ess\M2ePro\Helper\Component\Walmart\Vocabulary $vocabularyHelper
+     * @param \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculatorFactory $walmartPriceCalculatorFactory
      * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory
      * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
      * @param \Ess\M2ePro\Model\Factory $modelFactory
@@ -44,6 +43,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function __construct(
         \Ess\M2ePro\Helper\Component\Walmart\Vocabulary $vocabularyHelper,
+        \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculatorFactory $walmartPriceCalculatorFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
@@ -69,6 +69,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         );
 
         $this->vocabularyHelper = $vocabularyHelper;
+        $this->walmartPriceCalculatorFactory = $walmartPriceCalculatorFactory;
     }
 
     //########################################
@@ -310,14 +311,17 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getActualMagentoProduct()
     {
-        if (!$this->getVariationManager()->isPhysicalUnit() ||
-            !$this->getVariationManager()->getTypeModel()->isVariationProductMatched()
+        if (
+            !$this->getVariationManager()->isPhysicalUnit()
+            || !$this->getVariationManager()->getTypeModel()->isVariationProductMatched()
         ) {
             return $this->getMagentoProduct();
         }
 
-        if ($this->getMagentoProduct()->isConfigurableType() ||
-            $this->getMagentoProduct()->isGroupedType()) {
+        if (
+            $this->getMagentoProduct()->isConfigurableType()
+            || $this->getMagentoProduct()->isGroupedType()
+        ) {
             $variations = $this->getVariations(true);
             if (empty($variations)) {
                 throw new \Ess\M2ePro\Model\Exception\Logic(
@@ -621,8 +625,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getQty($magentoMode = false)
     {
-        if ($this->getVariationManager()->isPhysicalUnit() &&
-            $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
+        if (
+            $this->getVariationManager()->isPhysicalUnit()
+            && $this->getVariationManager()->getTypeModel()->isVariationProductMatched()
+        ) {
             $variations = $this->getVariations(true);
             if (empty($variations)) {
                 throw new \Ess\M2ePro\Model\Exception\Logic(
@@ -655,8 +661,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      */
     public function getPrice()
     {
-        if ($this->getVariationManager()->isPhysicalUnit() &&
-            $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
+        if (
+            $this->getVariationManager()->isPhysicalUnit()
+            && $this->getVariationManager()->getTypeModel()->isVariationProductMatched()
+        ) {
             $variations = $this->getVariations(true);
             if (empty($variations)) {
                 throw new \Ess\M2ePro\Model\Exception\Logic(
@@ -675,44 +683,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         $src = $this->getWalmartSellingFormatTemplate()->getPriceSource();
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator $calculator */
-        $calculator = $this->modelFactory->getObject('Walmart_Listing_Product_PriceCalculator');
+        $calculator = $this->walmartPriceCalculatorFactory->create();
         $calculator->setSource($src)->setProduct($this->getParentObject());
-        $calculator->setCoefficient($this->getWalmartSellingFormatTemplate()->getPriceCoefficient());
+        $calculator->setModifier($this->getWalmartSellingFormatTemplate()->getPriceModifier());
         $calculator->setVatPercent($this->getWalmartSellingFormatTemplate()->getPriceVatPercent());
-
-        return $calculator->getProductValue();
-    }
-
-    /**
-     * @return float|int
-     * @throws \Ess\M2ePro\Model\Exception
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function getMapPrice()
-    {
-        if ($this->getVariationManager()->isPhysicalUnit() &&
-            $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
-            $variations = $this->getVariations(true);
-            if (empty($variations)) {
-                throw new \Ess\M2ePro\Model\Exception\Logic(
-                    'There are no variations for a variation product.',
-                    [
-                        'listing_product_id' => $this->getId()
-                    ]
-                );
-            }
-
-            /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
-            $variation = reset($variations);
-
-            return $variation->getChildObject()->getMapPrice();
-        }
-
-        $src = $this->getWalmartSellingFormatTemplate()->getMapPriceSource();
-
-        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator $calculator */
-        $calculator = $this->modelFactory->getObject('Walmart_Listing_Product_PriceCalculator');
-        $calculator->setSource($src)->setProduct($this->getParentObject());
 
         return $calculator->getProductValue();
     }
@@ -728,8 +702,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             return [];
         }
 
-        if ($this->getVariationManager()->isPhysicalUnit() &&
-            $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
+        if (
+            $this->getVariationManager()->isPhysicalUnit()
+            && $this->getVariationManager()->getTypeModel()->isVariationProductMatched()
+        ) {
             $variations = $this->getVariations(true);
             if (empty($variations)) {
                 throw new \Ess\M2ePro\Model\Exception\Logic(
@@ -755,7 +731,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
 
         foreach ($promotions as $promotion) {
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator $priceCalculator */
-            $priceCalculator = $this->modelFactory->getObject('Walmart_Listing_Product_PriceCalculator');
+            $priceCalculator = $this->walmartPriceCalculatorFactory->create();
             $priceCalculator->setSource($promotion->getPriceSource())->setProduct($this->getParentObject());
             $priceCalculator->setSourceModeMapping([
                 PriceCalculator::MODE_PRODUCT   => Promotion::PRICE_MODE_PRODUCT,
@@ -766,7 +742,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             $priceCalculator->setVatPercent($this->getWalmartSellingFormatTemplate()->getPriceVatPercent());
 
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator $comparisonPriceCalculator */
-            $comparisonPriceCalculator = $this->modelFactory->getObject('Walmart_Listing_Product_PriceCalculator');
+            $comparisonPriceCalculator = $this->walmartPriceCalculatorFactory->create();
             $comparisonPriceCalculator->setSource($promotion->getComparisonPriceSource())
                 ->setProduct($this->getParentObject());
             $comparisonPriceCalculator->setSourceModeMapping([

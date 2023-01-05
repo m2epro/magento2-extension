@@ -845,6 +845,14 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
             if ($item->isComponentModeAmazon()) {
                 /** @var \Ess\M2ePro\Model\Amazon\Account $childItem */
                 $tempInfo['marketplace'] = $childItem->getMarketplace()->getTitle();
+
+                if ($childItem->isRepricing()) {
+                    $tempInfoRepricer = $childItem->getRepricing();
+                    $tempInfo['repricer']['regular_price_mode'] = $tempInfoRepricer['regular_price_mode'];
+                    $tempInfo['repricer']['min_price_mode'] = $tempInfoRepricer['min_price_mode'];
+                    $tempInfo['repricer']['max_price_mode'] = $tempInfoRepricer['max_price_mode'];
+                    $tempInfo['repricer']['disable_mode'] = $tempInfoRepricer['disable_mode'];
+                }
             }
 
             $tempInfo['other_listings_synch'] = $childItem->isOtherListingsSynchronizationEnabled();

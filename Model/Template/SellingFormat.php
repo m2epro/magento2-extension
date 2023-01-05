@@ -8,29 +8,32 @@
 
 namespace Ess\M2ePro\Model\Template;
 
-use \Ess\M2ePro\Model\Amazon\Template\SellingFormat as AmazonTemplateSellingFormat;
-use \Ess\M2ePro\Model\Ebay\Template\SellingFormat as EbayTemplateSellingFormat;
-use \Ess\M2ePro\Model\Walmart\Template\SellingFormat as WalmartTemplateSellingFormat;
+use Ess\M2ePro\Model\Amazon\Template\SellingFormat as AmazonTemplateSellingFormat;
+use Ess\M2ePro\Model\Ebay\Template\SellingFormat as EbayTemplateSellingFormat;
+use Ess\M2ePro\Model\Walmart\Template\SellingFormat as WalmartTemplateSellingFormat;
 
 /**
- * Class \Ess\M2ePro\Model\Template\SellingFormat
- *
  * @method AmazonTemplateSellingFormat|EbayTemplateSellingFormat|WalmartTemplateSellingFormat getChildObject()
  */
 class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
-    const QTY_MODE_PRODUCT       = 1;
-    const QTY_MODE_NUMBER        = 3;
-    const QTY_MODE_ATTRIBUTE     = 4;
-    const QTY_MODE_PRODUCT_FIXED = 5;
+    public const QTY_MODE_PRODUCT       = 1;
+    public const QTY_MODE_NUMBER        = 3;
+    public const QTY_MODE_ATTRIBUTE     = 4;
+    public const QTY_MODE_PRODUCT_FIXED = 5;
 
-    const PRICE_MODE_NONE      = 0;
-    const PRICE_MODE_PRODUCT   = 1;
-    const PRICE_MODE_SPECIAL   = 2;
-    const PRICE_MODE_ATTRIBUTE = 3;
-    const PRICE_MODE_TIER      = 4;
+    public const PRICE_MODE_NONE      = 0;
+    public const PRICE_MODE_PRODUCT   = 1;
+    public const PRICE_MODE_SPECIAL   = 2;
+    public const PRICE_MODE_ATTRIBUTE = 3;
+    public const PRICE_MODE_TIER      = 4;
 
-    //########################################
+    public const PRICE_MODIFIER_NONE = 0;
+    public const PRICE_MODIFIER_ABSOLUTE_INCREASE = 1;
+    public const PRICE_MODIFIER_ABSOLUTE_DECREASE = 2;
+    public const PRICE_MODIFIER_PERCENTAGE_INCREASE = 3;
+    public const PRICE_MODIFIER_PERCENTAGE_DECREASE = 4;
+    public const PRICE_MODIFIER_ATTRIBUTE = 5;
 
     public function _construct()
     {

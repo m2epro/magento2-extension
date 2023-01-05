@@ -19,12 +19,6 @@ class Repricing
     public const COMMAND_SYNCHRONIZE = 'synchronize';
     public const COMMAND_SYNCHRONIZE_USER_CHANGES = 'synchronize/userChanges';
     public const COMMAND_GOTO_SERVICE = 'goto_service';
-    public const COMMAND_OFFERS_ADD = 'offers/add';
-    public const COMMAND_OFFERS_DETAILS = 'offers/details';
-    public const COMMAND_OFFERS_EDIT = 'offers/edit';
-    public const COMMAND_OFFERS_REMOVE = 'offers/remove';
-    public const COMMAND_DATA_SET_REQUEST = 'data/setRequest';
-    public const COMMAND_DATA_GET_RESPONSE = 'data/getResponse';
 
     private const REQUEST_TIMEOUT = 300;
 
@@ -37,6 +31,12 @@ class Repricing
     /** @var \Ess\M2ePro\Model\Config\Manager */
     private $config;
 
+    /**
+     * @param \Ess\M2ePro\Helper\Data $helperData
+     * @param \Ess\M2ePro\Helper\Module\Translation $moduleTranslation
+     * @param \Ess\M2ePro\Helper\Module\Support $moduleSupport
+     * @param \Ess\M2ePro\Model\Config\Manager $config
+     */
     public function __construct(
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Module\Translation $moduleTranslation,
@@ -49,19 +49,15 @@ class Repricing
         $this->config = $config;
     }
 
-    // ----------------------------------------
-
     /**
-     * @return bool
+     * @param $command
+     * @param array $postData
+     *
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Connection
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isEnabled(): bool
-    {
-        return (bool)$this->config->getGroupValue('/amazon/repricing/', 'mode');
-    }
-
-    // ----------------------------------------
-
-    public function sendRequest($command, array $postData)
+    public function sendRequest($command, array $postData): array
     {
         $curlObject = curl_init();
 
@@ -121,20 +117,31 @@ class Repricing
         ];
     }
 
-    public function getBaseUrl()
+    /**
+     * @return string
+     */
+    public function getBaseUrl(): string
     {
         $baseUrl = $this->config->getGroupValue('/amazon/repricing/', 'base_url');
 
         return rtrim($baseUrl, '/') . '/';
     }
 
-    // ----------------------------------------
-
-    public function prepareActionUrl($command, $serverRequestToken)
+    /**
+     * @param $command
+     * @param $serverRequestToken
+     * @return string
+     */
+    public function prepareActionUrl($command, $serverRequestToken): string
     {
         return $this->getBaseUrl() . $command . '?' . http_build_query(['request_token' => $serverRequestToken]);
     }
 
+    /**
+     * @param \Ess\M2ePro\Model\Account $account
+     * @return false|string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function getManagementUrl(Account $account)
     {
         /** @var AmazonAccount $amazonAccount */

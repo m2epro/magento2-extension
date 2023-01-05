@@ -50,6 +50,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     public const BUSINESS_DISCOUNTS_MAX_RULES_COUNT_ALLOWED = 5;
 
+    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculatorFactory */
+    private $amazonPriceCalculatorFactory;
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Identifiers\Factory */
     private $identifiersFactory;
     /** @var \Ess\M2ePro\Model\Amazon\Search\Dispatcher */
@@ -64,7 +66,24 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing|null */
     private $repricingModel = null;
 
+    /**
+     * @param \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculatorFactory $amazonPriceCalculatorFactory
+     * @param \Ess\M2ePro\Model\Amazon\Listing\Product\Identifiers\Factory $identifiesFactory
+     * @param \Ess\M2ePro\Model\Amazon\Search\Dispatcher $searchDispatcher
+     * @param \Ess\M2ePro\Helper\Component\Amazon\Configuration $configuration
+     * @param \Ess\M2ePro\Helper\Data $helperData
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
+     * @param \Ess\M2ePro\Model\Factory $modelFactory
+     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
+     * @param \Ess\M2ePro\Helper\Factory $helperFactory
+     * @param \Magento\Framework\Model\Context $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
+     * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
+     * @param array $data
+     */
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculatorFactory $amazonPriceCalculatorFactory,
         \Ess\M2ePro\Model\Amazon\Listing\Product\Identifiers\Factory $identifiesFactory,
         \Ess\M2ePro\Model\Amazon\Search\Dispatcher $searchDispatcher,
         \Ess\M2ePro\Helper\Component\Amazon\Configuration $configuration,
@@ -79,6 +98,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
+        $this->amazonPriceCalculatorFactory = $amazonPriceCalculatorFactory;
         $this->identifiersFactory = $identifiesFactory;
         $this->searchDispatcher = $searchDispatcher;
         $this->configuration = $configuration;
@@ -451,14 +471,17 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getActualMagentoProduct()
     {
-        if (!$this->getVariationManager()->isPhysicalUnit() ||
-            !$this->getVariationManager()->getTypeModel()->isVariationProductMatched()
+        if (
+            !$this->getVariationManager()->isPhysicalUnit()
+            || !$this->getVariationManager()->getTypeModel()->isVariationProductMatched()
         ) {
             return $this->getMagentoProduct();
         }
 
-        if ($this->getMagentoProduct()->isConfigurableType() ||
-            $this->getMagentoProduct()->isGroupedType()) {
+        if (
+            $this->getMagentoProduct()->isConfigurableType()
+            || $this->getMagentoProduct()->isGroupedType()
+        ) {
             $variations = $this->getVariations(true);
             if (empty($variations)) {
                 throw new \Ess\M2ePro\Model\Exception\Logic(
@@ -819,8 +842,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return $this->getSettings('general_id_search_info');
     }
 
-    //########################################
-
     public function isAllowedForRegularCustomers()
     {
         return $this->getAmazonSellingFormatTemplate()->isRegularCustomerAllowed();
@@ -843,8 +864,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return true;
     }
 
-    //########################################
-
     /**
      * @param bool $magentoMode
      * @return int
@@ -853,8 +872,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getQty($magentoMode = false)
     {
-        if ($this->getVariationManager()->isPhysicalUnit() &&
-            $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
+        if (
+            $this->getVariationManager()->isPhysicalUnit()
+            && $this->getVariationManager()->getTypeModel()->isVariationProductMatched()
+        ) {
             $variations = $this->getVariations(true);
             if (empty($variations)) {
                 throw new \Ess\M2ePro\Model\Exception\Logic(
@@ -891,8 +912,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             return null;
         }
 
-        if ($this->getVariationManager()->isPhysicalUnit() &&
-            $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
+        if (
+            $this->getVariationManager()->isPhysicalUnit()
+            && $this->getVariationManager()->getTypeModel()->isVariationProductMatched()
+        ) {
             $variations = $this->getVariations(true);
             if (empty($variations)) {
                 throw new \Ess\M2ePro\Model\Exception\Logic(
@@ -911,9 +934,9 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $src = $this->getAmazonSellingFormatTemplate()->getRegularPriceSource();
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
-        $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_PriceCalculator');
+        $calculator = $this->amazonPriceCalculatorFactory->create();
         $calculator->setSource($src)->setProduct($this->getParentObject());
-        $calculator->setCoefficient($this->getAmazonSellingFormatTemplate()->getRegularPriceCoefficient());
+        $calculator->setModifier($this->getAmazonSellingFormatTemplate()->getRegularPriceModifier());
         $calculator->setVatPercent($this->getAmazonSellingFormatTemplate()->getRegularPriceVatPercent());
 
         return $calculator->getProductValue();
@@ -930,8 +953,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             return null;
         }
 
-        if ($this->getVariationManager()->isPhysicalUnit() &&
-            $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
+        if (
+            $this->getVariationManager()->isPhysicalUnit()
+            && $this->getVariationManager()->getTypeModel()->isVariationProductMatched()
+        ) {
             $variations = $this->getVariations(true);
             if (empty($variations)) {
                 throw new \Ess\M2ePro\Model\Exception(
@@ -950,7 +975,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $src = $this->getAmazonSellingFormatTemplate()->getRegularMapPriceSource();
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
-        $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_PriceCalculator');
+        $calculator = $this->amazonPriceCalculatorFactory->create();
         $calculator->setSource($src)->setProduct($this->getParentObject());
 
         return $calculator->getProductValue();
@@ -969,8 +994,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             return null;
         }
 
-        if ($this->getVariationManager()->isPhysicalUnit() &&
-            $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
+        if (
+            $this->getVariationManager()->isPhysicalUnit()
+            && $this->getVariationManager()->getTypeModel()->isVariationProductMatched()
+        ) {
             $variations = $this->getVariations(true);
             if (empty($variations)) {
                 throw new \Ess\M2ePro\Model\Exception(
@@ -989,17 +1016,19 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $src = $this->getAmazonSellingFormatTemplate()->getRegularSalePriceSource();
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
-        $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_PriceCalculator');
+        $calculator = $this->amazonPriceCalculatorFactory->create();
         $calculator->setSource($src)->setProduct($this->getParentObject());
         $calculator->setIsSalePrice(true);
-        $calculator->setCoefficient($this->getAmazonSellingFormatTemplate()->getRegularSalePriceCoefficient());
+        $calculator->setModifier($this->getAmazonSellingFormatTemplate()->getRegularSalePriceModifier());
         $calculator->setVatPercent($this->getAmazonSellingFormatTemplate()->getRegularPriceVatPercent());
 
         return $calculator->getProductValue();
     }
 
     /**
-     * @return array|bool
+     * @return array|false
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getRegularSalePriceInfo()
     {
@@ -1028,8 +1057,9 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             ->createGmtDateTime($this->helperData->getCurrentGmtDate(false, 'Y-m-d 00:00:00'))
             ->format('U');
 
-        if ($currentTimestamp > $endDateTimestamp ||
-            $startDateTimestamp >= $endDateTimestamp
+        if (
+            $currentTimestamp > $endDateTimestamp
+            || $startDateTimestamp >= $endDateTimestamp
         ) {
             return false;
         }
@@ -1045,8 +1075,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     private function getRegularSalePriceStartDate()
     {
-        if ($this->getAmazonSellingFormatTemplate()->isRegularSalePriceModeSpecial() &&
-            $this->getMagentoProduct()->isGroupedType()) {
+        if (
+            $this->getAmazonSellingFormatTemplate()->isRegularSalePriceModeSpecial()
+            && $this->getMagentoProduct()->isGroupedType()
+        ) {
             $magentoProduct = $this->getActualMagentoProduct();
         } elseif ($this->getAmazonSellingFormatTemplate()->isRegularPriceVariationModeParent()) {
             $magentoProduct = $this->getMagentoProduct();
@@ -1079,8 +1111,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     private function getRegularSalePriceEndDate()
     {
-        if ($this->getAmazonSellingFormatTemplate()->isRegularSalePriceModeSpecial() &&
-            $this->getMagentoProduct()->isGroupedType()) {
+        if (
+            $this->getAmazonSellingFormatTemplate()->isRegularSalePriceModeSpecial()
+            && $this->getMagentoProduct()->isGroupedType()
+        ) {
             $magentoProduct = $this->getActualMagentoProduct();
         } elseif ($this->getAmazonSellingFormatTemplate()->isRegularPriceVariationModeParent()) {
             $magentoProduct = $this->getMagentoProduct();
@@ -1128,8 +1162,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             return null;
         }
 
-        if ($this->getVariationManager()->isPhysicalUnit() &&
-            $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
+        if (
+            $this->getVariationManager()->isPhysicalUnit()
+            && $this->getVariationManager()->getTypeModel()->isVariationProductMatched()
+        ) {
             $variations = $this->getVariations(true);
             if (empty($variations)) {
                 throw new \Ess\M2ePro\Model\Exception(
@@ -1148,9 +1184,9 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $src = $this->getAmazonSellingFormatTemplate()->getBusinessPriceSource();
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
-        $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_PriceCalculator');
+        $calculator = $this->amazonPriceCalculatorFactory->create();
         $calculator->setSource($src)->setProduct($this->getParentObject());
-        $calculator->setCoefficient($this->getAmazonSellingFormatTemplate()->getBusinessPriceCoefficient());
+        $calculator->setModifier($this->getAmazonSellingFormatTemplate()->getBusinessPriceModifier());
         $calculator->setVatPercent($this->getAmazonSellingFormatTemplate()->getBusinessPriceVatPercent());
 
         return $calculator->getProductValue();
@@ -1171,8 +1207,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             return [];
         }
 
-        if ($this->getVariationManager()->isPhysicalUnit() &&
-            $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
+        if (
+            $this->getVariationManager()->isPhysicalUnit()
+            && $this->getVariationManager()->getTypeModel()->isVariationProductMatched()
+        ) {
             $variations = $this->getVariations(true);
             if (empty($variations)) {
                 throw new \Ess\M2ePro\Model\Exception\Logic(
@@ -1194,13 +1232,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
                 ->getWebsite($this->getListing()->getStoreId())->getId();
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
-            $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_PriceCalculator');
+            $calculator = $this->amazonPriceCalculatorFactory->create();
             $calculator->setSource($src)->setProduct($this->getParentObject());
             $calculator->setSourceModeMapping([
                 \Ess\M2ePro\Model\Listing\Product\PriceCalculator::MODE_TIER =>
                     \Ess\M2ePro\Model\Amazon\Template\SellingFormat::BUSINESS_DISCOUNTS_MODE_TIER,
             ]);
-            $calculator->setCoefficient($this->getAmazonSellingFormatTemplate()->getBusinessDiscountsTierCoefficient());
+            $calculator->setModifier($this->getAmazonSellingFormatTemplate()->getBusinessDiscountsTierModifier());
             $calculator->setVatPercent($this->getAmazonSellingFormatTemplate()->getBusinessPriceVatPercent());
 
             return array_slice(
@@ -1222,7 +1260,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         foreach ($businessDiscounts as $businessDiscount) {
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
-            $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_PriceCalculator');
+            $calculator = $this->amazonPriceCalculatorFactory->create();
             $calculator->setSource($businessDiscount->getSource())->setProduct($this->getParentObject());
             $calculator->setSourceModeMapping([
                 \Ess\M2ePro\Model\Listing\Product\PriceCalculator::MODE_PRODUCT   =>

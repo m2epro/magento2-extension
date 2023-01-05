@@ -11,63 +11,44 @@ namespace Ess\M2ePro\Model\Listing\Auto\Actions;
 use Ess\M2ePro\Model\Exception\Logic;
 use Ess\M2ePro\Model\Listing\Product;
 
-/**
- * Class \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
- */
-abstract class Listing extends \Ess\M2ePro\Model\AbstractModel
+abstract class Listing
 {
-    const INSTRUCTION_TYPE_STOP            = 'auto_actions_stop';
-    const INSTRUCTION_TYPE_STOP_AND_REMOVE = 'auto_actions_stop_and_remove';
+    public const INSTRUCTION_TYPE_STOP            = 'auto_actions_stop';
+    public const INSTRUCTION_TYPE_STOP_AND_REMOVE = 'auto_actions_stop_and_remove';
 
-    const INSTRUCTION_INITIATOR = 'auto_actions';
+    public const INSTRUCTION_INITIATOR = 'auto_actions';
 
-    /**
-     * @var null|\Ess\M2ePro\Model\Listing
-     */
-    private $listing = null;
-
+    /** @var \Ess\M2ePro\Model\Listing*/
+    protected $listing;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    protected $exceptionHelper;
 
     public function __construct(
+        \Ess\M2ePro\Model\Listing $listing,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
+        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
-        parent::__construct($helperFactory, $modelFactory);
-    }
-
-    //########################################
-
-    public function setListing(\Ess\M2ePro\Model\Listing $listing)
-    {
         $this->listing = $listing;
+        $this->activeRecordFactory = $activeRecordFactory;
+        $this->exceptionHelper = $exceptionHelper;
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Listing
+     * @param \Magento\Catalog\Model\Product $product
+     * @param int $deletingMode
+     *
+     * @return void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function getListing()
-    {
-        if (!($this->listing instanceof \Ess\M2ePro\Model\Listing)) {
-            throw new \Ess\M2ePro\Model\Exception\Logic('Property "Listing" should be set first.');
-        }
-
-        return $this->listing;
-    }
-
-    //########################################
-
-    public function deleteProduct(\Magento\Catalog\Model\Product $product, $deletingMode)
+    public function deleteProduct(\Magento\Catalog\Model\Product $product, int $deletingMode): void
     {
         if ($deletingMode == \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE) {
             return;
         }
 
-        $listingsProducts = $this->getListing()->getProducts(true, ['product_id'=>(int)$product->getId()]);
+        $listingsProducts = $this->getListing()->getProducts(true, ['product_id' => (int)$product->getId()]);
 
         if (count($listingsProducts) <= 0) {
             return;
@@ -101,29 +82,43 @@ abstract class Listing extends \Ess\M2ePro\Model\AbstractModel
                 );
                 $instruction->save();
             } catch (\Exception $exception) {
-                $this->getHelper('Module\Exception')->process($exception);
+                $this->exceptionHelper->process($exception);
             }
         }
     }
 
-    //########################################
-
+    /**
+     * @param \Magento\Catalog\Model\Product $product
+     * @param \Ess\M2ePro\Model\Listing\Auto\Category\Group $categoryGroup
+     *
+     * @return mixed
+     */
     abstract public function addProductByCategoryGroup(
         \Magento\Catalog\Model\Product $product,
         \Ess\M2ePro\Model\Listing\Auto\Category\Group $categoryGroup
     );
 
+    /**
+     * @param \Magento\Catalog\Model\Product $product
+     * @param \Ess\M2ePro\Model\Listing $listing
+     *
+     * @return mixed
+     */
     abstract public function addProductByGlobalListing(
         \Magento\Catalog\Model\Product $product,
         \Ess\M2ePro\Model\Listing $listing
     );
 
+    /**
+     * @param \Magento\Catalog\Model\Product $product
+     * @param \Ess\M2ePro\Model\Listing $listing
+     *
+     * @return mixed
+     */
     abstract public function addProductByWebsiteListing(
         \Magento\Catalog\Model\Product $product,
         \Ess\M2ePro\Model\Listing $listing
     );
-
-    //########################################
 
     /**
      * @param Product $listingProduct
@@ -145,5 +140,11 @@ abstract class Listing extends \Ess\M2ePro\Model\AbstractModel
         );
     }
 
-    //########################################
+    /**
+     * @return \Ess\M2ePro\Model\Listing
+     */
+    protected function getListing(): \Ess\M2ePro\Model\Listing
+    {
+        return $this->listing;
+    }
 }

@@ -8,20 +8,15 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Log
- */
 class Log extends \Ess\M2ePro\Model\Listing\Log
 {
-    //########################################
-
-    public function _construct()
+    protected function _construct(): void
     {
         parent::_construct();
         $this->setComponentMode(\Ess\M2ePro\Helper\Component\Amazon::NICK);
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param $listingId
@@ -77,11 +72,11 @@ class Log extends \Ess\M2ePro\Model\Listing\Log
                 $productOptions = $variationManager->getTypeModel()->getProductOptions();
 
                 if (!empty($productOptions)) {
-                    $dataForAdd['additional_data'] = (array)$this->getHelper('Data')->jsonDecode(
+                    $dataForAdd['additional_data'] = (array)\Ess\M2ePro\Helper\Json::decode(
                         $dataForAdd['additional_data']
                     );
                     $dataForAdd['additional_data']['variation_options'] = $productOptions;
-                    $dataForAdd['additional_data'] = $this->getHelper('Data')->jsonEncode(
+                    $dataForAdd['additional_data'] = \Ess\M2ePro\Helper\Json::encode(
                         $dataForAdd['additional_data']
                     );
                 }
@@ -94,6 +89,4 @@ class Log extends \Ess\M2ePro\Model\Listing\Log
 
         $this->createMessage($dataForAdd);
     }
-
-    //########################################
 }

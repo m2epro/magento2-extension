@@ -10,6 +10,8 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\ReturnPolicy\Edit\Form;
 
 class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
+    private const RETURNS_WITHIN_DEFAULT_VALUE = 'Days_30';
+
     protected $returnPolicyTemplate;
 
     public $formData = [];
@@ -120,6 +122,13 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 ]
             );
         }
+        $defaultValue = $this->getDefaultDaysValueForReturnPolicy(
+            $this->getMarketplaceDataToOptions('returns_within')
+        );
+
+        $returnWithinDefaultValue = !empty($this->formData['within'])
+            ? $this->formData['within']
+            : $defaultValue;
 
         if (!empty($this->marketplaceData['info']['returns_within'])) {
             $fieldset->addField(
@@ -130,7 +139,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'label' => __('Item Must Be Returned Within'),
                     'title' => __('Item Must Be Returned Within'),
                     'values' => $this->getMarketplaceDataToOptions('returns_within'),
-                    'value' => $this->formData['within'],
+                    'value' => $returnWithinDefaultValue,
                 ]
             );
         }
@@ -182,6 +191,14 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             );
         }
 
+        $defaultValue = $this->getDefaultDaysValueForReturnPolicy(
+            $this->getMarketplaceDataToOptions('international_returns_within')
+        );
+
+        $returnInternationalWithinDefaultValue = !empty($this->formData['international_within'])
+            ? $this->formData['international_within']
+            : $defaultValue;
+
         if (!empty($this->marketplaceData['info']['international_returns_within'])) {
             $fieldset->addField(
                 'return_international_within',
@@ -191,7 +208,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'label' => __('Item Must Be Returned Within'),
                     'title' => __('Item Must Be Returned Within'),
                     'values' => $this->getMarketplaceDataToOptions('international_returns_within'),
-                    'value' => $this->formData['international_within']
+                    'value' => $returnInternationalWithinDefaultValue,
                 ]
             );
         }
@@ -390,5 +407,22 @@ JS
         );
 
         return parent::_toHtml();
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return mixed|string
+     */
+    private function getDefaultDaysValueForReturnPolicy(array $options)
+    {
+        $result = null;
+        foreach ($options as $option) {
+            if ($option['value'] === self::RETURNS_WITHIN_DEFAULT_VALUE) {
+                $result = $option['value'];
+            }
+        }
+
+        return $result ?? array_shift($options)['value'];
     }
 }

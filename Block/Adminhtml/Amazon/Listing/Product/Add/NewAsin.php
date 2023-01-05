@@ -69,8 +69,24 @@ class NewAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->addButton('back', [
             'label'     => $this->__('Back'),
             'class'     => 'back',
-            'onclick'   => 'setLocation(\''.$url.'\');'
+            'onclick'   => 'setLocation(\'' . $url . '\');'
         ]);
+
+        $url = $this->getUrl(
+            '*/amazon_listing_product_add/exitToListing',
+            ['id' => $this->getRequest()->getParam('id')]
+        );
+        $confirm =
+            '<strong>' . $this->__('Are you sure?') . '</strong><br><br>'
+            . $this->__('All unsaved changes will be lost and you will be returned to the Listings grid.');
+        $this->addButton(
+            'exit_to_listing',
+            [
+                'label' => $this->__('Cancel'),
+                'onclick' => "confirmSetLocation('$confirm', '$url');",
+                'class' => 'action-primary',
+            ]
+        );
 
         $this->addButton('next', [
             'label'     => $this->__('Continue'),

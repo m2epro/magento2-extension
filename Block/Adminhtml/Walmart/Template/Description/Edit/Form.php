@@ -54,10 +54,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text_select' => $this->magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'select']),
             'text' => $this->magentoAttributeHelper->filterByInputTypes($allAttributes, ['text']),
             'text_weight' => $this->magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'weight']),
-            'text_keywords' => $this->magentoAttributeHelper->filterByInputTypes(
-                $allAttributes,
-                ['text', 'select', 'textarea']
-            ),
             'text_images' => $this->magentoAttributeHelper->filterByInputTypes(
                 $allAttributes,
                 ['text', 'image', 'media_image', 'gallery', 'multiline', 'textarea', 'select', 'multiselect']
@@ -801,59 +797,6 @@ HTML
         // ---------------------------------------
 
         $fieldSet->addField(
-            'keywords_custom_attribute',
-            'hidden',
-            [
-                'name' => 'keywords_custom_attribute',
-                'value' => $this->formData['keywords_custom_attribute']
-            ]
-        );
-
-        $defaultValue = '';
-        if ($this->formData['keywords_mode'] == Description::KEYWORDS_MODE_NONE ||
-            $this->formData['keywords_mode'] == Description::KEYWORDS_MODE_CUSTOM_VALUE
-        ) {
-            $defaultValue = $this->formData['keywords_mode'];
-        }
-
-        $fieldSet->addField(
-            'keywords_mode',
-            self::SELECT,
-            [
-                'name' => 'keywords_mode',
-                'label' => $this->__('Keywords'),
-                'title' => $this->__('Keywords'),
-                'values' => $this->getKeywordsModeOptions(),
-                'value' => $defaultValue,
-                'class' => 'select',
-                'create_magento_attribute' => true,
-                'tooltip' => $this->__('Specify the relevant keywords that buyers would use to find your Item.<br>
-                    Either enter the value manually or use the value from a selected Magento Attribute.')
-            ]
-        )->addCustomAttribute('allowed_attribute_types', 'text,select,textarea');
-
-        $fieldSet->addField(
-            'keywords_custom_value',
-            'textarea',
-            [
-                'name' => 'keywords_custom_value',
-                'label' => $this->__('Keywords Value'),
-                'title' => $this->__('Keywords Value'),
-                'value' => $this->formData['keywords_custom_value'],
-                'class' => 'input-text M2ePro-required-when-visible',
-                'required' => true,
-                'field_extra_attributes' => 'id="keywords_custom_value_tr" style="display: none;"',
-                'rows' => '5'
-            ]
-        );
-
-        // ---------------------------------------
-
-        $fieldSet->addField('keywords_custom_mode_separator', self::SEPARATOR, []);
-
-        // ---------------------------------------
-
-        $fieldSet->addField(
             'attributes_mode',
             self::SELECT,
             [
@@ -1073,23 +1016,6 @@ HTML
             Description::TOTAL_COUNT_MODE_CUSTOM_ATTRIBUTE,
             'total_count_custom_attribute',
             'text_select'
-        ));
-    }
-
-    public function getKeywordsModeOptions()
-    {
-        $optionsResult = [
-            ['value' => Description::KEYWORDS_MODE_NONE, 'label' => $this->__('None')],
-            [
-                'value' => Description::KEYWORDS_MODE_CUSTOM_VALUE,
-                'label' => $this->__('Custom Value')
-            ],
-        ];
-
-        return array_merge($optionsResult, $this->getAttributeOptions(
-            Description::KEYWORDS_MODE_CUSTOM_ATTRIBUTE,
-            'keywords_custom_attribute',
-            'text_keywords'
         ));
     }
 

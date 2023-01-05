@@ -601,4 +601,23 @@ a.walmart-listing-view-switch-variation-mode:before {
 .searched_child_product .admin__field-tooltip .admin__field-tooltip-action:before {
     content: '';
 }
-/* ================================================ */
+
+.big-size {
+    padding: 5px 10px;
+    font-size: 1.4rem;
+}
+
+#view_mode_switcher {
+    background: #eb5202;
+    color: white;
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+#view_mode_switcher:after {
+    border-color: white transparent transparent transparent;
+}
+
+.admin__menu #menu-ess-m2epro-amazon [target='_blank']:after {
+    font-size: 1rem;
+}

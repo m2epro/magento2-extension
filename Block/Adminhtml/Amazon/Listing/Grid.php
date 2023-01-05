@@ -224,19 +224,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
                     ]
                 ]
             ],
-
-            'searchSetting' => [
-                'caption' => $this->__('Search'),
-                'group'   => 'edit_actions',
-                'field'   => 'id',
-                'url'     => [
-                    'base'   => '*/amazon_listing/edit',
-                    'params' => [
-                        'back' => $backUrl,
-                        'tab' => 'search'
-                    ]
-                ]
-            ]
         ];
 
         return $actions;

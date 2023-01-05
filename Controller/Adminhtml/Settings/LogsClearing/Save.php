@@ -10,18 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Settings\LogsClearing;
 
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
-    /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
-    private $componentEbayPickupStore;
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
-        \Ess\M2ePro\Controller\Adminhtml\Context $context
-    ) {
-        parent::__construct($context);
-
-        $this->componentEbayPickupStore = $componentEbayPickupStore;
-    }
-
     public function execute()
     {
         // Get actions
@@ -32,9 +20,6 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
         $messages = [];
         if ($task !== null) {
             $title = ucwords(str_replace('_', ' ', $log));
-            if ($log == \Ess\M2ePro\Model\Log\Clearing::LOG_EBAY_PICKUP_STORE) {
-                $title = 'eBay In-Store Pickup';
-            }
 
             switch ($task) {
                 case 'run_now':

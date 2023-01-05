@@ -8,68 +8,59 @@
 
 namespace Ess\M2ePro\Model\Lock\Item;
 
-/**
- * Class \Ess\M2ePro\Model\Lock\Item\Manager
- */
-class Manager extends \Ess\M2ePro\Model\AbstractModel
+class Manager
 {
-    const DEFAULT_MAX_INACTIVE_TIME = 900;
-
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
-    private $activeRecordFactory;
-
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $helperData;
+    public const DEFAULT_MAX_INACTIVE_TIME = 900;
 
     /** @var string */
     private $nick;
-
-    //########################################
+    /** @var \Ess\M2ePro\Model\ResourceModel\Lock\Item\CollectionFactory */
+    private $lockItemCollectionFactory;
+    /** @var \Ess\M2ePro\Model\Lock\ItemFactory */
+    private $lockItemFactory;
+    /** @var \Ess\M2ePro\Model\Lock\Item\ManagerFactory */
+    private $lockItemManagerFactory;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Data $helperData,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        $nick,
-        array $data = []
+        \Ess\M2ePro\Model\Lock\Item\ManagerFactory $lockItemManagerFactory,
+        \Ess\M2ePro\Model\Lock\ItemFactory $lockItemFactory,
+        \Ess\M2ePro\Model\ResourceModel\Lock\Item\CollectionFactory $lockItemCollectionFactory,
+        string $nick
     ) {
-        $this->helperData          = $helperData;
-        $this->activeRecordFactory = $activeRecordFactory;
-        $this->nick                = $nick;
-        parent::__construct($helperFactory, $modelFactory, $data);
+        $this->lockItemCollectionFactory = $lockItemCollectionFactory;
+        $this->nick = $nick;
+        $this->lockItemFactory = $lockItemFactory;
+        $this->lockItemManagerFactory = $lockItemManagerFactory;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getNick()
+    public function getNick(): string
     {
         return $this->nick;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function create($parentNick = null)
+    public function create($parentNick = null): self
     {
         /** @var \Ess\M2ePro\Model\Lock\Item $parentLockItem */
-        $parentLockItem = $this->activeRecordFactory->getObject('Lock\Item');
+        $parentLockItem = $this->lockItemFactory->create();
         if ($parentNick !== null) {
             $parentLockItem->load($parentNick, 'nick');
         }
 
-        $data = [
-            'nick'      => $this->nick,
-            'parent_id' => $parentLockItem->getId(),
-        ];
-
         /** @var \Ess\M2ePro\Model\Lock\Item $lockModel */
-        $lockModel = $this->activeRecordFactory->getObject('Lock\Item')->setData($data);
+        $lockModel = $this->lockItemFactory->create();
+        $lockModel->setNick($this->nick)
+                  ->setParentId($parentLockItem->getId());
+
         $lockModel->save();
 
         return $this;
     }
 
-    public function remove()
+    public function remove(): bool
     {
         $lockItem = $this->getLockItemObject();
         if ($lockItem === null) {
@@ -77,16 +68,15 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         }
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Lock\Item\Collection $childLockItemCollection */
-        $childLockItemCollection = $this->activeRecordFactory->getObject('Lock\Item')->getCollection();
+        $childLockItemCollection = $this->lockItemCollectionFactory->create();
         $childLockItemCollection->addFieldToFilter('parent_id', $lockItem->getId());
 
         /** @var \Ess\M2ePro\Model\Lock\Item[] $childLockItems */
         $childLockItems = $childLockItemCollection->getItems();
 
         foreach ($childLockItems as $childLockItem) {
-            $childManager = $this->modelFactory->getObject(
-                'Lock_Item_Manager',
-                ['nick' => $childLockItem->getNick()]
+            $childManager = $this->lockItemManagerFactory->create(
+                $childLockItem->getNick()
             );
             $childManager->remove();
         }
@@ -98,31 +88,25 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     // ---------------------------------------
 
-    public function isExist()
+    public function isExist(): bool
     {
         return $this->getLockItemObject() !== null;
     }
 
-    public function isInactiveMoreThanSeconds($maxInactiveInterval)
+    public function isInactiveMoreThanSeconds($maxInactiveInterval): bool
     {
         $lockItem = $this->getLockItemObject();
         if ($lockItem === null) {
             return true;
         }
 
-        $currentTimestamp = $this->helperData->getCurrentGmtDate(true);
-        $updateTimestamp = (int)$this->helperData
-            ->createGmtDateTime($lockItem->getUpdateDate())
-            ->format('U');
+        $currentDate = \Ess\M2ePro\Helper\Date::createCurrentGmt();
+        $updateDate = \Ess\M2ePro\Helper\Date::createDateGmt($lockItem->getUpdateDate());
 
-        if ($updateTimestamp < $currentTimestamp - $maxInactiveInterval) {
-            return true;
-        }
-
-        return false;
+        return $updateDate->getTimestamp() < ($currentDate->getTimestamp() - $maxInactiveInterval);
     }
 
-    public function activate()
+    public function activate(): void
     {
         $lockItem = $this->getLockItemObject();
         if ($lockItem === null) {
@@ -132,15 +116,12 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($lockItem->getParentId() !== null) {
-
             /** @var \Ess\M2ePro\Model\Lock\Item $parentLockItem */
-            $parentLockItem = $this->activeRecordFactory->getObject('Lock\Item')->load($lockItem->getParentId());
+            $parentLockItem = $this->lockItemFactory->create()->load($lockItem->getParentId());
 
             if ($parentLockItem->getId()) {
-                /** @var \Ess\M2ePro\Model\Lock\Item\Manager $parentManager */
-                $parentManager = $this->modelFactory->getObject(
-                    'Lock_Item_Manager',
-                    ['nick' => $parentLockItem->getNick()]
+                $parentManager = $this->lockItemManagerFactory->create(
+                    $parentLockItem->getNick()
                 );
                 $parentManager->activate();
             }
@@ -148,11 +129,9 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
         $lockItem->setDataChanges(true);
         $lockItem->save();
-
-        return true;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function addContentData($key, $value)
     {
@@ -165,14 +144,14 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
         $data = $lockItem->getContentData();
         if (!empty($data)) {
-            $data = $this->helperData->jsonDecode($data);
+            $data = \Ess\M2ePro\Helper\Json::decode($data);
         } else {
             $data = [];
         }
 
         $data[$key] = $value;
 
-        $lockItem->setData('data', $this->helperData->jsonEncode($data));
+        $lockItem->setData('data', \Ess\M2ePro\Helper\Json::encode($data));
         $lockItem->save();
 
         return true;
@@ -187,7 +166,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             );
         }
 
-        $lockItem->setData('data', $this->helperData->jsonEncode($data));
+        $lockItem->setData('data', \Ess\M2ePro\Helper\Json::encode($data));
         $lockItem->save();
 
         return true;
@@ -208,27 +187,20 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             return null;
         }
 
-        $data = $this->helperData->jsonDecode($lockItem->getContentData());
+        $data = \Ess\M2ePro\Helper\Json::decode($lockItem->getContentData());
         if ($key === null) {
             return $data;
         }
 
-        if (isset($data[$key])) {
-            return $data[$key];
-        }
-
-        return null;
+        return $data[$key] ?? null;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    /**
-     * @return \Ess\M2ePro\Model\Lock\Item
-     */
-    protected function getLockItemObject()
+    private function getLockItemObject(): ?\Ess\M2ePro\Model\Lock\Item
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Lock\Item\Collection $lockItemCollection */
-        $lockItemCollection = $this->activeRecordFactory->getObject('Lock\Item')->getCollection();
+        $lockItemCollection = $this->lockItemCollectionFactory->create();
         $lockItemCollection->addFieldToFilter('nick', $this->nick);
 
         /** @var \Ess\M2ePro\Model\Lock\Item $lockItem */
@@ -236,6 +208,4 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
         return $lockItem->getId() ? $lockItem : null;
     }
-
-    //########################################
 }

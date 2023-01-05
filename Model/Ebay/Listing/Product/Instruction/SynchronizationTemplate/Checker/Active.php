@@ -8,31 +8,36 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker;
 
-use \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
+use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\Active
- */
 class Active extends AbstractModel
 {
-    protected $parentFactory;
-
-    //########################################
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise\Checker */
+    private $ebayReviseChecker;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory */
+    private $parentFactory;
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\ConfiguratorFactory */
+    private $configuratorFactory;
 
     public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Action\ConfiguratorFactory $configuratorFactory,
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise\Checker $ebayReviseChecker,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
-        $this->parentFactory = $parentFactory;
         parent::__construct($activeRecordFactory, $helperFactory, $modelFactory, $data);
+        $this->ebayReviseChecker = $ebayReviseChecker;
+        $this->parentFactory = $parentFactory;
+        $this->configuratorFactory = $configuratorFactory;
     }
 
-    //########################################
-
-    protected function getStopInstructionTypes()
+    /**
+     * @return array
+     */
+    protected function getStopInstructionTypes(): array
     {
         return [
             ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_DATA_POTENTIALLY_CHANGED,
@@ -57,9 +62,11 @@ class Active extends AbstractModel
         ];
     }
 
-    //########################################
-
-    public function isAllowed()
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isAllowed(): bool
     {
         if (!parent::isAllowed()) {
             return false;
@@ -91,22 +98,22 @@ class Active extends AbstractModel
         return true;
     }
 
-    //########################################
-
-    public function process(array $params = [])
+    /**
+     * @param array $params
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function process(array $params = []): void
     {
         $scheduledAction = $this->input->getScheduledAction();
         if ($scheduledAction === null) {
+            /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction */
             $scheduledAction = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction');
         }
 
         if ($this->input->hasInstructionWithTypes($this->getStopInstructionTypes())) {
-            if (!$this->isMeetStopRequirements()) {
-                if ($scheduledAction->isActionTypeStop() && !$scheduledAction->isForce()) {
-                    $this->getScheduledActionManager()->deleteAction($scheduledAction);
-                    $scheduledAction->unsetData();
-                }
-            } else {
+            if ($this->isMeetStopRequirements()) {
 
                 /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
                 $ebayListingProduct = $this->input->getListingProduct()->getChildObject();
@@ -129,10 +136,8 @@ class Active extends AbstractModel
                     $tags[] = 'qty';
 
                     $additionalData['configurator'] = $configurator->getSerializedData();
-                } else {
-                    if ($scheduledAction->isActionTypeRevise()) {
-                        $this->setPropertiesForRecheck($this->getPropertiesDataFromInputScheduledAction());
-                    }
+                } elseif ($scheduledAction->isActionTypeRevise()) {
+                    $this->setPropertiesForRecheck($this->getPropertiesDataFromInputScheduledAction());
                 }
 
                 $scheduledAction->addData(
@@ -141,7 +146,7 @@ class Active extends AbstractModel
                         'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
                         'action_type' => $actionType,
                         'tag' => '/' . implode('/', $tags) . '/',
-                        'additional_data' => $this->getHelper('Data')->jsonEncode($additionalData),
+                        'additional_data' => \Ess\M2ePro\Helper\Json::encode($additionalData),
                     ]
                 );
 
@@ -150,6 +155,9 @@ class Active extends AbstractModel
                 } else {
                     $this->getScheduledActionManager()->addAction($scheduledAction);
                 }
+            } elseif ($scheduledAction->isActionTypeStop() && !$scheduledAction->isForce()) {
+                $this->getScheduledActionManager()->deleteAction($scheduledAction);
+                $scheduledAction->unsetData();
             }
         }
 
@@ -168,7 +176,7 @@ class Active extends AbstractModel
         }
 
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator $configurator */
-        $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
+        $configurator = $this->configuratorFactory->create();
         $configurator->disableAll();
 
         $tags = [];
@@ -323,7 +331,7 @@ class Active extends AbstractModel
                 'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
                 'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
                 'tag' => '/' . implode('/', $tags) . '/',
-                'additional_data' => $this->getHelper('Data')->jsonEncode(
+                'additional_data' => \Ess\M2ePro\Helper\Json::encode(
                     [
                         'params' => $params,
                         'configurator' => $configurator->getSerializedData()
@@ -339,9 +347,12 @@ class Active extends AbstractModel
         }
     }
 
-    //########################################
-
-    public function isMeetStopRequirements()
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetStopRequirements(): bool
     {
         $listingProduct = $this->input->getListingProduct();
 
@@ -366,16 +377,16 @@ class Active extends AbstractModel
         if ($ebaySynchronizationTemplate->isStopStatusDisabled()) {
             if (!$listingProduct->getMagentoProduct()->isStatusEnabled()) {
                 return true;
-            } else {
-                if ($ebayListingProduct->isVariationsReady()) {
-                    $temp = $variationResource->isAllStatusesDisabled(
-                        $listingProduct->getId(),
-                        $listingProduct->getListing()->getStoreId()
-                    );
+            }
 
-                    if ($temp !== null && $temp) {
-                        return true;
-                    }
+            if ($ebayListingProduct->isVariationsReady()) {
+                $temp = $variationResource->isAllStatusesDisabled(
+                    $listingProduct->getId(),
+                    $listingProduct->getListing()->getStoreId()
+                );
+
+                if ($temp !== null && $temp) {
+                    return true;
                 }
             }
         }
@@ -383,16 +394,16 @@ class Active extends AbstractModel
         if ($ebaySynchronizationTemplate->isStopOutOfStock()) {
             if (!$listingProduct->getMagentoProduct()->isStockAvailability()) {
                 return true;
-            } else {
-                if ($ebayListingProduct->isVariationsReady()) {
-                    $temp = $variationResource->isAllDoNotHaveStockAvailabilities(
-                        $listingProduct->getId(),
-                        $listingProduct->getListing()->getStoreId()
-                    );
+            }
 
-                    if ($temp !== null && $temp) {
-                        return true;
-                    }
+            if ($ebayListingProduct->isVariationsReady()) {
+                $temp = $variationResource->isAllDoNotHaveStockAvailabilities(
+                    $listingProduct->getId(),
+                    $listingProduct->getListing()->getStoreId()
+                );
+
+                if ($temp !== null && $temp) {
+                    return true;
                 }
             }
         }
@@ -423,369 +434,129 @@ class Active extends AbstractModel
         return false;
     }
 
-    // ---------------------------------------
-
-    public function isMeetReviseQtyRequirements()
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetReviseQtyRequirements(): bool
     {
-        $listingProduct = $this->input->getListingProduct();
-
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct = $listingProduct->getChildObject();
-
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
-        $configurator->disableAll()->allowQty()->allowVariations();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdateQty()) {
-            return false;
-        }
-
-        $isMaxAppliedValueModeOn = $ebaySynchronizationTemplate->isReviseUpdateQtyMaxAppliedValueModeOn();
-        $maxAppliedValue = $ebaySynchronizationTemplate->getReviseUpdateQtyMaxAppliedValue();
-
-        if (!$ebayListingProduct->isVariationsReady()) {
-            $productQty = $ebayListingProduct->getQty();
-            $channelQty = $ebayListingProduct->getOnlineQty() - $ebayListingProduct->getOnlineQtySold();
-
-            // Check ReviseUpdateQtyMaxAppliedValue
-            if ($isMaxAppliedValueModeOn && $productQty > $maxAppliedValue && $channelQty > $maxAppliedValue) {
-                return false;
-            }
-
-            if ($productQty != $channelQty) {
-                return true;
-            }
-        } else {
-            $variations = $listingProduct->getVariations(true);
-
-            foreach ($variations as $variation) {
-
-                /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation $ebayVariation */
-                $ebayVariation = $variation->getChildObject();
-
-                $productQty = $ebayVariation->getQty();
-                $channelQty = $ebayVariation->getOnlineQty() - $ebayVariation->getOnlineQtySold();
-
-                if ($productQty != $channelQty &&
-                    (!$isMaxAppliedValueModeOn || $productQty <= $maxAppliedValue || $channelQty <= $maxAppliedValue)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    // ---------------------------------------
-
-    public function isMeetRevisePriceRequirements()
-    {
-        $listingProduct = $this->input->getListingProduct();
-
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct = $listingProduct->getChildObject();
-
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
-        $configurator->disableAll()->allowPrice()->allowVariations();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdatePrice()) {
-            return false;
-        }
-
-        if (!$ebayListingProduct->isVariationsReady()) {
-            if ($ebayListingProduct->isListingTypeFixed()) {
-                if ($ebayListingProduct->getOnlineCurrentPrice() != $ebayListingProduct->getFixedPrice()) {
-                    return true;
-                }
-            }
-
-            if ($ebayListingProduct->isListingTypeAuction()) {
-                if ($ebayListingProduct->getOnlineStartPrice() != $ebayListingProduct->getStartPrice()) {
-                    return true;
-                }
-
-                if ($ebayListingProduct->getOnlineReservePrice() != $ebayListingProduct->getReservePrice()) {
-                    return true;
-                }
-
-                if ($ebayListingProduct->getOnlineBuyItNowPrice() != $ebayListingProduct->getBuyItNowPrice()) {
-                    return true;
-                }
-            }
-        } else {
-            $variations = $listingProduct->getVariations(true);
-
-            foreach ($variations as $variation) {
-
-                /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation $ebayVariation */
-                $ebayVariation = $variation->getChildObject();
-
-                if ($ebayVariation->getOnlinePrice() != $ebayVariation->getPrice()) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    // ---------------------------------------
-
-    public function isMeetReviseTitleRequirements()
-    {
-        $listingProduct = $this->input->getListingProduct();
-
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct = $listingProduct->getChildObject();
-
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdateTitle()) {
-            return false;
-        }
-
-        $actionDataBuilder = $this->modelFactory->getObject('Ebay_Listing_Product_Action_DataBuilder_Title');
-        $actionDataBuilder->setListingProduct($listingProduct);
-
-        $actionData = $actionDataBuilder->getBuilderData();
-
-        if ($actionData['title'] == $ebayListingProduct->getOnlineTitle()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    // ---------------------------------------
-
-    public function isMeetReviseSubtitleRequirements()
-    {
-        $listingProduct = $this->input->getListingProduct();
-
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct = $listingProduct->getChildObject();
-
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdateSubtitle()) {
-            return false;
-        }
-
-        $actionDataBuilder = $this->modelFactory->getObject('Ebay_Listing_Product_Action_DataBuilder_Subtitle');
-        $actionDataBuilder->setListingProduct($listingProduct);
-
-        $actionData = $actionDataBuilder->getBuilderData();
-
-        if ($actionData['subtitle'] == $ebayListingProduct->getOnlineSubTitle()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    // ---------------------------------------
-
-    public function isMeetReviseDescriptionRequirements()
-    {
-        $listingProduct = $this->input->getListingProduct();
-
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct = $listingProduct->getChildObject();
-
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdateDescription()) {
-            return false;
-        }
-
-        $actionDataBuilder = $this->modelFactory->getObject('Ebay_Listing_Product_Action_DataBuilder_Description');
-        $actionDataBuilder->setListingProduct($listingProduct);
-
-        $actionData = $actionDataBuilder->getBuilderData();
-
-        $hashDescription = $this->getHelper('Data')->hashString($actionData['description'], 'md5');
-        if ($hashDescription == $ebayListingProduct->getOnlineDescription()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    // ---------------------------------------
-
-    public function isMeetReviseImagesRequirements()
-    {
-        $listingProduct = $this->input->getListingProduct();
-
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct = $listingProduct->getChildObject();
-
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdateImages()) {
-            return false;
-        }
-
-        $actionDataBuilder = $this->modelFactory->getObject('Ebay_Listing_Product_Action_DataBuilder_Images');
-        $actionDataBuilder->setListingProduct($listingProduct);
-        $actionDataBuilder->setIsVariationItem($ebayListingProduct->isVariationsReady());
-
-        $hashImagesData = $this->getHelper('Data')->hashString(
-            $this->getHelper('Data')->jsonEncode($actionDataBuilder->getBuilderData()),
-            'md5'
+        return $this->ebayReviseChecker->isNeedReviseForQty(
+            $this->input->getListingProduct()->getChildObject()
         );
-
-        if ($hashImagesData == $ebayListingProduct->getOnlineImages()) {
-            return false;
-        }
-
-        return true;
     }
 
-    // ---------------------------------------
-
-    public function isMeetReviseCategoriesRequirements()
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetRevisePriceRequirements(): bool
     {
-        $listingProduct = $this->input->getListingProduct();
-
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct = $listingProduct->getChildObject();
-
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdateCategories()) {
-            return false;
-        }
-
-        $actionDataBuilder = $this->modelFactory->getObject('Ebay_Listing_Product_Action_DataBuilder_Categories');
-        $actionDataBuilder->setListingProduct($listingProduct);
-
-        if ($actionDataBuilder->getBuilderData() == $ebayListingProduct->getOnlineCategoriesData()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    // ---------------------------------------
-
-    public function isMeetRevisePartsRequirements()
-    {
-        $listingProduct = $this->input->getListingProduct();
-
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct = $listingProduct->getChildObject();
-
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdateParts()) {
-            return false;
-        }
-
-        $actionDataBuilder = $this->modelFactory->getObject(
-            'Ebay_Listing_Product_Action_DataBuilder_Parts'
+        return $this->ebayReviseChecker->isNeedReviseForPrice(
+            $this->input->getListingProduct()->getChildObject()
         );
-        $actionDataBuilder->setListingProduct($listingProduct);
-
-        if ($actionDataBuilder->getHash() == $ebayListingProduct->getData('online_parts_data')) {
-            return false;
-        }
-
-        return true;
     }
 
-    // ---------------------------------------
-
-    public function isMeetReviseShippingRequirements()
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetReviseTitleRequirements(): bool
     {
-        $listingProduct = $this->input->getListingProduct();
-
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct = $listingProduct->getChildObject();
-
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdateShipping()) {
-            return false;
-        }
-
-        $actionDataBuilder = $this->modelFactory->getObject('Ebay_Listing_Product_Action_DataBuilder_Shipping');
-        $actionDataBuilder->setListingProduct($listingProduct);
-
-        $hashReturnData = $this->getHelper('Data')->hashString(
-            $this->getHelper('Data')->jsonEncode($actionDataBuilder->getBuilderData()),
-            'md5'
+        return $this->ebayReviseChecker->isNeedReviseForTitle(
+            $this->input->getListingProduct()->getChildObject()
         );
-
-        if ($hashReturnData == $ebayListingProduct->getOnlineShippingData()) {
-            return false;
-        }
-
-        return true;
     }
 
-    // ---------------------------------------
-
-    public function isMeetReviseReturnRequirements()
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetReviseSubtitleRequirements(): bool
     {
-        $listingProduct = $this->input->getListingProduct();
-
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct = $listingProduct->getChildObject();
-
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdateReturn()) {
-            return false;
-        }
-
-        $actionDataBuilder = $this->modelFactory->getObject('Ebay_Listing_Product_Action_DataBuilder_ReturnPolicy');
-        $actionDataBuilder->setListingProduct($listingProduct);
-
-        $hashReturnData = $this->getHelper('Data')->hashString(
-            $this->getHelper('Data')->jsonEncode($actionDataBuilder->getBuilderData()),
-            'md5'
+        return $this->ebayReviseChecker->isNeedReviseForTitle(
+            $this->input->getListingProduct()->getChildObject()
         );
-
-        if ($hashReturnData == $ebayListingProduct->getOnlineReturnData()) {
-            return false;
-        }
-
-        return true;
     }
 
-    // ---------------------------------------
-
-    public function isMeetReviseOtherRequirements()
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetReviseDescriptionRequirements(): bool
     {
-        $listingProduct = $this->input->getListingProduct();
-
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct = $listingProduct->getChildObject();
-
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdateOther()) {
-            return false;
-        }
-
-        $actionDataBuilder = $this->modelFactory->getObject('Ebay_Listing_Product_Action_DataBuilder_Other');
-        $actionDataBuilder->setListingProduct($listingProduct);
-
-        $hashOtherData = $this->getHelper('Data')->hashString(
-            $this->getHelper('Data')->jsonEncode($actionDataBuilder->getBuilderData()),
-            'md5'
+        return $this->ebayReviseChecker->isNeedReviseForDescription(
+            $this->input->getListingProduct()->getChildObject()
         );
-
-        if ($hashOtherData == $ebayListingProduct->getOnlineOtherData()) {
-            return false;
-        }
-
-        return true;
     }
 
-    //########################################
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetReviseImagesRequirements(): bool
+    {
+        return $this->ebayReviseChecker->isNeedReviseForImages(
+            $this->input->getListingProduct()->getChildObject()
+        );
+    }
+
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetReviseCategoriesRequirements(): bool
+    {
+        return $this->ebayReviseChecker->isNeedReviseForCategories(
+            $this->input->getListingProduct()->getChildObject()
+        );
+    }
+
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetRevisePartsRequirements(): bool
+    {
+        return $this->ebayReviseChecker->isNeedReviseForParts(
+            $this->input->getListingProduct()->getChildObject()
+        );
+    }
+
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetReviseShippingRequirements(): bool
+    {
+        return $this->ebayReviseChecker->isNeedReviseForShipping(
+            $this->input->getListingProduct()->getChildObject()
+        );
+    }
+
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetReviseReturnRequirements(): bool
+    {
+        return $this->ebayReviseChecker->isNeedReviseForReturn(
+            $this->input->getListingProduct()->getChildObject()
+        );
+    }
+
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetReviseOtherRequirements(): bool
+    {
+        return $this->ebayReviseChecker->isNeedReviseForOther(
+            $this->input->getListingProduct()->getChildObject()
+        );
+    }
 }

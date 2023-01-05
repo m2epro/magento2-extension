@@ -8,21 +8,14 @@
 
 namespace Ess\M2ePro\Model\Amazon\Template\SellingFormat;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Template\SellingFormat\Diff
- */
 class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
 {
-    //########################################
-
     public function isDifferent()
     {
         return $this->isQtyDifferent() ||
                $this->isRegularPriceDifferent() ||
                $this->isBusinessPriceDifferent();
     }
-
-    //########################################
 
     public function isQtyDifferent()
     {
@@ -44,12 +37,12 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
         $keys = [
             'is_regular_customer_allowed',
             'regular_price_mode',
-            'regular_price_coefficient',
+            'regular_price_modifier',
             'regular_price_custom_attribute',
             'regular_map_price_mode',
             'regular_map_price_custom_attribute',
             'regular_sale_price_mode',
-            'regular_sale_price_coefficient',
+            'regular_sale_price_modifier',
             'regular_sale_price_custom_attribute',
             'regular_sale_price_start_date_mode',
             'regular_sale_price_start_date_value',
@@ -69,18 +62,16 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
         $keys = [
             'is_business_customer_allowed',
             'business_price_mode',
-            'business_price_coefficient',
+            'business_price_modifier',
             'business_price_custom_attribute',
             'business_price_variation_mode',
             'business_price_vat_percent',
             'business_discounts_mode',
-            'business_discounts_tier_coefficient',
+            'business_discounts_tier_modifier',
             'business_discounts_tier_customer_group_id',
             'business_price_qty_discounts',
         ];
 
         return $this->isSettingsDifferent($keys);
     }
-
-    //########################################
 }

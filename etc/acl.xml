@@ -60,16 +60,23 @@
                         <resource id="Ess_M2ePro::amazon_listings_logs" title="Logs &#38; Events" sortOrder="4" />
                     </resource>
 
+                    <!-- amazon repricer acl -->
+
+                    <resource id="Ess_M2ePro::amazon_repricer" title="Repricer [NEW]" sortOrder="2">
+                        <resource id="Ess_M2ePro::amazon_repricer_source" title="Go to Repricer" sortOrder="1" />
+                        <resource id="Ess_M2ePro::amazon_repricer_accounts" title="Settings" sortOrder="2" />
+                    </resource>
+
                     <!-- amazon sales acl -->
 
-                    <resource id="Ess_M2ePro::amazon_sales" title="Sales" sortOrder="2">
+                    <resource id="Ess_M2ePro::amazon_sales" title="Sales" sortOrder="3">
                         <resource id="Ess_M2ePro::amazon_sales_orders" title="Orders" sortOrder="1" />
                         <resource id="Ess_M2ePro::amazon_sales_logs" title="Logs &#38; Events" sortOrder="2" />
                     </resource>
 
                     <!-- amazon configuration acl -->
 
-                    <resource id="Ess_M2ePro::amazon_configuration" title="Configuration" sortOrder="3">
+                    <resource id="Ess_M2ePro::amazon_configuration" title="Configuration" sortOrder="4">
                         <resource id="Ess_M2ePro::amazon_configuration_accounts" title="Accounts" sortOrder="1" />
                         <resource id="Ess_M2ePro::amazon_configuration_marketplaces" title="Marketplaces" sortOrder="2" />
                         <resource id="Ess_M2ePro::amazon_configuration_templates" title="Policies" sortOrder="3" />
@@ -78,7 +85,7 @@
 
                     <!-- amazon help center acl -->
 
-                    <resource id="Ess_M2ePro::amazon_help_center" title="Help Center" sortOrder="4">
+                    <resource id="Ess_M2ePro::amazon_help_center" title="Help Center" sortOrder="5">
                         <resource id="Ess_M2ePro::amazon_help_center_health_status" title="Health Status" sortOrder="1" />
                         <resource id="Ess_M2ePro::amazon_help_center_synchronization_log" title="Synchronization Logs" sortOrder="2" />
                         <resource id="Ess_M2ePro::amazon_help_center_m2e_support" title="M2E Support" sortOrder="3" />

@@ -125,15 +125,15 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             $responseData = $connectorObj->getResponseData();
 
-            $fromDate = new \DateTime($responseData['to_create_date'], new \DateTimeZone('UTC'));
-            if ($breakDate !== null && $breakDate->getTimestamp() === $fromDate->getTimestamp()) {
+            $fromTime = new \DateTime($responseData['to_create_date'], new \DateTimeZone('UTC'));
+            if ($breakDate !== null && $breakDate->getTimestamp() === $fromTime->getTimestamp()) {
                 break;
             }
 
             $orders[] = $responseData['items'];
-            $breakDate = $fromDate;
+            $breakDate = $fromTime;
 
-            if ($this->getHelper('Module')->isTestingManualEnvironment()) {
+            if ($fromTime > $toTime) {
                 break;
             }
         } while (!empty($responseData['items']));

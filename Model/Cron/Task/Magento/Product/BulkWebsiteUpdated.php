@@ -22,13 +22,14 @@ class BulkWebsiteUpdated extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     const PRODUCTS_COUNT = 1000;
 
+    /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Factory */
+    private $listingAutoActionsModeFactory;
     protected $productFactory;
     protected $websiteCollectionFactory;
     protected $storeFactory;
 
-    //########################################
-
     public function __construct(
+        \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Factory $listingAutoActionsModeFactory,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -41,6 +42,7 @@ class BulkWebsiteUpdated extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Magento\Store\Model\StoreFactory $storeFactory,
         \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo
     ) {
+        $this->listingAutoActionsModeFactory = $listingAutoActionsModeFactory;
         $this->productFactory = $productFactory;
         $this->websiteCollectionFactory = $websiteCollectionFactory;
         $this->storeFactory = $storeFactory;
@@ -66,10 +68,7 @@ class BulkWebsiteUpdated extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         foreach ($updatedProductsData as $productId => $updateProductData) {
             /** @var \Magento\Catalog\Model\Product $product */
             $product = $this->productFactory->create()->load($productId);
-
-            /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Website $autoActions */
-            $autoActions = $this->modelFactory->getObject('Listing_Auto_Actions_Mode_Website');
-            $autoActions->setProduct($product);
+            $autoActions = $this->listingAutoActionsModeFactory->createWebsiteMode($product);
 
             $addAction = \Ess\M2ePro\Model\Magento\Product\Websites\Update::ACTION_ADD;
             $removeAction = \Ess\M2ePro\Model\Magento\Product\Websites\Update::ACTION_REMOVE;

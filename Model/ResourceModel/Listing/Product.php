@@ -17,6 +17,9 @@ use Magento\GroupedProduct\Model\ResourceModel\Product\Link;
  */
 class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {
+    public const LISTING_ID_FIELD = 'listing_id';
+    public const PRODUCT_ID_FIELD = 'product_id';
+
     protected $metadataPool;
 
     //########################################

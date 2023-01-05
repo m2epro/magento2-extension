@@ -8,37 +8,20 @@
 
 namespace Ess\M2ePro\Model\Listing\Product;
 
-/**
- * Class \Ess\M2ePro\Model\Listing\Product\RemoveHandler
- */
 class RemoveHandler extends \Ess\M2ePro\Model\AbstractModel
 {
-    protected $activeRecordFactory;
-
     /** @var \Ess\M2ePro\Model\Listing\Product */
-    protected $listingProduct = null;
-
-    //########################################
-
-    public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        array $data = []
-    ) {
-        $this->activeRecordFactory = $activeRecordFactory;
-        parent::__construct($helperFactory, $modelFactory, $data);
-    }
-
-    //########################################
+    private $listingProduct;
 
     /**
+     * @deprecated use factory
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
      * @return $this
      */
-    public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct): self
     {
         $this->listingProduct = $listingProduct;
+
         return $this;
     }
 
@@ -50,9 +33,7 @@ class RemoveHandler extends \Ess\M2ePro\Model\AbstractModel
         return $this->listingProduct;
     }
 
-    //########################################
-
-    public function process()
+    public function process(): void
     {
         $this->eventBeforeProcess();
 
@@ -66,17 +47,11 @@ class RemoveHandler extends \Ess\M2ePro\Model\AbstractModel
         $this->eventAfterProcess();
     }
 
-    //########################################
-
-    protected function eventBeforeProcess()
+    protected function eventBeforeProcess(): void
     {
-        return null;
     }
 
-    protected function eventAfterProcess()
+    protected function eventAfterProcess(): void
     {
-        return null;
     }
-
-    //########################################
 }

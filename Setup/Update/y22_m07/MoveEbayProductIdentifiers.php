@@ -81,11 +81,11 @@ class MoveEbayProductIdentifiers extends AbstractFeature
 
         $row = $query->fetch();
 
-        $productDetails = json_decode($row["product_details"], true);
-
         if (empty($row["product_details"])) {
             return $configs;
         }
+
+        $productDetails = json_decode($row["product_details"], true);
 
         foreach ($this->identifiers as $identifier) {
             if (isset($productDetails[$identifier]['mode'])) {

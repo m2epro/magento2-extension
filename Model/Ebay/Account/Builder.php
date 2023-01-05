@@ -333,23 +333,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
-        // In Store Pickup statuses
-        // ---------------------------------------
-        $tempKey = 'in_store_pickup_statuses';
-        $tempSettings = !empty($this->rawData['magento_orders_settings'][$tempKey])
-            ? $this->rawData['magento_orders_settings'][$tempKey] : [];
-
-        $keys = [
-            'mode',
-            'ready_for_pickup',
-            'picked_up',
-        ];
-        foreach ($keys as $key) {
-            if (isset($tempSettings[$key])) {
-                $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
-            }
-        }
-
         $data['magento_orders_settings']['shipping_information']['ship_by_date']
             = (int)($this->rawData['magento_orders_settings']['shipping_information']['ship_by_date'] ?? 1);
 
@@ -381,14 +364,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             if (isset($this->rawData[$key])) {
                 $data[$key] = $this->rawData[$key];
             }
-        }
-
-        // tab: My Stores
-        // ---------------------------------------
-        if (isset($this->rawData['pickup_store_mode'])) {
-            $data['additional_data'] = $this->getHelper('Data')->jsonEncode(
-                ['bopis' => $this->rawData['pickup_store_mode']]
-            );
         }
 
         return $data;
@@ -449,11 +424,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                 ],
                 'tax'                      => [
                     'mode' => Account::MAGENTO_ORDERS_TAX_MODE_MIXED
-                ],
-                'in_store_pickup_statuses' => [
-                    'mode'             => 0,
-                    'ready_for_pickup' => '',
-                    'picked_up'        => '',
                 ],
                 'status_mapping'           => [
                     'mode'    => Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT,

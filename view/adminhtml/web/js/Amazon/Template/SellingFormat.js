@@ -1,12 +1,37 @@
 define([
     'jquery',
     'moment',
-    'M2ePro/Amazon/Template/Edit'
+    'M2ePro/Amazon/Template/Edit',
+    'M2ePro/Template/Helper/PriceChange',
 ], function (jQuery, moment) {
 
     window.AmazonTemplateSellingFormat = Class.create(AmazonTemplateEdit, {
-
         discountRulesCount: 0,
+
+        priceChange: {
+            regular_price: {
+                index: 0,
+                template: '',
+                enabled: true
+            },
+            regular_sale_price: {
+                index: 0,
+                template: '',
+                enabled: true
+            },
+            business_price: {
+                index: 0,
+                template: '',
+                enabled: true
+            },
+            business_discounts_tier: {
+                index: 0,
+                template: '',
+                enabled: true
+            }
+        },
+        priceChangeHelper: null,
+
 
         // ---------------------------------------
 
@@ -132,6 +157,9 @@ define([
 
                 return !(similarValues.length > 1);
             }, M2ePro.translator.translate('You should specify a unique pair of Magento Attribute and Price Change value for each Discount Rule.'));
+
+            this.priceChangeHelper = new TemplateHelperPriceChange();
+            this.priceChangeHelper.initPriceChange(this.priceChange);
         },
 
         initObservers: function()
@@ -315,17 +343,18 @@ define([
             var self = AmazonTemplateSellingFormatObj;
 
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_SellingFormat::PRICE_MODE_NONE')) {
-
-                $('regular_sale_price_start_date_mode_tr', 'regular_sale_price_end_date_mode_tr', 'regular_sale_price_coefficient_td').invoke('hide');
-                $('regular_sale_price_start_date_value_tr', 'regular_sale_price_end_date_value_tr').invoke('hide');
-            } else if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_SellingFormat::PRICE_MODE_SPECIAL')) {
-                $('regular_sale_price_coefficient_td').show();
                 $('regular_sale_price_start_date_mode_tr', 'regular_sale_price_end_date_mode_tr').invoke('hide');
                 $('regular_sale_price_start_date_value_tr', 'regular_sale_price_end_date_value_tr').invoke('hide');
+                $('regular_sale_price_change_placement_tr').hide();
+            } else if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_SellingFormat::PRICE_MODE_SPECIAL')) {
+                $('regular_sale_price_start_date_mode_tr', 'regular_sale_price_end_date_mode_tr').invoke('hide');
+                $('regular_sale_price_start_date_value_tr', 'regular_sale_price_end_date_value_tr').invoke('hide');
+                $('regular_sale_price_change_placement_tr').show();
             } else {
-                $('regular_sale_price_start_date_mode_tr', 'regular_sale_price_end_date_mode_tr', 'regular_sale_price_coefficient_td').invoke('show');
+                $('regular_sale_price_start_date_mode_tr', 'regular_sale_price_end_date_mode_tr').invoke('show');
                 $('regular_sale_price_start_date_mode').simulate('change');
                 $('regular_sale_price_end_date_mode').simulate('change');
+                $('regular_sale_price_change_placement_tr').show();
             }
 
             $('regular_sale_price_custom_attribute').value = '';
@@ -443,8 +472,10 @@ define([
             var qtyPriceMode = $('business_discounts_mode');
 
             $(
-                'business_discounts_tier_customer_group_id_tr', 'business_discounts_tier_coefficient_td',
-                'business_discounts_custom_value_discount_table', 'business_discounts_not_set_table'
+                'business_discounts_tier_customer_group_id_tr',
+                'business_discounts_custom_value_discount_table',
+                'business_discounts_not_set_table',
+                'business_discounts_tier_change_placement_tr'
             ).invoke('hide');
 
             $('business_discounts_custom_value_discount_table_tbody').update();
@@ -457,7 +488,7 @@ define([
 
             if (qtyPriceMode.value == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Template_SellingFormat::BUSINESS_DISCOUNTS_MODE_TIER')) {
                 $('business_discounts_tier_customer_group_id_tr').show();
-                $('business_discounts_tier_coefficient_td').show();
+                $('business_discounts_tier_change_placement_tr').show();
                 return;
             }
 

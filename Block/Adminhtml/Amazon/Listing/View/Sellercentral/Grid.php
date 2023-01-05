@@ -18,30 +18,33 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     /** @var  \Ess\M2ePro\Model\Listing */
     protected $listing;
-
     /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     protected $magentoProductCollectionFactory;
-
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
-
     /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
-
     /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
-
     /** @var \Ess\M2ePro\Helper\Component\Amazon */
     private $amazonHelper;
 
-    /** @var \Ess\M2ePro\Helper\Component\Amazon\Repricing */
-    private $amazonRepricingHelper;
-
     private $parentAndChildReviseScheduledCache = [];
 
+    /**
+     * @param \Ess\M2ePro\Helper\Component\Amazon $amazonHelper
+     * @param \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
+     * @param \Magento\Framework\Locale\CurrencyInterface $localeCurrency
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Backend\Helper\Data $backendHelper
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
+     * @param array $data
+     */
     public function __construct(
         \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
-        \Ess\M2ePro\Helper\Component\Amazon\Repricing $amazonRepricingHelper,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
@@ -53,7 +56,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         array $data = []
     ) {
         $this->amazonHelper = $amazonHelper;
-        $this->amazonRepricingHelper = $amazonRepricingHelper;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->amazonFactory = $amazonFactory;
         $this->localeCurrency = $localeCurrency;
@@ -292,8 +294,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'filter_condition_callback' => [$this, 'callbackFilterPrice']
         ];
 
-        if ($this->amazonRepricingHelper->isEnabled() &&
-            $this->listing->getAccount()->getChildObject()->isRepricing()) {
+        if ($this->listing->getAccount()->getChildObject()->isRepricing()) {
             $priceColumn['filter'] = \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price::class;
         }
 
@@ -329,13 +330,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         // Set mass-action
         // ---------------------------------------
         $groups = [
-            'actions'            => $this->__('Actions'),
-            'edit_fulfillment'   => $this->__('Fulfillment')
+            'actions' => $this->__('Actions'),
+            'edit_fulfillment' => $this->__('Fulfillment'),
         ];
-
-        if ($this->amazonRepricingHelper->isEnabled()) {
-            $groups['edit_repricing'] = $this->__('Repricing Tool');
-        }
 
         $this->getMassactionBlock()->setGroups($groups);
 
@@ -373,37 +370,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'label'    => $this->__('Switch to MFN'),
             'url'      => ''
         ], 'edit_fulfillment');
-
-        /** @var \Ess\M2ePro\Model\Account $account */
-        $account = $this->listing->getAccount();
-
-        if ($this->amazonRepricingHelper->isEnabled() &&
-            $account->getChildObject()->isRepricing()) {
-            $this->getMassactionBlock()->addItem('showDetails', [
-                'label' => $this->__('Show Details'),
-                'url' => '',
-                'confirm' => $this->__('Are you sure?')
-            ], 'edit_repricing');
-
-            $this->getMassactionBlock()->addItem('addToRepricing', [
-                'label' => $this->__('Add Item(s)'),
-                'url' => '',
-                'confirm' => $this->__('Are you sure?')
-            ], 'edit_repricing');
-
-            $this->getMassactionBlock()->addItem('editRepricing', [
-                'label' => $this->__('Edit Item(s)'),
-                'url' => '',
-                'confirm' => $this->__('Are you sure?')
-            ], 'edit_repricing');
-
-            $this->getMassactionBlock()->addItem('removeFromRepricing', [
-                'label' => $this->__('Remove Item(s)'),
-                'url' => '',
-                'confirm' => $this->__('Are you sure?')
-            ], 'edit_repricing');
-        }
-        // ---------------------------------------
 
         return parent::_prepareMassaction();
     }
@@ -821,8 +787,7 @@ HTML;
             $condition .= ' AND ('.$online_regular_price.' IS NULL))';
         }
 
-        if ($this->amazonRepricingHelper->isEnabled() &&
-            (isset($value['is_repricing']) && $value['is_repricing'] !== '')) {
+        if (isset($value['is_repricing']) && $value['is_repricing'] !== '') {
             if (!empty($condition)) {
                 $condition = '(' . $condition . ') OR ';
             }

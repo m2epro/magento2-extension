@@ -8,19 +8,14 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Auto\Actions;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Listing\Auto\Actions\Listing
- */
 class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
 {
-    //########################################
-
     /**
      * @param \Magento\Catalog\Model\Product $product
-     * @param $deletingMode
+     * @param int $deletingMode
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function deleteProduct(\Magento\Catalog\Model\Product $product, $deletingMode)
+    public function deleteProduct(\Magento\Catalog\Model\Product $product, int $deletingMode): void
     {
         if ($deletingMode == \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE) {
             return;
@@ -43,8 +38,9 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
             $walmartListingProduct = $listingProduct->getChildObject();
 
-            if ($walmartListingProduct->getVariationManager()->isRelationParentType() &&
-                $deletingMode == \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE
+            if (
+                $walmartListingProduct->getVariationManager()->isRelationParentType()
+                && $deletingMode == \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE
             ) {
                 $parentsForRemove[$listingProduct->getId()] = $listingProduct;
                 continue;
@@ -69,7 +65,7 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
                 );
                 $instruction->save();
             } catch (\Exception $exception) {
-                $this->getHelper('Module\Exception')->process($exception);
+                $this->exceptionHelper->process($exception);
             }
         }
 
@@ -83,11 +79,11 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         }
     }
 
-    //########################################
-
     /**
      * @param \Magento\Catalog\Model\Product $product
      * @param \Ess\M2ePro\Model\Listing\Auto\Category\Group $categoryGroup
+     *
+     * @return void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function addProductByCategoryGroup(
@@ -124,6 +120,8 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
     /**
      * @param \Magento\Catalog\Model\Product $product
      * @param \Ess\M2ePro\Model\Listing $listing
+     *
+     * @return void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function addProductByGlobalListing(
@@ -160,6 +158,8 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
     /**
      * @param \Magento\Catalog\Model\Product $product
      * @param \Ess\M2ePro\Model\Listing $listing
+     *
+     * @return void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function addProductByWebsiteListing(
@@ -191,9 +191,14 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         $this->processAddedListingProduct($listingProduct, $params);
     }
 
-    //########################################
-
-    protected function processAddedListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $params)
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param array $params
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function processAddedListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $params): void
     {
         if (empty($params['template_category_id'])) {
             return;
@@ -208,6 +213,4 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
             $walmartListingProduct->addVariationAttributes();
         }
     }
-
-    //########################################
 }

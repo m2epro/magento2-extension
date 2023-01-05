@@ -8,16 +8,31 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
-use \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
-use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
-use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
+use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
+use Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
+use Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
 
 class StepTwoGetSuggestedCategory extends Settings
 {
     /** @var \Ess\M2ePro\Helper\Magento\AttributeSet */
     protected $magentoAttributeSetHelper;
 
+    /**
+     * @param \Ess\M2ePro\Helper\Data\Session $sessionHelper
+     * @param \Ess\M2ePro\Helper\Module\Wizard $wizardHelper
+     * @param \Ess\M2ePro\Helper\Magento $magentoHelper
+     * @param \Ess\M2ePro\Helper\Magento\AttributeSet $magentoAttributeSetHelper
+     * @param \Ess\M2ePro\Helper\Magento\Category $magentoCategoryHelper
+     * @param \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay
+     * @param \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory
+     * @param \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory
+     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
+     */
     public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Helper\Module\Wizard $wizardHelper,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
         \Ess\M2ePro\Helper\Magento\AttributeSet $magentoAttributeSetHelper,
         \Ess\M2ePro\Helper\Magento\Category $magentoCategoryHelper,
         eBayCategory\Ebay $componentEbayCategoryEbay,
@@ -27,6 +42,9 @@ class StepTwoGetSuggestedCategory extends Settings
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct(
+            $sessionHelper,
+            $wizardHelper,
+            $magentoHelper,
             $magentoCategoryHelper,
             $componentEbayCategoryEbay,
             $componentEbayCategory,

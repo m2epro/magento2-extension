@@ -10,58 +10,36 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
 class RunStopAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\ActionAbstract
 {
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Manual\Realtime\StopAndRemoveAction */
+    private $realtimeStopAndRemoveAction;
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Manual\Schedule\StopAndRemoveAction */
+    private $scheduledStopAndRemoveAction;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Manual\Realtime\StopAndRemoveAction $realtimeStopAndRemoveAction,
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Manual\Schedule\StopAndRemoveAction $scheduledStopAndRemoveAction,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Log $listingLogResource,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($translationHelper, $listingLogResource, $ebayFactory, $context);
+        $this->realtimeStopAndRemoveAction = $realtimeStopAndRemoveAction;
+        $this->scheduledStopAndRemoveAction = $scheduledStopAndRemoveAction;
+    }
+
     public function execute()
     {
-        if (!$listingsProductsIds = $this->getRequest()->getParam('selected_products')) {
-            return $this->setRawContent('You should select Products');
-        }
-
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $productsCollection */
-        $productsCollection = $this->ebayFactory->getObject('Listing_Product')->getCollection();
-        $productsCollection->addFieldToFilter('id', explode(',', $listingsProductsIds));
-
-        /** @var \Ess\M2ePro\Model\Listing\Product[] $listingsProducts */
-        $listingsProducts = $productsCollection->getItems();
-        $logsActionId = $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getNextActionId();
-
-        $this->checkLocking($listingsProducts, $logsActionId, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP);
-        if (empty($listingsProducts)) {
-            $this->setJsonContent(['result' => 'error', 'action_id' => $logsActionId]);
-            return $this->getResult();
-        }
-
-        foreach ($listingsProducts as $index => $listingProduct) {
-            if (!$listingProduct->isStoppable()) {
-                /** @var \Ess\M2ePro\Model\Listing\Product\RemoveHandler $removeHandler */
-                $removeHandler = $this->modelFactory->getObject('Listing_Product_RemoveHandler');
-                $removeHandler->setListingProduct($listingProduct);
-                $removeHandler->process();
-
-                unset($listingsProducts[$index]);
-            }
-        }
-
-        if (empty($listingsProducts)) {
-            $this->setJsonContent(['result' => 'success', 'action_id' => $logsActionId]);
-            return $this->getResult();
-        }
-
-        if ($this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('is_realtime'))) {
-            return $this->runConnector(
-                $listingsProducts,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
-                ['remove' => true],
-                $logsActionId
+        if ($this->isRealtimeProcess()) {
+            return $this->processRealtime(
+                $this->realtimeStopAndRemoveAction,
+                ['remove' => true]
             );
         }
 
-        $this->createUpdateScheduledActions(
-            $listingsProducts,
-            \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
+        return $this->createScheduleAction(
+            $this->scheduledStopAndRemoveAction,
             ['remove' => true]
         );
-
-        $this->setJsonContent(['result' => 'success', 'action_id' => $logsActionId]);
-        return $this->getResult();
     }
 }

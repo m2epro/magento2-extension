@@ -176,6 +176,7 @@ class Request
             }
 
             do {
+                $stillRunning = 0;
                 // @codingStandardsIgnoreLine
                 curl_multi_exec($multiCurlObject, $stillRunning);
 

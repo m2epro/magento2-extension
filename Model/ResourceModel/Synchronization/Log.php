@@ -8,14 +8,9 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Synchronization;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Synchronization\Log
- */
 class Log extends \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
 {
-    //########################################
-
-    public function _construct()
+    protected function _construct(): void
     {
         $this->_init('m2epro_synchronization_log', 'id');
     }
@@ -23,10 +18,8 @@ class Log extends \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
     /**
      * @return string
      */
-    public function getConfigGroupSuffix()
+    public function getConfigGroupSuffix(): string
     {
         return 'synchronization';
     }
-
-    //########################################
 }

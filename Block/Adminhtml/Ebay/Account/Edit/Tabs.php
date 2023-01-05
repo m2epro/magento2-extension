@@ -20,9 +20,6 @@ class Tabs extends AbstractTabs
     public const TAB_ID_FEEDBACK = 'feedback';
     public const TAB_ID_MY_STORES = 'my_stores';
 
-    /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
-    private $componentEbayPickupStore;
-
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
@@ -30,7 +27,6 @@ class Tabs extends AbstractTabs
     private $globalDataHelper;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Json\EncoderInterface $jsonEncoder,
         \Magento\Backend\Model\Auth\Session $authSession,
@@ -40,7 +36,6 @@ class Tabs extends AbstractTabs
     ) {
         parent::__construct($context, $jsonEncoder, $authSession, $data);
 
-        $this->componentEbayPickupStore = $componentEbayPickupStore;
         $this->dataHelper = $dataHelper;
         $this->globalDataHelper = $globalDataHelper;
     }
@@ -131,19 +126,6 @@ class Tabs extends AbstractTabs
                     'content' => $this->getLayout()
                                       ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Feedback::class)
                                       ->toHtml()
-                ]
-            );
-        }
-
-        if ($account && $account->getId() && $this->componentEbayPickupStore->isFeatureEnabled()) {
-            $this->addTab(
-                self::TAB_ID_MY_STORES,
-                [
-                    'label'   => $this->__('In-Store Pickup'),
-                    'title'   => $this->__('In-Store Pickup'),
-                    'content' => $this->getLayout()
-                                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\PickupStore::class)
-                                  ->toHtml()
                 ]
             );
         }

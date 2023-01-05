@@ -146,6 +146,24 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     }
 
     /**
+     * @return bool
+     */
+    public function isInvalid(): bool
+    {
+        return (bool)$this->getData('invalid');
+    }
+
+    /**
+     * @return $this
+     */
+    public function markAsInvalid(): Repricing
+    {
+         $this->setData('invalid', 1);
+
+         return $this;
+    }
+
+    /**
      * @return int
      */
     public function getTotalProducts()

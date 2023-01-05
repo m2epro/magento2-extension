@@ -267,7 +267,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $html = '<div class="m2ePro-variation-attributes" style="margin-left: 5px;">';
         if (!$uniqueProductsIds) {
-            $url = $this->getUrl('catalog/product/edit', ['id' => reset($productsIds)]);
+            $data['id'] = reset($productsIds);
+            if ($this->getListingProduct()->getListing()->getStoreId() != null) {
+                $data['store'] = $this->getListingProduct()->getListing()->getStoreId();
+            }
+            $url = $this->getUrl('catalog/product/edit', $data);
             $html .= '<a href="' . $url . '" target="_blank" style="color: grey;">';
         }
         foreach ($attributes as $attribute => $option) {
@@ -275,7 +279,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 '</b>:&nbsp;' . $this->dataHelper->escapeHtml($option);
 
             if ($uniqueProductsIds) {
-                $url = $this->getUrl('catalog/product/edit', ['id' => $productsIds[$attribute]]);
+                $data['id'] = $productsIds[$attribute];
+                if ($this->getListingProduct()->getListing()->getStoreId() != null) {
+                    $data['store'] = $this->getListingProduct()->getListing()->getStoreId();
+                }
+                $url = $this->getUrl('catalog/product/edit', $data);
                 $html .= '<a href="' . $url . '" target="_blank" style="color: grey;">' . $optionHtml . '</a><br/>';
             } else {
                 $html .= $optionHtml . '<br/>';

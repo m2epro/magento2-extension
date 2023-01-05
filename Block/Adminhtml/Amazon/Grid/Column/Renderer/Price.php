@@ -16,22 +16,24 @@ class Price extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 
     /** @var \Ess\M2ePro\Helper\Factory  */
     protected $helperFactory;
-
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
-
     /** @var \Magento\Framework\Locale\CurrencyInterface  */
     protected $localeCurrency;
-
     /** @var \Ess\M2ePro\Helper\Data */
     protected $helperData;
-
     /** @var \Ess\M2ePro\Helper\Module\Translation */
     private $translationHelper;
 
-    /** @var \Ess\M2ePro\Helper\Component\Amazon\Repricing */
-    private $amazonRepricingHelper;
-
+    /**
+     * @param \Ess\M2ePro\Helper\Factory $helperFactory
+     * @param \Magento\Framework\Locale\CurrencyInterface $localeCurrency
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
+     * @param \Ess\M2ePro\Helper\Data $helperData
+     * @param \Magento\Backend\Block\Context $context
+     * @param \Ess\M2ePro\Helper\Module\Translation $translationHelper
+     * @param array $data
+     */
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
@@ -39,7 +41,6 @@ class Price extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Backend\Block\Context $context,
         \Ess\M2ePro\Helper\Module\Translation $translationHelper,
-        \Ess\M2ePro\Helper\Component\Amazon\Repricing $amazonRepricingHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -49,7 +50,6 @@ class Price extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         $this->localeCurrency = $localeCurrency;
         $this->helperData = $helperData;
         $this->translationHelper = $translationHelper;
-        $this->amazonRepricingHelper = $amazonRepricingHelper;
     }
 
     public function render(\Magento\Framework\DataObject $row)
@@ -76,8 +76,7 @@ class Price extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 
         $repricingHtml ='';
 
-        if ($this->amazonRepricingHelper->isEnabled() &&
-            (bool)(int)$rowObject->getData('is_repricing')) {
+        if ((int)$rowObject->getData('is_repricing')) {
             $icon = 'repricing-enabled';
             $text = $this->translationHelper->__(
                 'This Product is used by Amazon Repricing Tool, so its Price cannot be managed via M2E Pro. <br>

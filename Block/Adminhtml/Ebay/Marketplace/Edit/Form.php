@@ -12,9 +12,6 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 class Form extends AbstractForm
 {
-    /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
-    private $componentEbayPickupStore;
-
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
@@ -22,7 +19,6 @@ class Form extends AbstractForm
     private $ebayHelper;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
@@ -30,9 +26,9 @@ class Form extends AbstractForm
         \Ess\M2ePro\Helper\Component\Ebay $ebayHelper,
         array $data = []
     ) {
-        $this->componentEbayPickupStore = $componentEbayPickupStore;
         $this->dataHelper = $dataHelper;
         $this->ebayHelper = $ebayHelper;
+
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -105,26 +101,12 @@ HTML;
                     'after_element_html' => $afterElementHtml
                 ];
 
-                if ($marketplace['params']['locked'] || $marketplace['params']['lockedByPickupStore']) {
-                    $lockedText = '';
-                    if ($marketplace['params']['locked']) {
-                        $lockedText = $this->__('Used in Listing(s)');
-                    } elseif ($marketplace['params']['lockedByPickupStore']) {
-                        $lockedText = $this->__('Used In-Store Pickup.');
-                    }
+                $selectData['values'] = [
+                    \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE => $this->__('Disabled'),
+                    \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE => $this->__('Enabled'),
+                ];
+                $selectData['value'] = $marketplace['instance']->getStatus();
 
-                    $selectData['disabled'] = 'disabled';
-                    $selectData['values'] = [
-                        \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE => $this->__('Enabled') . ' - ' . $lockedText
-                    ];
-                    $selectData['value'] = \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE;
-                } else {
-                    $selectData['values'] = [
-                        \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE => $this->__('Disabled'),
-                        \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE => $this->__('Enabled')
-                    ];
-                    $selectData['value'] = $marketplace['instance']->getStatus();
-                }
 
                 $selectData['name'] = 'status_'.$marketplace['instance']->getId();
                 $selectData['class'] = 'marketplace_status_select';
@@ -185,15 +167,6 @@ HTML;
                     ->addFieldToFilter('marketplace_id', $tempMarketplace->getId())
                     ->getSize();
 
-                $isLockedByPickupStore = false;
-
-                if ($this->componentEbayPickupStore->isFeatureEnabled()) {
-                    $isLockedByPickupStore = (bool)$this->activeRecordFactory->getObject('Ebay_Account_PickupStore')
-                        ->getCollection()
-                        ->addFieldToFilter('marketplace_id', $tempMarketplace->getId())
-                        ->getSize();
-                }
-
                 $storedStatuses[] = [
                     'marketplace_id' => $tempMarketplace->getId(),
                     'status'         => $tempMarketplace->getStatus()
@@ -204,7 +177,6 @@ HTML;
                     'instance' => $tempMarketplace,
                     'params'   => [
                         'locked' => $isLocked,
-                        'lockedByPickupStore' => $isLockedByPickupStore
                     ]
                 ];
 

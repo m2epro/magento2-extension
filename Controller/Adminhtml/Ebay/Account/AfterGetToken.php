@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
+use Ess\M2ePro\Model\Ebay\Account\Issue\ValidTokens;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Account\AfterGetToken
@@ -19,6 +20,8 @@ class AfterGetToken extends Account
     private $helperException;
     /** @var \Ess\M2ePro\Model\Ebay\Account\TemporaryStorage */
     private $temporaryStorage;
+    /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
+    private $permanentCacheHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\Ebay\Account\TemporaryStorage $temporaryStorage,
@@ -26,7 +29,8 @@ class AfterGetToken extends Account
         \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update $storeCategoryUpdate,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
-        \Ess\M2ePro\Controller\Adminhtml\Context $context
+        \Ess\M2ePro\Controller\Adminhtml\Context $context,
+        \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCacheHelper
     ) {
         parent::__construct(
             $storeCategoryUpdate,
@@ -37,6 +41,7 @@ class AfterGetToken extends Account
 
         $this->helperException = $helperException;
         $this->temporaryStorage = $temporaryStorage;
+        $this->permanentCacheHelper = $permanentCacheHelper;
     }
 
     // ----------------------------------------
@@ -78,6 +83,8 @@ class AfterGetToken extends Account
 
             return $this->_redirect('*/ebay_account');
         }
+
+        $this->permanentCacheHelper->removeValue(ValidTokens::ACCOUNT_TOKENS_CACHE_KEY);
 
         $this->messageManager->addSuccessMessage($this->__('Token was saved'));
 

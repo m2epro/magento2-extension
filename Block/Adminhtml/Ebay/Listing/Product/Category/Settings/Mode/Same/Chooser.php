@@ -43,6 +43,22 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
             'onclick' => 'setLocation(\'' . $this->getUrl('*/*/*', ['_current' => true, 'step' => 1]) . '\');'
         ]);
 
+        $url = $this->getUrl(
+            '*/ebay_listing_product_add/exitToListing',
+            ['id' => $this->getRequest()->getParam('id')]
+        );
+        $confirm =
+            '<strong>' . $this->__('Are you sure?') . '</strong><br><br>'
+            . $this->__('All unsaved changes will be lost and you will be returned to the Listings grid.');
+        $this->addButton(
+            'exit_to_listing',
+            [
+                'label' => $this->__('Cancel'),
+                'onclick' => "confirmSetLocation('$confirm', '$url');",
+                'class' => 'action-primary',
+            ]
+        );
+
         $onClick = <<<JS
 EbayListingCategoryObj.modeSameSubmitData(
     '{$this->getUrl('*/*/*', array('step' => 2,'_current' => true))}'

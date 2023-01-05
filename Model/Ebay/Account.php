@@ -148,13 +148,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             $item->delete();
         }
 
-        $pickupStoreCollection = $this->activeRecordFactory->getObject('Ebay_Account_PickupStore')
-            ->getCollection()->addFieldToFilter('account_id', $this->getId());
-        foreach ($pickupStoreCollection as $pickupStore) {
-            /** @var \Ess\M2ePro\Model\Ebay\Account\PickupStore $pickupStore */
-            $pickupStore->delete();
-        }
-
         $shippingTemplateCollection = $this->shippingTemplateCollectionFactory
             ->create()
             ->applyLinkedAccountFilter($this->getId());
@@ -935,15 +928,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return (int)$setting;
     }
 
-    // ---------------------------------------
-
-    public function isMagentoOrdersInStorePickupEnabled()
-    {
-        $setting = $this->getSetting('magento_orders_settings', ['in_store_pickup_statues', 'mode'], 0);
-
-        return (bool)$setting;
-    }
-
     /**
      * @return bool
      */
@@ -971,32 +955,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             self::USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT
         );
     }
-
-    // ---------------------------------------
-
-    public function getMagentoOrdersInStorePickupStatusReadyForPickup()
-    {
-        $setting = $this->getSetting(
-            'magento_orders_settings',
-            ['in_store_pickup_statues', 'ready_for_pickup'],
-            null
-        );
-
-        return $setting;
-    }
-
-    public function getMagentoOrdersInStorePickupStatusPickedUp()
-    {
-        $setting = $this->getSetting(
-            'magento_orders_settings',
-            ['in_store_pickup_statues', 'picked_up'],
-            null
-        );
-
-        return $setting;
-    }
-
-    // ---------------------------------------
 
     /**
      * @return bool
@@ -1173,17 +1131,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     {
         return !empty($this->getRateTables());
     }
-
-    //########################################
-
-    public function isPickupStoreEnabled()
-    {
-        $additionalData = $this->getHelper('Data')->jsonDecode($this->getParentObject()->getData('additional_data'));
-
-        return !empty($additionalData['bopis']);
-    }
-
-    //########################################
 
     public function getTokenSession()
     {

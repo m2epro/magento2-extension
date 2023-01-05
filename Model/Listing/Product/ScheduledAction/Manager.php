@@ -8,36 +8,28 @@
 
 namespace Ess\M2ePro\Model\Listing\Product\ScheduledAction;
 
-/**
- * Class \Ess\M2ePro\Model\Listing\Product\ScheduledAction\Manager
- */
-class Manager extends \Ess\M2ePro\Model\AbstractModel
+class Manager
 {
-    protected $activeRecordFactory;
-
-    //########################################
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\CollectionFactory */
+    private $collectionFactory;
 
     public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        array $data = []
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\CollectionFactory $collectionFactory
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
-        parent::__construct($helperFactory, $modelFactory, $data);
+        $this->collectionFactory = $collectionFactory;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function addAction(\Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction)
+    public function addAction(\Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction): void
     {
         $scheduledAction->save();
     }
 
-    public function updateAction(\Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction)
+    public function updateAction(\Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction): void
     {
-        $scheduledActionCollection = $this->activeRecordFactory
-            ->getObject('Listing_Product_ScheduledAction')->getCollection();
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $scheduledActionCollection */
+        $scheduledActionCollection = $this->collectionFactory->create();
         $scheduledActionCollection->addFieldToFilter('listing_product_id', $scheduledAction->getListingProductId());
 
         /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction $existedScheduledAction */
@@ -46,7 +38,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         $existedScheduledAction->save();
     }
 
-    public function deleteAction(\Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction)
+    public function deleteAction(\Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction): void
     {
         if (!$scheduledAction->getId()) {
             return;
@@ -54,6 +46,4 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
         $scheduledAction->delete();
     }
-
-    //########################################
 }

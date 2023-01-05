@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action;
 
 use Ess\M2ePro\Model\Exception\Logic;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator
- */
 class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
 {
     const DATA_TYPE_GENERAL = 'general';
@@ -28,8 +25,6 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
     const DATA_TYPE_RETURN = 'return';
     const DATA_TYPE_OTHER = 'other';
     const DATA_TYPE_VARIATIONS = 'variations';
-
-    //########################################
 
     /**
      * @return array
@@ -390,6 +385,4 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
     {
         return $this->disallow(self::DATA_TYPE_VARIATIONS);
     }
-
-    //########################################
 }

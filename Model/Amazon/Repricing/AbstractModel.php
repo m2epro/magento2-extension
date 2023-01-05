@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Repricing;
 
 use Ess\M2ePro\Model\Account;
+use Ess\M2ePro\Model\Amazon\Repricing\ResponseMessage as RepricingResponseMessage;
 use Ess\M2ePro\Model\Exception\Logic;
 use Ess\M2ePro\Model\Amazon\Account\Repricing as AccountRepricing;
 
@@ -84,19 +85,40 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         }
 
         foreach ($response['messages'] as $messageData) {
-            $message = $this->modelFactory->getObject('Response\Message');
-            $message->initFromResponseData($messageData);
+            $message = new RepricingResponseMessage(
+                $messageData['text'] ?? '',
+                $messageData['type'] ??  RepricingResponseMessage::TYPE_WARNING,
+                (int)($messageData['code'] ?? RepricingResponseMessage::DEFAULT_CODE)
+            );
 
             if (!$message->isError()) {
                 continue;
             }
 
+            $errorText = $message->getText();
+
+            if (
+                $message->getCode() === RepricingResponseMessage::NOT_FOUND_ACCOUNT_CODE
+            ) {
+                $errorText = 'Repricer account is invalid.';
+
+                if (!$this->getAmazonAccountRepricing()->isInvalid()) {
+                    $this->getAmazonAccountRepricing()
+                         ->markAsInvalid()
+                         ->save();
+
+                    /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent $cache */
+                    $cache = $this->getHelper('Data_Cache_Permanent');
+                    $cache->removeValue(\Ess\M2ePro\Model\Amazon\Repricing\Issue\InvalidToken::CACHE_KEY);
+                }
+            }
+
             $this->getSynchronizationLog()->addMessage(
-                $this->getHelper('Module\Translation')->__($message->getText()),
+                $this->getHelper('Module\Translation')->__($errorText),
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
             );
 
-            $exception = new \Ess\M2ePro\Model\Exception($message->getText());
+            $exception = new \Ess\M2ePro\Model\Exception($errorText);
             $this->getHelper('Module\Exception')->process($exception);
         }
     }

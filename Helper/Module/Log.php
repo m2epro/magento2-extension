@@ -185,7 +185,6 @@ class Log
     {
         switch ($class) {
             case \Ess\M2ePro\Model\Listing\Log::class:
-            case \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::class:
                 $prefix = 'ACTION_';
                 break;
 

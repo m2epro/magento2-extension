@@ -11,11 +11,13 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode as SourceModeBlock;
 use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode as CategoryTemplateBlock;
-use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
-use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
+use Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
+use Ess\M2ePro\Model\Ebay\Listing as EbayListing;
+use Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 
 abstract class Settings extends Listing
 {
+    /** @var string */
     protected $sessionKey = 'ebay_listing_product_category_settings';
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
     protected $componentEbayCategory;
@@ -25,8 +27,28 @@ abstract class Settings extends Listing
     protected $componentEbayCategoryStore;
     /** @var \Ess\M2ePro\Helper\Magento\Category */
     protected $magentoCategoryHelper;
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+    /** @var \Ess\M2ePro\Helper\Module\Wizard */
+    private $wizardHelper;
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
 
+    /**
+     * @param \Ess\M2ePro\Helper\Data\Session $sessionHelper
+     * @param \Ess\M2ePro\Helper\Module\Wizard $wizardHelper
+     * @param \Ess\M2ePro\Helper\Magento $magentoHelper
+     * @param \Ess\M2ePro\Helper\Magento\Category $magentoCategoryHelper
+     * @param \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay
+     * @param \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory
+     * @param \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory
+     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
+     */
     public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Helper\Module\Wizard $wizardHelper,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
         \Ess\M2ePro\Helper\Magento\Category $magentoCategoryHelper,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
@@ -37,9 +59,12 @@ abstract class Settings extends Listing
         parent::__construct($ebayFactory, $context);
 
         $this->componentEbayCategoryStore = $componentEbayCategoryStore;
-        $this->componentEbayCategory      = $componentEbayCategory;
-        $this->componentEbayCategoryEbay  = $componentEbayCategoryEbay;
-        $this->magentoCategoryHelper      = $magentoCategoryHelper;
+        $this->componentEbayCategory = $componentEbayCategory;
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+        $this->magentoCategoryHelper = $magentoCategoryHelper;
+        $this->sessionHelper = $sessionHelper;
+        $this->wizardHelper = $wizardHelper;
+        $this->magentoHelper = $magentoHelper;
     }
 
     protected function getSelectedListingProductsIdsByCategoriesIds($categoriesIds)
@@ -57,38 +82,28 @@ abstract class Settings extends Listing
         );
     }
 
-    //########################################
-
     protected function setWizardStep($step)
     {
-        /** @var \Ess\M2ePro\Helper\Module\Wizard $wizardHelper */
-        $wizardHelper = $this->getHelper('Module\Wizard');
-
-        if (!$wizardHelper->isActive(\Ess\M2ePro\Helper\View\Ebay::WIZARD_INSTALLATION_NICK)) {
+        if (!$this->wizardHelper->isActive(\Ess\M2ePro\Helper\View\Ebay::WIZARD_INSTALLATION_NICK)) {
             return;
         }
 
-        $wizardHelper->setStep(\Ess\M2ePro\Helper\View\Ebay::WIZARD_INSTALLATION_NICK, $step);
+        $this->wizardHelper->setStep(\Ess\M2ePro\Helper\View\Ebay::WIZARD_INSTALLATION_NICK, $step);
     }
 
     protected function endWizard()
     {
-        /** @var \Ess\M2ePro\Helper\Module\Wizard $wizardHelper */
-        $wizardHelper = $this->getHelper('Module\Wizard');
-
-        if (!$wizardHelper->isActive(\Ess\M2ePro\Helper\View\Ebay::WIZARD_INSTALLATION_NICK)) {
+        if (!$this->wizardHelper->isActive(\Ess\M2ePro\Helper\View\Ebay::WIZARD_INSTALLATION_NICK)) {
             return;
         }
 
-        $wizardHelper->setStatus(
+        $this->wizardHelper->setStatus(
             \Ess\M2ePro\Helper\View\Ebay::WIZARD_INSTALLATION_NICK,
             \Ess\M2ePro\Helper\Module\Wizard::STATUS_COMPLETED
         );
 
-        $this->getHelper('Magento')->clearMenuCache();
+        $this->magentoHelper->clearMenuCache();
     }
-
-    //########################################
 
     protected function save($sessionData)
     {
@@ -136,8 +151,6 @@ abstract class Settings extends Listing
         $this->endListingCreation();
     }
 
-    //########################################
-
     protected function isEbayPrimaryCategorySelected(
         $categoryData,
         \Ess\M2ePro\Model\Listing $listing,
@@ -162,8 +175,6 @@ abstract class Settings extends Listing
             $listing->getMarketplaceId()
         );
     }
-
-    //########################################
 
     protected function prepareUniqueTemplatesData($sessionData)
     {
@@ -203,8 +214,6 @@ abstract class Settings extends Listing
         return $unique;
     }
 
-    //########################################
-
     protected function convertCategoriesIdstoProductIds($sessionData)
     {
         if ($this->getSessionValue('mode') !== CategoryTemplateBlock::MODE_CATEGORY) {
@@ -228,8 +237,6 @@ abstract class Settings extends Listing
 
         return $sessionData;
     }
-
-    //########################################
 
     protected function initSessionDataProducts(array $addingListingProductIds)
     {
@@ -408,8 +415,6 @@ abstract class Settings extends Listing
         $this->setSessionValue($this->getSessionDataKey(), $sessionData);
     }
 
-    //########################################
-
     protected function setSessionValue($key, $value)
     {
         $listing = $this->getListingFromRequest();
@@ -421,7 +426,7 @@ abstract class Settings extends Listing
             $sessionData[$key] = $value;
         }
 
-        $this->getHelper('Data\Session')->setValue($this->sessionKey . $listing->getId(), $sessionData);
+        $this->sessionHelper->setValue($this->sessionKey . $listing->getId(), $sessionData);
 
         return $this;
     }
@@ -429,7 +434,7 @@ abstract class Settings extends Listing
     protected function getSessionValue($key = null)
     {
         $listing = $this->getListingFromRequest();
-        $sessionData = $this->getHelper('Data\Session')->getValue($this->sessionKey . $listing->getId());
+        $sessionData = $this->sessionHelper->getValue($this->sessionKey . $listing->getId());
 
         if ($sessionData === null) {
             $sessionData = [];
@@ -445,7 +450,7 @@ abstract class Settings extends Listing
     protected function clearSession()
     {
         $listing = $this->getListingFromRequest();
-        $this->getHelper('Data\Session')->getValue($this->sessionKey . $listing->getId(), true);
+        $this->sessionHelper->getValue($this->sessionKey . $listing->getId(), true);
     }
 
     protected function getSessionDataKey()
@@ -468,14 +473,35 @@ abstract class Settings extends Listing
         return $key;
     }
 
-    //########################################
-
     protected function endListingCreation()
     {
         $ebayListing = $this->getEbayListingFromRequest();
 
-        $this->getHelper('Data\Session')->setValue('added_products_ids', $ebayListing->getAddedListingProductsIds());
+        $this->sessionHelper->setValue('added_products_ids', $ebayListing->getAddedListingProductsIds());
         $sessionData = $this->getSessionValue($this->getSessionDataKey());
+        $this->updateListingLastPrimaryCategory($ebayListing, $sessionData);
+
+        //-- Remove successfully moved Unmanaged items
+        $additionalData = $ebayListing->getParentObject()->getSettings('additional_data');
+        if (isset($additionalData['source']) && $additionalData['source'] == SourceModeBlock::MODE_OTHER) {
+            $this->deleteListingOthers();
+        }
+
+        //--
+        $this->clearSession();
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Ebay\Listing $ebayListing
+     * @param array|null $sessionData
+     *
+     * @return void
+     */
+    protected function updateListingLastPrimaryCategory(EbayListing $ebayListing, ?array $sessionData)
+    {
+        if (!is_array($sessionData)) {
+            return;
+        }
 
         if ($this->getSessionValue('mode') == CategoryTemplateBlock::MODE_SAME) {
             if (isset($sessionData['category'][eBayCategory::TYPE_EBAY_MAIN])) {
@@ -510,18 +536,7 @@ abstract class Settings extends Listing
                 }
             }
         }
-
-        //-- Remove successfully moved Unmanaged items
-        $additionalData = $ebayListing->getParentObject()->getSettings('additional_data');
-        if (isset($additionalData['source']) && $additionalData['source'] == SourceModeBlock::MODE_OTHER) {
-            $this->deleteListingOthers();
-        }
-
-        //--
-        $this->clearSession();
     }
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Listing
@@ -544,8 +559,6 @@ abstract class Settings extends Listing
     {
         return $this->getListingFromRequest()->getChildObject();
     }
-
-    //########################################
 
     protected function deleteListingProducts($listingProductsIds)
     {
@@ -573,7 +586,7 @@ abstract class Settings extends Listing
 
         $listing->getChildObject()->setData(
             'product_add_ids',
-            $this->getHelper('Data')->jsonEncode($listingProductAddIds)
+            \Ess\M2ePro\Helper\Json::encode($listingProductAddIds)
         );
         $listing->save();
     }
@@ -611,22 +624,39 @@ abstract class Settings extends Listing
         }
     }
 
-    //########################################
-
     protected function getCategoryHashes(array $categoryData)
     {
         // @codingStandardsIgnoreStart
         $mainHash = $categoryData['mode'] .'-'. $categoryData['value'];
         $specificsHash = !empty($categoryData['specific'])
-            ? sha1($this->getHelper('Data')->jsonEncode($categoryData['specific']))
+            ? sha1(\Ess\M2ePro\Helper\Json::encode($categoryData['specific']))
             : '';
         // @codingStandardsIgnoreEnd
 
         return [
             $mainHash,
-            $mainHash .'-'. $specificsHash
+            $mainHash . '-' . $specificsHash
         ];
     }
 
-    //########################################
+    /**
+     * @return void
+     * @throws \Exception
+     */
+    protected function cancelProductsAdding()
+    {
+        $this->endWizard();
+
+        $ebayListing = $this->getEbayListingFromRequest();
+        $sessionData = $this->getSessionValue($this->getSessionDataKey());
+
+        $this->updateListingLastPrimaryCategory($ebayListing, $sessionData);
+
+        $this->sessionHelper->setValue('added_products_ids', []);
+        $this->clearSession();
+
+        $this->deleteListingProducts($ebayListing->getAddedListingProductsIds());
+
+        $ebayListing->setData('product_add_ids', \Ess\M2ePro\Helper\Json::encode([]))->save();
+    }
 }

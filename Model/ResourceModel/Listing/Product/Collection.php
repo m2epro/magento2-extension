@@ -8,13 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Product;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection
- */
+use Ess\M2ePro\Model\ResourceModel\Listing\Product as ListingProductResource;
+
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Parent\AbstractModel
 {
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
@@ -24,8 +21,29 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         );
     }
 
-    //########################################
+    /**
+     * @return void
+     */
+    public function selectListingId(): void
+    {
+        $this->addFieldToSelect(ListingProductResource::LISTING_ID_FIELD);
+    }
 
+    /**
+     * @param string|int $value
+     *
+     * @return void
+     */
+    public function whereProductIdEq($value): void
+    {
+        $this->getSelect()->where(ListingProductResource::PRODUCT_ID_FIELD . ' = ?', $value);
+    }
+
+    /**
+     * @param array $columns
+     *
+     * @return $this
+     */
     public function joinListingTable($columns = [])
     {
         $this->getSelect()->join(
@@ -36,6 +54,4 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
 
         return $this;
     }
-
-    //########################################
 }

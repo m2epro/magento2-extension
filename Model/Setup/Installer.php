@@ -2468,10 +2468,7 @@ class Installer
         $moduleConfig->insert('/logs/clearing/synchronizations/', 'days', '30');
         $moduleConfig->insert('/logs/clearing/orders/', 'mode', '1');
         $moduleConfig->insert('/logs/clearing/orders/', 'days', '90');
-        $moduleConfig->insert('/logs/clearing/ebay_pickup_store/', 'mode', '1');
-        $moduleConfig->insert('/logs/clearing/ebay_pickup_store/', 'days', '30');
         $moduleConfig->insert('/logs/listings/', 'last_action_id', '0');
-        $moduleConfig->insert('/logs/ebay_pickup_store/', 'last_action_id', '0');
         $moduleConfig->insert('/logs/grouped/', 'max_records_count', '100000');
         $moduleConfig->insert('/support/', 'documentation_url', 'https://m2e.atlassian.net/wiki/');
         $moduleConfig->insert('/support/', 'clients_portal_url', 'https://clients.m2epro.com/');
@@ -2812,329 +2809,6 @@ class Installer
             ->setOption('collate', 'utf8_general_ci')
             ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($ebayAccountStoreCategoryTable);
-
-        $ebayAccountPickupStoreTable = $this->getConnection()->newTable(
-            $this->getFullTableName('ebay_account_pickup_store')
-        )
-            ->addColumn(
-                'id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
-            )
-            ->addColumn(
-                'name',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'location_id',
-                Table::TYPE_TEXT,
-                255,
-                ['default' => null]
-            )
-            ->addColumn(
-                'account_id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'marketplace_id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'phone',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'postal_code',
-                Table::TYPE_TEXT,
-                50,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'url',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'utc_offset',
-                Table::TYPE_TEXT,
-                50,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'country',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'region',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'city',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'address_1',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'address_2',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'latitude',
-                Table::TYPE_FLOAT,
-                null,
-                []
-            )
-            ->addColumn(
-                'longitude',
-                Table::TYPE_FLOAT,
-                null,
-                []
-            )
-            ->addColumn(
-                'business_hours',
-                Table::TYPE_TEXT,
-                null,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'special_hours',
-                Table::TYPE_TEXT,
-                null,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'pickup_instruction',
-                Table::TYPE_TEXT,
-                null,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'qty_mode',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'qty_custom_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'qty_custom_attribute',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'qty_percentage',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 100]
-            )
-            ->addColumn(
-                'qty_modification_mode',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'qty_min_posted_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'default' => null]
-            )
-            ->addColumn(
-                'qty_max_posted_value',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'default' => null]
-            )
-            ->addColumn(
-                'update_date',
-                Table::TYPE_DATETIME,
-                null,
-                ['default' => null]
-            )
-            ->addColumn(
-                'create_date',
-                Table::TYPE_DATETIME,
-                null,
-                ['default' => null]
-            )
-            ->addIndex('name', 'name')
-            ->addIndex('location_id', 'location_id')
-            ->addIndex('account_id', 'account_id')
-            ->addIndex('marketplace_id', 'marketplace_id')
-            ->setOption('type', 'INNODB')
-            ->setOption('charset', 'utf8')
-            ->setOption('collate', 'utf8_general_ci')
-            ->setOption('row_format', 'dynamic');
-        $this->getConnection()->createTable($ebayAccountPickupStoreTable);
-
-        $ebayAccountPickupStoreStateTable = $this->getConnection()->newTable(
-            $this->getFullTableName('ebay_account_pickup_store_state')
-        )
-            ->addColumn(
-                'id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
-            )
-            ->addColumn(
-                'account_pickup_store_id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'is_in_processing',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'default' => 0]
-            )
-            ->addColumn(
-                'sku',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'online_qty',
-                Table::TYPE_INTEGER,
-                null,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'target_qty',
-                Table::TYPE_INTEGER,
-                null,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'is_added',
-                Table::TYPE_SMALLINT,
-                null,
-                ['nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
-                'is_deleted',
-                Table::TYPE_SMALLINT,
-                null,
-                ['nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
-                'update_date',
-                Table::TYPE_DATETIME,
-                null,
-                ['default' => null]
-            )
-            ->addColumn(
-                'create_date',
-                Table::TYPE_DATETIME,
-                null,
-                ['default' => null]
-            )
-            ->addIndex('account_pickup_store_id', 'account_pickup_store_id')
-            ->addIndex('is_in_processing', 'is_in_processing')
-            ->addIndex('sku', 'sku')
-            ->setOption('type', 'INNODB')
-            ->setOption('charset', 'utf8')
-            ->setOption('collate', 'utf8_general_ci')
-            ->setOption('row_format', 'dynamic');
-        $this->getConnection()->createTable($ebayAccountPickupStoreStateTable);
-
-        $ebayAccountPickupStoreLogTable = $this->getConnection()->newTable(
-            $this->getFullTableName('ebay_account_pickup_store_log')
-        )
-            ->addColumn(
-                'id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
-            )
-            ->addColumn(
-                'account_pickup_store_state_id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'default' => null]
-            )
-            ->addColumn(
-                'location_id',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'location_title',
-                Table::TYPE_TEXT,
-                255,
-                ['default' => null]
-            )
-            ->addColumn(
-                'action_id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'action',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 1]
-            )
-            ->addColumn(
-                'type',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 1]
-            )
-            ->addColumn(
-                'description',
-                Table::TYPE_TEXT,
-                null,
-                ['default' => null]
-            )
-            ->addColumn(
-                'create_date',
-                Table::TYPE_DATETIME,
-                null,
-                ['default' => null]
-            )
-            ->addIndex('account_pickup_store_state_id', 'account_pickup_store_state_id')
-            ->addIndex('location_id', 'location_id')
-            ->addIndex('location_title', 'location_title')
-            ->addIndex('action', 'action')
-            ->addIndex('action_id', 'action_id')
-            ->addIndex('type', 'type')
-            ->addIndex('create_date', 'create_date')
-            ->setOption('type', 'INNODB')
-            ->setOption('charset', 'utf8')
-            ->setOption('collate', 'utf8_general_ci')
-            ->setOption('row_format', 'dynamic');
-        $this->getConnection()->createTable($ebayAccountPickupStoreLogTable);
 
         $ebayProcessingActionTable = $this->getConnection()->newTable(
             $this->getFullTableName('ebay_listing_product_action_processing')
@@ -4219,42 +3893,6 @@ class Installer
             ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($ebayListingProductTable);
 
-        $ebayListingProductPickupStoreTable = $this->getConnection()->newTable(
-            $this->getFullTableName('ebay_listing_product_pickup_store')
-        )
-            ->addColumn(
-                'id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
-            )
-            ->addColumn(
-                'listing_product_id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'default' => null]
-            )
-            ->addColumn(
-                'account_pickup_store_id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'default' => null]
-            )
-            ->addColumn(
-                'is_process_required',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
-            ->addIndex('listing_product_id', 'listing_product_id')
-            ->addIndex('account_pickup_store_id', 'account_pickup_store_id')
-            ->addIndex('is_process_required', 'is_process_required')
-            ->setOption('type', 'INNODB')
-            ->setOption('charset', 'utf8')
-            ->setOption('collate', 'utf8_general_ci')
-            ->setOption('row_format', 'dynamic');
-        $this->getConnection()->createTable($ebayListingProductPickupStoreTable);
-
         $ebayListingProductVariationTable = $this->getConnection()->newTable(
             $this->getFullTableName('ebay_listing_product_variation')
         )
@@ -4495,12 +4133,6 @@ class Installer
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_in_store_pickup',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
                 'is_return_description',
                 Table::TYPE_SMALLINT,
                 null,
@@ -4532,7 +4164,6 @@ class Installer
             ->addIndex('is_stp', 'is_stp')
             ->addIndex('is_stp_advanced', 'is_stp_advanced')
             ->addIndex('is_map', 'is_map')
-            ->addIndex('is_in_store_pickup', 'is_in_store_pickup')
             ->addIndex('is_return_description', 'is_return_description')
             ->addIndex('is_epid', 'is_epid')
             ->addIndex('is_ktype', 'is_ktype')
@@ -6937,7 +6568,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 1,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 1,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
                     'is_ktype'                             => 0
@@ -6963,7 +6593,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 1,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
                     'is_ktype'                             => 0
@@ -6989,7 +6618,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 1,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 1,
                     'is_return_description'                => 0,
                     'is_epid'                              => 1,
                     'is_ktype'                             => 1
@@ -7015,7 +6643,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 1,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
                     'is_ktype'                             => 1
@@ -7041,7 +6668,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 1,
                     'is_epid'                              => 0,
                     'is_ktype'                             => 0
@@ -7067,7 +6693,7 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 0,
+
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
                     'is_ktype'                             => 0
@@ -7093,7 +6719,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 1,
                     'is_epid'                              => 0,
                     'is_ktype'                             => 1
@@ -7119,7 +6744,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 1,
                     'is_return_description'                => 1,
                     'is_epid'                              => 1,
                     'is_ktype'                             => 1
@@ -7145,7 +6769,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 1,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 1,
                     'is_ktype'                             => 0
@@ -7171,7 +6794,6 @@ class Installer
                     'is_cash_on_delivery'                  => 1,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 1,
                     'is_epid'                              => 1,
                     'is_ktype'                             => 1
@@ -7197,7 +6819,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
                     'is_ktype'                             => 0
@@ -7223,7 +6844,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
                     'is_ktype'                             => 0
@@ -7249,7 +6869,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 1,
                     'is_epid'                              => 0,
                     'is_ktype'                             => 1
@@ -7275,7 +6894,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
                     'is_ktype'                             => 0
@@ -7301,7 +6919,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
                     'is_ktype'                             => 0
@@ -7327,7 +6944,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
                     'is_ktype'                             => 0
@@ -7353,7 +6969,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
                     'is_ktype'                             => 0
@@ -7379,7 +6994,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
                     'is_ktype'                             => 0
@@ -7405,7 +7019,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
                     'is_ktype'                             => 0
@@ -7431,7 +7044,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
                     'is_ktype'                             => 0
@@ -7457,7 +7069,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
                     'is_ktype'                             => 0
@@ -7483,7 +7094,6 @@ class Installer
                     'is_cash_on_delivery'                  => 0,
                     'is_global_shipping_program'           => 0,
                     'is_charity'                           => 1,
-                    'is_in_store_pickup'                   => 0,
                     'is_return_description'                => 0,
                     'is_epid'                              => 0,
                     'is_ktype'                             => 0
@@ -7621,6 +7231,12 @@ class Installer
                 Table::TYPE_TEXT,
                 255,
                 ['default' => null]
+            )
+            ->addColumn(
+                'invalid',
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'total_products',
@@ -10257,10 +9873,10 @@ class Installer
                 ['nullable' => false]
             )
             ->addColumn(
-                'regular_price_coefficient',
+                'regular_price_modifier',
                 Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
+                null,
+                ['nullable' => true, 'default' => null]
             )
             ->addColumn(
                 'regular_map_price_mode',
@@ -10287,10 +9903,10 @@ class Installer
                 ['nullable' => false]
             )
             ->addColumn(
-                'regular_sale_price_coefficient',
+                'regular_sale_price_modifier',
                 Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
+                null,
+                ['nullable' => true, 'default' => null]
             )
             ->addColumn(
                 'regular_price_variation_mode',
@@ -10353,10 +9969,10 @@ class Installer
                 ['nullable' => false]
             )
             ->addColumn(
-                'business_price_coefficient',
+                'business_price_modifier',
                 Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
+                null,
+                ['nullable' => true, 'default' => null]
             )
             ->addColumn(
                 'business_price_variation_mode',
@@ -10377,10 +9993,10 @@ class Installer
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'business_discounts_tier_coefficient',
+                'business_discounts_tier_modifier',
                 Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
+                null,
+                ['nullable' => true, 'default' => null]
             )
             ->addColumn(
                 'business_discounts_tier_customer_group_id',
@@ -10652,7 +10268,6 @@ class Installer
         $moduleConfig->insert('/amazon/listing/product/action/stop/', 'min_allowed_wait_interval', '600');
         $moduleConfig->insert('/amazon/listing/product/action/delete/', 'min_allowed_wait_interval', '600');
         $moduleConfig->insert('/amazon/order/settings/marketplace_25/', 'use_first_street_line_as_company', '1');
-        $moduleConfig->insert('/amazon/repricing/', 'mode', '1');
         $moduleConfig->insert('/amazon/repricing/', 'base_url', 'https://repricer.m2epro.com/connector/m2epro/');
         $moduleConfig->insert('/amazon/configuration/', 'business_mode', '0');
         $moduleConfig->insert('/amazon/configuration/', 'worldwide_id_mode', '0');
@@ -11349,12 +10964,6 @@ class Installer
                 Table::TYPE_TEXT,
                 self::LONG_COLUMN_SIZE,
                 ['default' => null]
-            )
-            ->addColumn(
-                'tax_codes',
-                Table::TYPE_TEXT,
-                self::LONG_COLUMN_SIZE,
-                ['nullable' => true]
             )
             ->addIndex('marketplace_id', 'marketplace_id')
             ->setOption('type', 'INNODB')
@@ -12778,24 +12387,6 @@ class Installer
                 ['nullable' => false]
             )
             ->addColumn(
-                'keywords_mode',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
-                'keywords_custom_value',
-                Table::TYPE_TEXT,
-                4000,
-                ['nullable' => true]
-            )
-            ->addColumn(
-                'keywords_custom_attribute',
-                Table::TYPE_TEXT,
-                4000,
-                ['nullable' => true]
-            )
-            ->addColumn(
                 'attributes_mode',
                 Table::TYPE_SMALLINT,
                 null,
@@ -12885,22 +12476,10 @@ class Installer
                 ['nullable' => false]
             )
             ->addColumn(
-                'map_price_mode',
-                Table::TYPE_SMALLINT,
+                'price_modifier',
+                Table::TYPE_TEXT,
                 null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'map_price_custom_attribute',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'price_coefficient',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
+                ['nullable' => true, 'default' => null]
             )
             ->addColumn(
                 'price_variation_mode',
@@ -12934,24 +12513,6 @@ class Installer
             )
             ->addColumn(
                 'lag_time_custom_attribute',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'product_tax_code_mode',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'product_tax_code_custom_value',
-                Table::TYPE_TEXT,
-                255,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'product_tax_code_custom_attribute',
                 Table::TYPE_TEXT,
                 255,
                 ['nullable' => false]

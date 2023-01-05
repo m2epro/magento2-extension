@@ -24,9 +24,6 @@ class Grid extends AbstractGrid
     /** @var \Ess\M2ePro\Model\ResourceModel\Order\Item\Collection */
     private $itemsCollection;
 
-    /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
-    private $componentEbayPickupStore;
-
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $databaseHelper;
 
@@ -37,7 +34,6 @@ class Grid extends AbstractGrid
     private $ebayHelper;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -49,10 +45,10 @@ class Grid extends AbstractGrid
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->ebayFactory = $ebayFactory;
-        $this->componentEbayPickupStore = $componentEbayPickupStore;
         $this->databaseHelper = $databaseHelper;
         $this->dataHelper = $dataHelper;
         $this->ebayHelper = $ebayHelper;
+
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -291,10 +287,6 @@ class Grid extends AbstractGrid
             'general' => $this->__('General'),
         ];
 
-        if ($this->componentEbayPickupStore->isFeatureEnabled()) {
-            $groups['in_store_pickup'] = $this->__('In-Store Pickup');
-        }
-
         $this->getMassactionBlock()->setGroups($groups);
 
         // Set mass-action
@@ -357,41 +349,6 @@ class Grid extends AbstractGrid
                 'confirm' => $this->__('Are you sure?')
             ],
             'general'
-        );
-        // ---------------------------------------
-
-        if (!$this->componentEbayPickupStore->isFeatureEnabled()) {
-            return parent::_prepareMassaction();
-        }
-
-        $this->getMassactionBlock()->addItem(
-            'mark_as_ready_for_pickup',
-            [
-                'label'   => $this->__('Mark as Ready For Pickup'),
-                'url'     => $this->getUrl('*/ebay_order/markAsReadyForPickup'),
-                'confirm' => $this->__('Are you sure?')
-            ],
-            'in_store_pickup'
-        );
-
-        $this->getMassactionBlock()->addItem(
-            'mark_as_picked_up',
-            [
-                'label'   => $this->__('Mark as Picked Up'),
-                'url'     => $this->getUrl('*/ebay_order/markAsPickedUp'),
-                'confirm' => $this->__('Are you sure?')
-            ],
-            'in_store_pickup'
-        );
-
-        $this->getMassactionBlock()->addItem(
-            'mark_as_cancelled',
-            [
-                'label'   => $this->__('Mark as Cancelled'),
-                'url'     => $this->getUrl('*/ebay_order/markAsCancelled'),
-                'confirm' => $this->__('Are you sure?')
-            ],
-            'in_store_pickup'
         );
 
         return parent::_prepareMassaction();
@@ -475,20 +432,9 @@ HTML;
 HTML;
         }
 
-        if (!$this->componentEbayPickupStore->isFeatureEnabled()) {
-            return $returnString;
-        }
-
         if (empty($row->getChildObject()->getData('shipping_details'))) {
             return $returnString;
         }
-
-        $shippingDetails = $this->dataHelper->jsonDecode($row->getChildObject()->getData('shipping_details'));
-        if (empty($shippingDetails['in_store_pickup_details'])) {
-            return $returnString;
-        }
-
-        $returnString = '<img src="/images/in_store_pickup.png" />&nbsp;' . $returnString;
 
         return $returnString;
     }
@@ -669,13 +615,6 @@ HTML;
             $collection
                 ->getSelect()
                 ->where('ebay_order_id LIKE ? OR selling_manager_id LIKE ?', '%' . $value['value'] . '%');
-        }
-
-        if (!empty($value['is_in_store_pickup'])) {
-            $collection->getSelect()->where(
-                'shipping_details regexp ?',
-                '"in_store_pickup_details":\{.+\}'
-            );
         }
     }
 

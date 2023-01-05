@@ -15,9 +15,6 @@ class Grid extends AccountGrid
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
 
-    /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
-    private $componentEbayPickupStore;
-
     /** @var \Ess\M2ePro\Helper\View\Ebay */
     protected $ebayViewHelper;
 
@@ -28,7 +25,6 @@ class Grid extends AccountGrid
     private $globalDataHelper;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Component\Ebay\PickupStore $componentEbayPickupStore,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
         \Ess\M2ePro\Helper\View $viewHelper,
@@ -39,7 +35,6 @@ class Grid extends AccountGrid
         array $data = []
     ) {
         $this->ebayFactory = $ebayFactory;
-        $this->componentEbayPickupStore = $componentEbayPickupStore;
         $this->ebayViewHelper = $ebayViewHelper;
         $this->dataHelper = $dataHelper;
         $this->globalDataHelper = $globalDataHelper;
@@ -77,18 +72,16 @@ class Grid extends AccountGrid
         ]);
 
         $header = $this->__('Management');
-        $pickupStoreAccounts = $this->componentEbayPickupStore->getEnabledAccounts();
         $isFeedbacksEnabled = $this->ebayViewHelper->isFeedbacksShouldBeShown();
-        if (!empty($pickupStoreAccounts) && !$isFeedbacksEnabled) {
+        if (!$isFeedbacksEnabled) {
             $header = $this->__('My Stores');
-        } elseif (empty($pickupStoreAccounts) && $this->ebayViewHelper->isFeedbacksShouldBeShown()) {
+        } elseif ($this->ebayViewHelper->isFeedbacksShouldBeShown()) {
             $header = $this->__('Feedbacks');
         }
 
-        $this->globalDataHelper->setValue('pickup_store_accounts', $pickupStoreAccounts);
         $this->globalDataHelper->setValue('feedbacks_enabled', $isFeedbacksEnabled);
 
-        if ($this->ebayViewHelper->isFeedbacksShouldBeShown() || !empty($pickupStoreAccounts)) {
+        if ($this->ebayViewHelper->isFeedbacksShouldBeShown()) {
             $this->addColumn('management', [
                 'header'         => $header,
                 'align'          => 'center',
@@ -151,19 +144,9 @@ HTML;
 HTML;
         }
 
-        $additionalData = $this->dataHelper->jsonDecode($row->getData('additional_data'));
-
-        if (!empty($additionalData) && (int)$additionalData['bopis']) {
-            $url = $this->getUrl('*/ebay_account_pickupStore/index', ['account_id' => $row->getData('id')]);
-            $html .= <<<HTML
-            <a href="{$url}" style="display: block; padding-top: 5px;" target="_self">{$this->__('My Stores')}</a>
-HTML;
-        }
-
-        $pickupStoreAccounts = $this->globalDataHelper->getValue('pickup_store_accounts');
         $isFeedbacksEnabled = $this->globalDataHelper->getValue('feedbacks_enabled');
 
-        if (empty($html) && (!$isFeedbacksEnabled || empty($pickupStoreAccounts))) {
+        if (empty($html) && !$isFeedbacksEnabled) {
             $html = '<strong style="color: gray;">' . $this->__("Disabled") . '</strong>';
         }
 

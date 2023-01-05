@@ -9,12 +9,28 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
+use Ess\M2ePro\Model\Ebay\Account\Issue\ValidTokens;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Delete
  */
 class Delete extends Account
 {
+    /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
+    private $permanentCacheHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update $storeCategoryUpdate,
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context,
+        \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCacheHelper
+    ) {
+        parent::__construct($storeCategoryUpdate, $componentEbayCategoryStore, $ebayFactory, $context);
+
+        $this->permanentCacheHelper = $permanentCacheHelper;
+    }
+
     public function execute()
     {
         $ids = $this->getRequestIds();
@@ -42,6 +58,8 @@ class Delete extends Account
 
             $deleted++;
         }
+
+        $this->permanentCacheHelper->removeValue(ValidTokens::ACCOUNT_TOKENS_CACHE_KEY);
 
         $tempString = $this->__('%amount% record(s) were deleted.', $deleted);
         $deleted && $this->messageManager->addSuccess($tempString);

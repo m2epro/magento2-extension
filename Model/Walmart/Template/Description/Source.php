@@ -373,26 +373,6 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @return null|string
      */
-    public function getKeywords()
-    {
-        if ($this->getWalmartDescriptionTemplate()->isKeywordsModeNone()) {
-            return null;
-        }
-
-        $src = $this->getWalmartDescriptionTemplate()->getKeywordsSource();
-
-        if ($this->getWalmartDescriptionTemplate()->isKeywordsModeCustomValue()) {
-            return trim($src['custom_value']);
-        }
-
-        return trim($this->getMagentoProduct()->getAttributeValue($src['custom_attribute']));
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return null|string
-     */
     public function getManufacturer()
     {
         $src = $this->getWalmartDescriptionTemplate()->getManufacturerSource();

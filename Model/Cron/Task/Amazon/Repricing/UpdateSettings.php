@@ -13,21 +13,47 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Repricing;
  */
 class UpdateSettings extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/repricing/update_settings';
+    public const NICK = 'amazon/repricing/update_settings';
 
-    /**
-     * @var int (in seconds)
-     */
+    public const MAX_COUNT_OF_ITERATIONS = 10;
+    public const MAX_ITEMS_COUNT_PER_REQUEST = 500;
+
+    /** @var int (in seconds) */
     protected $interval = 180;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory */
+    private $accountCollectionFactory;
 
-    const MAX_COUNT_OF_ITERATIONS     = 10;
-    const MAX_ITEMS_COUNT_PER_REQUEST = 500;
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Magento\Framework\Event\Manager $eventManager,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo,
+        \Magento\Framework\App\ResourceConnection $resource,
+        \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory
+    ) {
+        parent::__construct(
+            $helperData,
+            $eventManager,
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $taskRepo,
+            $resource
+        );
+        $this->accountCollectionFactory = $accountCollectionFactory;
+    }
 
     //####################################
 
     public function performActions()
     {
-        $permittedAccounts = $this->getPermittedAccounts();
+        $permittedAccounts = $this->accountCollectionFactory
+            ->create()
+            ->getAccountsWithValidRepricingAccount();
         if (empty($permittedAccounts)) {
             return;
         }
@@ -38,28 +64,6 @@ class UpdateSettings extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     }
 
     //####################################
-
-    /**
-     * @return \Ess\M2ePro\Model\Account[]
-     */
-    protected function getPermittedAccounts()
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountCollection */
-        $accountCollection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'Account'
-        )->getCollection();
-        $accountCollection->getSelect()->joinInner(
-            [
-                'aar' => $this->activeRecordFactory->getObject('Amazon_Account_Repricing')
-                ->getResource()->getMainTable()
-            ],
-            'aar.account_id=main_table.id',
-            []
-        );
-
-        return $accountCollection->getItems();
-    }
 
     protected function processAccount(\Ess\M2ePro\Model\Account $acc)
     {

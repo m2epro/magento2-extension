@@ -11,17 +11,22 @@ class ProductAttributesQueryBuilder
     private $resourceConnection;
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $dbHelper;
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
 
     /**
      * @param \Magento\Framework\App\ResourceConnection $resourceConnection
      * @param \Ess\M2ePro\Helper\Module\Database\Structure $dbHelper
+     * @param \Ess\M2ePro\Helper\Magento $magentoHelper
      */
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Ess\M2ePro\Helper\Module\Database\Structure $dbHelper
+        \Ess\M2ePro\Helper\Module\Database\Structure $dbHelper,
+        \Ess\M2ePro\Helper\Magento $magentoHelper
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->dbHelper = $dbHelper;
+        $this->magentoHelper = $magentoHelper;
     }
 
     /**
@@ -52,12 +57,15 @@ class ProductAttributesQueryBuilder
         $attributeSelect->columns([
             'value' => new \Zend_Db_Expr($valueQuery)
         ]);
+
+        $linkColumn = $this->getEntityIdColumnName();
+
         $attributeSelect->where('attr.attribute_id = ?', $attributeId);
         $attributeSelect->where('attr.store_id = 0 OR attr.store_id = ?', new \Zend_Db_Expr($storeIdAttribute));
-        $attributeSelect->group('attr.entity_id');
+        $attributeSelect->group($linkColumn);
 
         if ($productAttribute !== null) {
-            $attributeSelect->where('attr.entity_id = ?', new \Zend_Db_Expr($productAttribute));
+            $attributeSelect->where($linkColumn . ' = ?', new \Zend_Db_Expr($productAttribute));
         }
 
         return $attributeSelect;
@@ -122,5 +130,31 @@ class ProductAttributesQueryBuilder
         }
 
         $this->attributesTableMap = $tmp;
+    }
+
+    /**
+     * @return string
+     */
+    private function getEntityIdColumnName(): string
+    {
+        if ($this->isEnterpriseEdition()) {
+            return 'attr.row_id';
+        }
+
+        return 'attr.entity_id';
+    }
+
+    /**
+     * https://magento.stackexchange.com/questions/352414/code-to-get-row-id-or-entity-id-for-catalog-product-entity-varchar-table-for-joi
+     * @return bool
+     */
+    private function isEnterpriseEdition(): bool
+    {
+        $tableName = $this->resourceConnection
+            ->getTableName('catalog_product_entity_varchar');
+
+        return $this->resourceConnection
+            ->getConnection()
+            ->tableColumnExists($tableName, 'row_id');
     }
 }

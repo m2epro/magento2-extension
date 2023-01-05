@@ -9,6 +9,7 @@
 namespace  Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer;
 
 use Ess\M2ePro\Block\Adminhtml\Traits;
+use Ess\M2ePro\Model\Listing\Product;
 
 class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
 {
@@ -42,16 +43,21 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
     public function render(\Magento\Framework\DataObject $row)
     {
         $value = $this->_getValue($row);
+        if (!$value && $row->getChildObject()) {
+            $value = $this->_getValue($row->getChildObject());
+        }
 
         if (!$row->getData('is_variation_parent')) {
-            if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-                return '<span style="color: gray;">'.$this->translationHelper->__('Not Listed').'</span>';
+            if ($row->getData('status') == Product::STATUS_NOT_LISTED) {
+                return '<span style="color: gray;">' . $this->translationHelper->__('Not Listed') . '</span>';
             }
 
-            if ($value === null || $value === '' ||
-                ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED &&
-                    !$row->getData('is_online_price_invalid'))) {
-                return $this->translationHelper->__('N/A');
+            if ($value === null || $value === '') {
+                if ($row->getData('status') == Product::STATUS_BLOCKED) {
+                    return $this->translationHelper->__('N/A');
+                }
+
+                return '<i style="color:gray;">receiving...</i>';
             }
 
             if ($value <= 0) {
@@ -69,7 +75,7 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
 
         $activeChildrenCount = 0;
         foreach ($variationChildStatuses as $childStatus => $count) {
-            if ($childStatus == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
+            if ($childStatus == Product::STATUS_NOT_LISTED) {
                 continue;
             }
 

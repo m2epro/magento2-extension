@@ -1,8 +1,9 @@
 define([
-   'jquery',
-   'M2ePro/Walmart/Template/Edit',
-   'Magento_Ui/js/modal/modal',
-   'mage/calendar'
+    'jquery',
+    'M2ePro/Template/Helper/PriceChange',
+    'M2ePro/Walmart/Template/Edit',
+    'Magento_Ui/js/modal/modal',
+    'mage/calendar'
 ], function (jQuery) {
     window.WalmartTemplateSellingFormat = Class.create(WalmartTemplateEdit, {
 
@@ -10,6 +11,15 @@ define([
         promotionsIndex: 0,
 
         taxCodePopup: null,
+
+        priceChange: {
+            price: {
+                index: 0,
+                template: '',
+                enabled: true
+            }
+        },
+        priceChangeHelper: null,
 
         // ---------------------------------------
 
@@ -52,14 +62,6 @@ define([
 
                 return value > 0 && value <= 30;
             }, M2ePro.translator.translate('wrong_value_more_than_30'));
-
-            jQuery.validator.addMethod('M2ePro-validation-walmart-tax-code', function (value, el) {
-                if (self.isElementHiddenFromPage(el)) {
-                    return true;
-                }
-
-                return value.length === 7;
-            }, M2ePro.translator.translate('Must be a 7-digit code assigned to the taxable Items.'));
 
             jQuery.validator.addMethod('M2ePro-validate-promotions', function (value, el) {
 
@@ -107,6 +109,9 @@ define([
 
                 return true;
             }, M2ePro.translator.translate('You should specify at least one Override Rule.'));
+
+            this.priceChangeHelper = new TemplateHelperPriceChange();
+            this.priceChangeHelper.initPriceChange(this.priceChange);
         },
 
         initObservers: function () {
@@ -125,12 +130,6 @@ define([
             if ($('price_mode')) {
                 $('price_mode')
                     .observe('change', WalmartTemplateSellingFormatObj.price_mode_change)
-                    .simulate('change');
-            }
-
-            if ($('map_price_mode')) {
-                $('map_price_mode')
-                    .observe('change', WalmartTemplateSellingFormatObj.map_price_mode_change)
                     .simulate('change');
             }
 
@@ -181,10 +180,6 @@ define([
             $('lag_time_mode')
                 .observe('change', WalmartTemplateSellingFormatObj.lag_time_mode_change)
                 .simulate('change');
-
-            $('product_tax_code_mode')
-                .observe('change', WalmartTemplateSellingFormatObj.product_tax_code_mode_change)
-                .simulate('change');
         },
 
         // ---------------------------------------
@@ -226,10 +221,6 @@ define([
             $$('#shipping_override_rules_table_tbody .shipping-override-rule button.delete').each(function (el) {
                 WalmartTemplateSellingFormatObj.removeRow(el);
             });
-
-            M2ePro.customData.marketplaces_with_tax_codes_dictionary.indexOf($('marketplace_id').value) != -1
-                ? $('tax_codes').show()
-                : $('tax_codes').hide();
 
             $$('[class^="shipping-override-rule-currency-"]').each(function (el) {
                 el.hide();
@@ -300,15 +291,6 @@ define([
             }
         },
 
-        map_price_mode_change: function () {
-            var self = WalmartTemplateSellingFormatObj;
-
-            $('map_price_custom_attribute').value = '';
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_SellingFormat::PRICE_MODE_ATTRIBUTE')) {
-                self.updateHiddenValue(this, $('map_price_custom_attribute'));
-            }
-        },
-
         // ---------------------------------------
 
         sale_time_start_date_mode_change: function () {
@@ -365,17 +347,6 @@ define([
 
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_SellingFormat::LAG_TIME_MODE_CUSTOM_ATTRIBUTE')) {
                 self.updateHiddenValue(this, $('lag_time_custom_attribute'));
-            }
-        },
-
-        product_tax_code_mode_change: function () {
-            $('product_tax_code_custom_value_tr').hide();
-            $('product_tax_code_custom_attribute').value = '';
-
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_SellingFormat::PRODUCT_TAX_CODE_MODE_VALUE')) {
-                $('product_tax_code_custom_value_tr').show();
-            } else if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_SellingFormat::PRODUCT_TAX_CODE_MODE_ATTRIBUTE')) {
-                WalmartTemplateSellingFormatObj.updateHiddenValue(this, $('product_tax_code_custom_attribute'));
             }
         },
 
@@ -873,49 +844,6 @@ define([
             if (WalmartTemplateSellingFormatObj.rulesIndex > 0) {
                 --WalmartTemplateSellingFormatObj.rulesIndex;
             }
-        },
-
-        // ---------------------------------------
-
-        openTaxCodePopup: function (noSelection) {
-            var self = this;
-            var marketplaceId = $('marketplace_id').value;
-
-            new Ajax.Request(M2ePro.url.get('walmart_template_sellingFormat/getTaxCodesGrid'), {
-                method: 'get',
-                parameters: {
-                    marketplace_id: marketplaceId,
-                    no_selection  : +noSelection,
-                },
-                onSuccess: function (transport) {
-
-                    var modalElement = jQuery('#modal_dialog_message');
-
-                    modalElement.html(transport.responseText);
-                    modalElement.modal({
-                        title: M2ePro.translator.translate('Sales Tax Codes'),
-                        type: 'slide',
-                        buttons: [{
-                            text: M2ePro.translator.translate('Cancel'),
-                            click: function () {
-                                modalElement.modal('closeModal');
-                            }
-                        }]
-                                       });
-                    modalElement.modal('openModal');
-
-                    self.taxCodePopup = modalElement;
-                }
-            });
-        },
-
-        // ---------------------------------------
-
-        taxCodePopupSelectAndClose: function (taxCode) {
-            var self = this;
-
-            $('product_tax_code_custom_value').value = taxCode;
-            self.taxCodePopup.modal('closeModal');
         },
 
         // ---------------------------------------

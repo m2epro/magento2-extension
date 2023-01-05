@@ -21,8 +21,6 @@ class Module
 
     public const ENVIRONMENT_PRODUCTION     = 'production';
     public const ENVIRONMENT_DEVELOPMENT    = 'development';
-    public const ENVIRONMENT_TESTING_MANUAL = 'testing-manual';
-    public const ENVIRONMENT_TESTING_AUTO   = 'testing-auto';
 
     /**  @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
@@ -314,22 +312,6 @@ class Module
     public function isDevelopmentEnvironment(): bool
     {
         return $this->getEnvironment() === self::ENVIRONMENT_DEVELOPMENT;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isTestingManualEnvironment(): bool
-    {
-        return $this->getEnvironment() === self::ENVIRONMENT_TESTING_MANUAL;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isTestingAutoEnvironment(): bool
-    {
-        return $this->getEnvironment() === self::ENVIRONMENT_TESTING_AUTO;
     }
 
     /**

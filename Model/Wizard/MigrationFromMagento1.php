@@ -172,10 +172,6 @@ class MigrationFromMagento1 extends Wizard
      */
     public function isUnexpectedlyCopiedFromM1()
     {
-        if (!$this->getHelper('Module')->isProductionEnvironment()) {
-            return false;
-        }
-
         $installedVersion = $this->getHelper('Module')->getDataVersion();
 
         $setupTable = $this->getM1TablesPrefix() . 'm2epro_setup';

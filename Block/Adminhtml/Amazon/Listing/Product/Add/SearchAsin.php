@@ -68,9 +68,25 @@ class SearchAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
         ]);
 
         // ---------------------------------------
+        $url = $this->getUrl(
+            '*/amazon_listing_product_add/exitToListing',
+            ['id' => $this->getRequest()->getParam('id')]
+        );
+        $confirm =
+            '<strong>' . $this->__('Are you sure?') . '</strong><br><br>'
+            . $this->__('All unsaved changes will be lost and you will be returned to the Listings grid.');
+        $this->addButton(
+            'exit_to_listing',
+            [
+                'label' => $this->__('Cancel'),
+                'onclick' => "confirmSetLocation('$confirm', '$url');",
+                'class' => 'action-primary',
+            ]
+        );
+
         $this->addButton('add_products_search_asin_continue', [
             'label'     => $this->__('Continue'),
-            'onclick'   => 'ListingGridObj.checkSearchResults('.$this->listing['id'].')',
+            'onclick'   => 'ListingGridObj.checkSearchResults(' . $this->listing['id'] . ')',
             'class'     => 'action-primary forward'
         ]);
         // ---------------------------------------
@@ -146,18 +162,17 @@ HTML
         );
         $notSynchronizedMarketplace = $this->__(
             'In order to use New ASIN/ISBN functionality, please re-synchronize Marketplace data.'
-        ) .' '. $this->__('Press "Save And Update" Button after redirect on Marketplace Page.');
+        ) . ' ' . $this->__('Press "Save And Update" Button after redirect on Marketplace Page.');
 
         $newAsinPopupTitle = $this->__('New ASIN/ISBN creation');
         $notCompletedPopupTitle = $this->__('Adding of New Products to the Listing was not competed');
-        $notCompletedPopupText = $this->__('
-            The Process of Adding new Products was not ended for this Listing.<br/><br/>
-            To work with Products in Listing it is necessary to follow all the Steps of Adding Products.
-            You should specify all Required Data to complete
-            Adding Process and then press <strong>Continue</strong> Button.<br/><br/>
-            In case you do not want to Add selected Products to the Listing,
-            you can press <strong>Back</strong> Button and you will be able to manage your Listing.
-        ');
+        $notCompletedPopupText = $this->__("
+            You didn't finish adding Products to the Listing.<br/><br/>
+            To add selected Products to the Listing, you need to specify the required information first.
+            Once you're done, click <strong>Continue</strong>.<br/><br/>
+            If you don't want to add selected Products to the Listing, click <strong>Back</strong> to return
+            to the previous step. Or <strong>Cancel</strong> the adding process to return to the Listing.
+        ");
 
         $variationManageMatchedAttributesErrorDuplicateSelection = $this->__(
             'You can not choose the same Attribute twice.'

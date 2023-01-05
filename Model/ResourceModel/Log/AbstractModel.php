@@ -8,26 +8,37 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Log;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
- */
 abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
-    const ACTION_KEY = 'last_action_id';
+    private const ACTION_KEY = 'last_action_id';
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $dbStructureHelper;
 
-    public function getConfigGroupSuffix()
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Database\Structure $dbStructureHelper,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        $connectionName = null
+    )
+    {
+        parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
+        $this->dbStructureHelper = $dbStructureHelper;
+    }
+
+    public function getConfigGroupSuffix(): string
     {
         return 'general';
     }
 
-    public function getNextActionId()
+    public function getNextActionId(): int
     {
         $connection = $this->getConnection();
 
-        $table = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_config');
-        $groupConfig = '/logs/'.$this->getConfigGroupSuffix().'/';
+        $table = $this->dbStructureHelper->getTableNameWithPrefix('m2epro_config');
+        $groupConfig = '/logs/' . $this->getConfigGroupSuffix() . '/';
 
         $lastActionId = (int)$connection->select()
             ->from($table, 'value')
@@ -46,7 +57,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
         return $nextActionId;
     }
 
-    public function clearMessages($filters = [])
+    public function clearMessages($filters = []): void
     {
         $where = [];
         foreach ($filters as $column => $value) {
@@ -55,6 +66,4 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
 
         $this->getConnection()->delete($this->getMainTable(), $where);
     }
-
-    //########################################
 }

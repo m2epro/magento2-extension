@@ -8,39 +8,37 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Auto\Actions;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Auto\Actions\Listing
- */
 class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
 {
-    protected $amazonFactory;
-
-    //########################################
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
+    private $amazonFactory;
+    /** @var \Ess\M2ePro\Model\Amazon\Marketplace\DetailsFactory */
+    private $marketplaceDetailsFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Model\Amazon\Marketplace\DetailsFactory $marketplaceDetailsFactory,
+        \Ess\M2ePro\Model\Listing $listing,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
+        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper
     ) {
+        parent::__construct($listing, $activeRecordFactory, $exceptionHelper);
         $this->amazonFactory = $amazonFactory;
-        parent::__construct($activeRecordFactory, $helperFactory, $modelFactory);
+        $this->marketplaceDetailsFactory = $marketplaceDetailsFactory;
     }
-
-    //########################################
 
     /**
      * @param \Magento\Catalog\Model\Product $product
-     * @param $deletingMode
+     * @param int $deletingMode
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function deleteProduct(\Magento\Catalog\Model\Product $product, $deletingMode)
+    public function deleteProduct(\Magento\Catalog\Model\Product $product, int $deletingMode): void
     {
         if ($deletingMode == \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE) {
             return;
         }
 
-        $listingsProducts = $this->getListing()->getProducts(true, ['product_id'=>(int)$product->getId()]);
+        $listingsProducts = $this->getListing()->getProducts(true, ['product_id' => (int)$product->getId()]);
 
         if (count($listingsProducts) <= 0) {
             return;
@@ -57,8 +55,9 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
             $amazonListingProduct = $listingProduct->getChildObject();
 
-            if ($amazonListingProduct->getVariationManager()->isRelationParentType() &&
-                $deletingMode == \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE
+            if (
+                $amazonListingProduct->getVariationManager()->isRelationParentType()
+                && $deletingMode == \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE
             ) {
                 $parentsForRemove[$listingProduct->getId()] = $listingProduct;
                 continue;
@@ -83,7 +82,7 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
                 );
                 $instruction->save();
             } catch (\Exception $exception) {
-                $this->getHelper('Module\Exception')->process($exception);
+                $this->exceptionHelper->process($exception);
             }
         }
 
@@ -97,11 +96,12 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         }
     }
 
-    //########################################
-
     /**
      * @param \Magento\Catalog\Model\Product $product
      * @param \Ess\M2ePro\Model\Listing\Auto\Category\Group $categoryGroup
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function addProductByCategoryGroup(
@@ -138,6 +138,9 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
     /**
      * @param \Magento\Catalog\Model\Product $product
      * @param \Ess\M2ePro\Model\Listing $listing
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function addProductByGlobalListing(
@@ -174,6 +177,9 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
     /**
      * @param \Magento\Catalog\Model\Product $product
      * @param \Ess\M2ePro\Model\Listing $listing
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function addProductByWebsiteListing(
@@ -205,10 +211,18 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         $this->processAddedListingProduct($listingProduct, $params);
     }
 
-    //########################################
-
-    protected function processAddedListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $params)
-    {
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param array $params
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function processAddedListingProduct(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        array $params
+    ): void {
         if (empty($params['template_description_id'])) {
             return;
         }
@@ -230,15 +244,18 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
 
         $processor = $amazonListingProduct->getVariationManager()->getTypeModel()->getProcessor();
 
-        if ($listingProduct->getMagentoProduct()->isBundleType() ||
-            $listingProduct->getMagentoProduct()->isSimpleTypeWithCustomOptions() ||
-            $listingProduct->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()
+        if (
+            $listingProduct->getMagentoProduct()->isBundleType()
+            || $listingProduct->getMagentoProduct()->isSimpleTypeWithCustomOptions()
+            || $listingProduct->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()
         ) {
             $processor->process();
+
             return;
         }
 
-        $detailsModel = $this->modelFactory->getObject('Amazon_Marketplace_Details');
+        /** @var  \Ess\M2ePro\Model\Amazon\Marketplace\Details $detailsModel */
+        $detailsModel = $this->marketplaceDetailsFactory->create();
         $detailsModel->setMarketplaceId($listingProduct->getListing()->getMarketplaceId());
 
         /** @var \Ess\M2ePro\Model\Template\Description $descriptionTemplate */
@@ -274,6 +291,4 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
 
         $processor->process();
     }
-
-    //########################################
 }

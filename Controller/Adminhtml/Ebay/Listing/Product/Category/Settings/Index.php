@@ -8,21 +8,34 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
-use \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode as CategoryTemplateBlock;
-use \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
-use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
-use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
+use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode as CategoryTemplateBlock;
+use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
+use Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
+use Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode as SourceModeBlock;
 
 class Index extends Settings
 {
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
-
     /** @var \Ess\M2ePro\Helper\Magento\Category */
     protected $magentoCategoryHelper;
 
+    /**
+     * @param \Ess\M2ePro\Helper\Data\Session $sessionHelper
+     * @param \Ess\M2ePro\Helper\Module\Wizard $wizardHelper
+     * @param \Ess\M2ePro\Helper\Magento $magentoHelper
+     * @param \Ess\M2ePro\Helper\Magento\Category $magentoCategoryHelper
+     * @param \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay
+     * @param \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory
+     * @param \Ess\M2ePro\Helper\Component\Ebay\Category\Store $componentEbayCategoryStore
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory
+     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
+     */
     public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Helper\Module\Wizard $wizardHelper,
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
         \Ess\M2ePro\Helper\Magento\Category $magentoCategoryHelper,
         eBayCategory\Ebay $componentEbayCategoryEbay,
         eBayCategory $componentEbayCategory,
@@ -31,6 +44,9 @@ class Index extends Settings
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct(
+            $sessionHelper,
+            $wizardHelper,
+            $magentoHelper,
             $magentoCategoryHelper,
             $componentEbayCategoryEbay,
             $componentEbayCategory,
@@ -446,7 +462,7 @@ class Index extends Settings
             $primaryCategory = $categoryData[eBayCategory::TYPE_EBAY_MAIN];
 
             if ($primaryCategory['is_custom_template'] !== null && $primaryCategory['is_custom_template'] == 0) {
-                list($mainHash, $hash) = $this->getCategoryHashes($categoryData[eBayCategory::TYPE_EBAY_MAIN]);
+                [$mainHash, $hash] = $this->getCategoryHashes($categoryData[eBayCategory::TYPE_EBAY_MAIN]);
 
                 if (!isset($defaultHashes[$mainHash])) {
                     $defaultHashes[$mainHash] = $hash;
@@ -470,7 +486,7 @@ class Index extends Settings
             }
 
             $primaryCategory = $categoryData[eBayCategory::TYPE_EBAY_MAIN];
-            list($mainHash, $hash) = $this->getCategoryHashes($categoryData[eBayCategory::TYPE_EBAY_MAIN]);
+            [$mainHash, $hash] = $this->getCategoryHashes($categoryData[eBayCategory::TYPE_EBAY_MAIN]);
 
             $hasRequiredSpecifics = $this->componentEbayCategoryEbay->hasRequiredSpecifics(
                 $categoryData[eBayCategory::TYPE_EBAY_MAIN]['value'],

@@ -114,11 +114,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $this->returnTemplateModel                 = null;
         $this->shippingTemplateModel               = null;
 
-        if ($this->getEbayAccount()->isPickupStoreEnabled()) {
-            $this->activeRecordFactory->getObject('Ebay_Listing_Product_PickupStore')
-                ->getResource()->processDeletedProduct($this->getParentObject());
-        }
-
         return parent::delete();
     }
 

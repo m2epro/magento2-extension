@@ -161,10 +161,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
      */
     public function getAddressData()
     {
-        if (!$this->order->isUseGlobalShippingProgram() &&
-            !$this->order->isUseClickAndCollect() &&
-            !$this->order->isUseInStorePickup()
-        ) {
+        if (!$this->order->isUseGlobalShippingProgram() && !$this->order->isUseClickAndCollect()) {
             return parent::getAddressData();
         }
 
@@ -211,11 +208,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
         if ($this->order->isUseClickAndCollect()) {
             $details = $this->order->getClickAndCollectDetails();
-            isset($details['reference_id']) && $referenceId = 'Ref #' . $details['reference_id'];
-        }
-
-        if ($this->order->isUseInStorePickup()) {
-            $details = $this->order->getInStorePickupDetails();
             isset($details['reference_id']) && $referenceId = 'Ref #' . $details['reference_id'];
         }
 
@@ -343,14 +335,9 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     {
         $additionalData = '';
 
-        if ($this->order->isUseClickAndCollect() || $this->order->isUseInStorePickup()) {
-            if ($this->order->isUseClickAndCollect()) {
-                $additionalData .= 'Click And Collect | ';
-                $details = $this->order->getClickAndCollectDetails();
-            } else {
-                $additionalData .= 'In Store Pickup | ';
-                $details = $this->order->getInStorePickupDetails();
-            }
+        if ($this->order->isUseClickAndCollect()) {
+            $additionalData .= 'Click And Collect | ';
+            $details = $this->order->getClickAndCollectDetails();
 
             if (!empty($details['location_id'])) {
                 $additionalData .= 'Store ID: ' . $details['location_id'] . ' | ';

@@ -14,12 +14,51 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product;
 
 use Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion as Promotion;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
- */
 class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
-    //########################################
+    /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculatorFactory */
+    private $walmartPriceCalculatorFactory;
+
+    /**
+     * @param \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculatorFactory $walmartPriceCalculatorFactory
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
+     * @param \Ess\M2ePro\Model\Factory $modelFactory
+     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
+     * @param \Ess\M2ePro\Helper\Factory $helperFactory
+     * @param \Magento\Framework\Model\Context $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
+     * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculatorFactory $walmartPriceCalculatorFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        parent::__construct(
+            $walmartFactory,
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
+        $this->walmartPriceCalculatorFactory = $walmartPriceCalculatorFactory;
+    }
 
     public function _construct()
     {
@@ -198,8 +237,10 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\A
         $options = $this->getOptions(true);
 
         // Configurable, Grouped product
-        if ($this->getListingProduct()->getMagentoProduct()->isConfigurableType() ||
-            $this->getListingProduct()->getMagentoProduct()->isGroupedType()) {
+        if (
+            $this->getListingProduct()->getMagentoProduct()->isConfigurableType()
+            || $this->getListingProduct()->getMagentoProduct()->isGroupedType()
+        ) {
             foreach ($options as $option) {
                 /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
                 $sku = $option->getChildObject()->getSku();
@@ -259,27 +300,19 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\A
 
     // ---------------------------------------
 
+    /**
+     * @return float|int|mixed
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function getPrice()
     {
         $src = $this->getWalmartSellingFormatTemplate()->getPriceSource();
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator $calculator */
-        $calculator = $this->modelFactory->getObject('Walmart_Listing_Product_PriceCalculator');
+        $calculator = $this->walmartPriceCalculatorFactory->create();
         $calculator->setSource($src)->setProduct($this->getListingProduct());
-        $calculator->setCoefficient($this->getWalmartSellingFormatTemplate()->getPriceCoefficient());
+        $calculator->setModifier($this->getWalmartSellingFormatTemplate()->getPriceModifier());
         $calculator->setVatPercent($this->getWalmartSellingFormatTemplate()->getPriceVatPercent());
-        $calculator->setPriceVariationMode($this->getWalmartSellingFormatTemplate()->getPriceVariationMode());
-
-        return $calculator->getVariationValue($this->getParentObject());
-    }
-
-    public function getMapPrice()
-    {
-        $src = $this->getWalmartSellingFormatTemplate()->getMapPriceSource();
-
-        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator $calculator */
-        $calculator = $this->modelFactory->getObject('Walmart_Listing_Product_PriceCalculator');
-        $calculator->setSource($src)->setProduct($this->getListingProduct());
         $calculator->setPriceVariationMode($this->getWalmartSellingFormatTemplate()->getPriceVariationMode());
 
         return $calculator->getVariationValue($this->getParentObject());
@@ -309,7 +342,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\A
         foreach ($promotions as $promotion) {
 
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator $priceCalculator */
-            $priceCalculator = $this->modelFactory->getObject('Walmart_Listing_Product_PriceCalculator');
+            $priceCalculator = $this->walmartPriceCalculatorFactory->create();
             $priceCalculator->setSource($promotion->getPriceSource())->setProduct($this->getListingProduct());
             $priceCalculator->setSourceModeMapping([
                 PriceCalculator::MODE_PRODUCT   => Promotion::PRICE_MODE_PRODUCT,
@@ -323,7 +356,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\A
             );
 
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator $comparisonPriceCalculator */
-            $comparisonPriceCalculator = $this->modelFactory->getObject('Walmart_Listing_Product_PriceCalculator');
+            $comparisonPriceCalculator = $this->walmartPriceCalculatorFactory->create();
             $comparisonPriceCalculator->setSource(
                 $promotion->getComparisonPriceSource()
             )->setProduct($this->getListingProduct());

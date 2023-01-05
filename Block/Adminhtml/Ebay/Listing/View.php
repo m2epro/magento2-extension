@@ -115,21 +115,6 @@ class View extends AbstractContainer
         // ---------------------------------------
 
         // ---------------------------------------
-        if ($this->listing->getAccount()->getChildObject()->isPickupStoreEnabled() &&
-            $this->listing->getMarketplace()->getChildObject()->isInStorePickupEnabled()) {
-            $pickupStoreUrl = $this->getUrl('*/ebay_listing_pickupStore/index', ['id' => $this->listing->getId()]);
-            $this->addButton(
-                'pickup_store_management',
-                [
-                    'label'   => $this->__('In-Store Pickup'),
-                    'onclick' => 'window.open(\'' . $pickupStoreUrl . '\',\'_blank\')',
-                    'class'   => 'success primary'
-                ]
-            );
-        }
-        // ---------------------------------------
-
-        // ---------------------------------------
         $this->addButton(
             'edit_templates',
             [

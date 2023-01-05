@@ -18,7 +18,6 @@ class Vocabulary extends \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary
     /**
      * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartParentFactory
      * @param \Ess\M2ePro\Model\Factory $modelFactory
-     * @param \Ess\M2ePro\Helper\Module $moduleHelper
      * @param \Ess\M2ePro\Helper\Module\Exception $exceptionHelper
      * @param \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCacheHelper
      * @param \Ess\M2ePro\Model\Config\Manager $config
@@ -27,7 +26,6 @@ class Vocabulary extends \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartParentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Helper\Module $moduleHelper,
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
         \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCacheHelper,
         \Ess\M2ePro\Model\Config\Manager $config,
@@ -36,7 +34,6 @@ class Vocabulary extends \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary
         $this->walmartParentFactory = $walmartParentFactory;
         parent::__construct(
             $modelFactory,
-            $moduleHelper,
             $exceptionHelper,
             $permanentCacheHelper,
             $config,

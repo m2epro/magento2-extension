@@ -376,8 +376,7 @@ class Active extends AbstractModel
             return false;
         }
 
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
-            $amazonListingProduct->isRepricingManaged()) {
+        if ($amazonListingProduct->isRepricingManaged()) {
             return false;
         }
 

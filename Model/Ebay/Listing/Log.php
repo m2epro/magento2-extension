@@ -8,18 +8,11 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Log
- */
 class Log extends \Ess\M2ePro\Model\Listing\Log
 {
-    //########################################
-
-    public function _construct()
+    protected function _construct(): void
     {
         parent::_construct();
         $this->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK);
     }
-
-    //########################################
 }

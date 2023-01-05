@@ -151,11 +151,16 @@ class Client
      */
     protected function getServerDomain(): string
     {
-        $domain = rtrim($this->phpEnvironmentRequest->getServer('HTTP_HOST'), '/');
-        empty($domain) && $domain = '127.0.0.1';
-        strpos($domain, 'www.') === 0 && $domain = substr($domain, 4);
+        $domain = rtrim($this->phpEnvironmentRequest->getServer('HTTP_HOST', ''), '/');
+        if (empty($domain)) {
+            $domain = '127.0.0.1';
+        }
 
-        return strtolower(trim((string)$domain));
+        if (strpos($domain, 'www.') === 0) {
+            $domain = substr($domain, 4);
+        }
+
+        return strtolower(trim($domain));
     }
 
     /**

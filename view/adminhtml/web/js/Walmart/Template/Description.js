@@ -50,10 +50,6 @@ define([
                 .observe('change', WalmartTemplateDescriptionObj.total_count_mode_change)
                 .simulate('change');
 
-            $('keywords_mode')
-                .observe('change', WalmartTemplateDescriptionObj.keywords_mode_change)
-                .simulate('change');
-
             // ---
 
             $('count_per_pack_mode')
@@ -206,22 +202,6 @@ define([
             }
 
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Description::TOTAL_COUNT_MODE_CUSTOM_ATTRIBUTE')) {
-                WalmartTemplateDescriptionObj.updateHiddenValue(this, customAttribute);
-            }
-        },
-
-        keywords_mode_change: function () {
-            var customAttribute = $('keywords_custom_attribute'),
-                customValueTr   = $('keywords_custom_value_tr');
-
-            customValueTr.hide();
-
-            customAttribute.value = '';
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Description::KEYWORDS_MODE_CUSTOM_VALUE')) {
-                customValueTr.show();
-            }
-
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Walmart_Template_Description::KEYWORDS_MODE_CUSTOM_ATTRIBUTE')) {
                 WalmartTemplateDescriptionObj.updateHiddenValue(this, customAttribute);
             }
         },

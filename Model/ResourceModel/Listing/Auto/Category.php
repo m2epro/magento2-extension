@@ -8,17 +8,13 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Auto;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category
- */
 class Category extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
-    //########################################
+    public const CATEGORY_ID_FIELD = 'category_id';
+    public const GROUP_ID_FIELD = 'group_id';
 
     public function _construct()
     {
         $this->_init('m2epro_listing_auto_category', 'id');
     }
-
-    //########################################
 }

@@ -11,14 +11,17 @@ namespace Ess\M2ePro\Model\Walmart\Template\SellingFormat;
 use Ess\M2ePro\Model\Template\SellingFormat;
 use Ess\M2ePro\Model\Walmart\Template\SellingFormat as WalmartSellingFormat;
 
-/**
- * Class Ess\M2ePro\Model\Walmart\Template\SellingFormat\Builder
- */
 class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 {
     /** @var \Ess\M2ePro\Helper\Data */
     protected $helperData;
 
+    /**
+     * @param \Ess\M2ePro\Helper\Data $helperData
+     * @param \Ess\M2ePro\Helper\Factory $helperFactory
+     * @param \Ess\M2ePro\Model\Factory $modelFactory
+     * @param array $data
+     */
     public function __construct(
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -29,9 +32,11 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         parent::__construct($helperFactory, $modelFactory, $data);
     }
 
-    //########################################
-
-    protected function prepareData()
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function prepareData(): array
     {
         $data = [];
 
@@ -69,6 +74,10 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
         $data['attributes'] = $this->helperData->jsonEncode(
             $this->getComparedData($data, 'attributes_name', 'attributes_value')
+        );
+
+        $data['price_modifier'] = \Ess\M2ePro\Helper\Json::encode(
+            \Ess\M2ePro\Model\Template\SellingFormat\BuilderHelper::getPriceModifierData('price', $this->rawData)
         );
 
         return $data;
@@ -111,11 +120,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'qty_max_posted_value' => WalmartSellingFormat::QTY_MAX_POSTED_DEFAULT_VALUE,
 
             'price_mode' => SellingFormat::PRICE_MODE_PRODUCT,
-            'price_coefficient' => '',
+            'price_modifier' => '[]',
             'price_custom_attribute' => '',
-
-            'map_price_mode' => SellingFormat::PRICE_MODE_NONE,
-            'map_price_custom_attribute' => '',
 
             'price_variation_mode' => WalmartSellingFormat::PRICE_VARIATION_MODE_PARENT,
 
@@ -141,10 +147,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'lag_time_value' => 0,
             'lag_time_custom_attribute' => '',
 
-            'product_tax_code_mode' => WalmartSellingFormat::PRODUCT_TAX_CODE_MODE_VALUE,
-            'product_tax_code_custom_value' => '',
-            'product_tax_code_custom_attribute' => '',
-
             'must_ship_alone_mode' => WalmartSellingFormat::MUST_SHIP_ALONE_MODE_NONE,
             'must_ship_alone_value' => '',
             'must_ship_alone_custom_attribute' => '',
@@ -162,6 +164,4 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'shipping_override_rule' => []
         ];
     }
-
-    //########################################
 }

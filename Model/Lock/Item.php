@@ -8,20 +8,13 @@
 
 namespace Ess\M2ePro\Model\Lock;
 
-/**
- * Class \Ess\M2ePro\Model\Lock\Item
- */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
-    //########################################
-
-    public function _construct()
+    protected function _construct(): void
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Lock\Item::class);
     }
-
-    //########################################
 
     /**
      * This object can NOT be locked. So we are avoiding unnecessary queries to the database.
@@ -39,9 +32,23 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     //########################################
 
+    public function setNick(string $nick): self
+    {
+        $this->setData('nick', $nick);
+
+        return $this;
+    }
+
     public function getNick()
     {
         return $this->getData('nick');
+    }
+
+    public function setParentId($id): self
+    {
+        $this->setData('parent_id', $id);
+
+        return $this;
     }
 
     public function getParentId()
@@ -65,6 +72,4 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     {
         return $this->getData('create_date');
     }
-
-    //########################################
 }

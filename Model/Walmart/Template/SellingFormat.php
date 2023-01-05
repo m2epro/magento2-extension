@@ -13,9 +13,6 @@
 
 namespace Ess\M2ePro\Model\Walmart\Template;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Template\SellingFormat
- */
 class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
     const QTY_MODIFICATION_MODE_OFF = 0;
@@ -35,9 +32,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
 
     const LAG_TIME_MODE_RECOMMENDED = 1;
     const LAG_TIME_MODE_CUSTOM_ATTRIBUTE = 2;
-
-    const PRODUCT_TAX_CODE_MODE_VALUE = 1;
-    const PRODUCT_TAX_CODE_MODE_ATTRIBUTE = 2;
 
     const WEIGHT_MODE_CUSTOM_VALUE = 1;
     const WEIGHT_MODE_CUSTOM_ATTRIBUTE = 2;
@@ -431,9 +425,18 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
         return $this->getPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE;
     }
 
-    public function getPriceCoefficient()
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getPriceModifier(): array
     {
-        return $this->getData('price_coefficient');
+        $value = $this->getData('price_modifier');
+        if (empty($value)) {
+            return [];
+        }
+
+        return \Ess\M2ePro\Helper\Json::decode($value) ?: [];
     }
 
     /**
@@ -443,7 +446,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     {
         return [
             'mode'        => $this->getPriceMode(),
-            'coefficient' => $this->getPriceCoefficient(),
             'attribute'   => $this->getData('price_custom_attribute')
         ];
     }
@@ -455,74 +457,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     {
         $attributes = [];
         $src = $this->getPriceSource();
-
-        if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
-            $attributes[] = $src['attribute'];
-        }
-
-        return $attributes;
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return int
-     */
-    public function getMapPriceMode()
-    {
-        return (int)$this->getData('map_price_mode');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isMapPriceModeNone()
-    {
-        return $this->getMapPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isMapPriceModeProduct()
-    {
-        return $this->getMapPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isMapPriceModeSpecial()
-    {
-        return $this->getMapPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isMapPriceModeAttribute()
-    {
-        return $this->getMapPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE;
-    }
-
-    /**
-     * @return array
-     */
-    public function getMapPriceSource()
-    {
-        return [
-            'mode'      => $this->getMapPriceMode(),
-            'attribute' => $this->getData('map_price_custom_attribute')
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getMapPriceAttributes()
-    {
-        $attributes = [];
-        $src = $this->getMapPriceSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
             $attributes[] = $src['attribute'];
@@ -790,57 +724,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
         $src = $this->getLagTimeSource();
 
         if ($src['mode'] == self::LAG_TIME_MODE_CUSTOM_ATTRIBUTE) {
-            $attributes[] = $src['attribute'];
-        }
-
-        return $attributes;
-    }
-
-    // ---------------------------------------
-
-    public function getProductTaxCodeMode()
-    {
-        return (int)$this->getData('product_tax_code_mode');
-    }
-
-    public function isProductTaxCodeModeValue()
-    {
-        return $this->getProductTaxCodeMode() == self::PRODUCT_TAX_CODE_MODE_VALUE;
-    }
-
-    public function isProductTaxCodeModeAttribute()
-    {
-        return $this->getProductTaxCodeMode() == self::PRODUCT_TAX_CODE_MODE_ATTRIBUTE;
-    }
-
-    public function getProductTaxCodeCustomValue()
-    {
-        return $this->getData('product_tax_code_custom_value');
-    }
-
-    public function getProductTaxCodeCustomAttribute()
-    {
-        return $this->getData('product_tax_code_custom_attribute');
-    }
-
-    /**
-     * @return array
-     */
-    public function getProductTaxCodeSource()
-    {
-        return [
-            'mode'      => $this->getProductTaxCodeMode(),
-            'value'     => $this->getData('product_tax_code_custom_value'),
-            'attribute' => $this->getData('product_tax_code_custom_attribute')
-        ];
-    }
-
-    public function getProductTaxCodeAttributes()
-    {
-        $attributes = [];
-        $src = $this->getProductTaxCodeSource();
-
-        if ($src['mode'] == self::PRODUCT_TAX_CODE_MODE_ATTRIBUTE) {
             $attributes[] = $src['attribute'];
         }
 
@@ -1128,17 +1011,10 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
             return true;
         }
 
-        if ($isPriceConvertEnabled && $this->isPriceModeAttribute() &&
-            $attributeHelper->isAttributeInputTypePrice($this->getData('price_custom_attribute'))) {
-            return true;
-        }
-
-        if ($this->isMapPriceModeProduct() || $this->isMapPriceModeSpecial()) {
-            return true;
-        }
-
-        if ($isPriceConvertEnabled && $this->isMapPriceModeAttribute() &&
-            $attributeHelper->isAttributeInputTypePrice($this->getData('map_price_custom_attribute'))) {
+        if (
+            $isPriceConvertEnabled && $this->isPriceModeAttribute()
+            && $attributeHelper->isAttributeInputTypePrice($this->getData('price_custom_attribute'))
+        ) {
             return true;
         }
 
@@ -1151,28 +1027,35 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
                 return true;
             }
 
-            if ($isPriceConvertEnabled && $promotion->isComparisonPriceModeAttribute() &&
-                $attributeHelper->isAttributeInputTypePrice($promotion->getComparisonPriceAttribute())) {
+            if (
+                $isPriceConvertEnabled
+                && $promotion->isComparisonPriceModeAttribute()
+                && $attributeHelper->isAttributeInputTypePrice($promotion->getComparisonPriceAttribute())
+            ) {
                 return true;
             }
 
-            if ($isPriceConvertEnabled && $promotion->isPriceModeAttribute() &&
-                $attributeHelper->isAttributeInputTypePrice($promotion->getPriceAttribute())) {
+            if (
+                $isPriceConvertEnabled
+                && $promotion->isPriceModeAttribute()
+                && $attributeHelper->isAttributeInputTypePrice($promotion->getPriceAttribute())
+            ) {
                 return true;
             }
         }
 
         foreach ($this->getShippingOverrides(true) as $service) {
-            if ($isPriceConvertEnabled && $service->isCostModeCustomAttribute() &&
-                $attributeHelper->isAttributeInputTypePrice($service->getCostAttribute())) {
+            if (
+                $isPriceConvertEnabled
+                && $service->isCostModeCustomAttribute()
+                && $attributeHelper->isAttributeInputTypePrice($service->getCostAttribute())
+            ) {
                 return true;
             }
         }
 
         return false;
     }
-
-    //########################################
 
     public function isCacheEnabled()
     {
@@ -1183,6 +1066,4 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     {
         return array_merge(parent::getCacheGroupTags(), ['template']);
     }
-
-    //########################################
 }

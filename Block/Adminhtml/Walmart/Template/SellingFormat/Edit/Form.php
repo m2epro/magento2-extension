@@ -95,7 +95,11 @@ class Form extends AbstractForm
         ];
     }
 
-    protected function _prepareForm()
+    /**
+     * @return \Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    protected function _prepareForm(): Form
     {
         $form = $this->_formFactory->create(['data' => [
             'id'      => 'edit_form',
@@ -110,19 +114,17 @@ class Form extends AbstractForm
             [
                 'content' => $this->__(
                     <<<HTML
-                    <p>Selling Policy contains conditions based on which you are going to sell your Item on the
-                    Channel, e.g. Item Price, Quantity, Shipping and Product Tax Code settings, etc.
-                    Take Magento Price and Quantity values as they are or use the Price Change box and
-                    Conditional/Percentage Quantity options to modify the related Magento data.
-                    By creating Promotion rules, you can price your Items at reduced values during the
-                    specified period. Use the Shipping Overrides option when you need to override the
-                    global shipping setting. If you would like to limit your Item availability on Walmart to the
-                    certain period, define Start/End Dates.</p><br>
-                    <p><strong>Note:</strong> Selling Policy is created per marketplace that cannot be changed
-                    after the Policy is assigned to M2E Pro Listing.</p><br>
-                    <p><strong>Note:</strong> Selling Policy is required when you create a
-                    new offer on Walmart.</p><br>
+                    <p>Using Selling Policy, you should define conditions for selling your products on Walmart,
+                    such as Price, Quantity, Shipping settings, etc.</p><br>
+
+                    <p>Selling Policy is created per marketplace and cannot be changed once the Policy is assigned
+                    to M2E Pro Listing.</p><br>
+
+                    <p>Head over to <a href="%url%" target="_blank" class="external-link">docs</a>
+                    for detailed information.</p><br>
 HTML
+                    ,
+                    $this->supportHelper->getDocumentationArticleUrl('x/cv1IB')
                 )
             ]
         );
@@ -193,8 +195,14 @@ HTML
         // ---------------------------------------
 
         $defaultValue = '';
-        if (in_array($this->formData['qty_mode'], [\Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT,
-                                                   \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_NUMBER])
+        if (
+            in_array(
+                $this->formData['qty_mode'],
+                [
+                    \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT,
+                   \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_NUMBER
+                ]
+            )
         ) {
             $defaultValue = $this->formData['qty_mode'];
         }
@@ -337,28 +345,21 @@ HTML
         // ---------------------------------------
 
         $defaultValue = '';
-        if (in_array($this->formData['price_mode'], [\Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
-                                                     \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
-                                                     \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL])
+        if (
+            in_array(
+                $this->formData['price_mode'],
+                [
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL
+                ]
+            )
         ) {
             $defaultValue = $this->formData['price_mode'];
         }
 
-        $priceRegularCoefficient = $this->elementFactory->create('text', ['data' => [
-            'html_id' => 'price_coefficient',
-            'name' => 'price_coefficient',
-            'label' => '',
-            'value' => $this->formData['price_coefficient'],
-            'class' => 'M2ePro-validate-price-coefficient',
-        ]]);
-        $priceRegularCoefficient->setForm($form);
-
         $tooltipRegularPriceMode = $this->getTooltipHtml(
             $this->__('Item Price displayed on Walmart.')
-        );
-
-        $tooltipRegularPriceCoefficient = $this->getTooltipHtml(
-            $this->__('Absolute figure (+8,-3), percentage (+15%, -20%) or Currency rate (1.44)')
         );
 
         $fieldset->addField(
@@ -372,9 +373,6 @@ HTML
                 'class' => 'select-main',
                 'create_magento_attribute' => true,
                 'after_element_html' => $tooltipRegularPriceMode
-                                        . '<span id="price_coefficient_td">'
-                                        . $priceRegularCoefficient->toHtml()
-                                        . $tooltipRegularPriceCoefficient . '</span>'
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,price');
 
@@ -385,6 +383,11 @@ HTML
                 'name' => 'price_custom_attribute',
                 'value' => $this->formData['price_custom_attribute']
             ]
+        );
+
+        $this->appendPriceChangeElements(
+            $fieldset,
+            $this->formData['price_modifier']
         );
 
         // ---------------------------------------
@@ -401,47 +404,7 @@ HTML
                     SellingFormat::PRICE_VARIATION_MODE_CHILDREN => $this->__('Associated Products')
                 ],
                 'value' => $this->formData['price_variation_mode'],
-                'tooltip' => $this->__(
-                    'Select where the price for Configurable Product Variations should be taken from.'
-                )
-            ]
-        );
-
-        // ---------------------------------------
-
-        $defaultValue = '';
-        if (in_array($this->formData['map_price_mode'], [\Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
-                                                     \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
-                                                     \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL])
-        ) {
-            $defaultValue = $this->formData['map_price_mode'];
-        }
-
-        $fieldset->addField(
-            'map_price_mode',
-            self::SELECT,
-            [
-                'name' => 'map_price_mode',
-                'label' => $this->__('Minimum Advertised Price'),
-                'class' => 'select-main',
-                'values' => $this->getMapPriceOptions(),
-                'value' => $defaultValue,
-                'create_magento_attribute' => true,
-                'tooltip' => $this->__(
-                    'It is the lowest Price that retailer can advertise the Product for sale.<br>
-                    <strong>Note:</strong> If your Item Price is below the manufacturer\'s Minimum Advertised Price,
-                    it will not be displayed on the Walmart Item page.<br>
-                    Buyers will see your retail Price only after they add the Item to the cart.'
-                )
-            ]
-        )->addCustomAttribute('allowed_attribute_types', 'text,price');
-
-        $fieldset->addField(
-            'map_price_custom_attribute',
-            'hidden',
-            [
-                'name' => 'map_price_custom_attribute',
-                'value' => $this->formData['map_price_custom_attribute']
+                'tooltip' => $this->__('Choose the source of the price value for Bundle Products variations.'),
             ]
         );
 
@@ -582,64 +545,6 @@ HTML
 
         // ---------------------------------------
 
-        $fieldset->addField(
-            'product_tax_code_custom_attribute',
-            'hidden',
-            [
-                'name' => 'product_tax_code_custom_attribute',
-                'value' => $this->formData['product_tax_code_custom_attribute']
-            ]
-        );
-
-        $defaultValue = '';
-        if ($this->formData['product_tax_code_mode'] == SellingFormat::PRODUCT_TAX_CODE_MODE_VALUE) {
-            $defaultValue = $this->formData['product_tax_code_mode'];
-        }
-
-        $fieldset->addField(
-            'product_tax_code_mode',
-            self::SELECT,
-            [
-                'name' => 'product_tax_code_mode',
-                'label' => $this->__('Product Tax Code'),
-                'title' => $this->__('Product Tax Code'),
-                'values' => $this->getProductTaxCodeOptions(),
-                'value' => $defaultValue,
-                'class' => 'select',
-                'required' => true,
-                'create_magento_attribute' => true,
-                'tooltip' => $this->__(
-                    'Provide a Product Tax Code, which is assigned to a taxable item so Walmart can automatically
-                    calculate taxes on each sale. Find the current Sales Tax Codes
-                    <a href="javascript:void(0)" onclick="%onclick%">here</a>.',
-                    'WalmartTemplateSellingFormatObj.openTaxCodePopup(true);'
-                )
-            ]
-        )->addCustomAttribute('allowed_attribute_types', 'text,select');
-
-        $fieldset->addField(
-            'product_tax_code_custom_value',
-            'text',
-            [
-                'name' => 'product_tax_code_custom_value',
-                'container_id' => 'product_tax_code_custom_value_tr',
-                'label' => $this->__('Product Tax Code Value'),
-                'value' => $this->formData['product_tax_code_custom_value'],
-                'class' => 'M2ePro-required-when-visible M2ePro-validation-int M2ePro-validation-walmart-tax-code',
-                'required' => true,
-                'style' => 'width: 65%',
-                'field_extra_attributes' => 'style="display: none;"',
-                'after_element_html' => '<span id="tax_codes">' . $this->getLayout()->createBlock(Button::class)
-                                     ->setData('label', $this->__('Show Sales Tax Codes'))
-                                     ->addData([
-                                         'onclick' => 'WalmartTemplateSellingFormatObj.openTaxCodePopup(false)',
-                                         'class'   => 'add bt_tax_codes primary'
-                                     ])->toHtml() . '</span>'
-            ]
-        );
-
-        // ---------------------------------------
-
         $fieldset = $form->addFieldset(
             'magento_block_walmart_template_selling_format_shipping',
             [
@@ -745,7 +650,8 @@ HTML
         );
 
         $defaultValue = '';
-        if ($this->formData['ships_in_original_packaging_mode'] == SellingFormat::SHIPS_IN_ORIGINAL_PACKAGING_MODE_NONE
+        if (
+            $this->formData['ships_in_original_packaging_mode'] == SellingFormat::SHIPS_IN_ORIGINAL_PACKAGING_MODE_NONE
         ) {
             $defaultValue = $this->formData['ships_in_original_packaging_mode'];
         }
@@ -835,8 +741,9 @@ HTML
         );
 
         $defaultValue = '';
-        if ($this->formData['sale_time_start_date_mode'] == SellingFormat::DATE_NONE ||
-            $this->formData['sale_time_start_date_mode'] == SellingFormat::DATE_VALUE
+        if (
+            $this->formData['sale_time_start_date_mode'] == SellingFormat::DATE_NONE
+            || $this->formData['sale_time_start_date_mode'] == SellingFormat::DATE_VALUE
         ) {
             $defaultValue = $this->formData['sale_time_start_date_mode'];
         }
@@ -880,8 +787,9 @@ HTML
         );
 
         $defaultValue = '';
-        if ($this->formData['sale_time_end_date_mode'] == SellingFormat::DATE_NONE ||
-            $this->formData['sale_time_end_date_mode'] == SellingFormat::DATE_VALUE
+        if (
+            $this->formData['sale_time_end_date_mode'] == SellingFormat::DATE_NONE
+            || $this->formData['sale_time_end_date_mode'] == SellingFormat::DATE_VALUE
         ) {
             $defaultValue = $this->formData['sale_time_end_date_mode'];
         }
@@ -998,7 +906,7 @@ HTML
             $tmpOption['attrs']['selected'] = 'selected';
         }
 
-        array_unshift($attributeOptions[count($attributeOptions)-1]['value'], $tmpOption);
+        array_unshift($attributeOptions[count($attributeOptions) - 1]['value'], $tmpOption);
 
         return array_merge($optionsResult, $attributeOptions);
     }
@@ -1019,30 +927,6 @@ HTML
         return array_merge($optionsResult, $this->getAttributeOptions(
             \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE,
             'price_custom_attribute',
-            'text_price'
-        ));
-    }
-
-    public function getMapPriceOptions()
-    {
-        $optionsResult = [
-            [
-                'value' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
-                'label' => $this->__('None')
-            ],
-            [
-                'value' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
-                'label' => $this->__('Product Price')
-            ],
-            [
-                'value' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL,
-                'label' => $this->__('Special Price')
-            ]
-        ];
-
-        return array_merge($optionsResult, $this->getAttributeOptions(
-            \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE,
-            'map_price_custom_attribute',
             'text_price'
         ));
     }
@@ -1081,22 +965,6 @@ HTML
             SellingFormat::LAG_TIME_MODE_CUSTOM_ATTRIBUTE,
             'lag_time_custom_attribute',
             'text_select'
-        ));
-    }
-
-    public function getProductTaxCodeOptions()
-    {
-        $optionsResult = [
-            [
-                'value' => SellingFormat::PRODUCT_TAX_CODE_MODE_VALUE,
-                'label' => $this->__('Custom Value')
-            ]
-        ];
-
-        return array_merge($optionsResult, $this->getAttributeOptions(
-            SellingFormat::PRODUCT_TAX_CODE_MODE_ATTRIBUTE,
-            'product_tax_code_custom_attribute',
-            'text_price'
         ));
     }
 
@@ -1359,6 +1227,11 @@ HTML
         );
     }
 
+    /**
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \ReflectionException
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function _beforeToHtml()
     {
         $this->jsPhp->addConstants(
@@ -1440,20 +1313,17 @@ HTML
             'You should specify at least one Override Rule.' => $this->__(
                 'You should specify at least one Override Rule.'
             ),
-            'Must be a 7-digit code assigned to the taxable Items.' => $this->__(
-                'Must be a 7-digit code assigned to the taxable Items.'
-            ),
-            'Sales Tax Codes' => $this->__('Sales Tax Codes'),
+            'Price Change is not valid.' => $this->__('Price Change is not valid.'),
         ]);
 
         $formData = $this->dataHelper->jsonEncode($this->formData);
         $isEdit = $this->templateModel->getId() ? 'true' : 'false';
         $allAttributes = $this->dataHelper->jsonEncode($this->magentoAttributeHelper->getAll());
-        $marketplacesWithTaxCodes = $this->dataHelper
-                                         ->jsonEncode($this->getMarketplacesWithTaxCodesDictionary());
 
         $promotions = $this->dataHelper->jsonEncode($this->formData['promotions']);
         $shippingOverride = $this->dataHelper->jsonEncode($this->formData['shipping_override_rule']);
+
+        $injectPriceChangeJs = $this->getPriceChangeInjectorJs($this->formData);
 
         $this->js->addRequireJs(
             [
@@ -1465,7 +1335,6 @@ HTML
             <<<JS
 
         M2ePro.formData = {$formData};
-        M2ePro.customData.marketplaces_with_tax_codes_dictionary = {$marketplacesWithTaxCodes};
 
         M2ePro.customData.is_edit = {$isEdit};
 
@@ -1483,6 +1352,7 @@ HTML
             if ({$isEdit}) {
                 WalmartTemplateSellingFormatObj.renderPromotions({$promotions});
                 WalmartTemplateSellingFormatObj.renderRules({$shippingOverride});
+                {$injectPriceChangeJs}
             }
         });
 JS
@@ -1494,22 +1364,6 @@ JS
     protected function _toHtml()
     {
         return '<div id="modal_dialog_message"></div>' . parent::_toHtml();
-    }
-
-    public function getMarketplacesWithTaxCodesDictionary()
-    {
-        $connRead = $this->resourceConnection->getConnection();
-
-        $queryStmt = $connRead->select()
-                              ->from(
-                                  $this->databaseHelper
-                                      ->getTableNameWithPrefix('m2epro_walmart_dictionary_marketplace'),
-                                  ['marketplace_id']
-                              )
-                              ->where('`tax_codes` IS NOT NULL')
-                              ->query();
-
-        return (array)$queryStmt->fetchAll(\Zend_Db::FETCH_COLUMN);
     }
 
     public function getFormData()
@@ -1568,8 +1422,10 @@ JS
 
     public function getForceAddedAttributeOption($attributeCode, $availableValues, $value = null)
     {
-        if (empty($attributeCode) ||
-            $this->magentoAttributeHelper->isExistInAttributesArray($attributeCode, $availableValues)) {
+        if (
+            empty($attributeCode)
+            || $this->magentoAttributeHelper->isExistInAttributesArray($attributeCode, $availableValues)
+        ) {
             return '';
         }
 
@@ -1625,5 +1481,62 @@ JS
         }
 
         return $optionsResult;
+    }
+
+    /**
+     * @param \Magento\Framework\Data\Form\Element\Fieldset $fieldset
+     * @param string $priceModifier
+     *
+     * @return void
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function appendPriceChangeElements(
+        \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
+        string $priceModifier
+    ) {
+        $block = $this->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Template\SellingFormat\PriceChange::class)
+            ->addData([
+              'price_type' => 'price',
+              'price_modifier' => $priceModifier,
+            ]);
+
+        $fieldset->addField(
+            'price_change_placement',
+            'label',
+            [
+                'container_id' => 'price_change_placement_tr',
+                'label' => '',
+                'after_element_html' => $block->toHtml(),
+            ]
+        );
+    }
+
+    /**
+     * @param array $formData
+     *
+     * @return string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function getPriceChangeInjectorJs(array $formData): string
+    {
+        $result = [];
+
+        $key = 'price_modifier';
+        if (!empty($formData[$key])) {
+            // ensure that data always have a valid json format
+            $json = \Ess\M2ePro\Helper\json::encode(
+                \Ess\M2ePro\Helper\Json::decode($formData[$key]) ?: []
+            );
+
+            $result[] = <<<JS
+    WalmartTemplateSellingFormatObj.priceChangeHelper.renderPriceChangeRows(
+        'price',
+        {$json}
+    );
+JS;
+        }
+
+        return implode("\n", $result);
     }
 }

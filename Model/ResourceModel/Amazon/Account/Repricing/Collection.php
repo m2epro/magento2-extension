@@ -8,12 +8,9 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Account\Repricing;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Account\Repricing\Collection
- */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
-    //########################################
+    // ----------------------------------------
 
     public function _construct()
     {
@@ -24,5 +21,15 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         );
     }
 
-    //########################################
+    // ----------------------------------------
+
+    /**
+     * @return \Ess\M2ePro\Model\Amazon\Account\Repricing[]
+     */
+    public function getInvalidAccounts(): array
+    {
+        $this->getSelect()->where('invalid = 1');
+
+        return $this->getItems();
+    }
 }

@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\Other;
 
+use Ess\M2ePro\Model\Listing\Product;
+
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGrid
 {
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
@@ -193,21 +195,39 @@ HTML;
 
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
-        if ($value === null || $value === '' ||
-            ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED &&
-             !$row->getData('is_online_price_invalid'))) {
+        if ($value === null || $value === '' || $row->getData('status') == Product::STATUS_BLOCKED) {
             return $this->__('N/A');
+        }
+
+        $currency = $this->walmartFactory->getCachedObjectLoaded('Marketplace', $row->getData('marketplace_id'))
+                                         ->getChildObject()
+                                         ->getDefaultCurrency();
+        $priceValue = $this->convertAndFormatPriceCurrency($value, $currency);
+
+        if ($row->getData('is_online_price_invalid')) {
+            $message = <<<HTML
+Item Price violates Walmart pricing rules. Please adjust the Item Price to comply with the Walmart requirements.<br>
+Once the changes are applied, Walmart Item will become Active automatically.
+HTML;
+            $msg = '<p>' . $this->__($message) . '</p>';
+            if (empty($msg)) {
+                return $priceValue;
+            }
+
+            $priceValue .= <<<HTML
+<span class="fix-magento-tooltip">
+    {$this->getTooltipHtml($message, 'map_link_defected_message_icon_' . $row->getId())}
+</span>
+HTML;
+
+            return $priceValue;
         }
 
         if ((float)$value <= 0) {
             return '<span style="color: #f00;">0</span>';
         }
 
-        $currency = $this->walmartFactory->getCachedObjectLoaded('Marketplace', $row->getData('marketplace_id'))
-            ->getChildObject()
-            ->getDefaultCurrency();
-
-        return $this->convertAndFormatPriceCurrency($value, $currency);
+        return $priceValue;
     }
 
     //########################################
@@ -253,19 +273,16 @@ HTML;
             return;
         }
 
-        $condition = '';
+        $condition = 'main_table.status <> ' . Product::STATUS_BLOCKED;
 
-        if (isset($value['from']) || isset($value['to'])) {
-            if (isset($value['from']) && $value['from'] != '') {
-                $condition = 'second_table.online_price >= \'' . (float)$value['from'] . '\'';
-            }
+        if (isset($value['from']) && $value['from'] != '') {
+            $quoted = $collection->getConnection()->quote($value['from']);
+            $condition .= ' AND second_table.online_price >= ' . $quoted;
+        }
 
-            if (isset($value['to']) && $value['to'] != '') {
-                if (isset($value['from']) && $value['from'] != '') {
-                    $condition .= ' AND ';
-                }
-                $condition .= 'second_table.online_price <= \'' . (float)$value['to'] . '\'';
-            }
+        if (isset($value['to']) && $value['to'] != '') {
+            $quoted = $collection->getConnection()->quote($value['to']);
+            $condition .= ' AND second_table.online_price <= ' . $quoted;
         }
 
         $collection->getSelect()->where($condition);
@@ -297,19 +314,16 @@ SQL;
             return;
         }
 
-        $where = '';
+        $where = 'main_table.status <> ' . Product::STATUS_BLOCKED;
 
         if (isset($value['from']) && $value['from'] != '') {
             $quoted = $collection->getConnection()->quote($value['from']);
-            $where .= 'second_table.online_qty >= ' . $quoted;
+            $where .= ' AND second_table.online_qty >= ' . $quoted;
         }
 
         if (isset($value['to']) && $value['to'] != '') {
-            if (isset($value['from']) && $value['from'] != '') {
-                $where .= ' AND ';
-            }
             $quoted = $collection->getConnection()->quote($value['to']);
-            $where .= 'second_table.online_qty <= ' . $quoted;
+            $where .= ' AND second_table.online_qty <= ' . $quoted;
         }
 
         $collection->getSelect()->where($where);

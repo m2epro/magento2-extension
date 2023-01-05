@@ -272,9 +272,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             return true;
         }
 
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled() &&
-            $this->getAmazonListingProduct()->isRepricingManaged()
-        ) {
+        if ($this->getAmazonListingProduct()->isRepricingManaged()) {
             $this->getConfigurator()->disallowRegularPrice();
 
             $this->addMessage(

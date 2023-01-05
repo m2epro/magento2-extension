@@ -8,14 +8,16 @@
 
 namespace Ess\M2ePro\Observer\Product\AddUpdate;
 
-use \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
-use \Magento\Catalog\Model\Product\Attribute\Source\Status;
+use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
+use Magento\Catalog\Model\Product\Attribute\Source\Status;
 
 /**
  * Class \Ess\M2ePro\Observer\Product\AddUpdate\After
  */
 class After extends AbstractAddUpdate
 {
+    /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Factory */
+    private $listingAutoActionsModeFactory;
     protected $listingsProductsChangedAttributes = [];
     protected $attributeAffectOnStoreIdCache = [];
 
@@ -26,6 +28,7 @@ class After extends AbstractAddUpdate
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Factory $listingAutoActionsModeFactory,
         \Magento\Eav\Model\Config $eavConfig,
         \Magento\Store\Model\StoreManager $storeManager,
         \Magento\Catalog\Model\ProductFactory $productFactory,
@@ -37,6 +40,7 @@ class After extends AbstractAddUpdate
         $this->eavConfig = $eavConfig;
         $this->storeManager = $storeManager;
         $this->objectManager = $objectManager;
+        $this->listingAutoActionsModeFactory = $listingAutoActionsModeFactory;
         parent::__construct($productFactory, $helperFactory, $activeRecordFactory, $modelFactory);
     }
 
@@ -424,17 +428,13 @@ class After extends AbstractAddUpdate
 
     protected function performGlobalAutoActions()
     {
-        /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\GlobalMode $object */
-        $object = $this->modelFactory->getObject('Listing_Auto_Actions_Mode_GlobalMode');
-        $object->setProduct($this->getProduct());
+        $object = $this->listingAutoActionsModeFactory->createGlobalMode($this->getProduct());
         $object->synch();
     }
 
     protected function performWebsiteAutoActions()
     {
-        /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Website $object */
-        $object = $this->modelFactory->getObject('Listing_Auto_Actions_Mode_Website');
-        $object->setProduct($this->getProduct());
+        $object = $this->listingAutoActionsModeFactory->createWebsiteMode($this->getProduct());
 
         $websiteIdsOld = $this->getProxy()->getWebsiteIds();
         $websiteIdsNew = $this->getProduct()->getWebsiteIds();
@@ -455,10 +455,6 @@ class After extends AbstractAddUpdate
 
     protected function performCategoryAutoActions()
     {
-        /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Category $object */
-        $object = $this->modelFactory->getObject('Listing_Auto_Actions_Mode_Category');
-        $object->setProduct($this->getProduct());
-
         $categoryIdsOld = $this->getProxy()->getCategoriesIds();
         $categoryIdsNew = $this->getProduct()->getCategoryIds();
         $addedCategories = array_diff($categoryIdsNew, $categoryIdsOld);
@@ -504,14 +500,10 @@ class After extends AbstractAddUpdate
             $websitesChanges[$websiteId] = $websiteChanges;
         }
 
+        $categoryAutoAction = $this->listingAutoActionsModeFactory->createCategoryMode($this->getProduct());
         foreach ($websitesChanges as $websiteId => $changes) {
-            foreach ($changes['added'] as $categoryId) {
-                $object->synchWithAddedCategoryId($categoryId, $websiteId);
-            }
-
-            foreach ($changes['deleted'] as $categoryId) {
-                $object->synchWithDeletedCategoryId($categoryId, $websiteId);
-            }
+            $categoryAutoAction->synchWithAddedCategoryId($websiteId, $changes['added']);
+            $categoryAutoAction->synchWithDeletedCategoryId($websiteId, $changes['deleted']);
         }
     }
 

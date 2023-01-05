@@ -12,7 +12,29 @@ use Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Tr
 
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
+     * @param \Ess\M2ePro\Helper\Data\Session $sessionHelper
+     * @param \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
+     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($variationHelper, $amazonFactory, $context);
+        $this->globalDataHelper = $globalDataHelper;
+        $this->sessionHelper = $sessionHelper;
+    }
 
     public function execute()
     {
@@ -28,7 +50,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 
         $listing = $this->getListing();
 
-        $this->getHelper('Data\GlobalData')->setValue('listing_for_products_add', $listing);
+        $this->globalDataHelper->setValue('listing_for_products_add', $listing);
 
         $step = (int)$this->getRequest()->getParam('step');
 
@@ -68,8 +90,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         return $this->getResult();
     }
 
-    //########################################
-
     public function sourceMode()
     {
         $this->setWizardStep('sourceMode');
@@ -81,7 +101,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
                 return $this->_redirect('*/*/index', ['_current' => true, 'step' => 2, 'source' => $source]);
             }
 
-            return $this->_redirect('*/*/index', ['clear'=>'yes']);
+            return $this->_redirect('*/*/index', ['clear' => 'yes']);
         }
 
         $this->addContent(
@@ -89,8 +109,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         );
         $this->setPageHelpLink('x/tgMVB');
     }
-
-    //########################################
 
     public function stepOneSourceProducts()
     {
@@ -106,8 +124,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return $this->_redirect('*/*/*', ['_current' => true]);
         }
 
-        $this->getHelper('Data\Session')->setValue('temp_products', []);
-        $this->getHelper('Data\Session')->setValue(
+        $this->sessionHelper->setValue('temp_products', []);
+        $this->sessionHelper->setValue(
             'products_source',
             \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_PRODUCT
         );
@@ -118,10 +136,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 
         if ($this->getRequest()->isPost()) {
             $hideProductsOtherParam = $this->getRequest()->getPost('hide_products_others_listings', 1);
-            $this->getHelper('Data\Session')->setValue($prefix, $hideProductsOtherParam);
+            $this->sessionHelper->setValue($prefix, $hideProductsOtherParam);
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('hide_products_others_listings_prefix', $prefix);
+        $this->globalDataHelper->setValue('hide_products_others_listings_prefix', $prefix);
 
         if ($this->getRequest()->isXmlHttpRequest()) {
             $grid = $this->getLayout()
@@ -153,8 +171,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return $this->_redirect('*/*/*', ['_current' => true]);
         }
 
-        $this->getHelper('Data\Session')->setValue('temp_products', []);
-        $this->getHelper('Data\Session')->setValue(
+        $this->sessionHelper->setValue('temp_products', []);
+        $this->sessionHelper->setValue(
             'products_source',
             \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_CATEGORY
         );
@@ -165,10 +183,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 
         if ($this->getRequest()->isPost()) {
             $hideProductsOtherParam = $this->getRequest()->getPost('hide_products_others_listings', 1);
-            $this->getHelper('Data\Session')->setValue($prefix, $hideProductsOtherParam);
+            $this->sessionHelper->setValue($prefix, $hideProductsOtherParam);
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('hide_products_others_listings_prefix', $prefix);
+        $this->globalDataHelper->setValue('hide_products_others_listings_prefix', $prefix);
 
         $tempSession = $this->getSessionValue('source_categories');
         $selectedProductsIds = !isset($tempSession['products_ids']) ? [] : $tempSession['products_ids'];
@@ -201,9 +219,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             'data' => [
                 'tree_settings' => [
                     'show_products_amount' => true,
-                    'hide_products_this_listing' => true
-                ]
-            ]
+                    'hide_products_this_listing' => true,
+                ],
+            ],
         ]);
 
         if ($this->getSessionValue('current_category_id') === null) {
@@ -222,8 +240,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         $gridContainer->getChildBlock('grid')->setSelectedIds($selectedProductsIds);
         $gridContainer->getChildBlock('grid')->setCurrentCategoryId($this->getSessionValue('current_category_id'));
     }
-
-    //########################################
 
     protected function asinSearchView()
     {
@@ -277,11 +293,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         );
     }
 
-    //----------------------------------------
-
     protected function getAddedListingProductsIds()
     {
-        $listingProductsIds = $this->getHelper('Data\Session')->getValue('temp_products');
+        $listingProductsIds = $this->sessionHelper->getValue('temp_products');
 
         if (empty($listingProductsIds)) {
             $listingProductsIds = $this->getListing()->getSetting('additional_data', 'adding_listing_products_ids');
@@ -289,23 +303,21 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             $this->getListing()
                 ->setSetting('additional_data', 'adding_listing_products_ids', $listingProductsIds)->save();
 
-            $this->getHelper('Data\Session')->setValue('temp_products', []);
+            $this->sessionHelper->setValue('temp_products', []);
         }
 
         return $listingProductsIds;
     }
 
-    //########################################
-
     protected function review()
     {
         $this->endWizard();
 
-        $this->getHelper('Data\Session')->setValue('products_source', '');
+        $this->sessionHelper->setValue('products_source', '');
 
         $listing = $this->getListing();
 
-        $this->getHelper('Data\Session')->setValue(
+        $this->sessionHelper->setValue(
             'added_products_ids',
             $listing->getSetting('additional_data', 'adding_listing_products_ids')
         );
@@ -322,8 +334,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         );
     }
 
-    //########################################
-
     protected function getHideProductsInOtherListingsPrefix()
     {
         $id = $this->getRequest()->getParam('id');
@@ -335,17 +345,15 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         return $prefix;
     }
 
-    //########################################
-
     protected function setRuleData($prefix)
     {
-        $listingData = $this->getHelper('Data\GlobalData')
+        $listingData = $this->globalDataHelper
                             ->getValue('listing_for_products_add')
                             ->getData();
 
         $storeId = isset($listingData['store_id']) ? (int)$listingData['store_id'] : 0;
-        $prefix .= isset($listingData['id']) ? '_'.$listingData['id'] : '';
-        $this->getHelper('Data\GlobalData')->setValue('rule_prefix', $prefix);
+        $prefix .= isset($listingData['id']) ? '_' . $listingData['id'] : '';
+        $this->globalDataHelper->setValue('rule_prefix', $prefix);
 
         $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
             [
@@ -356,21 +364,35 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 
         $ruleParam = $this->getRequest()->getPost('rule');
         if (!empty($ruleParam)) {
-            $this->getHelper('Data\Session')->setValue(
+            $this->sessionHelper->setValue(
                 $prefix,
                 $ruleModel->getSerializedFromPost($this->getRequest()->getPostValue())
             );
         } elseif ($ruleParam !== null) {
-            $this->getHelper('Data\Session')->setValue($prefix, []);
+            $this->sessionHelper->setValue($prefix, []);
         }
 
-        $sessionRuleData = $this->getHelper('Data\Session')->getValue($prefix);
+        $sessionRuleData = $this->sessionHelper->getValue($prefix);
         if (!empty($sessionRuleData)) {
             $ruleModel->loadFromSerialized($sessionRuleData);
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('rule_model', $ruleModel);
+        $this->globalDataHelper->setValue('rule_model', $ruleModel);
     }
 
-    //########################################
+    /**
+     * @return void
+     */
+    protected function cancelProductsAdding()
+    {
+        $this->endWizard();
+        $addedListingProductsIds = $this->getAddedListingProductsIds();
+
+        $this->sessionHelper->setValue('products_source', '');
+        $this->sessionHelper->setValue('added_products_ids', []);
+
+        if (!empty($addedListingProductsIds) && is_array($addedListingProductsIds)) {
+            $this->deleteListingProducts($addedListingProductsIds);
+        }
+    }
 }

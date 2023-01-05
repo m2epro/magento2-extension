@@ -42,8 +42,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Ess\M2ePro\Helper\Data */
     protected $helperData;
 
-    //########################################
-
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
@@ -818,12 +816,33 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                                 'wpid'    => $productData['wpid'],
                                 'item_id' => $productData['item_id'],
                                 'gtin'    => $productData['gtin'],
-                                'upc'     => isset($productData['upc']) ? $productData['upc'] : null,
-                                'ean'     => isset($productData['ean']) ? $productData['ean'] : null,
-                                'isbn'    => isset($productData['isbn']) ? $productData['isbn'] : null,
+                                'upc'     => $productData['upc'] ?? null,
+                                'ean'     => $productData['ean'] ?? null,
+                                'isbn'    => $productData['isbn'] ?? null,
                             ]
                         );
-                        $linking->link();
+
+                        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
+
+                        if ($linking->link()) {
+                            $message->initFromPreparedData(
+                                sprintf('Product has been found by SKU %s in your Inventory and linked.', $sku),
+                                ResponseMessage::TYPE_SUCCESS
+                            );
+                        } else {
+                            $message->initFromPreparedData(
+                                sprintf('Unexpected error during process of linking by SKU %s. The required SKU
+                                         has been found but the data is not sent back. Please try again.', $sku),
+                                ResponseMessage::TYPE_ERROR
+                            );
+                        }
+
+                        $additionalData = $this->helperData->jsonDecode($listingProductData['additional_data']);
+                        $logger = $this->createLogger($additionalData['params']['status_changer']);
+                        $logger->logListingProductMessage($listingProduct, $message);
+
+                        $removedListingsProductsIds[] = $listingProductId;
+                        unset($accountData[$listingProductId]);
                     } elseif ($walmartListingProduct->getSku()) {
                         $listingProduct->addData(
                             [
@@ -1342,6 +1361,4 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
         return $logger;
     }
-
-    //########################################
 }

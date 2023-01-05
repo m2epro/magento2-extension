@@ -8,9 +8,8 @@
 
 namespace Ess\M2ePro\Model\Listing\Auto\Category;
 
-/**
- * Class \Ess\M2ePro\Model\Listing\Auto\Category\Group
- */
+use Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category\Group as GroupResource;
+
 class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
     //########################################
@@ -45,7 +44,7 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
      */
     public function getAddingMode()
     {
-        return (int)$this->getData('adding_mode');
+        return (int)$this->getData(GroupResource::ADDING_MODE_FIELD);
     }
 
     // ---------------------------------------
@@ -81,7 +80,7 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
      */
     public function getDeletingMode()
     {
-        return (int)$this->getData('deleting_mode');
+        return (int)$this->getData(GroupResource::DELETING_MODE_FIELD);
     }
 
     // ---------------------------------------

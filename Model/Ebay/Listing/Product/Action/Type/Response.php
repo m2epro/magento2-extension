@@ -661,17 +661,6 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         return $data;
     }
 
-    //########################################
-
-    protected function runAccountPickupStoreStateUpdater()
-    {
-        $pickupStoreStateUpdater = $this->modelFactory->getObject('Ebay_Listing_Product_PickupStore_State_Updater');
-        $pickupStoreStateUpdater->setListingProduct($this->getListingProduct());
-        $pickupStoreStateUpdater->process();
-    }
-
-    //########################################
-
     public function throwRepeatActionInstructions()
     {
         $instructions = [];

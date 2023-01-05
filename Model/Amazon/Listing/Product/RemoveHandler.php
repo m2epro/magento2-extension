@@ -8,20 +8,27 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product;
 
-use \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation;
-use \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
+use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation;
+use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\RemoveHandler
- */
 class RemoveHandler extends \Ess\M2ePro\Model\Listing\Product\RemoveHandler
 {
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product */
-    protected $parentAmazonListingProductForProcess = null;
+    private $parentAmazonListingProductForProcess;
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $exceptionHelper;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+        $this->exceptionHelper = $exceptionHelper;
+    }
 
-    protected function eventBeforeProcess()
+    protected function eventBeforeProcess(): void
     {
         parent::eventBeforeProcess();
 
@@ -47,7 +54,7 @@ class RemoveHandler extends \Ess\M2ePro\Model\Listing\Product\RemoveHandler
         }
     }
 
-    protected function eventAfterProcess()
+    protected function eventAfterProcess(): void
     {
         parent::eventAfterProcess();
 
@@ -60,20 +67,18 @@ class RemoveHandler extends \Ess\M2ePro\Model\Listing\Product\RemoveHandler
         try {
             $parentTypeModel->getProcessor()->process();
         } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
+            $this->exceptionHelper->process($exception);
         }
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function getAmazonListingProduct()
+    private function getAmazonListingProduct()
     {
-        return $this->listingProduct->getChildObject();
+        return $this->getListingProduct()->getChildObject();
     }
-
-    //########################################
 }

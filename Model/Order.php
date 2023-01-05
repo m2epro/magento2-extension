@@ -767,13 +767,24 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     public function updateMagentoOrderStatus()
     {
-        if ($this->getMagentoOrder() === null) {
+        $magentoOrder = $this->getMagentoOrder();
+        if ($magentoOrder === null) {
+            return;
+        }
+
+        $state = $magentoOrder->getState();
+        if (
+            $state === \Magento\Sales\Model\Order::STATE_CLOSED
+            || $state === \Magento\Sales\Model\Order::STATE_COMPLETE
+            || $state === \Magento\Sales\Model\Order::STATE_CANCELED
+            || $this->getChildObject()->isCanceled()
+        ) {
             return;
         }
 
         /** @var \Ess\M2ePro\Model\Magento\Order\Updater $magentoOrderUpdater */
         $magentoOrderUpdater = $this->modelFactory->getObject('Magento_Order_Updater');
-        $magentoOrderUpdater->setMagentoOrder($this->getMagentoOrder());
+        $magentoOrderUpdater->setMagentoOrder($magentoOrder);
         $magentoOrderUpdater->updateStatus($this->getChildObject()->getStatusForMagentoOrder());
         $magentoOrderUpdater->finishUpdate();
     }

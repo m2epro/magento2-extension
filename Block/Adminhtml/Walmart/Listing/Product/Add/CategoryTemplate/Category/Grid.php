@@ -347,13 +347,6 @@ JS
 
         $this->setData('categories_data', $categoriesData);
         $this->setData('category_templates_data', $categoryTemplatesIds);
-
-        $this->listing->setSetting(
-            'additional_data',
-            'adding_new_asin_category_templates_data',
-            $categoryTemplatesIds
-        );
-        $this->listing->save();
     }
 
     protected function isNotExistProductsWithCategoryTemplate($categoryTemplatesData)

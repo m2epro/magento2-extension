@@ -8,21 +8,36 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\RunStopProducts
- */
 class RunStopProducts extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\ActionAbstract
 {
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Manual\Realtime\StopAction */
+    private $realtimeStopAction;
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Manual\Schedule\StopAction */
+    private $scheduledStopAction;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Manual\Realtime\StopAction $realtimeStopAction,
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Manual\Schedule\StopAction $scheduledStopAction,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Log $listingLogResource,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($translationHelper, $listingLogResource, $ebayFactory, $context);
+        $this->realtimeStopAction = $realtimeStopAction;
+        $this->scheduledStopAction = $scheduledStopAction;
+    }
+
     public function execute()
     {
-        if ($this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('is_realtime'))) {
-            return $this->processConnector(
-                \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+        if ($this->isRealtimeProcess()) {
+            return $this->processRealtime(
+                $this->realtimeStopAction
             );
         }
 
-        return $this->scheduleAction(
-            \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+        return $this->createScheduleAction(
+            $this->scheduledStopAction
         );
     }
 }

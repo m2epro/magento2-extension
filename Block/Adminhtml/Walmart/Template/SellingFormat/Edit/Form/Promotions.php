@@ -17,7 +17,8 @@ use \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion;
 class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
     private $elementFactory;
-
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
     protected $_template = 'walmart/template/sellingFormat/form/promotions.phtml';
 
     private $parentForm;
@@ -28,9 +29,12 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         array $data = []
     ) {
         $this->elementFactory = $context->getElementFactory();
+        $this->supportHelper = $supportHelper;
+
         parent::__construct($context, $data);
     }
 
@@ -124,6 +128,7 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
                 'disabled' => true,
             ]
         );
+
         $this->setData('promotions_to_date_custom_attribute', $promotionsToDateCustomAttribute);
 
         $promotionsToDateMode = $this->createElement(
@@ -140,8 +145,12 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $promotionsToDateMode->addCustomAttribute('allowed_attribute_types', 'text,date');
         $this->setData('promotions_to_date_mode', $promotionsToDateMode);
 
-        // ---------------------------------------
-
+        $docUrl = $this->supportHelper->getDocumentationArticleUrl('x/dP1IB');
+        $toDateTooltip = <<<HTML
+        <span>The end date of the promotion is within 365 days from the current date and time.
+        Promotions beyond 365 days will be returned an error.</span>
+<a href="{$docUrl}">{$this->__('How to create promotion?')}</a>
+HTML;
         $promotionsToDateValue = $this->createElement(
             'text',
             [
@@ -151,6 +160,7 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
                 'class'       => 'M2ePro-required-when-visible M2ePro-input-datetime',
                 'disabled'    => true,
                 'date_format' => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT),
+                'tooltip' => $toDateTooltip,
             ]
         );
         $this->setData('promotions_to_date_value', $promotionsToDateValue);

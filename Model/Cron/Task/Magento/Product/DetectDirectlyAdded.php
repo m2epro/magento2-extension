@@ -17,9 +17,11 @@ class DetectDirectlyAdded extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected $magentoProductCollectionFactory;
 
-    //########################################
+    /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Factory */
+    private $listingAutoActionsModeFactory;
 
     public function __construct(
+        \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Factory $listingAutoActionsModeFactory,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
@@ -32,6 +34,7 @@ class DetectDirectlyAdded extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     ) {
 
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
+        $this->listingAutoActionsModeFactory = $listingAutoActionsModeFactory;
         parent::__construct(
             $helperData,
             $eventManager,
@@ -80,37 +83,28 @@ class DetectDirectlyAdded extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $categoriesByWebsite[$websiteId] = $productCategories;
         }
 
-        /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Category $autoActionsCategory */
-        $autoActionsCategory = $this->modelFactory->getObject('Listing_Auto_Actions_Mode_Category');
-        $autoActionsCategory->setProduct($product);
-
+        $autoActionsCategory = $this->listingAutoActionsModeFactory->createCategoryMode($product);
         foreach ($categoriesByWebsite as $websiteId => $categoryIds) {
-            foreach ($categoryIds as $categoryId) {
-                $autoActionsCategory->synchWithAddedCategoryId($categoryId, $websiteId);
-            }
+            $autoActionsCategory->synchWithAddedCategoryId($websiteId, $categoryIds);
         }
     }
 
     protected function processGlobalActions(\Magento\Catalog\Model\Product $product)
     {
-        /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\GlobalMode $object */
-        $object = $this->modelFactory->getObject('Listing_Auto_Actions_Mode_GlobalMode');
-        $object->setProduct($product);
-        $object->synch();
+        $globalMode = $this->listingAutoActionsModeFactory->createGlobalMode($product);
+        $globalMode->synch();
     }
 
     protected function processWebsiteActions(\Magento\Catalog\Model\Product $product)
     {
-        /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Website $object */
-        $object = $this->modelFactory->getObject('Listing_Auto_Actions_Mode_Website');
-        $object->setProduct($product);
+        $websiteMode = $this->listingAutoActionsModeFactory->createWebsiteMode($product);
 
         // website for admin values
         $websiteIds = $product->getWebsiteIds();
         $websiteIds[] = 0;
 
         foreach ($websiteIds as $websiteId) {
-            $object->synchWithAddedWebsiteId($websiteId);
+            $websiteMode->synchWithAddedWebsiteId($websiteId);
         }
     }
 

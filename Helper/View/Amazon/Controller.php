@@ -33,7 +33,8 @@ class Controller
         /** @var \Ess\M2ePro\Model\Issue\Notification\Channel\Magento\Session $notificationChannel */
         $notificationChannel = $this->modelFactory->getObject('Issue_Notification_Channel_Magento_Session');
         $issueLocators = [
-            'Amazon_Marketplace_Issue_NotUpdated'
+            'Amazon_Marketplace_Issue_NotUpdated',
+            'Amazon_Repricing_Issue_InvalidToken',
         ];
 
         foreach ($issueLocators as $locator) {

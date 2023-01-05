@@ -5,6 +5,7 @@
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
+
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin;
 
 class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
@@ -57,12 +58,27 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'class'     => 'back'
         ]);
         // ---------------------------------------
+        $url = $this->getUrl(
+            '*/amazon_listing_product_add/exitToListing',
+            ['id' => $this->getRequest()->getParam('id')]
+        );
+        $confirm =
+            '<strong>' . $this->__('Are you sure?') . '</strong><br><br>'
+            . $this->__('All unsaved changes will be lost and you will be returned to the Listings grid.');
+        $this->addButton(
+            'exit_to_listing',
+            [
+                'label' => $this->__('Cancel'),
+                'onclick' => "confirmSetLocation('$confirm', '$url');",
+                'class' => 'action-primary',
+            ]
+        );
 
         $url = $this->getUrl('*/*/index', ['_current' => true, 'step' => 5]);
         // ---------------------------------------
         $this->addButton('add_products_new_asin_manual_continue', [
             'label'   => $this->__('Continue'),
-            'onclick' => 'ListingGridObj.checkManualProducts(\''.$url.'\')',
+            'onclick' => 'ListingGridObj.checkManualProducts(\'' . $url . '\')',
             'class'   => 'action-primary forward'
         ]);
         // ---------------------------------------

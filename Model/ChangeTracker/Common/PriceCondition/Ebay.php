@@ -2,12 +2,27 @@
 
 namespace Ess\M2ePro\Model\ChangeTracker\Common\PriceCondition;
 
-use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder;
-
 class Ebay extends AbstractPriceCondition
 {
+    /**
+     * @return array
+     * @throws \Zend_Db_Statement_Exception
+     */
     protected function loadSellingPolicyData(): array
     {
-        return [];
+        $sellingPolicyQuery = $this->queryBuilder
+            ->makeSubQuery();
+
+        $sellingPolicyQuery
+            ->addSelect('id', 'template_selling_format_id')
+            ->addSelect('vat', 'vat_percent')
+            ->addSelect('modifier', 'fixed_price_modifier')
+            ->addSelect('mode', 'fixed_price_mode')
+            ->addSelect('mode_attribute', 'fixed_price_custom_attribute')
+        ;
+
+        $sellingPolicyQuery->from('t', 'm2epro_ebay_template_selling_format');
+
+        return $sellingPolicyQuery->fetchAll();
     }
 }

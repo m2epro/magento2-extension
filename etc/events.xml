@@ -120,10 +120,6 @@
                   shared="false" />
     </event>
     <event name="sales_order_save_after">
-        <observer name="m2epro_observer_order_save_after_sendpickupstorenotifications"
-                  instance="Ess\M2ePro\Observer\Order\Save\After\SendPickupStoreNotifications"
-                  shared="false" />
-
         <observer name="m2epro_observer_order_order_save_after_storemagentoorderid"
                   instance="Ess\M2ePro\Observer\Order\Save\After\StoreMagentoOrderId"
                   shared="false" />

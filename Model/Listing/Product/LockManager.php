@@ -8,75 +8,102 @@
 
 namespace Ess\M2ePro\Model\Listing\Product;
 
-/**
- * Class \Ess\M2ePro\Model\Listing\Product\LockManager
- */
-class LockManager extends \Ess\M2ePro\Model\AbstractModel
+class LockManager
 {
-    const LOCK_ITEM_MAX_ALLOWED_INACTIVE_TIME = 1800; // 30 min
-
-    protected $activeRecordFactory;
+    private const LOCK_ITEM_MAX_ALLOWED_INACTIVE_TIME = 1800; // 30 min
 
     /** @var \Ess\M2ePro\Model\Listing\Product */
-    protected $listingProduct = null;
+    private $listingProduct;
+    /** @var int */
+    private $initiator;
+    /** @var int */
+    private $logsActionId;
+    /** @var int */
+    private $logsAction;
 
     /** @var \Ess\M2ePro\Model\Lock\Item\Manager */
-    protected $lockItemManager = null;
-
+    private $lockItemManager;
     /** @var \Ess\M2ePro\Model\Listing\Log */
-    protected $listingLog = null;
+    private $listingLog;
 
-    protected $initiator = null;
-
-    protected $logsActionId = null;
-
-    protected $logsAction = null;
-
-    //########################################
+    /** @var \Ess\M2ePro\Model\Lock\Item\ManagerFactory */
+    private $lockItemManagerFactory;
+    /** @var \Ess\M2ePro\Helper\Module\Translation */
+    private $translationHelper;
+    /** @var \Ess\M2ePro\Model\Amazon\Listing\LogFactory */
+    private $amazonListingLogFactory;
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\LogFactory */
+    private $ebayListingLogFactory;
+    /** @var \Ess\M2ePro\Model\Walmart\Listing\LogFactory */
+    private $walmartListingLogFactory;
 
     public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        array $data = []
+        \Ess\M2ePro\Model\Amazon\Listing\LogFactory $amazonListingLogFactory,
+        \Ess\M2ePro\Model\Ebay\Listing\LogFactory $ebayListingLogFactory,
+        \Ess\M2ePro\Model\Walmart\Listing\LogFactory $walmartListingLogFactory,
+        \Ess\M2ePro\Model\Lock\Item\ManagerFactory $lockItemManagerFactory,
+        \Ess\M2ePro\Helper\Module\Translation $translationHelper
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
-        parent::__construct($helperFactory, $modelFactory, $data);
+        $this->lockItemManagerFactory = $lockItemManagerFactory;
+        $this->translationHelper = $translationHelper;
+        $this->amazonListingLogFactory = $amazonListingLogFactory;
+        $this->ebayListingLogFactory = $ebayListingLogFactory;
+        $this->walmartListingLogFactory = $walmartListingLogFactory;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     *
      * @return $this
      */
-    public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct): self
     {
         $this->listingProduct = $listingProduct;
+
         return $this;
     }
 
-    public function setInitiator($initiator)
+    /**
+     * @param int $initiator
+     *
+     * @return $this
+     */
+    public function setInitiator($initiator): self
     {
         $this->initiator = $initiator;
+
         return $this;
     }
 
-    public function setLogsActionId($logsActionId)
+    /**
+     * @param int $logsActionId
+     *
+     * @return $this
+     */
+    public function setLogsActionId($logsActionId): self
     {
         $this->logsActionId = $logsActionId;
+
         return $this;
     }
 
-    public function setLogsAction($logsAction)
+    /**
+     * @param int $logsAction
+     *
+     * @return $this
+     */
+    public function setLogsAction($logsAction): self
     {
         $this->logsAction = $logsAction;
+
         return $this;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function isLocked()
+    public function isLocked(): bool
     {
         if ($this->listingProduct->isSetProcessingLock(null)) {
             return true;
@@ -88,13 +115,14 @@ class LockManager extends \Ess\M2ePro\Model\AbstractModel
 
         if ($this->getLockItemManager()->isInactiveMoreThanSeconds(self::LOCK_ITEM_MAX_ALLOWED_INACTIVE_TIME)) {
             $this->getLockItemManager()->remove();
+
             return false;
         }
 
         return true;
     }
 
-    public function checkLocking()
+    public function checkLocking(): bool
     {
         if (!$this->isLocked()) {
             return false;
@@ -107,7 +135,7 @@ class LockManager extends \Ess\M2ePro\Model\AbstractModel
             $this->initiator,
             $this->logsActionId,
             $this->logsAction,
-            $this->getHelper('Module\Translation')->__(
+            $this->translationHelper->__(
                 'Another Action is being processed. Try again when the Action is completed.'
             ),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
@@ -118,43 +146,45 @@ class LockManager extends \Ess\M2ePro\Model\AbstractModel
 
     // ----------------------------------------
 
-    public function lock()
+    public function lock(): void
     {
         $this->getLockItemManager()->create();
     }
 
-    public function unlock()
+    public function unlock(): void
     {
         $this->getLockItemManager()->remove();
     }
 
-    //########################################
+    // ----------------------------------------
 
-    protected function getLockItemManager()
+    private function getLockItemManager(): \Ess\M2ePro\Model\Lock\Item\Manager
     {
         if ($this->lockItemManager !== null) {
             return $this->lockItemManager;
         }
 
-        $this->lockItemManager = $this->modelFactory->getObject('Lock_Item_Manager', [
-            'nick' => $this->listingProduct->getComponentMode() . '_listing_product_' . $this->listingProduct->getId()
-        ]);
+        $this->lockItemManager = $this->lockItemManagerFactory->create(
+            $this->listingProduct->getComponentMode() . '_listing_product_' . $this->listingProduct->getId()
+        );
 
         return $this->lockItemManager;
     }
 
-    protected function getListingLog()
+    private function getListingLog(): \Ess\M2ePro\Model\Listing\Log
     {
         if ($this->listingLog !== null) {
             return $this->listingLog;
         }
 
-        $this->listingLog = $this->activeRecordFactory->getObject(
-            ucfirst($this->listingProduct->getComponentMode()) . '_Listing_Log'
-        );
+        if ($this->listingProduct->getComponentMode() === \Ess\M2ePro\Helper\Component\Ebay::NICK) {
+            $this->listingLog = $this->ebayListingLogFactory->create();
+        } elseif ($this->listingProduct->getComponentMode() === \Ess\M2ePro\Helper\Component\Amazon::NICK) {
+            $this->listingLog = $this->amazonListingLogFactory->create();
+        } else {
+            $this->listingLog = $this->walmartListingLogFactory->create();
+        }
 
         return $this->listingLog;
     }
-
-    //########################################
 }

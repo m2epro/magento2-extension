@@ -73,6 +73,22 @@ class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
 
         // ---------------------------------------
+        $url = $this->getUrl(
+            '*/amazon_listing_product_add/exitToListing',
+            ['id' => $this->getRequest()->getParam('id')]
+        );
+        $confirm =
+            '<strong>' . $this->__('Are you sure?') . '</strong><br><br>'
+            . $this->__('All unsaved changes will be lost and you will be returned to the Listings grid.');
+        $this->addButton(
+            'exit_to_listing',
+            [
+                'label' => $this->__('Cancel'),
+                'onclick' => "confirmSetLocation('$confirm', '$url');",
+                'class' => 'action-primary',
+            ]
+        );
+
         $this->addButton('add_products_mode_product_continue', [
             'label'     => $this->__('Continue'),
             'onclick'   => 'ListingProductGridObj.saveClick(\'view\')',

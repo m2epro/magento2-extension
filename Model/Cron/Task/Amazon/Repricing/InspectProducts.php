@@ -13,13 +13,42 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Repricing;
  */
 class InspectProducts extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/repricing/inspect_products';
+    public const NICK = 'amazon/repricing/inspect_products';
+
+    /** @var \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory */
+    private $accountCollectionFactory;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Magento\Framework\Event\Manager $eventManager,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo,
+        \Magento\Framework\App\ResourceConnection $resource,
+        \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory
+    ) {
+        parent::__construct(
+            $helperData,
+            $eventManager,
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $taskRepo,
+            $resource
+        );
+        $this->accountCollectionFactory = $accountCollectionFactory;
+    }
 
     //####################################
 
     public function performActions()
     {
-        $permittedAccounts = $this->getPermittedAccounts();
+        $permittedAccounts = $this->accountCollectionFactory
+            ->create()
+            ->getAccountsWithValidRepricingAccount();
 
         foreach ($permittedAccounts as $permittedAccount) {
             $operationDate = $this->getHelper('Data')->getCurrentGmtDate();
@@ -39,29 +68,6 @@ class InspectProducts extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     }
 
     //####################################
-
-    /**
-     * @return \Ess\M2ePro\Model\Account[]
-     */
-    protected function getPermittedAccounts()
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountCollection */
-        $accountCollection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'Account'
-        )->getCollection();
-
-        $accountCollection->getSelect()->joinInner(
-            [
-                'aar' => $this->activeRecordFactory->getObject('Amazon_Account_Repricing')->getResource()
-                    ->getMainTable()
-            ],
-            'aar.account_id=main_table.id',
-            []
-        );
-
-        return $accountCollection->getItems();
-    }
 
     /**
      * @param \Ess\M2ePro\Model\Account $account

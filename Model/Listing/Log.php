@@ -99,7 +99,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 
     //########################################
 
-    public function _construct()
+    protected function _construct(): void
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Listing\Log::class);
@@ -223,9 +223,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
             'action'             => $action,
             'description'        => $description,
             'type'               => $type,
-            'additional_data'    => $this->getHelper('Data')->jsonEncode($additionalData)
+            'additional_data'    => \Ess\M2ePro\Helper\Json::encode($additionalData)
         ];
     }
-
-    //########################################
 }

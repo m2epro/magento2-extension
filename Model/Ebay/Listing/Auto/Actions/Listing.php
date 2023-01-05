@@ -8,16 +8,13 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Auto\Actions;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Auto\Actions\Listing
- */
 class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
 {
-    //########################################
-
     /**
      * @param \Magento\Catalog\Model\Product $product
      * @param \Ess\M2ePro\Model\Listing\Auto\Category\Group $categoryGroup
+     *
+     * @return void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function addProductByCategoryGroup(
@@ -96,6 +93,8 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
     /**
      * @param \Magento\Catalog\Model\Product $product
      * @param \Ess\M2ePro\Model\Listing $listing
+     *
+     * @return void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function addProductByWebsiteListing(

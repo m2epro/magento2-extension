@@ -13,7 +13,11 @@ use Ess\M2ePro\Model\Amazon\Template\SellingFormat as AmazonSellingFormat;
 
 class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 {
-    protected function prepareData()
+    /**
+     * @return array
+     * @throws \Exception
+     */
+    protected function prepareData(): array
     {
         $data = [];
 
@@ -59,23 +63,44 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             );
         }
 
+        $priceTypes = [
+            \Ess\M2ePro\Model\Amazon\Template\SellingFormat::PRICE_TYPE_REGULAR,
+            \Ess\M2ePro\Model\Amazon\Template\SellingFormat::PRICE_TYPE_REGULAR_SALE,
+        ];
+
         if (empty($data['is_business_customer_allowed'])) {
             unset($data['business_price_mode']);
-            unset($data['business_price_coefficient']);
             unset($data['business_price_custom_attribute']);
             unset($data['business_price_variation_mode']);
             unset($data['business_price_vat_percent']);
             unset($data['business_discounts_mode']);
-            unset($data['business_discounts_tier_coefficient']);
             unset($data['business_discounts_tier_customer_group_id']);
+        } else {
+            $priceTypes = array_merge(
+                $priceTypes,
+                [
+                    \Ess\M2ePro\Model\Amazon\Template\SellingFormat::PRICE_TYPE_BUSINESS,
+                    \Ess\M2ePro\Model\Amazon\Template\SellingFormat::PRICE_TYPE_BUSINESS_DISCOUNTS_TIER,
+                ]
+            );
         }
 
         $data['title'] = strip_tags($data['title']);
 
+        foreach ($priceTypes as $priceType) {
+            $data[$priceType . '_modifier'] = \Ess\M2ePro\Helper\Json::encode(
+                \Ess\M2ePro\Model\Template\SellingFormat\BuilderHelper::getPriceModifierData($priceType, $this->rawData)
+            );
+        }
+
         return $data;
     }
 
-    public function getDefaultData()
+    /**
+     * @return array
+     * @throws \Exception
+     */
+    public function getDefaultData(): array
     {
         return [
             'title' => '',
@@ -92,14 +117,14 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'qty_max_posted_value' => AmazonSellingFormat::QTY_MAX_POSTED_DEFAULT_VALUE,
 
             'regular_price_mode' => SellingFormat::PRICE_MODE_PRODUCT,
-            'regular_price_coefficient' => '',
+            'regular_price_modifier' => '[]',
             'regular_price_custom_attribute' => '',
 
             'regular_map_price_mode' => SellingFormat::PRICE_MODE_NONE,
             'regular_map_price_custom_attribute' => '',
 
             'regular_sale_price_mode' => SellingFormat::PRICE_MODE_NONE,
-            'regular_sale_price_coefficient' => '',
+            'regular_sale_price_modifier' => '[]',
             'regular_sale_price_custom_attribute' => '',
 
             'regular_price_variation_mode' => AmazonSellingFormat::PRICE_VARIATION_MODE_PARENT,
@@ -116,7 +141,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'regular_price_vat_percent' => 0,
 
             'business_price_mode' => SellingFormat::PRICE_MODE_PRODUCT,
-            'business_price_coefficient' => '',
+            'business_price_modifier' => '[]',
             'business_price_custom_attribute' => '',
 
             'business_price_variation_mode' => AmazonSellingFormat::PRICE_VARIATION_MODE_PARENT,
@@ -124,7 +149,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'business_price_vat_percent' => 0,
 
             'business_discounts_mode' => 0,
-            'business_discounts_tier_coefficient' => '',
+            'business_discounts_tier_modifier' => '[]',
             'business_discounts_tier_customer_group_id' => null,
 
             'discount_rules' => []

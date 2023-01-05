@@ -425,7 +425,7 @@ td.specifics-grid {
 
 #promotions_table_tbody .promotions_date_value [id^="promotions_from_date_value_"],
 #promotions_table_tbody .promotions_date_value [id^="promotions_to_date_value_"] {
-    width: 100%;
+    width: 82%;
 }
 
 #promotions_table_tbody .promotions_price_mode_block,
@@ -443,10 +443,6 @@ td.specifics-grid {
 
 #promotions_table_tbody .promotions_price_coefficient_block .admin__field-control.control {
     margin: 0 !important;
-}
-
-#tax_codes {
-    margin-left: 5px;
 }
 
 #shipping_override_rule_container #shipping_override_rule_table_main_screen {
@@ -469,6 +465,23 @@ td.specifics-grid {
 
 #custom_title_tr input[type="text"].input-text {
     width: 180px;
+}
+
+.price_change_row {
+    margin-bottom: 20px;
+}
+
+.coef {
+    text-align: right;
+    width: 70px !important;
+}
+
+.price_modifier_mode {
+    margin-right: 10px;
+}
+
+.price_change_additional_element {
+    margin: 0 10px;
 }
 
 /* ================================================ */

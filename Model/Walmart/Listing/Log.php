@@ -10,20 +10,15 @@ namespace Ess\M2ePro\Model\Walmart\Listing;
 
 use Ess\M2ePro\Helper\Component\Walmart;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Listing\Log
- */
 class Log extends \Ess\M2ePro\Model\Listing\Log
 {
-    //########################################
-
-    public function _construct()
+    protected function _construct(): void
     {
         parent::_construct();
         $this->setComponentMode(Walmart::NICK);
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param $listingId
@@ -93,6 +88,4 @@ class Log extends \Ess\M2ePro\Model\Listing\Log
 
         $this->createMessage($dataForAdd);
     }
-
-    //########################################
 }

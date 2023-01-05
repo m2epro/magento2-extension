@@ -498,28 +498,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             ? $shippingDetails['click_and_collect_details'] : [];
     }
 
-    // ---------------------------------------
-
-    /**
-     * @return bool
-     */
-    public function isUseInStorePickup()
-    {
-        $inStorePickupDetails = $this->getInStorePickupDetails();
-
-        return !empty($inStorePickupDetails);
-    }
-
-    public function getInStorePickupDetails()
-    {
-        $shippingDetails = $this->getShippingDetails();
-
-        return isset($shippingDetails['in_store_pickup_details'])
-            ? $shippingDetails['in_store_pickup_details'] : [];
-    }
-
-    // ---------------------------------------
-
     /**
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic

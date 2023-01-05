@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\Item\Revise;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Connector\Item\Revise\Requester
- */
 class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Requester
 {
-    //########################################
-
     protected function getCommand()
     {
         return ['item','update','reviseManager'];
@@ -29,6 +24,4 @@ class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Requester
     {
         return \Ess\M2ePro\Model\Listing\Log::ACTION_REVISE_PRODUCT_ON_COMPONENT;
     }
-
-    //########################################
 }

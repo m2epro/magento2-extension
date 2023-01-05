@@ -136,7 +136,6 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
             'client_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : null,
             'server_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : null,
             'product_data'   => isset($details['product_data']) ? $helper->jsonEncode($details['product_data']) : null,
-            'tax_codes'      => isset($details['tax_codes']) ? $helper->jsonEncode($details['tax_codes']) : null
         ];
 
         $this->resourceConnection->getConnection()->insert($tableMarketplaces, $data);

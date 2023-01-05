@@ -215,6 +215,7 @@ class Modifier
             \Ess\M2ePro\Setup\Update\y22_m07\AddEpidsForItaly::class,
             \Ess\M2ePro\Setup\Update\y22_m07\MoveEbayProductIdentifiers::class,
             \Ess\M2ePro\Setup\Update\y22_m08\MoveAmazonProductIdentifiers::class,
+            \Ess\M2ePro\Setup\Update\y22_m10\AmazonWalmartSellingPolicyPriceModifier::class,
         ];
 
         foreach ($featureClasses as $featureClass) {

@@ -1,0 +1,88 @@
+<?php
+
+/**
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Template\SellingFormat\PriceChange $block */
+
+$type = $block->getPriceType();
+$typeForDataset = str_replace('_', '-', $type);
+$priceModifierData = $block->getPriceModifier();
+
+$attributes = $block->getAllAttributes();
+$priceModifierAttributes = $block->getPriceModifierAttributes($priceModifierData);
+$attributesByInputTypes = $block->getAttributesByInputTypes();
+
+?>
+
+<div id="<?=$type?>_change_container"></div>
+<div id="<?=$type?>_calculation_example" class="price_change_row" style="display: none;"></div>
+<button title="<?php echo $block->__('Add Price Change'); ?>"
+        id="<?=$type?>_change_add_row_button"
+        type="button"
+        class="action-default scalable action primary price_change_remove price_change_additional_element">
+    <span><?php echo $block->__('Add Price Change'); ?></span>
+</button>
+
+<div id="<?=$type?>_change_row_template" style="display: none;">
+    <div style="position: relative;" class="price_change_row">
+        <select id="<?=$type?>_modifier_mode_%index%"
+                name="<?=$type?>_modifier_mode[%index%]"
+                class="select admin__control-select M2ePro-validate-price-modifier price_modifier_mode required-entry"
+                data-<?=$typeForDataset?>-change-index="%index%"
+                style="width: 250px;">
+            <option
+                value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ABSOLUTE_INCREASE; ?>">
+                <?php echo $block->__('Absolute Value increase'); ?></option>
+            <option
+                value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ABSOLUTE_DECREASE; ?>">
+                <?php echo $block->__('Absolute Value decrease'); ?></option>
+            <option
+                value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_PERCENTAGE_INCREASE; ?>">
+                <?php echo $block->__('Percentage increase'); ?></option>
+            <option
+                value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_PERCENTAGE_DECREASE; ?>">
+                <?php echo $block->__('Percentage decrease'); ?></option>
+
+            <optgroup class="M2ePro-custom-attribute-optgroup"
+                      label="Magento Attribute">
+                <?php foreach ($priceModifierAttributes as $attributeCode): ?>
+                    <?php if(!$block->magentoAttributeHelper->isExistInAttributesArray($attributeCode, $attributes)): ?>
+                        <option attribute_code="<?php echo $attributeCode; ?>"
+                                value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE; ?>">
+                            <?php echo $block->escapeHtml($block->magentoAttributeHelper->getAttributeLabel($attributeCode)); ?>
+                        </option>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+
+                <?php foreach ($attributesByInputTypes['text_price'] as $attribute) : ?>
+                    <option attribute_code="<?php echo $attribute['code']; ?>"
+                            value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE; ?>">
+                        <?php echo $block->escapeHtml($attribute['label']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </optgroup>
+        </select>
+
+        <input name="<?=$type?>_modifier_value[%index%]"
+               id="<?=$type?>_modifier_value_%index%"
+               type="text"
+               class="admin__control-text input-text coef price_change_additional_element"/>
+
+        <input type="hidden"
+               name="<?=$type?>_modifier_attribute[%index%]"
+               id="<?=$type?>_modifier_attribute_%index%"/>
+
+        <button title="<?php echo $block->__('Remove'); ?>"
+                id="<?=$type?>_modifier_row_remove_button_%index%"
+                type="button"
+                class="action-default scalable action primary price_change_remove price_change_additional_element">
+            <span><?php echo $block->__('Remove'); ?></span>
+        </button>
+    </div>
+</div>

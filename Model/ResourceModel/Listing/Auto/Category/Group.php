@@ -13,7 +13,8 @@ namespace Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category;
  */
 class Group extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {
-    //########################################
+    public const ADDING_MODE_FIELD = 'adding_mode';
+    public const DELETING_MODE_FIELD = 'deleting_mode';
 
     public function _construct()
     {

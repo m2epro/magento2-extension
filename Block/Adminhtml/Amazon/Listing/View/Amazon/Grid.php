@@ -8,6 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Amazon;
 
+use Ess\M2ePro\Helper\Data\Product\Identifier;
 use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 use Ess\M2ePro\Model\Listing\Log;
 
@@ -35,16 +36,25 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected $helperData;
     /** @var \Ess\M2ePro\Helper\Component\Amazon */
     protected $amazonHelper;
-    /** @var \Ess\M2ePro\Helper\Component\Amazon\Repricing */
-    protected $amazonRepricingHelper;
 
+    /**
+     * @param \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
+     * @param \Magento\Framework\Locale\CurrencyInterface $localeCurrency
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     * @param \Ess\M2ePro\Helper\Component\Amazon $amazonHelper
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Backend\Helper\Data $backendHelper
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
+     * @param array $data
+     */
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
-        \Ess\M2ePro\Helper\Component\Amazon\Repricing $amazonRepricingHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
@@ -56,7 +66,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         $this->amazonHelper = $amazonHelper;
-        $this->amazonRepricingHelper = $amazonRepricingHelper;
         parent::__construct($context, $backendHelper, $dataHelper, $globalDataHelper, $data);
     }
 
@@ -283,8 +292,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'filter_condition_callback' => [$this, 'callbackFilterPrice']
         ];
 
-        if ($this->amazonRepricingHelper->isEnabled() &&
-            $this->listing->getAccount()->getChildObject()->isRepricing()) {
+        if ($this->listing->getAccount()->getChildObject()->isRepricing()) {
             $priceColumn['filter'] = \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price::class;
         }
 
@@ -652,7 +660,7 @@ HTML;
 
         $repricingHtml ='';
 
-        if ($this->amazonRepricingHelper->isEnabled() && $row->getData('is_repricing')) {
+        if ($row->getData('is_repricing')) {
             if ($row->getData('is_variation_parent')) {
                 $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
 
@@ -1054,8 +1062,7 @@ HTML;
             $condition .= ')';
         }
 
-        if ($this->amazonRepricingHelper->isEnabled() &&
-            (isset($value['is_repricing']) && $value['is_repricing'] !== '')) {
+        if (isset($value['is_repricing']) && $value['is_repricing'] !== '') {
             if (!empty($condition)) {
                 $condition = '(' . $condition . ') OR ';
             }
@@ -1254,15 +1261,27 @@ HTML;
 
         $generalIdOwnerHtml = '';
         if ($row->getData('is_general_id_owner') == \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES) {
-            $generalIdOwnerHtml = '<br/><span style="font-size: 10px; color: grey;">'.
+            $generalIdOwnerHtml = '<span style="font-size: 10px; color: grey;">'.
                                    $this->__('creator of ASIN/ISBN').
                                   '</span>';
         }
-
+        $notASINAndNotISBN = !Identifier::isASIN($generalId) && !Identifier::isISBN($generalId);
         if ((int)$row->getData('amazon_status') != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-            return <<<HTML
-<a href="{$url}" target="_blank">{$generalId}</a>{$generalIdOwnerHtml}
+            if ($notASINAndNotISBN) {
+                return <<<HTML
+<div style="display: flex; flex-direction: row; align-items: center;">
+    <span>{$generalId}</span>
+    <div style="position:relative; left: 15px; top: -2px;">
+    {$this->getTooltipHtml($this->__('Amazon returned UPC/EAN as the product ID'))}
+    </div>
+</div>
+$generalIdOwnerHtml
 HTML;
+            } else {
+                return <<<HTML
+<div><a href="{$url}" target="_blank">{$generalId}</a></div>{$generalIdOwnerHtml}
+HTML;
+            }
         }
 
         $generalIdSearchInfo = $row->getData('general_id_search_info');
@@ -1283,6 +1302,11 @@ HTML;
 HTML;
         }
 
+        $tooltipHtml = '';
+        if ($notASINAndNotISBN) {
+            $text = $generalId;
+            $tooltipHtml = $this->getTooltipHtml($this->__('Amazon returned UPC/EAN as the product ID'));
+        }
         // ---------------------------------------
         $hasInActionLock = $this->getLockedData($row);
         $hasInActionLock = $hasInActionLock['in_action'];
@@ -1312,17 +1336,23 @@ HTML;
         }
 
         $tip = $this->__('Unassign ASIN/ISBN');
-
-        $text .= <<<HTML
-&nbsp;
-<a href="javascript:;"
-    class="amazon-listing-view-icon amazon-listing-view-generalId-remove"
-    onclick="ListingGridObj.productSearchHandler.showUnmapFromGeneralIdPrompt({$listingProductId});"
-    title="{$tip}">
-</a>{$generalIdOwnerHtml}
+        $result = <<<HTML
+<div style="display: flex; flex-direction: row; align-items: center;">
+    <span>{$text}</span>
+    &nbsp;
+    <a href="javascript:;"
+        class="amazon-listing-view-icon amazon-listing-view-generalId-remove"
+        onclick="ListingGridObj.productSearchHandler.showUnmapFromGeneralIdPrompt({$listingProductId});"
+        title="{$tip}">
+    </a>
+    <div style="position:relative; left: 15px; top: -2px;">
+    {$tooltipHtml}
+    </div>
+</div>
+{$generalIdOwnerHtml}
 HTML;
 
-        return $text;
+        return $result;
     }
 
     private function getGeneralIdColumnValueGeneralIdOwner($row)

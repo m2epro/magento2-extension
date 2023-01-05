@@ -31,7 +31,7 @@ class General extends AbstractModel
             $filters = [
                 'skus_list' => $skus,
             ];
-            $skus = array_map('strtolower', $skus);
+            $skus = array_map('strtolower', array_filter($skus));
         }
 
         $response = $this->sendRequest($filters);

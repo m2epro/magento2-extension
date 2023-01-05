@@ -13,39 +13,71 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Repricing;
  */
 class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/repricing/synchronize';
+    public const NICK = 'amazon/repricing/synchronize';
 
-    const REGISTRY_GENERAL_START_DATE = '/amazon/repricing/synchronize/general/start_date/';
+    public const REGISTRY_GENERAL_START_DATE = '/amazon/repricing/synchronize/general/start_date/';
 
-    const REGISTRY_GENERAL_LAST_LISTING_PRODUCT_ID = '/amazon/repricing/synchronize/general/last_listing_product_id/';
-    const REGISTRY_GENERAL_LAST_LISTING_OTHER_ID = '/amazon/repricing/synchronize/general/last_other_product_id/';
+    public const REGISTRY_GENERAL_LAST_LISTING_PRODUCT_ID
+        = '/amazon/repricing/synchronize/general/last_listing_product_id/';
+    public const REGISTRY_GENERAL_LAST_LISTING_OTHER_ID
+        = '/amazon/repricing/synchronize/general/last_other_product_id/';
 
-    const REGISTRY_ACTUAL_PRICE_START_DATE = '/amazon/repricing/synchronize/actual_price/start_date/';
+    public const REGISTRY_ACTUAL_PRICE_START_DATE = '/amazon/repricing/synchronize/actual_price/start_date/';
 
-    const REGISTRY_ACTUAL_PRICE_LAST_LISTING_PRODUCT_ID =
+    public const REGISTRY_ACTUAL_PRICE_LAST_LISTING_PRODUCT_ID =
         '/amazon/repricing/synchronize/actual_price/last_listing_product_id/';
-    const REGISTRY_ACTUAL_PRICE_LAST_LISTING_OTHER_ID =
+    public const REGISTRY_ACTUAL_PRICE_LAST_LISTING_OTHER_ID =
         '/amazon/repricing/synchronize/actual_price/last_other_product_id/';
 
-    const SYNCHRONIZE_GENERAL_INTERVAL = 60;
-    const SYNCHRONIZE_ACTUAL_PRICE_INTERVAL = 60;
+    public const SYNCHRONIZE_GENERAL_INTERVAL = 60;
+    public const SYNCHRONIZE_ACTUAL_PRICE_INTERVAL = 60;
 
-    const PRODUCTS_COUNT_BY_ACCOUNT_AND_PRODUCT_TYPE = 5000;
+    public const PRODUCTS_COUNT_BY_ACCOUNT_AND_PRODUCT_TYPE = 5000;
+
+    /** @var \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory */
+    private $accountCollectionFactory;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Magento\Framework\Event\Manager $eventManager,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo,
+        \Magento\Framework\App\ResourceConnection $resource,
+        \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory
+    ) {
+        parent::__construct(
+            $helperData,
+            $eventManager,
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $taskRepo,
+            $resource
+        );
+        $this->accountCollectionFactory = $accountCollectionFactory;
+    }
 
     //####################################
 
     public function performActions()
     {
-        $accounts = $this->getPermittedAccounts();
-        if (empty($accounts)) {
-            return;
-        }
-
+        $accounts = $this->accountCollectionFactory
+            ->create()
+            ->getAccountsWithValidRepricingAccount();
         foreach ($accounts as $account) {
             if ($this->isPossibleToSynchronizeGeneral($account)) {
                 $this->synchronizeGeneral($account);
             }
+        }
 
+        $accounts = $this->accountCollectionFactory
+            ->create()
+            ->getAccountsWithValidRepricingAccount();
+        foreach ($accounts as $account) {
             if ($this->isPossibleToSynchronizeActualPrice($account)) {
                 $this->synchronizeActualPrice($account);
             }
@@ -333,28 +365,6 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     }
 
     //#####################################
-
-    /**
-     * @return \Ess\M2ePro\Model\Account[]
-     */
-    protected function getPermittedAccounts()
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountCollection */
-        $accountCollection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'Account'
-        )->getCollection();
-        $accountCollection->getSelect()->joinInner(
-            [
-                'aar' => $this->activeRecordFactory->getObject('Amazon_Account_Repricing')
-                ->getResource()->getMainTable()
-            ],
-            'aar.account_id=main_table.id',
-            []
-        );
-
-        return $accountCollection->getItems();
-    }
 
     protected function getAccountData($account, $key)
     {

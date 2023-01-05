@@ -8,23 +8,18 @@
 
 namespace Ess\M2ePro\Model\Listing\Product;
 
-/**
- * Class \Ess\M2ePro\Model\Listing\Product\ScheduledAction
- */
 class ScheduledAction extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Listing\Product */
     protected $listingProduct = null;
 
-    //########################################
-
-    public function _construct()
+    protected function _construct(): void
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction::class);
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {

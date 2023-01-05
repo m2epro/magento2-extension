@@ -168,9 +168,12 @@ abstract class BasePriceTracker implements TrackerInterface
             )
         ;
 
-        /* Не включаем в выборку grouped and bundle товары */
-        $query->andWhere('lpvo.product_type != ?', 'grouped');
-        $query->andWhere('lpvo.product_type != ?', 'bundle');
+        /* Не включаємо у вибірку grouped and bundle товари */
+        $query->andWhere("IFNULL(lpvo.product_type, 'simple') != ?", 'grouped');
+        $query->andWhere("IFNULL(lpvo.product_type, 'simple') != ?", 'bundle');
+
+        /* Не включаємо у вибірку товари з поміткою duplicate */
+        $query->andWhere("JSON_EXTRACT(lp.additional_data, '$.item_duplicate_action_required') IS NULL");
 
         $query->addGroup('lp.id');
         $query->addGroup('IFNULL(lpvo.product_id, lp.product_id)');

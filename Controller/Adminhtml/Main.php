@@ -357,8 +357,7 @@ abstract class Main extends Base
         }
 
         if ($this->getHelper('Module')->isReadyToWork() &&
-            $this->getHelper('Module\Cron')->isLastRunMoreThan(1, true) &&
-            !$this->getHelper('Module')->isDevelopmentEnvironment()
+            $this->getHelper('Module\Cron')->isLastRunMoreThan(1, true)
         ) {
             $url = $this->getHelper('Module\Support')->getSupportUrl('/support/solutions/articles/9000200402');
 

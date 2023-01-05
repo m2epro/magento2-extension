@@ -12,9 +12,6 @@ use Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 
 class CheckAuth extends Account
 {
-    /** @var \Ess\M2ePro\Helper\Module */
-    private $helperModule;
-
     /** @var \Ess\M2ePro\Helper\Module\Exception */
     private $helperException;
 
@@ -22,7 +19,6 @@ class CheckAuth extends Account
     private $helperData;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Module $helperModule,
         \Ess\M2ePro\Helper\Module\Exception $helperException,
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -30,24 +26,12 @@ class CheckAuth extends Account
     ) {
         parent::__construct($amazonFactory, $context);
 
-        $this->helperModule = $helperModule;
         $this->helperException = $helperException;
         $this->helperData = $helperData;
     }
 
     public function execute()
     {
-        if (!$this->helperModule->isProductionEnvironment()) {
-            $this->setJsonContent(
-                [
-                    'result' => true,
-                    'reason' => null
-                ]
-            );
-
-            return $this->getResult();
-        }
-
         $merchantId = $this->getRequest()->getParam('merchant_id');
         $token = $this->getRequest()->getParam('token');
         $marketplaceId = $this->getRequest()->getParam('marketplace_id');

@@ -121,8 +121,6 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
             $trackingAttributes,
             $walmartSellingFormatTemplate->getSaleTimeStartDateAttributes(),
             $walmartSellingFormatTemplate->getSaleTimeEndDateAttributes(),
-            $walmartSellingFormatTemplate->getMapPriceAttributes(),
-            $walmartSellingFormatTemplate->getProductTaxCodeAttributes(),
             $walmartSellingFormatTemplate->getItemWeightAttributes(),
             $walmartSellingFormatTemplate->getMustShipAloneAttributes(),
             $walmartSellingFormatTemplate->getShipsInOriginalPackagingModeAttributes(),
@@ -162,7 +160,6 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
             $walmartDescriptionTemplate->getManufacturerAttributes(),
             $walmartDescriptionTemplate->getManufacturerPartNumberAttributes(),
             $walmartDescriptionTemplate->getMsrpRrpAttributes(),
-            $walmartDescriptionTemplate->getKeywordsAttributes(),
             $walmartDescriptionTemplate->getImageMainAttributes(),
             $walmartDescriptionTemplate->getGalleryImagesAttributes(),
             $walmartDescriptionTemplate->getImageVariationDifferenceAttributes()

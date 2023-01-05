@@ -20,8 +20,6 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
     private $moduleMaintenanceHelper;
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfigurationHelper;
-    /** @var \Ess\M2ePro\Helper\Component\Ebay\PickupStore */
-    private $ebayPickupStoreHelper;
     /** @var \Ess\M2ePro\Model\Log\Clearing */
     private $logClearing;
 
@@ -30,7 +28,6 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param \Ess\M2ePro\Helper\Module $moduleHelper
      * @param \Ess\M2ePro\Helper\Module\Maintenance $moduleMaintenanceHelper
      * @param \Ess\M2ePro\Helper\Module\Configuration $moduleConfigurationHelper
-     * @param \Ess\M2ePro\Helper\Component\Ebay\PickupStore $ebayPickupStoreHelper
      * @param \Ess\M2ePro\Model\Log\Clearing $logClearing
      * @param \Ess\M2ePro\Helper\Factory $helperFactory
      * @param \Ess\M2ePro\Model\Factory $modelFactory
@@ -40,7 +37,6 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
         \Ess\M2ePro\Helper\Module $moduleHelper,
         \Ess\M2ePro\Helper\Module\Maintenance $moduleMaintenanceHelper,
         \Ess\M2ePro\Helper\Module\Configuration $moduleConfigurationHelper,
-        \Ess\M2ePro\Helper\Component\Ebay\PickupStore $ebayPickupStoreHelper,
         \Ess\M2ePro\Model\Log\Clearing $logClearing,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
@@ -51,7 +47,6 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
         $this->moduleHelper = $moduleHelper;
         $this->moduleMaintenanceHelper = $moduleMaintenanceHelper;
         $this->moduleConfigurationHelper = $moduleConfigurationHelper;
-        $this->ebayPickupStoreHelper = $ebayPickupStoreHelper;
         $this->logClearing = $logClearing;
     }
 
@@ -215,13 +210,5 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
             $groups['sync_logs_and_events_clearing']['fields']['sync_log_mode_field']['value'],
             $groups['sync_logs_and_events_clearing']['fields']['sync_log_days_field']['value']
         );
-
-        if ($this->ebayPickupStoreHelper->isFeatureEnabled()) {
-            $this->logClearing->saveSettings(
-                \Ess\M2ePro\Model\Log\Clearing::LOG_EBAY_PICKUP_STORE,
-                $groups['in_store_pickup_log_clearing']['fields']['in_store_pickup_log_mode_field']['value'],
-                $groups['in_store_pickup_log_clearing']['fields']['in_store_pickup_log_days_field']['value']
-            );
-        }
     }
 }

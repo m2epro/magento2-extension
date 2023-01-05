@@ -481,7 +481,12 @@ class Data
         return !empty($prefix) ? $prefix . $hash : $hash;
     }
 
-    //########################################
+    public function md5String(string $string): string
+    {
+        return $this->hashString($string, 'md5');
+    }
+
+    // ----------------------------------------
 
     /**
      * It prevents situations when json_encode() returns FALSE due to some broken bytes sequence.

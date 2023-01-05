@@ -347,11 +347,8 @@ class Builder extends AbstractModel
         $finalFee = $this->order->getChildObject()->getApproximatelyFinalFee();
         $magentoOrder = $this->order->getMagentoOrder();
 
-        if (
-            !empty($finalFee)
-            && !empty($magentoOrder)
-            && $this->isMagentoOrderUpdatable($magentoOrder)
-        ) {
+        if (!empty($finalFee) && !empty($magentoOrder)) {
+
             if (!empty($magentoOrder->getPayment())) {
                 $paymentAdditionalData = $this->getHelper('Data')->unserialize(
                     $magentoOrder->getPayment()->getAdditionalData()
@@ -543,18 +540,6 @@ class Builder extends AbstractModel
     }
 
     /**
-     * @param ?\Magento\Sales\Model\Order $magentoOrder
-     *
-     * @return bool
-     */
-    protected function isMagentoOrderUpdatable(?\Magento\Sales\Model\Order $magentoOrder): bool
-    {
-        return $magentoOrder !== null
-            && $magentoOrder->getState() !== \Magento\Sales\Model\Order::STATE_CLOSED
-            && $magentoOrder->getState() !== \Magento\Sales\Model\Order::STATE_CANCELED;
-    }
-
-    /**
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function createOrUpdateOrder()
@@ -589,12 +574,7 @@ class Builder extends AbstractModel
                 $this->order->getReserve()->cancel();
             }
 
-            $magentoOrder = $this->order->getMagentoOrder();
-            if (
-                $magentoOrder !== null
-                && !$magentoOrder->isCanceled()
-                && $this->isMagentoOrderUpdatable($magentoOrder)
-            ) {
+            if ($this->order->getMagentoOrder() !== null && !$this->order->getMagentoOrder()->isCanceled()) {
                 $this->order->cancelMagentoOrder();
             }
         }
@@ -1030,7 +1010,7 @@ class Builder extends AbstractModel
         }
 
         $magentoOrder = $this->order->getMagentoOrder();
-        if ($magentoOrder === null || !$this->isMagentoOrderUpdatable($magentoOrder)) {
+        if ($magentoOrder === null) {
             return;
         }
 

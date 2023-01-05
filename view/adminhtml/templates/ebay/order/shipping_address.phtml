@@ -61,7 +61,7 @@
         </td>
     </tr>
 
-    <?php if (!$block->getOrder()->getChildObject()->isUseClickAndCollect() && !$block->getOrder()->getChildObject()->isUseInStorePickup()) : ?>
+    <?php if (!$block->getOrder()->getChildObject()->isUseClickAndCollect()) : ?>
         <tr>
             <td class="label"><?php echo $block->__('Address'); ?></td>
             <td class="value">

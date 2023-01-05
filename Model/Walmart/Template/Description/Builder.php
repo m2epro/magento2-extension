@@ -127,10 +127,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'other_features_mode' => Description::OTHER_FEATURES_MODE_NONE,
             'other_features'      => $this->getHelper('Data')->jsonEncode([]),
 
-            'keywords_mode'             => Description::KEYWORDS_MODE_NONE,
-            'keywords_custom_value'     => '',
-            'keywords_custom_attribute' => '',
-
             'attributes_mode' => Description::ATTRIBUTES_MODE_NONE,
             'attributes'      => $this->getHelper('Data')->jsonEncode([]),
             'attributes_name' => $this->getHelper('Data')->jsonEncode([]),

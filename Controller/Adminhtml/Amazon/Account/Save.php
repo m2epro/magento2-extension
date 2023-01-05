@@ -22,25 +22,10 @@ class Save extends Account
     private $serverAccountCreate;
     /** @var \Ess\M2ePro\Model\Amazon\Account\Builder */
     private $accountBuilder;
-    /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing\SnapshotBuilder */
-    private $repricingSnapshotBuilder;
-    /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing\Diff */
-    private $repricingSnapshotDiff;
-    /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing\Builder */
-    private $repricingBuilder;
-    /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing\AffectedListingsProducts */
-    private $repricingAffectedListingsProducts;
-    /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing\ChangeProcessor */
-    private $repricingChangeProcessor;
 
     /**
      * @param \Ess\M2ePro\Model\Amazon\Account\Builder $accountBuilder
      * @param \Ess\M2ePro\Model\Amazon\Account\Server\Create $serverAccountCreate
-     * @param \Ess\M2ePro\Model\Amazon\Account\Repricing\Diff $repricingSnapshotDiff
-     * @param \Ess\M2ePro\Model\Amazon\Account\Repricing\Builder $repricingBuilder
-     * @param \Ess\M2ePro\Model\Amazon\Account\Repricing\SnapshotBuilder $repricingSnapshotBuilder
-     * @param \Ess\M2ePro\Model\Amazon\Account\Repricing\AffectedListingsProducts $repricingAffectedListingsProducts
-     * @param \Ess\M2ePro\Model\Amazon\Account\Repricing\ChangeProcessor $repricingChangeProcessor
      * @param \Ess\M2ePro\Helper\Module\Wizard $helperWizard
      * @param \Ess\M2ePro\Helper\Module\Exception $helperException
      * @param \Ess\M2ePro\Helper\Data $helperData
@@ -50,11 +35,6 @@ class Save extends Account
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Account\Builder $accountBuilder,
         \Ess\M2ePro\Model\Amazon\Account\Server\Create $serverAccountCreate,
-        \Ess\M2ePro\Model\Amazon\Account\Repricing\Diff $repricingSnapshotDiff,
-        \Ess\M2ePro\Model\Amazon\Account\Repricing\Builder $repricingBuilder,
-        \Ess\M2ePro\Model\Amazon\Account\Repricing\SnapshotBuilder $repricingSnapshotBuilder,
-        \Ess\M2ePro\Model\Amazon\Account\Repricing\AffectedListingsProducts $repricingAffectedListingsProducts,
-        \Ess\M2ePro\Model\Amazon\Account\Repricing\ChangeProcessor $repricingChangeProcessor,
         \Ess\M2ePro\Helper\Module\Wizard $helperWizard,
         \Ess\M2ePro\Helper\Module\Exception $helperException,
         \Ess\M2ePro\Helper\Data $helperData,
@@ -68,11 +48,6 @@ class Save extends Account
         $this->helperData = $helperData;
         $this->serverAccountCreate = $serverAccountCreate;
         $this->accountBuilder = $accountBuilder;
-        $this->repricingSnapshotBuilder = $repricingSnapshotBuilder;
-        $this->repricingSnapshotDiff = $repricingSnapshotDiff;
-        $this->repricingBuilder = $repricingBuilder;
-        $this->repricingAffectedListingsProducts = $repricingAffectedListingsProducts;
-        $this->repricingChangeProcessor = $repricingChangeProcessor;
     }
 
     // ----------------------------------------
@@ -135,34 +110,6 @@ class Save extends Account
 
             $this->updateAccount($account, $data);
         }
-
-        // Repricing
-        // ---------------------------------------
-        if (!empty($post['repricing']) && $account->getChildObject()->isRepricing()) {
-            /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing $repricingModel */
-            $repricingModel = $account->getChildObject()->getRepricing();
-
-            $this->repricingSnapshotBuilder->setModel($repricingModel);
-
-            $repricingOldData = $this->repricingSnapshotBuilder->getSnapshot();
-
-            $this->repricingBuilder->build($repricingModel, $post['repricing']);
-
-            $this->repricingSnapshotBuilder->setModel($repricingModel);
-
-            $repricingNewData = $this->repricingSnapshotBuilder->getSnapshot();
-
-            $this->repricingSnapshotDiff->setOldSnapshot($repricingOldData);
-            $this->repricingSnapshotDiff->setNewSnapshot($repricingNewData);
-
-            $this->repricingAffectedListingsProducts->setModel($repricingModel);
-
-            $this->repricingChangeProcessor->process(
-                $this->repricingSnapshotDiff,
-                $this->repricingAffectedListingsProducts->getObjectsData(['id', 'status'])
-            );
-        }
-        // ---------------------------------------
 
         if ($this->isAjax()) {
             $this->setJsonContent([

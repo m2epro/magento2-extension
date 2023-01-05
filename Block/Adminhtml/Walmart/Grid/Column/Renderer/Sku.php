@@ -35,8 +35,9 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         $this->translationHelper = $translationHelper;
     }
 
-    //########################################
-
+    /**
+     * @inheritDoc
+     */
     public function render(\Magento\Framework\DataObject $row)
     {
         $value = $this->_getValue($row);
@@ -73,26 +74,6 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 HTML;
         }
 
-        if (!$isVariationParent && $row->getData('is_online_price_invalid')) {
-
-            $message = <<<HTML
-Item Price violates Walmart pricing rules. Please adjust the Item Price to comply with the Walmart requirements.<br>
-Once the changes are applied, Walmart Item will become Active automatically.
-HTML;
-            $msg = '<p>' . $this->translationHelper->__($message) . '</p>';
-            if (empty($msg)) {
-                return $value;
-            }
-
-            $value .= <<<HTML
-<span class="fix-magento-tooltip">
-    {$this->getTooltipHtml($msg, 'map_link_defected_message_icon_'.$row->getId())}
-</span>
-HTML;
-        }
-
         return $value;
     }
-
-    //########################################
 }

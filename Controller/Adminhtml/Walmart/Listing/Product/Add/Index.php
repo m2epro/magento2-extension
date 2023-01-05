@@ -9,25 +9,29 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
 use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode as SourceModeBlock;
-use Ess\M2ePro\Controller\Adminhtml\Context;
 
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $sessionHelper;
-
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalData;
-
-    /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\CollectionFactory */
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory */
     private $listingProductCollectionFactory;
 
+    /**
+     * @param \Ess\M2ePro\Helper\Data\Session $sessionHelper
+     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalData
+     * @param \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory
+     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
+     */
     public function __construct(
         \Ess\M2ePro\Helper\Data\Session $sessionHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalData,
-        \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\CollectionFactory $listingProductCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
-        Context $context
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($walmartFactory, $context);
 
@@ -100,7 +104,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
                 return $this->_redirect('*/*/index', ['_current' => true, 'step' => 2, 'source' => $source]);
             }
 
-            return $this->_redirect('*/*/index', ['clear'=>'yes']);
+            return $this->_redirect('*/*/index', ['clear' => 'yes']);
         }
 
         $this->addContent(
@@ -108,8 +112,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         );
         $this->setPageHelpLink('x/PQBhAQ');
     }
-
-    //########################################
 
     public function stepOneSourceProducts()
     {
@@ -243,8 +245,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         $gridContainer->getChildBlock('grid')->setCurrentCategoryId($this->getSessionValue('current_category_id'));
     }
 
-    //########################################
-
     protected function addCategoryTemplateView()
     {
         $listingProductsIds = $this->getAddedListingProductsIds();
@@ -264,8 +264,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         );
     }
 
-    //----------------------------------------
-
     protected function getAddedListingProductsIds()
     {
         $listingProductsIds = $this->sessionHelper->getValue('temp_products');
@@ -282,8 +280,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         return $listingProductsIds;
     }
 
-    //########################################
-
     protected function review()
     {
         $listingId = $this->getRequest()->getParam('id');
@@ -294,7 +290,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         }
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
-        $collection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
+        $collection = $this->listingProductCollectionFactory
+            ->create(['childMode' => \Ess\M2ePro\Helper\Component\Walmart::NICK]);
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns([
             'id' => 'main_table.id'
@@ -374,13 +371,14 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 
     private function addVariationAttributes($productsIds)
     {
-        $listingProductCollection = $this->listingProductCollectionFactory->create();
+        $listingProductCollection = $this->listingProductCollectionFactory
+            ->create(['childMode' => \Ess\M2ePro\Helper\Component\Walmart::NICK]);
         $listingProductCollection->addFieldToFilter('listing_product_id', ['in' => $productsIds]);
         $listingProductCollection->addFieldToFilter('is_variation_product', 1);
 
-        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $listingProduct */
+        /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         foreach ($listingProductCollection as $listingProduct) {
-            $listingProduct->addVariationAttributes();
+            $listingProduct->getChildObject()->addVariationAttributes();
         }
     }
 
@@ -402,7 +400,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
                             ->getData();
 
         $storeId = isset($listingData['store_id']) ? (int)$listingData['store_id'] : 0;
-        $prefix .= isset($listingData['id']) ? '_'.$listingData['id'] : '';
+        $prefix .= isset($listingData['id']) ? '_' . $listingData['id'] : '';
         $this->globalData->setValue('rule_prefix', $prefix);
 
         $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
@@ -428,6 +426,25 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         }
 
         $this->globalData->setValue('rule_model', $ruleModel);
+    }
+
+    /**
+     * @param array $additionalData
+     *
+     * @return void
+     */
+    protected function cancelProductsAdding(array $additionalData)
+    {
+        $this->endWizard();
+        $this->sessionHelper->setValue('products_source', '');
+        $this->sessionHelper->setValue('added_products_ids', []);
+
+        if (
+            !empty($additionalData['adding_listing_products_ids'])
+            && is_array($additionalData['adding_listing_products_ids'])
+        ) {
+            $this->deleteListingProducts($additionalData['adding_listing_products_ids']);
+        }
     }
 
     public function clear()

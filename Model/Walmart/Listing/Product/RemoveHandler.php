@@ -11,17 +11,12 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product;
 
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Listing\Product\RemoveHandler
- */
 class RemoveHandler extends \Ess\M2ePro\Model\Listing\Product\RemoveHandler
 {
     /** @var \Ess\M2ePro\Model\Walmart\Listing\Product */
-    protected $parentWalmartListingProductForProcess = null;
+    private $parentWalmartListingProductForProcess;
 
-    //########################################
-
-    protected function eventBeforeProcess()
+    protected function eventBeforeProcess(): void
     {
         parent::eventBeforeProcess();
 
@@ -47,7 +42,7 @@ class RemoveHandler extends \Ess\M2ePro\Model\Listing\Product\RemoveHandler
         }
     }
 
-    protected function eventAfterProcess()
+    protected function eventAfterProcess(): void
     {
         parent::eventAfterProcess();
 
@@ -60,16 +55,14 @@ class RemoveHandler extends \Ess\M2ePro\Model\Listing\Product\RemoveHandler
         $parentTypeModel->getProcessor()->process();
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return \Ess\M2ePro\Model\Walmart\Listing\Product
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function getWalmartListingProduct()
+    private function getWalmartListingProduct()
     {
-        return $this->listingProduct->getChildObject();
+        return $this->getListingProduct()->getChildObject();
     }
-
-    //########################################
 }

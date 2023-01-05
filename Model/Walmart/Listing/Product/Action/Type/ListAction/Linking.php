@@ -8,12 +8,8 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction;
 
-use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction\Linking
- */
 class Linking extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -25,8 +21,6 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
 
     protected $activeRecordFactory;
     protected $walmartFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -40,13 +34,11 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
         parent::__construct($helperFactory, $modelFactory, $data);
     }
 
-    //########################################
-
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
      * @return $this
      */
-    public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct): Linking
     {
         $this->listingProduct = $listingProduct;
         return $this;
@@ -56,7 +48,7 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
      * @param array $productIdentifiers
      * @return $this
      */
-    public function setProductIdentifiers(array $productIdentifiers)
+    public function setProductIdentifiers(array $productIdentifiers): Linking
     {
         $this->productIdentifiers = $productIdentifiers;
         return $this;
@@ -66,27 +58,29 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
      * @param $sku
      * @return $this
      */
-    public function setSku($sku)
+    public function setSku($sku): Linking
     {
         $this->sku = $sku;
         return $this;
     }
 
-    //########################################
-
     /**
      * @return bool
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function link()
+    public function link(): bool
     {
         $this->validate();
 
         if (!$this->getVariationManager()->isRelationMode()) {
-            return $this->linkSimpleOrIndividualProduct();
+            $this->linkSimpleOrIndividualProduct();
+            return true;
         }
 
         if ($this->getVariationManager()->isRelationChildType()) {
-            return $this->linkChildProduct();
+            $this->linkChildProduct();
+            return true;
         }
 
         return false;
@@ -97,7 +91,7 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Exception
      */
-    public function createWalmartItem()
+    public function createWalmartItem(): \Ess\M2ePro\Model\Walmart\Item
     {
         $data = [
             'account_id'     => $this->getListingProduct()->getListing()->getAccountId(),
@@ -107,15 +101,13 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
             'store_id'       => $this->getListingProduct()->getListing()->getStoreId(),
         ];
 
-        $helper = $this->getHelper('Data');
-
         if ($this->getVariationManager()->isPhysicalUnit() &&
             $this->getVariationManager()->getTypeModel()->isVariationProductMatched()
         ) {
 
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\PhysicalUnit $typeModel */
             $typeModel = $this->getVariationManager()->getTypeModel();
-            $data['variation_product_options'] = $helper->jsonEncode($typeModel->getProductOptions());
+            $data['variation_product_options'] = \Ess\M2ePro\Helper\Json::encode($typeModel->getProductOptions());
         }
 
         if ($this->getVariationManager()->isRelationChildType()) {
@@ -123,13 +115,15 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
             $typeModel = $this->getVariationManager()->getTypeModel();
 
             if ($typeModel->isVariationProductMatched()) {
-                $data['variation_product_options'] = $helper->jsonEncode($typeModel->getRealProductOptions());
+                $data['variation_product_options'] = \Ess\M2ePro\Helper\Json::encode(
+                    $typeModel->getRealProductOptions()
+                );
             }
         }
 
         if ($this->getListingProduct()->getMagentoProduct()->isGroupedType()) {
             $additionalData = $this->getListingProduct()->getAdditionalData();
-            $data['additional_data'] = $this->getHelper('Data')->jsonEncode([
+            $data['additional_data'] = \Ess\M2ePro\Helper\Json::encode([
                 'grouped_product_mode' => $additionalData['grouped_product_mode']
             ]);
         }
@@ -142,9 +136,11 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
         return $object;
     }
 
-    //########################################
-
-    private function validate()
+    /**
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function validate(): void
     {
         $listingProduct = $this->getListingProduct();
         if (empty($listingProduct)) {
@@ -162,32 +158,41 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
         }
     }
 
-    //########################################
-
-    private function linkSimpleOrIndividualProduct()
+    /**
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception
+     */
+    private function linkSimpleOrIndividualProduct(): void
     {
-        $data = [
-            'sku' => $this->getSku(),
-        ];
+        $this->getListingProduct()->addData([
+            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
+        ]);
 
-        $data = array_merge($data, $this->getProductIdentifiers());
+        $productIdentifiers = $this->getProductIdentifiers();
 
-        $this->getListingProduct()->addData($data);
+        $this->getWalmartListingProduct()->addData([
+            'wpid'    => $productIdentifiers['wpid'],
+            'item_id' => $productIdentifiers['item_id'],
+            'gtin'    => $productIdentifiers['gtin'],
+            'upc'     => $productIdentifiers['upc'] ?? null,
+            'ean'     => $productIdentifiers['ean'] ?? null,
+            'isbn'    => $productIdentifiers['isbn'] ?? null,
+            'sku'     => $this->getSku(),
+        ]);
+
         $this->getListingProduct()->save();
 
-        return true;
+        $this->createWalmartItem();
     }
 
-    private function linkChildProduct()
+    /**
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function linkChildProduct(): void
     {
-        $data = [
-            'sku' => $this->getSku(),
-        ];
-
-        $data = array_merge($data, $this->getProductIdentifiers());
-
-        $this->getListingProduct()->addData($data);
-        $this->getListingProduct()->save();
+        $this->linkSimpleOrIndividualProduct();
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Child $typeModel */
         $typeModel = $this->getVariationManager()->getTypeModel();
@@ -199,51 +204,48 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
             ->getTypeModel();
 
         $parentTypeModel->getProcessor()->process();
-
-        return true;
     }
 
-    //########################################
-
     /**
-     * @return \Ess\M2ePro\Model\Listing\Product
+     * @return \Ess\M2ePro\Model\Listing\Product|null
      */
-    private function getListingProduct()
+    private function getListingProduct(): ?\Ess\M2ePro\Model\Listing\Product
     {
         return $this->listingProduct;
     }
 
     /**
      * @return \Ess\M2ePro\Model\Walmart\Listing\Product
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    private function getWalmartListingProduct()
+    private function getWalmartListingProduct(): \Ess\M2ePro\Model\Walmart\Listing\Product
     {
         return $this->getListingProduct()->getChildObject();
     }
 
     /**
      * @return \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    private function getVariationManager()
+    private function getVariationManager(): \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager
     {
         return $this->getWalmartListingProduct()->getVariationManager();
     }
 
-    // ---------------------------------------
-
-    private function getProductIdentifiers()
+    /**
+     * @return array
+     */
+    private function getProductIdentifiers(): array
     {
         return $this->productIdentifiers;
     }
 
-    private function getSku()
+    /**
+     * @return string|null
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function getSku(): ?string
     {
-        if ($this->sku !== null) {
-            return $this->sku;
-        }
-
-        return $this->getWalmartListingProduct()->getSku();
+        return $this->sku ?? $this->getWalmartListingProduct()->getSku();
     }
-
-    //########################################
 }

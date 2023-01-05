@@ -8,20 +8,15 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection
- */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     /** how much time should pass to increase priority value by 1 */
-    const SECONDS_TO_INCREMENT_PRIORITY = 30;
+    private const SECONDS_TO_INCREMENT_PRIORITY = 30;
 
     /** @var null|string */
     protected $componentMode = null;
 
-    //########################################
-
-    public function _construct()
+    protected function _construct(): void
     {
         parent::_construct();
         $this->_init(
@@ -30,7 +25,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         );
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param $componentMode

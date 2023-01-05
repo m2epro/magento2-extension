@@ -19,9 +19,6 @@ use Ess\M2ePro\Model\Magento\Product\Cache;
 use Ess\M2ePro\Model\Listing\Product\Variation;
 use Ess\M2ePro\Model\Template\SellingFormat;
 
-/**
- * Class \Ess\M2ePro\Model\Listing\Product\PriceCalculator
- */
 abstract class PriceCalculator extends AbstractModel
 {
     const MODE_NONE      = 0;
@@ -303,6 +300,7 @@ abstract class PriceCalculator extends AbstractModel
             return 0;
         }
 
+        $this->setAttributeSourceProduct($this->getMagentoProduct());
         $value = $this->getProductBaseValue();
         return $this->prepareFinalValue($value);
     }
@@ -313,6 +311,16 @@ abstract class PriceCalculator extends AbstractModel
             return 0;
         }
 
+        if ($this->getMagentoProduct()->isBundleType() && $this->isPriceVariationModeParent()) {
+            $magentoProduct = $this->getMagentoProduct();
+        } else {
+            $options = $variation->getOptions(true);
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
+            $option = reset($options);
+            $magentoProduct = $option->getMagentoProduct();
+        }
+
+        $this->setAttributeSourceProduct($magentoProduct);
         $value = $this->getVariationBaseValue($variation);
         return $this->prepareFinalValue($value);
     }
@@ -330,8 +338,10 @@ abstract class PriceCalculator extends AbstractModel
                 $value = $this->getConfigurableProductValue($this->getMagentoProduct());
             } elseif ($this->getMagentoProduct()->isGroupedType()) {
                 $value = $this->getGroupedProductValue($this->getMagentoProduct());
-            } elseif ($this->getMagentoProduct()->isBundleType() &&
-                $this->getMagentoProduct()->isBundlePriceTypeDynamic()) {
+            } elseif (
+                $this->getMagentoProduct()->isBundleType()
+                && $this->getMagentoProduct()->isBundlePriceTypeDynamic()
+            ) {
                 $value = $this->getBundleProductDynamicValue($this->getMagentoProduct());
             } else {
                 $value = $this->getExistedProductValue($this->getMagentoProduct());
@@ -341,16 +351,20 @@ abstract class PriceCalculator extends AbstractModel
                 $value = $this->getConfigurableProductValue($this->getMagentoProduct());
             } elseif ($this->getMagentoProduct()->isGroupedType()) {
                 $value = $this->getGroupedProductValue($this->getMagentoProduct());
-            } elseif ($this->getMagentoProduct()->isBundleType() &&
-                $this->getMagentoProduct()->isBundlePriceTypeDynamic()) {
+            } elseif (
+                $this->getMagentoProduct()->isBundleType()
+                && $this->getMagentoProduct()->isBundlePriceTypeDynamic()
+            ) {
                 $value = $this->getBundleProductDynamicSpecialValue($this->getMagentoProduct());
             } else {
                 $value = $this->getExistedProductSpecialValue($this->getMagentoProduct());
             }
         } elseif ($this->isSourceModeAttribute()) {
             if ($this->getMagentoProduct()->isConfigurableType()) {
-                if ($this->getSource('attribute') == Attribute::PRICE_CODE ||
-                    $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE) {
+                if (
+                    $this->getSource('attribute') == Attribute::PRICE_CODE
+                    || $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE
+                ) {
                     $value = $this->getConfigurableProductValue($this->getMagentoProduct());
                 } else {
                     $value = $this->getHelper('Magento\Attribute')->convertAttributeTypePriceFromStoreToMarketplace(
@@ -361,8 +375,10 @@ abstract class PriceCalculator extends AbstractModel
                     );
                 }
             } elseif ($this->getMagentoProduct()->isGroupedType()) {
-                if ($this->getSource('attribute') == Attribute::PRICE_CODE ||
-                    $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE) {
+                if (
+                    $this->getSource('attribute') == Attribute::PRICE_CODE
+                    || $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE
+                ) {
                     $value = $this->getGroupedProductValue($this->getMagentoProduct());
                 } else {
                     $value = $this->getHelper('Magento\Attribute')->convertAttributeTypePriceFromStoreToMarketplace(
@@ -372,12 +388,20 @@ abstract class PriceCalculator extends AbstractModel
                         $this->getListing()->getStoreId()
                     );
                 }
-            } elseif ($this->getMagentoProduct()->isBundleType() &&
-                       ($this->getMagentoProduct()->isBundlePriceTypeDynamic() ||
-                        ($this->getMagentoProduct()->isBundlePriceTypeFixed() &&
-                         $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE))) {
-                if ($this->getMagentoProduct()->isBundlePriceTypeFixed() &&
-                    $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE) {
+            } elseif (
+                $this->getMagentoProduct()->isBundleType()
+                && (
+                    $this->getMagentoProduct()->isBundlePriceTypeDynamic()
+                    || (
+                        $this->getMagentoProduct()->isBundlePriceTypeFixed()
+                        && $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE
+                    )
+                )
+            ) {
+                if (
+                    $this->getMagentoProduct()->isBundlePriceTypeFixed()
+                    && $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE
+                ) {
                     $value = $this->getExistedProductSpecialValue($this->getMagentoProduct());
                 } else {
                     if ($this->getSource('attribute') == Attribute::PRICE_CODE) {
@@ -506,10 +530,14 @@ abstract class PriceCalculator extends AbstractModel
             return $value;
         }
 
-        if ($this->getMagentoProduct()->isBundlePriceTypeFixed() ||
-            ($this->isSourceModeAttribute() &&
-             $this->getSource('attribute') != Attribute::PRICE_CODE &&
-             $this->getSource('attribute') != Attribute::SPECIAL_PRICE_CODE)) {
+        if (
+            $this->getMagentoProduct()->isBundlePriceTypeFixed()
+            || (
+                $this->isSourceModeAttribute()
+                && $this->getSource('attribute') != Attribute::PRICE_CODE
+                && $this->getSource('attribute') != Attribute::SPECIAL_PRICE_CODE
+            )
+        ) {
             $value = $this->getProductBaseValue();
 
             if ($this->isSourceModeTier()) {
@@ -529,16 +557,22 @@ abstract class PriceCalculator extends AbstractModel
                 $value += $tempValue;
             }
 
-            if ($this->isSourceModeSpecial() &&
-                $value > 0 && $this->getMagentoProduct()->isSpecialPriceActual()) {
+            if (
+                $this->isSourceModeSpecial()
+                && $value > 0
+                && $this->getMagentoProduct()->isSpecialPriceActual()
+            ) {
                 $percent = (double)$this->getMagentoProduct()->getProduct()->getSpecialPrice();
                 $value = round((($value * $percent) / 100), 2);
             }
 
             if ($this->isSourceModeAttribute()) {
-                if ($this->moduleConfiguration->isEnableMagentoAttributePriceTypeConvertingMode() &&
-                    ($this->getSource('attribute') == Attribute::PRICE_CODE ||
-                     $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE)
+                if (
+                    $this->moduleConfiguration->isEnableMagentoAttributePriceTypeConvertingMode()
+                    && (
+                        $this->getSource('attribute') == Attribute::PRICE_CODE
+                        || $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE
+                    )
                 ) {
                     $value = $this->convertValueFromStoreToMarketplace($value);
                 }
@@ -645,8 +679,10 @@ abstract class PriceCalculator extends AbstractModel
                     continue;
                 }
 
-                if ($tempOption->getData('price_type') !== null &&
-                    $tempOption->getData('price_type') !== false) {
+                if (
+                    $tempOption->getData('price_type') !== null
+                    && $tempOption->getData('price_type') !== false
+                ) {
                     switch ($tempOption->getData('price_type')) {
                         case 'percent':
                             if ($this->isSourceModeTier()) {
@@ -727,9 +763,13 @@ abstract class PriceCalculator extends AbstractModel
                 } else {
                     $value = (float)$tempOption->getData('selection_price_value');
 
-                    if (($this->isSourceModeSpecial() || $this->isSourceModeAttribute() &&
-                        $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE) &&
-                        $this->getMagentoProduct()->isSpecialPriceActual()
+                    if (
+                        (
+                            $this->isSourceModeSpecial()
+                            || $this->isSourceModeAttribute()
+                            && $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE
+                        )
+                        && $this->getMagentoProduct()->isSpecialPriceActual()
                     ) {
                         $value = ($value * $product->getSpecialPrice()) / 100;
                     }
@@ -867,16 +907,18 @@ abstract class PriceCalculator extends AbstractModel
 
                 $variationValue *= $defaultQty;
                 $value += $variationValue;
-
             } elseif ($variationValue < $value || $value === 0) {
                 $value = $variationValue;
             }
         }
 
         if ($this->isSourceModeAttribute()) {
-            if ($this->moduleConfiguration->isEnableMagentoAttributePriceTypeConvertingMode() &&
-                ($this->getSource('attribute') == Attribute::PRICE_CODE ||
-                 $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE)
+            if (
+                $this->moduleConfiguration->isEnableMagentoAttributePriceTypeConvertingMode()
+                && (
+                    $this->getSource('attribute') == Attribute::PRICE_CODE
+                    || $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE
+                )
             ) {
                 return $this->convertValueFromStoreToMarketplace($value);
             }
@@ -913,9 +955,12 @@ abstract class PriceCalculator extends AbstractModel
         }
 
         if ($this->isSourceModeAttribute()) {
-            if ($this->moduleConfiguration->isEnableMagentoAttributePriceTypeConvertingMode() &&
-                ($this->getSource('attribute') == Attribute::PRICE_CODE ||
-                    $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE)
+            if (
+                $this->moduleConfiguration->isEnableMagentoAttributePriceTypeConvertingMode()
+                && (
+                    $this->getSource('attribute') == Attribute::PRICE_CODE
+                    || $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE
+                )
             ) {
                 return $this->convertValueFromStoreToMarketplace($value);
             }

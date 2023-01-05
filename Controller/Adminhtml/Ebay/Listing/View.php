@@ -64,7 +64,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         try {
             $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $id);
-        } catch (\LogicException $e) {
+        } catch (\Ess\M2ePro\Model\Exception\Logic $e) {
             $this->getMessageManager()->addError($this->__('Listing does not exist.'));
             return $this->_redirect('*/ebay_listing/index');
         }

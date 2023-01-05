@@ -8,36 +8,38 @@
 
 namespace Ess\M2ePro\Plugin\Order\Magento\Framework\App;
 
-/**
- * Class \Ess\M2ePro\Plugin\Order\Magento\Framework\App\Config
- */
 class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
-    protected $mutableConfig;
+    /** @var \Ess\M2ePro\Model\Magento\Config\Mutable */
+    private $mutableConfig;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+
 
     public function __construct(
         \Ess\M2ePro\Model\Magento\Config\Mutable $mutableConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
     ) {
         $this->mutableConfig = $mutableConfig;
+        $this->globalDataHelper = $globalDataHelper;
+
         parent::__construct($helperFactory, $modelFactory);
     }
 
-    //########################################
-
+    /**
+     * @return bool
+     */
     protected function canExecute()
     {
-        if (!$this->helperFactory->getObject('Data\GlobalData')->getValue('use_mutable_config')) {
+        if (!$this->globalDataHelper->getValue('use_mutable_config')) {
             return false;
         }
 
         return parent::canExecute();
     }
-
-    //########################################
 
     public function aroundGetValue($interceptor, \Closure $callback, ...$arguments)
     {
@@ -61,6 +63,4 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 
         return $callback(...$arguments);
     }
-
-    //########################################
 }

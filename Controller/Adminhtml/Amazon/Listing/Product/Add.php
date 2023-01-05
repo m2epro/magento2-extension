@@ -128,5 +128,26 @@ abstract class Add extends Main
         $this->getHelper('Magento')->clearMenuCache();
     }
 
-    //########################################
+    /**
+     * @param array $listingProductsIds
+     *
+     * @return void
+     */
+    protected function deleteListingProducts(array $listingProductsIds)
+    {
+        foreach ($listingProductsIds as $listingProductId) {
+            try {
+                $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $listingProductId);
+                $listingProduct->delete();
+            } catch (\Exception $e) {
+            }
+        }
+
+        $listing = $this->getListing();
+        $listing->setSetting('additional_data', 'adding_listing_products_ids', []);
+        $listing->setSetting('additional_data', 'adding_new_asin_listing_products_ids', []);
+        $listing->setSetting('additional_data', 'auto_search_was_performed', 0);
+        $listing->setSetting('additional_data', 'adding_new_asin_description_templates_data', []);
+        $listing->save();
+    }
 }

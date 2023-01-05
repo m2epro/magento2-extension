@@ -59,7 +59,9 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         );
 
         try {
+            /** @var \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
+            /** @var \Ess\M2ePro\Model\Cron\Task\Walmart\Listing\SynchronizeInventory\Requester $connectorObj */
             $connectorObj = $dispatcherObject->getCustomConnector(
                 'Cron_Task_Walmart_Listing_SynchronizeInventory_Requester',
                 [],

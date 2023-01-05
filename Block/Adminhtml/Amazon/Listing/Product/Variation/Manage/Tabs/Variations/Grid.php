@@ -8,6 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Variations;
 
+use Ess\M2ePro\Helper\Data\Product\Identifier;
 use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
@@ -20,25 +21,27 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct;
-
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
-
     /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
-
     /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
-
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-
     /** @var \Ess\M2ePro\Helper\Component\Amazon */
     private $amazonHelper;
 
-    /** @var \Ess\M2ePro\Helper\Component\Amazon\Repricing */
-    private $amazonRepricingHelper;
-
+    /**
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
+     * @param \Magento\Framework\Locale\CurrencyInterface $localeCurrency
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Backend\Helper\Data $backendHelper
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param \Ess\M2ePro\Helper\Component\Amazon $amazonHelper
+     * @param array $data
+     */
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
@@ -47,7 +50,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
-        \Ess\M2ePro\Helper\Component\Amazon\Repricing $amazonRepricingHelper,
         array $data = []
     ) {
         $this->amazonFactory = $amazonFactory;
@@ -55,7 +57,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->resourceConnection = $resourceConnection;
         $this->dataHelper = $dataHelper;
         $this->amazonHelper = $amazonHelper;
-        $this->amazonRepricingHelper = $amazonRepricingHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -246,8 +247,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_condition_callback' => [$this, 'callbackFilterPrice']
         ];
 
-        if ($this->amazonRepricingHelper->isEnabled() &&
-            $this->getListingProduct()->getListing()->getAccount()->getChildObject()->isRepricing()) {
+        if ($this->getListingProduct()->getListing()->getAccount()->getChildObject()->isRepricing()) {
             $priceColumn['filter'] = \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price::class;
         }
 
@@ -341,7 +341,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
             $html .= '<div class="m2ePro-variation-attributes product-options-list">';
             if (!$uniqueProductsIds) {
-                $url = $this->getUrl('catalog/product/edit', ['id' => reset($productsIds)]);
+                $data['id'] = reset($productsIds);
+                if ($this->getListingProduct()->getListing()->getStoreId() != null) {
+                    $data['store'] = $this->getListingProduct()->getListing()->getStoreId();
+                }
+                $url = $this->getUrl('catalog/product/edit', $data);
                 $html .= '<a href="' . $url . '" target="_blank">';
             }
             foreach ($productOptions as $attribute => $option) {
@@ -359,7 +363,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                     '</span></span>';
 
                 if ($uniqueProductsIds && $option !== '--' && !in_array($attribute, $virtualProductAttributes, true)) {
-                    $url = $this->getUrl('catalog/product/edit', ['id' => $productsIds[$attribute]]);
+                    $data['id'] = $productsIds[$attribute];
+                    if ($this->getListingProduct()->getListing()->getStoreId() != null) {
+                        $data['store'] = $this->getListingProduct()->getListing()->getStoreId();
+                    }
+                    $url = $this->getUrl('catalog/product/edit', $data);
                     $html .= '<a href="' . $url . '" target="_blank">' . $optionHtml . '</a><br/>';
                 } else {
                     $html .= $optionHtml . '<br/>';
@@ -537,7 +545,6 @@ HTML;
         $generalId = $row->getChildObject()->getData('general_id');
 
         if ($generalId === null || $generalId === '') {
-
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
             $amazonListingProduct = $this->getListingProduct()->getChildObject();
             if ($amazonListingProduct->isGeneralIdOwner()) {
@@ -546,7 +553,19 @@ HTML;
 
             return $this->__('N/A');
         }
-        return $this->getGeneralIdLink($generalId);
+        if (Identifier::isASIN($generalId) || Identifier::isISBN($generalId)) {
+            return $this->getGeneralIdLink($generalId);
+        }
+
+        $tooltip = $this->getTooltipHtml($this->__('Amazon returned UPC/EAN as the product ID'));
+        $result = <<<HTML
+<div style="display: flex; align-items: center;">
+    <span>{$generalId}</span>
+    {$tooltip}
+</div>
+HTML;
+
+        return $result;
     }
 
     public function callbackProductOptions($collection, $column)
@@ -686,8 +705,7 @@ HTML;
             $condition .= ' AND (second_table.online_regular_price IS NULL))';
         }
 
-        if ($this->amazonRepricingHelper->isEnabled() &&
-            (isset($value['is_repricing']) && $value['is_repricing'] !== '')) {
+        if (isset($value['is_repricing']) && $value['is_repricing'] !== '') {
             if (!empty($condition)) {
                 $condition = '(' . $condition . ') OR ';
             }

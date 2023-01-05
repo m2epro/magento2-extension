@@ -24,20 +24,12 @@ define([
         saveSettings: function ()
         {
             var isFormValid = true;
-            var nameTabs = []
-            jQuery.find('.tab-item-link._changed').forEach(x => {
-                var name = x.getAttribute('name')
-                nameTabs.push(name)
-            })
             var uiTabs = jQuery.find('div.ui-tabs-panel')
             uiTabs.forEach(item => {
                 var elementId = item.getAttribute('data-ui-id').split('-').pop();
-                // check isFormValid and if tab changed
-                if (isFormValid && nameTabs.indexOf(elementId) != -1) {
+                if (isFormValid) {
                     var form = jQuery(item).find('form');
-
                     if (form.length) {
-
                         if (!form.valid()) {
                             isFormValid = false;
                             return;

@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Other\View;
 
+use Ess\M2ePro\Model\Listing\Product;
+
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     /** @var \Magento\Framework\Locale\CurrencyInterface */
@@ -163,9 +165,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'type' => 'options',
             'sortable' => false,
             'options' => [
-                \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Active'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Inactive'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Incomplete')
+                Product::STATUS_LISTED => $this->__('Active'),
+                Product::STATUS_STOPPED => $this->__('Inactive'),
+                Product::STATUS_BLOCKED => $this->__('Incomplete')
             ],
             'frame_callback' => [$this, 'callbackColumnStatus']
         ]);
@@ -349,9 +351,7 @@ HTML;
     public function callbackColumnAvailableQty($value, $row, $column, $isExport)
     {
         $value = $row->getChildObject()->getData('online_qty');
-        if ($value === null || $value === '' ||
-            ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED &&
-             !$row->getData('is_online_price_invalid'))) {
+        if ($value === null || $value === '' || $row->getData('status') == Product::STATUS_BLOCKED) {
             return $this->__('N/A');
         }
 
@@ -365,34 +365,50 @@ HTML;
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
         $value = $row->getChildObject()->getData('online_price');
-        if ($value === null || $value === '' ||
-            ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED &&
-             !$row->getData('is_online_price_invalid'))) {
+        if ($value === null || $value === '' || $row->getData('status') == Product::STATUS_BLOCKED) {
             return $this->__('N/A');
         }
 
         $currency = $this->walmartFactory
-                        ->getObjectLoaded('Marketplace', $row->getData('marketplace_id'))
-                        ->getChildObject()
-                        ->getDefaultCurrency();
+            ->getObjectLoaded('Marketplace', $row->getData('marketplace_id'))
+            ->getChildObject()
+            ->getDefaultCurrency();
+        $value = $this->localeCurrency->getCurrency($currency)->toCurrency($value);
 
-        $priceValue = $this->localeCurrency->getCurrency($currency)->toCurrency($value);
+        if ($row->getChildObject()->getData('is_online_price_invalid')) {
+            $message = <<<HTML
+Item Price violates Walmart pricing rules. Please adjust the Item Price to comply with the Walmart requirements.<br>
+Once the changes are applied, Walmart Item will become Active automatically.
+HTML;
+            $msg = '<p>' . $this->__($message) . '</p>';
+            if (empty($msg)) {
+                return $value;
+            }
 
-        return $priceValue;
+            $value .= <<<HTML
+<span class="fix-magento-tooltip">
+    {$this->getTooltipHtml($message, 'map_link_defected_message_icon_' . $row->getId())}
+</span>
+HTML;
+
+            return $value;
+        }
+
+        return $value;
     }
 
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
         switch ($row->getData('status')) {
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED:
+            case Product::STATUS_LISTED:
                 $value = '<span style="color: green;">' . $value . '</span>';
                 break;
 
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED:
+            case Product::STATUS_STOPPED:
                 $value = '<span style="color: red;">' . $value . '</span>';
                 break;
 
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:
+            case Product::STATUS_BLOCKED:
                 $value = '<span style="color: orange; font-weight: bold;">' . $value . '</span>';
                 break;
 
@@ -465,17 +481,14 @@ HTML;
             return;
         }
 
-        $where = '';
+        $where = 'main_table.status <> ' . Product::STATUS_BLOCKED;
 
         if (isset($value['from']) && $value['from'] != '') {
-            $where .= 'online_qty >= ' . (int)$value['from'];
+            $where .= ' AND online_qty >= ' . (int)$value['from'];
         }
 
         if (isset($value['to']) && $value['to'] != '') {
-            if (isset($value['from']) && $value['from'] != '') {
-                $where .= ' AND ';
-            }
-            $where .= 'online_qty <= ' . (int)$value['to'];
+            $where .= ' AND online_qty <= ' . (int)$value['to'];
         }
 
         $collection->getSelect()->where($where);
@@ -507,17 +520,14 @@ SQL;
             return;
         }
 
-        $where = '';
+        $where = 'main_table.status <> ' . Product::STATUS_BLOCKED;
 
         if (isset($value['from']) && $value['from'] != '') {
-            $where .= 'online_price >= ' . (float)$value['from'];
+            $where .= ' AND online_price >= ' . (float)$value['from'];
         }
 
         if (isset($value['to']) && $value['to'] != '') {
-            if (isset($value['from']) && $value['from'] != '') {
-                $where .= ' AND ';
-            }
-            $where .= 'online_price <= ' . (float)$value['to'];
+            $where .= ' AND online_price <= ' . (float)$value['to'];
         }
 
         $collection->getSelect()->where($where);

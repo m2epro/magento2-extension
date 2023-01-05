@@ -79,13 +79,6 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
             return false;
         }
 
-        if ($this->getEbayAccount()->isPickupStoreEnabled()) {
-            $this->activeRecordFactory->getObject('Ebay_Listing_Product_PickupStore')->getResource()
-                ->processDeletedVariation(
-                    $this->getParentObject()
-                );
-        }
-
         return parent::delete();
     }
 

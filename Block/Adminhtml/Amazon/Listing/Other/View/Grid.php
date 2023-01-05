@@ -15,22 +15,25 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
-
     /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
-
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
-
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-
     /** @var \Ess\M2ePro\Helper\Component\Amazon */
     private $amazonHelper;
 
-    /** @var \Ess\M2ePro\Helper\Component\Amazon\Repricing */
-    private $amazonRepricingHelper;
-
+    /**
+     * @param \Magento\Framework\Locale\CurrencyInterface $localeCurrency
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Backend\Helper\Data $backendHelper
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param \Ess\M2ePro\Helper\Component\Amazon $amazonHelper
+     * @param array $data
+     */
     public function __construct(
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -39,7 +42,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
-        \Ess\M2ePro\Helper\Component\Amazon\Repricing $amazonRepricingHelper,
         array $data = []
     ) {
         $this->localeCurrency = $localeCurrency;
@@ -47,7 +49,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->amazonFactory = $amazonFactory;
         $this->dataHelper = $dataHelper;
         $this->amazonHelper = $amazonHelper;
-        $this->amazonRepricingHelper = $amazonRepricingHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -168,8 +169,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $account = $this->amazonFactory->getObjectLoaded('Account', $this->getRequest()->getParam('account'));
 
-        if ($this->amazonRepricingHelper->isEnabled() &&
-            $account->getChildObject()->isRepricing()) {
+        if ($account->getChildObject()->isRepricing()) {
             $priceColumn['filter'] = \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price::class;
         }
 
@@ -325,8 +325,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $html ='';
         $value = $row->getChildObject()->getData('online_price');
 
-        if ($this->amazonRepricingHelper->isEnabled() &&
-            (int)$row->getChildObject()->getData('is_repricing') == 1) {
+        if ((int)$row->getChildObject()->getData('is_repricing') == 1) {
             $icon = 'repricing-enabled';
             $text = $this->__(
                 'This Product is used by Amazon Repricing Tool, so its Price cannot be managed via M2E Pro. <br>
@@ -505,8 +504,7 @@ HTML;
             $where .= 'online_price <= ' . (float)$value['to'];
         }
 
-        if ($this->amazonRepricingHelper->isEnabled() &&
-            (isset($value['is_repricing']) && $value['is_repricing'] !== '')) {
+        if (isset($value['is_repricing']) && $value['is_repricing'] !== '') {
             if (!empty($where)) {
                 $where = '(' . $where . ') OR ';
             }

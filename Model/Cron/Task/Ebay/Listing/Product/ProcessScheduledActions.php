@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Product;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Product\ProcessScheduledActions
- */
 class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'ebay/listing/product/process_scheduled_actions';
@@ -31,8 +28,6 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     const REVISE_RETURN_PRIORITY      = 50;
     const REVISE_OTHER_PRIORITY       = 50;
 
-    //####################################
-
     /**
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -46,7 +41,7 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         return parent::isPossibleToRun();
     }
 
-    //####################################
+    // ----------------------------------------
 
     /**
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -70,6 +65,7 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         foreach ($scheduledActions as $scheduledAction) {
             try {
+                /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
                 $listingProduct = $scheduledAction->getListingProduct();
                 $additionalData = $scheduledAction->getAdditionalData();
             } catch (\Ess\M2ePro\Model\Exception\Logic $e) {
@@ -84,6 +80,7 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 $params = $additionalData['params'];
             }
 
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator $configurator */
             $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
             if (!empty($additionalData['configurator'])) {
                 $configurator->setUnserializedData($additionalData['configurator']);
@@ -92,6 +89,7 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             $listingProduct->setActionConfigurator($configurator);
 
+            /** @var \Ess\M2ePro\Model\Ebay\Connector\Item\Dispatcher $dispatcher */
             $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Item_Dispatcher');
             $dispatcher->process($scheduledAction->getActionType(), [$listingProduct], $params);
 

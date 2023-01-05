@@ -24,8 +24,6 @@ class Config extends AbstractConfig
                 'PrimaryConfigs',
                 'ModuleConfigs',
                 'AddAmazonCollects',
-                'AddGermanyInStorePickUpForDevelop',
-                'DisableInStorePickUpCanadaFr',
             ],
             'y19_m01' => [
                 'NewUpgradesEngine',
@@ -246,11 +244,19 @@ class Config extends AbstractConfig
             ],
             'y22_m10' => [
                 'AddIsSoldByAmazonColumnToAmazonOrder',
+                'AddRepricingAccountTokenValidityField',
                 'UpdateAmazonMarketplace',
                 'RemoveEpidsForAustralia',
+                'RemoveWalmartLegacySettings',
+                'RemovePickupInStoreTablesAndColumns',
+                'AmazonWalmartSellingPolicyPriceModifier',
+                'RemoveRepricingDisablingConfig',
             ],
             'y22_m11' => [
                 'FixWalmartChildListingId'
+            ],
+            'y23_m01' => [
+                'FixEbayQtyReservationDays'
             ],
         ];
     }

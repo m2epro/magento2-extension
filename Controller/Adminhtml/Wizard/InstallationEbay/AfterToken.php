@@ -16,12 +16,16 @@ class AfterToken extends InstallationEbay
 {
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $sessionHelper;
-
     /** @var \Ess\M2ePro\Helper\Magento\Store */
     private $magentoStoreHelper;
-
     /** @var \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update */
     private $storeCategoryUpdate;
+    /** @var \Ess\M2ePro\Model\Ebay\Account\Builder */
+    private $ebayAccountBuilder;
+    /** @var \Ess\M2ePro\Model\AccountFactory */
+    private $accountFactory;
+    /** @var \Ess\M2ePro\Model\Ebay\Connector\DispatcherFactory */
+    private $ebayDispatcherFactory;
 
     public function __construct(
         \Ess\M2ePro\Helper\Data\Session $sessionHelper,
@@ -30,15 +34,30 @@ class AfterToken extends InstallationEbay
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
+        \Ess\M2ePro\Model\Ebay\Account\Builder $ebayAccountBuilder,
+        \Ess\M2ePro\Model\AccountFactory $accountFactory,
+        \Ess\M2ePro\Model\Ebay\Connector\DispatcherFactory $ebayDispatcherFactory,
         Context $context
     ) {
-        parent::__construct($ebayFactory, $ebayViewHelper, $nameBuilder, $context);
+        parent::__construct(
+            $ebayFactory,
+            $ebayViewHelper,
+            $nameBuilder,
+            $context
+        );
 
         $this->storeCategoryUpdate = $storeCategoryUpdate;
         $this->sessionHelper = $sessionHelper;
         $this->magentoStoreHelper = $magentoStoreHelper;
+        $this->ebayAccountBuilder = $ebayAccountBuilder;
+        $this->accountFactory = $accountFactory;
+        $this->ebayDispatcherFactory = $ebayDispatcherFactory;
     }
 
+    /**
+     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function execute()
     {
         $tokenSessionId = $this->sessionHelper->getValue('token_session_id', true);
@@ -52,19 +71,16 @@ class AfterToken extends InstallationEbay
         $accountMode = $this->getRequest()->getParam('mode');
 
         $params = [
-            'mode'          => $accountMode,
-            'token_session' => $tokenSessionId
+            'mode' => $accountMode,
+            'token_session' => $tokenSessionId,
         ];
 
-        $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+        $dispatcherObject = $this->ebayDispatcherFactory->create();
         $connectorObj = $dispatcherObject->getVirtualConnector(
             'account',
             'add',
             'entity',
-            $params,
-            null,
-            null,
-            null
+            $params
         );
 
         $dispatcherObject->process($connectorObj);
@@ -76,28 +92,11 @@ class AfterToken extends InstallationEbay
             return $this->_redirect('*/*/installation');
         }
 
-        if ($accountMode == 'sandbox') {
-            $accountMode = EbayAccount::MODE_SANDBOX;
-        } else {
-            $accountMode = EbayAccount::MODE_PRODUCTION;
-        }
-
-        $data = array_merge(
-            $this->getEbayAccountDefaultSettings(),
-            [
-                'title'   => $responseData['info']['UserID'],
-                'user_id' => $responseData['info']['UserID'],
-                'mode'    => $accountMode,
-                'info'    => $this->getHelper('Data')->jsonEncode($responseData['info']),
-                'server_hash'   => $responseData['hash'],
-                'token_session' => $tokenSessionId,
-                'token_expired_date' => $responseData['token_expired_date']
-            ]
+        $account = $this->createAccount(
+            $responseData,
+            $accountMode === 'sandbox' ? EbayAccount::MODE_SANDBOX : EbayAccount::MODE_PRODUCTION,
+            $tokenSessionId
         );
-
-        /** @var \Ess\M2ePro\Model\Account $account */
-        $account = $this->ebayFactory->getObject('Account');
-        $this->modelFactory->getObject('Ebay_Account_Builder')->build($account, $data);
 
         $this->storeCategoryUpdate->process($account->getChildObject());
 
@@ -107,17 +106,38 @@ class AfterToken extends InstallationEbay
     }
 
     /**
-     * @return mixed
+     * @param array $responseData
+     * @param int $accountMode
+     * @param string $tokenSessionId
+     *
+     * @return \Ess\M2ePro\Model\Account
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    private function getEbayAccountDefaultSettings()
-    {
-        $data = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
-        $data['marketplaces_data'] = [];
-        $data['magento_orders_settings']['listing_other']['store_id'] = $this->magentoStoreHelper->getDefaultStoreId();
-        $data['magento_orders_settings']['qty_reservation']['days'] = 0;
+    private function createAccount(
+        array $responseData,
+        int $accountMode,
+        string $tokenSessionId
+    ): \Ess\M2ePro\Model\Account {
+        $data = $this->ebayAccountBuilder->getDefaultData();
 
-        return $data;
+        $data['title'] = $responseData['info']['UserID'];
+        $data['user_id'] = $responseData['info']['UserID'];
+        $data['mode'] = $accountMode;
+        $data['server_hash'] = $responseData['hash'];
+        $data['token_session'] = $tokenSessionId;
+        $data['token_expired_date'] = $responseData['token_expired_date'];
+
+        $data['magento_orders_settings']['listing_other']['store_id'] = $this->magentoStoreHelper->getDefaultStoreId();
+
+        $data['marketplaces_data'] = [];
+        $data['info'] = \Ess\M2ePro\Helper\Json::encode($responseData['info']);
+
+        $account = $this->accountFactory->create();
+        $account->setChildMode(\Ess\M2ePro\Helper\Component\Ebay::NICK);
+
+        $this->ebayAccountBuilder->build($account, $data);
+
+        return $account;
     }
 
     //########################################

@@ -346,25 +346,16 @@ td.specifics-grid {
     width: 250px;
 }
 
-#regular_price_coefficient,
-#regular_sale_price_coefficient,
-#business_price_coefficient,
-#business_discounts_tier_coefficient {
+#regular_price_coefficient {
     width: 100px;
 }
 
-#regular_price_coefficient_td,
-#regular_sale_price_coefficient_td,
-#business_price_coefficient_td,
-#business_discounts_tier_coefficient_td {
+#regular_price_coefficient_td {
     position: relative;
     left: 65px;
 }
 
-label.mage-error[for='regular_price_coefficient'],
-label.mage-error[for='regular_sale_price_coefficient'],
-label.mage-error[for='business_price_coefficient'],
-label.mage-error[for='business_discounts_tier_coefficient'] {
+label.mage-error[for='regular_price_coefficient'] {
     position: absolute;
     display: block !important;
     width: 150px;
@@ -450,6 +441,23 @@ td.specifics-grid {
     position: relative !important;
     left: auto !important;
     text-align: left;
+}
+
+.price_change_row {
+    margin-bottom: 20px;
+}
+
+.coef {
+    text-align: right;
+    width: 70px !important;
+}
+
+.price_modifier_mode {
+    margin-right: 10px;
+}
+
+.price_change_additional_element {
+    margin: 0 10px;
 }
 
 /* ================================================ */

@@ -65,10 +65,6 @@ class Magento extends AbstractModel
 
     protected function distributeLoadIfNeed()
     {
-        if (!$this->getHelper('Module')->isProductionEnvironment()) {
-            return;
-        }
-
         $maxExecutionTime = (int)ini_get('max_execution_time');
 
         if ($maxExecutionTime <= 0 || $maxExecutionTime < self::MIN_DISTRIBUTION_EXECUTION_TIME) {

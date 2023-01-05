@@ -8,17 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Product;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction
- */
 class ScheduledAction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
-    //########################################
-
-    public function _construct()
+    protected function _construct(): void
     {
         $this->_init('m2epro_listing_product_scheduled_action', 'id');
     }
-
-    //########################################
 }

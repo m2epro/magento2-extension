@@ -28,7 +28,6 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
             'product_ids_data'      => $this->getProductIdsData(),
             'description_data'      => $this->getDescriptionData(),
             'shipping_weight'       => $sellingFormatTemplateSource->getItemWeight(),
-            'tax_code'              => $sellingFormatTemplateSource->getProductTaxCode(),
             'additional_attributes' => $sellingFormatTemplateSource->getAttributes(),
         ];
 
@@ -48,11 +47,6 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
             $data['end_date'] = $endDate;
         } else {
             $data['end_date'] = '9999-01-01 00:00:00';
-        }
-
-        $mapPrice = $this->getWalmartListingProduct()->getMapPrice();
-        if (!empty($mapPrice)) {
-            $data['map_price'] = $mapPrice;
         }
 
         $mustShipAlone = $this->getWalmartListingProduct()->getSellingFormatTemplateSource()->getMustShipAlone();
@@ -241,10 +235,6 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
         $this->searchNotFoundAttributes();
         $data['features'] = $source->getOtherFeatures();
         $this->processNotFoundAttributes('Other Features');
-
-        $this->searchNotFoundAttributes();
-        $data['keywords'] = $source->getKeywords();
-        $this->processNotFoundAttributes('Keywords');
 
         $this->searchNotFoundAttributes();
         $data['msrp'] = $source->getMsrpRrp();

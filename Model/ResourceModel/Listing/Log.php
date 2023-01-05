@@ -8,14 +8,33 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Listing\Log
- */
 class Log extends \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Module\Log */
+    private $logHelper;
 
-    public function _construct()
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Log $logHelper,
+        \Ess\M2ePro\Helper\Module\Database\Structure $dbStructureHelper,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        $connectionName = null
+    ) {
+        parent::__construct(
+            $dbStructureHelper,
+            $helperFactory,
+            $activeRecordFactory,
+            $parentFactory,
+            $context,
+            $connectionName
+        );
+
+        $this->logHelper = $logHelper;
+    }
+
+    protected function _construct(): void
     {
         $this->_init('m2epro_listing_log', 'id');
     }
@@ -23,14 +42,14 @@ class Log extends \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
     /**
      * @return string
      */
-    public function getConfigGroupSuffix()
+    public function getConfigGroupSuffix(): string
     {
         return 'listings';
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function updateListingTitle($listingId, $title)
+    public function updateListingTitle($listingId, $title): bool
     {
         if ($title == '') {
             return false;
@@ -45,7 +64,7 @@ class Log extends \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
         return true;
     }
 
-    public function updateProductTitle($productId, $title)
+    public function updateProductTitle($productId, $title): bool
     {
         if ($title == '') {
             return false;
@@ -72,8 +91,6 @@ class Log extends \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
             throw new \Exception('Logs action ID does not exist.');
         }
 
-        return $this->getHelper('Module\Log')->getStatusByResultType($resultType);
+        return $this->logHelper->getStatusByResultType($resultType);
     }
-
-    //########################################
 }

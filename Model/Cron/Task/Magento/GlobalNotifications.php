@@ -29,7 +29,7 @@ class GlobalNotifications extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         /** @var \Ess\M2ePro\Model\Issue\Notification\Channel\Magento\GlobalMessage $notificationChannel */
         $notificationChannel = $this->modelFactory->getObject('Issue_Notification_Channel_Magento_GlobalMessage');
         $issueLocators = [
-            'Ebay_Account_Issue_AccessTokens',
+            'Ebay_Account_Issue_ExpiredTokens',
         ];
 
         foreach ($issueLocators as $locator) {

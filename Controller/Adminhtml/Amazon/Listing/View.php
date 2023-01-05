@@ -50,7 +50,7 @@ class View extends Main
 
         try {
             $listing = $this->amazonFactory->getCachedObjectLoaded('Listing', $id);
-        } catch (\LogicException $e) {
+        } catch (\Ess\M2ePro\Model\Exception\Logic $e) {
             $this->getMessageManager()->addError($this->__('Listing does not exist.'));
             return $this->_redirect('*/amazon_listing/index');
         }

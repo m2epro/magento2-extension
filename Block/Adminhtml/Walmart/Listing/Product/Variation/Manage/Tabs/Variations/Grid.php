@@ -8,36 +8,54 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Variations;
 
+use Ess\M2ePro\Model\Listing\Product;
+
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
+    /** @var array */
     protected $lockedDataCache = [];
 
-    protected $childListingProducts = null;
-    protected $currentProductVariations = null;
-    protected $usedProductVariations = null;
-
+    /** @var \Ess\M2ePro\Model\Walmart\Listing\Product */
+    protected $childListingProducts;
+    /** @var array */
+    protected $currentProductVariations;
+    /** @var array */
+    protected $usedProductVariations;
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct;
-
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
     protected $walmartFactory;
-
     /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
-
     /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
-
     /** @var \Ess\M2ePro\Helper\View\Walmart */
     protected $walmartViewHelper;
-
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-
     /** @var \Ess\M2ePro\Helper\Component\Walmart */
     private $walmartHelper;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Listing */
+    private $walmartListingResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat */
+    private $walmartSellingFormatResource;
 
+    /**
+     * @param \Ess\M2ePro\Model\ResourceModel\Walmart\Listing $walmartListingResource
+     * @param \Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat $walmartSellingFormatResource
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory
+     * @param \Magento\Framework\Locale\CurrencyInterface $localeCurrency
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     * @param \Ess\M2ePro\Helper\View\Walmart $walmartViewHelper
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Backend\Helper\Data $backendHelper
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param \Ess\M2ePro\Helper\Component\Walmart $walmartHelper
+     * @param array $data
+     */
     public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Walmart\Listing $walmartListingResource,
+        \Ess\M2ePro\Model\ResourceModel\Walmart\Template\SellingFormat $walmartSellingFormatResource,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -55,6 +73,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->dataHelper = $dataHelper;
         $this->walmartHelper = $walmartHelper;
         parent::__construct($context, $backendHelper, $data);
+        $this->walmartListingResource = $walmartListingResource;
+        $this->walmartSellingFormatResource = $walmartSellingFormatResource;
     }
 
     public function _construct()
@@ -85,6 +105,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareCollection()
     {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->walmartFactory->getObject('Listing\Product')->getCollection();
         $collection->getSelect()->distinct();
         $collection->getSelect()->where(
@@ -113,6 +134,21 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'main_table.id=t.listing_product_id',
             [
                 'products_ids' => 'products_ids',
+            ]
+        );
+
+        $collection->getSelect()->joinInner(
+            ['wl' => $this->walmartListingResource->getMainTable()],
+            'wl.listing_id = main_table.listing_id',
+            null
+        );
+
+        $collection->getSelect()->joinInner(
+            ['wtsf' => $this->walmartSellingFormatResource->getMainTable()],
+            'wtsf.template_selling_format_id = wl.template_selling_format_id',
+            [
+                'is_set_online_promotions'
+                    => new \Zend_Db_Expr('wtsf.promotions_mode = 1 AND second_table.online_promotions IS NOT NULL')
             ]
         );
 
@@ -325,7 +361,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
             $html .= '<div class="m2ePro-variation-attributes product-options-list">';
             if (!$uniqueProductsIds) {
-                $url = $this->getUrl('catalog/product/edit', ['id' => reset($productsIds)]);
+                $data['id'] = reset($productsIds);
+                if ($this->getListingProduct()->getListing()->getStoreId() != null) {
+                    $data['store'] = $this->getListingProduct()->getListing()->getStoreId();
+                }
+                $url = $this->getUrl('catalog/product/edit', $data);
                 $html .= '<a href="' . $url . '" target="_blank">';
             }
             foreach ($productOptions as $attribute => $option) {
@@ -343,7 +383,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                     '</span></span>';
 
                 if ($uniqueProductsIds && $option !== '--' && !in_array($attribute, $virtualProductAttributes, true)) {
-                    $url = $this->getUrl('catalog/product/edit', ['id' => $productsIds[$attribute]]);
+                    $data['id'] = $productsIds[$attribute];
+                    if ($this->getListingProduct()->getListing()->getStoreId() != null) {
+                        $data['store'] = $this->getListingProduct()->getListing()->getStoreId();
+                    }
+                    $url = $this->getUrl('catalog/product/edit', $data);
                     $html .= '<a href="' . $url . '" target="_blank">' . $optionHtml . '</a><br/>';
                 } else {
                     $html .= $optionHtml . '<br/>';
@@ -459,26 +503,59 @@ HTML;
 
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
-        if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
+        if ($row->getData('status') == Product::STATUS_NOT_LISTED) {
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
         $onlinePrice  = $row->getChildObject()->getData('online_price');
 
-        if ($onlinePrice === null || $onlinePrice === '' ||
-            ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED &&
-                !$row->getData('is_online_price_invalid'))) {
-            return $this->__('N/A');
+        if ($onlinePrice === null || $onlinePrice === ''){
+            if ($row->getData('status') == Product::STATUS_NOT_LISTED
+                || $row->getData('status') == Product::STATUS_BLOCKED
+            ) {
+                return $this->__('N/A');
+            }
+
+            return '<i style="color:gray;">receiving...</i>';
         }
 
         $currency = $this->getListingProduct()->getListing()
-            ->getMarketplace()->getChildObject()
-            ->getDefaultCurrency();
+                         ->getMarketplace()->getChildObject()
+                         ->getDefaultCurrency();
+        $priceValue = $this->convertAndFormatPriceCurrency($onlinePrice, $currency);
+
+        if ($row->getChildObject()->getData('is_online_price_invalid')) {
+            $message = <<<HTML
+Item Price violates Walmart pricing rules. Please adjust the Item Price to comply with the Walmart requirements.<br>
+Once the changes are applied, Walmart Item will become Active automatically.
+HTML;
+            $msg = '<p>' . $this->__($message) . '</p>';
+            if (empty($msg)) {
+                return $priceValue;
+            }
+
+            $priceValue .= <<<HTML
+<span class="fix-magento-tooltip">
+    {$this->getTooltipHtml($message, 'map_link_defected_message_icon_' . $row->getId())}
+</span>
+HTML;
+
+            return $priceValue;
+        }
 
         if ((float)$onlinePrice <= 0) {
             $priceValue = '<span style="color: #f00;">0</span>';
-        } else {
-            $priceValue = $this->convertAndFormatPriceCurrency($onlinePrice, $currency);
+        }
+
+        $isSetOnlinePromotions = (bool)$row->getData('is_set_online_promotions');
+        if ($isSetOnlinePromotions) {
+            $promotionTooltipText = $this->__('Price without promotions<br>Actual price is available on Walmart.');
+            $promotionTooltipHtml = $this->getTooltipHtml(
+                $promotionTooltipText,
+                '',
+                ['m2epro-field-tooltip-price-info']
+            );
+            $priceValue = $promotionTooltipHtml. '&nbsp;' . $priceValue;
         }
 
         return $priceValue;
@@ -534,17 +611,14 @@ HTML;
             return;
         }
 
-        $where = '';
+        $where = 'main_table.status <> ' . Product::STATUS_BLOCKED;
 
         if (isset($value['from']) && $value['from'] != '') {
-            $where .= 'online_qty >= ' . (int)$value['from'];
+            $where .= ' AND online_qty >= ' . (int)$value['from'];
         }
 
         if (isset($value['to']) && $value['to'] != '') {
-            if (isset($value['from']) && $value['from'] != '') {
-                $where .= ' AND ';
-            }
-            $where .= 'online_qty <= ' . (int)$value['to'];
+            $where .= ' AND online_qty <= ' . (int)$value['to'];
         }
 
         $collection->getSelect()->where($where);
@@ -558,19 +632,16 @@ HTML;
             return;
         }
 
-        $condition = '';
+        $condition = 'main_table.status <> ' . Product::STATUS_BLOCKED;
 
-        if (isset($value['from']) || isset($value['to'])) {
-            if (isset($value['from']) && $value['from'] != '') {
-                $condition = 'second_table.online_price >= \'' . (float)$value['from'] . '\'';
-            }
+        if (isset($value['from']) && $value['from'] != '') {
+            $quoted = $collection->getConnection()->quote($value['from']);
+            $condition .= ' AND second_table.online_price >= ' . $quoted;
+        }
 
-            if (isset($value['to']) && $value['to'] != '') {
-                if (isset($value['from']) && $value['from'] != '') {
-                    $condition .= ' AND ';
-                }
-                $condition .= 'second_table.online_price <= \'' . (float)$value['to'] . '\'';
-            }
+        if (isset($value['to']) && $value['to'] != '') {
+            $quoted = $collection->getConnection()->quote($value['to']);
+            $condition .= ' AND second_table.online_price <= ' . $quoted;
         }
 
         $collection->getSelect()->where($condition);
@@ -712,7 +783,7 @@ HTML;
         return <<<HTML
     <div id="{$id}" class="m2epro-field-tooltip admin__field-tooltip {$classes}">
         <a class="admin__field-tooltip-action" href="javascript://"></a>
-        <div class="admin__field-tooltip-content" style="">
+        <div class="admin__field-tooltip-content" style="width:300px">
             {$content}
         </div>
     </div>

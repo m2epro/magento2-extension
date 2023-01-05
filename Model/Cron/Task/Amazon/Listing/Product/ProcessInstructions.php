@@ -34,11 +34,9 @@ class ProcessInstructions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $this->modelFactory->getObject('Amazon_Listing_Product_Instruction_SynchronizationTemplate_Handler')
         );
 
-        if ($this->getHelper('Component_Amazon_Repricing')->isEnabled()) {
-            $processor->registerHandler(
-                $this->modelFactory->getObject('Amazon_Listing_Product_Instruction_Repricing_Handler')
-            );
-        }
+        $processor->registerHandler(
+            $this->modelFactory->getObject('Amazon_Listing_Product_Instruction_Repricing_Handler')
+        );
 
         $processor->process();
     }

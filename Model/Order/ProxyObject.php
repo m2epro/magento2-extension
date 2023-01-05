@@ -394,7 +394,7 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $currentInfo['firstname'] = isset($parts[0]) ? $parts[0] : 'NA';
-        $currentInfo['lastname'] = isset($parts[1]) ? $parts[1] : 'NA';
+        $currentInfo['lastname'] = isset($parts[1]) ? $parts[1] : $currentInfo['firstname'];
 
         return $currentInfo;
     }

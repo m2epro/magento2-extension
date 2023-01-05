@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise\Request
- */
 class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 {
-    //########################################
-
     /**
      * @return array
      */
@@ -62,7 +57,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
         return parent::prepareFinalData($data);
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function processingReplacedAction($data)
     {
@@ -188,6 +183,4 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
         return $data;
     }
-
-    //########################################
 }

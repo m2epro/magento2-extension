@@ -43,7 +43,9 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
         $tempLog = $this->activeRecordFactory->getObject('Listing\Log');
         $tempLog->setComponentMode($this->getComponentMode());
 
+        /** @var \Ess\M2ePro\Helper\Data $dataHelper */
         $dataHelper      = $this->helperFactory->getObject('Data');
+        /** @var \Ess\M2ePro\Helper\Component\Walmart $componentHelper */
         $componentHelper = $this->helperFactory->getObject('Component\Walmart');
 
         $parentIdsForProcessing = [];

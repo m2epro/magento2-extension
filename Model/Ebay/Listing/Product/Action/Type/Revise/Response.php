@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise\Response
- */
 class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Response
 {
-    //########################################
-
     public function processSuccess(array $response, array $responseParams = [])
     {
         $this->prepareMetadata();
@@ -50,7 +45,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $data = $this->appendOtherValues($data);
 
         if (isset($data['additional_data'])) {
-            $data['additional_data'] = $this->getHelper('Data')->jsonEncode($data['additional_data']);
+            $data['additional_data'] = \Ess\M2ePro\Helper\Json::encode($data['additional_data']);
         }
 
         $this->getListingProduct()->addData($data);
@@ -59,10 +54,6 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
 
         $this->updateVariationsValues(true);
         $this->updateEbayItem();
-
-        if ($this->getEbayAccount()->isPickupStoreEnabled() && $this->getConfigurator()->isVariationsAllowed()) {
-            $this->runAccountPickupStoreStateUpdater();
-        }
     }
 
     public function processAlreadyStopped(array $response, array $responseParams = [])
@@ -81,12 +72,12 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         }
 
         $data['additional_data']['ebay_item_fees'] = [];
-        $data['additional_data'] = $this->getHelper('Data')->jsonEncode($data['additional_data']);
+        $data['additional_data'] = \Ess\M2ePro\Helper\Json::encode($data['additional_data']);
 
         $this->getListingProduct()->addData($data)->save();
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function appendOnlineBidsValue($data)
     {
@@ -190,7 +181,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
                 ];
             }
 
-            $data['variations'] = $this->getHelper('Data')->jsonEncode($variations);
+            $data['variations'] = \Ess\M2ePro\Helper\Json::encode($variations);
         }
 
         /** @var \Ess\M2ePro\Model\Ebay\Item $object */
@@ -199,6 +190,4 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
 
         return $object;
     }
-
-    //########################################
 }

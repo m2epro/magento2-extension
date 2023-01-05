@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\ResourceModel\Account;
  */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Parent\AbstractModel
 {
-    //########################################
+    // ----------------------------------------
 
     public function _construct()
     {
@@ -24,5 +24,27 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         );
     }
 
-    //########################################
+    // ----------------------------------------
+
+    /**
+     * @return \Ess\M2ePro\Model\Account[]
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getAccountsWithValidRepricingAccount(): array
+    {
+        $amazonRepricingAccountResource = $this->activeRecordFactory
+            ->getObject('Amazon_Account_Repricing')
+            ->getResource();
+
+        $this->getSelect()->joinInner(
+            ['aar' => $amazonRepricingAccountResource->getMainTable()],
+            'aar.account_id = main_table.id',
+            []
+        );
+
+        $this->getSelect()->where('invalid = 0');
+
+        return $this->getItems();
+    }
 }

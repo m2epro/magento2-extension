@@ -65,16 +65,10 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->from('base', $query)
         ;
 
-        $modeExpression = "(CASE base.status
-        WHEN 2 THEN  IF(base.is_in_stock = 0 OR base.calculated_qty = 0, 'stop', 'revise')
-        WHEN 0 THEN  'list'
-        ELSE 'relist'
-        END)";
-        $mainQuery->addSelect('mode', $modeExpression);
+        $conditionalReviseCondition = '(base.calculated_qty > online_qty AND online_qty < revise_threshold)
+            OR (base.calculated_qty != online_qty) AND (base.calculated_qty < base.revise_threshold)';
 
-        $condition = 'base.online_qty != base.calculated_qty';
-
-        $mainQuery->andWhere($condition);
+        $mainQuery->andWhere($conditionalReviseCondition);
 
         $message = sprintf(
             'Data query %s %s',
@@ -148,6 +142,13 @@ abstract class BaseInventoryTracker implements TrackerInterface
                 'lpvo.listing_product_variation_id = lpv.id'
             )
         ;
+
+        /* Не включаем в выборку grouped and bundle товары */
+        $query->andWhere("IFNULL(lpvo.product_type, 'simple') != ?", 'grouped');
+        $query->andWhere("IFNULL(lpvo.product_type, 'simple') != ?", 'bundle');
+
+        /* Не включаємо у вибірку товари з поміткою duplicate */
+        $query->andWhere("JSON_EXTRACT(lp.additional_data, '$.item_duplicate_action_required') IS NULL");
 
         return $query;
     }

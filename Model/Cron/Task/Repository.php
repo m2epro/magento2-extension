@@ -165,14 +165,6 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'group'     => self::GROUP_EBAY,
         ],
-        \Ess\M2ePro\Model\Cron\Task\Ebay\PickupStore\ScheduleForUpdate::NICK => [
-            'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'group'     => self::GROUP_EBAY,
-        ],
-        \Ess\M2ePro\Model\Cron\Task\Ebay\PickupStore\UpdateOnChannel::NICK => [
-            'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'group'     => self::GROUP_EBAY,
-        ],
 
         //----------------------------------------
 
@@ -307,6 +299,10 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
             'group'     => self::GROUP_WALMART,
         ],
         \Ess\M2ePro\Model\Cron\Task\Walmart\Order\Receive::NICK => [
+            'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+            'group'     => self::GROUP_WALMART,
+        ],
+        \Ess\M2ePro\Model\Cron\Task\Walmart\Order\ReceiveWithCancellationRequested::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
             'group'     => self::GROUP_WALMART,
         ],

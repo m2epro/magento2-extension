@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Model\Walmart\Template\SellingFormat;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Diff
- */
 class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
 {
-    //########################################
-
     public function isDifferent()
     {
         return $this->isQtyDifferent() ||
@@ -23,8 +18,6 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
                $this->isPromotionsDifferent() ||
                $this->isDetailsDifferent();
     }
-
-    //########################################
 
     public function isQtyDifferent()
     {
@@ -56,7 +49,7 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
     {
         $keys = [
             'price_mode',
-            'price_coefficient',
+            'price_modifier',
             'price_custom_attribute',
             'price_variation_mode',
             'price_vat_percent',
@@ -75,17 +68,12 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
     public function isDetailsDifferent()
     {
         $keys = [
-            'map_price_mode',
-            'map_price_custom_attribute',
             'sale_time_start_date_mode',
             'sale_time_start_date_value',
             'sale_time_start_date_custom_attribute',
             'sale_time_end_date_mode',
             'sale_time_end_date_value',
             'sale_time_end_date_custom_attribute',
-            'product_tax_code_mode',
-            'product_tax_code_custom_value',
-            'product_tax_code_custom_attribute',
             'item_weight_mode',
             'item_weight_custom_value',
             'item_weight_custom_attribute',
@@ -103,6 +91,4 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
 
         return $this->isSettingsDifferent($keys);
     }
-
-    //########################################
 }

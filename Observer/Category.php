@@ -8,13 +8,26 @@
 
 namespace Ess\M2ePro\Observer;
 
-/**
- * Class \Ess\M2ePro\Observer\Category
- */
 class Category extends AbstractModel
 {
-    //########################################
+    /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Factory */
+    private $listingAutoActionsModeFactory;
 
+    public function __construct(
+        \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Factory $listingAutoActionsModeFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory
+    ) {
+        parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
+        $this->listingAutoActionsModeFactory = $listingAutoActionsModeFactory;
+    }
+
+    /**
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
     public function process()
     {
         /** @var \Magento\Catalog\Model\Category $category */
@@ -51,19 +64,14 @@ class Category extends AbstractModel
 
                 /** @var \Magento\Catalog\Model\Product $product */
                 $product = $this->getHelper('Magento\Product')->getCachedAndLoadedProduct($productId);
-
-                /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Category $object */
-                $object = $this->modelFactory->getObject('Listing_Auto_Actions_Mode_Category');
-                $object->setProduct($product);
+                $categoryAutoAction = $this->listingAutoActionsModeFactory->createCategoryMode($product);
 
                 if (in_array($productId, $postedProductsIds)) {
-                    $object->synchWithAddedCategoryId($categoryId, $websiteId);
+                    $categoryAutoAction->synchWithAddedCategoryId($websiteId, [$categoryId]);
                 } else {
-                    $object->synchWithDeletedCategoryId($categoryId, $websiteId);
+                    $categoryAutoAction->synchWithDeletedCategoryId($websiteId, [$categoryId]);
                 }
             }
         }
     }
-
-    //########################################
 }

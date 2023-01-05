@@ -16,10 +16,22 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
 
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $databaseHelper;
-
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /**
+     * @param \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory
+     * @param \Magento\Framework\Locale\CurrencyInterface $localeCurrency
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     * @param \Ess\M2ePro\Helper\Data $helperData
+     * @param \Ess\M2ePro\Helper\Component\Amazon $amazonHelper
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Backend\Helper\Data $backendHelper
+     * @param \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param array $data
+     */
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
@@ -27,7 +39,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
-        \Ess\M2ePro\Helper\Component\Amazon\Repricing $amazonRepricingHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
@@ -43,7 +54,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
             $resourceConnection,
             $helperData,
             $amazonHelper,
-            $amazonRepricingHelper,
             $context,
             $backendHelper,
             $data
@@ -707,7 +717,7 @@ HTML;
             }
         }
 
-        if ($this->amazonRepricingHelper->isEnabled() && isset($cond['is_repricing'])) {
+        if (isset($cond['is_repricing'])) {
             if (!empty($where)) {
                 $where = '(' . $where . ') OR ';
             }

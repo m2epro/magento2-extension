@@ -5,7 +5,6 @@ define([
     'M2ePro/Listing/Mapping',
     'M2ePro/Amazon/Listing/View/Action',
     'M2ePro/Amazon/Listing/View/Fulfillment',
-    'M2ePro/Amazon/Listing/Product/Repricing',
     'M2ePro/Amazon/Listing/Product/Search',
     'M2ePro/Amazon/Listing/Product/Template/Description',
     'M2ePro/Amazon/Listing/Product/Template/Shipping',
@@ -59,7 +58,6 @@ define([
 
             this.variationProductManageHandler = new AmazonListingProductVariationManage(this);
             this.fulfillmentHandler = new AmazonListingViewFulfillment(this);
-            this.repricingHandler = new AmazonListingProductRepricing(this);
 
             this.actions = Object.extend(this.actions, {
                 duplicateAction: this.duplicateProducts.bind(this),
@@ -101,23 +99,6 @@ define([
                 switchToMfnAction: (function(id) {
                     id = id || this.getSelectedProductsString();
                     this.fulfillmentHandler.switchToMFN(id);
-                }).bind(this),
-
-                addToRepricingAction: (function(id) {
-                    id = id || this.getSelectedProductsString();
-                    this.repricingHandler.addToRepricing(id);
-                }).bind(this),
-                showDetailsAction: (function(id) {
-                    id = id || this.getSelectedProductsString();
-                    this.repricingHandler.showDetails(id);
-                }).bind(this),
-                editRepricingAction: (function(id) {
-                    id = id || this.getSelectedProductsString();
-                    this.repricingHandler.editRepricing(id);
-                }).bind(this),
-                removeFromRepricingAction: (function(id) {
-                    id = id || this.getSelectedProductsString();
-                    this.repricingHandler.removeFromRepricing(id);
                 }).bind(this),
 
                 assignGeneralIdAction: (function() {
