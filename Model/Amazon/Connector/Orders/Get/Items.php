@@ -293,7 +293,7 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
             'state' => trim((string)($location['state'] ?? '')),
             'city' => trim((string)($location['city'] ?? '')),
             'postal_code' => trim((string)($location['postal_code'] ?? '')),
-            'recipient_name' => trim((string)($location['buyer'] ?? '')),
+            'recipient_name' => trim((string)($shippingData['buyer'] ?? '')),
             'phone' => $shippingData['phone'] ?? '',
             'company' => '',
             'address_type' => trim((string)($shippingData['address_type'] ?? '')),
